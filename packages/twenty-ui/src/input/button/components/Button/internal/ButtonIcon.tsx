@@ -2,16 +2,15 @@ import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { useContext } from 'react';
 
 const StyledIcon = styled.div<{
   isLoading: boolean;
-  theme: ThemeType;
 }>`
   align-items: center;
   display: flex;
-  height: calc(100% - ${({ theme }) => theme.spacing(4)});
+  height: calc(100% - ${themeVar.spacing[4]});
   color: var(--tw-button-color);
 
   opacity: ${({ isLoading }) => (isLoading ? 0 : 1)};
@@ -27,14 +26,14 @@ const StyledIconWrapper = styled.div`
   pointer-events: none;
 `;
 
-const StyledLoader = styled.div<{ theme: ThemeType }>`
-  left: ${({ theme }) => theme.spacing(2)};
+const StyledLoader = styled.div`
+  left: ${themeVar.spacing[2]};
   opacity: 1;
   position: absolute;
 
   transition: opacity ${baseTransitionTiming / 2}ms ease;
   transition-delay: ${baseTransitionTiming / 2}ms;
-  width: ${({ theme }) => theme.spacing(6)};
+  width: ${themeVar.spacing[6]};
 `;
 
 export const ButtonIcon = ({
@@ -48,12 +47,12 @@ export const ButtonIcon = ({
   return (
     <StyledIconWrapper>
       {isLoading && (
-        <StyledLoader theme={theme}>
+        <StyledLoader>
           <Loader />
         </StyledLoader>
       )}
       {Icon && (
-        <StyledIcon isLoading={!!isLoading} theme={theme}>
+        <StyledIcon isLoading={!!isLoading}>
           <Icon size={theme.icon.size.sm} />
         </StyledIcon>
       )}

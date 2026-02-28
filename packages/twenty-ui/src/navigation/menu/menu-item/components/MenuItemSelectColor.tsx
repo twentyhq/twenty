@@ -43,17 +43,12 @@ export const MenuItemSelectColor = ({
       className={className}
       disabled={disabled}
       focused={focused}
-      theme={theme}
     >
-      <StyledMenuItemLeftContent theme={theme}>
+      <StyledMenuItemLeftContent>
         <ColorSample colorName={color} variant={variant} />
-        <StyledMenuItemLabel theme={theme}>
-          {colorLabels[color]}
-        </StyledMenuItemLabel>
+        <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck theme={theme} size={theme.icon.size.md} />
-      )}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

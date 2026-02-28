@@ -1,20 +1,20 @@
 import { styled } from '@linaria/react';
-import { type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledList = styled.ul<{ depth: number; theme: ThemeType }>`
+const StyledList = styled.ul<{ depth: number }>`
   margin: 0;
   padding: 0;
 
   display: grid;
-  row-gap: ${({ theme }) => theme.spacing(2)};
+  row-gap: ${themeVar.spacing[2]};
 
-  ${({ theme, depth }) =>
+  ${({ depth }) =>
     depth > 0
       ? `
-      padding-left: ${theme.spacing(8)};
+      padding-left: ${themeVar.spacing[8]};
 
       > :first-of-type {
-        margin-top: ${theme.spacing(2)};
+        margin-top: ${themeVar.spacing[2]};
       }
     `
       : ''}

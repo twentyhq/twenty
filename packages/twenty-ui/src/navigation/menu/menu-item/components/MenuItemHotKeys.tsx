@@ -1,34 +1,34 @@
 import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledCommandTextContainer = styled.div<{ theme: ThemeType }>`
+const StyledCommandTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeVar.spacing[1]};
   justify-content: center;
 `;
 
-const StyledCommandText = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledCommandText = styled.div`
+  color: ${themeVar.font.color.light};
   vertical-align: middle;
   white-space: nowrap;
 `;
 
-const StyledCommandKey = styled.div<{ theme: ThemeType }>`
+const StyledCommandKey = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.underline};
+  background-color: ${themeVar.background.secondary};
+  border: 1px solid ${themeVar.border.color.strong};
+  border-radius: ${themeVar.border.radius.sm};
+  box-shadow: ${themeVar.boxShadow.underline};
   display: flex;
   flex-direction: column;
   height: 18px;
   justify-content: center;
   text-align: center;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${themeVar.spacing[4]};
 `;
 
 export type MenuItemHotKeysProps = {
@@ -40,15 +40,13 @@ export const MenuItemHotKeys = ({
   hotKeys,
   joinLabel = 'then',
 }: MenuItemHotKeysProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledCommandText theme={theme}>
+    <StyledCommandText>
       {hotKeys && (
-        <StyledCommandTextContainer theme={theme}>
+        <StyledCommandTextContainer>
           {hotKeys.map((hotKey, index) => (
             <React.Fragment key={index}>
-              <StyledCommandKey theme={theme}>{hotKey}</StyledCommandKey>
+              <StyledCommandKey>{hotKey}</StyledCommandKey>
               {index < hotKeys.length - 1 && joinLabel}
             </React.Fragment>
           ))}

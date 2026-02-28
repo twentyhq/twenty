@@ -4,7 +4,7 @@ import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { motion, type MotionProps } from 'framer-motion';
 import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
@@ -23,33 +23,31 @@ export type AnimatedLightIconButtonProps = {
   Pick<MotionProps, 'animate' | 'transition'>;
 
 const StyledButton = styled.button<
-  Pick<AnimatedLightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'> & {
-    theme: ThemeType;
-  }
+  Pick<AnimatedLightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
 >`
   align-items: center;
   background: transparent;
   border: none;
 
-  border: ${({ disabled, theme, focus }) =>
-    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ disabled, theme, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${theme.color.blue3}` : 'none'};
-  color: ${({ theme, accent, active, disabled, focus }) => {
+  border: ${({ disabled, focus }) =>
+    !disabled && focus ? `1px solid ${themeVar.color.blue}` : 'none'};
+  border-radius: ${themeVar.border.radius.sm};
+  box-shadow: ${({ disabled, focus }) =>
+    !disabled && focus ? `0 0 0 3px ${themeVar.color.blue3}` : 'none'};
+  color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? theme.color.blue
+          ? themeVar.color.blue
           : !disabled
-            ? theme.font.color.secondary
-            : theme.font.color.extraLight;
+            ? themeVar.font.color.secondary
+            : themeVar.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? theme.color.blue
+          ? themeVar.color.blue
           : !disabled
-            ? theme.font.color.tertiary
-            : theme.font.color.extraLight;
+            ? themeVar.font.color.tertiary
+            : themeVar.font.color.extraLight;
     }
     return '';
   }};
@@ -57,12 +55,12 @@ const StyledButton = styled.button<
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeVar.font.family};
+  font-weight: ${themeVar.font.weight.regular};
+  gap: ${themeVar.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeVar.spacing[1]};
   transition: background 0.1s ease;
 
   white-space: nowrap;
@@ -70,8 +68,8 @@ const StyledButton = styled.button<
   min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.light : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.light : 'transparent'};
   }
 
   &:focus {
@@ -79,8 +77,8 @@ const StyledButton = styled.button<
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.medium : 'transparent'};
   }
 `;
 
@@ -119,7 +117,6 @@ export const AnimatedLightIconButton = ({
       size={size}
       active={active}
       title={title}
-      theme={theme}
     >
       <StyledIconContainer animate={animate} transition={transition}>
         {Icon && (

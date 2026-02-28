@@ -3,8 +3,6 @@ import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { JsonTreeContextProvider } from '@ui/json-visualizer/components/JsonTreeContextProvider';
 import { type ShouldExpandNodeInitiallyProps } from '@ui/json-visualizer/contexts/JsonTreeContext';
 import { type GetJsonNodeHighlighting } from '@ui/json-visualizer/types/GetJsonNodeHighlighting';
-import { ThemeContext } from '@ui/theme';
-import { useContext } from 'react';
 import { type JsonValue } from 'type-fest';
 
 export const JsonTree = ({
@@ -30,8 +28,6 @@ export const JsonTree = ({
   arrowButtonExpandedLabel: string;
   onNodeValueClick?: (valueAsString: string) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <JsonTreeContextProvider
       value={{
@@ -45,7 +41,7 @@ export const JsonTree = ({
         onNodeValueClick,
       }}
     >
-      <JsonList depth={0} theme={theme}>
+      <JsonList depth={0}>
         <JsonNode value={value} depth={0} keyPath="" />
       </JsonList>
     </JsonTreeContextProvider>

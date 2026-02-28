@@ -1,31 +1,29 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import {
   type ButtonAccent,
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
-  theme: ThemeType;
 }>`
-  background: ${({ theme, accent }) => {
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.buttons.secondaryTextColor;
+        return themeVar.buttons.secondaryTextColor;
       case 'danger':
-        return theme.border.color.danger;
+        return themeVar.border.color.danger;
       default:
-        return theme.font.color.light;
+        return themeVar.font.color.light;
     }
   }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  height: ${({ buttonSize }) =>
+    buttonSize === 'small' ? themeVar.spacing[2] : themeVar.spacing[4]};
   margin: 0;
   width: 1px;
 `;
@@ -33,21 +31,20 @@ const StyledSeparator = styled.div<{
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
-  theme: ThemeType;
 }>`
-  color: ${({ theme, variant, accent }) => {
+  color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.buttons.secondaryTextColor;
+        return themeVar.buttons.secondaryTextColor;
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red8;
+          ? themeVar.border.color.danger
+          : themeVar.color.red8;
       default:
-        return theme.font.color.light;
+        return themeVar.font.color.light;
     }
   }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeVar.font.weight.medium};
 `;
 
 export const ButtonHotkeys = ({
@@ -61,12 +58,10 @@ export const ButtonHotkeys = ({
   variant: ButtonVariant;
   hotkeys: string[];
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <>
-      <StyledSeparator theme={theme} buttonSize={size} accent={accent} />
-      <StyledShortcutLabel theme={theme} variant={variant} accent={accent}>
+      <StyledSeparator buttonSize={size} accent={accent} />
+      <StyledShortcutLabel variant={variant} accent={accent}>
         {hotkeys.join(getOsShortcutSeparator())}
       </StyledShortcutLabel>
     </>

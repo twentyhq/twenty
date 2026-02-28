@@ -1,8 +1,7 @@
 import { type IconComponent } from '@ui/display';
 import { StyledTabButton } from '@ui/input/button/components/TabButton/internals/components/StyledTabBase';
 import { TabContent } from '@ui/input/button/components/TabButton/internals/components/TabContent';
-import { ThemeContext } from '@ui/theme';
-import { type ReactElement, useContext } from 'react';
+import { type ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 type TabButtonProps = {
@@ -36,11 +35,8 @@ export const TabButton = ({
   contentSize = 'sm',
   disableTestId = false,
 }: TabButtonProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledTabButton
-      theme={theme}
       data-testid={disableTestId ? undefined : `tab-${id}`}
       active={active}
       disabled={disabled}

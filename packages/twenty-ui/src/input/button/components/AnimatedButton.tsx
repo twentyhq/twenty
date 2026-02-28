@@ -6,7 +6,7 @@ import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import {
   type ButtonAccent,
   type ButtonProps,
@@ -36,14 +36,13 @@ const computeAnimatedButtonDynamicStyles = (
   accent: ButtonAccent,
   disabled: boolean,
   focus: boolean,
-  theme: ThemeType,
 ): AnimatedButtonDynamicStyles => {
   const result: AnimatedButtonDynamicStyles = {
     background: 'transparent',
     borderColor: 'transparent',
     borderWidthOverride: '',
     boxShadow: 'none',
-    color: theme.font.color.secondary,
+    color: themeVar.font.color.secondary,
     hoverBackground: 'transparent',
     activeBackground: 'transparent',
   };
@@ -53,34 +52,34 @@ const computeAnimatedButtonDynamicStyles = (
       switch (accent) {
         case 'default':
           result.background = !inverted
-            ? theme.background.secondary
-            : theme.background.primary;
+            ? themeVar.background.secondary
+            : themeVar.background.primary;
           result.borderColor = !inverted
             ? !disabled && focus
-              ? theme.color.blue
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeVar.color.blue
+              : themeVar.background.transparent.light
+            : themeVar.background.transparent.light;
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeVar.accent.tertiary
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.font.color.secondary
-              : theme.font.color.extraLight
-            : theme.font.color.secondary;
+              ? themeVar.font.color.secondary
+              : themeVar.font.color.extraLight
+            : themeVar.font.color.secondary;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.background.tertiary
-              : theme.background.secondary;
+              ? themeVar.background.tertiary
+              : themeVar.background.secondary;
             result.activeBackground = !inverted
-              ? theme.background.quaternary
-              : theme.background.tertiary;
+              ? themeVar.background.quaternary
+              : themeVar.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -88,30 +87,32 @@ const computeAnimatedButtonDynamicStyles = (
           break;
         case 'blue':
           result.background = !inverted
-            ? theme.color.blue
-            : theme.background.primary;
+            ? themeVar.color.blue
+            : themeVar.background.primary;
           result.borderColor = !inverted
             ? focus
-              ? theme.color.blue
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeVar.color.blue
+              : themeVar.background.transparent.light
+            : themeVar.background.transparent.light;
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeVar.accent.tertiary
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
-          result.color = !inverted ? theme.grayScale.gray1 : theme.color.blue;
+          result.color = !inverted
+            ? themeVar.grayScale.gray1
+            : themeVar.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.color.blue10
-              : theme.background.secondary;
+              ? themeVar.color.blue10
+              : themeVar.background.secondary;
             result.activeBackground = !inverted
-              ? theme.color.blue12
-              : theme.background.tertiary;
+              ? themeVar.color.blue12
+              : themeVar.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -119,30 +120,32 @@ const computeAnimatedButtonDynamicStyles = (
           break;
         case 'danger':
           result.background = !inverted
-            ? theme.color.red
-            : theme.background.primary;
+            ? themeVar.color.red
+            : themeVar.background.primary;
           result.borderColor = !inverted
             ? focus
-              ? theme.color.red
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeVar.color.red
+              : themeVar.background.transparent.light
+            : themeVar.background.transparent.light;
           result.borderWidthOverride = '1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.color.red3
-                    : theme.background.transparent.medium
+                    ? themeVar.color.red3
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
-          result.color = !inverted ? theme.background.primary : theme.color.red;
+          result.color = !inverted
+            ? themeVar.background.primary
+            : themeVar.color.red;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.color.red8
-              : theme.background.secondary;
+              ? themeVar.color.red8
+              : themeVar.background.secondary;
             result.activeBackground = !inverted
-              ? theme.color.red10
-              : theme.background.tertiary;
+              ? themeVar.color.red10
+              : themeVar.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -158,124 +161,124 @@ const computeAnimatedButtonDynamicStyles = (
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? !disabled && focus
-                ? theme.color.blue
-                : theme.background.transparent.medium
+                ? themeVar.color.blue
+                : themeVar.background.transparent.medium
               : focus
-                ? theme.color.blue
+                ? themeVar.color.blue
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeVar.grayScale.gray1
+                : themeVar.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeVar.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeVar.accent.tertiary
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.font.color.secondary
-              : theme.font.color.extraLight
-            : theme.font.color.inverted;
+              ? themeVar.font.color.secondary
+              : themeVar.font.color.extraLight
+            : themeVar.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.background.transparent.light
+              ? themeVar.background.transparent.light
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeVar.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.background.transparent.light
+              ? themeVar.background.transparent.light
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeVar.background.transparent.medium;
           break;
         case 'blue':
           result.background = 'transparent';
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? focus
-                ? theme.color.blue
-                : theme.accent.primary
+                ? themeVar.color.blue
+                : themeVar.accent.primary
               : focus
-                ? theme.color.blue
+                ? themeVar.color.blue
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeVar.grayScale.gray1
+                : themeVar.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeVar.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeVar.accent.tertiary
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.color.blue
-              : theme.accent.accent4060
-            : theme.font.color.inverted;
+              ? themeVar.color.blue
+              : themeVar.accent.accent4060
+            : themeVar.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.accent.tertiary
+              ? themeVar.accent.tertiary
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeVar.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.accent.secondary
+              ? themeVar.accent.secondary
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeVar.background.transparent.medium;
           break;
         case 'danger':
           result.background = 'transparent';
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? focus
-                ? theme.color.red
-                : theme.border.color.danger
+                ? themeVar.color.red
+                : themeVar.border.color.danger
               : focus
-                ? theme.color.red
+                ? themeVar.color.red
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeVar.grayScale.gray1
+                : themeVar.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeVar.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.color.red3
-                    : theme.background.transparent.medium
+                    ? themeVar.color.red3
+                    : themeVar.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
-            ? theme.font.color.danger
-            : theme.font.color.inverted;
+            ? themeVar.font.color.danger
+            : themeVar.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.background.danger
+              ? themeVar.background.danger
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeVar.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.background.danger
+              ? themeVar.background.danger
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeVar.background.transparent.medium;
           break;
       }
       break;
@@ -295,7 +298,7 @@ const StyledButton = styled.button<
     | 'target'
     | 'dataClickOutsideId'
     | 'dataGloballyPreventClickOutside'
-  > & { theme: ThemeType }
+  >
 >`
   align-items: center;
   background: var(--abtn-bg);
@@ -312,16 +315,16 @@ const StyledButton = styled.button<
   }
 
   text-decoration: none;
-  border-radius: ${({ position, theme }) => {
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeVar.border.radius.sm} 0px 0px ${themeVar.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeVar.border.radius.sm} ${themeVar.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeVar.border.radius.sm;
     }
     return '';
   }};
@@ -329,15 +332,13 @@ const StyledButton = styled.button<
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
+  font-family: ${themeVar.font.family};
   font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeVar.font.size.md};
+  gap: ${themeVar.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify ?? ''};
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
+  padding: 0 ${themeVar.spacing[2]};
 
   transition: background 0.1s ease;
 
@@ -357,20 +358,19 @@ const StyledSoonPill = styled(Pill)`
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
-  theme: ThemeType;
 }>`
-  background: ${({ theme, accent }) => {
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return themeVar.border.color.blue;
       case 'danger':
-        return theme.border.color.danger;
+        return themeVar.border.color.danger;
       default:
-        return theme.font.color.light;
+        return themeVar.font.color.light;
     }
   }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  height: ${({ buttonSize }) =>
+    buttonSize === 'small' ? themeVar.spacing[2] : themeVar.spacing[4]};
   margin: 0;
   width: 1px;
 `;
@@ -378,21 +378,20 @@ const StyledSeparator = styled.div<{
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
-  theme: ThemeType;
 }>`
-  color: ${({ theme, variant, accent }) => {
+  color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return themeVar.border.color.blue;
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red8;
+          ? themeVar.border.color.danger
+          : themeVar.color.red8;
       default:
-        return theme.font.color.light;
+        return themeVar.font.color.light;
     }
   }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeVar.font.weight.medium};
 `;
 
 const StyledIconContainer = styled(motion.div)`
@@ -439,7 +438,6 @@ export const AnimatedButton = ({
       accent,
       isDisabled,
       focus,
-      theme,
     );
     return {
       '--abtn-bg': s.background,
@@ -450,13 +448,12 @@ export const AnimatedButton = ({
       '--abtn-hover-bg': s.hoverBackground,
       '--abtn-active-bg': s.activeBackground,
     } as React.CSSProperties;
-  }, [variant, inverted, accent, isDisabled, focus, theme]);
+  }, [variant, inverted, accent, isDisabled, focus]);
 
   const ButtonComponent = to ? Link : 'button';
 
   return (
     <StyledButton
-      theme={theme}
       as={ButtonComponent}
       fullWidth={fullWidth}
       size={size}
@@ -486,8 +483,8 @@ export const AnimatedButton = ({
       {title}
       {hotkeys && !isMobile && (
         <>
-          <StyledSeparator theme={theme} buttonSize={size} accent={accent} />
-          <StyledShortcutLabel theme={theme} variant={variant} accent={accent}>
+          <StyledSeparator buttonSize={size} accent={accent} />
+          <StyledShortcutLabel variant={variant} accent={accent}>
             {hotkeys.join(getOsShortcutSeparator())}
           </StyledShortcutLabel>
         </>

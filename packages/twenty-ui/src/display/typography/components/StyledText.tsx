@@ -1,11 +1,6 @@
-import {
-  forwardRef,
-  type ReactElement,
-  type ReactNode,
-  useContext,
-} from 'react';
+import { forwardRef, type ReactElement, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 type StyledTextProps = {
   PrefixComponent?: ReactElement;
@@ -13,14 +8,9 @@ type StyledTextProps = {
   color?: string;
 };
 
-const useThemeFromContext = () => {
-  const { theme } = useContext(ThemeContext);
-  return theme;
-};
-
-const StyledTextContentInner = styled.div<{ theme: ThemeType }>`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+const StyledTextContentInner = styled.div`
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.regular};
 
   overflow: hidden;
   padding-left: 0;
@@ -30,14 +20,12 @@ const StyledTextContentInner = styled.div<{ theme: ThemeType }>`
 
 export const StyledTextContent = forwardRef<
   HTMLDivElement,
-  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+  React.ComponentPropsWithoutRef<'div'>
 >((props, ref) => {
-  const contextTheme = useThemeFromContext();
   return (
     <StyledTextContentInner
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-      theme={props.theme ?? contextTheme}
       ref={ref}
     />
   );
@@ -46,10 +34,9 @@ StyledTextContent.displayName = 'StyledTextContent';
 
 const StyledTextWrapperInner = styled.div<{
   color?: string;
-  theme: ThemeType;
 }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: ${themeVar.spacing[1]};
+  --vertical-padding: ${themeVar.spacing[2]};
 
   cursor: initial;
 
@@ -57,28 +44,25 @@ const StyledTextWrapperInner = styled.div<{
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeVar.font.size.sm};
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
 
   padding: var(--vertical-padding) 0;
 
-  color: ${({ theme, color }) => color ?? theme.font.color.primary};
+  color: ${({ color }) => color ?? themeVar.font.color.primary};
 `;
 
 export const StyledTextWrapper = forwardRef<
   HTMLDivElement,
   {
-    theme?: ThemeType;
     color?: string;
   } & React.ComponentPropsWithoutRef<'div'>
 >((props, ref) => {
-  const contextTheme = useThemeFromContext();
   return (
     <StyledTextWrapperInner
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-      theme={props.theme ?? contextTheme}
       ref={ref}
     />
   );
@@ -90,12 +74,10 @@ export const StyledText = ({
   text,
   color,
 }: StyledTextProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledTextWrapper color={color} theme={theme}>
+    <StyledTextWrapper color={color}>
       {PrefixComponent ? PrefixComponent : null}
-      <StyledTextContent theme={theme}>{text}</StyledTextContent>
+      <StyledTextContent>{text}</StyledTextContent>
     </StyledTextWrapper>
   );
 };

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 export enum ChipSize {
   Large = 'large',
@@ -38,28 +38,28 @@ export type ChipProps = {
   emptyLabel?: string;
 };
 
-const StyledDiv = styled.div<{ emptyLabelColor: string }>`
-  color: ${({ emptyLabelColor }) => emptyLabelColor};
+const StyledDiv = styled.div`
+  color: ${themeVar.font.color.tertiary};
 `;
 
 const StyledContainer = styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  > & { theme: ThemeType }
+  >
 >`
-  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
+  --chip-horizontal-padding: ${themeVar.spacing[1]};
+  --chip-vertical-padding: ${themeVar.spacing[1]};
 
   text-decoration: none;
   align-items: center;
 
-  color: ${({ theme, accent, disabled }) =>
+  color: ${({ accent, disabled }) =>
     disabled
-      ? theme.font.color.light
+      ? themeVar.font.color.light
       : accent === ChipAccent.TextPrimary
-        ? theme.font.color.primary
-        : theme.font.color.secondary};
+        ? themeVar.font.color.primary
+        : themeVar.font.color.secondary};
 
   cursor: ${({ clickable, disabled, variant }) =>
     variant === ChipVariant.Transparent
@@ -72,9 +72,9 @@ const StyledContainer = styled.div<
 
   display: inline-flex;
   justify-content: flex-start;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme, size }) =>
-    size === ChipSize.Large ? theme.spacing(4) : theme.spacing(3)};
+  gap: ${themeVar.spacing[1]};
+  height: ${({ size }) =>
+    size === ChipSize.Large ? themeVar.spacing[4] : themeVar.spacing[3]};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -83,47 +83,49 @@ const StyledContainer = styled.div<
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
 
-  font-weight: ${({ theme, accent }) =>
-    accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
+  font-weight: ${({ accent }) =>
+    accent === ChipAccent.TextSecondary
+      ? themeVar.font.weight.medium
+      : 'inherit'};
 
   &:hover {
-    background-color: ${({ theme, variant, disabled }) =>
+    background-color: ${({ variant, disabled }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.light
+        ? themeVar.background.transparent.light
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.medium
+          ? themeVar.background.transparent.medium
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeVar.background.transparent.light
             : 'inherit'};
   }
 
   &:active {
-    background-color: ${({ theme, disabled, variant }) =>
+    background-color: ${({ disabled, variant }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.medium
+        ? themeVar.background.transparent.medium
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.strong
+          ? themeVar.background.transparent.strong
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeVar.background.transparent.light
             : 'inherit'};
   }
 
-  background-color: ${({ theme, variant }) =>
+  background-color: ${({ variant }) =>
     variant === ChipVariant.Highlighted || variant === ChipVariant.Static
-      ? theme.background.transparent.light
+      ? themeVar.background.transparent.light
       : 'inherit'};
 
   border: none;
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeVar.border.radius.sm};
 
   & > svg {
     flex-shrink: 0;
   }
 
-  padding-left: ${({ theme, variant }) =>
+  padding-left: ${({ variant }) =>
     variant === ChipVariant.Transparent
-      ? theme.spacing(0)
+      ? themeVar.spacing[0]
       : 'var(--chip-horizontal-padding)'};
 `;
 
@@ -154,12 +156,9 @@ export const Chip = ({
   forceEmptyText = false,
   emptyLabel = 'Untitled',
 }: ChipProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledContainer
       data-testid="chip"
-      theme={theme}
       accent={accent}
       clickable={clickable}
       disabled={disabled}
@@ -172,9 +171,7 @@ export const Chip = ({
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
-        <StyledDiv emptyLabelColor={theme.font.color.tertiary}>
-          {emptyLabel}
-        </StyledDiv>
+        <StyledDiv>{emptyLabel}</StyledDiv>
       ) : (
         ''
       )}

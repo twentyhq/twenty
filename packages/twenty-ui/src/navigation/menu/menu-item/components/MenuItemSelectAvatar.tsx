@@ -9,7 +9,7 @@ import {
 
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -24,11 +24,11 @@ type MenuItemSelectAvatarProps = {
   testId?: string;
 };
 
-const StyledTextContainer = styled.div<{ theme: ThemeType }>`
+const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1 0 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeVar.spacing[1]};
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -49,7 +49,6 @@ export const MenuItemSelectAvatar = ({
 
   return (
     <StyledMenuItemSelect
-      theme={theme}
       onClick={onClick}
       className={className}
       disabled={disabled}
@@ -59,27 +58,23 @@ export const MenuItemSelectAvatar = ({
       aria-selected={selected}
       aria-disabled={disabled}
     >
-      <StyledMenuItemLeftContent theme={theme}>
+      <StyledMenuItemLeftContent>
         {avatar}
-        <StyledTextContainer theme={theme}>
-          <StyledMenuItemLabel theme={theme}>
+        <StyledTextContainer>
+          <StyledMenuItemLabel>
             <OverflowingTextWithTooltip text={text} />
           </StyledMenuItemLabel>
           {contextualText && (
             <>
-              <StyledMenuItemLabelLight theme={theme}>
-                ·
-              </StyledMenuItemLabelLight>
-              <StyledMenuItemLabelLight theme={theme}>
+              <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
+              <StyledMenuItemLabelLight>
                 <OverflowingTextWithTooltip text={contextualText} />
               </StyledMenuItemLabelLight>
             </>
           )}
         </StyledTextContainer>
       </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck theme={theme} size={theme.icon.size.md} />
-      )}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

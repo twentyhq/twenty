@@ -3,7 +3,7 @@ import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,32 +24,32 @@ type CodeEditorProps = Pick<
 const StyledEditorLoader = styled.div<{
   height: string | number;
   variant: CodeEditorVariant;
-  theme: ThemeType;
 }>`
   align-items: center;
   display: flex;
   height: ${({ height }) =>
     typeof height === 'number' ? `${height}px` : height};
   justify-content: center;
-  border: ${({ variant, theme }) =>
+  border: ${({ variant }) =>
     variant === 'borderless'
       ? 'none'
-      : `1px solid ${theme.border.color.medium}`};
-  border-top: ${({ variant, theme }) => {
-    if (variant === 'default') return `1px solid ${theme.border.color.medium}`;
+      : `1px solid ${themeVar.border.color.medium}`};
+  border-top: ${({ variant }) => {
+    if (variant === 'default')
+      return `1px solid ${themeVar.border.color.medium}`;
     return 'none';
   }};
-  border-radius: ${({ variant, theme }) => {
+  border-radius: ${({ variant }) => {
     switch (variant) {
       case 'default':
-        return theme.border.radius.sm;
+        return themeVar.border.radius.sm;
       case 'with-header':
-        return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
+        return `0 0 ${themeVar.border.radius.sm} ${themeVar.border.radius.sm}`;
       default:
         return '0';
     }
   }};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  background-color: ${themeVar.background.transparent.lighter};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -59,46 +59,45 @@ const StyledCodeEditorContainer = styled.div`
 const StyledEditorWrapper = styled.div<{
   variant: CodeEditorVariant;
   transparentBackground?: boolean;
-  theme: ThemeType;
 }>`
   display: contents;
 
   .monaco-editor {
     outline-width: 0;
 
-    background-color: ${({ theme, transparentBackground }) =>
-      !transparentBackground ? theme.background.secondary : 'transparent'};
+    background-color: ${({ transparentBackground }) =>
+      !transparentBackground ? themeVar.background.secondary : 'transparent'};
 
-    border-radius: ${({ variant, theme }) =>
-      variant !== 'borderless' ? theme.border.radius.sm : '0'};
+    border-radius: ${({ variant }) =>
+      variant !== 'borderless' ? themeVar.border.radius.sm : '0'};
   }
 
   .overflow-guard {
     box-sizing: border-box;
 
-    border: ${({ variant, theme }) => {
+    border: ${({ variant }) => {
       switch (variant) {
         case 'default':
         case 'with-header':
-          return `1px solid ${theme.border.color.medium}`;
+          return `1px solid ${themeVar.border.color.medium}`;
         default:
           return 'none';
       }
     }};
-    border-radius: ${({ variant, theme }) => {
+    border-radius: ${({ variant }) => {
       switch (variant) {
         case 'default':
-          return theme.border.radius.sm;
+          return themeVar.border.radius.sm;
         case 'with-header':
-          return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
+          return `0 0 ${themeVar.border.radius.sm} ${themeVar.border.radius.sm}`;
         default:
           return '0';
       }
     }};
-    border-top: ${({ variant, theme }) => {
+    border-top: ${({ variant }) => {
       if (variant === 'with-header') return 'none';
       if (variant === 'default')
-        return `1px solid ${theme.border.color.medium}`;
+        return `1px solid ${themeVar.border.color.medium}`;
       return 'none';
     }};
   }
@@ -145,7 +144,7 @@ export const CodeEditor = ({
   };
 
   return isLoading ? (
-    <StyledEditorLoader theme={theme} height={height} variant={variant}>
+    <StyledEditorLoader height={height} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
@@ -157,7 +156,6 @@ export const CodeEditor = ({
         readOnly
       />
       <StyledEditorWrapper
-        theme={theme}
         variant={variant}
         transparentBackground={transparentBackground}
       >

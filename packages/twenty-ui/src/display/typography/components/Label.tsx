@@ -1,11 +1,10 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 export type LabelVariant = 'default' | 'small';
 
-const StyledLabel = styled.div<{ variant?: LabelVariant; theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledLabel = styled.div<{ variant?: LabelVariant }>`
+  color: ${themeVar.font.color.light};
   font-size: ${({ variant = 'default' }) => {
     switch (variant) {
       case 'default':
@@ -14,7 +13,7 @@ const StyledLabel = styled.div<{ variant?: LabelVariant; theme: ThemeType }>`
         return '9px';
     }
   }};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-weight: ${themeVar.font.weight.semiBold};
 `;
 
 type LabelProps = {
@@ -24,10 +23,8 @@ type LabelProps = {
 };
 
 export const Label = ({ variant, children, className }: LabelProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledLabel variant={variant} theme={theme} className={className}>
+    <StyledLabel variant={variant} className={className}>
       {children}
     </StyledLabel>
   );

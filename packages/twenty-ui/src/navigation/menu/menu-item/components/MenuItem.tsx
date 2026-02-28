@@ -96,7 +96,6 @@ export const MenuItem = ({
 
   return (
     <StyledHoverableMenuItemBase
-      theme={theme}
       data-testid={testId ?? undefined}
       onClick={disabled ? undefined : handleMenuItemClick}
       disabled={disabled}
@@ -117,7 +116,7 @@ export const MenuItem = ({
         disabled={disabled}
       />
 
-      <StyledMenuItemRightContent theme={theme}>
+      <StyledMenuItemRightContent>
         {iconButtons && (
           <div className="hoverable-buttons">
             {showIconButtons && (

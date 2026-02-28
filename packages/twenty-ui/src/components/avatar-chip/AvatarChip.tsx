@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { type Nullable } from '@ui/utilities';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,12 +22,11 @@ const StyledIconWithBackgroundContainer = styled.div<{
 const StyledAvatarChipWrapper = styled.div<{
   isClickable: boolean;
   divider: AvatarChipProps['divider'];
-  theme: ThemeType;
 }>`
-  border-left: ${({ divider, theme }) =>
-    divider === 'left' ? `1px solid ${theme.border.color.light}` : 'none'};
-  border-right: ${({ divider, theme }) =>
-    divider === 'right' ? `1px solid ${theme.border.color.light}` : 'none'};
+  border-left: ${({ divider }) =>
+    divider === 'left' ? `1px solid ${themeVar.border.color.light}` : 'none'};
+  border-right: ${({ divider }) =>
+    divider === 'right' ? `1px solid ${themeVar.border.color.light}` : 'none'};
 
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
   display: flex;
@@ -79,7 +78,6 @@ export const AvatarChip = ({
       <StyledAvatarChipWrapper
         isClickable={isClickable}
         divider={divider}
-        theme={theme}
         onClick={onClick}
       >
         <StyledIconWithBackgroundContainer
@@ -101,7 +99,6 @@ export const AvatarChip = ({
     <StyledAvatarChipWrapper
       isClickable={isClickable}
       divider={divider}
-      theme={theme}
       onClick={onClick}
     >
       <Icon

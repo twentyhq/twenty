@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
-import { type ReactNode, useContext } from 'react';
+import { themeVar } from '@ui/theme';
+import { type ReactNode } from 'react';
 
-const StyledErrorContainer = styled.div<{ theme: ThemeType }>`
+const StyledErrorContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeVar.spacing[8]};
   justify-content: center;
   text-align: center;
 `;
@@ -20,19 +20,18 @@ export const AnimatedPlaceholderErrorContainer = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledErrorContainer theme={theme} className={className}>
+    <StyledErrorContainer className={className}>
       {children}
     </StyledErrorContainer>
   );
 };
 
-const StyledErrorTextContainer = styled.div<{ theme: ThemeType }>`
+const StyledErrorTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeVar.spacing[4]};
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -45,19 +44,18 @@ export const AnimatedPlaceholderErrorTextContainer = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledErrorTextContainer theme={theme} className={className}>
+    <StyledErrorTextContainer className={className}>
       {children}
     </StyledErrorTextContainer>
   );
 };
 
-const StyledErrorTitle = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+const StyledErrorTitle = styled.div`
+  color: ${themeVar.font.color.primary};
+  font-size: ${themeVar.font.size.xl};
+  font-weight: ${themeVar.font.weight.semiBold};
+  line-height: ${themeVar.text.lineHeight.lg};
 `;
 
 export const AnimatedPlaceholderErrorTitle = ({
@@ -67,19 +65,14 @@ export const AnimatedPlaceholderErrorTitle = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  return (
-    <StyledErrorTitle theme={theme} className={className}>
-      {children}
-    </StyledErrorTitle>
-  );
+  return <StyledErrorTitle className={className}>{children}</StyledErrorTitle>;
 };
 
-const StyledErrorSubTitle = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+const StyledErrorSubTitle = styled.div`
+  color: ${themeVar.font.color.tertiary};
+  font-size: ${themeVar.font.size.xs};
+  font-weight: ${themeVar.font.weight.regular};
+  line-height: ${themeVar.text.lineHeight.md};
   max-height: 2.4em;
   overflow: hidden;
 `;
@@ -91,10 +84,7 @@ export const AnimatedPlaceholderErrorSubTitle = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledErrorSubTitle theme={theme} className={className}>
-      {children}
-    </StyledErrorSubTitle>
+    <StyledErrorSubTitle className={className}>{children}</StyledErrorSubTitle>
   );
 };

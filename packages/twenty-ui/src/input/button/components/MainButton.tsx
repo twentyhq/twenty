@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import React, { type FunctionComponent, useContext } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
@@ -14,76 +14,76 @@ type Props = {
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'width' | 'variant'> & { theme: ThemeType }
+  Pick<Props, 'fullWidth' | 'width' | 'variant'>
 >`
   align-items: center;
-  background: ${({ theme, variant, disabled }) => {
+  background: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.background.secondary;
+      return themeVar.background.secondary;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.primaryInverted;
+        return themeVar.background.primaryInverted;
       case 'secondary':
-        return theme.background.primary;
+        return themeVar.background.primary;
       default:
-        return theme.background.primary;
+        return themeVar.background.primary;
     }
   }};
   border: 1px solid;
-  border-color: ${({ theme, disabled, variant }) => {
+  border-color: ${({ disabled, variant }) => {
     if (disabled === true) {
-      return theme.background.transparent.lighter;
+      return themeVar.background.transparent.lighter;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.transparent.strong;
+        return themeVar.background.transparent.strong;
       case 'secondary':
-        return theme.border.color.medium;
+        return themeVar.border.color.medium;
       default:
-        return theme.background.primary;
+        return themeVar.background.primary;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme, disabled }) =>
-    disabled ? 'none' : theme.boxShadow.light};
-  color: ${({ theme, variant, disabled }) => {
+  border-radius: ${themeVar.border.radius.md};
+  box-shadow: ${({ disabled }) =>
+    disabled ? 'none' : themeVar.boxShadow.light};
+  color: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.font.color.light;
+      return themeVar.font.color.light;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.font.color.inverted;
+        return themeVar.font.color.inverted;
       case 'secondary':
-        return theme.font.color.primary;
+        return themeVar.font.color.primary;
       default:
-        return theme.font.color.primary;
+        return themeVar.font.color.primary;
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-family: ${themeVar.font.family};
+  font-weight: ${themeVar.font.weight.semiBold};
+  gap: ${themeVar.spacing[2]};
   justify-content: center;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  max-height: ${({ theme }) => theme.spacing(8)};
+  padding: ${themeVar.spacing[2]} ${themeVar.spacing[3]};
+  max-height: ${themeVar.spacing[8]};
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
   &:hover {
-    background: ${({ theme, variant, disabled }) => {
+    background: ${({ variant, disabled }) => {
       switch (variant) {
         case 'secondary':
-          return theme.background.tertiary;
+          return themeVar.background.tertiary;
         default:
           return !disabled
-            ? theme.background.primaryInvertedHover
-            : theme.background.secondary;
+            ? themeVar.background.primaryInvertedHover
+            : themeVar.background.secondary;
       }
     }};
   }
@@ -108,7 +108,6 @@ export const MainButton = ({
   return (
     <StyledButton
       className={className}
-      theme={theme}
       {...{ disabled, fullWidth, width, onClick, type, variant }}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}

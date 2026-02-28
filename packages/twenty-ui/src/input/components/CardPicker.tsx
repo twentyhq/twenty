@@ -1,29 +1,27 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { Radio } from './Radio';
 
-const StyledSubscriptionCardContainer = styled.button<{
-  theme: ThemeType;
-}>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+const StyledSubscriptionCardContainer = styled.button`
+  background-color: ${themeVar.background.secondary};
+  border: 1px solid ${themeVar.border.color.medium};
+  border-radius: ${themeVar.border.radius.md};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  padding: ${themeVar.spacing[4]} ${themeVar.spacing[3]};
   position: relative;
   width: 100%;
   :hover {
     cursor: pointer;
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${themeVar.background.tertiary};
   }
 `;
 
-const StyledRadioContainer = styled.div<{ theme: ThemeType }>`
+const StyledRadioContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: ${({ theme }) => theme.spacing(2)};
+  right: ${themeVar.spacing[2]};
+  top: ${themeVar.spacing[2]};
 `;
 
 type CardPickerProps = {
@@ -37,11 +35,9 @@ export const CardPicker = ({
   checked,
   handleChange,
 }: CardPickerProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledSubscriptionCardContainer theme={theme} onClick={handleChange}>
-      <StyledRadioContainer theme={theme}>
+    <StyledSubscriptionCardContainer onClick={handleChange}>
+      <StyledRadioContainer>
         <Radio checked={checked} />
       </StyledRadioContainer>
       {children}

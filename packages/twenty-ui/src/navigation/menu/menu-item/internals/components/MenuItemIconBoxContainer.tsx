@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledIconContainerBase = styled.div<{ theme: ThemeType }>`
+const StyledIconContainerBase = styled.div`
   align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeVar.background.transparent.light};
+  border-radius: ${themeVar.border.radius.sm};
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeVar.spacing[1]};
 `;
 
 export const StyledIconContainer = ({
@@ -19,10 +19,8 @@ export const StyledIconContainer = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledIconContainerBase theme={theme} className={className}>
+    <StyledIconContainerBase className={className}>
       {children}
     </StyledIconContainerBase>
   );

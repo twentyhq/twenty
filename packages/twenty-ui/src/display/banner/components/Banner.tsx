@@ -1,23 +1,22 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledBanner = styled.div<{ variant?: BannerVariant; theme: ThemeType }>`
+const StyledBanner = styled.div<{ variant?: BannerVariant }>`
   align-items: center;
   backdrop-filter: blur(5px);
-  background: ${({ theme, variant }) =>
-    variant === 'danger' ? theme.color.red : theme.color.blue};
+  background: ${({ variant }) =>
+    variant === 'danger' ? themeVar.color.red : themeVar.color.blue};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeVar.spacing[3]};
   height: 40px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(3)};
+  padding: ${themeVar.spacing[2]} ${themeVar.spacing[3]};
   width: 100%;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${themeVar.font.color.inverted};
   font-family: Inter;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeVar.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeVar.font.weight.medium};
   line-height: 150%;
   box-sizing: border-box;
 `;
@@ -35,10 +34,8 @@ export const Banner = ({
   className,
   children,
 }: BannerProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledBanner variant={variant} className={className} theme={theme}>
+    <StyledBanner variant={variant} className={className}>
       {children}
     </StyledBanner>
   );

@@ -1,15 +1,14 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { MOBILE_VIEWPORT, ThemeContext, type ThemeType } from '@ui/theme';
+import { MOBILE_VIEWPORT, themeVar } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeVar.spacing[4]};
   }
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     overflow: scroll;
@@ -21,11 +20,11 @@ const StyledCardContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledLabel = styled.span<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+const StyledLabel = styled.span`
+  color: ${themeVar.font.color.secondary};
+  font-size: ${themeVar.font.size.xs};
+  font-weight: ${themeVar.font.weight.medium};
+  margin-top: ${themeVar.spacing[2]};
 `;
 
 export type ColorSchemePickerProps = {
@@ -45,17 +44,15 @@ export const ColorSchemePicker = ({
   darkLabel,
   systemLabel,
 }: ColorSchemePickerProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledContainer theme={theme} className={className}>
+    <StyledContainer className={className}>
       <StyledCardContainer>
         <ColorSchemeCard
           onClick={() => onChange('Light')}
           variant="Light"
           selected={value === 'Light'}
         />
-        <StyledLabel theme={theme}>{lightLabel}</StyledLabel>
+        <StyledLabel>{lightLabel}</StyledLabel>
       </StyledCardContainer>
       <StyledCardContainer>
         <ColorSchemeCard
@@ -63,7 +60,7 @@ export const ColorSchemePicker = ({
           variant="Dark"
           selected={value === 'Dark'}
         />
-        <StyledLabel theme={theme}>{darkLabel}</StyledLabel>
+        <StyledLabel>{darkLabel}</StyledLabel>
       </StyledCardContainer>
       <StyledCardContainer>
         <ColorSchemeCard
@@ -71,7 +68,7 @@ export const ColorSchemePicker = ({
           variant="System"
           selected={value === 'System'}
         />
-        <StyledLabel theme={theme}>{systemLabel}</StyledLabel>
+        <StyledLabel>{systemLabel}</StyledLabel>
       </StyledCardContainer>
     </StyledContainer>
   );

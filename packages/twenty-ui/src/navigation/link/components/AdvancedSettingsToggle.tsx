@@ -1,28 +1,28 @@
 import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { useContext, useId } from 'react';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
   position: relative;
-  height: ${({ theme }) => theme.spacing(5)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  height: ${themeVar.spacing[5]};
+  padding: ${themeVar.spacing[1]};
 `;
 
-const StyledText = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledText = styled.div`
+  color: ${themeVar.font.color.secondary};
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.medium};
 `;
 
-const StyledIconContainer = styled.div<{ theme: ThemeType }>`
+const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-  left: ${({ theme }) => theme.spacing(-5)};
+  left: calc(-1 * ${themeVar.spacing[5]});
   position: absolute;
 `;
 
@@ -53,8 +53,8 @@ export const AdvancedSettingsToggle = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledContainer theme={theme}>
-      <StyledIconContainer theme={theme}>
+    <StyledContainer>
+      <StyledIconContainer>
         <IconPoint
           size={12}
           color={theme.color.yellow}
@@ -62,7 +62,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={instanceId}>
-        <StyledText theme={theme}>{label}</StyledText>
+        <StyledText>{label}</StyledText>
 
         <Toggle
           id={instanceId}

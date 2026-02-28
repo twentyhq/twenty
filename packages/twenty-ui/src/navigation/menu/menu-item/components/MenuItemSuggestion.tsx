@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/display';
-import { HOVER_BACKGROUND, ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
@@ -19,34 +19,36 @@ export type MenuItemSuggestionProps = {
 
 const StyledSuggestionMenuItem = styled.li<{
   selected?: boolean;
-  theme: ThemeType;
 }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: ${themeVar.spacing[1]};
+  --vertical-padding: ${themeVar.spacing[2]};
 
   align-items: center;
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeVar.border.radius.sm};
   cursor: pointer;
 
   display: flex;
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeVar.font.size.sm};
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  background: ${({ selected, theme }) =>
-    selected ? theme.background.transparent.medium : ''};
-  color: ${({ theme }) => theme.font.color.secondary};
+  background: ${({ selected }) =>
+    selected ? themeVar.background.transparent.medium : ''};
+  color: ${themeVar.font.color.secondary};
 
-  ${HOVER_BACKGROUND};
+  transition: background 0.1s ease;
+  &:hover {
+    background: ${themeVar.background.transparent.light};
+  }
 
   position: relative;
   user-select: none;
@@ -64,8 +66,6 @@ export const MenuItemSuggestion = ({
   selected,
   onClick,
 }: MenuItemSuggestionProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const handleMenuItemClick = (event: MouseEvent<HTMLLIElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -79,9 +79,8 @@ export const MenuItemSuggestion = ({
       onClick={handleMenuItemClick}
       className={className}
       selected={selected}
-      theme={theme}
     >
-      <StyledMenuItemLeftContent theme={theme}>
+      <StyledMenuItemLeftContent>
         <MenuItemLeftContent
           LeftIcon={LeftIcon ?? undefined}
           text={text}

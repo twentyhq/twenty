@@ -1,28 +1,27 @@
-import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  color: ${({ theme }) => theme.font.color.extraLight};
+  font-size: ${themeVar.font.size.md};
+  font-weight: ${themeVar.font.weight.semiBold};
+  color: ${themeVar.font.color.extraLight};
 
   &:before,
   &:after {
     content: '';
     height: 1px;
     flex-grow: 1;
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeVar.background.transparent.light};
   }
 
   &:before {
-    margin: 0 ${({ theme }) => theme.spacing(4)} 0 0;
+    margin: 0 ${themeVar.spacing[4]} 0 0;
   }
   &:after {
-    margin: 0 0 0 ${({ theme }) => theme.spacing(4)};
+    margin: 0 0 0 ${themeVar.spacing[4]};
   }
 `;
 
@@ -31,7 +30,5 @@ export const SeparatorLineText = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
-  return <StyledContainer theme={theme}>{children}</StyledContainer>;
+  return <StyledContainer>{children}</StyledContainer>;
 };

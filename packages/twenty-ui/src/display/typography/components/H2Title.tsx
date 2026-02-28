@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 type H2TitleProps = {
   title: string;
@@ -10,10 +9,10 @@ type H2TitleProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeVar.spacing[4]};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -22,19 +21,19 @@ const StyledTitleContainer = styled.div`
   justify-content: space-between;
 `;
 
-const StyledTitle = styled.h2<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+const StyledTitle = styled.h2`
+  color: ${themeVar.font.color.primary};
+  font-size: ${themeVar.font.size.md};
+  font-weight: ${themeVar.font.weight.semiBold};
   margin: 0;
 `;
 
-const StyledDescription = styled.h3<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+const StyledDescription = styled.h3`
+  color: ${themeVar.font.color.tertiary};
+  font-size: ${themeVar.font.size.md};
+  font-weight: ${themeVar.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeVar.spacing[2]};
 `;
 
 export const H2Title = ({
@@ -43,16 +42,14 @@ export const H2Title = ({
   adornment,
   className,
 }: H2TitleProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledContainer className={className} theme={theme}>
+    <StyledContainer className={className}>
       <StyledTitleContainer>
-        <StyledTitle theme={theme}>{title}</StyledTitle>
+        <StyledTitle>{title}</StyledTitle>
         {adornment}
       </StyledTitleContainer>
       {description && (
-        <StyledDescription theme={theme}>
+        <StyledDescription>
           <OverflowingTextWithTooltip
             text={description}
             displayedMaxRows={5}

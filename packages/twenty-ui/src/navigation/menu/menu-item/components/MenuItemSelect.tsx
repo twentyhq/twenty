@@ -7,60 +7,42 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { forwardRef, type ReactNode, useContext } from 'react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
-  type MenuItemBaseProps,
   StyledMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemRightContent,
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledMenuItemSelectInner = styled(StyledMenuItemBase)<{
+export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
-  theme: ThemeType;
 }>`
-  background: ${({ theme, disabled, focused }) => {
+  background: ${({ disabled, focused }) => {
     if (disabled === true) {
       return 'inherit';
     }
     if (focused === true) {
-      return theme.background.transparent.light;
+      return themeVar.background.transparent.light;
     }
     return '';
   }};
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      disabled === true ? 'inherit' : theme.background.transparent.light};
+    background: ${({ disabled }) =>
+      disabled === true ? 'inherit' : themeVar.background.transparent.light};
   }
 
-  color: ${({ theme, disabled }) =>
-    disabled === true ? theme.font.color.tertiary : theme.font.color.secondary};
+  color: ${({ disabled }) =>
+    disabled === true
+      ? themeVar.font.color.tertiary
+      : themeVar.font.color.secondary};
 
   cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;
-
-export const StyledMenuItemSelect = forwardRef<
-  HTMLDivElement,
-  MenuItemBaseProps & {
-    focused?: boolean;
-  } & React.ComponentPropsWithoutRef<'div'>
->(({ theme: propTheme, ...rest }, ref) => {
-  const { theme: contextTheme } = useContext(ThemeContext);
-  return (
-    <StyledMenuItemSelectInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...rest}
-      theme={propTheme ?? contextTheme}
-      ref={ref as any}
-    />
-  );
-});
-StyledMenuItemSelect.displayName = 'StyledMenuItemSelect';
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
@@ -102,7 +84,6 @@ export const MenuItemSelect = ({
       role="option"
       aria-selected={selected}
       aria-disabled={disabled}
-      theme={theme}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
@@ -112,11 +93,11 @@ export const MenuItemSelect = ({
         }
         withIconContainer={withIconContainer}
       />
-      <StyledMenuItemRightContent theme={theme}>
+      <StyledMenuItemRightContent>
         {contextualTextPosition === 'right' && (
-          <StyledMenuItemLabel theme={theme}>
+          <StyledMenuItemLabel>
             {isString(contextualText) ? (
-              <StyledRightMenuItemContextualText theme={theme}>
+              <StyledRightMenuItemContextualText>
                 <OverflowingTextWithTooltip text={contextualText} />
               </StyledRightMenuItemContextualText>
             ) : (

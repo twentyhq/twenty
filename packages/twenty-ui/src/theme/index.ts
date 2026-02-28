@@ -62,5 +62,7 @@ export {
 } from './provider/ThemeContextProvider';
 export { ThemeProvider } from './provider/ThemeProvider';
 export type { ThemeType } from './types/ThemeType';
+export { flattenThemeToVars } from './utils/flattenThemeToVars';
 export { getNextThemeColor } from './utils/getNextThemeColor';
 export { themeColorSchema } from './utils/themeColorSchema';
+export { themeVar } from './utils/themeVar';

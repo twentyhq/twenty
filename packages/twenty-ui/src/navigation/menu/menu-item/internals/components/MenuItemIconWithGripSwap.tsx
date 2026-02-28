@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import { type IconComponent, IconGripVertical } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 const StyledIconSwapContainer = styled.div`
@@ -12,16 +12,16 @@ const StyledIconSwapContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledDefaultIcon = styled.div<{ theme: ThemeType }>`
+const StyledDefaultIcon = styled.div`
   display: flex;
-  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  transition: opacity ${themeVar.animation.duration.instant}s ease;
 `;
 
-const StyledHoverIcon = styled.div<{ theme: ThemeType }>`
+const StyledHoverIcon = styled.div`
   position: absolute;
   display: flex;
   opacity: 0;
-  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  transition: opacity ${themeVar.animation.duration.instant}s ease;
 `;
 
 export type MenuItemIconWithGripSwapProps = {
@@ -43,10 +43,10 @@ export const MenuItemIconWithGripSwap = ({
 
   const iconContent = (
     <StyledIconSwapContainer>
-      <StyledDefaultIcon className="grip-swap-default-icon" theme={theme}>
+      <StyledDefaultIcon className="grip-swap-default-icon">
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       </StyledDefaultIcon>
-      <StyledHoverIcon className="grip-swap-hover-icon" theme={theme}>
+      <StyledHoverIcon className="grip-swap-hover-icon">
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}

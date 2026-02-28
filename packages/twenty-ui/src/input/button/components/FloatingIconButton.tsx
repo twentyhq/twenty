@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
@@ -26,56 +26,57 @@ const StyledButton = styled.button<
   Pick<
     FloatingIconButtonProps,
     'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'
-  > & { theme: ThemeType }
+  >
 >`
   align-items: center;
-  backdrop-filter: ${({ theme, applyBlur }) =>
-    applyBlur ? theme.blur.medium : 'none'};
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.background.transparent.medium : theme.background.primary};
-  border: ${({ focus, theme }) =>
+  backdrop-filter: ${({ applyBlur }) =>
+    applyBlur ? themeVar.blur.medium : 'none'};
+  background: ${({ isActive }) =>
+    isActive
+      ? themeVar.background.transparent.medium
+      : themeVar.background.primary};
+  border: ${({ focus }) =>
     focus
-      ? `1px solid ${theme.color.blue}`
-      : `1px solid ${theme.border.color.strong}`};
-  border-radius: ${({ position, theme }) => {
+      ? `1px solid ${themeVar.color.blue}`
+      : `1px solid ${themeVar.border.color.strong}`};
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeVar.border.radius.sm} 0px 0px ${themeVar.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeVar.border.radius.sm} ${themeVar.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeVar.border.radius.sm;
     }
     return '';
   }};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
+  box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? theme.boxShadow.light
+      ? themeVar.boxShadow.light
       : focus
-        ? `0 0 0 3px ${theme.color.blue3}`
+        ? `0 0 0 3px ${themeVar.color.blue3}`
         : 'none'};
   box-sizing: border-box;
-  color: ${({ theme, disabled, focus }) => {
+  color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.tertiary
-      : theme.font.color.extraLight;
+        ? themeVar.color.blue
+        : themeVar.font.color.tertiary
+      : themeVar.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeVar.font.family};
+  font-weight: ${themeVar.font.weight.regular};
+  gap: ${themeVar.spacing[1]};
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background ${({ theme }) => theme.animation.duration.instant}s
-    ease;
+  transition: background ${themeVar.animation.duration.instant}s ease;
   white-space: nowrap;
 
   height: ${({ position, size }) =>
@@ -84,13 +85,13 @@ const StyledButton = styled.button<
     (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4)}px;
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.lighter : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.lighter : 'transparent'};
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.medium : 'transparent'};
   }
 
   &:focus {
@@ -113,7 +114,6 @@ export const FloatingIconButton = ({
   const { theme } = useContext(ThemeContext);
   return (
     <StyledButton
-      theme={theme}
       disabled={disabled}
       focus={focus && !disabled}
       size={size}

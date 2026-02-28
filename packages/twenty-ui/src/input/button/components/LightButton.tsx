@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import { type MouseEvent, useContext } from 'react';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';
@@ -18,30 +18,30 @@ export type LightButtonProps = {
 };
 
 const StyledButton = styled.button<
-  Pick<LightButtonProps, 'accent' | 'active' | 'focus'> & { theme: ThemeType }
+  Pick<LightButtonProps, 'accent' | 'active' | 'focus'>
 >`
   align-items: center;
   background: transparent;
-  border: ${({ theme, focus }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'none'};
+  border: ${({ focus }) =>
+    focus ? `1px solid ${themeVar.color.blue}` : 'none'};
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme, focus }) =>
-    focus ? `0 0 0 3px  ${theme.color.blue3}` : 'none'};
-  color: ${({ theme, accent, active, disabled, focus }) => {
+  border-radius: ${themeVar.border.radius.sm};
+  box-shadow: ${({ focus }) =>
+    focus ? `0 0 0 3px  ${themeVar.color.blue3}` : 'none'};
+  color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? theme.color.blue
+          ? themeVar.color.blue
           : !disabled
-            ? theme.font.color.secondary
-            : theme.font.color.extraLight;
+            ? themeVar.font.color.secondary
+            : themeVar.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? theme.color.blue
+          ? themeVar.color.blue
           : !disabled
-            ? theme.font.color.tertiary
-            : theme.font.color.extraLight;
+            ? themeVar.font.color.tertiary
+            : themeVar.font.color.extraLight;
     }
     return '';
   }};
@@ -49,21 +49,19 @@ const StyledButton = styled.button<
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeVar.font.family};
+  font-weight: ${themeVar.font.weight.regular};
+  gap: ${themeVar.spacing[1]};
   height: 24px;
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
+  padding: 0 ${themeVar.spacing[2]};
 
   transition: background 0.1s ease;
 
   white-space: nowrap;
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.light : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.light : 'transparent'};
   }
 
   &:focus {
@@ -71,8 +69,8 @@ const StyledButton = styled.button<
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? themeVar.background.transparent.medium : 'transparent'};
   }
 `;
 
@@ -98,7 +96,6 @@ export const LightButton = ({
       accent={accent}
       className={className}
       active={active}
-      theme={theme}
     >
       {!!Icon && <Icon size={theme.icon.size.md} />}
       {title}

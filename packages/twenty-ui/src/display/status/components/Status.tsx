@@ -1,11 +1,5 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
-import {
-  MAIN_COLOR_NAMES,
-  ThemeContext,
-  type ThemeColor,
-  type ThemeType,
-} from '@ui/theme';
+import { MAIN_COLOR_NAMES, themeVar, type ThemeColor } from '@ui/theme';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';
 
@@ -18,33 +12,32 @@ const StyledStatus = styled.h3<{
   color: ThemeColor;
   weight: 'regular' | 'medium';
   isLoaderVisible: boolean;
-  theme: ThemeType;
 }>`
   align-items: center;
-  background: ${({ color, theme }) => theme.tag.background[color]};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
-  color: ${({ color, theme }) => theme.tag.text[color]};
+  background: ${({ color }) => themeVar.tag.background[color]};
+  border-radius: ${themeVar.border.radius.pill};
+  color: ${({ color }) => themeVar.tag.text[color]};
   display: inline-flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeVar.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme, weight }) => theme.font.weight[weight]};
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(5)};
+  font-weight: ${({ weight }) => themeVar.font.weight[weight]};
+  gap: ${themeVar.spacing[1]};
+  height: ${themeVar.spacing[5]};
   margin: 0;
   overflow: hidden;
   padding: 0
-    ${({ theme, isLoaderVisible }) =>
-      isLoaderVisible ? theme.spacing(1) : theme.spacing(2)}
-    0 ${({ theme }) => theme.spacing(2)};
+    ${({ isLoaderVisible }) =>
+      isLoaderVisible ? themeVar.spacing[1] : themeVar.spacing[2]}
+    0 ${themeVar.spacing[2]};
 
   &:before {
-    background-color: ${({ color, theme }) => theme.tag.text[color]};
-    border-radius: ${({ theme }) => theme.border.radius.rounded};
+    background-color: ${({ color }) => themeVar.tag.text[color]};
+    border-radius: ${themeVar.border.radius.rounded};
     content: '';
     display: block;
     flex-shrink: 0;
-    height: ${({ theme }) => theme.spacing(1)};
-    width: ${({ theme }) => theme.spacing(1)};
+    height: ${themeVar.spacing[1]};
+    width: ${themeVar.spacing[1]};
   }
 `;
 
@@ -71,8 +64,6 @@ export const Status = ({
   onClick,
   weight = 'regular',
 }: StatusProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledStatus
       className={className}
@@ -80,7 +71,6 @@ export const Status = ({
       onClick={onClick}
       weight={weight}
       isLoaderVisible={isLoaderVisible}
-      theme={theme}
     >
       <StyledContent>{text}</StyledContent>
       {isLoaderVisible ? <Loader color={color} /> : null}

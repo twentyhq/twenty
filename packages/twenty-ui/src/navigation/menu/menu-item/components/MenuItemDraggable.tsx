@@ -4,8 +4,7 @@ import { type MenuItemAccent } from '../types/MenuItemAccent';
 
 import { type IconComponent } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
-import { ThemeContext } from '@ui/theme';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { type MenuItemDraggableGripMode } from '../types/MenuItemDraggableGripMode';
 import { type MenuItemIconButton } from './MenuItem';
 
@@ -36,8 +35,6 @@ export const MenuItemDraggable = ({
   isIconDisplayedOnHoverOnly = true,
   gripMode = 'never',
 }: MenuItemDraggableProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const cursorType =
@@ -50,7 +47,6 @@ export const MenuItemDraggable = ({
       className={className}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       cursor={cursorType}
-      theme={theme}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}

@@ -1,21 +1,19 @@
 import { styled } from '@linaria/react';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { themeVar } from '@ui/theme';
 
 const StyledText = styled.span<{
   highlighting: JsonNodeHighlighting | undefined;
-  theme: ThemeType;
 }>`
   align-items: center;
   box-sizing: border-box;
-  color: ${({ theme, highlighting }) =>
+  color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue8
+      ? themeVar.color.blue8
       : highlighting === 'red'
-        ? theme.color.red8
-        : theme.font.color.tertiary};
+        ? themeVar.color.red8
+        : themeVar.font.color.tertiary};
   display: inline-flex;
   height: 24px;
   line-height: 1;
@@ -29,14 +27,13 @@ export const JsonNodeValue = ({
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
   const { onNodeValueClick } = useJsonTreeContextOrThrow();
-  const { theme } = useContext(ThemeContext);
 
   const handleClick = () => {
     onNodeValueClick?.(valueAsString);
   };
 
   return (
-    <StyledText highlighting={highlighting} onClick={handleClick} theme={theme}>
+    <StyledText highlighting={highlighting} onClick={handleClick}>
       {valueAsString}
     </StyledText>
   );

@@ -3,11 +3,11 @@ import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.color.blue};
+  background-color: ${themeVar.color.blue};
   border-radius: 50%;
   display: flex;
   height: 20px;
@@ -23,7 +23,7 @@ export const Checkmark = ({ className }: CheckmarkProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledContainer className={className} theme={theme}>
+    <StyledContainer className={className}>
       <IconCheck color={theme.grayScale.gray1} size={14} />
     </StyledContainer>
   );

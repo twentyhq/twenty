@@ -1,13 +1,12 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledEllipsis = styled.div<{ isLoading?: boolean; theme: ThemeType }>`
+const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
   right: 0;
-  clip-path: ${({ theme, isLoading }) =>
-    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
+  clip-path: ${({ isLoading }) =>
+    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${themeVar.spacing[6]})`};
   overflow: hidden;
   position: absolute;
 
@@ -25,18 +24,17 @@ const StyledTextWrapper = styled.div`
 const StyledText = styled.div<{
   isLoading?: boolean;
   hasIcon: boolean;
-  theme: ThemeType;
 }>`
-  clip-path: ${({ isLoading, theme, hasIcon }) =>
+  clip-path: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
+      ? ` inset(0 ${!hasIcon ? themeVar.spacing[12] : themeVar.spacing[6]} 0 0)`
       : ' inset(0 0 0 0)'};
 
   overflow: hidden;
 
-  transform: ${({ theme, isLoading, hasIcon }) =>
+  transform: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? `translateX(${!hasIcon ? theme.spacing(7) : theme.spacing(3)})`
+      ? `translateX(${!hasIcon ? themeVar.spacing[7] : themeVar.spacing[3]})`
       : 'none'};
 
   transition:
@@ -57,16 +55,12 @@ export const ButtonText = ({
   hasIcon: boolean;
   title?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledTextWrapper>
-      <StyledText theme={theme} isLoading={isLoading} hasIcon={hasIcon}>
+      <StyledText isLoading={isLoading} hasIcon={hasIcon}>
         {title}
       </StyledText>
-      <StyledEllipsis theme={theme} isLoading={isLoading}>
-        ...
-      </StyledEllipsis>
+      <StyledEllipsis isLoading={isLoading}>...</StyledEllipsis>
     </StyledTextWrapper>
   );
 };

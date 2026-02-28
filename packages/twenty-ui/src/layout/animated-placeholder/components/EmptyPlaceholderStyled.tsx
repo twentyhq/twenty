@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { type HTMLMotionProps, motion } from 'framer-motion';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
-const StyledEmptyContainerBase = styled.div<{ theme: ThemeType }>`
+const StyledEmptyContainerBase = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeVar.spacing[6]};
   justify-content: center;
   text-align: center;
 `;
@@ -31,10 +31,8 @@ export const AnimatedPlaceholderEmptyContainer = ({
   animate,
   transition,
 }: AnimatedPlaceholderEmptyContainerProps) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <MotionEmptyContainer
-      theme={theme}
       className={className}
       initial={initial}
       animate={animate}
@@ -53,11 +51,11 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-const StyledEmptyTextContainer = styled.div<{ theme: ThemeType }>`
+const StyledEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -70,18 +68,17 @@ export const AnimatedPlaceholderEmptyTextContainer = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledEmptyTextContainer theme={theme} className={className}>
+    <StyledEmptyTextContainer className={className}>
       {children}
     </StyledEmptyTextContainer>
   );
 };
 
-const StyledEmptyTitle = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+const StyledEmptyTitle = styled.div`
+  color: ${themeVar.font.color.primary};
+  font-size: ${themeVar.font.size.lg};
+  font-weight: ${themeVar.font.weight.semiBold};
 `;
 
 export const AnimatedPlaceholderEmptyTitle = ({
@@ -91,19 +88,14 @@ export const AnimatedPlaceholderEmptyTitle = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  return (
-    <StyledEmptyTitle theme={theme} className={className}>
-      {children}
-    </StyledEmptyTitle>
-  );
+  return <StyledEmptyTitle className={className}>{children}</StyledEmptyTitle>;
 };
 
-const StyledEmptySubTitle = styled.div<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+const StyledEmptySubTitle = styled.div`
+  color: ${themeVar.font.color.tertiary};
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.regular};
+  line-height: ${themeVar.text.lineHeight.lg};
   max-height: 2.8em;
   overflow: hidden;
   width: 50%;
@@ -116,10 +108,7 @@ export const AnimatedPlaceholderEmptySubTitle = ({
   children?: ReactNode;
   className?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledEmptySubTitle theme={theme} className={className}>
-      {children}
-    </StyledEmptySubTitle>
+    <StyledEmptySubTitle className={className}>{children}</StyledEmptySubTitle>
   );
 };

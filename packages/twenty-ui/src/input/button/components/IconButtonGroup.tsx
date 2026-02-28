@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 
 import { InsideButton } from '@ui/input/button/components/InsideButton';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 export type IconButtonGroupProps = {
   disabled?: boolean;
@@ -15,20 +15,20 @@ export type IconButtonGroupProps = {
 };
 
 const StyledIconButtonGroupContainer = styled.div<
-  Pick<IconButtonGroupProps, 'disabled'> & { theme: ThemeType }
+  Pick<IconButtonGroupProps, 'disabled'>
 >`
   display: inline-flex;
   align-items: flex-start;
-  background-color: ${({ disabled, theme }) =>
-    disabled ? 'inherit' : theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  background-color: ${({ disabled }) =>
+    disabled ? 'inherit' : themeVar.background.transparent.lighter};
+  border-radius: ${themeVar.border.radius.sm};
+  border: 1px solid ${themeVar.border.color.strong};
   gap: 2px;
   padding: 2px;
   backdrop-filter: blur(20px);
 
   &:hover {
-    box-shadow: ${({ theme }) => theme.boxShadow.light};
+    box-shadow: ${themeVar.boxShadow.light};
   }
 `;
 
@@ -37,14 +37,8 @@ export const IconButtonGroup = ({
   disabled,
   className,
 }: IconButtonGroupProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledIconButtonGroupContainer
-      theme={theme}
-      className={className}
-      disabled={disabled}
-    >
+    <StyledIconButtonGroupContainer className={className} disabled={disabled}>
       {iconButtons.map(({ Icon, onClick }, index) => {
         return (
           <InsideButton

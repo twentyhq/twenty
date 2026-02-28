@@ -1,22 +1,21 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 
 import {
   FloatingIconButton,
   type FloatingIconButtonPosition,
   type FloatingIconButtonProps,
 } from './FloatingIconButton';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledFloatingIconButtonGroupContainer = styled.div<{
-  theme: ThemeType;
-}>`
+const StyledFloatingIconButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
-  background-color: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) =>
-    `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
+  background-color: ${themeVar.background.primary};
+  border-radius: ${themeVar.border.radius.sm};
+  box-shadow:
+    0px 2px 4px 0px ${themeVar.background.transparent.light},
+    0px 0px 4px 0px ${themeVar.background.transparent.medium};
   display: inline-flex;
   gap: 2px;
   padding: 2px;
@@ -38,10 +37,8 @@ export const FloatingIconButtonGroup = ({
   size,
   className,
 }: FloatingIconButtonGroupProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledFloatingIconButtonGroupContainer theme={theme} className={className}>
+    <StyledFloatingIconButtonGroupContainer className={className}>
       {iconButtons.map(({ Icon, onClick, isActive }, index) => {
         const position: FloatingIconButtonPosition =
           iconButtons.length === 1

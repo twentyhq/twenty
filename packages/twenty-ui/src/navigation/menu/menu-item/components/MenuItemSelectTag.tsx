@@ -40,9 +40,8 @@ export const MenuItemSelectTag = ({
       className={className}
       focused={focused}
       isKeySelected={isKeySelected}
-      theme={theme}
     >
-      <StyledMenuItemLeftContent theme={theme}>
+      <StyledMenuItemLeftContent>
         <Tag
           variant={variant}
           color={color}
@@ -50,9 +49,7 @@ export const MenuItemSelectTag = ({
           Icon={LeftIcon ?? undefined}
         />
       </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck theme={theme} size={theme.icon.size.md} />
-      )}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

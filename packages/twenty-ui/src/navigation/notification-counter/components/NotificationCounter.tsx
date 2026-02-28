@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 const StyledNotificationCounter = styled.div<{
   variant: 'primary' | 'secondary';
-  theme: ThemeType;
 }>`
   width: 14px;
   height: 14px;
@@ -13,14 +11,14 @@ const StyledNotificationCounter = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ theme }) => theme.font.size.xxs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  background: ${({ theme, variant }) =>
+  font-size: ${themeVar.font.size.xxs};
+  font-weight: ${themeVar.font.weight.semiBold};
+  background: ${({ variant }) =>
     variant === 'primary'
-      ? theme.color.blue
-      : theme.background.transparent.light};
-  color: ${({ theme, variant }) =>
-    variant === 'primary' ? 'white' : theme.font.color.secondary};
+      ? themeVar.color.blue
+      : themeVar.background.transparent.light};
+  color: ${({ variant }) =>
+    variant === 'primary' ? 'white' : themeVar.font.color.secondary};
 `;
 
 type NotificationCounterProps = {
@@ -34,14 +32,8 @@ export const NotificationCounter = ({
   variant = 'primary',
   className,
 }: NotificationCounterProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledNotificationCounter
-      variant={variant}
-      className={className}
-      theme={theme}
-    >
+    <StyledNotificationCounter variant={variant} className={className}>
       {count}
     </StyledNotificationCounter>
   );

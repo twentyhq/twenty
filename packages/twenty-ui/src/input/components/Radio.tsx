@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import * as React from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -33,14 +32,12 @@ type RadioInputProps = {
   'radio-size'?: RadioSize;
 };
 
-const StyledRadioInputBase = styled.input<
-  RadioInputProps & { theme: ThemeType }
->`
+const StyledRadioInputBase = styled.input<RadioInputProps>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.font.color.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  border: 1px solid ${themeVar.font.color.secondary};
+  border-radius: ${themeVar.border.radius.rounded};
   height: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
   margin: 0;
@@ -50,26 +47,26 @@ const StyledRadioInputBase = styled.input<
     radioSize === RadioSize.Large ? '18px' : '16px'};
 
   :hover {
-    background-color: ${({ theme, checked }) => {
+    background-color: ${({ checked }) => {
       if (!checked) {
-        return theme.background.tertiary;
+        return themeVar.background.tertiary;
       }
       return '';
     }};
     outline: 4px solid
-      ${({ theme, checked }) => {
+      ${({ checked }) => {
         if (!checked) {
-          return theme.background.tertiary;
+          return themeVar.background.tertiary;
         }
         return '';
       }};
   }
 
   &:checked {
-    background-color: ${({ theme }) => theme.color.blue};
+    background-color: ${themeVar.color.blue};
     border: none;
     &::after {
-      background-color: ${({ theme }) => theme.grayScale.gray1};
+      background-color: ${themeVar.grayScale.gray1};
       border-radius: 50%;
       content: '';
       height: ${({ 'radio-size': radioSize }) =>
@@ -96,15 +93,15 @@ type LabelProps = {
   labelPosition?: LabelPosition;
 };
 
-const StyledLabel = styled.label<LabelProps & { theme: ThemeType }>`
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledLabel = styled.label<LabelProps>`
+  color: ${themeVar.font.color.primary};
   cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-left: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Right ? theme.spacing(2) : '0px'};
-  margin-right: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Left ? theme.spacing(2) : '0px'};
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.regular};
+  margin-left: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Right ? themeVar.spacing[2] : '0px'};
+  margin-right: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Left ? themeVar.spacing[2] : '0px'};
   opacity: ${({ disabled }) => (disabled ? 0.32 : 1)};
 `;
 
@@ -134,8 +131,6 @@ export const Radio = ({
   size = RadioSize.Small,
   value,
 }: RadioProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onCheckedChange?.(event.target.checked);
@@ -146,7 +141,6 @@ export const Radio = ({
   return (
     <StyledContainer className={className} labelPosition={labelPosition}>
       <StyledRadioInput
-        theme={theme}
         type="radio"
         id={optionId}
         name={name}
@@ -163,7 +157,6 @@ export const Radio = ({
       />
       {label && (
         <StyledLabel
-          theme={theme}
           htmlFor={optionId}
           labelPosition={labelPosition}
           disabled={disabled}

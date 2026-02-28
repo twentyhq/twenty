@@ -2,27 +2,28 @@ import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION, ThemeContext, type ThemeType } from '@ui/theme';
+import { ANIMATION, ThemeContext, themeVar } from '@ui/theme';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
 const StyledButton = styled.button<{
   variant?: 'blue' | 'red';
-  theme: ThemeType;
 }>`
   align-items: center;
-  background-color: ${({ theme, variant }) =>
+  background-color: ${({ variant }) =>
     variant === 'red'
-      ? theme.background.danger
-      : theme.background.transparent.lighter};
-  border-color: ${({ theme, variant }) =>
-    variant === 'red' ? theme.border.color.danger : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+      ? themeVar.background.danger
+      : themeVar.background.transparent.lighter};
+  border-color: ${({ variant }) =>
+    variant === 'red'
+      ? themeVar.border.color.danger
+      : themeVar.border.color.medium};
+  border-radius: ${themeVar.border.radius.sm};
   border-style: solid;
   border-width: 1px;
   display: flex;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  padding-inline: ${themeVar.spacing[1]};
   height: 24px;
   width: 24px;
   box-sizing: border-box;
@@ -46,7 +47,7 @@ export const JsonArrow = ({
     useJsonTreeContextOrThrow();
 
   return (
-    <StyledButton theme={theme} variant={variant} onClick={onClick}>
+    <StyledButton variant={variant} onClick={onClick}>
       <VisibilityHidden>
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>

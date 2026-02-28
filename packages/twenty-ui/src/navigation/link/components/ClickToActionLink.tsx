@@ -1,20 +1,20 @@
 import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledButtonLink = styled.a<{ theme: ThemeType }>`
+const StyledButtonLink = styled.a`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeVar.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.medium};
+  gap: ${themeVar.spacing[1]};
+  padding: 0 ${themeVar.spacing[1]};
   text-decoration: none;
 
   :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeVar.font.color.tertiary};
     cursor: pointer;
   }
 `;
@@ -24,8 +24,6 @@ type ClickToActionLinkProps = React.ComponentProps<'a'> & {
 };
 
 export const ClickToActionLink = (props: ClickToActionLinkProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledButtonLink
       className={props.className}
@@ -33,7 +31,6 @@ export const ClickToActionLink = (props: ClickToActionLinkProps) => {
       onClick={props.onClick}
       target={props.target}
       rel={props.rel}
-      theme={theme}
     >
       {props.children}
     </StyledButtonLink>

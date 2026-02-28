@@ -1,19 +1,19 @@
-import { type ReactElement, useContext } from 'react';
+import { type ReactElement } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background: ${({ theme }) => theme.background.transparent.secondary};
+const StyledContainer = styled.div`
+  border-radius: ${themeVar.border.radius.sm};
+  border: 1px solid ${themeVar.border.color.medium};
+  background: ${themeVar.background.transparent.secondary};
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(3)};
-  gap: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeVar.spacing[3]};
+  gap: ${themeVar.spacing[3]};
 `;
 
-const StyledCommandContain = styled.div<{ theme: ThemeType }>`
-  font-family: ${({ theme }) => theme.code.font.family};
+const StyledCommandContain = styled.div`
+  font-family: ${themeVar.code.font.family};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -22,12 +22,12 @@ const StyledButtonContainer = styled.div`
 
 const StyledLineContainer = styled.div``;
 
-const StyledLineStartSpan = styled.span<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.code.text.orange};
+const StyledLineStartSpan = styled.span`
+  color: ${themeVar.code.text.orange};
 `;
 
-const StyledLineSpan = styled.span<{ theme: ThemeType }>`
-  color: ${({ theme }) => theme.code.text.green};
+const StyledLineSpan = styled.span`
+  color: ${themeVar.code.text.green};
 `;
 
 type CommandBlockProps = {
@@ -36,16 +36,14 @@ type CommandBlockProps = {
 };
 
 export const CommandBlock = ({ commands, button }: CommandBlockProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledContainer theme={theme}>
-      <StyledCommandContain theme={theme}>
+    <StyledContainer>
+      <StyledCommandContain>
         <>
           {commands.map((line, i) => (
             <StyledLineContainer key={i}>
-              <StyledLineStartSpan theme={theme}>{'> '}</StyledLineStartSpan>
-              <StyledLineSpan theme={theme}>{line}</StyledLineSpan>
+              <StyledLineStartSpan>{'> '}</StyledLineStartSpan>
+              <StyledLineSpan>{line}</StyledLineSpan>
             </StyledLineContainer>
           ))}
         </>

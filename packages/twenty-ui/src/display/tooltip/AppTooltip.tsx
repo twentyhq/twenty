@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
 export enum TooltipPosition {
   Top = 'top',
@@ -17,25 +16,25 @@ export enum TooltipDelay {
   longDelay = '1000ms',
 }
 
-const StyledAppTooltip = styled(Tooltip)<{ width?: string; theme: ThemeType }>`
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => theme.color.transparent.gray11};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
+  backdrop-filter: ${themeVar.blur.strong};
+  background-color: ${themeVar.color.transparent.gray11};
+  border-radius: ${themeVar.border.radius.sm};
 
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  color: ${({ theme }) => theme.grayScale.gray1};
+  box-shadow: ${themeVar.boxShadow.light};
+  color: ${themeVar.grayScale.gray1};
 
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: ${themeVar.font.size.sm};
+  font-weight: ${themeVar.font.weight.regular};
 
   max-width: ${({ width }) => width || '40%'};
   overflow: visible;
 
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeVar.spacing[2]};
 
   word-break: break-word;
 
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+  z-index: ${themeVar.lastLayerZIndex};
 `;
 
 export type AppTooltipProps = {
@@ -69,8 +68,6 @@ export const AppTooltip = ({
   width,
   isOpen,
 }: AppTooltipProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const getDelayInMis = (delay: TooltipDelay) => {
     switch (delay) {
       case TooltipDelay.noDelay:
@@ -102,7 +99,6 @@ export const AppTooltip = ({
         width,
         isOpen,
       }}
-      theme={theme}
     />
   );
 };

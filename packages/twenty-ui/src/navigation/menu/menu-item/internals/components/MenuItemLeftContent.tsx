@@ -64,7 +64,7 @@ export const MenuItemLeftContent = ({
       : theme.font.color.light;
 
   return (
-    <StyledMenuItemLeftContent theme={theme} className={className}>
+    <StyledMenuItemLeftContent className={className}>
       {gripMode === 'always' &&
         (withIconContainer ? (
           <MenuItemIconBoxContainer>
@@ -95,7 +95,7 @@ export const MenuItemLeftContent = ({
         <MenuItemIcon Icon={LeftIcon} withContainer={withIconContainer} />
       )}
       {LeftComponent}
-      <StyledMenuItemLabel theme={theme}>
+      <StyledMenuItemLabel>
         {isString(text) ? (
           <StyledMainText>
             <OverflowingTextWithTooltip text={text} />
@@ -107,7 +107,7 @@ export const MenuItemLeftContent = ({
           <>
             {isString(contextualText)
               ? isNonEmptyString(contextualText) && (
-                  <StyledMenuItemContextualText theme={theme}>
+                  <StyledMenuItemContextualText>
                     <OverflowingTextWithTooltip text={`· ${contextualText}`} />
                   </StyledMenuItemContextualText>
                 )
@@ -116,8 +116,8 @@ export const MenuItemLeftContent = ({
         )}
       </StyledMenuItemLabel>
       {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabelRight theme={theme}>
-          <StyledRightMenuItemContextualText theme={theme}>
+        <StyledMenuItemLabelRight>
+          <StyledRightMenuItemContextualText>
             {isString(contextualText) ? (
               <OverflowingTextWithTooltip text={contextualText} />
             ) : (

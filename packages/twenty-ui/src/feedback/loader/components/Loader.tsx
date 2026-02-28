@@ -1,37 +1,34 @@
 import { styled } from '@linaria/react';
-import { type ThemeColor, ThemeContext, type ThemeType } from '@ui/theme';
+import { type ThemeColor, themeVar } from '@ui/theme';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 
 const StyledLoaderContainer = styled.div<{
   color?: ThemeColor;
-  theme: ThemeType;
 }>`
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  width: ${({ theme }) => theme.spacing(6)};
-  height: ${({ theme }) => theme.spacing(3)};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
+  gap: ${themeVar.spacing[2]};
+  width: ${themeVar.spacing[6]};
+  height: ${themeVar.spacing[3]};
+  border-radius: ${themeVar.border.radius.pill};
   border: 1px solid
-    ${({ color, theme }) =>
+    ${({ color }) =>
       color
-        ? theme.tag.text[color]
-        : `var(--tw-button-color, ${theme.font.color.tertiary})`};
+        ? themeVar.tag.text[color]
+        : `var(--tw-button-color, ${themeVar.font.color.tertiary})`};
   overflow: hidden;
 `;
 
 const StyledLoaderBase = styled.div<{
   color?: ThemeColor;
-  theme: ThemeType;
 }>`
-  background-color: ${({ color, theme }) =>
+  background-color: ${({ color }) =>
     color
-      ? theme.tag.text[color]
-      : `var(--tw-button-color, ${theme.font.color.tertiary})`};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
+      ? themeVar.tag.text[color]
+      : `var(--tw-button-color, ${themeVar.font.color.tertiary})`};
+  border-radius: ${themeVar.border.radius.pill};
   height: 8px;
   width: 8px;
 `;
@@ -43,13 +40,10 @@ type LoaderProps = {
 };
 
 export const Loader = ({ color }: LoaderProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledLoaderContainer color={color} theme={theme}>
+    <StyledLoaderContainer color={color}>
       <StyledLoader
         color={color}
-        theme={theme}
         animate={{
           x: [-16, 0, 16],
           width: [8, 12, 8],

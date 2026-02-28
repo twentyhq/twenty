@@ -4,11 +4,10 @@ import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListIt
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { themeVar } from '@ui/theme';
 
-const StyledListItem = styled(JsonListItem)<{ theme: ThemeType }>`
-  column-gap: ${({ theme }) => theme.spacing(2)};
+const StyledListItem = styled(JsonListItem)`
+  column-gap: ${themeVar.spacing[2]};
 `;
 
 type JsonValueNodeProps = {
@@ -26,10 +25,8 @@ type JsonValueNodeProps = {
 );
 
 export const JsonValueNode = (props: JsonValueNodeProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledListItem theme={theme}>
+    <StyledListItem>
       {props.label && (
         <JsonNodeLabel
           label={props.label}

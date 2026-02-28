@@ -26,8 +26,8 @@ export const MenuItemNavigate = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledMenuItemBase theme={theme} onClick={onClick} className={className}>
-      <StyledMenuItemLeftContent theme={theme}>
+    <StyledMenuItemBase onClick={onClick} className={className}>
+      <StyledMenuItemLeftContent>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}

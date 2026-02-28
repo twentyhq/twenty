@@ -1,32 +1,26 @@
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
-import { forwardRef, useContext } from 'react';
-
-const useThemeFromContext = () => {
-  const { theme } = useContext(ThemeContext);
-  return theme;
-};
+import { themeVar } from '@ui/theme';
+import React from 'react';
 
 const StyledTabButtonInner = styled.button<{
-  theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
   to?: string;
 }>`
   all: unset;
   align-items: center;
-  color: ${({ theme, active, disabled }) =>
+  color: ${({ active, disabled }) =>
     active
-      ? theme.font.color.primary
+      ? themeVar.font.color.primary
       : disabled
-        ? theme.font.color.light
-        : theme.font.color.secondary};
+        ? themeVar.font.color.light
+        : themeVar.font.color.secondary};
   cursor: pointer;
   background-color: transparent;
   border: none;
   font-family: inherit;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeVar.spacing[1]};
   justify-content: center;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
@@ -38,28 +32,25 @@ const StyledTabButtonInner = styled.button<{
     left: 0;
     right: 0;
     height: 1px;
-    background-color: ${({ theme, active }) =>
-      active ? theme.border.color.inverted : 'transparent'};
+    background-color: ${({ active }) =>
+      active ? themeVar.border.color.inverted : 'transparent'};
     z-index: 1;
   }
 `;
 
-export const StyledTabButton = forwardRef<
+export const StyledTabButton = React.forwardRef<
   HTMLButtonElement,
   {
-    theme?: ThemeType;
     active?: boolean;
     disabled?: boolean;
     to?: string;
     as?: React.ElementType;
   } & React.ComponentPropsWithoutRef<'button'>
 >((props, ref) => {
-  const contextTheme = useThemeFromContext();
   return (
     <StyledTabButtonInner
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-      theme={props.theme ?? contextTheme}
       ref={ref}
     />
   );
@@ -67,21 +58,20 @@ export const StyledTabButton = forwardRef<
 StyledTabButton.displayName = 'StyledTabButton';
 
 const StyledTabContainerInner = styled.div<{
-  theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
 }>`
   align-items: center;
-  color: ${({ theme, active, disabled }) =>
+  color: ${({ active, disabled }) =>
     active
-      ? theme.font.color.primary
+      ? themeVar.font.color.primary
       : disabled
-        ? theme.font.color.light
-        : theme.font.color.secondary};
+        ? themeVar.font.color.light
+        : themeVar.font.color.secondary};
   cursor: pointer;
   background-color: transparent;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeVar.spacing[1]};
   justify-content: center;
   text-decoration: none;
   position: relative;
@@ -93,26 +83,23 @@ const StyledTabContainerInner = styled.div<{
     left: 0;
     right: 0;
     height: 1px;
-    background-color: ${({ theme, active }) =>
-      active ? theme.border.color.inverted : 'transparent'};
+    background-color: ${({ active }) =>
+      active ? themeVar.border.color.inverted : 'transparent'};
     z-index: 1;
   }
 `;
 
-export const StyledTabContainer = forwardRef<
+export const StyledTabContainer = React.forwardRef<
   HTMLDivElement,
   {
-    theme?: ThemeType;
     active?: boolean;
     disabled?: boolean;
   } & React.ComponentPropsWithoutRef<'div'>
 >((props, ref) => {
-  const contextTheme = useThemeFromContext();
   return (
     <StyledTabContainerInner
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-      theme={props.theme ?? contextTheme}
       ref={ref}
     />
   );
@@ -120,40 +107,36 @@ export const StyledTabContainer = forwardRef<
 StyledTabContainer.displayName = 'StyledTabContainer';
 
 const StyledTabHoverInner = styled.span<{
-  theme: ThemeType;
   contentSize?: 'sm' | 'md';
 }>`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme, contentSize }) =>
+  gap: ${themeVar.spacing[1]};
+  padding: ${({ contentSize }) =>
     contentSize === 'sm'
-      ? `${theme.spacing(1)} ${theme.spacing(2)}`
-      : `${theme.spacing(2)} ${theme.spacing(2)}`};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+      ? `${themeVar.spacing[1]} ${themeVar.spacing[2]}`
+      : `${themeVar.spacing[2]} ${themeVar.spacing[2]}`};
+  font-weight: ${themeVar.font.weight.medium};
   width: 100%;
   white-space: nowrap;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeVar.border.radius.sm};
   &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${themeVar.background.tertiary};
   }
   &:active {
-    background: ${({ theme }) => theme.background.quaternary};
+    background: ${themeVar.background.quaternary};
   }
 `;
 
-export const StyledTabHover = forwardRef<
+export const StyledTabHover = React.forwardRef<
   HTMLSpanElement,
   {
-    theme?: ThemeType;
     contentSize?: 'sm' | 'md';
   } & React.ComponentPropsWithoutRef<'span'>
 >((props, ref) => {
-  const contextTheme = useThemeFromContext();
   return (
     <StyledTabHoverInner
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-      theme={props.theme ?? contextTheme}
       ref={ref}
     />
   );

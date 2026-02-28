@@ -1,22 +1,17 @@
 import { styled } from '@linaria/react';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import {
-  GRAY_SCALE_DARK,
-  GRAY_SCALE_LIGHT,
-  ThemeContext,
-  type ThemeType,
-} from '@ui/theme';
+import { GRAY_SCALE_DARK, GRAY_SCALE_LIGHT, themeVar } from '@ui/theme';
 import {
   AnimatePresence,
   type AnimationControls,
   motion,
   useAnimation,
 } from 'framer-motion';
-import React, { useContext } from 'react';
+import React from 'react';
 
 const StyledColorSchemeBackground = styled.div<
-  Pick<ColorSchemeCardProps, 'variant'> & { theme: ThemeType }
+  Pick<ColorSchemeCardProps, 'variant'>
 >`
   align-items: flex-end;
   background: ${({ variant }) => {
@@ -37,20 +32,20 @@ const StyledColorSchemeBackground = styled.div<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeVar.border.radius.md};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   height: 80px;
   justify-content: flex-end;
   overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
+  padding-left: ${themeVar.spacing[6]};
+  padding-top: ${themeVar.spacing[6]};
   width: 160px;
 `;
 
 const StyledColorSchemeContentBase = styled.div<
-  Pick<ColorSchemeCardProps, 'variant'> & { theme: ThemeType }
+  Pick<ColorSchemeCardProps, 'variant'>
 >`
   background: ${({ variant }) => {
     switch (variant) {
@@ -71,7 +66,7 @@ const StyledColorSchemeContentBase = styled.div<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
+  border-radius: ${themeVar.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
@@ -95,8 +90,8 @@ const StyledColorSchemeContentBase = styled.div<
   flex: 1;
   font-size: 20px;
   height: 56px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeVar.spacing[2]};
+  padding-top: ${themeVar.spacing[2]};
 `;
 
 const StyledColorSchemeContent = motion.create(StyledColorSchemeContentBase);
@@ -116,19 +111,12 @@ const ColorSchemeSegment = ({
   onMouseEnter,
   onMouseLeave,
 }: ColorSchemeSegmentProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledColorSchemeBackground
-      theme={theme}
       className={className}
       {...{ variant, style, onClick, onMouseEnter, onMouseLeave }}
     >
-      <StyledColorSchemeContent
-        theme={theme}
-        animate={controls}
-        variant={variant}
-      >
+      <StyledColorSchemeContent animate={controls} variant={variant}>
         Aa
       </StyledColorSchemeContent>
     </StyledColorSchemeBackground>
@@ -140,8 +128,8 @@ const StyledContainer = styled.div`
   width: 160px;
 `;
 
-const StyledMixedColorSchemeSegment = styled.div<{ theme: ThemeType }>`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+const StyledMixedColorSchemeSegment = styled.div`
+  border-radius: ${themeVar.border.radius.md};
   cursor: pointer;
   display: flex;
   height: 80px;
@@ -150,9 +138,9 @@ const StyledMixedColorSchemeSegment = styled.div<{ theme: ThemeType }>`
   width: 160px;
 `;
 
-const StyledCheckmarkContainerBase = styled.div<{ theme: ThemeType }>`
+const StyledCheckmarkContainerBase = styled.div`
   bottom: 0px;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeVar.spacing[2]};
   position: absolute;
   right: 0px;
 `;
@@ -175,7 +163,6 @@ export const ColorSchemeCard = ({
   selected,
   onClick,
 }: ColorSchemeCardProps) => {
-  const { theme } = useContext(ThemeContext);
   const controls = useAnimation();
 
   const handleMouseEnter = () => {
@@ -198,7 +185,6 @@ export const ColorSchemeCard = ({
     return (
       <StyledContainer>
         <StyledMixedColorSchemeSegment
-          theme={theme}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={onClick}
@@ -217,7 +203,6 @@ export const ColorSchemeCard = ({
         <AnimatePresence>
           {selected && (
             <StyledCheckmarkContainer
-              theme={theme}
               key="system"
               variants={checkmarkAnimationVariants}
               initial="initial"
@@ -245,7 +230,6 @@ export const ColorSchemeCard = ({
       <AnimatePresence>
         {selected && (
           <StyledCheckmarkContainer
-            theme={theme}
             key={variant}
             variants={checkmarkAnimationVariants}
             initial="initial"

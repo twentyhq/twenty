@@ -1,17 +1,15 @@
 import { styled } from '@linaria/react';
 import * as React from 'react';
-import { useContext } from 'react';
-import { ThemeContext } from '@ui/theme';
+
+import { themeVar } from '@ui/theme';
 
 const StyledClickableLink = styled.a<{
   maxWidth?: number;
-  underlineColor: string;
-  hoverColor: string;
 }>`
   color: inherit;
   overflow: hidden;
   text-decoration: underline;
-  text-decoration-color: ${({ underlineColor }) => underlineColor};
+  text-decoration-color: ${themeVar.border.color.strong};
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
@@ -19,7 +17,7 @@ const StyledClickableLink = styled.a<{
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
 
   &:hover {
-    text-decoration-color: ${({ hoverColor }) => hoverColor};
+    text-decoration-color: ${themeVar.font.color.primary};
   }
 `;
 
@@ -36,16 +34,12 @@ export const ContactLink = ({
   onClick,
   maxWidth,
 }: ContactLinkProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledClickableLink
       maxWidth={maxWidth}
       target="_blank"
       onClick={onClick}
       href={href}
-      underlineColor={theme.border.color.strong}
-      hoverColor={theme.font.color.primary}
     >
       {children}
     </StyledClickableLink>

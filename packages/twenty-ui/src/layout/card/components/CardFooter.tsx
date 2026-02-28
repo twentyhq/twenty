@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
-import { type ReactNode, useContext } from 'react';
+import { themeVar } from '@ui/theme';
+import { type ReactNode } from 'react';
 
-const StyledCardFooter = styled.div<{ divider?: boolean; theme: ThemeType }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  border-top: ${({ divider = true, theme }) =>
-    divider ? `1px solid ${theme.border.color.medium}` : '0'};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
+const StyledCardFooter = styled.div<{ divider?: boolean }>`
+  background-color: ${themeVar.background.primary};
+  border-top: ${({ divider = true }) =>
+    divider ? `1px solid ${themeVar.border.color.medium}` : '0'};
+  font-size: ${themeVar.font.size.sm};
+  padding: ${themeVar.spacing[2]} ${themeVar.spacing[4]};
 `;
 
 export const CardFooter = ({
@@ -19,9 +19,8 @@ export const CardFooter = ({
   className?: string;
   divider?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
-    <StyledCardFooter theme={theme} className={className} divider={divider}>
+    <StyledCardFooter className={className} divider={divider}>
       {children}
     </StyledCardFooter>
   );

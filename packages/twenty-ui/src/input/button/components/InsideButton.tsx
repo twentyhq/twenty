@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 import React, { useContext } from 'react';
 
 export type InsideButtonProps = {
@@ -10,12 +10,12 @@ export type InsideButtonProps = {
   disabled?: boolean;
 };
 
-const StyledButton = styled.button<{ theme: ThemeType }>`
+const StyledButton = styled.button`
   align-items: center;
   border: none;
   background-color: transparent;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  border-radius: ${themeVar.border.radius.xs};
+  color: ${themeVar.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
@@ -27,7 +27,7 @@ const StyledButton = styled.button<{ theme: ThemeType }>`
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeVar.background.transparent.light};
   }
 `;
 
@@ -40,12 +40,7 @@ export const InsideButton = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButton
-      className={className}
-      onClick={onClick}
-      disabled={disabled}
-      theme={theme}
-    >
+    <StyledButton className={className} onClick={onClick} disabled={disabled}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledButton>
   );

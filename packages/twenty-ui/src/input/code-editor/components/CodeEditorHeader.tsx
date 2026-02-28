@@ -1,26 +1,25 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 
-const StyledEditorHeader = styled.div<{ theme: ThemeType }>`
+const StyledEditorHeader = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  background-color: ${themeVar.background.transparent.lighter};
+  color: ${themeVar.font.color.tertiary};
+  font-weight: ${themeVar.font.weight.medium};
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  height: ${themeVar.spacing[10]};
+  padding: 0 ${themeVar.spacing[2]};
+  border: 1px solid ${themeVar.border.color.medium};
+  border-top-left-radius: ${themeVar.border.radius.sm};
+  border-top-right-radius: ${themeVar.border.radius.sm};
   justify-content: space-between;
 `;
 
-const StyledElementContainer = styled.div<{ theme: ThemeType }>`
+const StyledElementContainer = styled.div`
   align-content: flex-end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
 `;
 
 export type CoreEditorHeaderProps = {
@@ -34,18 +33,16 @@ export const CoreEditorHeader = ({
   leftNodes,
   rightNodes,
 }: CoreEditorHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledEditorHeader theme={theme}>
-      <StyledElementContainer theme={theme}>
+    <StyledEditorHeader>
+      <StyledElementContainer>
         {leftNodes &&
           leftNodes.map((leftButton, index) => {
             return <div key={`left-${index}`}>{leftButton}</div>;
           })}
         {title}
       </StyledElementContainer>
-      <StyledElementContainer theme={theme}>
+      <StyledElementContainer>
         {rightNodes &&
           rightNodes.map((rightButton, index) => {
             return <div key={`right-${index}`}>{rightButton}</div>;

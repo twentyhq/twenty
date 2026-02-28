@@ -1,24 +1,12 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
-// TODO prastoin We should forbid barrel import within the twenty-ui package
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import {
-  BORDER_COMMON,
-  THEME_COMMON,
-  type ThemeColor,
-  ThemeContext,
-  type ThemeType,
-} from '@ui/theme';
+import { type ThemeColor, ThemeContext, themeVar } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const spacing5 = THEME_COMMON.spacing(5);
-const spacing2 = THEME_COMMON.spacing(2);
-const spacing1 = THEME_COMMON.spacing(1);
-
 const StyledTag = styled.h3<{
-  theme: ThemeType;
   color: TagColor;
   weight: TagWeight;
   variant: TagVariant;
@@ -26,43 +14,36 @@ const StyledTag = styled.h3<{
   preventPadding?: boolean;
 }>`
   align-items: center;
-  background: ${({ color, theme }) => {
+  background: ${({ color }) => {
     if (color === 'transparent') {
       return 'transparent';
     } else {
-      const themeColor = theme.tag.background[color];
-
-      if (!isDefined(themeColor)) {
-        // eslint-disable-next-line no-console
-        console.warn(`Tag color ${color} is not defined in the theme`);
-        return theme.tag.background.gray;
-      } else {
-        return themeColor;
-      }
+      return `var(--t-tag-background-${color}, ${themeVar.tag.background.gray})`;
     }
   }};
-  border-radius: ${BORDER_COMMON.radius.sm};
-  color: ${({ color, theme }) =>
+  border-radius: ${themeVar.border.radius.sm};
+  color: ${({ color }) =>
     color === 'transparent'
-      ? theme.font.color.secondary
-      : theme.tag.text[color]};
+      ? themeVar.font.color.secondary
+      : `var(--t-tag-text-${color})`};
   display: inline-flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeVar.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme, weight }) =>
+  font-weight: ${({ weight }) =>
     weight === 'regular'
-      ? theme.font.weight.regular
-      : theme.font.weight.medium};
-  height: ${spacing5};
+      ? themeVar.font.weight.regular
+      : themeVar.font.weight.medium};
+  height: ${themeVar.spacing[5]};
   margin: 0;
   overflow: hidden;
-  padding: ${({ preventPadding }) => (preventPadding ? '0' : `0 ${spacing2}`)};
-  border: ${({ variant, theme }) =>
+  padding: ${({ preventPadding }) =>
+    preventPadding ? '0' : `0 ${themeVar.spacing[2]}`};
+  border: ${({ variant }) =>
     variant === 'outline' || variant === 'border'
-      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
+      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${themeVar.border.color.strong}`
       : 'none'};
 
-  gap: ${spacing1};
+  gap: ${themeVar.spacing[1]};
 
   min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;
@@ -98,7 +79,6 @@ type TagProps = {
   preventPadding?: boolean;
 };
 
-// TODO: Find a way to have ellipsis and shrinkable tag in tag list while keeping good perf for table cells
 export const Tag = ({
   className,
   color,
@@ -114,7 +94,6 @@ export const Tag = ({
 
   return (
     <StyledTag
-      theme={theme}
       className={className}
       color={color}
       onClick={onClick}

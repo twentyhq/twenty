@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { ThemeContext, themeVar } from '@ui/theme';
 
 import { Button } from '@ui/input/button/components/Button/Button';
 import React, { useContext } from 'react';
@@ -15,41 +15,41 @@ export type InfoProps = {
   to?: string;
 };
 
-const StyledTextContainer = styled.div<{ theme: ThemeType }>`
+const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeVar.spacing[2]};
 `;
 
 const StyledIconInfoCircle = styled(IconInfoCircle)`
   flex-shrink: 0;
 `;
 
-const StyledInfo = styled.div<Pick<InfoProps, 'accent'> & { theme: ThemeType }>`
+const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeVar.border.radius.md};
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeVar.font.weight.medium};
   justify-content: space-between;
   max-width: 512px;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  background: ${({ theme, accent }) => {
+  gap: ${themeVar.spacing[2]};
+  padding: ${themeVar.spacing[2]};
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue5;
+        return themeVar.color.blue5;
       case 'danger':
-        return theme.color.red3;
+        return themeVar.color.red3;
       default:
         return 'transparent';
     }
   }};
-  color: ${({ theme, accent }) => {
+  color: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue10;
+        return themeVar.color.blue10;
       case 'danger':
-        return theme.color.red;
+        return themeVar.color.red;
       default:
         return 'inherit';
     }
@@ -69,8 +69,8 @@ export const Info = ({
 }: InfoProps) => {
   const { theme } = useContext(ThemeContext);
   return (
-    <StyledInfo theme={theme} accent={accent}>
-      <StyledTextContainer theme={theme}>
+    <StyledInfo accent={accent}>
+      <StyledTextContainer>
         <StyledIconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>

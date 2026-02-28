@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
-import React, { type ReactNode, useContext } from 'react';
+import React, { type ReactNode } from 'react';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeVar } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledButtonGroupContainer = styled.div<{ theme: ThemeType }>`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+const StyledButtonGroupContainer = styled.div`
+  border-radius: ${themeVar.border.radius.md};
   display: flex;
 `;
 
@@ -24,10 +24,8 @@ export const ButtonGroup = ({
   size,
   accent,
 }: ButtonGroupProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
-    <StyledButtonGroupContainer theme={theme} className={className}>
+    <StyledButtonGroupContainer className={className}>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return null;
 
