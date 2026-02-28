@@ -35,6 +35,8 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -43,6 +45,22 @@ import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQ
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 import { useStore } from 'jotai';
+
+const AUTH_AND_ONBOARDING_PATHS = [
+  AppPath.SignInUp,
+  AppPath.Verify,
+  AppPath.VerifyEmail,
+  AppPath.Invite,
+  AppPath.ResetPassword,
+  AppPath.CreateWorkspace,
+  AppPath.CreateProfile,
+  AppPath.SyncEmails,
+  AppPath.InviteTeam,
+  AppPath.PlanRequired,
+  AppPath.PlanRequiredSuccess,
+  AppPath.BookCallDecision,
+  AppPath.BookCall,
+];
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -99,6 +117,14 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
+    useReturnToPath();
+  const isLoggedIn = useIsLogged();
+
+  const isOnAuthOrOnboardingPage = AUTH_AND_ONBOARDING_PATHS.some((appPath) =>
+    isMatchingLocation(location, appPath),
+  );
+
   const closeCommandMenuUnlessOnEditPage = useCallback(() => {
     const currentPage = store.get(commandMenuPageState.atom);
     if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
@@ -133,6 +159,13 @@ export const PageChangeEffect = () => {
       isDefined(pageChangeEffectNavigateLocation) &&
       isAppEffectRedirectEnabled
     ) {
+      if (
+        pageChangeEffectNavigateLocation === AppPath.SignInUp &&
+        !isOnAuthOrOnboardingPage
+      ) {
+        saveReturnToPath(`${location.pathname}${location.search}`);
+      }
+
       navigate(pageChangeEffectNavigateLocation);
     }
   }, [
@@ -140,6 +173,21 @@ export const PageChangeEffect = () => {
     pageChangeEffectNavigateLocation,
     initializeQueryParamState,
     isAppEffectRedirectEnabled,
+    isOnAuthOrOnboardingPage,
+    saveReturnToPath,
+    location.pathname,
+    location.search,
+  ]);
+
+  useEffect(() => {
+    if (isLoggedIn && !isOnAuthOrOnboardingPage && getReturnToPath() !== null) {
+      clearReturnToPath();
+    }
+  }, [
+    isLoggedIn,
+    isOnAuthOrOnboardingPage,
+    getReturnToPath,
+    clearReturnToPath,
   ]);
 
   useEffect(() => {

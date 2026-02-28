@@ -1,5 +1,7 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { returnToPathState } from '@/auth/states/returnToPathState';
+import { readReturnToPathFromSessionStorage } from '@/auth/utils/returnToPathSessionStorage';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -7,6 +9,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,6 +55,11 @@ export const usePageChangeEffectNavigateLocation = () => {
   const verifyEmailRedirectPath = useAtomStateValue(
     verifyEmailRedirectPathState,
   );
+
+  const returnToPath = useAtomStateValue(returnToPathState);
+  const resolvedReturnToPath = isNonEmptyString(returnToPath)
+    ? returnToPath
+    : readReturnToPathFromSessionStorage();
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
@@ -139,11 +147,11 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(location, AppPath.ResetPassword) &&
     isLoggedIn
   ) {
-    return defaultHomePagePath;
+    return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLoggedIn) {
-    return defaultHomePagePath;
+    return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (

@@ -7,7 +7,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { previousUrlState } from '@/auth/states/previousUrlState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
+import { writeReturnToPathToSessionStorage } from '@/auth/utils/returnToPathSessionStorage';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -36,7 +38,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
 
-  const setPreviousUrl = useSetAtomState(previousUrlState);
+  const setReturnToPath = useSetAtomState(returnToPathState);
   const location = useLocation();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -76,7 +78,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(location, AppPath.Invite) &&
           !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
-          setPreviousUrl(`${location.pathname}${location.search}`);
+          const path = `${location.pathname}${location.search}`;
+
+          if (isValidReturnToPath(path)) {
+            setReturnToPath(path);
+            writeReturnToPathToSessionStorage(path);
+          }
           navigate(AppPath.SignInUp);
         }
       },
@@ -109,7 +116,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentUser,
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
-    setPreviousUrl,
+    setReturnToPath,
     enqueueErrorSnackBar,
   ]);
 
