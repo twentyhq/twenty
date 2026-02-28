@@ -3,9 +3,9 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { type DataSource } from 'typeorm';
+import { base64UrlEncode } from 'twenty-shared/utils';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
-import { base64UrlEncode } from 'twenty-shared/utils';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const TEST_USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';

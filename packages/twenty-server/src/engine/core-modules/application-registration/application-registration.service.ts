@@ -140,11 +140,14 @@ export class ApplicationRegistrationService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.name)) updateData.name = update.name;
-    if (isDefined(update.description)) updateData.description = update.description;
+    if (isDefined(update.description))
+      updateData.description = update.description;
     if (isDefined(update.logoUrl)) updateData.logoUrl = update.logoUrl;
     if (isDefined(update.author)) updateData.author = update.author;
-    if (isDefined(update.oAuthRedirectUris)) updateData.oAuthRedirectUris = update.oAuthRedirectUris;
-    if (isDefined(update.oAuthScopes)) updateData.oAuthScopes = update.oAuthScopes;
+    if (isDefined(update.oAuthRedirectUris))
+      updateData.oAuthRedirectUris = update.oAuthRedirectUris;
+    if (isDefined(update.oAuthScopes))
+      updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
     if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
 

@@ -79,7 +79,7 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariables,
-      flatLogicFunction,
+      _flatLogicFunction: flatLogicFunction,
     });
 
     const resultLogicFunction = await this.driver.execute({
@@ -169,12 +169,12 @@ export class LogicFunctionExecutorService {
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    flatLogicFunction,
+    _flatLogicFunction,
     flatApplicationVariables,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    flatLogicFunction: FlatLogicFunction;
+    _flatLogicFunction: FlatLogicFunction;
     flatApplicationVariables: FlatApplicationVariable[];
   }) {
     const applicationAccessToken =
