@@ -73,11 +73,11 @@ export const useCreateAppRouter = (
               />
             }
           />
-          <Route path="/__perf__/table" element={<RecordTablePerfPage />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>
           <Route path={AppPath.Authorize} element={<Authorize />} />
+          <Route path="/__perf__/table" element={<RecordTablePerfPage />} />
         </Route>
       </Route>,
     ),
