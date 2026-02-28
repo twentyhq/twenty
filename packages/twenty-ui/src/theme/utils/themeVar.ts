@@ -48,13 +48,13 @@ const buildVarRefs = (
 // Built from the theme structure at module init time so wyw-in-js can
 // evaluate and inline references at build time.
 //
-//   themeVar.font.color.primary  →  'var(--t-font-color-primary)'
-//   themeVar.spacing[4]          →  'var(--t-spacing-4)'
-//   themeVar.border.radius.sm    →  'var(--t-border-radius-sm)'
+//   theme.font.color.primary  →  'var(--t-font-color-primary)'
+//   theme.spacing[4]          →  'var(--t-spacing-4)'
+//   theme.border.radius.sm    →  'var(--t-border-radius-sm)'
 //
 // The actual values are injected as CSS custom properties on the root
 // element by ThemeContextProvider.
-export const themeVar: DeepCSSVarRefs<ThemeType> = buildVarRefs(
+export const theme: DeepCSSVarRefs<ThemeType> = buildVarRefs(
   THEME_LIGHT as unknown as Record<string, unknown>,
   't',
 ) as DeepCSSVarRefs<ThemeType>;

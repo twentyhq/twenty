@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { type ThemeColor, themeVar } from '@ui/theme';
+import { type ThemeColor, theme } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
@@ -18,11 +18,11 @@ const getColor = (colorName: ThemeColor, color?: string) => {
     return color;
   }
 
-  return themeVar.tag.background[colorName];
+  return theme.tag.background[colorName];
 };
 
 const getBorderColor = (colorName: ThemeColor) => {
-  return themeVar.tag.text[colorName];
+  return theme.tag.text[colorName];
 };
 
 const StyledColorSample = styled.div<StyledColorSampleProps>`
@@ -30,8 +30,8 @@ const StyledColorSample = styled.div<StyledColorSampleProps>`
   border: ${({ variant, colorName }) =>
     variant === 'pipeline' ? '0' : `1px solid ${getBorderColor(colorName)}`};
   border-radius: 60px;
-  height: ${themeVar.spacing[4]};
-  width: ${themeVar.spacing[3]};
+  height: ${theme.spacing[4]};
+  width: ${theme.spacing[3]};
   align-items: ${({ variant }) =>
     variant === 'pipeline' ? 'center' : 'initial'};
   display: ${({ variant }) => (variant === 'pipeline' ? 'flex' : 'block')};
@@ -42,13 +42,13 @@ const StyledColorSample = styled.div<StyledColorSampleProps>`
     background-color: ${({ colorName, color, variant }) =>
       variant === 'pipeline' ? getColor(colorName, color) : 'transparent'};
     border-radius: ${({ variant }) =>
-      variant === 'pipeline' ? themeVar.border.radius.rounded : '0'};
+      variant === 'pipeline' ? theme.border.radius.rounded : '0'};
     content: ${({ variant }) => (variant === 'pipeline' ? "''" : 'none')};
     display: ${({ variant }) => (variant === 'pipeline' ? 'block' : 'none')};
     height: ${({ variant }) =>
-      variant === 'pipeline' ? themeVar.spacing[1] : '0'};
+      variant === 'pipeline' ? theme.spacing[1] : '0'};
     width: ${({ variant }) =>
-      variant === 'pipeline' ? themeVar.spacing[1] : '0'};
+      variant === 'pipeline' ? theme.spacing[1] : '0'};
   }
 `;
 

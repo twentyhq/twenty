@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { useContext } from 'react';
 
 const StyledLabelContainer = styled.span<{
@@ -9,33 +9,33 @@ const StyledLabelContainer = styled.span<{
 }>`
   background-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? themeVar.color.blue3
+      ? theme.color.blue3
       : highlighting === 'red'
-        ? themeVar.background.danger
-        : themeVar.background.transparent.lighter};
+        ? theme.background.danger
+        : theme.background.transparent.lighter};
   border-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? themeVar.color.blue5
+      ? theme.color.blue5
       : highlighting === 'red'
-        ? themeVar.border.color.danger
-        : themeVar.border.color.medium};
+        ? theme.border.color.danger
+        : theme.border.color.medium};
   color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? themeVar.color.blue
+      ? theme.color.blue
       : highlighting === 'red'
-        ? themeVar.font.color.danger
-        : themeVar.font.color.primary};
-  border-radius: ${themeVar.border.radius.sm};
+        ? theme.font.color.danger
+        : theme.font.color.primary};
+  border-radius: ${theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
-  column-gap: ${themeVar.spacing[2]};
+  column-gap: ${theme.spacing[2]};
   display: inline-flex;
   align-items: center;
   height: 24px;
   box-sizing: border-box;
-  font-size: ${themeVar.font.size.md};
+  font-size: ${theme.font.size.md};
   white-space: nowrap;
-  padding-inline: ${themeVar.spacing[2]};
+  padding-inline: ${theme.spacing[2]};
 
   > span {
     align-items: center;

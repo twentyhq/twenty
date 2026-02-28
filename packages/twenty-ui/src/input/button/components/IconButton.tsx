@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { GRAY_SCALE_LIGHT, ThemeContext, themeVar } from '@ui/theme';
+import { GRAY_SCALE_LIGHT, ThemeContext, theme } from '@ui/theme';
 import React, { useContext, useMemo } from 'react';
 
 export type IconButtonSize = 'medium' | 'small';
@@ -47,66 +47,56 @@ const computeIconButtonDynamicStyles = (
       switch (accent) {
         case 'default':
           return {
-            background: themeVar.background.secondary,
+            background: theme.background.secondary,
             borderColor: focus
-              ? themeVar.color.blue
-              : themeVar.background.transparent.light,
+              ? theme.color.blue
+              : theme.background.transparent.light,
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
             boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.accent.tertiary}`
+              ? `0 0 0 3px ${theme.accent.tertiary}`
               : 'none',
             color: !disabled
-              ? themeVar.font.color.secondary
-              : themeVar.font.color.extraLight,
+              ? theme.font.color.secondary
+              : theme.font.color.extraLight,
             opacity: 1,
             hoverBackground: !disabled
-              ? themeVar.background.tertiary
-              : themeVar.background.secondary,
+              ? theme.background.tertiary
+              : theme.background.secondary,
             activeBackground: !disabled
-              ? themeVar.background.quaternary
-              : themeVar.background.secondary,
+              ? theme.background.quaternary
+              : theme.background.secondary,
           };
         case 'blue':
           return {
-            background: themeVar.color.blue,
+            background: theme.color.blue,
             borderColor: !disabled
               ? focus
-                ? themeVar.color.blue
-                : themeVar.background.transparent.light
+                ? theme.color.blue
+                : theme.background.transparent.light
               : 'transparent',
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
             boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.accent.tertiary}`
+              ? `0 0 0 3px ${theme.accent.tertiary}`
               : 'none',
             color: GRAY_SCALE_LIGHT.gray1,
             opacity: disabled ? 0.24 : 1,
-            hoverBackground: disabled
-              ? themeVar.color.blue
-              : themeVar.color.blue10,
-            activeBackground: disabled
-              ? themeVar.color.blue
-              : themeVar.color.blue12,
+            hoverBackground: disabled ? theme.color.blue : theme.color.blue10,
+            activeBackground: disabled ? theme.color.blue : theme.color.blue12,
           };
         case 'danger':
           return {
-            background: themeVar.color.red,
+            background: theme.color.red,
             borderColor: !disabled
               ? focus
-                ? themeVar.color.red
-                : themeVar.background.transparent.light
+                ? theme.color.red
+                : theme.background.transparent.light
               : 'transparent',
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
-            boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.color.red3}`
-              : 'none',
+            boxShadow: focusOverride ? `0 0 0 3px ${theme.color.red3}` : 'none',
             color: GRAY_SCALE_LIGHT.gray1,
             opacity: disabled ? 0.24 : 1,
-            hoverBackground: disabled
-              ? themeVar.color.red
-              : themeVar.color.red10,
-            activeBackground: disabled
-              ? themeVar.color.red
-              : themeVar.color.red10,
+            hoverBackground: disabled ? theme.color.red : theme.color.red10,
+            activeBackground: disabled ? theme.color.red : theme.color.red10,
           };
       }
       break;
@@ -116,57 +106,55 @@ const computeIconButtonDynamicStyles = (
         case 'default':
           return {
             background: focus
-              ? themeVar.background.transparent.primary
+              ? theme.background.transparent.primary
               : 'transparent',
             borderColor:
               variant === 'secondary'
                 ? focusOverride
-                  ? themeVar.color.blue
-                  : themeVar.background.transparent.medium
+                  ? theme.color.blue
+                  : theme.background.transparent.medium
                 : focus
-                  ? themeVar.color.blue
+                  ? theme.color.blue
                   : 'transparent',
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
             boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.accent.tertiary}`
+              ? `0 0 0 3px ${theme.accent.tertiary}`
               : 'none',
             color: disabled
-              ? themeVar.font.color.extraLight
+              ? theme.font.color.extraLight
               : variant === 'secondary'
-                ? themeVar.font.color.secondary
-                : themeVar.font.color.tertiary,
+                ? theme.font.color.secondary
+                : theme.font.color.tertiary,
             opacity: 1,
             hoverBackground: !disabled
-              ? themeVar.background.transparent.light
+              ? theme.background.transparent.light
               : 'transparent',
             activeBackground: !disabled
-              ? themeVar.background.transparent.light
+              ? theme.background.transparent.light
               : 'transparent',
           };
         case 'blue':
           return {
             background: focus
-              ? themeVar.background.transparent.primary
+              ? theme.background.transparent.primary
               : 'transparent',
             borderColor:
               variant === 'secondary'
                 ? !disabled
-                  ? themeVar.color.blue
-                  : themeVar.color.blue5
+                  ? theme.color.blue
+                  : theme.color.blue5
                 : focus
-                  ? themeVar.color.blue
+                  ? theme.color.blue
                   : 'transparent',
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
             boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.accent.tertiary}`
+              ? `0 0 0 3px ${theme.accent.tertiary}`
               : 'none',
-            color: !disabled ? themeVar.color.blue : themeVar.accent.accent4060,
+            color: !disabled ? theme.color.blue : theme.accent.accent4060,
             opacity: 1,
-            hoverBackground: !disabled
-              ? themeVar.accent.tertiary
-              : 'transparent',
+            hoverBackground: !disabled ? theme.accent.tertiary : 'transparent',
             activeBackground: !disabled
-              ? themeVar.accent.secondary
+              ? theme.accent.secondary
               : 'transparent',
           };
         case 'danger':
@@ -174,21 +162,19 @@ const computeIconButtonDynamicStyles = (
             background: 'transparent',
             borderColor:
               variant === 'secondary'
-                ? themeVar.border.color.danger
+                ? theme.border.color.danger
                 : focus
-                  ? themeVar.color.red
+                  ? theme.color.red
                   : 'transparent',
             borderWidthOverride: focusOverride ? '1px 1px' : undefined,
-            boxShadow: focusOverride
-              ? `0 0 0 3px ${themeVar.color.red3}`
-              : 'none',
-            color: !disabled ? themeVar.font.color.danger : themeVar.color.red5,
+            boxShadow: focusOverride ? `0 0 0 3px ${theme.color.red3}` : 'none',
+            color: !disabled ? theme.font.color.danger : theme.color.red5,
             opacity: 1,
             hoverBackground: !disabled
-              ? themeVar.background.danger
+              ? theme.background.danger
               : 'transparent',
             activeBackground: !disabled
-              ? themeVar.background.danger
+              ? theme.background.danger
               : 'transparent',
           };
       }
@@ -198,7 +184,7 @@ const computeIconButtonDynamicStyles = (
     background: 'transparent',
     borderColor: 'transparent',
     boxShadow: 'none',
-    color: themeVar.font.color.secondary,
+    color: theme.font.color.secondary,
     opacity: 1,
     hoverBackground: 'transparent',
     activeBackground: 'transparent',
@@ -227,13 +213,13 @@ const StyledButton = styled.button<
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${themeVar.border.radius.sm} 0px 0px ${themeVar.border.radius.sm}`;
+        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
       case 'right':
-        return `0px ${themeVar.border.radius.sm} ${themeVar.border.radius.sm} 0px`;
+        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return themeVar.border.radius.sm;
+        return theme.border.radius.sm;
     }
     return '';
   }};
@@ -255,9 +241,9 @@ const StyledButton = styled.button<
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${themeVar.font.family};
+  font-family: ${theme.font.family};
   font-weight: 500;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
   padding: 0;

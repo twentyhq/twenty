@@ -3,11 +3,11 @@ import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background-color: ${themeVar.color.blue};
+  background-color: ${theme.color.blue};
   border-radius: 50%;
   display: flex;
   height: 20px;

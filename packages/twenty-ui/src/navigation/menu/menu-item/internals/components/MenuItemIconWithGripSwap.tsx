@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import { type IconComponent, IconGripVertical } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 const StyledIconSwapContainer = styled.div`
@@ -14,14 +14,14 @@ const StyledIconSwapContainer = styled.div`
 
 const StyledDefaultIcon = styled.div`
   display: flex;
-  transition: opacity ${themeVar.animation.duration.instant}s ease;
+  transition: opacity ${theme.animation.duration.instant}s ease;
 `;
 
 const StyledHoverIcon = styled.div`
   position: absolute;
   display: flex;
   opacity: 0;
-  transition: opacity ${themeVar.animation.duration.instant}s ease;
+  transition: opacity ${theme.animation.duration.instant}s ease;
 `;
 
 export type MenuItemIconWithGripSwapProps = {

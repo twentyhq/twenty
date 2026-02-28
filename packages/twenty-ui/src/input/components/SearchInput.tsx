@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconFilter, IconSearch } from '@ui/display';
 import { IconButton } from '@ui/input/button/components/IconButton';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { type ChangeEvent, type ReactNode, useContext, useState } from 'react';
 
 export type SearchInputProps = {
@@ -17,24 +17,24 @@ export type SearchInputProps = {
 const StyledWrapper = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
   width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  background-color: ${themeVar.background.transparent.lighter};
-  border: 1px solid ${themeVar.border.color.medium};
-  border-radius: ${themeVar.border.radius.sm};
+  background-color: ${theme.background.transparent.lighter};
+  border: 1px solid ${theme.border.color.medium};
+  border-radius: ${theme.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex: 1;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   height: 32px;
-  padding: 0 ${themeVar.spacing[2]};
+  padding: 0 ${theme.spacing[2]};
 
   &:focus-within {
-    border-color: ${themeVar.color.blue};
+    border-color: ${theme.color.blue};
   }
 `;
 
@@ -43,7 +43,7 @@ const StyledIconContainer = styled.div<{
 }>`
   align-items: center;
   color: ${({ isFocused }) =>
-    isFocused ? themeVar.font.color.secondary : themeVar.font.color.light};
+    isFocused ? theme.font.color.secondary : theme.font.color.light};
   display: flex;
   justify-content: center;
 `;
@@ -51,21 +51,21 @@ const StyledIconContainer = styled.div<{
 const StyledInput = styled.input`
   background: transparent;
   border: none;
-  color: ${themeVar.font.color.primary};
+  color: ${theme.font.color.primary};
   flex: 1;
-  font-family: ${themeVar.font.family};
-  font-size: ${themeVar.font.size.md};
-  font-weight: ${themeVar.font.weight.regular};
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.size.md};
+  font-weight: ${theme.font.weight.regular};
   outline: none;
   width: 100%;
 
   &::placeholder {
-    color: ${themeVar.font.color.light};
-    font-weight: ${themeVar.font.weight.medium};
+    color: ${theme.font.color.light};
+    font-weight: ${theme.font.weight.medium};
   }
 
   &:disabled {
-    color: ${themeVar.font.color.tertiary};
+    color: ${theme.font.color.tertiary};
   }
 `;
 

@@ -1,6 +1,6 @@
 import { forwardRef, type ReactElement, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type StyledTextProps = {
   PrefixComponent?: ReactElement;
@@ -9,8 +9,8 @@ type StyledTextProps = {
 };
 
 const StyledTextContentInner = styled.div`
-  font-size: ${themeVar.font.size.sm};
-  font-weight: ${themeVar.font.weight.regular};
+  font-size: ${theme.font.size.sm};
+  font-weight: ${theme.font.weight.regular};
 
   overflow: hidden;
   padding-left: 0;
@@ -35,8 +35,8 @@ StyledTextContent.displayName = 'StyledTextContent';
 const StyledTextWrapperInner = styled.div<{
   color?: string;
 }>`
-  --horizontal-padding: ${themeVar.spacing[1]};
-  --vertical-padding: ${themeVar.spacing[2]};
+  --horizontal-padding: ${theme.spacing[1]};
+  --vertical-padding: ${theme.spacing[2]};
 
   cursor: initial;
 
@@ -44,13 +44,13 @@ const StyledTextWrapperInner = styled.div<{
 
   flex-direction: row;
 
-  font-size: ${themeVar.font.size.sm};
+  font-size: ${theme.font.size.sm};
 
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
 
   padding: var(--vertical-padding) 0;
 
-  color: ${({ color }) => color ?? themeVar.font.color.primary};
+  color: ${({ color }) => color ?? theme.font.color.primary};
 `;
 
 export const StyledTextWrapper = forwardRef<

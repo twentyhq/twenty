@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type PillProps = {
   className?: string;
@@ -10,18 +10,18 @@ type PillProps = {
 
 const StyledPill = styled.span`
   align-items: center;
-  background: ${themeVar.background.transparent.light};
-  border-radius: ${themeVar.border.radius.pill};
-  color: ${themeVar.font.color.light};
+  background: ${theme.background.transparent.light};
+  border-radius: ${theme.border.radius.pill};
+  color: ${theme.font.color.light};
   display: inline-flex;
-  font-size: ${themeVar.font.size.xs};
+  font-size: ${theme.font.size.xs};
   font-style: normal;
-  font-weight: ${themeVar.font.weight.medium};
-  gap: ${themeVar.spacing[1]};
-  height: ${themeVar.spacing[4]};
+  font-weight: ${theme.font.weight.medium};
+  gap: ${theme.spacing[1]};
+  height: ${theme.spacing[4]};
   justify-content: flex-end;
-  line-height: ${themeVar.text.lineHeight.lg};
-  padding: 0 ${themeVar.spacing[2]};
+  line-height: ${theme.text.lineHeight.lg};
+  padding: 0 ${theme.spacing[2]};
 `;
 
 export const Pill = ({ className, label, Icon }: PillProps) => {

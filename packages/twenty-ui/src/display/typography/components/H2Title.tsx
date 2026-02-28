@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type H2TitleProps = {
   title: string;
@@ -12,7 +12,7 @@ type H2TitleProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: ${themeVar.spacing[4]};
+  margin-bottom: ${theme.spacing[4]};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -22,18 +22,18 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTitle = styled.h2`
-  color: ${themeVar.font.color.primary};
-  font-size: ${themeVar.font.size.md};
-  font-weight: ${themeVar.font.weight.semiBold};
+  color: ${theme.font.color.primary};
+  font-size: ${theme.font.size.md};
+  font-weight: ${theme.font.weight.semiBold};
   margin: 0;
 `;
 
 const StyledDescription = styled.h3`
-  color: ${themeVar.font.color.tertiary};
-  font-size: ${themeVar.font.size.md};
-  font-weight: ${themeVar.font.weight.regular};
+  color: ${theme.font.color.tertiary};
+  font-size: ${theme.font.size.md};
+  font-weight: ${theme.font.weight.regular};
   margin: 0;
-  margin-top: ${themeVar.spacing[2]};
+  margin-top: ${theme.spacing[2]};
 `;
 
 export const H2Title = ({

@@ -4,7 +4,7 @@ import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Chip, ChipVariant } from '@ui/components/chip/Chip';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledIconsContainer = styled.div`
   align-items: center;
@@ -13,7 +13,7 @@ const StyledIconsContainer = styled.div`
 
 const StyledChipContainer = styled.div`
   display: inline-flex;
-  font-size: ${themeVar.font.size.sm};
+  font-size: ${theme.font.size.sm};
 `;
 
 export type MultipleAvatarChipProps = {

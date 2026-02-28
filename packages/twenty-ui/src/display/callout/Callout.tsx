@@ -4,7 +4,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightButton, LightIconButton } from '@ui/input';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 export type CalloutVariant =
   | 'info'
@@ -19,33 +19,33 @@ const StyledCalloutContainer = styled.div<{
   align-items: flex-start;
   background-color: ${({ variant }) =>
     variant === 'info'
-      ? themeVar.accent.accent1
+      ? theme.accent.accent1
       : variant === 'warning'
-        ? themeVar.color.orange1
+        ? theme.color.orange1
         : variant === 'success'
-          ? themeVar.color.turquoise1
+          ? theme.color.turquoise1
           : variant === 'error'
-            ? themeVar.color.red1
-            : themeVar.color.gray1};
+            ? theme.color.red1
+            : theme.color.gray1};
   border: 1px solid
     ${({ variant }) =>
       variant === 'info'
-        ? themeVar.accent.accent6
+        ? theme.accent.accent6
         : variant === 'warning'
-          ? themeVar.color.orange6
+          ? theme.color.orange6
           : variant === 'success'
-            ? themeVar.color.turquoise6
+            ? theme.color.turquoise6
             : variant === 'error'
-              ? themeVar.color.red6
-              : themeVar.color.gray6};
-  border-radius: ${themeVar.border.radius.md};
+              ? theme.color.red6
+              : theme.color.gray6};
+  border-radius: ${theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
   max-width: 512px;
   overflow: hidden;
-  padding: ${themeVar.spacing[3]} ${themeVar.spacing[3]} ${themeVar.spacing[2]};
+  padding: ${theme.spacing[3]} ${theme.spacing[3]} ${theme.spacing[2]};
   width: 100%;
 `;
 
@@ -54,8 +54,8 @@ const StyledHeader = styled.div`
   align-self: stretch;
   display: flex;
   flex-direction: row;
-  gap: ${themeVar.spacing[2]};
-  min-height: ${themeVar.spacing[6]};
+  gap: ${theme.spacing[2]};
+  min-height: ${theme.spacing[6]};
 `;
 
 const StyledIconContainer = styled.div<{
@@ -65,26 +65,26 @@ const StyledIconContainer = styled.div<{
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  height: ${themeVar.spacing[4]};
-  width: ${themeVar.spacing[4]};
+  height: ${theme.spacing[4]};
+  width: ${theme.spacing[4]};
   color: ${({ variant }) =>
     variant === 'info'
-      ? themeVar.accent.accent9
+      ? theme.accent.accent9
       : variant === 'warning'
-        ? themeVar.color.orange9
+        ? theme.color.orange9
         : variant === 'success'
-          ? themeVar.color.turquoise9
+          ? theme.color.turquoise9
           : variant === 'error'
-            ? themeVar.color.red9
-            : themeVar.color.gray9};
+            ? theme.color.red9
+            : theme.color.gray9};
 `;
 
 const StyledTitle = styled.div`
   flex: 1;
-  color: ${themeVar.font.color.primary};
-  font-family: ${themeVar.font.family};
-  font-size: ${themeVar.font.size.md};
-  font-weight: ${themeVar.font.weight.medium};
+  color: ${theme.font.color.primary};
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.size.md};
+  font-weight: ${theme.font.weight.medium};
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,16 +97,16 @@ const StyledDescriptionWrapper = styled.div<{
   align-items: center;
   display: flex;
   align-self: stretch;
-  padding-bottom: ${({ hasAction }) => (hasAction ? 0 : themeVar.spacing[2])};
-  padding-left: ${themeVar.spacing[6]};
+  padding-bottom: ${({ hasAction }) => (hasAction ? 0 : theme.spacing[2])};
+  padding-left: ${theme.spacing[6]};
 `;
 
 const StyledDescription = styled.div`
   flex: 1;
-  color: ${themeVar.font.color.tertiary};
-  font-family: ${themeVar.font.family};
-  font-size: ${themeVar.font.size.sm};
-  font-weight: ${themeVar.font.weight.regular};
+  color: ${theme.font.color.tertiary};
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.size.sm};
+  font-weight: ${theme.font.weight.regular};
   line-height: 1.4;
 `;
 

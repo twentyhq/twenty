@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 export enum TooltipPosition {
   Top = 'top',
@@ -17,24 +17,24 @@ export enum TooltipDelay {
 }
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
-  backdrop-filter: ${themeVar.blur.strong};
-  background-color: ${themeVar.color.transparent.gray11};
-  border-radius: ${themeVar.border.radius.sm};
+  backdrop-filter: ${theme.blur.strong};
+  background-color: ${theme.color.transparent.gray11};
+  border-radius: ${theme.border.radius.sm};
 
-  box-shadow: ${themeVar.boxShadow.light};
-  color: ${themeVar.grayScale.gray1};
+  box-shadow: ${theme.boxShadow.light};
+  color: ${theme.grayScale.gray1};
 
-  font-size: ${themeVar.font.size.sm};
-  font-weight: ${themeVar.font.weight.regular};
+  font-size: ${theme.font.size.sm};
+  font-weight: ${theme.font.weight.regular};
 
   max-width: ${({ width }) => width || '40%'};
   overflow: visible;
 
-  padding: ${themeVar.spacing[2]};
+  padding: ${theme.spacing[2]};
 
   word-break: break-word;
 
-  z-index: ${themeVar.lastLayerZIndex};
+  z-index: ${theme.lastLayerZIndex};
 `;
 
 export type AppTooltipProps = {

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION, ThemeContext, themeVar } from '@ui/theme';
+import { ANIMATION, ThemeContext, theme } from '@ui/theme';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
@@ -12,18 +12,16 @@ const StyledButton = styled.button<{
   align-items: center;
   background-color: ${({ variant }) =>
     variant === 'red'
-      ? themeVar.background.danger
-      : themeVar.background.transparent.lighter};
+      ? theme.background.danger
+      : theme.background.transparent.lighter};
   border-color: ${({ variant }) =>
-    variant === 'red'
-      ? themeVar.border.color.danger
-      : themeVar.border.color.medium};
-  border-radius: ${themeVar.border.radius.sm};
+    variant === 'red' ? theme.border.color.danger : theme.border.color.medium};
+  border-radius: ${theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
   display: flex;
   justify-content: center;
-  padding-inline: ${themeVar.spacing[1]};
+  padding-inline: ${theme.spacing[1]};
   height: 24px;
   width: 24px;
   box-sizing: border-box;

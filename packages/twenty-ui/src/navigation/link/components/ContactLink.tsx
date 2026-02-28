@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import * as React from 'react';
 
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledClickableLink = styled.a<{
   maxWidth?: number;
@@ -9,7 +9,7 @@ const StyledClickableLink = styled.a<{
   color: inherit;
   overflow: hidden;
   text-decoration: underline;
-  text-decoration-color: ${themeVar.border.color.strong};
+  text-decoration-color: ${theme.border.color.strong};
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
@@ -17,7 +17,7 @@ const StyledClickableLink = styled.a<{
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
 
   &:hover {
-    text-decoration-color: ${themeVar.font.color.primary};
+    text-decoration-color: ${theme.font.color.primary};
   }
 `;
 

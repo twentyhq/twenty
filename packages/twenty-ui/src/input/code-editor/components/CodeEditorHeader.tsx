@@ -1,25 +1,25 @@
 import { styled } from '@linaria/react';
 
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledEditorHeader = styled.div`
   align-items: center;
-  background-color: ${themeVar.background.transparent.lighter};
-  color: ${themeVar.font.color.tertiary};
-  font-weight: ${themeVar.font.weight.medium};
+  background-color: ${theme.background.transparent.lighter};
+  color: ${theme.font.color.tertiary};
+  font-weight: ${theme.font.weight.medium};
   display: flex;
-  height: ${themeVar.spacing[10]};
-  padding: 0 ${themeVar.spacing[2]};
-  border: 1px solid ${themeVar.border.color.medium};
-  border-top-left-radius: ${themeVar.border.radius.sm};
-  border-top-right-radius: ${themeVar.border.radius.sm};
+  height: ${theme.spacing[10]};
+  padding: 0 ${theme.spacing[2]};
+  border: 1px solid ${theme.border.color.medium};
+  border-top-left-radius: ${theme.border.radius.sm};
+  border-top-right-radius: ${theme.border.radius.sm};
   justify-content: space-between;
 `;
 
 const StyledElementContainer = styled.div`
   align-content: flex-end;
   display: flex;
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
 `;
 
 export type CoreEditorHeaderProps = {

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { type ThemeColor, ThemeContext, themeVar } from '@ui/theme';
+import { type ThemeColor, ThemeContext, theme } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledTag = styled.h3<{
@@ -18,32 +18,32 @@ const StyledTag = styled.h3<{
     if (color === 'transparent') {
       return 'transparent';
     } else {
-      return `var(--t-tag-background-${color}, ${themeVar.tag.background.gray})`;
+      return `var(--t-tag-background-${color}, ${theme.tag.background.gray})`;
     }
   }};
-  border-radius: ${themeVar.border.radius.sm};
+  border-radius: ${theme.border.radius.sm};
   color: ${({ color }) =>
     color === 'transparent'
-      ? themeVar.font.color.secondary
+      ? theme.font.color.secondary
       : `var(--t-tag-text-${color})`};
   display: inline-flex;
-  font-size: ${themeVar.font.size.md};
+  font-size: ${theme.font.size.md};
   font-style: normal;
   font-weight: ${({ weight }) =>
     weight === 'regular'
-      ? themeVar.font.weight.regular
-      : themeVar.font.weight.medium};
-  height: ${themeVar.spacing[5]};
+      ? theme.font.weight.regular
+      : theme.font.weight.medium};
+  height: ${theme.spacing[5]};
   margin: 0;
   overflow: hidden;
   padding: ${({ preventPadding }) =>
-    preventPadding ? '0' : `0 ${themeVar.spacing[2]}`};
+    preventPadding ? '0' : `0 ${theme.spacing[2]}`};
   border: ${({ variant }) =>
     variant === 'outline' || variant === 'border'
-      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${themeVar.border.color.strong}`
+      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
       : 'none'};
 
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
 
   min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;

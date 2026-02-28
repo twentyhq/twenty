@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
@@ -30,53 +30,51 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) =>
-    applyBlur ? themeVar.blur.medium : 'none'};
+    applyBlur ? theme.blur.medium : 'none'};
   background: ${({ isActive }) =>
-    isActive
-      ? themeVar.background.transparent.medium
-      : themeVar.background.primary};
+    isActive ? theme.background.transparent.medium : theme.background.primary};
   border: ${({ focus }) =>
     focus
-      ? `1px solid ${themeVar.color.blue}`
-      : `1px solid ${themeVar.border.color.strong}`};
+      ? `1px solid ${theme.color.blue}`
+      : `1px solid ${theme.border.color.strong}`};
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${themeVar.border.radius.sm} 0px 0px ${themeVar.border.radius.sm}`;
+        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
       case 'right':
-        return `0px ${themeVar.border.radius.sm} ${themeVar.border.radius.sm} 0px`;
+        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return themeVar.border.radius.sm;
+        return theme.border.radius.sm;
     }
     return '';
   }};
   box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? themeVar.boxShadow.light
+      ? theme.boxShadow.light
       : focus
-        ? `0 0 0 3px ${themeVar.color.blue3}`
+        ? `0 0 0 3px ${theme.color.blue3}`
         : 'none'};
   box-sizing: border-box;
   color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? themeVar.color.blue
-        : themeVar.font.color.tertiary
-      : themeVar.font.color.extraLight;
+        ? theme.color.blue
+        : theme.font.color.tertiary
+      : theme.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${themeVar.font.family};
-  font-weight: ${themeVar.font.weight.regular};
-  gap: ${themeVar.spacing[1]};
+  font-family: ${theme.font.family};
+  font-weight: ${theme.font.weight.regular};
+  gap: ${theme.spacing[1]};
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background ${themeVar.animation.duration.instant}s ease;
+  transition: background ${theme.animation.duration.instant}s ease;
   white-space: nowrap;
 
   height: ${({ position, size }) =>
@@ -86,12 +84,12 @@ const StyledButton = styled.button<
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.lighter : 'transparent'};
+      !disabled ? theme.background.transparent.lighter : 'transparent'};
   }
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.medium : 'transparent'};
+      !disabled ? theme.background.transparent.medium : 'transparent'};
   }
 
   &:focus {

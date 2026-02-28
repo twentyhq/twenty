@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { type RadioProps } from './Radio';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;
@@ -25,7 +25,7 @@ export const RadioGroup = ({
       {React.Children.map(children, (child) => {
         if (React.isValidElement<RadioProps>(child)) {
           return React.cloneElement(child, {
-            style: { marginBottom: themeVar.spacing[2] },
+            style: { marginBottom: theme.spacing[2] },
             checked: child.props.value === value,
             onChange: handleChange,
           });

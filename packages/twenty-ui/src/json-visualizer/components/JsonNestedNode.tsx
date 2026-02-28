@@ -7,7 +7,7 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ANIMATION, themeVar } from '@ui/theme';
+import { ANIMATION, theme } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,16 +21,14 @@ const StyledContainer = styled.li`
 const StyledLabelContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
 `;
 
 const StyledElementsCount = styled.span<{
   variant?: 'red';
 }>`
   color: ${({ variant }) =>
-    variant === 'red'
-      ? themeVar.font.color.danger
-      : themeVar.font.color.tertiary};
+    variant === 'red' ? theme.font.color.danger : theme.font.color.tertiary};
 `;
 
 const StyledJsonListBase = styled.ul<{
@@ -39,12 +37,12 @@ const StyledJsonListBase = styled.ul<{
   margin: 0;
   padding: 0;
   display: grid;
-  row-gap: ${themeVar.spacing[2]};
+  row-gap: ${theme.spacing[2]};
   ${({ depth }) =>
     depth > 0
-      ? `padding-left: ${themeVar.spacing[8]};
+      ? `padding-left: ${theme.spacing[8]};
          > :first-of-type {
-           margin-top: ${themeVar.spacing[2]};
+           margin-top: ${theme.spacing[2]};
          }`
       : ''}
 `;

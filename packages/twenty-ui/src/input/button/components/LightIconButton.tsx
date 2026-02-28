@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
@@ -27,24 +27,24 @@ const StyledButton = styled.button<
   border: none;
 
   border: ${({ disabled, focus }) =>
-    !disabled && focus ? `1px solid ${themeVar.color.blue}` : 'none'};
-  border-radius: ${themeVar.border.radius.sm};
+    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
+  border-radius: ${theme.border.radius.sm};
   box-shadow: ${({ disabled, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${themeVar.color.blue3}` : 'none'};
+    !disabled && focus ? `0 0 0 3px ${theme.color.blue3}` : 'none'};
   color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.secondary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.secondary
+            : theme.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.tertiary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.tertiary
+            : theme.font.color.extraLight;
     }
     return '';
   }};
@@ -52,24 +52,24 @@ const StyledButton = styled.button<
   display: flex;
   flex-direction: row;
 
-  font-family: ${themeVar.font.family};
-  font-weight: ${themeVar.font.weight.regular};
-  gap: ${themeVar.spacing[1]};
+  font-family: ${theme.font.family};
+  font-weight: ${theme.font.weight.regular};
+  gap: ${theme.spacing[1]};
   height: ${({ size }) =>
-    size === 'small' ? themeVar.spacing[6] : themeVar.spacing[8]};
+    size === 'small' ? theme.spacing[6] : theme.spacing[8]};
   justify-content: center;
-  padding: ${themeVar.spacing[1]};
+  padding: ${theme.spacing[1]};
   transition: background 0.1s ease;
 
   white-space: nowrap;
   width: ${({ size }) =>
-    size === 'small' ? themeVar.spacing[6] : themeVar.spacing[8]};
+    size === 'small' ? theme.spacing[6] : theme.spacing[8]};
   min-width: ${({ size }) =>
-    size === 'small' ? themeVar.spacing[6] : themeVar.spacing[8]};
+    size === 'small' ? theme.spacing[6] : theme.spacing[8]};
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.light : 'transparent'};
+      !disabled ? theme.background.transparent.light : 'transparent'};
   }
 
   &:focus {
@@ -78,7 +78,7 @@ const StyledButton = styled.button<
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.medium : 'transparent'};
+      !disabled ? theme.background.transparent.medium : 'transparent'};
   }
 `;
 

@@ -7,15 +7,15 @@ import {
   type FloatingIconButtonPosition,
   type FloatingIconButtonProps,
 } from './FloatingIconButton';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledFloatingIconButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
-  background-color: ${themeVar.background.primary};
-  border-radius: ${themeVar.border.radius.sm};
+  background-color: ${theme.background.primary};
+  border-radius: ${theme.border.radius.sm};
   box-shadow:
-    0px 2px 4px 0px ${themeVar.background.transparent.light},
-    0px 0px 4px 0px ${themeVar.background.transparent.medium};
+    0px 2px 4px 0px ${theme.background.transparent.light},
+    0px 0px 4px 0px ${theme.background.transparent.medium};
   display: inline-flex;
   gap: 2px;
   padding: 2px;

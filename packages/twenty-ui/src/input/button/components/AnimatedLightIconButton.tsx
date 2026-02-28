@@ -4,7 +4,7 @@ import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { motion, type MotionProps } from 'framer-motion';
 import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
@@ -30,24 +30,24 @@ const StyledButton = styled.button<
   border: none;
 
   border: ${({ disabled, focus }) =>
-    !disabled && focus ? `1px solid ${themeVar.color.blue}` : 'none'};
-  border-radius: ${themeVar.border.radius.sm};
+    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
+  border-radius: ${theme.border.radius.sm};
   box-shadow: ${({ disabled, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${themeVar.color.blue3}` : 'none'};
+    !disabled && focus ? `0 0 0 3px ${theme.color.blue3}` : 'none'};
   color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.secondary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.secondary
+            : theme.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.tertiary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.tertiary
+            : theme.font.color.extraLight;
     }
     return '';
   }};
@@ -55,12 +55,12 @@ const StyledButton = styled.button<
   display: flex;
   flex-direction: row;
 
-  font-family: ${themeVar.font.family};
-  font-weight: ${themeVar.font.weight.regular};
-  gap: ${themeVar.spacing[1]};
+  font-family: ${theme.font.family};
+  font-weight: ${theme.font.weight.regular};
+  gap: ${theme.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
-  padding: ${themeVar.spacing[1]};
+  padding: ${theme.spacing[1]};
   transition: background 0.1s ease;
 
   white-space: nowrap;
@@ -69,7 +69,7 @@ const StyledButton = styled.button<
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.light : 'transparent'};
+      !disabled ? theme.background.transparent.light : 'transparent'};
   }
 
   &:focus {
@@ -78,7 +78,7 @@ const StyledButton = styled.button<
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.medium : 'transparent'};
+      !disabled ? theme.background.transparent.medium : 'transparent'};
   }
 `;
 

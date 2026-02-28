@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import React, { useContext } from 'react';
 
 export type InsideButtonProps = {
@@ -14,8 +14,8 @@ const StyledButton = styled.button`
   align-items: center;
   border: none;
   background-color: transparent;
-  border-radius: ${themeVar.border.radius.xs};
-  color: ${themeVar.font.color.tertiary};
+  border-radius: ${theme.border.radius.xs};
+  color: ${theme.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
@@ -27,7 +27,7 @@ const StyledButton = styled.button`
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: ${themeVar.background.transparent.light};
+    background-color: ${theme.background.transparent.light};
   }
 `;
 

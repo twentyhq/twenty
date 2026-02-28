@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ColorSample, type ColorSampleProps } from '@ui/display';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import {
   LightIconButton,
   type LightIconButtonProps,
@@ -16,11 +16,11 @@ const StyledButtonWrapper = styled.div<{
 }>`
   button {
     background-color: ${({ isSelected }) =>
-      isSelected ? themeVar.background.transparent.medium : 'inherit'};
+      isSelected ? theme.background.transparent.medium : 'inherit'};
 
     &:hover {
       background-color: ${({ isSelected }) =>
-        isSelected ? themeVar.background.transparent.medium : 'inherit'};
+        isSelected ? theme.background.transparent.medium : 'inherit'};
     }
   }
 `;

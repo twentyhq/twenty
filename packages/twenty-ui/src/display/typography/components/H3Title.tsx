@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type H3TitleProps = {
   title: ReactNode;
@@ -15,18 +15,18 @@ const StyledContainer = styled.div`
 `;
 
 const StyledH3Title = styled.h3`
-  color: ${themeVar.font.color.primary};
-  font-size: ${themeVar.font.size.lg};
-  font-weight: ${themeVar.font.weight.semiBold};
+  color: ${theme.font.color.primary};
+  font-size: ${theme.font.size.lg};
+  font-weight: ${theme.font.weight.semiBold};
   margin: 0;
 `;
 
 const StyledDescription = styled.h4`
-  color: ${themeVar.font.color.tertiary};
-  font-size: ${themeVar.font.size.md};
-  font-weight: ${themeVar.font.weight.regular};
+  color: ${theme.font.color.tertiary};
+  font-size: ${theme.font.size.md};
+  font-weight: ${theme.font.weight.regular};
   margin: 0;
-  margin-top: ${themeVar.spacing[2]};
+  margin-top: ${theme.spacing[2]};
 `;
 
 export const H3Title = ({ title, description, className }: H3TitleProps) => {

@@ -7,7 +7,7 @@ import {
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
@@ -20,40 +20,40 @@ const StyledMenuPicker = styled.button<{
   outline: inherit;
   color: inherit;
   align-items: center;
-  border: 1px solid ${themeVar.border.color.medium};
-  border-radius: ${themeVar.border.radius.sm};
+  border: 1px solid ${theme.border.color.medium};
+  border-radius: ${theme.border.radius.sm};
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   justify-content: center;
-  min-height: ${themeVar.spacing[8]};
-  padding: ${themeVar.spacing[1.5]} ${themeVar.spacing[1]};
-  transition: all ${themeVar.animation.duration.instant}s ease;
+  min-height: ${theme.spacing[8]};
+  padding: ${theme.spacing[1.5]} ${theme.spacing[1]};
+  transition: all ${theme.animation.duration.instant}s ease;
   user-select: none;
   width: 100%;
 
   background: ${({ disabled }) =>
-    disabled ? themeVar.background.secondary : 'transparent'};
+    disabled ? theme.background.secondary : 'transparent'};
 
   border-color: ${({ selected, disabled }) => {
     if (disabled) {
-      return themeVar.border.color.medium;
+      return theme.border.color.medium;
     }
     if (selected) {
-      return themeVar.color.blue;
+      return theme.color.blue;
     }
-    return themeVar.border.color.medium;
+    return theme.border.color.medium;
   }};
 
   color: ${({ selected, disabled }) => {
     if (disabled) {
-      return themeVar.font.color.extraLight;
+      return theme.font.color.extraLight;
     }
     if (selected) {
-      return themeVar.color.blue;
+      return theme.color.blue;
     }
-    return themeVar.font.color.tertiary;
+    return theme.font.color.tertiary;
   }};
 
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -61,12 +61,12 @@ const StyledMenuPicker = styled.button<{
   &:hover {
     background: ${({ selected, disabled }) => {
       if (disabled) {
-        return themeVar.background.secondary;
+        return theme.background.secondary;
       }
       if (selected) {
-        return themeVar.background.transparent.primary;
+        return theme.background.transparent.primary;
       }
-      return themeVar.background.transparent.light;
+      return theme.background.transparent.light;
     }};
   }
 `;
@@ -75,9 +75,9 @@ const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  height: ${themeVar.icon.size.md}px;
+  height: ${theme.icon.size.md}px;
   justify-content: center;
-  width: ${themeVar.icon.size.md}px;
+  width: ${theme.icon.size.md}px;
 `;
 
 const StyledLabel = styled.div<{
@@ -86,16 +86,16 @@ const StyledLabel = styled.div<{
 }>`
   color: ${({ selected, disabled }) => {
     if (disabled) {
-      return themeVar.font.color.extraLight;
+      return theme.font.color.extraLight;
     }
     if (selected) {
-      return themeVar.color.blue;
+      return theme.color.blue;
     }
-    return themeVar.font.color.tertiary;
+    return theme.font.color.tertiary;
   }};
-  font-family: ${themeVar.font.family};
-  font-size: ${themeVar.font.size.xs};
-  font-weight: ${themeVar.font.weight.semiBold};
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.size.xs};
+  font-weight: ${theme.font.weight.semiBold};
   max-width: 100%;
   overflow: hidden;
   text-align: center;

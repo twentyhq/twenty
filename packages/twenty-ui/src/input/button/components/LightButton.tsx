@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { type MouseEvent, useContext } from 'react';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';
@@ -22,26 +22,25 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   background: transparent;
-  border: ${({ focus }) =>
-    focus ? `1px solid ${themeVar.color.blue}` : 'none'};
+  border: ${({ focus }) => (focus ? `1px solid ${theme.color.blue}` : 'none')};
 
-  border-radius: ${themeVar.border.radius.sm};
+  border-radius: ${theme.border.radius.sm};
   box-shadow: ${({ focus }) =>
-    focus ? `0 0 0 3px  ${themeVar.color.blue3}` : 'none'};
+    focus ? `0 0 0 3px  ${theme.color.blue3}` : 'none'};
   color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.secondary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.secondary
+            : theme.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? themeVar.color.blue
+          ? theme.color.blue
           : !disabled
-            ? themeVar.font.color.tertiary
-            : themeVar.font.color.extraLight;
+            ? theme.font.color.tertiary
+            : theme.font.color.extraLight;
     }
     return '';
   }};
@@ -49,11 +48,11 @@ const StyledButton = styled.button<
   display: flex;
   flex-direction: row;
 
-  font-family: ${themeVar.font.family};
-  font-weight: ${themeVar.font.weight.regular};
-  gap: ${themeVar.spacing[1]};
+  font-family: ${theme.font.family};
+  font-weight: ${theme.font.weight.regular};
+  gap: ${theme.spacing[1]};
   height: 24px;
-  padding: 0 ${themeVar.spacing[2]};
+  padding: 0 ${theme.spacing[2]};
 
   transition: background 0.1s ease;
 
@@ -61,7 +60,7 @@ const StyledButton = styled.button<
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.light : 'transparent'};
+      !disabled ? theme.background.transparent.light : 'transparent'};
   }
 
   &:focus {
@@ -70,7 +69,7 @@ const StyledButton = styled.button<
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? themeVar.background.transparent.medium : 'transparent'};
+      !disabled ? theme.background.transparent.medium : 'transparent'};
   }
 `;
 

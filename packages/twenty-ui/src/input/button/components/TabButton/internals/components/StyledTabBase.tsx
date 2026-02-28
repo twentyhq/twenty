@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import React from 'react';
 
 const StyledTabButtonInner = styled.button<{
@@ -11,16 +11,16 @@ const StyledTabButtonInner = styled.button<{
   align-items: center;
   color: ${({ active, disabled }) =>
     active
-      ? themeVar.font.color.primary
+      ? theme.font.color.primary
       : disabled
-        ? themeVar.font.color.light
-        : themeVar.font.color.secondary};
+        ? theme.font.color.light
+        : theme.font.color.secondary};
   cursor: pointer;
   background-color: transparent;
   border: none;
   font-family: inherit;
   display: flex;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   justify-content: center;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
@@ -33,7 +33,7 @@ const StyledTabButtonInner = styled.button<{
     right: 0;
     height: 1px;
     background-color: ${({ active }) =>
-      active ? themeVar.border.color.inverted : 'transparent'};
+      active ? theme.border.color.inverted : 'transparent'};
     z-index: 1;
   }
 `;
@@ -64,14 +64,14 @@ const StyledTabContainerInner = styled.div<{
   align-items: center;
   color: ${({ active, disabled }) =>
     active
-      ? themeVar.font.color.primary
+      ? theme.font.color.primary
       : disabled
-        ? themeVar.font.color.light
-        : themeVar.font.color.secondary};
+        ? theme.font.color.light
+        : theme.font.color.secondary};
   cursor: pointer;
   background-color: transparent;
   display: flex;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   justify-content: center;
   text-decoration: none;
   position: relative;
@@ -84,7 +84,7 @@ const StyledTabContainerInner = styled.div<{
     right: 0;
     height: 1px;
     background-color: ${({ active }) =>
-      active ? themeVar.border.color.inverted : 'transparent'};
+      active ? theme.border.color.inverted : 'transparent'};
     z-index: 1;
   }
 `;
@@ -110,20 +110,20 @@ const StyledTabHoverInner = styled.span<{
   contentSize?: 'sm' | 'md';
 }>`
   display: flex;
-  gap: ${themeVar.spacing[1]};
+  gap: ${theme.spacing[1]};
   padding: ${({ contentSize }) =>
     contentSize === 'sm'
-      ? `${themeVar.spacing[1]} ${themeVar.spacing[2]}`
-      : `${themeVar.spacing[2]} ${themeVar.spacing[2]}`};
-  font-weight: ${themeVar.font.weight.medium};
+      ? `${theme.spacing[1]} ${theme.spacing[2]}`
+      : `${theme.spacing[2]} ${theme.spacing[2]}`};
+  font-weight: ${theme.font.weight.medium};
   width: 100%;
   white-space: nowrap;
-  border-radius: ${themeVar.border.radius.sm};
+  border-radius: ${theme.border.radius.sm};
   &:hover {
-    background: ${themeVar.background.tertiary};
+    background: ${theme.background.tertiary};
   }
   &:active {
-    background: ${themeVar.background.quaternary};
+    background: ${theme.background.quaternary};
   }
 `;
 

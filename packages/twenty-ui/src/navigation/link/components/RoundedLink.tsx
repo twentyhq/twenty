@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import { type MouseEvent } from 'react';
 
 type RoundedLinkProps = {
@@ -12,31 +12,31 @@ type RoundedLinkProps = {
 
 const StyledLink = styled.a`
   align-items: center;
-  background-color: ${themeVar.background.transparent.lighter};
-  border: 1px solid ${themeVar.border.color.strong};
+  background-color: ${theme.background.transparent.lighter};
+  border: 1px solid ${theme.border.color.strong};
   border-radius: 50px;
-  color: ${themeVar.font.color.primary};
+  color: ${theme.font.color.primary};
   cursor: pointer;
   display: inline-flex;
-  font-weight: ${themeVar.font.size.md};
-  gap: ${themeVar.spacing[1]};
+  font-weight: ${theme.font.size.md};
+  gap: ${theme.spacing[1]};
   height: 10px;
   justify-content: center;
-  max-width: calc(100% - ${themeVar.spacingMultiplicator} * 2px);
+  max-width: calc(100% - ${theme.spacingMultiplicator} * 2px);
   min-width: fit-content;
   overflow: hidden;
-  padding: ${themeVar.spacing[1]} ${themeVar.spacing[2]};
+  padding: ${theme.spacing[1]} ${theme.spacing[2]};
   text-decoration: none;
   text-overflow: ellipsis;
   user-select: none;
   white-space: nowrap;
 
   &:hover {
-    background-color: ${themeVar.background.transparent.light};
+    background-color: ${theme.background.transparent.light};
   }
 
   &:active {
-    background-color: ${themeVar.background.transparent.medium};
+    background-color: ${theme.background.transparent.medium};
   }
 `;
 

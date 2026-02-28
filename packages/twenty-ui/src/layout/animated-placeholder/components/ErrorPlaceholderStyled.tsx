@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import { type ReactNode } from 'react';
 
 const StyledErrorContainer = styled.div`
@@ -8,7 +8,7 @@ const StyledErrorContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${themeVar.spacing[8]};
+  gap: ${theme.spacing[8]};
   justify-content: center;
   text-align: center;
 `;
@@ -31,7 +31,7 @@ const StyledErrorTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${themeVar.spacing[4]};
+  gap: ${theme.spacing[4]};
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -52,10 +52,10 @@ export const AnimatedPlaceholderErrorTextContainer = ({
 };
 
 const StyledErrorTitle = styled.div`
-  color: ${themeVar.font.color.primary};
-  font-size: ${themeVar.font.size.xl};
-  font-weight: ${themeVar.font.weight.semiBold};
-  line-height: ${themeVar.text.lineHeight.lg};
+  color: ${theme.font.color.primary};
+  font-size: ${theme.font.size.xl};
+  font-weight: ${theme.font.weight.semiBold};
+  line-height: ${theme.text.lineHeight.lg};
 `;
 
 export const AnimatedPlaceholderErrorTitle = ({
@@ -69,10 +69,10 @@ export const AnimatedPlaceholderErrorTitle = ({
 };
 
 const StyledErrorSubTitle = styled.div`
-  color: ${themeVar.font.color.tertiary};
-  font-size: ${themeVar.font.size.xs};
-  font-weight: ${themeVar.font.weight.regular};
-  line-height: ${themeVar.text.lineHeight.md};
+  color: ${theme.font.color.tertiary};
+  font-size: ${theme.font.size.xs};
+  font-weight: ${theme.font.weight.regular};
+  line-height: ${theme.text.lineHeight.md};
   max-height: 2.4em;
   overflow: hidden;
 `;

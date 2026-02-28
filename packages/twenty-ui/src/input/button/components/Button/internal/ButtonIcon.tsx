@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { useContext } from 'react';
 
 const StyledIcon = styled.div<{
@@ -10,7 +10,7 @@ const StyledIcon = styled.div<{
 }>`
   align-items: center;
   display: flex;
-  height: calc(100% - ${themeVar.spacing[4]});
+  height: calc(100% - ${theme.spacing[4]});
   color: var(--tw-button-color);
 
   opacity: ${({ isLoading }) => (isLoading ? 0 : 1)};
@@ -27,13 +27,13 @@ const StyledIconWrapper = styled.div`
 `;
 
 const StyledLoader = styled.div`
-  left: ${themeVar.spacing[2]};
+  left: ${theme.spacing[2]};
   opacity: 1;
   position: absolute;
 
   transition: opacity ${baseTransitionTiming / 2}ms ease;
   transition-delay: ${baseTransitionTiming / 2}ms;
-  width: ${themeVar.spacing[6]};
+  width: ${theme.spacing[6]};
 `;
 
 export const ButtonIcon = ({

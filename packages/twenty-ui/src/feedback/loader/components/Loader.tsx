@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ThemeColor, themeVar } from '@ui/theme';
+import { type ThemeColor, theme } from '@ui/theme';
 import { motion } from 'framer-motion';
 
 const StyledLoaderContainer = styled.div<{
@@ -9,15 +9,15 @@ const StyledLoaderContainer = styled.div<{
   justify-content: center;
   align-items: center;
   display: flex;
-  gap: ${themeVar.spacing[2]};
-  width: ${themeVar.spacing[6]};
-  height: ${themeVar.spacing[3]};
-  border-radius: ${themeVar.border.radius.pill};
+  gap: ${theme.spacing[2]};
+  width: ${theme.spacing[6]};
+  height: ${theme.spacing[3]};
+  border-radius: ${theme.border.radius.pill};
   border: 1px solid
     ${({ color }) =>
       color
-        ? themeVar.tag.text[color]
-        : `var(--tw-button-color, ${themeVar.font.color.tertiary})`};
+        ? theme.tag.text[color]
+        : `var(--tw-button-color, ${theme.font.color.tertiary})`};
   overflow: hidden;
 `;
 
@@ -26,9 +26,9 @@ const StyledLoaderBase = styled.div<{
 }>`
   background-color: ${({ color }) =>
     color
-      ? themeVar.tag.text[color]
-      : `var(--tw-button-color, ${themeVar.font.color.tertiary})`};
-  border-radius: ${themeVar.border.radius.pill};
+      ? theme.tag.text[color]
+      : `var(--tw-button-color, ${theme.font.color.tertiary})`};
+  border-radius: ${theme.border.radius.pill};
   height: 8px;
   width: 8px;
 `;

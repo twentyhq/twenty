@@ -2,22 +2,22 @@ import { useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;
   background-color: ${({ isActive }) =>
-    isActive ? themeVar.background.transparent.light : 'none'};
-  border-radius: ${themeVar.spacing[1]};
+    isActive ? theme.background.transparent.light : 'none'};
+  border-radius: ${theme.spacing[1]};
   cursor: pointer;
   display: flex;
-  height: ${themeVar.spacing[10]};
+  height: ${theme.spacing[10]};
   justify-content: center;
-  transition: background-color ${themeVar.animation.duration.fast}s ease;
-  width: ${themeVar.spacing[10]};
+  transition: background-color ${theme.animation.duration.fast}s ease;
+  width: ${theme.spacing[10]};
 
   &:hover {
-    background-color: ${themeVar.background.transparent.light};
+    background-color: ${theme.background.transparent.light};
   }
 `;
 

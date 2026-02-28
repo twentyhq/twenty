@@ -4,14 +4,14 @@ import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
 import { MenuItemLeftContent } from '@ui/navigation/menu/menu-item/internals/components/MenuItemLeftContent';
-import { type ThemeColor, themeVar } from '@ui/theme';
+import { type ThemeColor, theme } from '@ui/theme';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${themeVar.spacing[2]};
+  gap: ${theme.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;

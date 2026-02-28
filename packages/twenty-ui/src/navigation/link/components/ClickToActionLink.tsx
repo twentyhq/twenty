@@ -1,20 +1,20 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledButtonLink = styled.a`
   align-items: center;
-  color: ${themeVar.font.color.light};
+  color: ${theme.font.color.light};
   display: flex;
-  font-size: ${themeVar.font.size.sm};
-  font-weight: ${themeVar.font.weight.medium};
-  gap: ${themeVar.spacing[1]};
-  padding: 0 ${themeVar.spacing[1]};
+  font-size: ${theme.font.size.sm};
+  font-weight: ${theme.font.weight.medium};
+  gap: ${theme.spacing[1]};
+  padding: 0 ${theme.spacing[1]};
   text-decoration: none;
 
   :hover {
-    color: ${themeVar.font.color.tertiary};
+    color: ${theme.font.color.tertiary};
     cursor: pointer;
   }
 `;

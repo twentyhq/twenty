@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import * as React from 'react';
 
 export enum CheckboxVariant {
@@ -66,11 +66,11 @@ const StyledCheckboxContainer = styled.div<InputProps>`
     if (!(indeterminate || isChecked)) return 'transparent';
     return disabled === true
       ? accent === CheckboxAccent.Blue
-        ? themeVar.color.blue7
-        : themeVar.color.orange7
+        ? theme.color.blue7
+        : theme.color.orange7
       : accent === CheckboxAccent.Blue
-        ? themeVar.color.blue
-        : themeVar.color.orange;
+        ? theme.color.blue
+        : theme.color.orange;
   }};
   --checkbox-border-color: ${({
     indeterminate,
@@ -83,45 +83,45 @@ const StyledCheckboxContainer = styled.div<InputProps>`
       case indeterminate || isChecked:
         return disabled === true
           ? accent === CheckboxAccent.Blue
-            ? themeVar.color.blue7
-            : themeVar.color.orange7
+            ? theme.color.blue7
+            : theme.color.orange7
           : accent === CheckboxAccent.Blue
-            ? themeVar.color.blue
-            : themeVar.color.orange;
+            ? theme.color.blue
+            : theme.color.orange;
       case disabled === true:
-        return themeVar.border.color.strong;
+        return theme.border.color.strong;
       case variant === CheckboxVariant.Primary:
-        return themeVar.border.color.inverted;
+        return theme.border.color.inverted;
       case variant === CheckboxVariant.Tertiary:
-        return themeVar.border.color.medium;
+        return theme.border.color.medium;
       default:
-        return themeVar.border.color.secondaryInverted;
+        return theme.border.color.secondaryInverted;
     }
   }};
   --checkbox-border-radius: ${({ shape }) =>
     shape === CheckboxShape.Rounded
-      ? themeVar.border.radius.rounded
-      : themeVar.border.radius.sm};
+      ? theme.border.radius.rounded
+      : theme.border.radius.sm};
   --checkbox-border-width: ${({ variant, checkboxSize }) =>
     checkboxSize === CheckboxSize.Large || variant === CheckboxVariant.Tertiary
       ? '1.43px'
       : '1px'};
   --checkbox-cursor: ${({ disabled }) =>
     disabled === true ? 'not-allowed' : 'pointer'};
-  --checkbox-stroke: ${themeVar.font.color.inverted};
+  --checkbox-stroke: ${theme.font.color.inverted};
 
   align-items: center;
   border-radius: ${({ shape }) =>
     shape === CheckboxShape.Rounded
-      ? themeVar.border.radius.rounded
-      : themeVar.border.radius.md};
+      ? theme.border.radius.rounded
+      : theme.border.radius.md};
   cursor: var(--checkbox-cursor);
   display: flex;
   padding: ${({ checkboxSize, hoverable }) => {
     if (hoverable === true) {
       return checkboxSize === CheckboxSize.Large
-        ? themeVar.spacing[1.5]
-        : themeVar.spacing[1.25];
+        ? theme.spacing[1.5]
+        : theme.spacing[1.25];
     } else {
       return '0';
     }
@@ -139,10 +139,10 @@ const StyledCheckboxContainer = styled.div<InputProps>`
       if (hoverable !== true || disabled === true) return 'transparent';
       if (indeterminate === true || isChecked === true) {
         return accent === CheckboxAccent.Blue
-          ? themeVar.background.transparent.blue
-          : themeVar.background.transparent.orange;
+          ? theme.background.transparent.blue
+          : theme.background.transparent.orange;
       }
-      return themeVar.background.transparent.light;
+      return theme.background.transparent.light;
     }};
   }
 

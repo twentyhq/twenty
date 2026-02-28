@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 type H1TitleProps = {
   title: ReactNode;
@@ -17,12 +17,12 @@ export enum H1TitleFontColor {
 const StyledTitle = styled.h2<{
   fontColor: H1TitleFontColor;
 }>`
-  color: ${({ fontColor }) => themeVar.font.color[fontColor]};
-  font-size: ${themeVar.font.size.lg};
-  font-weight: ${themeVar.font.weight.semiBold};
-  line-height: ${themeVar.text.lineHeight.md};
+  color: ${({ fontColor }) => theme.font.color[fontColor]};
+  font-size: ${theme.font.size.lg};
+  font-weight: ${theme.font.weight.semiBold};
+  line-height: ${theme.text.lineHeight.md};
   margin: 0;
-  margin-bottom: ${themeVar.spacing[4]};
+  margin-bottom: ${theme.spacing[4]};
 `;
 
 export const H1Title = ({

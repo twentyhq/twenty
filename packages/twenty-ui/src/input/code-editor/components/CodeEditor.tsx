@@ -3,7 +3,7 @@ import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
-import { ThemeContext, themeVar } from '@ui/theme';
+import { ThemeContext, theme } from '@ui/theme';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,23 +33,22 @@ const StyledEditorLoader = styled.div<{
   border: ${({ variant }) =>
     variant === 'borderless'
       ? 'none'
-      : `1px solid ${themeVar.border.color.medium}`};
+      : `1px solid ${theme.border.color.medium}`};
   border-top: ${({ variant }) => {
-    if (variant === 'default')
-      return `1px solid ${themeVar.border.color.medium}`;
+    if (variant === 'default') return `1px solid ${theme.border.color.medium}`;
     return 'none';
   }};
   border-radius: ${({ variant }) => {
     switch (variant) {
       case 'default':
-        return themeVar.border.radius.sm;
+        return theme.border.radius.sm;
       case 'with-header':
-        return `0 0 ${themeVar.border.radius.sm} ${themeVar.border.radius.sm}`;
+        return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
       default:
         return '0';
     }
   }};
-  background-color: ${themeVar.background.transparent.lighter};
+  background-color: ${theme.background.transparent.lighter};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -66,10 +65,10 @@ const StyledEditorWrapper = styled.div<{
     outline-width: 0;
 
     background-color: ${({ transparentBackground }) =>
-      !transparentBackground ? themeVar.background.secondary : 'transparent'};
+      !transparentBackground ? theme.background.secondary : 'transparent'};
 
     border-radius: ${({ variant }) =>
-      variant !== 'borderless' ? themeVar.border.radius.sm : '0'};
+      variant !== 'borderless' ? theme.border.radius.sm : '0'};
   }
 
   .overflow-guard {
@@ -79,7 +78,7 @@ const StyledEditorWrapper = styled.div<{
       switch (variant) {
         case 'default':
         case 'with-header':
-          return `1px solid ${themeVar.border.color.medium}`;
+          return `1px solid ${theme.border.color.medium}`;
         default:
           return 'none';
       }
@@ -87,9 +86,9 @@ const StyledEditorWrapper = styled.div<{
     border-radius: ${({ variant }) => {
       switch (variant) {
         case 'default':
-          return themeVar.border.radius.sm;
+          return theme.border.radius.sm;
         case 'with-header':
-          return `0 0 ${themeVar.border.radius.sm} ${themeVar.border.radius.sm}`;
+          return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
         default:
           return '0';
       }
@@ -97,7 +96,7 @@ const StyledEditorWrapper = styled.div<{
     border-top: ${({ variant }) => {
       if (variant === 'with-header') return 'none';
       if (variant === 'default')
-        return `1px solid ${themeVar.border.color.medium}`;
+        return `1px solid ${theme.border.color.medium}`;
       return 'none';
     }};
   }

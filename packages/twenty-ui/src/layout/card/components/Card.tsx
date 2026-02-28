@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import { type ReactNode } from 'react';
 
 const StyledCard = styled.div<{
   fullWidth?: boolean;
   rounded?: boolean;
 }>`
-  border: 1px solid ${themeVar.border.color.medium};
+  border: 1px solid ${theme.border.color.medium};
   border-radius: ${({ rounded }) =>
-    rounded ? themeVar.border.radius.md : themeVar.border.radius.sm};
-  color: ${themeVar.font.color.secondary};
+    rounded ? theme.border.radius.md : theme.border.radius.sm};
+  color: ${theme.font.color.secondary};
   overflow: hidden;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;

@@ -2,11 +2,11 @@ import { styled } from '@linaria/react';
 import React, { type ReactNode } from 'react';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledButtonGroupContainer = styled.div`
-  border-radius: ${themeVar.border.radius.md};
+  border-radius: ${theme.border.radius.md};
   display: flex;
 `;
 

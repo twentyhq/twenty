@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { MAIN_COLOR_NAMES, themeVar, type ThemeColor } from '@ui/theme';
+import { MAIN_COLOR_NAMES, theme, type ThemeColor } from '@ui/theme';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';
 
@@ -14,30 +14,30 @@ const StyledStatus = styled.h3<{
   isLoaderVisible: boolean;
 }>`
   align-items: center;
-  background: ${({ color }) => themeVar.tag.background[color]};
-  border-radius: ${themeVar.border.radius.pill};
-  color: ${({ color }) => themeVar.tag.text[color]};
+  background: ${({ color }) => theme.tag.background[color]};
+  border-radius: ${theme.border.radius.pill};
+  color: ${({ color }) => theme.tag.text[color]};
   display: inline-flex;
-  font-size: ${themeVar.font.size.md};
+  font-size: ${theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ weight }) => themeVar.font.weight[weight]};
-  gap: ${themeVar.spacing[1]};
-  height: ${themeVar.spacing[5]};
+  font-weight: ${({ weight }) => theme.font.weight[weight]};
+  gap: ${theme.spacing[1]};
+  height: ${theme.spacing[5]};
   margin: 0;
   overflow: hidden;
   padding: 0
     ${({ isLoaderVisible }) =>
-      isLoaderVisible ? themeVar.spacing[1] : themeVar.spacing[2]}
-    0 ${themeVar.spacing[2]};
+      isLoaderVisible ? theme.spacing[1] : theme.spacing[2]}
+    0 ${theme.spacing[2]};
 
   &:before {
-    background-color: ${({ color }) => themeVar.tag.text[color]};
-    border-radius: ${themeVar.border.radius.rounded};
+    background-color: ${({ color }) => theme.tag.text[color]};
+    border-radius: ${theme.border.radius.rounded};
     content: '';
     display: block;
     flex-shrink: 0;
-    height: ${themeVar.spacing[1]};
-    width: ${themeVar.spacing[1]};
+    height: ${theme.spacing[1]};
+    width: ${theme.spacing[1]};
   }
 `;
 

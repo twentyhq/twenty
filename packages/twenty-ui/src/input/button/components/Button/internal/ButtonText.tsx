@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { themeVar } from '@ui/theme';
+import { theme } from '@ui/theme';
 
 const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
   right: 0;
   clip-path: ${({ isLoading }) =>
-    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${themeVar.spacing[6]})`};
+    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing[6]})`};
   overflow: hidden;
   position: absolute;
 
@@ -27,14 +27,14 @@ const StyledText = styled.div<{
 }>`
   clip-path: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? ` inset(0 ${!hasIcon ? themeVar.spacing[12] : themeVar.spacing[6]} 0 0)`
+      ? ` inset(0 ${!hasIcon ? theme.spacing[12] : theme.spacing[6]} 0 0)`
       : ' inset(0 0 0 0)'};
 
   overflow: hidden;
 
   transform: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? `translateX(${!hasIcon ? themeVar.spacing[7] : themeVar.spacing[3]})`
+      ? `translateX(${!hasIcon ? theme.spacing[7] : theme.spacing[3]})`
       : 'none'};
 
   transition:
