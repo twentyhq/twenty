@@ -551,13 +551,13 @@ export type WorkflowStepPositionUpdateInput = {
 
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
-  createdAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   name: Scalars['String'];
   status: Scalars['String'];
   steps?: Maybe<Scalars['JSON']>;
   trigger?: Maybe<Scalars['JSON']>;
-  updatedAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   workflowId: Scalars['UUID'];
 };
 
