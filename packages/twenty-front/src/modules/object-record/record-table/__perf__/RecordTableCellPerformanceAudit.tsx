@@ -1,58 +1,49 @@
-import { useEffect, useRef, useState } from 'react';
-import { styled } from '@linaria/react';
-
-// POC: Performance audit comparing minimal cell vs current architecture overhead
-// This component renders a grid of cells using different approaches and measures timings.
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 const ROWS = 50;
 const COLS = 8;
 const TOTAL_CELLS = ROWS * COLS;
 
-const StyledContainer = styled.div`
-  padding: 16px;
-  font-family: sans-serif;
-`;
-
-const StyledResults = styled.div`
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #f5f5f5;
-  border-radius: 4px;
-  font-size: 13px;
-  line-height: 1.6;
-`;
-
-const StyledBenchGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(${COLS}, 150px);
-  gap: 0;
-`;
-
-const StyledMinimalCell = styled.div`
-  height: 32px;
-  border-bottom: 1px solid #eee;
-  border-right: 1px solid #eee;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 13px;
-`;
-
-// Approach 1: Absolute minimal - just a div with text
-const MinimalCell = ({ value }: { value: string }) => (
-  <StyledMinimalCell>{value}</StyledMinimalCell>
-);
-
-// Approach 2: With useState (simulating FieldFocusContextProvider)
-const CellWithUseState = ({ value }: { value: string }) => {
-  const [_isFocused, _setIsFocused] = useState(false);
-  return <StyledMinimalCell>{value}</StyledMinimalCell>;
+const containerStyle: React.CSSProperties = {
+  padding: 16,
+  fontFamily: 'sans-serif',
 };
 
-// Approach 3: With context consumption (simulating real cell)
-import { createContext, useContext } from 'react';
+const resultsStyle: React.CSSProperties = {
+  marginBottom: 16,
+  padding: 12,
+  background: '#f5f5f5',
+  borderRadius: 4,
+  fontSize: 13,
+  lineHeight: 1.6,
+};
+
+const gridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: `repeat(${COLS}, 150px)`,
+  gap: 0,
+};
+
+const cellStyle: React.CSSProperties = {
+  height: 32,
+  borderBottom: '1px solid #eee',
+  borderRight: '1px solid #eee',
+  padding: '0 8px',
+  display: 'flex',
+  alignItems: 'center',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  fontSize: 13,
+};
+
+const MinimalCell = ({ value }: { value: string }) => (
+  <div style={cellStyle}>{value}</div>
+);
+
+const CellWithUseState = ({ value }: { value: string }) => {
+  const [_isFocused, _setIsFocused] = useState(false);
+  return <div style={cellStyle}>{value}</div>;
+};
 
 const FakeRowContext = createContext({
   recordId: '',
@@ -74,10 +65,9 @@ const CellWith3Contexts = ({ value }: { value: string }) => {
   useContext(FakeRowContext);
   useContext(FakeCellContext);
   useContext(FakeFieldContext);
-  return <StyledMinimalCell>{value}</StyledMinimalCell>;
+  return <div style={cellStyle}>{value}</div>;
 };
 
-// Approach 4: With 3 contexts + useState + 2 function creations (simulating hooks)
 const CellWith3ContextsAndHooks = ({ value }: { value: string }) => {
   useContext(FakeRowContext);
   useContext(FakeCellContext);
@@ -93,18 +83,17 @@ const CellWith3ContextsAndHooks = ({ value }: { value: string }) => {
   const handleClick = () => {};
 
   return (
-    <StyledMinimalCell
+    <div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      style={{ cursor: isReadOnly ? 'default' : 'pointer' }}
+      style={{ ...cellStyle, cursor: isReadOnly ? 'default' : 'pointer' }}
     >
       {value}
-    </StyledMinimalCell>
+    </div>
   );
 };
 
-// Approach 5: Deep component nesting (simulating current ~15 component depth)
 const Wrapper1 = ({ children }: { children: React.ReactNode }) => (
   <>{children}</>
 );
@@ -139,7 +128,7 @@ const DeeplyNestedCell = ({ value }: { value: string }) => (
             <Wrapper6>
               <Wrapper7>
                 <Wrapper8>
-                  <StyledMinimalCell>{value}</StyledMinimalCell>
+                  <div style={cellStyle}>{value}</div>
                 </Wrapper8>
               </Wrapper7>
             </Wrapper6>
@@ -150,7 +139,6 @@ const DeeplyNestedCell = ({ value }: { value: string }) => (
   </Wrapper1>
 );
 
-// Approach 6: Deep nesting + contexts + hooks (closest to current architecture)
 const ContextProvider1 = ({ children }: { children: React.ReactNode }) => (
   <FakeRowContext.Provider
     value={{ recordId: 'rec-1', rowIndex: 0, isSelected: false }}
@@ -185,51 +173,47 @@ const FullSimulationCell = ({ value }: { value: string }) => (
   </ContextProvider1>
 );
 
-// Approach 7: Multiple styled components per cell (simulating StyledCell + StyledBaseContainer + StyledOuterContainer + StyledInnerContainer)
-const StyledCellOuter = styled.div`
-  border-bottom: 1px solid #eee;
-  border-right: 1px solid #eee;
-  padding: 0;
-  text-align: left;
-  background: white;
-`;
-
-const StyledCellBase = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  height: 32px;
-  user-select: none;
-  position: relative;
-`;
-
-const StyledCellDisplayOuter = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  padding-left: 8px;
-  width: 100%;
-`;
-
-const StyledCellDisplayInner = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-  white-space: nowrap;
-`;
+const cellOuterStyle: React.CSSProperties = {
+  borderBottom: '1px solid #eee',
+  borderRight: '1px solid #eee',
+  padding: 0,
+  textAlign: 'left',
+  background: 'white',
+};
+const cellBaseStyle: React.CSSProperties = {
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  cursor: 'pointer',
+  display: 'flex',
+  height: 32,
+  userSelect: 'none',
+  position: 'relative',
+};
+const cellDisplayOuterStyle: React.CSSProperties = {
+  alignItems: 'center',
+  display: 'flex',
+  height: '100%',
+  overflow: 'hidden',
+  paddingLeft: 8,
+  width: '100%',
+};
+const cellDisplayInnerStyle: React.CSSProperties = {
+  alignItems: 'center',
+  display: 'flex',
+  height: '100%',
+  overflow: 'hidden',
+  width: '100%',
+  whiteSpace: 'nowrap',
+};
 
 const MultiStyledCell = ({ value }: { value: string }) => (
-  <StyledCellOuter>
-    <StyledCellBase>
-      <StyledCellDisplayOuter>
-        <StyledCellDisplayInner>{value}</StyledCellDisplayInner>
-      </StyledCellDisplayOuter>
-    </StyledCellBase>
-  </StyledCellOuter>
+  <div style={cellOuterStyle}>
+    <div style={cellBaseStyle}>
+      <div style={cellDisplayOuterStyle}>
+        <div style={cellDisplayInnerStyle}>{value}</div>
+      </div>
+    </div>
+  </div>
 );
 
 type BenchmarkResult = {
@@ -260,16 +244,13 @@ export const RecordTableCellPerformanceAudit = () => {
     startTimeRef.current = performance.now();
 
     const grid = (
-      <StyledBenchGrid>
+      <div style={gridStyle}>
         {data.current.flatMap((row, rowIndex) =>
           row.map((value, colIndex) => (
-            <CellComponent
-              key={`${rowIndex}-${colIndex}`}
-              value={value}
-            />
+            <CellComponent key={`${rowIndex}-${colIndex}`} value={value} />
           )),
         )}
-      </StyledBenchGrid>
+      </div>
     );
 
     setTestGrid(grid);
@@ -294,14 +275,16 @@ export const RecordTableCellPerformanceAudit = () => {
   const perCell = (ms: number) => (ms / TOTAL_CELLS).toFixed(3);
 
   return (
-    <StyledContainer>
+    <div style={containerStyle}>
       <h3>RecordTable Cell Performance Audit</h3>
       <p>
         Rendering {TOTAL_CELLS} cells ({ROWS} rows x {COLS} cols). Click each
         to measure.
       </p>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+      <div
+        style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}
+      >
         <button onClick={() => runBenchmark('1. Minimal div', MinimalCell)}>
           1. Minimal div
         </button>
@@ -311,9 +294,7 @@ export const RecordTableCellPerformanceAudit = () => {
           2. + useState
         </button>
         <button
-          onClick={() =>
-            runBenchmark('3. + 3 contexts', CellWith3Contexts)
-          }
+          onClick={() => runBenchmark('3. + 3 contexts', CellWith3Contexts)}
         >
           3. + 3 contexts
         </button>
@@ -354,7 +335,7 @@ export const RecordTableCellPerformanceAudit = () => {
       </div>
 
       {results.length > 0 && (
-        <StyledResults>
+        <div style={resultsStyle}>
           <strong>Results ({TOTAL_CELLS} cells):</strong>
           <br />
           {results.map((r, i) => (
@@ -364,7 +345,13 @@ export const RecordTableCellPerformanceAudit = () => {
             </div>
           ))}
           {results.length >= 2 && (
-            <div style={{ marginTop: 8, borderTop: '1px solid #ddd', paddingTop: 8 }}>
+            <div
+              style={{
+                marginTop: 8,
+                borderTop: '1px solid #ddd',
+                paddingTop: 8,
+              }}
+            >
               <strong>Overhead vs minimal:</strong>
               <br />
               {results.slice(1).map((r, i) => {
@@ -374,17 +361,17 @@ export const RecordTableCellPerformanceAudit = () => {
                 return (
                   <div key={i}>
                     {r.name}: +{overhead.toFixed(1)}ms (+{pct}%) = +
-                    {(overhead / TOTAL_CELLS * 1000).toFixed(0)}μs/cell
+                    {((overhead / TOTAL_CELLS) * 1000).toFixed(0)}us/cell
                   </div>
                 );
               })}
             </div>
           )}
-        </StyledResults>
+        </div>
       )}
 
       {activeTest && <p>Running: {activeTest}...</p>}
       {testGrid}
-    </StyledContainer>
+    </div>
   );
 };

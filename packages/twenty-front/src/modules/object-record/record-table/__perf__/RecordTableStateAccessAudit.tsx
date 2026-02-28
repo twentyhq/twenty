@@ -1,51 +1,45 @@
 import { atom, createStore, Provider, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { styled } from '@linaria/react';
-
-// POC: Measures overhead of different state access patterns
-// Compares: raw context, single atom, multiple atoms, atom families, selectors
 
 const ROWS = 50;
 const COLS = 8;
 const TOTAL_CELLS = ROWS * COLS;
 
-const StyledContainer = styled.div`
-  padding: 16px;
-  font-family: sans-serif;
-`;
+const containerStyle: React.CSSProperties = {
+  padding: 16,
+  fontFamily: 'sans-serif',
+};
 
-const StyledResults = styled.div`
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #f0f7ff;
-  border-radius: 4px;
-  font-size: 13px;
-  line-height: 1.6;
-`;
+const resultsStyle: React.CSSProperties = {
+  marginBottom: 16,
+  padding: 12,
+  background: '#f0f7ff',
+  borderRadius: 4,
+  fontSize: 13,
+  lineHeight: 1.6,
+};
 
-const StyledGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(${COLS}, 150px);
-  gap: 0;
-`;
+const gridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: `repeat(${COLS}, 150px)`,
+  gap: 0,
+};
 
-const StyledCell = styled.div`
-  height: 32px;
-  border-bottom: 1px solid #eee;
-  border-right: 1px solid #eee;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 13px;
-`;
+const cellStyle: React.CSSProperties = {
+  height: 32,
+  borderBottom: '1px solid #eee',
+  borderRight: '1px solid #eee',
+  padding: '0 8px',
+  display: 'flex',
+  alignItems: 'center',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  fontSize: 13,
+};
 
-// Store for atom-based tests
 const store = createStore();
 
-// Atom families simulating recordStoreFamilyState
 const recordAtomFamily = atomFamily((recordId: string) =>
   atom<Record<string, string>>({
     name: `Record ${recordId}`,
@@ -54,23 +48,16 @@ const recordAtomFamily = atomFamily((recordId: string) =>
   }),
 );
 
-// Field value selector (like recordStoreFieldValueSelector)
 const fieldValueSelectorFamily = atomFamily(
   ({ recordId, fieldName }: { recordId: string; fieldName: string }) =>
     atom((get) => get(recordAtomFamily(recordId))?.[fieldName] ?? ''),
   (a, b) => a.recordId === b.recordId && a.fieldName === b.fieldName,
 );
 
-// Row selection state (like isRowSelectedComponentFamilyState)
 const rowSelectedFamily = atomFamily((_recordId: string) => atom(false));
 
-// Hover position atom (table-wide, like recordTableHoverPositionComponentState)
 const hoverPositionAtom = atom<{ row: number; col: number } | null>(null);
 
-// Focus position atom
-const focusPositionAtom = atom<{ row: number; col: number } | null>(null);
-
-// Combined selector that checks if this cell is hovered
 const cellIsHoveredFamily = atomFamily(
   ({ row, col }: { row: number; col: number }) =>
     atom((get) => {
@@ -80,36 +67,29 @@ const cellIsHoveredFamily = atomFamily(
   (a, b) => a.row === b.row && a.col === b.col,
 );
 
-// Context approach
 const RowContext = createContext({ recordId: '', rowIndex: 0 });
 const CellContext = createContext({ column: 0, fieldName: '' });
 const FieldValueContext = createContext('');
 
-// --- Test cells ---
-
-// A: No state at all (baseline)
 const CellNoState = ({ value }: { value: string }) => (
-  <StyledCell>{value}</StyledCell>
+  <div style={cellStyle}>{value}</div>
 );
 
-// B: One context read
 const CellOneContext = () => {
   const { recordId } = useContext(RowContext);
-  return <StyledCell>{recordId}</StyledCell>;
+  return <div style={cellStyle}>{recordId}</div>;
 };
 
-// C: Two context reads
 const CellTwoContexts = () => {
   const { recordId } = useContext(RowContext);
   const { fieldName } = useContext(CellContext);
   return (
-    <StyledCell>
+    <div style={cellStyle}>
       {recordId}-{fieldName}
-    </StyledCell>
+    </div>
   );
 };
 
-// D: One Jotai atom read (field value selector)
 const CellOneAtom = ({
   recordId,
   fieldName,
@@ -120,10 +100,9 @@ const CellOneAtom = ({
   const value = useAtomValue(
     fieldValueSelectorFamily({ recordId, fieldName }),
   );
-  return <StyledCell>{value}</StyledCell>;
+  return <div style={cellStyle}>{value}</div>;
 };
 
-// E: Three Jotai atom reads (simulating current cell: field value + row selected + hover check)
 const CellThreeAtoms = ({
   recordId,
   fieldName,
@@ -140,23 +119,21 @@ const CellThreeAtoms = ({
   );
   useAtomValue(rowSelectedFamily(recordId));
   useAtomValue(cellIsHoveredFamily({ row, col }));
-  return <StyledCell>{value}</StyledCell>;
+  return <div style={cellStyle}>{value}</div>;
 };
 
-// F: Context + atom combined (closest to current pattern)
 const CellContextPlusAtom = () => {
   const { recordId } = useContext(RowContext);
   const { fieldName } = useContext(CellContext);
   const value = useAtomValue(
     fieldValueSelectorFamily({ recordId, fieldName }),
   );
-  return <StyledCell>{value}</StyledCell>;
+  return <div style={cellStyle}>{value}</div>;
 };
 
-// G: Pre-resolved context value (value passed through context, no atom read)
 const CellPreResolvedContext = () => {
   const value = useContext(FieldValueContext);
-  return <StyledCell>{value}</StyledCell>;
+  return <div style={cellStyle}>{value}</div>;
 };
 
 type BenchmarkResult = { name: string; renderTimeMs: number };
@@ -193,7 +170,10 @@ export const RecordTableStateAccessAudit = () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const elapsed = performance.now() - startTimeRef.current;
-          setResults((prev) => [...prev, { name: activeTest, renderTimeMs: elapsed }]);
+          setResults((prev) => [
+            ...prev,
+            { name: activeTest, renderTimeMs: elapsed },
+          ]);
           setActiveTest(null);
           startTimeRef.current = 0;
         });
@@ -204,56 +184,66 @@ export const RecordTableStateAccessAudit = () => {
   const perCell = (ms: number) => (ms / TOTAL_CELLS).toFixed(3);
 
   const gridA = () => (
-    <StyledGrid>
+    <div style={gridStyle}>
       {recordIds.current.flatMap((id, row) =>
         FIELD_NAMES.map((_, col) => (
           <CellNoState key={`${row}-${col}`} value={`${id}-col${col}`} />
         )),
       )}
-    </StyledGrid>
+    </div>
   );
 
   const gridB = () => (
-    <StyledGrid>
+    <div style={gridStyle}>
       {recordIds.current.flatMap((id, row) =>
         FIELD_NAMES.map((_, col) => (
-          <RowContext.Provider key={`${row}-${col}`} value={{ recordId: id, rowIndex: row }}>
+          <RowContext.Provider
+            key={`${row}-${col}`}
+            value={{ recordId: id, rowIndex: row }}
+          >
             <CellOneContext />
           </RowContext.Provider>
         )),
       )}
-    </StyledGrid>
+    </div>
   );
 
   const gridC = () => (
-    <StyledGrid>
+    <div style={gridStyle}>
       {recordIds.current.flatMap((id, row) =>
         FIELD_NAMES.map((fieldName, col) => (
-          <RowContext.Provider key={`${row}-${col}`} value={{ recordId: id, rowIndex: row }}>
+          <RowContext.Provider
+            key={`${row}-${col}`}
+            value={{ recordId: id, rowIndex: row }}
+          >
             <CellContext.Provider value={{ column: col, fieldName }}>
               <CellTwoContexts />
             </CellContext.Provider>
           </RowContext.Provider>
         )),
       )}
-    </StyledGrid>
+    </div>
   );
 
   const gridD = () => (
     <Provider store={store}>
-      <StyledGrid>
+      <div style={gridStyle}>
         {recordIds.current.flatMap((id, row) =>
           FIELD_NAMES.map((fieldName, col) => (
-            <CellOneAtom key={`${row}-${col}`} recordId={id} fieldName={fieldName} />
+            <CellOneAtom
+              key={`${row}-${col}`}
+              recordId={id}
+              fieldName={fieldName}
+            />
           )),
         )}
-      </StyledGrid>
+      </div>
     </Provider>
   );
 
   const gridE = () => (
     <Provider store={store}>
-      <StyledGrid>
+      <div style={gridStyle}>
         {recordIds.current.flatMap((id, row) =>
           FIELD_NAMES.map((fieldName, col) => (
             <CellThreeAtoms
@@ -265,47 +255,55 @@ export const RecordTableStateAccessAudit = () => {
             />
           )),
         )}
-      </StyledGrid>
+      </div>
     </Provider>
   );
 
   const gridF = () => (
     <Provider store={store}>
-      <StyledGrid>
+      <div style={gridStyle}>
         {recordIds.current.flatMap((id, row) =>
           FIELD_NAMES.map((fieldName, col) => (
-            <RowContext.Provider key={`${row}-${col}`} value={{ recordId: id, rowIndex: row }}>
+            <RowContext.Provider
+              key={`${row}-${col}`}
+              value={{ recordId: id, rowIndex: row }}
+            >
               <CellContext.Provider value={{ column: col, fieldName }}>
                 <CellContextPlusAtom />
               </CellContext.Provider>
             </RowContext.Provider>
           )),
         )}
-      </StyledGrid>
+      </div>
     </Provider>
   );
 
   const gridG = () => (
-    <StyledGrid>
+    <div style={gridStyle}>
       {recordIds.current.flatMap((id, row) =>
         FIELD_NAMES.map((fieldName, col) => (
-          <FieldValueContext.Provider key={`${row}-${col}`} value={`${id}-${fieldName}`}>
+          <FieldValueContext.Provider
+            key={`${row}-${col}`}
+            value={`${id}-${fieldName}`}
+          >
             <CellPreResolvedContext />
           </FieldValueContext.Provider>
         )),
       )}
-    </StyledGrid>
+    </div>
   );
 
   return (
-    <StyledContainer>
+    <div style={containerStyle}>
       <h3>State Access Pattern Audit</h3>
       <p>
         Comparing state access overhead for {TOTAL_CELLS} cells ({ROWS}r x{' '}
         {COLS}c).
       </p>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+      <div
+        style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}
+      >
         <button onClick={() => runBenchmark('A. No state (baseline)', gridA)}>
           A. No state
         </button>
@@ -330,7 +328,7 @@ export const RecordTableStateAccessAudit = () => {
       </div>
 
       {results.length > 0 && (
-        <StyledResults>
+        <div style={resultsStyle}>
           <strong>Results ({TOTAL_CELLS} cells):</strong>
           <br />
           {results.map((r, i) => (
@@ -339,11 +337,11 @@ export const RecordTableStateAccessAudit = () => {
               {perCell(r.renderTimeMs)}ms/cell)
             </div>
           ))}
-        </StyledResults>
+        </div>
       )}
 
       {activeTest && <p>Running: {activeTest}...</p>}
       {testGrid}
-    </StyledContainer>
+    </div>
   );
 };
