@@ -17,4 +17,14 @@ export class AuthorizeAppInput {
   @Field(() => String)
   @IsString()
   redirectUrl: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  state?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  scope?: string;
 }

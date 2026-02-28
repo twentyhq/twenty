@@ -148,6 +148,15 @@ export class ApplicationTokenService {
     }
   }
 
+  decodeToken(
+    token: string,
+  ): (ApplicationAccessTokenJwtPayload | ApplicationRefreshTokenJwtPayload) & {
+    exp?: number;
+    iat?: number;
+  } {
+    return this.jwtWrapperService.decode(token, { json: true });
+  }
+
   async renewApplicationTokens(payload: {
     workspaceId: string;
     applicationId: string;

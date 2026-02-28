@@ -88,7 +88,6 @@ export class OAuthService {
       where: {
         value: hashedAuthorizationCode,
         type: AppTokenType.AuthorizationCode,
-        revokedAt: IsNull(),
       },
     });
 
@@ -96,6 +95,20 @@ export class OAuthService {
       return this.errorResponse(
         'invalid_grant',
         'Authorization code not found',
+      );
+    }
+
+    // RFC 6749 §4.1.2: if a previously used code is presented, this indicates
+    // a potential compromise — log a security warning
+    if (authCodeToken.revokedAt) {
+      this.logger.warn(
+        `Authorization code replay detected for client ${clientId}. ` +
+          `Code was already used at ${authCodeToken.revokedAt.toISOString()}.`,
+      );
+
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code has already been used',
       );
     }
 
@@ -198,12 +211,20 @@ export class OAuthService {
         userWorkspaceId: userWorkspace?.id,
       });
 
+    const grantedScope =
+      authCodeToken.context?.scope ??
+      applicationRegistration.oAuthScopes.join(' ');
+
+    this.logger.log(
+      `Authorization code exchanged: client=${clientId} workspace=${authCodeToken.workspaceId} user=${authCodeToken.userId}`,
+    );
+
     return {
       access_token: applicationAccessToken.token,
       token_type: 'Bearer',
       expires_in: this.getAccessTokenExpiresInSeconds(),
       refresh_token: applicationRefreshToken.token,
-      scope: applicationRegistration.oAuthScopes.join(' '),
+      scope: grantedScope,
     };
   }
 
@@ -255,6 +276,10 @@ export class OAuthService {
         workspaceId: application.workspaceId,
         applicationId: application.id,
       });
+
+    this.logger.log(
+      `Client credentials token issued: client=${clientId} workspace=${application.workspaceId}`,
+    );
 
     return {
       access_token: applicationAccessToken.token,
@@ -314,6 +339,10 @@ export class OAuthService {
       const { applicationAccessToken, applicationRefreshToken } =
         await this.applicationTokenService.renewApplicationTokens(payload);
 
+      this.logger.log(
+        `Refresh token exchanged: client=${clientId} application=${payload.applicationId}`,
+      );
+
       return {
         access_token: applicationAccessToken.token,
         token_type: 'Bearer',
@@ -322,12 +351,154 @@ export class OAuthService {
         scope: applicationRegistration.oAuthScopes.join(' '),
       };
     } catch (error) {
-      this.logger.error('Refresh token grant failed', error);
+      this.logger.warn(`Refresh token grant failed: client=${clientId}`, error);
 
       return this.errorResponse(
         'invalid_grant',
         'Invalid or expired refresh token',
       );
+    }
+  }
+
+  // RFC 7009: Token revocation
+  // Returns true if token was successfully processed (even if already invalid)
+  async revokeToken(params: {
+    token: string;
+    clientId?: string;
+    clientSecret?: string;
+  }): Promise<{ success: boolean }> {
+    const { token, clientId, clientSecret } = params;
+
+    if (clientId) {
+      const clientValidation = await this.validateClient(clientId);
+
+      if ('error' in clientValidation) {
+        return { success: false };
+      }
+
+      if (clientSecret) {
+        const secretError = await this.validateClientSecret(
+          clientValidation,
+          clientSecret,
+        );
+
+        if (secretError) {
+          return { success: false };
+        }
+      }
+    }
+
+    // Since our tokens are stateless JWTs, we can't truly revoke them.
+    // We validate the token to log that revocation was requested.
+    try {
+      const payload =
+        this.applicationTokenService.validateApplicationRefreshToken(token);
+
+      this.logger.log(
+        `Token revocation requested for application ${payload.applicationId}`,
+      );
+    } catch {
+      // Per RFC 7009 §2.2: the server responds with HTTP 200 for both
+      // valid and invalid tokens
+    }
+
+    return { success: true };
+  }
+
+  // RFC 7662: Token introspection
+  async introspectToken(params: {
+    token: string;
+    clientId: string;
+    clientSecret?: string;
+  }): Promise<Record<string, unknown>> {
+    const { token, clientId, clientSecret } = params;
+
+    const clientValidation = await this.validateClient(clientId);
+
+    if ('error' in clientValidation) {
+      return { active: false };
+    }
+
+    if (clientSecret) {
+      const secretError = await this.validateClientSecret(
+        clientValidation,
+        clientSecret,
+      );
+
+      if (secretError) {
+        return { active: false };
+      }
+    }
+
+    try {
+      this.applicationTokenService.validateApplicationRefreshToken(token);
+
+      const decoded = this.applicationTokenService.decodeToken(token);
+
+      if (!decoded) {
+        return { active: false };
+      }
+
+      // Verify the token belongs to this client
+      const application = await this.applicationRepository.findOne({
+        where: { id: decoded.applicationId },
+      });
+
+      if (
+        !application ||
+        application.applicationRegistrationId !== clientValidation.id
+      ) {
+        return { active: false };
+      }
+
+      return {
+        active: true,
+        sub: decoded.sub,
+        client_id: clientId,
+        token_type: 'Bearer',
+        scope: clientValidation.oAuthScopes.join(' '),
+        aud: decoded.workspaceId,
+        iss: this.twentyConfigService.get('SERVER_URL'),
+        exp: decoded.exp,
+        iat: decoded.iat,
+      };
+    } catch {
+      // Try as access token
+      try {
+        const decoded = this.applicationTokenService.decodeToken(token);
+
+        if (!decoded) {
+          return { active: false };
+        }
+
+        const application = await this.applicationRepository.findOne({
+          where: { id: decoded.applicationId },
+        });
+
+        if (
+          !application ||
+          application.applicationRegistrationId !== clientValidation.id
+        ) {
+          return { active: false };
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+        const isExpired = decoded.exp && decoded.exp < now;
+
+        return {
+          active: !isExpired,
+          sub: decoded.sub,
+          client_id: clientId,
+          token_type: 'Bearer',
+          scope: clientValidation.oAuthScopes.join(' '),
+          aud: decoded.workspaceId,
+          iss: this.twentyConfigService.get('SERVER_URL'),
+          exp: decoded.exp,
+          iat: decoded.iat,
+        };
+      } catch {
+        return { active: false };
+      }
     }
   }
 

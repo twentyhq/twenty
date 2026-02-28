@@ -12,6 +12,8 @@ import {
 
 import { type Request, type Response } from 'express';
 
+import { OAuthIntrospectInput } from 'src/engine/core-modules/application-registration/dtos/oauth-introspect.input';
+import { OAuthRevokeInput } from 'src/engine/core-modules/application-registration/dtos/oauth-revoke.input';
 import { OAuthTokenInput } from 'src/engine/core-modules/application-registration/dtos/oauth-token.input';
 import { OAuthService } from 'src/engine/core-modules/application-registration/oauth.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application-registration/types/oauth-error-response.type';
@@ -86,17 +88,63 @@ export class OAuthTokenController {
         break;
     }
 
-    // RFC 6749 §5.1: token responses must not be cached
-    res.set('Cache-Control', 'no-store');
-    res.set('Pragma', 'no-cache');
+    this.setSecurityHeaders(res);
 
     if ('error' in result) {
-      const statusCode =
-        result.error === 'invalid_client' ? 401 : 400;
+      const statusCode = result.error === 'invalid_client' ? 401 : 400;
 
       res.status(statusCode);
     }
 
     return result;
+  }
+
+  // RFC 7009: Token revocation endpoint
+  @Post('revoke')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UsePipes(new ValidationPipe())
+  async revoke(
+    @Body() body: OAuthRevokeInput,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    this.setSecurityHeaders(res);
+
+    await this.oauthService.revokeToken({
+      token: body.token,
+      clientId: body.client_id,
+      clientSecret: body.client_secret,
+    });
+
+    // RFC 7009 §2.2: always return 200, even for invalid tokens
+    return {};
+  }
+
+  // RFC 7662: Token introspection endpoint
+  @Post('introspect')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UsePipes(new ValidationPipe())
+  async introspect(
+    @Body() body: OAuthIntrospectInput,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    this.setSecurityHeaders(res);
+
+    if (!body.client_id) {
+      res.status(401);
+
+      return { error: 'invalid_client', error_description: 'client_id is required' };
+    }
+
+    return this.oauthService.introspectToken({
+      token: body.token,
+      clientId: body.client_id,
+      clientSecret: body.client_secret,
+    });
+  }
+
+  private setSecurityHeaders(res: Response): void {
+    // RFC 6749 §5.1: token responses must not be cached
+    res.set('Cache-Control', 'no-store');
+    res.set('Pragma', 'no-cache');
   }
 }

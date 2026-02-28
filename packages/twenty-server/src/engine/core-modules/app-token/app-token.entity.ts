@@ -94,5 +94,6 @@ export class AppTokenEntity {
     redirectUri?: string;
     clientId?: string;
     codeChallenge?: string;
+    scope?: string;
   } | null;
 }

@@ -526,6 +526,22 @@ export class AuthService {
       );
     }
 
+    // Validate requested scopes are a subset of the registration's allowed scopes
+    const requestedScopes = authorizeAppInput.scope
+      ? authorizeAppInput.scope.split(' ').filter(Boolean)
+      : applicationRegistration.oAuthScopes;
+
+    const invalidScopes = requestedScopes.filter(
+      (scope) => !applicationRegistration.oAuthScopes.includes(scope),
+    );
+
+    if (invalidScopes.length > 0) {
+      throw new AuthException(
+        `Invalid scopes: ${invalidScopes.join(', ')}`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const redirectUriValidation = validateRedirectUri(
       authorizeAppInput.redirectUrl,
     );
@@ -548,6 +564,7 @@ export class AuthService {
     const authCodeContext = {
       redirectUri: authorizeAppInput.redirectUrl,
       clientId: applicationRegistration.oAuthClientId,
+      scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
     };
 
@@ -563,6 +580,13 @@ export class AuthService {
     await this.appTokenRepository.save(token);
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+
+    if (authorizeAppInput.state) {
+      redirectUriValidation.parsed.searchParams.set(
+        'state',
+        authorizeAppInput.state,
+      );
+    }
 
     return { redirectUrl: redirectUriValidation.parsed.toString() };
   }

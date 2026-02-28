@@ -227,6 +227,8 @@ describe('OAuth (integration)', () => {
         .expect(200);
 
       expect(res.body.token_endpoint).toContain('/oauth/token');
+      expect(res.body.revocation_endpoint).toContain('/oauth/revoke');
+      expect(res.body.introspection_endpoint).toContain('/oauth/introspect');
       expect(res.body.grant_types_supported).toEqual(
         expect.arrayContaining([
           'authorization_code',
@@ -729,6 +731,148 @@ describe('OAuth (integration)', () => {
       }).expect(400);
 
       expect(res.body.error).toBe('invalid_grant');
+    });
+  });
+
+  describe('Authorization code replay detection', () => {
+    it('should return specific error when a used code is replayed', async () => {
+      const code = crypto.randomBytes(42).toString('hex');
+      const hashedCode = crypto
+        .createHash('sha256')
+        .update(code)
+        .digest('hex');
+
+      const tokenId = await insertAppToken(ds, {
+        value: hashedCode,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: {
+          redirectUri: 'https://example.com/callback',
+          clientId: testRegistration.oAuthClientId,
+        },
+      });
+
+      createdEntityIds.tokens.push(tokenId);
+
+      // First use succeeds
+      await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      // Second use detects replay
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+      expect(res.body.error_description).toContain('already been used');
+    });
+  });
+
+  describe('Token revocation endpoint', () => {
+    it('should return 200 for valid token revocation', async () => {
+      const code = crypto.randomBytes(42).toString('hex');
+      const hashedCode = crypto
+        .createHash('sha256')
+        .update(code)
+        .digest('hex');
+
+      const tokenId = await insertAppToken(ds, {
+        value: hashedCode,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: {
+          redirectUri: 'https://example.com/callback',
+          clientId: testRegistration.oAuthClientId,
+        },
+      });
+
+      createdEntityIds.tokens.push(tokenId);
+
+      const tokenRes = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      await request(baseUrl)
+        .post('/oauth/revoke')
+        .send({
+          token: tokenRes.body.refresh_token,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+    });
+
+    it('should return 200 for invalid token (per RFC 7009)', async () => {
+      await request(baseUrl)
+        .post('/oauth/revoke')
+        .send({
+          token: 'completely-invalid-token',
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+    });
+  });
+
+  describe('Token introspection endpoint', () => {
+    it('should return active=true for a valid access token', async () => {
+      const res = await postToken({
+        grant_type: 'client_credentials',
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+
+      const introspectRes = await request(baseUrl)
+        .post('/oauth/introspect')
+        .send({
+          token: res.body.access_token,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+
+      expect(introspectRes.body.active).toBe(true);
+      expect(introspectRes.body.client_id).toBe(
+        testRegistration.oAuthClientId,
+      );
+      expect(introspectRes.body.token_type).toBe('Bearer');
+    });
+
+    it('should return active=false for an invalid token', async () => {
+      const res = await request(baseUrl)
+        .post('/oauth/introspect')
+        .send({
+          token: 'invalid-token',
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+
+      expect(res.body.active).toBe(false);
+    });
+
+    it('should require client_id', async () => {
+      await request(baseUrl)
+        .post('/oauth/introspect')
+        .send({ token: 'some-token' })
+        .expect(401);
     });
   });
 });
