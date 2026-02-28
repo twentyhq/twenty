@@ -41,21 +41,54 @@ RecordTableCellWrapper              → context + useMemo
 | `Draggable` wrapper per row | LOWER | DnD overhead even when not dragging |
 | `OverflowingTextWithTooltip` has 2× useState | LOWER | Tooltip state per text cell |
 
+## Changes Made
+
+### Tooling & Infrastructure
+
+- **Render profiler** (`useRecordTableRenderProfiler.ts`): Custom hook that logs per-component render counts, total/avg/max render times. Enable via `window.__RECORD_TABLE_PROFILE = true`. Instrumented on `RecordTableTr`, `RecordTableFieldsCells`, `RecordTableCellFieldContextGeneric`, `RecordTableCellBaseContainer`, `RecordTableCellDisplayMode`.
+- **Cell render benchmark** (`RecordTableCellPerformanceAudit.tsx`): Renders 400 cells at various complexity levels (minimal div, styled div, with context, with hooks, full replica) and measures mount time. Uses inline styles since Linaria requires build-time processing.
+- **State access benchmark** (`RecordTableStateAccessAudit.tsx`): Compares React context reads vs Jotai atom reads vs pre-resolved values across 400 cells.
+- **Perf page** (`RecordTablePerfPage.tsx`): Standalone page at `/__perf__/table`, routed outside `AppRouterProviders` to bypass auth/metadata providers entirely.
+- **Perf overlay** (`RecordTablePerfOverlay.tsx`): Mountable inside any authenticated page. Toggle with `Ctrl+Shift+P` or `window.__SHOW_TABLE_PERF = true`.
+
+### Phase 1 Progress (Display/Interaction Split)
+
+**1a. Removed `FieldFocusContextProvider` from display path** (DONE)
+- `RecordTableCell` now wraps cells in `FieldFocusStaticUnfocusedProvider` (a static context with `isFocused: false`, no `useState`).
+- `RecordTableCellHoveredPortalContent` wraps hovered cell content in `FieldFocusStaticFocusedProvider` (static `isFocused: true`).
+- Eliminates 400 `useState` instances from the display path.
+
+**1b. Event delegation for onMouseMove** (DONE)
+- Removed `onMouseMove` and `onMouseLeave` from each `RecordTableCellBaseContainer`.
+- Added a single delegated `onMouseMove` on `RecordTableContent` that parses cell position from `id="record-table-cell-{col}-{row}"` via `event.target.closest`.
+- Uses `lastHoverPositionRef` to skip redundant updates when mouse stays in the same cell.
+- Eliminates 400 closure creations for mouse handlers.
+
+**1b (continued). Removed unused hooks from `RecordTableCellBaseContainer`** (DONE)
+- Removed `useFieldFocus` (no longer needed since focus is static context).
+- Removed `useRecordTableBodyContextOrThrow` (mouse handlers were the only consumer).
+- Removed `handleContainerMouseMove` and `onMouseLeave` handlers.
+
+### Phase 3 Progress (State Optimization)
+
+**3a. Hoisted `useObjectMetadataItems()` out of cell loop** (DONE)
+- Added `objectMetadataItems` to `RecordTableContext` type and `RecordTableContextProvider`.
+- `RecordTableCellFieldContextGeneric` now reads `objectMetadataItems` from the table context instead of calling `useObjectMetadataItems()` per cell.
+- Eliminates 400 per-cell reads of the global metadata atom.
+- Updated `RecordTableDecorator.tsx` and `RecordTableCell.perf.stories.tsx` to satisfy the new context type.
+
 ## Improvement Plan
 
 ### Phase 1: Separate Display from Interaction (HIGH IMPACT)
 
 **Goal:** The display path should ONLY display. Interaction (hover, focus, edit) is handled by portals and event delegation.
 
-**1a. Remove `FieldFocusContextProvider` from display path**
-- The `useState(false)` per cell is only consumed by `RecordTableCellBaseContainer` for hover.
-- Hover styling should be pure CSS (`:hover` pseudo-class) or handled by the existing portal system.
-- Eliminates 400 `useState` instances.
+**1a. Remove `FieldFocusContextProvider` from display path** ✅
+- Replaced with static context providers. Eliminates 400 `useState` instances.
 
-**1b. Make `RecordTableCellBaseContainer` display-only**
-- Remove `onMouseMove`, `onMouseLeave`, `onClick` handlers from each cell.
-- Use event delegation at the table body level: a single `onMouseMove` handler with `event.target.closest('[data-cell-position]')`.
-- Eliminates 400 × 3 closure creations + 6 hook calls per cell.
+**1b. Make `RecordTableCellBaseContainer` display-only** ✅ (partial)
+- `onMouseMove` and `onMouseLeave` removed, delegated to table level. ✅
+- `onClick` handler still present — needs event delegation or portal handling. TODO.
 
 **1c. Make `RecordTableCellDisplayMode` display-only**
 - Remove `useOpenRecordTableCellFromCell` and `useIsFieldInputOnly`.
@@ -93,9 +126,8 @@ RecordTableCellContextSetup       → all contexts in one place
 
 **Goal:** Reduce per-cell computation, eliminate unnecessary atom reads.
 
-**3a. Hoist `useObjectMetadataItems()` out of cell loop**
-- Currently called 400× (once per cell in `RecordTableCellFieldContextGeneric`).
-- Move to table level, pass through context.
+**3a. Hoist `useObjectMetadataItems()` out of cell loop** ✅
+- Moved to `RecordTableContextProvider`, read from table context in cells.
 
 **3b. Pre-compute `fieldDefinition` and permissions at table level**
 - `fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId]` lookups are stable per render.
