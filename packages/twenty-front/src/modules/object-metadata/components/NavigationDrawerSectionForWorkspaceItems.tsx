@@ -1,6 +1,5 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +62,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const theme = useTheme();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
@@ -176,7 +174,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             objectMetadataItems={objectMetadataItems}
             views={views}
-            theme={theme}
             isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
             addToNavigationFallbackDestination={
               addToNavigationFallbackDestination
@@ -198,7 +195,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             objectMetadataItems={objectMetadataItems}
             views={views}
-            theme={theme}
             isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
             addToNavigationFallbackDestination={
               addToNavigationFallbackDestination

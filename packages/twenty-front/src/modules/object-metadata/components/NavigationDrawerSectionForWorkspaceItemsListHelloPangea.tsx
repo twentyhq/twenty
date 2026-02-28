@@ -11,7 +11,7 @@ import {
   StyledWorkspaceDroppableList,
   WORKSPACE_ORPHAN_DROPPABLE_ID,
 } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
-import type { WorkspaceSectionListCommonProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+import type { WorkspaceSectionListHelloPangeaProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 
 export const WorkspaceSectionListHelloPangea = ({
   filteredItems,
@@ -26,12 +26,11 @@ export const WorkspaceSectionListHelloPangea = ({
   onActiveObjectMetadataItemClick,
   objectMetadataItems,
   views,
-  theme,
   isAddMenuItemButtonVisible,
   addToNavigationFallbackDestination,
   onAddMenuItem,
   addMenuItemLabel,
-}: WorkspaceSectionListCommonProps) => {
+}: WorkspaceSectionListHelloPangeaProps) => {
   return (
     <Droppable
       droppableId={WORKSPACE_ORPHAN_DROPPABLE_ID}
@@ -61,7 +60,6 @@ export const WorkspaceSectionListHelloPangea = ({
                     item={item}
                     editModeProps={getEditModeProps(item)}
                     useDndKit={false}
-                    theme={theme}
                     isEditMode={isEditMode}
                     isDragging={isDragging}
                     folderChildrenById={folderChildrenById}

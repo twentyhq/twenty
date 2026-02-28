@@ -53,3 +53,7 @@ export type WorkspaceSectionListCommonProps = {
   onAddMenuItem?: () => void;
   addMenuItemLabel: string;
 };
+
+export type WorkspaceSectionListDndKitProps = WorkspaceSectionListCommonProps;
+export type WorkspaceSectionListHelloPangeaProps =
+  WorkspaceSectionListCommonProps;

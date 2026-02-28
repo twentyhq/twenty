@@ -12,7 +12,7 @@ import {
   StyledWorkspaceDroppableList,
   WORKSPACE_ORPHAN_DROPPABLE_ID,
 } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
-import type { WorkspaceSectionListCommonProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 
 export const WorkspaceSectionListDndKit = ({
   filteredItems,
@@ -27,12 +27,11 @@ export const WorkspaceSectionListDndKit = ({
   onActiveObjectMetadataItemClick,
   objectMetadataItems,
   views,
-  theme,
   isAddMenuItemButtonVisible,
   addToNavigationFallbackDestination,
   onAddMenuItem,
   addMenuItemLabel,
-}: WorkspaceSectionListCommonProps) => {
+}: WorkspaceSectionListDndKitProps) => {
   return (
     <StyledWorkspaceDroppableList
       data-dnd-group={WORKSPACE_ORPHAN_DROPPABLE_ID}
@@ -48,8 +47,7 @@ export const WorkspaceSectionListDndKit = ({
           <WorkspaceSectionItemContent
             item={item}
             editModeProps={getEditModeProps(item)}
-            useDndKit={true}
-            theme={theme}
+            useDndKit
             isEditMode={isEditMode}
             isDragging={isDragging}
             folderChildrenById={folderChildrenById}
