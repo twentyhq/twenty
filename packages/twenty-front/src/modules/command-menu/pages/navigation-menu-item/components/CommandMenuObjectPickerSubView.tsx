@@ -9,6 +9,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { CommandMenuObjectPickerItem } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerItem';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
@@ -72,10 +73,10 @@ export const CommandMenuObjectPickerSubView = ({
         <CommandMenuAddToNavDraggablePlaceholder index={filteredItems.length}>
           <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
             <CommandMenuItem
-              Icon={IconSettings}
+              Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
               label={t`System objects`}
               id="system"
-              hasSubMenu={true}
+              hasSubMenu
               onClick={onOpenSystemPicker}
             />
           </SelectableListItem>
@@ -83,10 +84,10 @@ export const CommandMenuObjectPickerSubView = ({
       ) : (
         <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
           <CommandMenuItem
-            Icon={IconSettings}
+            Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
             label={t`System objects`}
             id="system"
-            hasSubMenu={true}
+            hasSubMenu
             onClick={onOpenSystemPicker}
           />
         </SelectableListItem>

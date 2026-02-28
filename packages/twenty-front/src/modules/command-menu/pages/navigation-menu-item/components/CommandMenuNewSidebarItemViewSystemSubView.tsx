@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
 
@@ -6,9 +5,9 @@ import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
-import { IconWithBackground } from '@/navigation-menu-item/components/IconWithBackground';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
@@ -28,9 +27,7 @@ export const CommandMenuNewSidebarItemViewSystemSubView = ({
   onSelectObject,
 }: CommandMenuNewSidebarItemViewSystemSubViewProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { getIcon } = useIcons();
-  const iconColors = getNavigationMenuItemIconColors(theme);
   const {
     filteredItems: filteredSystemObjectMetadataItems,
     selectableItemIds,
@@ -67,12 +64,12 @@ export const CommandMenuNewSidebarItemViewSystemSubView = ({
               onEnter={() => onSelectObject(objectMetadataItem)}
             >
               <CommandMenuItem
-                Icon={({ size, stroke }) => (
-                  <IconWithBackground
+                Icon={() => (
+                  <NavigationMenuItemStyleIcon
                     Icon={getIcon(objectMetadataItem.icon)}
-                    backgroundColor={iconColors.object}
-                    size={size}
-                    stroke={stroke}
+                    color={getStandardObjectIconColor(
+                      objectMetadataItem.nameSingular,
+                    )}
                   />
                 )}
                 label={objectMetadataItem.labelPlural}

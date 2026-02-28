@@ -8,37 +8,11 @@ import {
 
 import { ColorSample, type ColorSampleVariant } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
+import {
+  DEFAULT_COLOR_LABELS,
+  type ColorLabels,
+} from '../constants/DefaultColorLabels';
 import { StyledMenuItemSelect } from './MenuItemSelect';
-
-export type ColorLabels = Record<ThemeColor, string>;
-
-const DEFAULT_COLOR_LABELS: ColorLabels = {
-  gray: 'Gray',
-  tomato: 'Tomato',
-  red: 'Red',
-  ruby: 'Ruby',
-  crimson: 'Crimson',
-  pink: 'Pink',
-  plum: 'Plum',
-  purple: 'Purple',
-  violet: 'Violet',
-  iris: 'Iris',
-  cyan: 'Cyan',
-  turquoise: 'Turquoise',
-  sky: 'Sky',
-  blue: 'Blue',
-  jade: 'Jade',
-  green: 'Green',
-  grass: 'Grass',
-  mint: 'Mint',
-  lime: 'Lime',
-  bronze: 'Bronze',
-  gold: 'Gold',
-  brown: 'Brown',
-  orange: 'Orange',
-  amber: 'Amber',
-  yellow: 'Yellow',
-};
 
 type MenuItemSelectColorProps = {
   selected: boolean;

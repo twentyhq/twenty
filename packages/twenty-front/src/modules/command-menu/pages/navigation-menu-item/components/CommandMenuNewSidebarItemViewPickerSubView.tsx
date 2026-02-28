@@ -1,7 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useIcons } from 'twenty-ui/display';
-
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
@@ -9,18 +5,23 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
+import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 type CommandMenuNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
@@ -80,6 +81,9 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId ?? null,
       addMenuItemInsertionContext?.targetIndex,
+      isDefined(selectedObjectMetadataItem)
+        ? getStandardObjectIconColor(selectedObjectMetadataItem.nameSingular)
+        : undefined,
     );
     setAddMenuItemInsertionContext(null);
     closeCommandMenu();
@@ -118,6 +122,9 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                               selectedObjectMetadataItem.icon,
                             )}
                             ViewIcon={getIcon(view.icon)}
+                            objectColor={getStandardObjectIconColor(
+                              selectedObjectMetadataItem.nameSingular,
+                            )}
                           />
                         ) : undefined
                       }

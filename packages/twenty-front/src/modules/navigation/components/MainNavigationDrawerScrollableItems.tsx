@@ -1,8 +1,25 @@
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
-import { CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher';
-import { WorkspaceNavigationMenuItemsDispatcher } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher';
+
+import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import styled from '@emotion/styled';
+import { lazy } from 'react';
+
+const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
+  import(
+    '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
+  ).then((module) => ({
+    default: module.CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher,
+  })),
+);
+
+const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
+  import(
+    '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher'
+  ).then((module) => ({
+    default: module.WorkspaceNavigationMenuItemsDispatcher,
+  })),
+);
 
 const StyledScrollableItemsContainer = styled.div`
   display: flex;
@@ -17,6 +34,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
       <WorkspaceNavigationMenuItemsDispatcher />
       <RemoteNavigationDrawerSection />
+      <NavigationDrawerOtherSection />
     </StyledScrollableItemsContainer>
   );
 };

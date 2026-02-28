@@ -1,13 +1,20 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconPlus,
+  useIcons,
+} from 'twenty-ui/display';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
+import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -15,21 +22,20 @@ import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/N
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
-import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { WorkspaceNavigationMenuItemFolderDragClone } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderDragClone';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
+import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -37,12 +43,11 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
   border: ${({ theme, $isSelectedInEditMode }) =>
@@ -57,7 +62,6 @@ const StyledFolderDroppableContent = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
   padding-bottom: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
 `;
 
@@ -71,6 +75,7 @@ type WorkspaceNavigationMenuItemsFolderProps = {
   folderId: string;
   folderName: string;
   folderIconKey?: string | null;
+  folderColor?: string | null;
   navigationMenuItems: ProcessedNavigationMenuItem[];
   isGroup: boolean;
   isEditMode?: boolean;
@@ -86,6 +91,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   folderId,
   folderName,
   folderIconKey,
+  folderColor,
   navigationMenuItems,
   isGroup,
   isEditMode = false,
@@ -98,10 +104,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 }: WorkspaceNavigationMenuItemsFolderProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
-  const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const coreViews = useAtomStateValue(coreViewsState);
@@ -112,14 +114,29 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const currentViewPath = location.pathname + location.search;
   const isMobile = useIsMobile();
 
+  const { t } = useLingui();
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
 
   const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
+  const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
 
   const isOpen = openNavigationMenuItemFolderIds.includes(folderId);
+
+  const folderContentLengthForTree =
+    isEditMode && isSelectedInEditMode
+      ? navigationMenuItems.length + 1
+      : navigationMenuItems.length;
+
+  const handleAddMenuItemToFolder = () => {
+    openAddItemToFolderPage({
+      targetFolderId: folderId,
+      targetIndex: navigationMenuItems.length,
+      resetNavigationStack: true,
+    });
+  };
 
   const handleToggle = () => {
     if (isMobile) {
@@ -172,8 +189,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     <NavigationDrawerItem
       label={folderName}
       Icon={FolderIcon}
-      iconBackgroundColor={
-        isNavigationMenuItemEditingEnabled ? iconColors.folder : undefined
+      iconColor={
+        isDefined(folderColor)
+          ? folderColor
+          : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
       }
       onClick={handleClick}
       className="navigation-drawer-item"
@@ -244,8 +263,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                       ? () =>
                           onNavigationMenuItemClick({
                             item: navigationMenuItem,
-                            objectMetadataItem:
-                              objectMetadataItem ?? undefined,
+                            objectMetadataItem: objectMetadataItem ?? undefined,
                           })
                       : undefined;
                   return (
@@ -257,41 +275,39 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                       disabled={!isEditMode || folderContentDropDisabled}
                     >
                       <NavigationDrawerSubItem
-                          secondaryLabel={
-                            navigationMenuItem.viewKey === ViewKey.Index
-                              ? undefined
-                              : getNavigationMenuItemSecondaryLabel({
-                                  objectMetadataItems,
-                                  navigationMenuItemObjectNameSingular:
-                                    navigationMenuItem.objectNameSingular,
-                                })
-                          }
-                          label={navigationMenuItem.labelIdentifier}
-                          Icon={() => (
-                            <NavigationMenuItemIcon
-                              navigationMenuItem={navigationMenuItem}
-                            />
-                          )}
-                          to={
-                            isContextDragging || handleEditModeClick
-                              ? undefined
-                              : navigationMenuItem.link
-                          }
-                          onClick={handleEditModeClick}
-                          active={index === selectedNavigationMenuItemIndex}
-                          isSelectedInEditMode={
-                            selectedNavigationMenuItemId ===
-                            navigationMenuItem.id
-                          }
-                          subItemState={getNavigationSubItemLeftAdornment({
-                            index,
-                            arrayLength:
-                              navigationMenuItemFolderContentLength,
-                            selectedIndex: selectedNavigationMenuItemIndex,
-                          })}
-                          isDragging={isContextDragging}
-                          triggerEvent="CLICK"
-                        />
+                        secondaryLabel={
+                          navigationMenuItem.viewKey === ViewKey.Index
+                            ? undefined
+                            : getNavigationMenuItemSecondaryLabel({
+                                objectMetadataItems,
+                                navigationMenuItemObjectNameSingular:
+                                  navigationMenuItem.objectNameSingular,
+                              })
+                        }
+                        label={navigationMenuItem.labelIdentifier}
+                        Icon={() => (
+                          <NavigationMenuItemIcon
+                            navigationMenuItem={navigationMenuItem}
+                          />
+                        )}
+                        to={
+                          isContextDragging || handleEditModeClick
+                            ? undefined
+                            : navigationMenuItem.link
+                        }
+                        onClick={handleEditModeClick}
+                        active={index === selectedNavigationMenuItemIndex}
+                        isSelectedInEditMode={
+                          selectedNavigationMenuItemId === navigationMenuItem.id
+                        }
+                        subItemState={getNavigationSubItemLeftAdornment({
+                          index,
+                          arrayLength: navigationMenuItemFolderContentLength,
+                          selectedIndex: selectedNavigationMenuItemIndex,
+                        })}
+                        isDragging={isContextDragging}
+                        triggerEvent="CLICK"
+                      />
                     </WorkspaceDndKitSortableItem>
                   );
                 })}
@@ -416,8 +432,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                             }
                             subItemState={getNavigationSubItemLeftAdornment({
                               index,
-                              arrayLength:
-                                navigationMenuItemFolderContentLength,
+                              arrayLength: folderContentLengthForTree,
                               selectedIndex: selectedNavigationMenuItemIndex,
                             })}
                             isDragging={isContextDragging}
@@ -431,6 +446,19 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 </StyledFolderDroppableContent>
               )}
             </Droppable>
+            {isEditMode && isSelectedInEditMode && (
+              <NavigationDrawerSubItem
+                label={t`Add menu item`}
+                Icon={IconPlus}
+                onClick={handleAddMenuItemToFolder}
+                triggerEvent="CLICK"
+                subItemState={getNavigationSubItemLeftAdornment({
+                  index: navigationMenuItems.length,
+                  arrayLength: folderContentLengthForTree,
+                  selectedIndex: selectedNavigationMenuItemIndex,
+                })}
+              />
+            )}
           </AnimatedExpandableContainer>
         </StyledFolderExpandableWrapper>
       </NavigationDrawerItemsCollapsableContainer>

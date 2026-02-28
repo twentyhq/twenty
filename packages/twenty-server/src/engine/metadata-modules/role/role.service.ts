@@ -20,9 +20,9 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';

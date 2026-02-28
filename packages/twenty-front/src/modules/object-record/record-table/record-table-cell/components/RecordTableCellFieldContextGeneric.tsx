@@ -1,4 +1,3 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -15,7 +14,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useContext, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
 type RecordTableCellFieldContextGenericProps = {
   recordField: RecordField;
   children: ReactNode;
@@ -27,15 +25,13 @@ export const RecordTableCellFieldContextGeneric = ({
 }: RecordTableCellFieldContextGenericProps) => {
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
-  const { objectMetadataItem, objectPermissions } =
+  const { objectMetadataItem, objectMetadataItems, objectPermissions } =
     useRecordTableContextOrThrow();
 
   const {
     objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];

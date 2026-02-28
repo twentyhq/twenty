@@ -55,7 +55,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -64,6 +63,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const theme = useTheme();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,

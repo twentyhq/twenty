@@ -24,9 +24,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-const APPLICATION_ACCESS_TOKEN_EXPIRY_SECONDS = 1800;
-const APPLICATION_REFRESH_TOKEN_EXPIRY_SECONDS = 60 * 60 * 24 * 60; // 60 days
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_MESSAGE =
   'Application refresh token invalid or expired';
 
@@ -39,6 +38,7 @@ export class ApplicationTokenService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async generateApplicationAccessToken({
@@ -46,15 +46,17 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
-    expiresInSeconds = APPLICATION_ACCESS_TOKEN_EXPIRY_SECONDS,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
-    expiresInSeconds?: number;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
+
+    const expiresIn = this.twentyConfigService.get(
+      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
+    );
 
     return this.signApplicationToken({
       workspaceId,
@@ -62,7 +64,7 @@ export class ApplicationTokenService {
       userWorkspaceId,
       userId,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-      expiresInSeconds,
+      expiresIn,
     });
   }
 
@@ -82,26 +84,30 @@ export class ApplicationTokenService {
   }> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
-    const [applicationAccessToken, applicationRefreshToken] = await Promise.all(
-      [
-        this.signApplicationToken({
-          workspaceId,
-          applicationId,
-          userWorkspaceId,
-          userId,
-          tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-          expiresInSeconds: APPLICATION_ACCESS_TOKEN_EXPIRY_SECONDS,
-        }),
-        this.signApplicationToken({
-          workspaceId,
-          applicationId,
-          userWorkspaceId,
-          userId,
-          tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
-          expiresInSeconds: APPLICATION_REFRESH_TOKEN_EXPIRY_SECONDS,
-        }),
-      ],
+    const accessTokenExpiresIn = this.twentyConfigService.get(
+      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
     );
+    const refreshTokenExpiresIn = this.twentyConfigService.get(
+      'APPLICATION_REFRESH_TOKEN_EXPIRES_IN',
+    );
+
+    const applicationAccessToken = this.signApplicationToken({
+      workspaceId,
+      applicationId,
+      userWorkspaceId,
+      userId,
+      tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      expiresIn: accessTokenExpiresIn,
+    });
+
+    const applicationRefreshToken = this.signApplicationToken({
+      workspaceId,
+      applicationId,
+      userWorkspaceId,
+      userId,
+      tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
+      expiresIn: refreshTokenExpiresIn,
+    });
 
     return { applicationAccessToken, applicationRefreshToken };
   }
@@ -188,7 +194,7 @@ export class ApplicationTokenService {
     userWorkspaceId,
     userId,
     tokenType,
-    expiresInSeconds,
+    expiresIn,
   }: {
     workspaceId: string;
     applicationId: string;
@@ -197,9 +203,8 @@ export class ApplicationTokenService {
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
-    expiresInSeconds: number;
+    expiresIn: string;
   }): AuthToken {
-    const expiresIn = `${expiresInSeconds}s`;
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const jwtPayload:

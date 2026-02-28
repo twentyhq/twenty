@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -17,20 +18,9 @@ export const useNavigationMenuObjectMetadataFromDraft = (
   const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 
-  const objectMetadataIdsInWorkspace = currentDraft.reduce<Set<string>>(
-    (ids, item) => {
-      const view = isDefined(item.viewId)
-        ? views.find((view) => view.id === item.viewId)
-        : undefined;
-      if (isDefined(view)) {
-        ids.add(view.objectMetadataId);
-      }
-      if (isDefined(item.targetObjectMetadataId)) {
-        ids.add(item.targetObjectMetadataId);
-      }
-      return ids;
-    },
-    new Set<string>(),
+  const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
+    currentDraft,
+    views,
   );
 
   const objectMetadataIdsWithIndexView = new Set(
