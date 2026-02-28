@@ -183,9 +183,47 @@ window.__RECORD_TABLE_PROFILE = true
 Results batch-log every 2s showing per-component render counts, total/avg/max times.
 
 ### POC Benchmarks
-Available at `/__perf__/table` when dev server is running:
-- **Cell Render Benchmark**: Compares minimal cell vs various complexity levels (400 cells)
-- **State Access Benchmark**: Compares context vs Jotai atoms vs pre-resolved values
+Available at `/__perf__/table` (outside auth — no login required). Both run 5 iterations per test with min/avg/max stats and visual bar chart.
+
+**Cell Render Benchmark** — 17 tests isolating each cost factor for 400 cells:
+| # | Test | What it measures |
+|---|------|-----------------|
+| 01 | Inline style (baseline) | Absolute minimum: plain div + style object |
+| 02 | Linaria static | Compile-time CSS, no dynamic props |
+| 03 | Linaria + 4 dynamic props | Compile-time CSS with prop-based values (real cell pattern) |
+| 04 | Emotion static | Runtime CSS-in-JS, no dynamic props |
+| 05 | Emotion + 4 dynamic props | Runtime CSS-in-JS with prop interpolation |
+| 06 | Emotion + theme interpolation | Runtime CSS with auto-injected theme context |
+| 07 | Emotion + withTheme HOC | Runtime CSS with withTheme wrapper (used in codebase) |
+| 08 | Linaria dynamic + 3 ctx reads | Styling + context overhead (RowCtx, CellCtx, FieldCtx) |
+| 09 | Linaria dynamic + 5 ctx reads | + TableCtx and FocusCtx |
+| 10 | + 1 useState per cell | Simulating FieldFocusContextProvider |
+| 11 | + 2 useState per cell | + OverflowingTextWithTooltip |
+| 12 | + 3 event handlers/cell | Closure creation for onMouseMove, onMouseLeave, onClick |
+| 13 | + 3 Jotai atom reads/cell | fieldValue + isSelected + isHovered selectors |
+| 14 | 4-level Linaria nesting | StyleWrapper > BaseContainer > DisplayOuter > DisplayInner |
+| 15 | Full sim (providers + styled + hooks + handlers) | 3 context providers + 4 styled wrappers + 2 useState + 3 handlers |
+| 16 | Full sim + Jotai atoms | Closest to real RecordTable cell |
+| 17 | 14 fragment wrappers | Pure component depth cost (no styling/state) |
+
+**State Access Benchmark** — 12 tests comparing state access patterns:
+| # | Test | What it measures |
+|---|------|-----------------|
+| A | Props only (baseline) | No state reads |
+| B | 1 context read | Single useContext |
+| C | 2 context reads | Row + Cell contexts |
+| D | Pre-resolved context | Optimal: parent pushes final value via context |
+| E | 1 Jotai selector/cell | Derived atom from atomFamily |
+| F | 3 Jotai atoms/cell | value + selected + hovered (real pattern) |
+| G | 5 Jotai atoms/cell | + focused + active |
+| H | 1 heavy derived atom | Single atom combining 4 sources |
+| I | 2 ctx + 2 atoms | Real pattern: context for position, atoms for data |
+| J | Unstable ctx value per cell | New object reference per render (forces children to re-render) |
+| K | Stable ctx + React.memo child | Same as J but with memo |
+| L | Row provider > cell provider > atom | Real hierarchy: nested providers + atom read |
+
+### Linaria Configuration
+The `@wyw-in-js/vite` plugin requires an explicit `include` whitelist in `vite.config.ts`. Files in `__perf__/` are included via `'**/__perf__/**/*.tsx'`. The dev server must be restarted after changing this config.
 
 ## Expected Impact
 

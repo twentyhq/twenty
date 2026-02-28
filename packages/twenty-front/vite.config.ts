@@ -143,6 +143,7 @@ export default defineConfig(({ command, mode }) => {
             '**/RecordTableRowVirtualizedContainer.tsx',
             '**/RecordTableVirtualizedBodyPlaceholder.tsx',
             '**/RecordTableCellLoading.tsx',
+            '**/__perf__/**/*.tsx',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],

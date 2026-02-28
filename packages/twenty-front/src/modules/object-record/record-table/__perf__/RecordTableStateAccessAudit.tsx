@@ -1,50 +1,59 @@
 import { atom, createStore, Provider, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { styled } from '@linaria/react';
 
 const ROWS = 50;
 const COLS = 8;
 const TOTAL_CELLS = ROWS * COLS;
+const ITERATIONS = 5;
 
-const containerStyle: React.CSSProperties = {
-  padding: 16,
-  fontFamily: 'sans-serif',
-};
+// ---------------------------------------------------------------------------
+// Styled cells (Linaria)
+// ---------------------------------------------------------------------------
 
-const resultsStyle: React.CSSProperties = {
-  marginBottom: 16,
-  padding: 12,
-  background: '#f0f7ff',
-  borderRadius: 4,
-  fontSize: 13,
-  lineHeight: 1.6,
-};
+const StyledCell = styled.div`
+  height: 32px;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 13px;
+`;
 
-const gridStyle: React.CSSProperties = {
+const gridCss = {
   display: 'grid',
   gridTemplateColumns: `repeat(${COLS}, 150px)`,
   gap: 0,
-};
+} as const;
 
-const cellStyle: React.CSSProperties = {
-  height: 32,
-  borderBottom: '1px solid #eee',
-  borderRight: '1px solid #eee',
-  padding: '0 8px',
-  display: 'flex',
-  alignItems: 'center',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  fontSize: 13,
-};
+// ---------------------------------------------------------------------------
+// Jotai store and atoms
+// ---------------------------------------------------------------------------
 
-const store = createStore();
+const perfStore = createStore();
 
 const recordAtomFamily = atomFamily((recordId: string) =>
   atom<Record<string, string>>({
-    name: `Record ${recordId}`,
-    email: `${recordId}@test.com`,
+    name: `Name ${recordId}`,
+    email: `${recordId}@example.com`,
     phone: '555-0100',
+    company: 'Acme Inc',
+    city: 'San Francisco',
+    role: 'Engineer',
+    status: 'Active',
+    score: '95',
   }),
 );
 
@@ -67,43 +76,102 @@ const cellIsHoveredFamily = atomFamily(
   (a, b) => a.row === b.row && a.col === b.col,
 );
 
+const rowFocusedFamily = atomFamily((_recordId: string) => atom(false));
+const rowActiveFamily = atomFamily((_recordId: string) => atom(false));
+
+// "heavy" derived atom that combines multiple sources (simulating real permission/metadata lookups)
+const cellComputedFamily = atomFamily(
+  ({ recordId, fieldName }: { recordId: string; fieldName: string }) =>
+    atom((get) => {
+      const value = get(recordAtomFamily(recordId))?.[fieldName] ?? '';
+      const isSelected = get(rowSelectedFamily(recordId));
+      const isFocused = get(rowFocusedFamily(recordId));
+      const isActive = get(rowActiveFamily(recordId));
+      return { value, isSelected, isFocused, isActive };
+    }),
+  (a, b) => a.recordId === b.recordId && a.fieldName === b.fieldName,
+);
+
+// ---------------------------------------------------------------------------
+// Contexts
+// ---------------------------------------------------------------------------
+
 const RowContext = createContext({ recordId: '', rowIndex: 0 });
 const CellContext = createContext({ column: 0, fieldName: '' });
 const FieldValueContext = createContext('');
 
-const CellNoState = ({ value }: { value: string }) => (
-  <div style={cellStyle}>{value}</div>
+// Per-row context provider (simulates RecordTableRowContextProvider)
+const PerRowProvider = ({
+  children,
+  recordId,
+  rowIndex,
+}: {
+  children: React.ReactNode;
+  recordId: string;
+  rowIndex: number;
+}) => (
+  <RowContext.Provider value={{ recordId, rowIndex }}>
+    {children}
+  </RowContext.Provider>
 );
 
-const CellOneContext = () => {
+// Per-cell context provider (simulates RecordTableCellContext + FieldContext)
+const PerCellProvider = ({
+  children,
+  column,
+  fieldName,
+}: {
+  children: React.ReactNode;
+  column: number;
+  fieldName: string;
+}) => (
+  <CellContext.Provider value={{ column, fieldName }}>
+    {children}
+  </CellContext.Provider>
+);
+
+// ---------------------------------------------------------------------------
+// Cell variants
+// ---------------------------------------------------------------------------
+
+// A. Pure prop passing (no state access)
+const CellA_Props = ({ value }: { value: string }) => (
+  <StyledCell>{value}</StyledCell>
+);
+
+// B. One context read
+const CellB_OneCtx = () => {
   const { recordId } = useContext(RowContext);
-  return <div style={cellStyle}>{recordId}</div>;
+  return <StyledCell>{recordId}</StyledCell>;
 };
 
-const CellTwoContexts = () => {
+// C. Two context reads (row + cell)
+const CellC_TwoCtx = () => {
   const { recordId } = useContext(RowContext);
   const { fieldName } = useContext(CellContext);
-  return (
-    <div style={cellStyle}>
-      {recordId}-{fieldName}
-    </div>
-  );
+  return <StyledCell>{recordId}-{fieldName}</StyledCell>;
 };
 
-const CellOneAtom = ({
+// D. Pre-resolved context value (optimal: data pushed from parent via context)
+const CellD_PreResolved = () => {
+  const value = useContext(FieldValueContext);
+  return <StyledCell>{value}</StyledCell>;
+};
+
+// E. 1 Jotai selector (derived atom from recordAtomFamily)
+const CellE_OneSelector = ({
   recordId,
   fieldName,
 }: {
   recordId: string;
   fieldName: string;
 }) => {
-  const value = useAtomValue(
-    fieldValueSelectorFamily({ recordId, fieldName }),
-  );
-  return <div style={cellStyle}>{value}</div>;
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
+  return <StyledCell>{value}</StyledCell>;
 };
 
-const CellThreeAtoms = ({
+// F. 3 Jotai atoms (value + selected + hovered — real cell pattern)
+const CellF_ThreeAtoms = ({
   recordId,
   fieldName,
   row,
@@ -114,234 +182,530 @@ const CellThreeAtoms = ({
   row: number;
   col: number;
 }) => {
-  const value = useAtomValue(
-    fieldValueSelectorFamily({ recordId, fieldName }),
-  );
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
   useAtomValue(rowSelectedFamily(recordId));
   useAtomValue(cellIsHoveredFamily({ row, col }));
-  return <div style={cellStyle}>{value}</div>;
+  return <StyledCell>{value}</StyledCell>;
 };
 
-const CellContextPlusAtom = () => {
+// G. 5 Jotai atoms (value + selected + hovered + focused + active)
+const CellG_FiveAtoms = ({
+  recordId,
+  fieldName,
+  row,
+  col,
+}: {
+  recordId: string;
+  fieldName: string;
+  row: number;
+  col: number;
+}) => {
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
+  useAtomValue(rowSelectedFamily(recordId));
+  useAtomValue(cellIsHoveredFamily({ row, col }));
+  useAtomValue(rowFocusedFamily(recordId));
+  useAtomValue(rowActiveFamily(recordId));
+  return <StyledCell>{value}</StyledCell>;
+};
+
+// H. 1 heavy derived atom (combines 4 sources — simulates real-world derived state)
+const CellH_DerivedAtom = ({
+  recordId,
+  fieldName,
+}: {
+  recordId: string;
+  fieldName: string;
+}) => {
+  const { value } = useAtomValue(cellComputedFamily({ recordId, fieldName }));
+  return <StyledCell>{value}</StyledCell>;
+};
+
+// I. Context reads + Jotai atoms (real pattern: ctx for position, atoms for data)
+const CellI_CtxPlusAtoms = () => {
+  const { recordId } = useContext(RowContext);
+  const { fieldName, column } = useContext(CellContext);
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
+  useAtomValue(rowSelectedFamily(recordId));
+  return <StyledCell>{value}{column}</StyledCell>;
+};
+
+// J. New context value per cell (unstable reference — forces child re-renders)
+const UnstableCtxInner = () => {
+  const value = useContext(FieldValueContext);
+  return <StyledCell>{value}</StyledCell>;
+};
+
+// K. Stable context with memo child
+const MemoStyledCell = memo(({ value }: { value: string }) => (
+  <StyledCell>{value}</StyledCell>
+));
+MemoStyledCell.displayName = 'MemoStyledCell';
+
+const StableCtxInner = () => {
+  const value = useContext(FieldValueContext);
+  return <MemoStyledCell value={value} />;
+};
+
+// L. Per-row provider wrapping per-cell providers (real hierarchy pattern)
+const CellL_NestedProviders = () => {
   const { recordId } = useContext(RowContext);
   const { fieldName } = useContext(CellContext);
-  const value = useAtomValue(
-    fieldValueSelectorFamily({ recordId, fieldName }),
-  );
-  return <div style={cellStyle}>{value}</div>;
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
+  return <StyledCell>{value}</StyledCell>;
 };
 
-const CellPreResolvedContext = () => {
-  const value = useContext(FieldValueContext);
-  return <div style={cellStyle}>{value}</div>;
+// ---------------------------------------------------------------------------
+// Benchmark definitions
+// ---------------------------------------------------------------------------
+
+const FIELD_NAMES = ['name', 'email', 'phone', 'company', 'city', 'role', 'status', 'score'];
+
+type BenchmarkDef = {
+  name: string;
+  render: (recordIds: string[]) => React.ReactNode;
 };
 
-type BenchmarkResult = { name: string; renderTimeMs: number };
-
-const generateRecordIds = () =>
-  Array.from({ length: ROWS }, (_, i) => `rec-${i}`);
-
-const FIELD_NAMES = [
-  'name',
-  'email',
-  'phone',
-  'name',
-  'email',
-  'phone',
-  'name',
-  'email',
-];
-
-export const RecordTableStateAccessAudit = () => {
-  const [results, setResults] = useState<BenchmarkResult[]>([]);
-  const [activeTest, setActiveTest] = useState<string | null>(null);
-  const [testGrid, setTestGrid] = useState<React.ReactNode | null>(null);
-  const startTimeRef = useRef(0);
-  const recordIds = useRef(generateRecordIds());
-
-  const runBenchmark = (name: string, renderGrid: () => React.ReactNode) => {
-    setActiveTest(name);
-    startTimeRef.current = performance.now();
-    setTestGrid(renderGrid());
-  };
-
-  useEffect(() => {
-    if (activeTest && startTimeRef.current > 0) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const elapsed = performance.now() - startTimeRef.current;
-          setResults((prev) => [
-            ...prev,
-            { name: activeTest, renderTimeMs: elapsed },
-          ]);
-          setActiveTest(null);
-          startTimeRef.current = 0;
-        });
-      });
-    }
-  }, [activeTest, testGrid]);
-
-  const perCell = (ms: number) => (ms / TOTAL_CELLS).toFixed(3);
-
-  const gridA = () => (
-    <div style={gridStyle}>
-      {recordIds.current.flatMap((id, row) =>
-        FIELD_NAMES.map((_, col) => (
-          <CellNoState key={`${row}-${col}`} value={`${id}-col${col}`} />
-        )),
-      )}
-    </div>
-  );
-
-  const gridB = () => (
-    <div style={gridStyle}>
-      {recordIds.current.flatMap((id, row) =>
-        FIELD_NAMES.map((_, col) => (
-          <RowContext.Provider
-            key={`${row}-${col}`}
-            value={{ recordId: id, rowIndex: row }}
-          >
-            <CellOneContext />
-          </RowContext.Provider>
-        )),
-      )}
-    </div>
-  );
-
-  const gridC = () => (
-    <div style={gridStyle}>
-      {recordIds.current.flatMap((id, row) =>
-        FIELD_NAMES.map((fieldName, col) => (
-          <RowContext.Provider
-            key={`${row}-${col}`}
-            value={{ recordId: id, rowIndex: row }}
-          >
-            <CellContext.Provider value={{ column: col, fieldName }}>
-              <CellTwoContexts />
-            </CellContext.Provider>
-          </RowContext.Provider>
-        )),
-      )}
-    </div>
-  );
-
-  const gridD = () => (
-    <Provider store={store}>
-      <div style={gridStyle}>
-        {recordIds.current.flatMap((id, row) =>
-          FIELD_NAMES.map((fieldName, col) => (
-            <CellOneAtom
-              key={`${row}-${col}`}
-              recordId={id}
-              fieldName={fieldName}
-            />
+const BENCHMARKS: BenchmarkDef[] = [
+  {
+    name: 'A. Props only (baseline)',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((fn, ci) => (
+            <CellA_Props key={`${ri}-${ci}`} value={`${id}-${fn}`} />
           )),
         )}
       </div>
-    </Provider>
-  );
-
-  const gridE = () => (
-    <Provider store={store}>
-      <div style={gridStyle}>
-        {recordIds.current.flatMap((id, row) =>
-          FIELD_NAMES.map((fieldName, col) => (
-            <CellThreeAtoms
-              key={`${row}-${col}`}
-              recordId={id}
-              fieldName={fieldName}
-              row={row}
-              col={col}
-            />
+    ),
+  },
+  {
+    name: 'B. 1 context read',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((_, ci) => (
+            <RowContext.Provider key={`${ri}-${ci}`} value={{ recordId: id, rowIndex: ri }}>
+              <CellB_OneCtx />
+            </RowContext.Provider>
           )),
         )}
       </div>
-    </Provider>
-  );
-
-  const gridF = () => (
-    <Provider store={store}>
-      <div style={gridStyle}>
-        {recordIds.current.flatMap((id, row) =>
-          FIELD_NAMES.map((fieldName, col) => (
-            <RowContext.Provider
-              key={`${row}-${col}`}
-              value={{ recordId: id, rowIndex: row }}
-            >
-              <CellContext.Provider value={{ column: col, fieldName }}>
-                <CellContextPlusAtom />
+    ),
+  },
+  {
+    name: 'C. 2 context reads',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((fn, ci) => (
+            <RowContext.Provider key={`${ri}-${ci}`} value={{ recordId: id, rowIndex: ri }}>
+              <CellContext.Provider value={{ column: ci, fieldName: fn }}>
+                <CellC_TwoCtx />
               </CellContext.Provider>
             </RowContext.Provider>
           )),
         )}
       </div>
-    </Provider>
+    ),
+  },
+  {
+    name: 'D. Pre-resolved context (optimal)',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((fn, ci) => (
+            <FieldValueContext.Provider key={`${ri}-${ci}`} value={`${id}-${fn}`}>
+              <CellD_PreResolved />
+            </FieldValueContext.Provider>
+          )),
+        )}
+      </div>
+    ),
+  },
+  {
+    name: 'E. 1 Jotai selector/cell',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <CellE_OneSelector key={`${ri}-${ci}`} recordId={id} fieldName={fn} />
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'F. 3 Jotai atoms/cell',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <CellF_ThreeAtoms
+                key={`${ri}-${ci}`}
+                recordId={id}
+                fieldName={fn}
+                row={ri}
+                col={ci}
+              />
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'G. 5 Jotai atoms/cell',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <CellG_FiveAtoms
+                key={`${ri}-${ci}`}
+                recordId={id}
+                fieldName={fn}
+                row={ri}
+                col={ci}
+              />
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'H. 1 heavy derived atom (4 sources)',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <CellH_DerivedAtom key={`${ri}-${ci}`} recordId={id} fieldName={fn} />
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'I. 2 ctx + 2 atoms (real pattern)',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <RowContext.Provider key={`${ri}-${ci}`} value={{ recordId: id, rowIndex: ri }}>
+                <CellContext.Provider value={{ column: ci, fieldName: fn }}>
+                  <CellI_CtxPlusAtoms />
+                </CellContext.Provider>
+              </RowContext.Provider>
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'J. Unstable ctx value per cell',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((fn, ci) => (
+            <FieldValueContext.Provider key={`${ri}-${ci}`} value={`${id}-${fn}`}>
+              <UnstableCtxInner />
+            </FieldValueContext.Provider>
+          )),
+        )}
+      </div>
+    ),
+  },
+  {
+    name: 'K. Stable ctx + React.memo child',
+    render: (recordIds) => (
+      <div style={gridCss}>
+        {recordIds.flatMap((id, ri) =>
+          FIELD_NAMES.map((fn, ci) => (
+            <FieldValueContext.Provider key={`${ri}-${ci}`} value={`${id}-${fn}`}>
+              <StableCtxInner />
+            </FieldValueContext.Provider>
+          )),
+        )}
+      </div>
+    ),
+  },
+  {
+    name: 'L. Row provider → cell provider → atom (real hierarchy)',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.map((id, ri) => (
+            <PerRowProvider key={ri} recordId={id} rowIndex={ri}>
+              {FIELD_NAMES.map((fn, ci) => (
+                <PerCellProvider key={ci} column={ci} fieldName={fn}>
+                  <CellL_NestedProviders />
+                </PerCellProvider>
+              ))}
+            </PerRowProvider>
+          ))}
+        </div>
+      </Provider>
+    ),
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Harness
+// ---------------------------------------------------------------------------
+
+type BenchmarkResult = {
+  name: string;
+  times: number[];
+  avg: number;
+  min: number;
+  max: number;
+};
+
+const generateRecordIds = () =>
+  Array.from({ length: ROWS }, (_, i) => `rec-${i}`);
+
+export const RecordTableStateAccessAudit = () => {
+  const [results, setResults] = useState<BenchmarkResult[]>([]);
+  const [activeTest, setActiveTest] = useState<string | null>(null);
+  const [testGrid, setTestGrid] = useState<React.ReactNode | null>(null);
+  const [running, setRunning] = useState(false);
+  const iterationRef = useRef(0);
+  const timesRef = useRef<number[]>([]);
+  const startTimeRef = useRef(0);
+  const currentBenchRef = useRef<BenchmarkDef | null>(null);
+  const queueRef = useRef<BenchmarkDef[]>([]);
+  const recordIdsRef = useRef(generateRecordIds());
+
+  const runSingleIteration = useCallback((bench: BenchmarkDef) => {
+    setActiveTest(`${bench.name} (${iterationRef.current + 1}/${ITERATIONS})`);
+    startTimeRef.current = performance.now();
+    setTestGrid(bench.render(recordIdsRef.current));
+  }, []);
+
+  useEffect(() => {
+    if (!activeTest || startTimeRef.current === 0) return;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const elapsed = performance.now() - startTimeRef.current;
+        startTimeRef.current = 0;
+        timesRef.current.push(elapsed);
+        iterationRef.current += 1;
+
+        if (iterationRef.current < ITERATIONS && currentBenchRef.current) {
+          setTestGrid(null);
+          setTimeout(() => runSingleIteration(currentBenchRef.current!), 50);
+        } else {
+          const times = [...timesRef.current];
+          const avg = times.reduce((a, b) => a + b, 0) / times.length;
+          const min = Math.min(...times);
+          const max = Math.max(...times);
+
+          setResults((prev) => [
+            ...prev,
+            { name: currentBenchRef.current!.name, times, avg, min, max },
+          ]);
+
+          setTestGrid(null);
+          setActiveTest(null);
+          currentBenchRef.current = null;
+
+          if (queueRef.current.length > 0) {
+            const next = queueRef.current.shift()!;
+            setTimeout(() => startBenchmark(next), 100);
+          } else {
+            setRunning(false);
+          }
+        }
+      });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTest, testGrid]);
+
+  const startBenchmark = useCallback((bench: BenchmarkDef) => {
+    currentBenchRef.current = bench;
+    iterationRef.current = 0;
+    timesRef.current = [];
+    runSingleIteration(bench);
+  }, [runSingleIteration]);
+
+  const runAll = useCallback(() => {
+    setResults([]);
+    setRunning(true);
+    queueRef.current = [...BENCHMARKS.slice(1)];
+    startBenchmark(BENCHMARKS[0]);
+  }, [startBenchmark]);
+
+  const runOne = useCallback(
+    (bench: BenchmarkDef) => {
+      setRunning(true);
+      queueRef.current = [];
+      startBenchmark(bench);
+    },
+    [startBenchmark],
   );
 
-  const gridG = () => (
-    <div style={gridStyle}>
-      {recordIds.current.flatMap((id, row) =>
-        FIELD_NAMES.map((fieldName, col) => (
-          <FieldValueContext.Provider
-            key={`${row}-${col}`}
-            value={`${id}-${fieldName}`}
-          >
-            <CellPreResolvedContext />
-          </FieldValueContext.Provider>
-        )),
-      )}
-    </div>
-  );
+  const perCell = (ms: number) => (ms / TOTAL_CELLS).toFixed(3);
+  const overhead = (avg: number) => {
+    if (results.length === 0) return '';
+    const baseline = results[0].avg;
+    const delta = avg - baseline;
+    const pct = ((delta / baseline) * 100).toFixed(0);
+    return `+${delta.toFixed(1)}ms (+${pct}%)`;
+  };
 
   return (
-    <div style={containerStyle}>
-      <h3>State Access Pattern Audit</h3>
-      <p>
-        Comparing state access overhead for {TOTAL_CELLS} cells ({ROWS}r x{' '}
-        {COLS}c).
+    <div style={{ padding: 16, fontFamily: 'system-ui, sans-serif' }}>
+      <h2 style={{ marginBottom: 4 }}>State Access Pattern Audit</h2>
+      <p style={{ color: '#666', marginTop: 0 }}>
+        {TOTAL_CELLS} cells ({ROWS}×{COLS}), {ITERATIONS} iterations each.
+        Compares context reads, Jotai atoms, derived selectors, and real hierarchy patterns.
       </p>
 
-      <div
-        style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}
-      >
-        <button onClick={() => runBenchmark('A. No state (baseline)', gridA)}>
-          A. No state
+      <div style={{ marginBottom: 12 }}>
+        <button
+          onClick={runAll}
+          disabled={running}
+          style={{
+            padding: '8px 16px',
+            fontWeight: 'bold',
+            fontSize: 14,
+            background: running ? '#ccc' : '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: 4,
+            cursor: running ? 'default' : 'pointer',
+            marginRight: 8,
+          }}
+        >
+          {running ? `Running: ${activeTest ?? '...'}` : 'Run All Benchmarks'}
         </button>
-        <button onClick={() => runBenchmark('B. 1 context', gridB)}>
-          B. 1 context
-        </button>
-        <button onClick={() => runBenchmark('C. 2 contexts', gridC)}>
-          C. 2 contexts
-        </button>
-        <button onClick={() => runBenchmark('D. 1 Jotai atom', gridD)}>
-          D. 1 atom
-        </button>
-        <button onClick={() => runBenchmark('E. 3 Jotai atoms', gridE)}>
-          E. 3 atoms
-        </button>
-        <button onClick={() => runBenchmark('F. Context + atom', gridF)}>
-          F. Ctx + atom
-        </button>
-        <button onClick={() => runBenchmark('G. Pre-resolved ctx', gridG)}>
-          G. Pre-resolved
+        <button
+          onClick={() => setResults([])}
+          disabled={running}
+          style={{ padding: '8px 12px', fontSize: 13 }}
+        >
+          Clear
         </button>
       </div>
 
-      {results.length > 0 && (
-        <div style={resultsStyle}>
-          <strong>Results ({TOTAL_CELLS} cells):</strong>
-          <br />
-          {results.map((r, i) => (
-            <div key={i}>
-              {r.name}: <strong>{r.renderTimeMs.toFixed(1)}ms</strong> total (
-              {perCell(r.renderTimeMs)}ms/cell)
-            </div>
+      <details style={{ marginBottom: 16 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
+          Run individual tests
+        </summary>
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 8 }}>
+          {BENCHMARKS.map((bench) => (
+            <button
+              key={bench.name}
+              onClick={() => runOne(bench)}
+              disabled={running}
+              style={{ fontSize: 11, padding: '4px 8px' }}
+            >
+              {bench.name}
+            </button>
           ))}
+        </div>
+      </details>
+
+      {results.length > 0 && (
+        <div
+          style={{
+            marginBottom: 16,
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: 6,
+            overflow: 'auto',
+          }}
+        >
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: '#f0f7ff' }}>
+                <th style={{ textAlign: 'left', padding: '8px 12px' }}>Test</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Avg</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Min</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Max</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Per cell</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>vs baseline</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', width: 200 }}>Bar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((r, i) => {
+                const maxAvg = Math.max(...results.map((x) => x.avg));
+                const barPct = (r.avg / maxAvg) * 100;
+                const isBaseline = i === 0;
+                return (
+                  <tr
+                    key={r.name}
+                    style={{
+                      borderTop: '1px solid #e2e8f0',
+                      background: isBaseline ? '#eff6ff' : undefined,
+                    }}
+                  >
+                    <td style={{ padding: '6px 12px', fontWeight: isBaseline ? 600 : 400 }}>
+                      {r.name}
+                    </td>
+                    <td style={{ textAlign: 'right', padding: '6px 12px', fontWeight: 600 }}>
+                      {r.avg.toFixed(1)}ms
+                    </td>
+                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                      {r.min.toFixed(1)}
+                    </td>
+                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                      {r.max.toFixed(1)}
+                    </td>
+                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                      {perCell(r.avg)}ms
+                    </td>
+                    <td
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 12px',
+                        color: isBaseline ? '#666' : '#dc2626',
+                        fontWeight: isBaseline ? 400 : 500,
+                      }}
+                    >
+                      {isBaseline ? '—' : overhead(r.avg)}
+                    </td>
+                    <td style={{ padding: '6px 12px' }}>
+                      <div
+                        style={{
+                          height: 16,
+                          width: `${barPct}%`,
+                          background: isBaseline
+                            ? '#93c5fd'
+                            : barPct > 80
+                              ? '#fca5a5'
+                              : barPct > 50
+                                ? '#fcd34d'
+                                : '#86efac',
+                          borderRadius: 2,
+                          transition: 'width 0.3s',
+                        }}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
-      {activeTest && <p>Running: {activeTest}...</p>}
-      {testGrid}
+      {activeTest && !results.length && (
+        <p style={{ color: '#666' }}>Running: {activeTest}...</p>
+      )}
+
+      <div style={{ position: 'absolute', left: -9999, top: -9999, visibility: 'hidden' }}>
+        {testGrid}
+      </div>
     </div>
   );
 };
