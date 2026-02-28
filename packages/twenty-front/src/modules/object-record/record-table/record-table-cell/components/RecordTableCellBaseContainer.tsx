@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useRecordTableRenderProfiler } from '@/object-record/record-table/__perf__/useRecordTableRenderProfiler';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
@@ -54,7 +53,6 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
-  useRecordTableRenderProfiler('RecordTableCellBaseContainer');
   const {
     isRecordFieldReadOnly: isReadOnly,
     fieldDefinition,

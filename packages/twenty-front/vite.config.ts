@@ -143,7 +143,6 @@ export default defineConfig(({ command, mode }) => {
             '**/RecordTableRowVirtualizedContainer.tsx',
             '**/RecordTableVirtualizedBodyPlaceholder.tsx',
             '**/RecordTableCellLoading.tsx',
-            '**/perf-linaria-cells.tsx',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],

@@ -14,8 +14,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useContext, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useRecordTableRenderProfiler } from '@/object-record/record-table/__perf__/useRecordTableRenderProfiler';
-
 type RecordTableCellFieldContextGenericProps = {
   recordField: RecordField;
   children: ReactNode;
@@ -25,7 +23,6 @@ export const RecordTableCellFieldContextGeneric = ({
   recordField,
   children,
 }: RecordTableCellFieldContextGenericProps) => {
-  useRecordTableRenderProfiler('RecordTableCellFieldContextGeneric');
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
   const { objectMetadataItem, objectMetadataItems, objectPermissions } =
