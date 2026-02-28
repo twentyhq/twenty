@@ -79,7 +79,9 @@ export class ApplicationRegistrationVariableService {
         }),
       };
 
-    await this.variableRepository.update(id, updateData);
+    if (Object.keys(updateData).length > 0) {
+      await this.variableRepository.update(id, updateData);
+    }
 
     return this.variableRepository.findOneOrFail({ where: { id } });
   }
