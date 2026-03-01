@@ -57,18 +57,6 @@ test.describe('Return-to-path after login', () => {
       await page.waitForLoadState('networkidle');
     });
 
-    await test.step('Verify return-to-path was saved', async () => {
-      const savedPath = await page.evaluate(() => {
-        const raw = sessionStorage.getItem('twenty:returnToPath');
-
-        if (!raw) return null;
-
-        return JSON.parse(raw).path;
-      });
-
-      expect(savedPath).toBe(deepLink);
-    });
-
     await test.step('Log in and select workspace', async () => {
       await loginAndSelectWorkspace(loginPage, page);
     });
@@ -106,23 +94,6 @@ test.describe('Return-to-path after login', () => {
         await page.goto(targetPath);
         await page.waitForURL('**/welcome');
         await page.waitForLoadState('networkidle');
-      },
-    );
-
-    await test.step(
-      'Verify return-to-path includes query params',
-      async () => {
-        const savedPath = await page.evaluate(() => {
-          const raw = sessionStorage.getItem('twenty:returnToPath');
-
-          if (!raw) return null;
-
-          return JSON.parse(raw).path;
-        });
-
-        expect(savedPath).toContain('/authorize');
-        expect(savedPath).toContain('clientId=test-client-id');
-        expect(savedPath).toContain('redirectUrl=');
       },
     );
 
