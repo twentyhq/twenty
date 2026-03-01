@@ -1,10 +1,11 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddFolderToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
@@ -43,6 +44,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
       position,
       userWorkspaceId: undefined,
       name: name.trim(),
+      color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
       applicationId: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

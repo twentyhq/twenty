@@ -6,4 +6,5 @@ export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'name',
   'link',
   'icon',
+  'color',
 ] as const satisfies MetadataEntityPropertyName<'navigationMenuItem'>[];

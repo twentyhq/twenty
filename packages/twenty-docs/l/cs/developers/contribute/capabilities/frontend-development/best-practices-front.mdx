@@ -6,9 +6,9 @@ Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při
 
 ## Správa stavu
 
-React and Jotai handle state management in the codebase.
+React a Jotai zajišťují správu stavu v kódu.
 
-### Use Jotai atoms to store state
+### Použijte atomy Jotai k ukládání stavu
 
 Je dobrým zvykem vytvořit tolik atomů, kolik potřebujete ke správě stavu.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Vyhněte se používání `useRef` k ukládání stavu.
 
-If you want to store state, you should use `useState` or Jotai atoms with `useAtomState`.
+Pokud chcete ukládat stav, měli byste použít `useState` nebo atomy Jotai s `useAtomState`.
 
 Podívejte se, jak spravovat překreslení, pokud máte pocit, že potřebujete `useRef`, abyste zabránili některým překreslením.
 
@@ -82,8 +82,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Stejný postup můžete aplikovat na logiku získávání dat pomocí Apollo hooks.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Špatně, způsobí překreslení, i když se data nemění,
+//    protože useEffect je třeba znovu vyhodnotit
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -103,8 +103,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Dobře, nezpůsobí překreslení, pokud se data nemění,
+//   protože useEffect je znovu vyhodnocen v jiné sourozenecké komponentě
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Use atom family states and selectors
+### Použijte rodiny atomů a selektory
 
-Atom family states and selectors are a great way to avoid re-renders.
+Rodiny atomů a selektory jsou skvělým způsobem, jak se vyhnout překreslování.
 
 Jsou užitečné, když potřebujete uložit seznam položek.
 

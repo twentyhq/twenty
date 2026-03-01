@@ -83,7 +83,7 @@ Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-ap
 * Minimal bir temel uygulamayı `my-twenty-app/` içine kopyalar
 * Yerel bir `twenty-sdk` bağımlılığı ve Yarn 4 yapılandırması ekler
 * `twenty` CLI ile bağlantılı yapılandırma dosyaları ve betikler oluşturur
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* İskelet oluşturma moduna bağlı olarak çekirdek dosyaları (uygulama yapılandırması, varsayılan işlev rolü, kurulum öncesi ve kurulum sonrası işlevler) ile örnek dosyaları üretir
 
 Varsayılan `--exhaustive` moduyla yeni oluşturulmuş bir uygulama şu şekilde görünür:
 
@@ -99,30 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Gerekli - ana uygulama yapılandırması
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Mantık fonksiyonları için varsayılan rol
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Örnek özel nesne tanımı
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Örnek bağımsız alan tanımı
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Örnek mantık fonksiyonu
+  │   ├── pre-install.ts                # Kurulum öncesi mantık fonksiyonu
+  │   └── post-install.ts               # Kurulum sonrası mantık fonksiyonu
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Örnek ön bileşen
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Örnek kaydedilmiş görünüm tanımı
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Örnek kenar çubuğu gezinme bağlantısı
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
+`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
 
 Genel hatlarıyla:
 
@@ -139,18 +139,18 @@ Genel hatlarıyla:
 
 SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** çağrılarını arayarak ayrıştırıp varlıkları algılar. Her varlık türünün, `twenty-sdk` tarafından dışa aktarılan karşılık gelen bir yardımcı fonksiyonu vardır:
 
-| Yardımcı fonksiyon                 | Varlık türü                                           |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | Özel nesne tanımları                                  |
-| `defineLogicFunction()`            | Mantık fonksiyon tanımları                            |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Front component definitions                           |
-| `defineRole()`                     | Rol tanımları                                         |
-| `defineField()`                    | Mevcut nesneler için alan genişletmeleri              |
-| `defineView()`                     | Kaydedilmiş görünüm tanımları                         |
-| `defineNavigationMenuItem()`       | Gezinme menüsü öğesi tanımları                        |
-| `defineSkill()`                    | Yapay zekâ ajanı yetenek tanımları                    |
+| Yardımcı fonksiyon                 | Varlık türü                                              |
+| ---------------------------------- | -------------------------------------------------------- |
+| `defineObject()`                   | Özel nesne tanımları                                     |
+| `defineLogicFunction()`            | Mantık fonksiyon tanımları                               |
+| `definePreInstallLogicFunction()`  | Kurulum öncesi mantık işlevi (kurulumdan önce çalışır)   |
+| `definePostInstallLogicFunction()` | Kurulum sonrası mantık işlevi (kurulumdan sonra çalışır) |
+| `defineFrontComponent()`           | Front component definitions                              |
+| `defineRole()`                     | Rol tanımları                                            |
+| `defineField()`                    | Mevcut nesneler için alan genişletmeleri                 |
+| `defineView()`                     | Kaydedilmiş görünüm tanımları                            |
+| `defineNavigationMenuItem()`       | Gezinme menüsü öğesi tanımları                           |
+| `defineSkill()`                    | Yapay zekâ ajanı yetenek tanımları                       |
 
 <Note>
 **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
@@ -220,8 +220,8 @@ SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağl
 | `defineApplication()`              | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet) |
 | `defineObject()`                   | Alanlara sahip özel nesneler tanımlayın                                   |
 | `defineLogicFunction()`            | İşleyicilerle mantık fonksiyonları tanımlayın                             |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                         |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                        |
+| `definePreInstallLogicFunction()`  | Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)    |
+| `definePostInstallLogicFunction()` | Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)   |
 | `defineFrontComponent()`           | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                |
 | `defineRole()`                     | Rol izinlerini ve nesne erişimini yapılandırın                            |
 | `defineField()`                    | Mevcut nesneleri ek alanlarla genişletin                                  |
@@ -327,7 +327,7 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application-config.ts` do
 * **Uygulamanın kim olduğu**: tanımlayıcılar, görünen ad ve açıklama.
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(İsteğe bağlı) kurulum öncesi işlev**: uygulama yüklenmeden önce çalışan bir mantık işlevi.
 * **(İsteğe bağlı) kurulum sonrası işlev**: uygulama yüklendikten sonra çalışan bir mantık işlevi.
 
 Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
@@ -359,7 +359,7 @@ Notlar:
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
 * `defaultRoleUniversalIdentifier`, rol dosyasıyla eşleşmelidir (aşağıya bakın).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* Kurulum öncesi ve kurulum sonrası işlevler, manifest oluşturma sırasında otomatik olarak algılanır. Bkz. [Kurulum öncesi işlevler](#pre-install-functions) ve [Kurulum sonrası işlevler](#post-install-functions).
 
 #### Roller ve izinler
 
@@ -498,11 +498,11 @@ Notlar:
 * `triggers` dizisi isteğe bağlıdır. Tetikleyicisi olmayan fonksiyonlar, diğer fonksiyonlar tarafından çağrılan yardımcı fonksiyonlar olarak kullanılabilir.
 * Tek bir fonksiyonda birden çok tetikleyici türünü birleştirebilirsiniz.
 
-### Pre-install functions
+### Kurulum öncesi işlevler
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+Kurulum öncesi işlev, uygulamanız bir çalışma alanına yüklenmeden önce otomatik olarak çalışan bir mantık işlevidir. Bu, doğrulama görevleri, önkoşul kontrolleri veya ana kurulum başlamadan önce çalışma alanı durumunun hazırlanması için yararlıdır.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+`create-twenty-app` ile yeni bir uygulama iskeleti oluşturduğunuzda, `src/logic-functions/pre-install.ts` konumunda sizin için bir kurulum öncesi işlev oluşturulur:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +521,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +529,12 @@ yarn twenty function:execute --preInstall
 
 Önemli noktalar:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
+* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
+* Uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `preInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
+* Varsayılan zaman aşımı, daha uzun hazırlık görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* Kurulum öncesi işlevlerin tetikleyicilere ihtiyacı yoktur — kurulumdan önce platform tarafından veya `function:execute --preInstall` aracılığıyla manuel olarak çağrılırlar.
 
 ### Kurulum sonrası işlevler
 
@@ -567,10 +567,10 @@ yarn twenty function:execute --postInstall
 
 Önemli noktalar:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* Kurulum sonrası işlevler `definePostInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
+* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
+* Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `postInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
 * Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
 * Kurulum sonrası işlevlerin tetikleyicilere ihtiyacı yoktur — kurulum sırasında platform tarafından veya `function:execute --postInstall` aracılığıyla manuel olarak çağrılırlar.
 
