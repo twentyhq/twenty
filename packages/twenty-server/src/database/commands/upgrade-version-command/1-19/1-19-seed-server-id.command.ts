@@ -39,6 +39,8 @@ export class SeedServerIdCommand extends ActiveOrSuspendedWorkspacesMigrationCom
 
     this.hasRun = true;
 
+    await queryRunner.release();
+
     this.logger.log(`SERVER_ID seeded successfully`);
   }
 }

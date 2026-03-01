@@ -13,7 +13,7 @@ export const seedServerId = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`"${schemaName}"."keyValuePair"`, ['key', 'value', 'type'])
+    .into(`${schemaName}.keyValuePair`, ['key', 'value', 'type'])
     .orIgnore()
     .values([
       {
