@@ -154,7 +154,7 @@ export const PageChangeEffect = () => {
         !isOnAuthOrOnboardingPage
       ) {
         saveReturnToPath(
-          `${location.pathname}${location.search}${location.hash}`,
+          `${window.location.pathname}${window.location.search}${window.location.hash}`,
         );
       }
 
@@ -176,9 +176,6 @@ export const PageChangeEffect = () => {
     saveReturnToPath,
     getReturnToPath,
     clearReturnToPath,
-    location.pathname,
-    location.search,
-    location.hash,
   ]);
 
   useEffect(() => {

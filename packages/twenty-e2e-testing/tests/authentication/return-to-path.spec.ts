@@ -54,6 +54,7 @@ test.describe('Return-to-path after login', () => {
     await test.step('Navigate to deep link while logged out', async () => {
       await page.goto(deepLink);
       await page.waitForURL('**/welcome');
+      await page.waitForLoadState('networkidle');
     });
 
     await test.step('Verify return-to-path was saved', async () => {
@@ -104,6 +105,7 @@ test.describe('Return-to-path after login', () => {
       async () => {
         await page.goto(targetPath);
         await page.waitForURL('**/welcome');
+        await page.waitForLoadState('networkidle');
       },
     );
 
