@@ -42,6 +42,9 @@ export const AppRouterProviders = () => {
         <ClientConfigProviderEffect />
         <MetadataProviderEffect />
         <WorkspaceProviderEffect />
+        {/* Start metadata fetch early, alongside MetadataProviderEffect.
+            Only needs the auth token (from cookies), not user data. */}
+        <ObjectMetadataItemsLoadEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
             <ChromeExtensionSidecarEffect />
@@ -50,7 +53,6 @@ export const AppRouterProviders = () => {
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
-                      <ObjectMetadataItemsLoadEffect />
                       <ObjectMetadataItemsProvider>
                         <PrefetchDataProvider>
                           <UserThemeProviderEffect />

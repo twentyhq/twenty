@@ -75,6 +75,7 @@
     "ai": "5.0.52",
     "apollo-link-rest": "^0.9.0",
     "apollo-upload-client": "^17.0.0",
+    "apollo3-cache-persist": "^0.14.1",
     "buffer": "^6.0.3",
     "cron-parser": "5.1.1",
     "date-fns": "^2.30.0",

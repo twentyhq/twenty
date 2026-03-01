@@ -8,6 +8,7 @@ import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { AppPath } from 'twenty-shared/types';
 
+import { lazy, Suspense } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -17,16 +18,66 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
-import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
-import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { BookCall } from '~/pages/onboarding/BookCall';
-import { BookCallDecision } from '~/pages/onboarding/BookCallDecision';
-import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
-import { CreateProfile } from '~/pages/onboarding/CreateProfile';
-import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
-import { InviteTeam } from '~/pages/onboarding/InviteTeam';
-import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
-import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+
+const RecordIndexPage = lazy(() =>
+  import('~/pages/object-record/RecordIndexPage').then((module) => ({
+    default: module.RecordIndexPage,
+  })),
+);
+
+const RecordShowPage = lazy(() =>
+  import('~/pages/object-record/RecordShowPage').then((module) => ({
+    default: module.RecordShowPage,
+  })),
+);
+
+const BookCall = lazy(() =>
+  import('~/pages/onboarding/BookCall').then((module) => ({
+    default: module.BookCall,
+  })),
+);
+
+const BookCallDecision = lazy(() =>
+  import('~/pages/onboarding/BookCallDecision').then((module) => ({
+    default: module.BookCallDecision,
+  })),
+);
+
+const ChooseYourPlan = lazy(() =>
+  import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
+    default: module.ChooseYourPlan,
+  })),
+);
+
+const CreateProfile = lazy(() =>
+  import('~/pages/onboarding/CreateProfile').then((module) => ({
+    default: module.CreateProfile,
+  })),
+);
+
+const CreateWorkspace = lazy(() =>
+  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
+    default: module.CreateWorkspace,
+  })),
+);
+
+const InviteTeam = lazy(() =>
+  import('~/pages/onboarding/InviteTeam').then((module) => ({
+    default: module.InviteTeam,
+  })),
+);
+
+const PaymentSuccess = lazy(() =>
+  import('~/pages/onboarding/PaymentSuccess').then((module) => ({
+    default: module.PaymentSuccess,
+  })),
+);
+
+const SyncEmails = lazy(() =>
+  import('~/pages/onboarding/SyncEmails').then((module) => ({
+    default: module.SyncEmails,
+  })),
+);
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -46,23 +97,87 @@ export const useCreateAppRouter = (
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
-          <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
-          <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
-          <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
-          <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
+          <Route
+            path={AppPath.CreateWorkspace}
+            element={
+              <Suspense>
+                <CreateWorkspace />
+              </Suspense>
+            }
+          />
+          <Route
+            path={AppPath.CreateProfile}
+            element={
+              <Suspense>
+                <CreateProfile />
+              </Suspense>
+            }
+          />
+          <Route
+            path={AppPath.SyncEmails}
+            element={
+              <Suspense>
+                <SyncEmails />
+              </Suspense>
+            }
+          />
+          <Route
+            path={AppPath.InviteTeam}
+            element={
+              <Suspense>
+                <InviteTeam />
+              </Suspense>
+            }
+          />
+          <Route
+            path={AppPath.PlanRequired}
+            element={
+              <Suspense>
+                <ChooseYourPlan />
+              </Suspense>
+            }
+          />
           <Route
             path={AppPath.PlanRequiredSuccess}
-            element={<PaymentSuccess />}
+            element={
+              <Suspense>
+                <PaymentSuccess />
+              </Suspense>
+            }
           />
           <Route
             path={AppPath.BookCallDecision}
-            element={<BookCallDecision />}
+            element={
+              <Suspense>
+                <BookCallDecision />
+              </Suspense>
+            }
           />
-          <Route path={AppPath.BookCall} element={<BookCall />} />
+          <Route
+            path={AppPath.BookCall}
+            element={
+              <Suspense>
+                <BookCall />
+              </Suspense>
+            }
+          />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-          <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
-          <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
+          <Route
+            path={AppPath.RecordIndexPage}
+            element={
+              <Suspense>
+                <RecordIndexPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path={AppPath.RecordShowPage}
+            element={
+              <Suspense>
+                <RecordShowPage />
+              </Suspense>
+            }
+          />
           <Route
             path={AppPath.SettingsCatchAll}
             element={

@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { normalizeSearchInput } from 'src/engine/core-modules/search/utils/normalize-search-input';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -96,14 +97,16 @@ export class SearchService {
                   rolePermissionConfig,
                 );
 
+              const normalizedInput = normalizeSearchInput(searchInput);
+
               return {
                 objectMetadataItem: flatObjectMetadata,
                 records: await this.buildSearchQueryAndGetRecords({
                   entityManager: repository,
                   flatObjectMetadata,
                   flatFieldMetadataMaps,
-                  searchTerms: formatSearchTerms(searchInput, 'and'),
-                  searchTermsOr: formatSearchTerms(searchInput, 'or'),
+                  searchTerms: formatSearchTerms(normalizedInput, 'and'),
+                  searchTermsOr: formatSearchTerms(normalizedInput, 'or'),
                   limit: limit as number,
                   filter: filter ?? ({} as ObjectRecordFilter),
                   after,

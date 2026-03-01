@@ -33,6 +33,8 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
 jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
   useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
     refreshObjectMetadataItems: jest.fn(),
+    fetchAndStoreRawObjectMetadataItems: jest.fn(),
+    enrichWithPermissions: jest.fn(),
   })),
 }));
 

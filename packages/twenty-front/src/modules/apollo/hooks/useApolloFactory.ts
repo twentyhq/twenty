@@ -21,6 +21,24 @@ import { isDefined } from 'twenty-shared/utils';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
+const DEFAULT_TYPE_POLICIES = {
+  RemoteTable: {
+    keyFields: ['name'],
+  },
+};
+
+// Stable cache instance shared across factory recreations
+let sharedCache: InMemoryCache | null = null;
+
+export const getOrCreateCache = (): InMemoryCache => {
+  if (!sharedCache) {
+    sharedCache = new InMemoryCache({
+      typePolicies: DEFAULT_TYPE_POLICIES,
+    });
+  }
+  return sharedCache;
+};
+
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
@@ -45,13 +63,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      cache: new InMemoryCache({
-        typePolicies: {
-          RemoteTable: {
-            keyFields: ['name'],
-          },
-        },
-      }),
+      cache: getOrCreateCache(),
 
       defaultOptions: {
         watchQuery: {
