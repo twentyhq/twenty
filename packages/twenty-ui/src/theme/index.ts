@@ -68,4 +68,3 @@ export { buildThemeReferencingRootCssVariables } from './utils/buildThemeReferen
 export { getNextThemeColor } from './utils/getNextThemeColor';
 export { prepareThemeForRootCssVariableInjection } from './utils/prepareThemeForRootCssVariableInjection';
 export { SPACING_VALUES } from './utils/spacingValues';
-export { themeColorSchema } from './utils/themeColorSchema';
