@@ -109,14 +109,10 @@ false
 {{- $host := .Values.redis.external.host | default "redis" -}}
 {{- $port := .Values.redis.external.port | default 6379 -}}
 {{- if or (eq (include "twenty.redis.useExternalSecret" .) "true") (.Values.redis.external.password) -}}
-{{- $auth := "$(REDIS_PASSWORD)@" -}}
-{{- printf "redis://%s%s:%v" $auth $host $port -}}
-{{- else if .Values.redis.external.password -}}
-{{- $auth := "$(REDIS_PASSWORD)@" -}}
+{{- $auth := ":$(REDIS_PASSWORD)@" -}}
 {{- printf "redis://%s%s:%v" $auth $host $port -}}
 {{- else -}}
-{{- $auth := "" -}}
-{{- printf "redis://%s%s:%v" $auth $host $port -}}
+{{- printf "redis://%s:%v" $host $port -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
