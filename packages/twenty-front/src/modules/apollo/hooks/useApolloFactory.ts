@@ -27,16 +27,10 @@ const DEFAULT_TYPE_POLICIES = {
   },
 };
 
-// Stable cache instance shared across factory recreations
-let sharedCache: InMemoryCache | null = null;
-
-export const getOrCreateCache = (): InMemoryCache => {
-  if (!sharedCache) {
-    sharedCache = new InMemoryCache({
-      typePolicies: DEFAULT_TYPE_POLICIES,
-    });
-  }
-  return sharedCache;
+export const createMetadataCache = (): InMemoryCache => {
+  return new InMemoryCache({
+    typePolicies: DEFAULT_TYPE_POLICIES,
+  });
 };
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
@@ -63,7 +57,10 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      cache: getOrCreateCache(),
+      // Each factory call gets its own cache unless overridden via options
+      cache: new InMemoryCache({
+        typePolicies: DEFAULT_TYPE_POLICIES,
+      }),
 
       defaultOptions: {
         watchQuery: {
@@ -113,7 +110,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       },
       extraLinks: [],
       isDebugMode: process.env.IS_DEBUG_MODE === 'true',
-      // Override options
+      // Override options (including cache if provided)
       ...options,
     });
 

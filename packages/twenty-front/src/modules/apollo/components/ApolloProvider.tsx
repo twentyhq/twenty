@@ -1,9 +1,10 @@
 import { ApolloProvider as ApolloProviderBase } from '@apollo/client';
+import { useMemo } from 'react';
 
 import { useApolloClientCachePersist } from '@/apollo/hooks/useApolloClientCachePersist';
 import {
   useApolloFactory,
-  getOrCreateCache,
+  createMetadataCache,
 } from '@/apollo/hooks/useApolloFactory';
 import { createCaptchaRefreshLink } from '@/apollo/utils/captchaRefreshLink';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
@@ -14,11 +15,14 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
 
   const captchaRefreshLink = createCaptchaRefreshLink(requestFreshCaptchaToken);
 
-  const cache = getOrCreateCache();
-  const { isRestored } = useApolloClientCachePersist(cache);
+  // Stable cache instance for the metadata Apollo client only
+
+  const metadataCache = useMemo(() => createMetadataCache(), []);
+  const { isRestored } = useApolloClientCachePersist(metadataCache);
 
   const apolloClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
+    cache: metadataCache,
     connectToDevTools: true,
     extraLinks: [captchaRefreshLink],
   });

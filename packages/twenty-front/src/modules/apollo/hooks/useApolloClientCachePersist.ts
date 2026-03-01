@@ -1,12 +1,14 @@
 import { type InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 import { CachePersistor, LocalStorageWrapper } from 'apollo3-cache-persist';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const CACHE_PERSIST_KEY = 'twenty-apollo-cache';
 const CACHE_VERSION_KEY = 'twenty-apollo-cache-version';
 
 export const useApolloClientCachePersist = (cache: InMemoryCache) => {
   const [isRestored, setIsRestored] = useState(false);
+  // eslint-disable-next-line twenty/no-state-useref
   const persistorRef = useRef<CachePersistor<NormalizedCacheObject> | null>(
     null,
   );
@@ -37,7 +39,7 @@ export const useApolloClientCachePersist = (cache: InMemoryCache) => {
   }, [cache]);
 
   const purge = useCallback(async () => {
-    if (persistorRef.current) {
+    if (isDefined(persistorRef.current)) {
       await persistorRef.current.purge();
     }
     localStorage.removeItem(CACHE_PERSIST_KEY);
