@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { Logger } from '@nestjs/common';
+
 import { type DataSource } from 'typeorm';
 import {
   FieldMetadataType,
@@ -46,6 +48,8 @@ type BuildRowLevelPermissionRecordFilterArgs = {
   workspaceDataSource?: DataSource;
   workspaceSchemaName?: string;
 };
+
+const logger = new Logger('buildRowLevelPermissionRecordFilter');
 
 export const buildRowLevelPermissionRecordFilter = async ({
   flatRowLevelPermissionPredicateMaps,
@@ -211,6 +215,10 @@ export const buildRowLevelPermissionRecordFilter = async ({
               );
 
               if (rows.length === 0) {
+                logger.warn(
+                  `[RLS] No rows found in "${tableName}" for workspace member ${workspaceMember.id} (fkColumn="${fkColumn}", workspace=${authContext.workspace?.id}). Predicate will deny access.`,
+                );
+
                 return null;
               }
 
@@ -218,7 +226,11 @@ export const buildRowLevelPermissionRecordFilter = async ({
                 rows.length === 1
                   ? rows[0].id
                   : rows.map((r: { id: string }) => r.id);
-            } catch {
+            } catch (error) {
+              logger.warn(
+                `[RLS] Error resolving indirect relation predicate for workspace member ${workspaceMember.id} (table="${tableName}", fkColumn="${fkColumn}", workspace=${authContext.workspace?.id}): ${error instanceof Error ? error.message : String(error)}`,
+              );
+
               return null;
             }
           }

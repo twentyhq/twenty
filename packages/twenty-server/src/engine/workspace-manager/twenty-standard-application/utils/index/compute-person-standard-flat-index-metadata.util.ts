@@ -29,12 +29,12 @@ export const buildPersonStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  emailsUniqueIndex: createStandardIndexFlatMetadata({
+  phonesUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'emailsUniqueIndex',
-      relatedFieldNames: ['emails'],
+      indexName: 'phonesUniqueIndex',
+      relatedFieldNames: ['phones'],
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,

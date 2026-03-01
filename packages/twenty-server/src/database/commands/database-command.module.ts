@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { ProvisionGoogleWorkspaceAccountsCommand } from 'src/database/commands/custom/provision-google-workspace-accounts.command';
 import { SeedInsuranceNavigationCommand } from 'src/database/commands/custom/seed-insurance-navigation.command';
+import { SyncPolicyStatusFromCsvCommand } from 'src/database/commands/custom/sync-policy-status-from-csv.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
@@ -80,6 +81,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     SyncAgentWorkspaceMembersCommand,
     SeedInsuranceNavigationCommand,
     ProvisionGoogleWorkspaceAccountsCommand,
+    SyncPolicyStatusFromCsvCommand,
   ],
 })
 export class DatabaseCommandModule {}

@@ -31,6 +31,11 @@ COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-server /app/packages/twenty-server
 
+RUN npx nx build twenty-shared
+
+RUN npx lingui extract --config packages/twenty-server/lingui.config.ts && \
+    npx lingui compile --config packages/twenty-server/lingui.config.ts
+
 RUN npx nx run twenty-server:build
 
 RUN if [ -n "$SENTRY_AUTH_TOKEN" ]; then \
@@ -60,6 +65,12 @@ COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
+
+RUN npx nx build twenty-shared
+
+RUN npx lingui extract --config packages/twenty-front/lingui.config.ts && \
+    npx lingui compile --config packages/twenty-front/lingui.config.ts
+
 RUN npx nx build twenty-front
 
 

@@ -29,6 +29,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { t } from '@lingui/core/macro';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
@@ -68,6 +70,8 @@ export const usePersistField = ({
   const { updateOneRecord } = useUpdateOneRecord();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -198,25 +202,37 @@ export const usePersistField = ({
               return;
             }
 
-            const newRecord = await updateOneRecord({
-              objectNameSingular: objectMetadataItem.nameSingular,
-              idToUpdate: recordId,
-              updateOneRecordInput: {
-                [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                  valueToPersist?.id ?? null,
-              },
-            });
+            try {
+              const newRecord = await updateOneRecord({
+                objectNameSingular: objectMetadataItem.nameSingular,
+                idToUpdate: recordId,
+                updateOneRecordInput: {
+                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                    valueToPersist?.id ?? null,
+                },
+              });
 
-            upsertRecordsInStore({
-              partialRecords: [
-                getRecordFromRecordNode({
-                  recordNode: newRecord,
-                }),
-              ],
-              recordGqlFields: {
-                [getForeignKeyNameFromRelationFieldName(fieldName)]: true,
-              },
-            });
+              if (newRecord !== null && newRecord !== undefined) {
+                upsertRecordsInStore({
+                  partialRecords: [
+                    getRecordFromRecordNode({
+                      recordNode: newRecord,
+                    }),
+                  ],
+                  recordGqlFields: {
+                    [getForeignKeyNameFromRelationFieldName(fieldName)]: true,
+                  },
+                });
+              }
+            } catch {
+              set(
+                recordStoreFamilySelector({ recordId, fieldName }),
+                currentValue,
+              );
+              enqueueErrorSnackBar({
+                message: t`Failed to save field. Please try again.`,
+              });
+            }
             return;
           }
 
@@ -225,22 +241,34 @@ export const usePersistField = ({
               return;
             }
 
-            const newRecord = await updateOneRecord({
-              objectNameSingular: objectMetadataItem.nameSingular,
-              idToUpdate: recordId,
-              updateOneRecordInput: {
-                [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                  valueToPersist?.id ?? null,
-              },
-            });
+            try {
+              const newRecord = await updateOneRecord({
+                objectNameSingular: objectMetadataItem.nameSingular,
+                idToUpdate: recordId,
+                updateOneRecordInput: {
+                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                    valueToPersist?.id ?? null,
+                },
+              });
 
-            upsertRecordsInStore({
-              partialRecords: [
-                getRecordFromRecordNode({
-                  recordNode: newRecord,
-                }),
-              ],
-            });
+              if (newRecord !== null && newRecord !== undefined) {
+                upsertRecordsInStore({
+                  partialRecords: [
+                    getRecordFromRecordNode({
+                      recordNode: newRecord,
+                    }),
+                  ],
+                });
+              }
+            } catch {
+              set(
+                recordStoreFamilySelector({ recordId, fieldName }),
+                currentValue,
+              );
+              enqueueErrorSnackBar({
+                message: t`Failed to save field. Please try again.`,
+              });
+            }
 
             return;
           }
@@ -249,18 +277,28 @@ export const usePersistField = ({
             return;
           }
 
-          updateOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
-            idToUpdate: recordId,
-            updateOneRecordInput: {
-              [fieldName]: valueToPersist,
-            },
-          });
-
           set(
             recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,
           );
+
+          try {
+            await updateOneRecord({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [fieldName]: valueToPersist,
+              },
+            });
+          } catch {
+            set(
+              recordStoreFamilySelector({ recordId, fieldName }),
+              currentValue,
+            );
+            enqueueErrorSnackBar({
+              message: t`Failed to save field. Please try again.`,
+            });
+          }
         } else {
           throw new Error(
             `Invalid value to persist: ${JSON.stringify(
@@ -271,7 +309,12 @@ export const usePersistField = ({
           );
         }
       },
-    [objectMetadataItem?.nameSingular, updateOneRecord, upsertRecordsInStore],
+    [
+      objectMetadataItem?.nameSingular,
+      updateOneRecord,
+      upsertRecordsInStore,
+      enqueueErrorSnackBar,
+    ],
   );
 
   return persistField;

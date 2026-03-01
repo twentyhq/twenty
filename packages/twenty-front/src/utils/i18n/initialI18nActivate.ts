@@ -1,7 +1,14 @@
+import { i18n } from '@lingui/core';
 import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
+import { messages as enMessages } from '~/locales/generated/en';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+
+// Synchronously activate English so translation functions never throw
+// before the async locale detection completes.
+i18n.load(SOURCE_LOCALE, enMessages);
+i18n.activate(SOURCE_LOCALE);
 
 export const initialI18nActivate = () => {
   const urlLocale = fromUrl('locale');

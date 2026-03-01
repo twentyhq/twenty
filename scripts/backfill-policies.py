@@ -36,9 +36,14 @@ POLICY_STATUS_NAME_MAP = {
     "active/approved": "ACTIVE_APPROVED",
     "active / placed": "ACTIVE_PLACED",
     "active/placed": "ACTIVE_PLACED",
+    "active - approved": "ACTIVE_APPROVED",
+    "active - placed": "ACTIVE_PLACED",
+    "active": "ACTIVE",
     "payment error - canceled": "PAYMENT_ERROR_CANCELED",
     "payment error - active/approved": "PAYMENT_ERROR_ACTIVE_APPROVED",
     "payment error - active/placed": "PAYMENT_ERROR_ACTIVE_PLACED",
+    "payment error - active approved": "PAYMENT_ERROR_ACTIVE_APPROVED",
+    "payment error - active placed": "PAYMENT_ERROR_ACTIVE_PLACED",
 }
 
 # Caches

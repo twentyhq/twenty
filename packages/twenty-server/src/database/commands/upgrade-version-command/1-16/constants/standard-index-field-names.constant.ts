@@ -192,8 +192,8 @@ export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
     companyIdIndex: [
       STANDARD_OBJECTS.person.fields.company.universalIdentifier,
     ],
-    emailsUniqueIndex: [
-      STANDARD_OBJECTS.person.fields.emails.universalIdentifier,
+    phonesUniqueIndex: [
+      STANDARD_OBJECTS.person.fields.phones.universalIdentifier,
     ],
     searchVectorGinIndex: [
       STANDARD_OBJECTS.person.fields.searchVector.universalIdentifier,

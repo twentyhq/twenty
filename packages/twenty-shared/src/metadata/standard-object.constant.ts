@@ -1459,8 +1459,8 @@ export const STANDARD_OBJECTS = {
       companyIdIndex: {
         universalIdentifier: '7072f7a1-8003-4e5b-7f4a-01d2e03d4d02',
       },
-      emailsUniqueIndex: {
-        universalIdentifier: '8183a8b2-9114-4f6c-8a5b-12e3f14e5e13',
+      phonesUniqueIndex: {
+        universalIdentifier: '854c57e4-fad5-45f1-8ecb-c3709a5edfa1',
       },
       searchVectorGinIndex: {
         universalIdentifier: '9294b9c3-0225-4a7d-9b6c-23f4a25f6f24',
