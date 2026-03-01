@@ -9,14 +9,14 @@ const test = base.extend<{ loginPage: LoginPage }>({
 });
 
 const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
   await loginPage.clickLoginWithEmailIfVisible();
   await loginPage.typeEmail(process.env.DEFAULT_LOGIN!);
   await loginPage.clickContinueButton();
   await loginPage.typePassword(process.env.DEFAULT_PASSWORD!);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
   await loginPage.clickSignInButton();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   const workspaceButton = page.getByText('Apple', { exact: true });
 
@@ -54,7 +54,7 @@ test.describe('Return-to-path after login', () => {
     await test.step('Navigate to deep link while logged out', async () => {
       await page.goto(deepLink);
       await page.waitForURL('**/welcome');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     });
 
     await test.step('Log in and select workspace', async () => {
@@ -93,7 +93,7 @@ test.describe('Return-to-path after login', () => {
       async () => {
         await page.goto(targetPath);
         await page.waitForURL('**/welcome');
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
       },
     );
 
