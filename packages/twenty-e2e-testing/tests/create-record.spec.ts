@@ -93,6 +93,7 @@ test('Create and update record', async ({ page }) => {
     await ratingContainer.locator('svg').nth(3).click({force: true});
 
     // Fill phone field
+    await recordFieldList.getByText('Phones').first().click();
     const phoneInput = recordFieldList.getByText('Phones').nth(1);
     await expect(phoneInput).toBeVisible();
     await phoneInput.click({ force: true });

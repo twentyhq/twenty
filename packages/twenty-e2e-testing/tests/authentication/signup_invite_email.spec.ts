@@ -45,6 +45,7 @@ test('Sign up with invite link via email', async ({
   });
 
   await test.step('Delete account from workspace', async () => {
+    await page.waitForLoadState('networkidle');
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();
