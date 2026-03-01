@@ -1,4 +1,6 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { readReturnToPathFromSessionStorage } from '@/auth/utils/returnToPathSessionStorage';
@@ -16,24 +18,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-
-export const ONGOING_USER_CREATION_PATHS = [
-  AppPath.Invite,
-  AppPath.SignInUp,
-  AppPath.VerifyEmail,
-  AppPath.Verify,
-];
-
-export const ONBOARDING_PATHS = [
-  AppPath.CreateWorkspace,
-  AppPath.CreateProfile,
-  AppPath.SyncEmails,
-  AppPath.InviteTeam,
-  AppPath.PlanRequired,
-  AppPath.PlanRequiredSuccess,
-  AppPath.BookCallDecision,
-  AppPath.BookCall,
-];
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();

@@ -40,11 +40,9 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
-import {
-  ONBOARDING_PATHS,
-  ONGOING_USER_CREATION_PATHS,
-  usePageChangeEffectNavigateLocation,
-} from '~/hooks/usePageChangeEffectNavigateLocation';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
+import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
