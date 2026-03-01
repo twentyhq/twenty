@@ -118,9 +118,11 @@ spec:
             - sh
             - -c
             - |
+              set -e
+
               if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
                   echo "Database setup and migrations are disabled, skipping..."
-                  return
+                  exit 0
               fi
 
               echo "Running database setup and migrations..."
