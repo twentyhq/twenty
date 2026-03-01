@@ -1,10 +1,7 @@
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  THEME_LIGHT,
-  ThemeContextProvider,
-  ThemeProvider,
-} from 'twenty-ui/theme';
+import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
@@ -84,7 +81,7 @@ const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted?: boolean;
 }) => {
   return render(
-    <ThemeProvider theme={THEME_LIGHT}>
+    <EmotionThemeProvider theme={THEME_LIGHT}>
       <ThemeContextProvider theme={THEME_LIGHT}>
         <ThinkingStepsDisplay
           parts={parts}
@@ -92,7 +89,7 @@ const renderThinkingStepsDisplay = ({
           hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
         />
       </ThemeContextProvider>
-    </ThemeProvider>,
+    </EmotionThemeProvider>,
   );
 };
 
