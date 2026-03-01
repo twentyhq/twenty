@@ -17,6 +17,24 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
+export const ONGOING_USER_CREATION_PATHS = [
+  AppPath.Invite,
+  AppPath.SignInUp,
+  AppPath.VerifyEmail,
+  AppPath.Verify,
+];
+
+export const ONBOARDING_PATHS = [
+  AppPath.CreateWorkspace,
+  AppPath.CreateProfile,
+  AppPath.SyncEmails,
+  AppPath.InviteTeam,
+  AppPath.PlanRequired,
+  AppPath.PlanRequiredSuccess,
+  AppPath.BookCallDecision,
+  AppPath.BookCall,
+];
+
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
@@ -30,22 +48,6 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
-  const onGoingUserCreationPaths = [
-    AppPath.Invite,
-    AppPath.SignInUp,
-    AppPath.VerifyEmail,
-    AppPath.Verify,
-  ];
-  const onboardingPaths = [
-    AppPath.CreateWorkspace,
-    AppPath.CreateProfile,
-    AppPath.SyncEmails,
-    AppPath.InviteTeam,
-    AppPath.PlanRequired,
-    AppPath.PlanRequiredSuccess,
-    AppPath.BookCallDecision,
-    AppPath.BookCall,
-  ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
@@ -64,7 +66,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
     !someMatchingLocationOf([
-      ...onGoingUserCreationPaths,
+      ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
     ])
   ) {
@@ -143,7 +145,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
-    someMatchingLocationOf([...onboardingPaths, ...onGoingUserCreationPaths]) &&
+    someMatchingLocationOf([
+      ...ONBOARDING_PATHS,
+      ...ONGOING_USER_CREATION_PATHS,
+    ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
     isLoggedIn
   ) {

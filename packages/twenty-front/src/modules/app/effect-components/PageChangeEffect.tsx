@@ -40,26 +40,20 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
-import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import {
+  ONBOARDING_PATHS,
+  ONGOING_USER_CREATION_PATHS,
+  usePageChangeEffectNavigateLocation,
+} from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 import { useStore } from 'jotai';
 
 const AUTH_AND_ONBOARDING_PATHS = [
-  AppPath.SignInUp,
-  AppPath.Verify,
-  AppPath.VerifyEmail,
-  AppPath.Invite,
+  ...ONGOING_USER_CREATION_PATHS,
+  ...ONBOARDING_PATHS,
   AppPath.ResetPassword,
-  AppPath.CreateWorkspace,
-  AppPath.CreateProfile,
-  AppPath.SyncEmails,
-  AppPath.InviteTeam,
-  AppPath.PlanRequired,
-  AppPath.PlanRequiredSuccess,
-  AppPath.BookCallDecision,
-  AppPath.BookCall,
 ];
 
 // TODO: break down into smaller functions and / or hooks
