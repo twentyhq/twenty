@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from '@ui/theme';
 
 type SectionProps = {
   children: ReactNode;
@@ -25,7 +26,12 @@ const StyledSection = styled.div<{
   fullWidth: boolean;
   fontColor: SectionFontColor;
 }>`
-  color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
+  color: ${({ fontColor }) =>
+    fontColor === 'primary'
+      ? themeCssVariables.font.color.primary
+      : fontColor === 'secondary'
+        ? themeCssVariables.font.color.secondary
+        : themeCssVariables.font.color.tertiary};
   text-align: ${({ alignment }) => alignment};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
@@ -36,13 +42,15 @@ export const Section = ({
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
-}: SectionProps) => (
-  <StyledSection
-    className={className}
-    alignment={alignment}
-    fullWidth={fullWidth}
-    fontColor={fontColor}
-  >
-    {children}
-  </StyledSection>
-);
+}: SectionProps) => {
+  return (
+    <StyledSection
+      className={className}
+      alignment={alignment}
+      fullWidth={fullWidth}
+      fontColor={fontColor}
+    >
+      {children}
+    </StyledSection>
+  );
+};

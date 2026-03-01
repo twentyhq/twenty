@@ -37,7 +37,7 @@ const StyledTabsPill = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.pill};
-  padding: ${({ theme }) => theme.spacing(0.75)};
+  padding: 3px;
   height: ${({ theme }) => theme.spacing(7)};
   display: flex;
   width: ${({ theme }) => theme.spacing(18)};
@@ -85,7 +85,7 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
     isExpanded ? theme.spacing(7) : theme.spacing(6)};
   justify-content: center;
   padding: ${({ theme, isExpanded }) =>
-    isExpanded ? theme.spacing(0.75) : theme.spacing(0.5)};
+    isExpanded ? '3px' : theme.spacing(0.5)};
   width: ${({ theme, isExpanded }) =>
     isExpanded ? theme.spacing(25.75) : theme.spacing(6)};
   transition:

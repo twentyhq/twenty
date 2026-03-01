@@ -1,15 +1,16 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNumber, isString } from '@sniptt/guards';
 import { type Decorator } from '@storybook/react-vite';
-import { type ComponentProps, type JSX } from 'react';
+import { type ComponentProps, type JSX, useContext } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
-const StyledColumnTitle = styled.h1`
+const StyledColumnTitle = styled.h1<{ theme: ThemeType }>`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledRowsTitle = styled.h2`
+const StyledRowsTitle = styled.h2<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -17,7 +18,7 @@ const StyledRowsTitle = styled.h2`
   width: 100px;
 `;
 
-const StyledRowTitle = styled.h3`
+const StyledRowTitle = styled.h3<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -25,7 +26,7 @@ const StyledRowTitle = styled.h3`
   width: 100px;
 `;
 
-const StyledElementTitle = styled.span`
+const StyledElementTitle = styled.span<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -39,19 +40,19 @@ const StyledContainer = styled.div`
   flex-direction: row;
 `;
 
-const StyledColumnContainer = styled.div`
+const StyledColumnContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledRowsContainer = styled.div`
+const StyledRowsContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledRowContainer = styled.div`
+const StyledRowContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -63,7 +64,7 @@ const StyledElementContainer = styled.div<{ width: number }>`
   ${({ width }) => width && `min-width: ${width}px;`}
 `;
 
-const StyledCellContainer = styled.div`
+const StyledCellContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -97,6 +98,8 @@ export type CatalogOptions = {
 };
 
 export const CatalogDecorator: Decorator = (Story, context) => {
+  const { theme } = useContext(ThemeContext);
+
   const {
     catalog: { dimensions = [], options = {} } = {
       dimensions: [],
@@ -118,27 +121,31 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   return (
     <StyledContainer>
       {dimension4.values.map((value4: any) => (
-        <StyledColumnContainer key={value4}>
-          <StyledColumnTitle>
+        <StyledColumnContainer key={value4} theme={theme}>
+          <StyledColumnTitle theme={theme}>
             {dimension4.labels?.(value4) ??
               (isStringOrNumber(value4) ? value4 : '')}
           </StyledColumnTitle>
           {dimension3.values.map((value3: any) => (
-            <StyledRowsContainer key={value3}>
-              <StyledRowsTitle>
+            <StyledRowsContainer key={value3} theme={theme}>
+              <StyledRowsTitle theme={theme}>
                 {dimension3.labels?.(value3) ??
                   (isStringOrNumber(value3) ? value3 : '')}
               </StyledRowsTitle>
               {dimension2.values.map((value2: any) => (
-                <StyledRowContainer key={value2}>
-                  <StyledRowTitle>
+                <StyledRowContainer key={value2} theme={theme}>
+                  <StyledRowTitle theme={theme}>
                     {dimension2.labels?.(value2) ??
                       (isStringOrNumber(value2) ? value2 : '')}
                   </StyledRowTitle>
                   {dimension1.values.map((value1: any) => {
                     return (
-                      <StyledCellContainer key={value1} id={value1}>
-                        <StyledElementTitle>
+                      <StyledCellContainer
+                        key={value1}
+                        id={value1}
+                        theme={theme}
+                      >
+                        <StyledElementTitle theme={theme}>
                           {dimension1.labels?.(value1) ??
                             (isStringOrNumber(value1) ? value1 : '')}
                         </StyledElementTitle>

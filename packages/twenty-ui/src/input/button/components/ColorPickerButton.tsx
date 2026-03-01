@@ -1,6 +1,6 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { ColorSample, type ColorSampleProps } from '@ui/display';
+import { themeCssVariables } from '@ui/theme';
 import {
   LightIconButton,
   type LightIconButtonProps,
@@ -11,30 +11,36 @@ type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
     isSelected?: boolean;
   };
 
-const StyledButton = styled(LightIconButton)<{
+const StyledButtonWrapper = styled.div<{
   isSelected?: boolean;
 }>`
-  ${({ isSelected, theme }) =>
-    isSelected
-      ? css`
-          background-color: ${theme.background.transparent.medium};
+  button {
+    ${({ isSelected }) =>
+      isSelected
+        ? `background-color: ${themeCssVariables.background.transparent.medium};`
+        : ''}
+  }
 
-          &:hover {
-            background-color: ${theme.background.transparent.medium};
-          }
-        `
-      : ''}
+  button:hover {
+    ${({ isSelected }) =>
+      isSelected
+        ? `background-color: ${themeCssVariables.background.transparent.medium};`
+        : ''}
+  }
 `;
 
 export const ColorPickerButton = ({
   colorName,
   isSelected,
   onClick,
-}: ColorPickerButtonProps) => (
-  <StyledButton
-    size="medium"
-    isSelected={isSelected}
-    Icon={() => <ColorSample colorName={colorName} />}
-    onClick={onClick}
-  />
-);
+}: ColorPickerButtonProps) => {
+  return (
+    <StyledButtonWrapper isSelected={isSelected}>
+      <LightIconButton
+        size="medium"
+        Icon={() => <ColorSample colorName={colorName} />}
+        onClick={onClick}
+      />
+    </StyledButtonWrapper>
+  );
+};

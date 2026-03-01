@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import { type AnimationDuration } from '@ui/theme';
+import { useContext } from 'react';
+import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type AnimatedEaseInOutProps = {
@@ -19,7 +19,7 @@ export const AnimatedEaseInOut = ({
   duration = 'normal',
   initial = true,
 }: AnimatedEaseInOutProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <AnimatePresence initial={initial}>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTheme } from '@emotion/react';
 
 import { type RadioProps } from './Radio';
+import { themeCssVariables } from '@ui/theme';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;
@@ -15,8 +15,6 @@ export const RadioGroup = ({
   onValueChange,
   children,
 }: RadioGroupProps) => {
-  const theme = useTheme();
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onValueChange?.(event.target.value);
@@ -27,7 +25,7 @@ export const RadioGroup = ({
       {React.Children.map(children, (child) => {
         if (React.isValidElement<RadioProps>(child)) {
           return React.cloneElement(child, {
-            style: { marginBottom: theme.spacing(2) },
+            style: { marginBottom: themeCssVariables.spacing[2] },
             checked: child.props.value === value,
             onChange: handleChange,
           });

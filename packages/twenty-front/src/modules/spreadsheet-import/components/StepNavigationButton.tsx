@@ -9,7 +9,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 const StyledFooter = styled(Modal.Footer)`
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  gap: ${({ theme }) => theme.spacing(2.5)};
+  gap: 10px;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(4)};
   height: auto;

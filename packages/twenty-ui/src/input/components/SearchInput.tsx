@@ -1,8 +1,8 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconFilter, IconSearch } from '@ui/display';
 import { IconButton } from '@ui/input/button/components/IconButton';
-import { type ChangeEvent, type ReactNode, useState } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { type ChangeEvent, type ReactNode, useContext, useState } from 'react';
 
 export type SearchInputProps = {
   value: string;
@@ -17,31 +17,35 @@ export type SearchInputProps = {
 const StyledWrapper = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: 32px;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
 
   &:focus-within {
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${themeCssVariables.color.blue};
   }
 `;
 
-const StyledIconContainer = styled.div<{ isFocused: boolean }>`
+const StyledIconContainer = styled.div<{
+  isFocused: boolean;
+}>`
   align-items: center;
-  color: ${({ theme, isFocused }) =>
-    isFocused ? theme.font.color.secondary : theme.font.color.light};
+  color: ${({ isFocused }) =>
+    isFocused
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
 `;
@@ -49,21 +53,21 @@ const StyledIconContainer = styled.div<{ isFocused: boolean }>`
 const StyledInput = styled.input`
   background: transparent;
   border: none;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
   outline: none;
   width: 100%;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    color: ${themeCssVariables.font.color.light};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 
   &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 `;
 
@@ -76,7 +80,7 @@ export const SearchInput = ({
   disabled,
   className,
 }: SearchInputProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isFocused, setIsFocused] = useState(false);
 
   const filterButton = <IconButton Icon={IconFilter} variant="secondary" />;
