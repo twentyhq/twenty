@@ -80,6 +80,7 @@ test('Create and update record', async ({ page }) => {
     await page.getByPlaceholder('Intro').press('Enter');
 
     // Fill URL
+    await recordFieldList.getByText('Linkedin').first().click();
     const urlInput = recordFieldList.getByText('Linkedin').nth(1);
     await expect(urlInput).toBeVisible();
     await urlInput.click({ force: true });
