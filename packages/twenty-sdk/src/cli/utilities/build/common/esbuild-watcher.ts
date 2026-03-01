@@ -37,10 +37,6 @@ export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'tls',
   'child_process',
   'worker_threads',
-  'twenty-sdk',
-  'twenty-sdk/*',
-  'twenty-shared',
-  'twenty-shared/*',
 ];
 
 export type EsbuildWatcherConfig = {

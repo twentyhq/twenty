@@ -24,7 +24,7 @@ export const copyYarnEngineAndBuildDependencies = async (
   const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
 
   try {
-    await execFilePromise(process.execPath, [localYarnPath], {
+    await execFilePromise(process.execPath, [localYarnPath, '--prod'], {
       cwd: buildDirectory,
       env: cleanEnv,
     });

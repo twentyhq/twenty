@@ -5443,7 +5443,7 @@ __metadata:
   resolution: "self-hosting@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    twenty-sdk: "npm:0.6.2"
+    twenty-sdk: "portal:../../../twenty-sdk"
   languageName: unknown
   linkType: soft
 
@@ -5902,9 +5902,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:0.6.2":
-  version: 0.6.2
-  resolution: "twenty-sdk@npm:0.6.2"
+"twenty-sdk@portal:../../../twenty-sdk::locator=self-hosting%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "twenty-sdk@portal:../../../twenty-sdk::locator=self-hosting%40workspace%3A."
   dependencies:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
@@ -5940,9 +5940,8 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/7c18973fe1a193475c88b00c6f2603b75020139c899a59d3997d044831c45a102c37eb9b87085691adcc46f6f38b22f5c25526f9c6fa1362b3e02670799838b0
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "type-fest@npm:^0.21.3":
   version: 0.21.3
