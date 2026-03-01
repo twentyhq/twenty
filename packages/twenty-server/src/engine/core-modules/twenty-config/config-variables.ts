@@ -715,7 +715,7 @@ export class ConfigVariables {
     description:
       'Unique identifier for this server instance, generated as UUID v4 during database seeding',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
+    isEnvOnly: false,
   })
   @IsOptional()
   SERVER_ID: string;

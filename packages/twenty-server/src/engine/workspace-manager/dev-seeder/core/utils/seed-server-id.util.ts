@@ -13,21 +13,13 @@ export const seedServerId = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}."keyValuePair"`, [
-      'key',
-      'value',
-      'type',
-      'userId',
-      'workspaceId',
-    ])
+    .into(`"${schemaName}"."keyValuePair"`, ['key', 'value', 'type'])
     .orIgnore()
     .values([
       {
         key: 'SERVER_ID',
         type: 'CONFIG_VARIABLE',
         value: v4(),
-        userId: null,
-        workspaceId: null,
       },
     ])
     .execute();
