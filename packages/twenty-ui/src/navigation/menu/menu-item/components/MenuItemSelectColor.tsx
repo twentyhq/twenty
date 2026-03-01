@@ -1,4 +1,4 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 
 import {
   StyledMenuItemIconCheck,
@@ -7,7 +7,7 @@ import {
 } from '../internals/components/StyledMenuItemBase';
 
 import { ColorSample, type ColorSampleVariant } from '@ui/display';
-import { type ThemeColor } from '@ui/theme';
+import { type ThemeColor, ThemeContext } from '@ui/theme';
 import {
   DEFAULT_COLOR_LABELS,
   type ColorLabels,
@@ -35,7 +35,7 @@ export const MenuItemSelectColor = ({
   variant = 'default',
   colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemSelect

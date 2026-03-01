@@ -31,10 +31,10 @@ const StyledThreadItem = styled.div<{ isSelected?: boolean }>`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   border-left: 3px solid transparent;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1, 0.25)};
-  right: ${({ theme }) => theme.spacing(0.75)};
+  padding: ${({ theme }) => theme.spacing(1)} 1px;
+  right: 3px;
   position: relative;
-  width: calc(100% + ${({ theme }) => theme.spacing(0.25)});
+  width: calc(100% + 1px);
 
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};

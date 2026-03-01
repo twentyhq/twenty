@@ -51,6 +51,7 @@ export { TAG_LIGHT } from './constants/TagLight';
 export { TEXT } from './constants/Text';
 export { TEXT_INPUT_STYLE } from './constants/TextInputStyle';
 export { THEME_COMMON } from './constants/ThemeCommon';
+export { themeCssVariables } from './constants/ThemeCssVariables';
 export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
 export { TRANSPARENT_COLORS_DARK } from './constants/TransparentColorsDark';
@@ -60,7 +61,10 @@ export {
   ThemeContext,
   ThemeContextProvider,
 } from './provider/ThemeContextProvider';
+export { ThemeCssVariableInjectorEffect } from './provider/ThemeCssVariableInjectorEffect';
 export { ThemeProvider } from './provider/ThemeProvider';
 export type { ThemeType } from './types/ThemeType';
+export { buildThemeReferencingRootCssVariables } from './utils/buildThemeReferencingRootCssVariables';
 export { getNextThemeColor } from './utils/getNextThemeColor';
-export { themeColorSchema } from './utils/themeColorSchema';
+export { prepareThemeForRootCssVariableInjection } from './utils/prepareThemeForRootCssVariableInjection';
+export { SPACING_VALUES } from './utils/spacingValues';

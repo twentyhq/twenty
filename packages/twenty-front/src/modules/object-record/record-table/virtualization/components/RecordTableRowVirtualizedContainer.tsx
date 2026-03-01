@@ -14,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledVirtualizedRowContainer = styled.div<{
   pixelsFromTop: number;
 }>`
-  height: ${RECORD_TABLE_ROW_HEIGHT + 1};
+  height: 33px;
   position: absolute;
   top: ${({ pixelsFromTop }) => pixelsFromTop}px;
 `;

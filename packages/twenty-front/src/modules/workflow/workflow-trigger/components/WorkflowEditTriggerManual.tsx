@@ -40,7 +40,7 @@ const StyledLabel = styled.span`
 const StyledDescription = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(0.25)};
+  margin-top: 1px;
 `;
 
 const StyledIconPickerContainer = styled.div`

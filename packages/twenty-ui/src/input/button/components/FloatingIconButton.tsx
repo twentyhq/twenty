@@ -1,7 +1,7 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import React from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
+import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
 export type FloatingIconButtonPosition =
@@ -22,92 +22,81 @@ export type FloatingIconButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isActive?: boolean;
 };
-const shouldForwardProp = (prop: string) =>
-  ![
-    'applyBlur',
-    'applyShadow',
-    'isActive',
-    'focus',
-    'position',
-    'size',
-  ].includes(prop);
-
-const StyledButton = styled('button', { shouldForwardProp })<
+const StyledButton = styled.button<
   Pick<
     FloatingIconButtonProps,
     'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'
   >
 >`
   align-items: center;
-  backdrop-filter: ${({ theme, applyBlur }) =>
-    applyBlur ? theme.blur.medium : 'none'};
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.background.transparent.medium : theme.background.primary};
-  border: ${({ focus, theme }) =>
+  backdrop-filter: ${({ applyBlur }) =>
+    applyBlur ? themeCssVariables.blur.medium : 'none'};
+  background: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.background.transparent.medium
+      : themeCssVariables.background.primary};
+  border: ${({ focus }) =>
     focus
-      ? `1px solid ${theme.color.blue}`
-      : `1px solid ${theme.border.color.strong}`};
-  border-radius: ${({ position, theme }) => {
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : `1px solid ${themeCssVariables.border.color.strong}`};
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeCssVariables.border.radius.sm;
     }
+    return '';
   }};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
+  box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? theme.boxShadow.light
+      ? themeCssVariables.boxShadow.light
       : focus
-        ? `0 0 0 3px ${theme.color.blue3}`
+        ? `0 0 0 3px ${themeCssVariables.color.blue3}`
         : 'none'};
   box-sizing: border-box;
-  color: ${({ theme, disabled, focus }) => {
+  color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.tertiary
-      : theme.font.color.extraLight;
+        ? themeCssVariables.color.blue
+        : themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background ${({ theme }) => theme.animation.duration.instant}s
-    ease;
+  transition: background
+    calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   white-space: nowrap;
 
-  ${({ position, size }) => {
-    const sizeInPx =
-      (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4);
+  height: ${({ position, size }) =>
+    (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4)}px;
+  width: ${({ position, size }) =>
+    (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4)}px;
 
-    return `
-      height: ${sizeInPx}px;
-      width: ${sizeInPx}px;
-    `;
-  }}
-
-  ${({ theme, disabled }) =>
-    !disabled &&
-    css`
-      &:hover {
-        background: ${theme.background.transparent.lighter};
-      }
-    `}
+  &:hover {
+    background: ${({ disabled }) =>
+      !disabled
+        ? themeCssVariables.background.transparent.lighter
+        : 'transparent'};
+  }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled
+        ? themeCssVariables.background.transparent.medium
+        : 'transparent'};
   }
 
   &:focus {
@@ -127,7 +116,7 @@ export const FloatingIconButton = ({
   onClick,
   isActive,
 }: FloatingIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledButton
       disabled={disabled}
