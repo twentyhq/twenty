@@ -103,6 +103,15 @@ export default defineObject({
           .universalIdentifier,
     },
     {
+      type: FieldType.TEXT,
+      name: 'serverId',
+      label: 'Server id',
+      description: 'Server id of the self hosting user',
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.serverId
+          .universalIdentifier,
+    },
+    {
       type: FieldType.NUMBER,
       name: 'numberOfEmailsWithSameDomain',
       label: 'Number of Emails with Same Domain',

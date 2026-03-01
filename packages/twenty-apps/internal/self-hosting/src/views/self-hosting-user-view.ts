@@ -79,6 +79,14 @@ export default defineView({
       isVisible: true,
     },
     {
+      universalIdentifier: '32c199d6-ebf3-434b-81b4-e2b59a0518b7',
+      fieldMetadataUniversalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.serverId
+          .universalIdentifier,
+      position: 6.1,
+      isVisible: true,
+    },
+    {
       universalIdentifier: '924ee786-ab93-44be-9d21-941ff9ffe1ac',
       fieldMetadataUniversalIdentifier:
         UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields

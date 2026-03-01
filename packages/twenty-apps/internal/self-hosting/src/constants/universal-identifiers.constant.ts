@@ -23,6 +23,9 @@ export const UNIVERSAL_IDENTIFIERS = {
         serverUrl: {
           universalIdentifier: 'f2516b77-2912-4cbb-8838-46ac5a5465d9',
         },
+        serverId: {
+          universalIdentifier: 'e68a2b15-786d-4e9d-a74d-6d6d577ae721',
+        },
         numberOfEmailsWithSameDomain: {
           universalIdentifier: '0bf05db0-6771-4400-91ca-1579ec11e76e',
         },

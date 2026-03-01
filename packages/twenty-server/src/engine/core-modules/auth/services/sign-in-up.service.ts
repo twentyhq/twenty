@@ -370,6 +370,7 @@ export class SignInUpService {
           userLastName: newUserWithPicture.lastName,
           locale: newUserWithPicture.locale,
           serverUrl: this.twentyConfigService.get('SERVER_URL'),
+          serverId: this.twentyConfigService.get('SERVER_ID'),
         },
       ],
       undefined,
