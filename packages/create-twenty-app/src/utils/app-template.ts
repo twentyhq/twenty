@@ -146,8 +146,7 @@ generated
 # dev
 /dist/
 
-.twenty/*
-!.twenty/output/
+.twenty
 
 # production
 /build
