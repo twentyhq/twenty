@@ -6,7 +6,6 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -111,7 +110,6 @@ export const PageChangeEffect = () => {
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
     useReturnToPath();
-  const isLoggedIn = useIsLogged();
 
   const isOnAuthOrOnboardingPage = AUTH_AND_ONBOARDING_PATHS.some((appPath) =>
     isMatchingLocation(location, appPath),
@@ -160,7 +158,14 @@ export const PageChangeEffect = () => {
         );
       }
 
+      const consumedReturnToPath =
+        getReturnToPath() === pageChangeEffectNavigateLocation;
+
       navigate(pageChangeEffectNavigateLocation);
+
+      if (consumedReturnToPath) {
+        clearReturnToPath();
+      }
     }
   }, [
     navigate,
@@ -169,20 +174,11 @@ export const PageChangeEffect = () => {
     isAppEffectRedirectEnabled,
     isOnAuthOrOnboardingPage,
     saveReturnToPath,
+    getReturnToPath,
+    clearReturnToPath,
     location.pathname,
     location.search,
     location.hash,
-  ]);
-
-  useEffect(() => {
-    if (isLoggedIn && !isOnAuthOrOnboardingPage && getReturnToPath() !== null) {
-      clearReturnToPath();
-    }
-  }, [
-    isLoggedIn,
-    isOnAuthOrOnboardingPage,
-    getReturnToPath,
-    clearReturnToPath,
   ]);
 
   useEffect(() => {
