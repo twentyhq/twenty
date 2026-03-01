@@ -88,7 +88,7 @@ test('Create and update record', async ({ page }) => {
     await page.getByPlaceholder('URL').press('Enter');
 
     // Click on 4th star to rate
-    recordFieldList.getByText('Performance Rating').first().click({ force: true });
+    await recordFieldList.getByText('Performance Rating').first().click({ force: true });
     const ratingContainer = recordFieldList.locator('div[aria-label="Rating"]');
     await ratingContainer.locator('svg').nth(3).click({force: true});
 
