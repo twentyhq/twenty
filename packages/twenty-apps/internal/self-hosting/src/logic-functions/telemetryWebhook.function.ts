@@ -20,6 +20,7 @@ export const main = async (
       userLastName,
       locale,
       serverUrl,
+      serverId,
     } = params.body || {};
 
     if (action !== 'user_signup') {
@@ -78,6 +79,7 @@ export const main = async (
               userId,
               locale,
               serverUrl,
+              serverId,
             },
           },
           id: true,
@@ -101,6 +103,7 @@ export const main = async (
             userId,
             locale,
             serverUrl,
+            serverId,
           },
         },
         id: true,

@@ -8,4 +8,5 @@ export type TelemetryEvent = {
   userLastName?: string;
   locale?: string;
   serverUrl: string;
+  serverId: string;
 };
