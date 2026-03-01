@@ -17,7 +17,7 @@ export const isValidReturnToPath = (path: string): boolean => {
     return false;
   }
 
-  if (!path.startsWith('/')) {
+  if (!path.startsWith('/') || path.startsWith('//')) {
     return false;
   }
 

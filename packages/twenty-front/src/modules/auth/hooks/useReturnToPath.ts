@@ -32,7 +32,13 @@ export const useReturnToPath = () => {
       return returnToPath;
     }
 
-    return readReturnToPathFromSessionStorage();
+    const sessionPath = readReturnToPathFromSessionStorage();
+
+    if (isNonEmptyString(sessionPath) && isValidReturnToPath(sessionPath)) {
+      return sessionPath;
+    }
+
+    return null;
   }, [returnToPath]);
 
   const clearReturnToPath = useCallback(() => {

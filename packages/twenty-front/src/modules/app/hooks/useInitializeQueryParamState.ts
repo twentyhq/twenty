@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { writeReturnToPathToSessionStorage } from '@/auth/utils/returnToPathSessionStorage';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
@@ -46,11 +47,15 @@ export const useInitializeQueryParamState = () => {
         }
       },
       returnToPath: (value: string) => {
-        const decodedValue = decodeURIComponent(value);
+        try {
+          const decodedValue = decodeURIComponent(value);
 
-        if (decodedValue.startsWith('/') && decodedValue !== '/') {
-          store.set(returnToPathState.atom, decodedValue);
-          writeReturnToPathToSessionStorage(decodedValue);
+          if (isValidReturnToPath(decodedValue)) {
+            store.set(returnToPathState.atom, decodedValue);
+            writeReturnToPathToSessionStorage(decodedValue);
+          }
+        } catch {
+          // malformed URI — ignore silently
         }
       },
     };
