@@ -711,16 +711,6 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'Unique identifier for this server instance, generated as UUID v4 during database seeding',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: false,
-  })
-  @IsOptional()
-  SERVER_ID: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description: 'ID for the Chrome extension',
     type: ConfigVariableType.STRING,
@@ -1014,6 +1004,16 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Unique identifier for this server instance, generated as UUID v4 during database seeding',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  SERVER_ID: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
