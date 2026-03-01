@@ -8,7 +8,7 @@ Acest document prezintă cele mai bune practici pe care ar trebui să le urmați
 
 React și Jotai se ocupă de managementul stării în cod.
 
-### Folosiți `useAtomState` pentru a stoca starea
+### Folosiți atomi Jotai pentru a stoca starea
 
 Este o bună practică să creezi atâția atomi câți ai nevoie pentru a-ți stoca starea.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Evitați utilizarea `useRef` pentru a stoca starea.
 
-Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau `useAtomState`.
+Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau atomii Jotai cu `useAtomState`.
 
 Vezi [cum să gestionezi re-randările](#managing-re-renders) dacă ți se pare că ai nevoie de `useRef` pentru a preveni apariția unor re-randări.
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Folosiți stări de familie și selectoare de familie cu jotai
+### Folosiți stări de familie de atomi și selectoare
 
-Stările și selectoarele de familie cu jotai sunt o metodă excelentă de a evita re-render-urile.
+Stările de familie de atomi și selectoarele sunt o metodă excelentă de a evita re-randările.
 
 Sunt utile când trebuie să stocați o listă de elemente.
 

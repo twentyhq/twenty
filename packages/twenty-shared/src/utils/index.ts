@@ -21,6 +21,7 @@ export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectsComparingId';
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
+export { base64UrlEncode } from './base64UrlEncode';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';

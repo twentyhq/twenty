@@ -259,7 +259,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "dotenv npx tsx scripts/generate-mock-data.ts"
+        "command": "dotenv npx vite-node scripts/generate-mock-data.ts"
       }
     },
     "chromatic": {

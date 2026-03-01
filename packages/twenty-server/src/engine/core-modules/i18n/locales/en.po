@@ -376,6 +376,16 @@ msgstr "API key role not found."
 msgid "Application not found."
 msgstr "Application not found."
 
+#. js-lingui-id: DE/icK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration not found."
+msgstr "Application registration not found."
+
+#. js-lingui-id: eiOt+9
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration variable not found."
+msgstr "Application registration variable not found."
+
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/applicationVariable/application-variable.exception.ts
 msgid "Application variable not found."
@@ -2934,6 +2944,16 @@ msgstr "One or more objects you are trying to set permissions for could not be f
 msgid "One or more records were not found."
 msgstr "One or more records were not found."
 
+#. js-lingui-id: kx632Q
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more redirect URIs are invalid."
+msgstr "One or more redirect URIs are invalid."
+
+#. js-lingui-id: PUBUbK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more requested scopes are invalid."
+msgstr "One or more requested scopes are invalid."
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -4087,6 +4107,11 @@ msgstr "This subdomain is already taken."
 msgid "This type of record cannot be merged."
 msgstr "This type of record cannot be merged."
 
+#. js-lingui-id: nZbise
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "This universal identifier is already claimed by another registration."
+msgstr "This universal identifier is already claimed by another registration."
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -4251,15 +4276,11 @@ msgstr "User already has a role assigned."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "User does not have access to this workspace"
-
-#. js-lingui-id: kZ0tmK
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-msgid "User does not have access to this workspace."
-msgstr "User does not have access to this workspace."
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts

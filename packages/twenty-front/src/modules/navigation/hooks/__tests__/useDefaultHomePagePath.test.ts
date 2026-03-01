@@ -15,8 +15,8 @@ import {
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { mockedUserData } from '~/testing/mock-data/users';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
@@ -48,7 +48,7 @@ const renderHooks = ({
             {
               id: 'viewId',
               name: 'Test View',
-              objectMetadataId: getMockCompanyObjectMetadataItem().id,
+              objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
               type: ViewType.TABLE,
               key: null,
               isCompact: false,

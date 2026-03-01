@@ -8,7 +8,7 @@ title: 最佳实践
 
 React 和 Jotai 在代码库中处理状态管理。
 
-### 使用 `useAtomState` 来存储状态
+### 使用 Jotai 原子来存储状态
 
 根据需要创建足够多的原子来存储你的状态，是一种良好实践。
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 避免使用 `useRef` 来存储状态。
 
-如果想存储状态，应该使用 `useState` 或 `useAtomState`。
+如果想存储状态，应该使用 `useState` 或配合 `useAtomState` 的 Jotai 原子。
 
 如果您觉得需要通过使用 `useRef` 来防止一些再渲染，请了解[如何管理再渲染](#managing-re-renders)。
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### 使用 Jotai 状态族和 Jotai 选择器族
+### 使用原子族状态和选择器
 
-Jotai 状态族和选择器族是避免再渲染的好方法。
+原子族状态和选择器是避免重新渲染的好方法。
 
 当您需要存储项目列表时，它们很有用。
 

@@ -8,7 +8,7 @@ title: Лучшие практики
 
 React и Jotai отвечают за управление состоянием в коде.
 
-### Используйте `useAtomState` для хранения состояния
+### Используйте атомы Jotai для хранения состояния
 
 Полезно создавать столько атомов, сколько вам нужно для хранения состояния.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Избегайте использования `useRef` для хранения состояния.
 
-Если вы хотите сохранить состояние, вам следует использовать `useState` или `useAtomState`.
+Если вы хотите сохранять состояние, используйте `useState` или атомы Jotai с `useAtomState`.
 
 Смотрите [как управлять повторными рендерами](#managing-re-renders), если вы считаете, что вам нужен `useRef`, чтобы предотвратить их.
 
@@ -82,8 +82,8 @@ export const MyComponent = () => {
 Вы можете применять то же самое для логики получения данных, с хуками Apollo.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Плохо, вызовет повторные рендеры, даже если данные не меняются,
+//    потому что useEffect нужно повторно вычислять
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -100,11 +100,12 @@ export const PageComponent = () => {
 export const App = () => (
   <PageComponent />
 );
+
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Хорошо, не вызовет повторные рендеры, если данные не меняются,
+//   потому что useEffect пересчитывается в другом соседнем компоненте
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -130,11 +131,12 @@ export const App = () => (
     <PageComponent />
   </>
 );
+
 ```
 
-### Используйте состояния семейства Jotai и селекторы семейства Jotai
+### Используйте состояния семейства атомов и селекторы
 
-Состояния семейства Jotai и селекторы — отличный способ избежать повторных рендеров.
+Состояния семейства атомов и селекторы — отличный способ избежать повторных рендеров.
 
 Они полезны, когда нужно хранить список элементов.
 
