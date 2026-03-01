@@ -71,6 +71,10 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.fullname" . }}-db-url
                   key: appPassword
+            {{- range $key, $value := .Values.server.additionalEnv }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           command:
             - sh
             - -c
@@ -131,6 +135,10 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
                   {{- end }}
+            {{- range $key, $value := .Values.server.additionalEnv }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
       containers:
         - name: server
               {{- $img := include "twenty.server.image" . }}
@@ -179,10 +187,15 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
-                {{- $storageEnv := (include "twenty.storageEnv" .) }}
-                {{- if $storageEnv }}
-                {{ $storageEnv | nindent 12 }}
-                {{- end }}
+            {{- $storageEnv := (include "twenty.storageEnv" .) }}
+            {{- if $storageEnv }}
+              {{ $storageEnv | nindent 12 }}
+            {{- end }}
+            {{- range $key, $value := .Values.server.additionalEnv }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+
           ports:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}

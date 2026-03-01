@@ -52,6 +52,7 @@ server:
     SIGN_IN_PREFILLED: "false"
     ACCESS_TOKEN_EXPIRES_IN: "7d"
     LOGIN_TOKEN_EXPIRES_IN: "1h"
+  additionalEnv: { }
 
   service:
     type: ClusterIP
@@ -104,6 +105,8 @@ worker:
     limits:
       cpu: 1000m
       memory: 2048Mi
+
+  additionalEnv: { }
 
 # PostgreSQL
 db:
