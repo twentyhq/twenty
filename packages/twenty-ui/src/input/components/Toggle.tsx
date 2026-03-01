@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { VisibilityHiddenInput } from '@ui/accessibility';
+import { themeCssVariables } from '@ui/theme';
 import { motion } from 'framer-motion';
 
 export type ToggleSize = 'small' | 'medium';
@@ -13,8 +14,10 @@ type ContainerProps = {
 
 const StyledContainer = styled.label<ContainerProps>`
   align-items: center;
-  background-color: ${({ theme, isOn, color }) =>
-    isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
+  background-color: ${({ isOn, color }) =>
+    isOn
+      ? (color ?? themeCssVariables.color.blue)
+      : themeCssVariables.background.transparent.medium};
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -28,10 +31,10 @@ const StyledContainer = styled.label<ContainerProps>`
   width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
 `;
 
-const StyledCircle = styled(motion.span)<{
+const StyledCircleBase = styled.span<{
   size: ToggleSize;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   border-radius: 50%;
   display: block;
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
@@ -39,6 +42,8 @@ const StyledCircle = styled(motion.span)<{
   position: absolute;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
 `;
+
+const StyledCircle = motion.create(StyledCircleBase);
 
 export type ToggleProps = {
   id?: string;

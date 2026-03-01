@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import { type AnimationDuration } from '@ui/theme';
+import { useContext } from 'react';
+import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { motion } from 'framer-motion';
 
 type AnimatedEaseInProps = Omit<
@@ -13,7 +13,7 @@ export const AnimatedEaseIn = ({
   children,
   duration = 'normal',
 }: AnimatedEaseInProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const initial = { opacity: 0 };
   const animate = { opacity: 1 };
   const transition = {

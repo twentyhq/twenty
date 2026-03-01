@@ -29,27 +29,13 @@ export default defineConfig(() => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui-individual',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({
-        jsxImportSource: '@emotion/react',
-        plugins: [['@swc/plugin-emotion', {}]],
-      }),
+      react(),
       tsconfigPaths({
         root: __dirname,
         projects: ['tsconfig.json'],
       }),
       svgr(),
       wyw({
-        include: [
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Tag.tsx',
-          '**/Avatar.tsx',
-          '**/Chip.tsx',
-          '**/LinkChip.tsx',
-          '**/Avatar.tsx',
-          '**/AvatarChipLeftComponent.tsx',
-          '**/ContactLink.tsx',
-          '**/RoundedLink.tsx',
-        ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },

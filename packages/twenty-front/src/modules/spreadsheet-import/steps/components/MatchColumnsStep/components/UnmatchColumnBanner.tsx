@@ -10,7 +10,7 @@ const StyledBanner = styled(Banner, {
   background: ${({ allMatched, theme }) =>
     allMatched ? theme.accent.secondary : theme.background.transparent.light};
   border-radius: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2.5)};
+  padding: ${({ theme }) => theme.spacing(2) + ' 10px'};
 `;
 
 const StyledText = styled('div', {
