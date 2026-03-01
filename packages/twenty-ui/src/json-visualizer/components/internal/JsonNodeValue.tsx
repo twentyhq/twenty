@@ -1,18 +1,19 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledText = styled.span<{
   highlighting: JsonNodeHighlighting | undefined;
 }>`
   align-items: center;
   box-sizing: border-box;
-  color: ${({ theme, highlighting }) =>
+  color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue8
+      ? themeCssVariables.color.blue8
       : highlighting === 'red'
-        ? theme.color.red8
-        : theme.font.color.tertiary};
+        ? themeCssVariables.color.red8
+        : themeCssVariables.font.color.tertiary};
   display: inline-flex;
   height: 24px;
   line-height: 1;

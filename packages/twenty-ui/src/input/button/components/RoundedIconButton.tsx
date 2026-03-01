@@ -1,15 +1,18 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { useContext } from 'react';
 
 export type RoundedIconButtonSize = 'small' | 'medium';
 
-const StyledIconButton = styled.button<{ size: RoundedIconButtonSize }>`
+const StyledIconButton = styled.button<{
+  size: RoundedIconButtonSize;
+}>`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue};
+  background: ${themeCssVariables.color.blue};
   border: none;
   border-radius: 50%;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${themeCssVariables.font.color.inverted};
   cursor: pointer;
   display: flex;
   height: ${({ size }) => (size === 'small' ? '20px' : '24px')};
@@ -21,8 +24,8 @@ const StyledIconButton = styled.button<{ size: RoundedIconButtonSize }>`
     background 0.1s ease-in-out;
 
   &:disabled {
-    background: ${({ theme }) => theme.background.quaternary};
-    color: ${({ theme }) => theme.font.color.tertiary};
+    background: ${themeCssVariables.background.quaternary};
+    color: ${themeCssVariables.font.color.tertiary};
     cursor: default;
   }
   width: ${({ size }) => (size === 'small' ? '20px' : '24px')};
@@ -40,7 +43,7 @@ export const RoundedIconButton = ({
   className,
   size = 'small',
 }: RoundedIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledIconButton

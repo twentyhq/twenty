@@ -3,11 +3,10 @@ import { t } from '@lingui/core/macro';
 import { IconCheck, IconX } from 'twenty-ui/display';
 import { THEME_COMMON } from 'twenty-ui/theme';
 
-const spacing = THEME_COMMON.spacingMultiplicator * 1;
 const iconSizeSm = THEME_COMMON.icon.size.sm;
 
 const StyledBooleanFieldValue = styled.div`
-  margin-left: ${spacing}px;
+  margin-left: 4px;
 `;
 
 type BooleanDisplayProps = {

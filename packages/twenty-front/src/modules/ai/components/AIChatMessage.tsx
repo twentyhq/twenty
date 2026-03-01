@@ -49,7 +49,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.4;
-    padding: ${({ theme }) => `${theme.spacing(0.25)} ${theme.spacing(0.75)}`};
+    padding: 1px 3px;
     border-radius: ${({ theme }) => theme.border.radius.sm};
     background: ${({ theme }) => theme.background.tertiary};
   }

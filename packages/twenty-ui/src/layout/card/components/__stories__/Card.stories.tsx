@@ -22,10 +22,7 @@ const meta: Meta<typeof Card> = {
       <CardFooter>Lorem ipsum</CardFooter>
     </Card>
   ),
-  argTypes: {
-    as: { control: false },
-    theme: { control: false },
-  },
+  argTypes: {},
 };
 
 export default meta;

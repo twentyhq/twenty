@@ -1,11 +1,26 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from '@ui/theme';
+import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCardHeader = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
 `;
 
-export { StyledCardHeader as CardHeader };
+type CardHeaderProps = ComponentPropsWithoutRef<'div'>;
+
+export const CardHeader = ({
+  children,
+  className,
+  ...rest
+}: CardHeaderProps) => {
+  return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <StyledCardHeader className={className} {...rest}>
+      {children}
+    </StyledCardHeader>
+  );
+};

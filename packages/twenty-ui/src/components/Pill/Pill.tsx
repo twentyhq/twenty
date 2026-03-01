@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
+import { themeCssVariables } from '@ui/theme';
 
 type PillProps = {
   className?: string;
@@ -9,18 +10,18 @@ type PillProps = {
 
 const StyledPill = styled.span`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
-  color: ${({ theme }) => theme.font.color.light};
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  color: ${themeCssVariables.font.color.light};
   display: inline-flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${themeCssVariables.font.size.xs};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(4)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[4]};
   justify-content: flex-end;
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 export const Pill = ({ className, label, Icon }: PillProps) => {

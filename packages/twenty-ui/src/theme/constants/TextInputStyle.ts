@@ -1,8 +1,6 @@
-import { css } from '@emotion/react';
-
 import { type ThemeType } from '..';
 
-export const TEXT_INPUT_STYLE = (props: { theme: ThemeType }) => css`
+export const TEXT_INPUT_STYLE = (props: { theme: ThemeType }) => `
   background-color: transparent;
   border: none;
   color: ${props.theme.font.color.primary};
