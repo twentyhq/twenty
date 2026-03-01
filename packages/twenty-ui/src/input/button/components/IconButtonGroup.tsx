@@ -3,7 +3,7 @@ import { type IconComponent } from '@ui/display';
 import { type MouseEvent } from 'react';
 
 import { InsideButton } from '@ui/input/button/components/InsideButton';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 export type IconButtonGroupProps = {
   disabled?: boolean;
@@ -20,15 +20,15 @@ const StyledIconButtonGroupContainer = styled.div<
   display: inline-flex;
   align-items: flex-start;
   background-color: ${({ disabled }) =>
-    disabled ? 'inherit' : theme.background.transparent.lighter};
-  border-radius: ${theme.border.radius.sm};
-  border: 1px solid ${theme.border.color.strong};
+    disabled ? 'inherit' : themeCssVariables.background.transparent.lighter};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  border: 1px solid ${themeCssVariables.border.color.strong};
   gap: 2px;
   padding: 2px;
   backdrop-filter: blur(20px);
 
   &:hover {
-    box-shadow: ${theme.boxShadow.light};
+    box-shadow: ${themeCssVariables.boxShadow.light};
   }
 `;
 

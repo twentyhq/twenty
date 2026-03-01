@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
@@ -15,7 +15,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -23,7 +23,7 @@ const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1 0 0;
-  gap: ${theme.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;

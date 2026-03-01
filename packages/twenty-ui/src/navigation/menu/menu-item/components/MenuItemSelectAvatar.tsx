@@ -9,7 +9,7 @@ import {
 
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -28,7 +28,7 @@ const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1 0 0;
-  gap: ${theme.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;

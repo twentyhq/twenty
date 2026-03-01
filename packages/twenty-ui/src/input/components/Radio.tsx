@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import * as React from 'react';
 
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -36,8 +36,8 @@ const StyledRadioInputBase = styled.input<RadioInputProps>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
-  border: 1px solid ${theme.font.color.secondary};
-  border-radius: ${theme.border.radius.rounded};
+  border: 1px solid ${themeCssVariables.font.color.secondary};
+  border-radius: ${themeCssVariables.border.radius.rounded};
   height: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
   margin: 0;
@@ -49,24 +49,24 @@ const StyledRadioInputBase = styled.input<RadioInputProps>`
   :hover {
     background-color: ${({ checked }) => {
       if (!checked) {
-        return theme.background.tertiary;
+        return themeCssVariables.background.tertiary;
       }
       return '';
     }};
     outline: 4px solid
       ${({ checked }) => {
         if (!checked) {
-          return theme.background.tertiary;
+          return themeCssVariables.background.tertiary;
         }
-        return theme.color.transparent.blue2;
+        return themeCssVariables.color.transparent.blue2;
       }};
   }
 
   &:checked {
-    background-color: ${theme.color.blue};
+    background-color: ${themeCssVariables.color.blue};
     border: none;
     &::after {
-      background-color: ${theme.grayScale.gray1};
+      background-color: ${themeCssVariables.grayScale.gray1};
       border-radius: 50%;
       content: '';
       height: ${({ 'radio-size': radioSize }) =>
@@ -94,14 +94,18 @@ type LabelProps = {
 };
 
 const StyledLabel = styled.label<LabelProps>`
-  color: ${theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  font-size: ${theme.font.size.sm};
-  font-weight: ${theme.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
   margin-left: ${({ labelPosition }) =>
-    labelPosition === LabelPosition.Right ? theme.spacing[2] : '0px'};
+    labelPosition === LabelPosition.Right
+      ? themeCssVariables.spacing[2]
+      : '0px'};
   margin-right: ${({ labelPosition }) =>
-    labelPosition === LabelPosition.Left ? theme.spacing[2] : '0px'};
+    labelPosition === LabelPosition.Left
+      ? themeCssVariables.spacing[2]
+      : '0px'};
   opacity: ${({ disabled }) => (disabled ? 0.32 : 1)};
 `;
 

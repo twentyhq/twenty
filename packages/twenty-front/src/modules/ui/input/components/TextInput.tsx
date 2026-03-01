@@ -409,7 +409,7 @@ const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
-  padding: 0 ${({ theme }) => theme.spacing(1.25)};
+  padding: 0 5px;
 `;
 
 const TextInputWithAutoGrowWrapper = forwardRef<

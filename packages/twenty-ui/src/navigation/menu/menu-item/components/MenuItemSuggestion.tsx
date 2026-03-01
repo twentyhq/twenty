@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/display';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
@@ -20,21 +20,21 @@ export type MenuItemSuggestionProps = {
 const StyledSuggestionMenuItem = styled.li<{
   selected?: boolean;
 }>`
-  --horizontal-padding: ${theme.spacing[1]};
-  --vertical-padding: ${theme.spacing[2]};
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
 
   align-items: center;
 
-  border-radius: ${theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
 
   display: flex;
 
   flex-direction: row;
 
-  font-size: ${theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
@@ -42,12 +42,12 @@ const StyledSuggestionMenuItem = styled.li<{
   padding: var(--vertical-padding) var(--horizontal-padding);
 
   background: ${({ selected }) =>
-    selected ? theme.background.transparent.medium : ''};
-  color: ${theme.font.color.secondary};
+    selected ? themeCssVariables.background.transparent.medium : ''};
+  color: ${themeCssVariables.font.color.secondary};
 
   transition: background 0.1s ease;
   &:hover {
-    background: ${theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 
   position: relative;

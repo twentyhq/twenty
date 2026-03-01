@@ -4,7 +4,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightButton, LightIconButton } from '@ui/input';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 export type CalloutVariant =
   | 'info'
@@ -19,33 +19,34 @@ const StyledCalloutContainer = styled.div<{
   align-items: flex-start;
   background-color: ${({ variant }) =>
     variant === 'info'
-      ? theme.accent.accent1
+      ? themeCssVariables.accent.accent1
       : variant === 'warning'
-        ? theme.color.orange1
+        ? themeCssVariables.color.orange1
         : variant === 'success'
-          ? theme.color.turquoise1
+          ? themeCssVariables.color.turquoise1
           : variant === 'error'
-            ? theme.color.red1
-            : theme.color.gray1};
+            ? themeCssVariables.color.red1
+            : themeCssVariables.color.gray1};
   border: 1px solid
     ${({ variant }) =>
       variant === 'info'
-        ? theme.accent.accent6
+        ? themeCssVariables.accent.accent6
         : variant === 'warning'
-          ? theme.color.orange6
+          ? themeCssVariables.color.orange6
           : variant === 'success'
-            ? theme.color.turquoise6
+            ? themeCssVariables.color.turquoise6
             : variant === 'error'
-              ? theme.color.red6
-              : theme.color.gray6};
-  border-radius: ${theme.border.radius.md};
+              ? themeCssVariables.color.red6
+              : themeCssVariables.color.gray6};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   max-width: 512px;
   overflow: hidden;
-  padding: ${theme.spacing[3]} ${theme.spacing[3]} ${theme.spacing[2]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -54,8 +55,8 @@ const StyledHeader = styled.div`
   align-self: stretch;
   display: flex;
   flex-direction: row;
-  gap: ${theme.spacing[2]};
-  min-height: ${theme.spacing[6]};
+  gap: ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledIconContainer = styled.div<{
@@ -65,26 +66,26 @@ const StyledIconContainer = styled.div<{
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  height: ${theme.spacing[4]};
-  width: ${theme.spacing[4]};
+  height: ${themeCssVariables.spacing[4]};
+  width: ${themeCssVariables.spacing[4]};
   color: ${({ variant }) =>
     variant === 'info'
-      ? theme.accent.accent9
+      ? themeCssVariables.accent.accent9
       : variant === 'warning'
-        ? theme.color.orange9
+        ? themeCssVariables.color.orange9
         : variant === 'success'
-          ? theme.color.turquoise9
+          ? themeCssVariables.color.turquoise9
           : variant === 'error'
-            ? theme.color.red9
-            : theme.color.gray9};
+            ? themeCssVariables.color.red9
+            : themeCssVariables.color.gray9};
 `;
 
 const StyledTitle = styled.div`
   flex: 1;
-  color: ${theme.font.color.primary};
-  font-family: ${theme.font.family};
-  font-size: ${theme.font.size.md};
-  font-weight: ${theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,16 +98,17 @@ const StyledDescriptionWrapper = styled.div<{
   align-items: center;
   display: flex;
   align-self: stretch;
-  padding-bottom: ${({ hasAction }) => (hasAction ? 0 : theme.spacing[2])};
-  padding-left: ${theme.spacing[6]};
+  padding-bottom: ${({ hasAction }) =>
+    hasAction ? 0 : themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledDescription = styled.div`
   flex: 1;
-  color: ${theme.font.color.tertiary};
-  font-family: ${theme.font.family};
-  font-size: ${theme.font.size.sm};
-  font-weight: ${theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 1.4;
 `;
 

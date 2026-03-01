@@ -8,7 +8,7 @@ import {
   type IconComponent,
 } from '@ui/display';
 import { type ReactNode, useContext } from 'react';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -26,18 +26,22 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       return 'inherit';
     }
     if (focused === true) {
-      return theme.background.transparent.light;
+      return themeCssVariables.background.transparent.light;
     }
     return '';
   }};
 
   &:hover {
     background: ${({ disabled }) =>
-      disabled === true ? 'inherit' : theme.background.transparent.light};
+      disabled === true
+        ? 'inherit'
+        : themeCssVariables.background.transparent.light};
   }
 
   color: ${({ disabled }) =>
-    disabled === true ? theme.font.color.tertiary : theme.font.color.secondary};
+    disabled === true
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.secondary};
 
   cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;

@@ -1,19 +1,19 @@
 import { type ReactElement } from 'react';
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledContainer = styled.div`
-  border-radius: ${theme.border.radius.sm};
-  border: 1px solid ${theme.border.color.medium};
-  background: ${theme.background.transparent.secondary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  background: ${themeCssVariables.background.transparent.secondary};
   display: flex;
   justify-content: space-between;
-  padding: ${theme.spacing[3]};
-  gap: ${theme.spacing[3]};
+  padding: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledCommandContain = styled.div`
-  font-family: ${theme.code.font.family};
+  font-family: ${themeCssVariables.code.font.family};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -23,11 +23,11 @@ const StyledButtonContainer = styled.div`
 const StyledLineContainer = styled.div``;
 
 const StyledLineStartSpan = styled.span`
-  color: ${theme.code.text.orange};
+  color: ${themeCssVariables.code.text.orange};
 `;
 
 const StyledLineSpan = styled.span`
-  color: ${theme.code.text.green};
+  color: ${themeCssVariables.code.text.green};
 `;
 
 type CommandBlockProps = {

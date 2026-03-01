@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { GRAY_SCALE_DARK, GRAY_SCALE_LIGHT, theme } from '@ui/theme';
+import {
+  GRAY_SCALE_DARK,
+  GRAY_SCALE_LIGHT,
+  themeCssVariables,
+} from '@ui/theme';
 import {
   AnimatePresence,
   type AnimationControls,
@@ -32,15 +36,15 @@ const StyledColorSchemeBackground = styled.div<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   height: 80px;
   justify-content: flex-end;
   overflow: hidden;
-  padding-left: ${theme.spacing[6]};
-  padding-top: ${theme.spacing[6]};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[6]};
   width: 160px;
 `;
 
@@ -66,7 +70,7 @@ const StyledColorSchemeContentBase = styled.div<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${theme.border.radius.md} 0px 0px 0px;
+  border-radius: ${themeCssVariables.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
@@ -90,8 +94,8 @@ const StyledColorSchemeContentBase = styled.div<
   flex: 1;
   font-size: 20px;
   height: 56px;
-  padding-left: ${theme.spacing[2]};
-  padding-top: ${theme.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledColorSchemeContent = motion.create(StyledColorSchemeContentBase);
@@ -129,7 +133,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
-  border-radius: ${theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;
   display: flex;
   height: 80px;
@@ -140,7 +144,7 @@ const StyledMixedColorSchemeSegment = styled.div`
 
 const StyledCheckmarkContainerBase = styled.div`
   bottom: 0px;
-  padding: ${theme.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   right: 0px;
 `;

@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
 
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${theme.spacing[4]};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: center;
-  padding: ${theme.spacing[3]};
+  padding: ${themeCssVariables.spacing[3]};
   z-index: 1001;
 `;
 

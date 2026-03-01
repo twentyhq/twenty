@@ -5,7 +5,7 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
@@ -15,15 +15,17 @@ const StyledSeparator = styled.div<{
   background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.buttons.secondaryTextColor;
+        return themeCssVariables.buttons.secondaryTextColor;
       case 'danger':
-        return theme.border.color.danger;
+        return themeCssVariables.border.color.danger;
       default:
-        return theme.font.color.light;
+        return themeCssVariables.font.color.light;
     }
   }};
   height: ${({ buttonSize }) =>
-    buttonSize === 'small' ? theme.spacing[2] : theme.spacing[4]};
+    buttonSize === 'small'
+      ? themeCssVariables.spacing[2]
+      : themeCssVariables.spacing[4]};
   margin: 0;
   width: 1px;
 `;
@@ -35,16 +37,16 @@ const StyledShortcutLabel = styled.div<{
   color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.buttons.secondaryTextColor;
+        return themeCssVariables.buttons.secondaryTextColor;
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red8;
+          ? themeCssVariables.border.color.danger
+          : themeCssVariables.color.red8;
       default:
-        return theme.font.color.light;
+        return themeCssVariables.font.color.light;
     }
   }};
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 export const ButtonHotkeys = ({

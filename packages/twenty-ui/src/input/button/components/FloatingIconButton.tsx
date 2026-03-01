@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
@@ -30,51 +30,54 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) =>
-    applyBlur ? theme.blur.medium : 'none'};
+    applyBlur ? themeCssVariables.blur.medium : 'none'};
   background: ${({ isActive }) =>
-    isActive ? theme.background.transparent.medium : theme.background.primary};
+    isActive
+      ? themeCssVariables.background.transparent.medium
+      : themeCssVariables.background.primary};
   border: ${({ focus }) =>
     focus
-      ? `1px solid ${theme.color.blue}`
-      : `1px solid ${theme.border.color.strong}`};
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : `1px solid ${themeCssVariables.border.color.strong}`};
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeCssVariables.border.radius.sm;
     }
     return '';
   }};
   box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? theme.boxShadow.light
+      ? themeCssVariables.boxShadow.light
       : focus
-        ? `0 0 0 3px ${theme.color.blue3}`
+        ? `0 0 0 3px ${themeCssVariables.color.blue3}`
         : 'none'};
   box-sizing: border-box;
   color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.tertiary
-      : theme.font.color.extraLight;
+        ? themeCssVariables.color.blue
+        : themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${theme.font.family};
-  font-weight: ${theme.font.weight.regular};
-  gap: ${theme.spacing[1]};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background calc(${theme.animation.duration.instant} * 1s) ease;
+  transition: background
+    calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   white-space: nowrap;
 
   height: ${({ position, size }) =>
@@ -84,12 +87,16 @@ const StyledButton = styled.button<
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? theme.background.transparent.lighter : 'transparent'};
+      !disabled
+        ? themeCssVariables.background.transparent.lighter
+        : 'transparent'};
   }
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+      !disabled
+        ? themeCssVariables.background.transparent.medium
+        : 'transparent'};
   }
 
   &:focus {

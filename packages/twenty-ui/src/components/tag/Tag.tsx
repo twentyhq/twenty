@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { type ThemeColor, ThemeContext, theme } from '@ui/theme';
+import { type ThemeColor, ThemeContext, themeCssVariables } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledTag = styled.h3<{
@@ -17,30 +17,32 @@ const StyledTag = styled.h3<{
   background: ${({ color }) =>
     color === 'transparent'
       ? 'transparent'
-      : (theme.tag.background[color] ?? theme.tag.background.gray)};
-  border-radius: ${theme.border.radius.sm};
+      : (themeCssVariables.tag.background[color] ??
+        themeCssVariables.tag.background.gray)};
+  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${({ color }) =>
     color === 'transparent'
-      ? theme.font.color.secondary
-      : (theme.tag.text[color] ?? theme.font.color.secondary)};
+      ? themeCssVariables.font.color.secondary
+      : (themeCssVariables.tag.text[color] ??
+        themeCssVariables.font.color.secondary)};
   display: inline-flex;
-  font-size: ${theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   font-style: normal;
   font-weight: ${({ weight }) =>
     weight === 'regular'
-      ? theme.font.weight.regular
-      : theme.font.weight.medium};
-  height: ${theme.spacing[5]};
+      ? themeCssVariables.font.weight.regular
+      : themeCssVariables.font.weight.medium};
+  height: ${themeCssVariables.spacing[5]};
   margin: 0;
   overflow: hidden;
   padding: ${({ preventPadding }) =>
-    preventPadding ? '0' : `0 ${theme.spacing[2]}`};
+    preventPadding ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   border: ${({ variant }) =>
     variant === 'outline' || variant === 'border'
-      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
+      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${themeCssVariables.border.color.strong}`
       : 'none'};
 
-  gap: ${theme.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
 
   min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;

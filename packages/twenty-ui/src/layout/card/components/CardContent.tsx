@@ -1,16 +1,16 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { motion } from 'framer-motion';
 import { type ComponentProps, type ReactNode } from 'react';
 
 const StyledCardContentBase = styled.div<{
   divider?: boolean;
 }>`
-  background-color: ${theme.background.secondary};
-  padding: ${theme.spacing[4]};
+  background-color: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[4]};
 
   border-bottom: ${({ divider }) =>
-    divider ? `1px solid ${theme.border.color.medium}` : 'none'};
+    divider ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
 `;
 
 const MotionCardContent = motion.create(StyledCardContentBase);

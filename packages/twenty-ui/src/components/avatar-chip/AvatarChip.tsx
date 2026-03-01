@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { type Nullable } from '@ui/utilities';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,9 +24,13 @@ const StyledAvatarChipWrapper = styled.div<{
   divider: AvatarChipProps['divider'];
 }>`
   border-left: ${({ divider }) =>
-    divider === 'left' ? `1px solid ${theme.border.color.light}` : 'none'};
+    divider === 'left'
+      ? `1px solid ${themeCssVariables.border.color.light}`
+      : 'none'};
   border-right: ${({ divider }) =>
-    divider === 'right' ? `1px solid ${theme.border.color.light}` : 'none'};
+    divider === 'right'
+      ? `1px solid ${themeCssVariables.border.color.light}`
+      : 'none'};
 
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
   display: flex;

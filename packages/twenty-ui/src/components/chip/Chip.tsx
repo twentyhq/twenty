@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 export enum ChipSize {
   Large = 'large',
@@ -39,7 +39,7 @@ export type ChipProps = {
 };
 
 const StyledDiv = styled.div`
-  color: ${theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledContainer = styled.div<
@@ -48,18 +48,18 @@ const StyledContainer = styled.div<
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
   >
 >`
-  --chip-horizontal-padding: ${theme.spacing[1]};
-  --chip-vertical-padding: ${theme.spacing[1]};
+  --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
+  --chip-vertical-padding: ${themeCssVariables.spacing[1]};
 
   text-decoration: none;
   align-items: center;
 
   color: ${({ accent, disabled }) =>
     disabled
-      ? theme.font.color.light
+      ? themeCssVariables.font.color.light
       : accent === ChipAccent.TextPrimary
-        ? theme.font.color.primary
-        : theme.font.color.secondary};
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.secondary};
 
   cursor: ${({ clickable, disabled, variant }) =>
     variant === ChipVariant.Transparent
@@ -72,9 +72,11 @@ const StyledContainer = styled.div<
 
   display: inline-flex;
   justify-content: flex-start;
-  gap: ${theme.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) =>
-    size === ChipSize.Large ? theme.spacing[4] : theme.spacing[3]};
+    size === ChipSize.Large
+      ? themeCssVariables.spacing[4]
+      : themeCssVariables.spacing[3]};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -84,38 +86,40 @@ const StyledContainer = styled.div<
   user-select: none;
 
   font-weight: ${({ accent }) =>
-    accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
+    accent === ChipAccent.TextSecondary
+      ? themeCssVariables.font.weight.medium
+      : 'inherit'};
 
   &:hover {
     background-color: ${({ variant, disabled }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.light
+        ? themeCssVariables.background.transparent.light
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.medium
+          ? themeCssVariables.background.transparent.medium
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : 'inherit'};
   }
 
   &:active {
     background-color: ${({ disabled, variant }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.medium
+        ? themeCssVariables.background.transparent.medium
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.strong
+          ? themeCssVariables.background.transparent.strong
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : 'inherit'};
   }
 
   background-color: ${({ variant }) =>
     variant === ChipVariant.Highlighted || variant === ChipVariant.Static
-      ? theme.background.transparent.light
+      ? themeCssVariables.background.transparent.light
       : 'inherit'};
 
   border: none;
 
-  border-radius: ${theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
 
   & > svg {
     flex-shrink: 0;
@@ -123,7 +127,7 @@ const StyledContainer = styled.div<
 
   padding-left: ${({ variant }) =>
     variant === ChipVariant.Transparent
-      ? theme.spacing[0]
+      ? themeCssVariables.spacing[0]
       : 'var(--chip-horizontal-padding)'};
 `;
 

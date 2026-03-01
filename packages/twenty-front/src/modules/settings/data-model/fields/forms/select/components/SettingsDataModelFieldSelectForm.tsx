@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainer = styled(CardContent)`
-  padding-bottom: ${({ theme }) => theme.spacing(3.5)};
+  padding-bottom: 14px;
 `;
 
 const StyledOptionsLabel = styled.div<{

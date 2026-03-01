@@ -1,28 +1,28 @@
 import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { useContext, useId } from 'react';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   position: relative;
-  height: ${theme.spacing[5]};
-  padding: ${theme.spacing[1]};
+  height: ${themeCssVariables.spacing[5]};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledText = styled.div`
-  color: ${theme.font.color.secondary};
-  font-size: ${theme.font.size.sm};
-  font-weight: ${theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-  left: calc(-1 * ${theme.spacing[5]});
+  left: calc(-1 * ${themeCssVariables.spacing[5]});
   position: absolute;
 `;
 

@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 export type LabelVariant = 'default' | 'small';
 
 const StyledLabel = styled.div<{ variant?: LabelVariant }>`
-  color: ${theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   font-size: ${({ variant = 'default' }) => {
     switch (variant) {
       case 'default':
@@ -13,7 +13,7 @@ const StyledLabel = styled.div<{ variant?: LabelVariant }>`
         return '9px';
     }
   }};
-  font-weight: ${theme.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 type LabelProps = {

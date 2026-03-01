@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -34,60 +34,65 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
-  background: ${theme.background.primary};
+  background: ${themeCssVariables.background.primary};
 
-  border: ${({ focus }) => (focus ? `1px solid ${theme.color.blue}` : 'none')};
+  border: ${({ focus }) =>
+    focus ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeCssVariables.border.radius.sm;
     }
     return '';
   }};
   box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
       ? `0px 2px 4px 0px ${
-          theme.background.transparent.light
-        }, 0px 0px 4px 0px ${theme.background.transparent.medium}${
-          focus ? `,0 0 0 3px ${theme.color.blue3}` : ''
+          themeCssVariables.background.transparent.light
+        }, 0px 0px 4px 0px ${themeCssVariables.background.transparent.medium}${
+          focus ? `,0 0 0 3px ${themeCssVariables.color.blue3}` : ''
         }`
       : focus
-        ? `0 0 0 3px ${theme.color.blue3}`
+        ? `0 0 0 3px ${themeCssVariables.color.blue3}`
         : 'none'};
   color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.secondary
-      : theme.font.color.extraLight;
+        ? themeCssVariables.color.blue
+        : themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
 
   flex-direction: row;
-  font-family: ${theme.font.family};
-  font-weight: ${theme.font.weight.regular};
-  gap: ${theme.spacing[1]};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  padding: 0 ${theme.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
   transition: background 0.1s ease;
 
   white-space: nowrap;
 
   &:hover {
     background: ${({ disabled }) =>
-      !disabled ? theme.background.transparent.lighter : 'transparent'};
+      !disabled
+        ? themeCssVariables.background.transparent.lighter
+        : 'transparent'};
   }
 
   &:active {
     background: ${({ disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+      !disabled
+        ? themeCssVariables.background.transparent.medium
+        : 'transparent'};
   }
 
   &:focus {

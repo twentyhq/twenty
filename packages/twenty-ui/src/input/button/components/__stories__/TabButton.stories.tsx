@@ -17,11 +17,11 @@ import {
   JotaiRootDecorator,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledTabContainer = styled.div`
   display: flex;
-  gap: ${theme.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
   height: 40px;
   user-select: none;
   position: relative;
@@ -34,7 +34,7 @@ const StyledTabContainer = styled.div`
     left: 0;
     right: 0;
     height: 1px;
-    background-color: ${theme.border.color.light};
+    background-color: ${themeCssVariables.border.color.light};
   }
 `;
 

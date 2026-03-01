@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 
@@ -9,7 +9,7 @@ const StyledEmptyContainerBase = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing[6]};
+  gap: ${themeCssVariables.spacing[6]};
   justify-content: center;
   text-align: center;
 `;
@@ -56,7 +56,7 @@ export const AnimatedPlaceholderEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -64,17 +64,17 @@ export const AnimatedPlaceholderEmptyTextContainer = styled.div`
 
 // eslint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderEmptyTitle = styled.div`
-  color: ${theme.font.color.primary};
-  font-size: ${theme.font.size.lg};
-  font-weight: ${theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 // eslint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderEmptySubTitle = styled.div`
-  color: ${theme.font.color.tertiary};
-  font-size: ${theme.font.size.sm};
-  font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.text.lineHeight.lg};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   max-height: 2.8em;
   overflow: hidden;
   width: 50%;

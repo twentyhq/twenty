@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledNotificationCounter = styled.div<{
   variant: 'primary' | 'secondary';
@@ -11,14 +11,14 @@ const StyledNotificationCounter = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${theme.font.size.xxs};
-  font-weight: ${theme.font.weight.semiBold};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   background: ${({ variant }) =>
     variant === 'primary'
-      ? theme.color.blue
-      : theme.background.transparent.light};
+      ? themeCssVariables.color.blue
+      : themeCssVariables.background.transparent.light};
   color: ${({ variant }) =>
-    variant === 'primary' ? 'white' : theme.font.color.secondary};
+    variant === 'primary' ? 'white' : themeCssVariables.font.color.secondary};
 `;
 
 type NotificationCounterProps = {

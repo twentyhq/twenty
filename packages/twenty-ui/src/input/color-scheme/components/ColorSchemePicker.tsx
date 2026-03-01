@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { MOBILE_VIEWPORT, theme } from '@ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${theme.spacing[4]};
+    margin-left: ${themeCssVariables.spacing[4]};
   }
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     overflow: scroll;
@@ -21,10 +21,10 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledLabel = styled.span`
-  color: ${theme.font.color.secondary};
-  font-size: ${theme.font.size.xs};
-  font-weight: ${theme.font.weight.medium};
-  margin-top: ${theme.spacing[2]};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export type ColorSchemePickerProps = {

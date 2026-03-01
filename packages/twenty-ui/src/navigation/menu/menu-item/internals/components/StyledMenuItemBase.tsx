@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
 
 import { IconCheck } from '@ui/display';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {
@@ -16,20 +16,20 @@ export type MenuItemBaseProps = {
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
-  --horizontal-padding: ${theme.spacing[1]};
-  --vertical-padding: ${theme.spacing[2]};
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
   align-items: center;
 
-  border-radius: ${theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
 
   display: flex;
 
   flex-direction: row;
 
-  font-size: ${theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
@@ -37,32 +37,35 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   padding: var(--vertical-padding) var(--horizontal-padding);
 
   background: ${({ isKeySelected, focused }) =>
-    isKeySelected || focused ? theme.background.transparent.light : ''};
+    isKeySelected || focused
+      ? themeCssVariables.background.transparent.light
+      : ''};
 
   transition: ${({ isHoverBackgroundDisabled, disabled }) =>
     disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
 
   color: ${({ accent, disabled }) => {
     if (!isUndefined(disabled) && disabled !== false) {
-      return theme.font.color.tertiary;
+      return themeCssVariables.font.color.tertiary;
     }
     switch (accent) {
       case 'danger':
-        return theme.font.color.danger;
+        return themeCssVariables.font.color.danger;
       case 'placeholder':
-        return theme.font.color.tertiary;
+        return themeCssVariables.font.color.tertiary;
       case 'default':
       default:
-        return theme.font.color.secondary;
+        return themeCssVariables.font.color.secondary;
     }
   }};
 
   &:hover {
     background: ${({ accent, disabled, isHoverBackgroundDisabled }) => {
       if (disabled === true) return '';
-      if (accent === 'danger') return theme.background.transparent.danger;
+      if (accent === 'danger')
+        return themeCssVariables.background.transparent.danger;
       if (isHoverBackgroundDisabled === true) return 'transparent';
-      return theme.background.transparent.light;
+      return themeCssVariables.background.transparent.light;
     }};
   }
 
@@ -75,8 +78,8 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 export const StyledMenuItemLabel = styled.div`
   display: flex;
   flex-direction: row;
-  font-size: ${theme.font.size.md};
-  font-weight: ${theme.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
 
   overflow: hidden;
 
@@ -84,11 +87,11 @@ export const StyledMenuItemLabel = styled.div`
 `;
 
 export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
-  color: ${theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 export const StyledNoIconFiller = styled.div`
-  width: ${theme.spacing[1]};
+  width: ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledMenuItemLeftContent = styled.div`
@@ -97,7 +100,7 @@ export const StyledMenuItemLeftContent = styled.div`
 
   flex-direction: row;
 
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   width: 100%;
 
@@ -110,7 +113,7 @@ export const StyledMenuItemRightContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
 
   & svg {
     flex-shrink: 0;
@@ -136,8 +139,11 @@ export const StyledHoverableMenuItemBase = styled(
     opacity: ${({ isIconDisplayedOnHoverOnly }) =>
       isIconDisplayedOnHoverOnly === true ? '0' : '1'};
     right: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly === true ? theme.spacing[2] : 'auto'};
-    transition: opacity calc(${theme.animation.duration.instant} * 1s) ease;
+      isIconDisplayedOnHoverOnly === true
+        ? themeCssVariables.spacing[2]
+        : 'auto'};
+    transition: opacity
+      calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   }
 
   &:hover {
@@ -168,15 +174,15 @@ export const StyledHoverableMenuItemBase = styled(
 
 export const StyledMenuItemIconCheck = styled(IconCheck)`
   flex-shrink: 0;
-  margin-right: ${theme.spacing[1]};
+  margin-right: ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledMenuItemContextualText = styled.div`
-  color: ${theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  padding-left: ${theme.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
   flex-shrink: 1;
   overflow: hidden;
 `;

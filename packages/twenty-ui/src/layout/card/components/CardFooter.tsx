@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCardFooter = styled.div<{ divider?: boolean }>`
-  background-color: ${theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   border-top: ${({ divider = true }) =>
-    divider ? `1px solid ${theme.border.color.medium}` : '0'};
-  font-size: ${theme.font.size.sm};
-  padding: ${theme.spacing[2]} ${theme.spacing[4]};
+    divider ? `1px solid ${themeCssVariables.border.color.medium}` : '0'};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
 `;
 
 type CardFooterProps = ComponentPropsWithoutRef<'div'> & {

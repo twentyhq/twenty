@@ -6,7 +6,7 @@ import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -44,7 +44,7 @@ const computeAnimatedButtonDynamicStyles = (
     borderColor: 'transparent',
     borderWidthOverride: '',
     boxShadow: 'none',
-    color: theme.font.color.secondary,
+    color: themeCssVariables.font.color.secondary,
     hoverBackground: 'transparent',
     activeBackground: 'transparent',
   };
@@ -54,34 +54,34 @@ const computeAnimatedButtonDynamicStyles = (
       switch (accent) {
         case 'default':
           result.background = !inverted
-            ? theme.background.secondary
-            : theme.background.primary;
+            ? themeCssVariables.background.secondary
+            : themeCssVariables.background.primary;
           result.borderColor = !inverted
             ? !disabled && focus
-              ? theme.color.blue
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeCssVariables.color.blue
+              : themeCssVariables.background.transparent.light
+            : themeCssVariables.background.transparent.light;
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.accent.tertiary
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.font.color.secondary
-              : theme.font.color.extraLight
-            : theme.font.color.secondary;
+              ? themeCssVariables.font.color.secondary
+              : themeCssVariables.font.color.extraLight
+            : themeCssVariables.font.color.secondary;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.background.tertiary
-              : theme.background.secondary;
+              ? themeCssVariables.background.tertiary
+              : themeCssVariables.background.secondary;
             result.activeBackground = !inverted
-              ? theme.background.quaternary
-              : theme.background.tertiary;
+              ? themeCssVariables.background.quaternary
+              : themeCssVariables.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -89,30 +89,32 @@ const computeAnimatedButtonDynamicStyles = (
           break;
         case 'blue':
           result.background = !inverted
-            ? theme.color.blue
-            : theme.background.primary;
+            ? themeCssVariables.color.blue
+            : themeCssVariables.background.primary;
           result.borderColor = !inverted
             ? focus
-              ? theme.color.blue
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeCssVariables.color.blue
+              : themeCssVariables.background.transparent.light
+            : themeCssVariables.background.transparent.light;
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.accent.tertiary
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
-          result.color = !inverted ? theme.grayScale.gray1 : theme.color.blue;
+          result.color = !inverted
+            ? themeCssVariables.grayScale.gray1
+            : themeCssVariables.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.color.blue10
-              : theme.background.secondary;
+              ? themeCssVariables.color.blue10
+              : themeCssVariables.background.secondary;
             result.activeBackground = !inverted
-              ? theme.color.blue12
-              : theme.background.tertiary;
+              ? themeCssVariables.color.blue12
+              : themeCssVariables.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -120,30 +122,32 @@ const computeAnimatedButtonDynamicStyles = (
           break;
         case 'danger':
           result.background = !inverted
-            ? theme.color.red
-            : theme.background.primary;
+            ? themeCssVariables.color.red
+            : themeCssVariables.background.primary;
           result.borderColor = !inverted
             ? focus
-              ? theme.color.red
-              : theme.background.transparent.light
-            : theme.background.transparent.light;
+              ? themeCssVariables.color.red
+              : themeCssVariables.background.transparent.light
+            : themeCssVariables.background.transparent.light;
           result.borderWidthOverride = '1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.color.red3
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.color.red3
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
-          result.color = !inverted ? theme.background.primary : theme.color.red;
+          result.color = !inverted
+            ? themeCssVariables.background.primary
+            : themeCssVariables.color.red;
           if (!disabled) {
             result.hoverBackground = !inverted
-              ? theme.color.red8
-              : theme.background.secondary;
+              ? themeCssVariables.color.red8
+              : themeCssVariables.background.secondary;
             result.activeBackground = !inverted
-              ? theme.color.red10
-              : theme.background.tertiary;
+              ? themeCssVariables.color.red10
+              : themeCssVariables.background.tertiary;
           } else {
             result.hoverBackground = result.background;
             result.activeBackground = result.background;
@@ -159,124 +163,124 @@ const computeAnimatedButtonDynamicStyles = (
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? !disabled && focus
-                ? theme.color.blue
-                : theme.background.transparent.medium
+                ? themeCssVariables.color.blue
+                : themeCssVariables.background.transparent.medium
               : focus
-                ? theme.color.blue
+                ? themeCssVariables.color.blue
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeCssVariables.grayScale.gray1
+                : themeCssVariables.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.accent.tertiary
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.font.color.secondary
-              : theme.font.color.extraLight
-            : theme.font.color.inverted;
+              ? themeCssVariables.font.color.secondary
+              : themeCssVariables.font.color.extraLight
+            : themeCssVariables.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.background.transparent.light
+              ? themeCssVariables.background.transparent.light
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeCssVariables.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.background.transparent.light
+              ? themeCssVariables.background.transparent.light
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeCssVariables.background.transparent.medium;
           break;
         case 'blue':
           result.background = 'transparent';
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? focus
-                ? theme.color.blue
-                : theme.accent.primary
+                ? themeCssVariables.color.blue
+                : themeCssVariables.accent.primary
               : focus
-                ? theme.color.blue
+                ? themeCssVariables.color.blue
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeCssVariables.grayScale.gray1
+                : themeCssVariables.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.accent.tertiary
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.accent.tertiary
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
             ? !disabled
-              ? theme.color.blue
-              : theme.accent.accent4060
-            : theme.font.color.inverted;
+              ? themeCssVariables.color.blue
+              : themeCssVariables.accent.accent4060
+            : themeCssVariables.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.accent.tertiary
+              ? themeCssVariables.accent.tertiary
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeCssVariables.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.accent.secondary
+              ? themeCssVariables.accent.secondary
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeCssVariables.background.transparent.medium;
           break;
         case 'danger':
           result.background = 'transparent';
           result.borderColor = !inverted
             ? variant === 'secondary'
               ? focus
-                ? theme.color.red
-                : theme.border.color.danger
+                ? themeCssVariables.color.red
+                : themeCssVariables.border.color.danger
               : focus
-                ? theme.color.red
+                ? themeCssVariables.color.red
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? theme.grayScale.gray1
-                : theme.background.transparent.primary
+                ? themeCssVariables.grayScale.gray1
+                : themeCssVariables.background.transparent.primary
               : focus
-                ? theme.grayScale.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
             !disabled && focus
               ? `0 0 0 3px ${
                   !inverted
-                    ? theme.color.red3
-                    : theme.background.transparent.medium
+                    ? themeCssVariables.color.red3
+                    : themeCssVariables.background.transparent.medium
                 }`
               : 'none';
           result.color = !inverted
-            ? theme.font.color.danger
-            : theme.font.color.inverted;
+            ? themeCssVariables.font.color.danger
+            : themeCssVariables.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
-              ? theme.background.danger
+              ? themeCssVariables.background.danger
               : 'transparent'
-            : theme.background.transparent.light;
+            : themeCssVariables.background.transparent.light;
           result.activeBackground = !inverted
             ? !disabled
-              ? theme.background.danger
+              ? themeCssVariables.background.danger
               : 'transparent'
-            : theme.background.transparent.medium;
+            : themeCssVariables.background.transparent.medium;
           break;
       }
       break;
@@ -330,13 +334,13 @@ const StyledButton = styled.button<
   border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeCssVariables.border.radius.sm;
     }
     return '';
   }};
@@ -344,13 +348,13 @@ const StyledButton = styled.button<
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${theme.font.family};
+  font-family: ${themeCssVariables.font.family};
   font-weight: 500;
-  font-size: ${theme.font.size.md};
-  gap: ${theme.spacing[1]};
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify ?? ''};
-  padding: 0 ${theme.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
 
   transition: background 0.1s ease;
 
@@ -374,15 +378,17 @@ const StyledSeparator = styled.div<{
   background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return themeCssVariables.border.color.blue;
       case 'danger':
-        return theme.border.color.danger;
+        return themeCssVariables.border.color.danger;
       default:
-        return theme.font.color.light;
+        return themeCssVariables.font.color.light;
     }
   }};
   height: ${({ buttonSize }) =>
-    buttonSize === 'small' ? theme.spacing[2] : theme.spacing[4]};
+    buttonSize === 'small'
+      ? themeCssVariables.spacing[2]
+      : themeCssVariables.spacing[4]};
   margin: 0;
   width: 1px;
 `;
@@ -394,16 +400,16 @@ const StyledShortcutLabel = styled.div<{
   color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return themeCssVariables.border.color.blue;
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red8;
+          ? themeCssVariables.border.color.danger
+          : themeCssVariables.color.red8;
       default:
-        return theme.font.color.light;
+        return themeCssVariables.font.color.light;
     }
   }};
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIconContainer = styled(motion.div)`

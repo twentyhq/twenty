@@ -5,15 +5,15 @@ import {
   type FloatingButtonPosition,
   type FloatingButtonProps,
 } from './FloatingButton';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledFloatingButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
-  border-radius: ${theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-shadow:
-    0px 2px 4px 0px ${theme.background.transparent.light},
-    0px 0px 4px 0px ${theme.background.transparent.medium};
+    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
+    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
   display: inline-flex;
 `;
 

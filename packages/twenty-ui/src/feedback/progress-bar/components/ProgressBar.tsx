@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -18,10 +18,10 @@ export type StyledBarProps = {
 };
 
 const StyledBar = styled.div<StyledBarProps>`
-  height: ${theme.spacing[2]};
+  height: ${themeCssVariables.spacing[2]};
   background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
   border-radius: ${({ withBorderRadius }) =>
-    withBorderRadius ? theme.border.radius.xxl : '0'};
+    withBorderRadius ? themeCssVariables.border.radius.xxl : '0'};
   overflow: hidden;
   width: 100%;
 `;
@@ -30,10 +30,11 @@ const StyledBarFillingBase = styled.div<{
   barColor?: string;
   withBorderRadius?: boolean;
 }>`
-  background-color: ${({ barColor }) => barColor ?? theme.font.color.primary};
+  background-color: ${({ barColor }) =>
+    barColor ?? themeCssVariables.font.color.primary};
   height: 100%;
   border-radius: ${({ withBorderRadius }) =>
-    withBorderRadius ? theme.border.radius.md : '0'};
+    withBorderRadius ? themeCssVariables.border.radius.md : '0'};
 `;
 
 const StyledBarFilling = motion.create(StyledBarFillingBase);

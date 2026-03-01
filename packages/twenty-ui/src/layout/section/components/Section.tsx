@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 type SectionProps = {
   children: ReactNode;
@@ -28,10 +28,10 @@ const StyledSection = styled.div<{
 }>`
   color: ${({ fontColor }) =>
     fontColor === 'primary'
-      ? theme.font.color.primary
+      ? themeCssVariables.font.color.primary
       : fontColor === 'secondary'
-        ? theme.font.color.secondary
-        : theme.font.color.tertiary};
+        ? themeCssVariables.font.color.secondary
+        : themeCssVariables.font.color.tertiary};
   text-align: ${({ alignment }) => alignment};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;

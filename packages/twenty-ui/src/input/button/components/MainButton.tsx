@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import React, { type FunctionComponent, useContext } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
@@ -19,70 +19,71 @@ const StyledButton = styled.button<
   align-items: center;
   background: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.background.secondary;
+      return themeCssVariables.background.secondary;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.primaryInverted;
+        return themeCssVariables.background.primaryInverted;
       case 'secondary':
-        return theme.background.primary;
+        return themeCssVariables.background.primary;
       default:
-        return theme.background.primary;
+        return themeCssVariables.background.primary;
     }
   }};
   border: 1px solid;
   border-color: ${({ disabled, variant }) => {
     if (disabled === true) {
-      return theme.background.transparent.lighter;
+      return themeCssVariables.background.transparent.lighter;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.transparent.strong;
+        return themeCssVariables.background.transparent.strong;
       case 'secondary':
-        return theme.border.color.medium;
+        return themeCssVariables.border.color.medium;
       default:
-        return theme.background.primary;
+        return themeCssVariables.background.primary;
     }
   }};
-  border-radius: ${theme.border.radius.md};
-  box-shadow: ${({ disabled }) => (disabled ? 'none' : theme.boxShadow.light)};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${({ disabled }) =>
+    disabled ? 'none' : themeCssVariables.boxShadow.light};
   color: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.font.color.light;
+      return themeCssVariables.font.color.light;
     }
 
     switch (variant) {
       case 'primary':
-        return theme.font.color.inverted;
+        return themeCssVariables.font.color.inverted;
       case 'secondary':
-        return theme.font.color.primary;
+        return themeCssVariables.font.color.primary;
       default:
-        return theme.font.color.primary;
+        return themeCssVariables.font.color.primary;
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${theme.font.family};
-  font-weight: ${theme.font.weight.semiBold};
-  gap: ${theme.spacing[2]};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   outline: none;
-  padding: ${theme.spacing[2]} ${theme.spacing[3]};
-  max-height: ${theme.spacing[8]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  max-height: ${themeCssVariables.spacing[8]};
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
   &:hover {
     background: ${({ variant, disabled }) => {
       switch (variant) {
         case 'secondary':
-          return theme.background.tertiary;
+          return themeCssVariables.background.tertiary;
         default:
           return !disabled
-            ? theme.background.primaryInvertedHover
-            : theme.background.secondary;
+            ? themeCssVariables.background.primaryInvertedHover
+            : themeCssVariables.background.secondary;
       }
     }};
   }

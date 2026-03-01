@@ -1,22 +1,24 @@
 import { styled } from '@linaria/react';
-import { theme } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledBanner = styled.div<{ variant?: BannerVariant }>`
   align-items: center;
   backdrop-filter: blur(5px);
   background: ${({ variant }) =>
-    variant === 'danger' ? theme.color.red : theme.color.blue};
+    variant === 'danger'
+      ? themeCssVariables.color.red
+      : themeCssVariables.color.blue};
   display: flex;
-  gap: ${theme.spacing[3]};
+  gap: ${themeCssVariables.spacing[3]};
   height: 40px;
   justify-content: center;
-  padding: ${theme.spacing[2]} ${theme.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
-  color: ${theme.font.color.inverted};
+  color: ${themeCssVariables.font.color.inverted};
   font-family: Inter;
-  font-size: ${theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   font-style: normal;
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 150%;
   box-sizing: border-box;
 `;

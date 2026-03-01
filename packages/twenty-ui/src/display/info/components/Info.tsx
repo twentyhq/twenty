@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext, theme } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 
 import { Button } from '@ui/input/button/components/Button/Button';
 import React, { useContext } from 'react';
@@ -18,7 +18,7 @@ export type InfoProps = {
 const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIconInfoCircle = styled(IconInfoCircle)`
@@ -27,19 +27,19 @@ const StyledIconInfoCircle = styled(IconInfoCircle)`
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   align-items: center;
-  border-radius: ${theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  font-weight: ${theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   justify-content: space-between;
   max-width: 512px;
-  gap: ${theme.spacing[2]};
-  padding: ${theme.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue5;
+        return themeCssVariables.color.blue5;
       case 'danger':
-        return theme.color.red3;
+        return themeCssVariables.color.red3;
       default:
         return 'transparent';
     }
@@ -47,9 +47,9 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   color: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue10;
+        return themeCssVariables.color.blue10;
       case 'danger':
-        return theme.color.red;
+        return themeCssVariables.color.red;
       default:
         return 'inherit';
     }
