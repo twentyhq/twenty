@@ -134,6 +134,13 @@ jobs:
             echo ""
             exit 1
           fi
+      - name: Zapier / Build
+        run: npx nx build twenty-zapier
+      - name: Zapier / Run Tests
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:zapier
+          tasks: test
       - name: Save server setup
         uses: ./.github/actions/save-cache
         with:
@@ -145,7 +152,7 @@ jobs:
     runs-on: depot-ubuntu-24.04
     strategy:
       matrix:
-        task: [lint, typecheck, test, validate]
+        task: [lint, typecheck, validate]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
