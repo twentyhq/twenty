@@ -112,19 +112,7 @@ export default defineConfig(({ command, mode }) => {
         ...wyw({
           include: [
             '**/twenty-ui/src/**/*.{ts,tsx}',
-            '**/EllipsisDisplay.tsx',
-            '**/BooleanDisplay.tsx',
-            '**/RatingInput.tsx',
-            '**/RecordTableCellDisplayContainer.tsx',
-            '**/RecordTableCellBaseContainer.tsx',
-            '**/RecordTableCellStyleWrapper.tsx',
-            '**/TextDisplay.tsx',
-            '**/EmailsDisplay.tsx',
-            '**/PhonesDisplay.tsx',
-            '**/MultiSelectDisplay.tsx',
-            '**/RecordTableRowVirtualizedContainer.tsx',
-            '**/RecordTableVirtualizedBodyPlaceholder.tsx',
-            '**/RecordTableCellLoading.tsx',
+            '**/twenty-front/src/**/*.{ts,tsx}',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],

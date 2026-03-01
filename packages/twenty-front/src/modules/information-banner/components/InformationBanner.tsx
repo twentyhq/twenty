@@ -1,7 +1,7 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -10,7 +10,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
+import { GRAY_SCALE_LIGHT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   overflow: hidden;
@@ -29,7 +29,7 @@ const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   display: flex;
   flex: 1;
   margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const InformationBanner = ({

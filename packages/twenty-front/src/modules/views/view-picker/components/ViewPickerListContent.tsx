@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DropResult } from '@hello-pangea/dnd';
 import { type MouseEvent, useCallback } from 'react';
 
@@ -24,11 +24,12 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 export const ViewPickerListContent = () => {

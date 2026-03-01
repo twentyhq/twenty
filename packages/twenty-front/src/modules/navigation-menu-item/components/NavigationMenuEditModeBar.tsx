@@ -10,33 +10,33 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue};
+  background: ${themeCssVariables.color.blue};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${themeCssVariables.font.color.inverted};
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
 const StyledTitle = styled.span`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const NavigationMenuEditModeBar = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);

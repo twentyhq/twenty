@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
@@ -9,14 +10,15 @@ const StyledDropTarget = styled.div<{
   $isDropForbidden: boolean;
   $compact?: boolean;
 }>`
-  min-height: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
+  min-height: ${({ $compact }) =>
+    $compact ? 0 : themeCssVariables.spacing[2]};
   position: relative;
   transition: all 150ms ease-in-out;
 
-  ${({ $isDragOver, theme }) =>
-    $isDragOver &&
-    `
-    background-color: ${theme.background.transparent.blue};
+  ${({ $isDragOver }) =>
+    $isDragOver
+      ? `
+    background-color: ${themeCssVariables.background.transparent.blue};
 
     &::before {
       content: '';
@@ -25,15 +27,16 @@ const StyledDropTarget = styled.div<{
       left: 0;
       width: 100%;
       height: 2px;
-      background-color: ${theme.color.blue};
-      border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
+      background-color: ${themeCssVariables.color.blue};
+      border-radius: ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0 0;
     }
-  `}
+  `
+      : ''}
 
-  ${({ $isDropForbidden, theme }) =>
-    $isDropForbidden &&
-    `
-    background-color: ${theme.background.transparent.danger};
+  ${({ $isDropForbidden }) =>
+    $isDropForbidden
+      ? `
+    background-color: ${themeCssVariables.background.transparent.danger};
     cursor: not-allowed;
 
     &::after {
@@ -43,10 +46,11 @@ const StyledDropTarget = styled.div<{
       left: 0;
       width: 100%;
       height: 2px;
-      background-color: ${theme.color.red};
-      border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
+      background-color: ${themeCssVariables.color.red};
+      border-radius: ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0 0;
     }
-  `}
+  `
+      : ''}
 `;
 
 type NavigationItemDropTargetProps = {

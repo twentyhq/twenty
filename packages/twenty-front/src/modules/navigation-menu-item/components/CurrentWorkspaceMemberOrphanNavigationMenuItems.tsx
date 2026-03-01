@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
@@ -25,7 +26,7 @@ const StyledEmptyContainer = styled.div`
 `;
 
 const StyledOrphanNavigationMenuItemsContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {

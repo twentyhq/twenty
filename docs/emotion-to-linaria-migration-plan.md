@@ -6,6 +6,13 @@ Migrate all Emotion (`@emotion/styled`, `@emotion/react`) usages in
 `packages/twenty-front/src` to Linaria (`@linaria/react`, `@linaria/core`),
 following the same patterns already established in the `twenty-ui` package.
 
+Linaria is a **zero-runtime** CSS-in-JS library. Styles are extracted at
+build time by [wyw-in-js](https://wyw-in-js.dev/) (the Vite plugin is
+`@wyw-in-js/vite`, already configured in `twenty-front/vite.config.ts`).
+This means every expression inside a `styled` or `css` template literal
+must be statically evaluable at build time — no runtime theme objects,
+no closures over component state, no side-effects.
+
 **Total files to migrate: ~998**
 
 | Category | Files | Description |
@@ -14,6 +21,21 @@ following the same patterns already established in the `twenty-ui` package.
 | styled + useTheme | 224 | Import both `@emotion/styled` and `useTheme` |
 | useTheme-only | 79 | Import `useTheme` but not `@emotion/styled` |
 | css / Global only | 1 | Import `css` or `Global` from `@emotion/react` only |
+
+## Theme Architecture
+
+Two build-time utilities produce the theme system:
+
+- **`buildThemeReferencingRootCssVariables`** — walks the theme object and
+  builds a nested mirror where every leaf is a `var(--t-xxx)` string
+  (evaluated at build time by wyw-in-js)
+- **`prepareThemeForRootCssVariableInjection`** — walks the runtime theme
+  and collects flat `[--css-variable-name, value]` pairs, injected onto
+  `document.documentElement` by `ThemeCssVariableInjectorEffect`
+
+`themeCssVariables` is the build-time object; every leaf resolves to a CSS
+`var()` reference. It is safe to use inside `styled` and `css` templates
+because wyw-in-js can evaluate it statically.
 
 ## Migration Patterns
 
@@ -56,6 +78,10 @@ For multi-arg spacing like `theme.spacing(2, 4)` → `"8px 16px"`:
 + padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
 ```
 
+The spacing scale covers integers 0–32 plus `0.5` and `1.5`. Any other
+fractional values (`0.25`, `0.75`, `1.25`, `2.5`, `3.5`) must be replaced
+with literal pixel values (e.g. `theme.spacing(2.5)` → `10px`).
+
 ### 4. `useTheme` → `useContext(ThemeContext)`
 
 For runtime theme access (icon sizes, animation durations, conditional logic
@@ -75,21 +101,147 @@ outside of styled components):
 
 ### 5. `css` template literal
 
+Linaria's `css` (from `@linaria/core`) returns a **class name string**, not
+a serialized style object like Emotion's `css`. This has two consequences:
+
+**Standalone usage** — apply via `className`, not the `css` prop:
+
 ```diff
 - import { css } from '@emotion/react';
 + import { css } from '@linaria/core';
+
+  const myClass = css`
+    text-decoration: none;
+  `;
+
+- <Link css={myClass} />
++ <Link className={myClass} />
 ```
 
-Note: Emotion's `css` returns a serialized style object; Linaria's `css`
-returns a class name string. Usage may need to adapt (apply via `className`
-instead of the `css` prop).
+**Inside `styled` templates** — do NOT nest `css` tags. Linaria's `css`
+returns a class name, not raw CSS text, so interpolating it inside `styled`
+produces broken output. Use plain strings instead:
 
-### 6. `Global` component
+```diff
+  // WRONG — css`` returns a class name, not CSS text
+  ${({ handle }) =>
+    handle === 'left'
+-     ? css`left: ${themeCssVariables.spacing[1]};`
+-     : css`right: ${themeCssVariables.spacing[1]};`}
++     ? `left: ${themeCssVariables.spacing[1]};`
++     : `right: ${themeCssVariables.spacing[1]};`}
+```
+
+### 6. Interpolation return types
+
+wyw-in-js requires prop interpolation functions to return `string | number`.
+They must **never** return `false`, `undefined`, or `null`. Replace
+short-circuit `&&` with ternary expressions:
+
+```diff
+  // WRONG — returns false when condition is false
+- ${({ isActive }) => isActive && `background: ${themeCssVariables.color.blue};`}
+  // CORRECT
++ ${({ isActive }) => isActive ? `background: ${themeCssVariables.color.blue};` : ''}
+```
+
+### 7. Block interpolations (multi-declaration returns)
+
+Linaria wraps each interpolation result in a single CSS custom property
+(`var(--xxx)`). An interpolation that returns **multiple CSS declarations**
+produces invalid CSS. Split into one interpolation per property:
+
+```diff
+  // WRONG — single interpolation returning multiple declarations
+- ${({ divider, theme }) => {
+-   const border = `1px solid ${theme.border.color.light}`;
+-   return divider === 'left' ? `border-left: ${border}` : `border-right: ${border}`;
+- }}
+
+  // CORRECT — one interpolation per property
++ border-left: ${({ divider }) =>
++   divider === 'left' ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
++ border-right: ${({ divider }) =>
++   divider === 'right' ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+```
+
+### 8. CSS var + unit concatenation
+
+CSS custom properties can't be concatenated with unit suffixes directly
+(`var(--x)px` is invalid). Use `calc()` to attach units:
+
+```diff
+- transition: background ${themeCssVariables.animation.duration.instant}s ease;
++ transition: background calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
+```
+
+### 9. `styled(Component)` requires `className`
+
+Linaria's `styled(Component)` works by passing a generated `className` to
+the wrapped component. The component **must** accept and forward a
+`className` prop — otherwise the styles are silently lost. If the component
+doesn't support it, either add `className` support or use a wrapper div.
+
+Linaria also does **not** support Emotion's `shouldForwardProp` option.
+Custom props on HTML elements are automatically filtered by Linaria's
+runtime (via `@emotion/is-prop-valid`). For custom components, all props are
+forwarded — ensure the wrapped component ignores unknown props gracefully.
+
+### 10. `type Theme` → `type ThemeType`
+
+```diff
+- import { type Theme } from '@emotion/react';
++ import { type ThemeType } from 'twenty-ui/theme';
+```
+
+### 11. Framer Motion integration
+
+Linaria doesn't support `styled(motion.div)` — wrapping a motion element
+with `styled()` causes the component body to be stripped at build time by
+wyw-in-js. Define the styled component first, then wrap with
+`motion.create()`:
+
+```tsx
+const StyledBarBase = styled.div`
+  background-color: ${themeCssVariables.font.color.primary};
+  height: 100%;
+`;
+
+const StyledBar = motion.create(StyledBarBase);
+```
+
+### 12. Dynamic styles via CSS variables
+
+When a component needs to compute styles from multiple props with complex
+branching logic (e.g. combining `variant`, `accent`, `disabled`, `focus`),
+Linaria's prop interpolations become unwieldy. Use a `computeDynamicStyles`
+helper that returns a `CSSProperties` object injected via `style={}`,
+referenced from the static CSS with `var()`:
+
+```tsx
+const StyledButton = styled.button`
+  background: var(--btn-bg);
+  border-color: var(--btn-border-color);
+  &:hover { background: var(--btn-hover-bg); }
+`;
+
+const dynamicStyles = useMemo(() => {
+  const s = computeButtonDynamicStyles(variant, accent, ...);
+  return {
+    '--btn-bg': s.background,
+    '--btn-hover-bg': s.hoverBackground,
+  } as CSSProperties;
+}, [variant, accent, ...]);
+
+return <StyledButton style={dynamicStyles} />;
+```
+
+### 13. `Global` component
 
 Replace Emotion's `<Global styles={...} />` with standard CSS or the
 `ThemeCssVariableInjectorEffect` pattern from twenty-ui.
 
-### 7. `ThemeProvider`
+### 14. `ThemeProvider`
 
 The `BaseThemeProvider` already wraps children with both Emotion's
 `ThemeProvider` and Linaria's `ThemeContextProvider`. Once all Emotion usages
@@ -206,11 +358,17 @@ Once all PRs are merged:
 
 | Risk | Mitigation |
 |---|---|
-| Linaria evaluates at build time; dynamic expressions may fail | Use `themeCssVariables` for all static theme values; pass dynamic values as component props |
-| `theme.spacing(N)` function → `themeCssVariables.spacing[N]` index | Pre-computed for values 0–32, 0.5, and 1.5 |
+| wyw-in-js evaluates at build time; dynamic expressions may fail | Use `themeCssVariables` for static theme values; pass dynamic values as component props or via `style={}` CSS variables |
+| `theme.spacing(N)` function → `themeCssVariables.spacing[N]` index | Pre-computed for integers 0–32 plus 0.5 and 1.5; other fractional values → literal pixel values |
 | `useTheme` used for runtime logic (not just styles) | Replace with `useContext(ThemeContext)`, destructure `{ theme }` |
 | Multi-arg `theme.spacing(a, b, c)` | Split into individual `themeCssVariables.spacing[N]` references |
-| `css` prop differences between Emotion and Linaria | Linaria `css` returns class name; apply via `className` |
+| `css` tag inside `styled` templates | Linaria `css` returns class name, not CSS text; use plain strings inside `styled` |
+| Interpolation returns `false` / `undefined` | wyw-in-js requires `string \| number`; use ternary `? : ''` instead of `&&` |
+| Block interpolations (multiple declarations) | Split into one interpolation per CSS property |
+| `var(--x)px` concatenation | Use `calc(var(--x) * 1px)` |
+| `styled(motion.div)` stripped by wyw-in-js | Use `motion.create(StyledBase)` pattern |
+| `styled(Component)` with no `className` prop | Add `className` support to wrapped component or use wrapper div |
+| Complex multi-prop style branching | Use `computeDynamicStyles` + `style={}` + `var()` references |
 
 ---
 

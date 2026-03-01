@@ -7,13 +7,14 @@ import {
 
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 const StyledIconChevronDown = styled(IconChevronDown)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export type SubMatchingSelectDropdownButtonProps = {
@@ -33,7 +34,7 @@ export const SubMatchingSelectDropdownButton = ({
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SubMatchingSelectControlContainer cursor="pointer" id="control">
