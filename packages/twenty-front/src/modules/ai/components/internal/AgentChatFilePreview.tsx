@@ -6,7 +6,12 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { type FileUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipVariant,
+  LinkChip,
+} from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 
@@ -36,20 +41,21 @@ export const AgentChatFilePreview = ({
   const leftComponent = isUploading ? (
     <Loader color="yellow" />
   ) : (
-    <AvatarChip
+    <AvatarOrIcon
       Icon={FileCategoryIcon}
       IconBackgroundColor={iconBackgroundColor}
     />
   );
 
   const rightComponent = onRemove ? (
-    <AvatarChip
+    <AvatarOrIcon
       Icon={IconX}
       IconColor={theme.font.color.secondary}
       onClick={onRemove}
-      divider="left"
     />
   ) : undefined;
+
+  const hasRightDivider = isDefined(onRemove);
 
   if (isDefined(fileUrl)) {
     return (
@@ -61,6 +67,7 @@ export const AgentChatFilePreview = ({
         target="_blank"
         leftComponent={leftComponent}
         rightComponent={rightComponent}
+        rightComponentDivider={hasRightDivider}
       />
     );
   }
@@ -73,6 +80,7 @@ export const AgentChatFilePreview = ({
       clickable={false}
       leftComponent={leftComponent}
       rightComponent={rightComponent}
+      rightComponentDivider={hasRightDivider}
     />
   );
 };
