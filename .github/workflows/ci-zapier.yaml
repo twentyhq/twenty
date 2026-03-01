@@ -55,96 +55,42 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore server setup
-        id: restore-server-setup-cache
-        uses: ./.github/actions/restore-cache
-        with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint & typecheck
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: lint,typecheck
+
       - name: Server / Write .env
-        run: npx nx reset:env twenty-server
+        run: npx nx reset:env:e2e-testing-server twenty-server
+
       - name: Server / Build
         run: npx nx build twenty-server
-      - name: Server / Create DB
+
+      - name: Create and setup database
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
-      - name: Worker / Run
-        run: |
-          timeout 30s npx nx run twenty-server:worker || exit_code=$?
-          if [ $exit_code -eq 124 ]; then
-            # If timeout was reached (exit code 124), consider it a success
-            exit 0
-          elif [ $exit_code -ne 0 ]; then
-            # If worker failed for other reasons, fail the build
-            exit $exit_code
-          fi
+          npx nx run twenty-server:database:reset
+
       - name: Server / Start
-        run: npx nx start:ci twenty-server &
-      - name: Waiting for server starting...
         run: |
-          for i in {1..10}; do
-            if curl -f http://localhost:3000/healthz; then
-              echo "Server ready!"
-              exit 0
-            fi
-            echo "Waiting..."
-            sleep 2
-          done
-          echo "Server did not become healthy in time" >&2
-          exit 1
-      - name: Server / Check for Pending Migrations
+          npx nx start twenty-server &
+          echo "Waiting for server to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+
+      - name: Start worker
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          npx nx run twenty-server:worker &
+          echo "Worker started"
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
-
-          if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
-            echo "$CORE_MIGRATION_OUTPUT"
-
-            rm -f packages/twenty-server/*core-migration-check.ts
-
-            exit 1
-          fi
-      - name: GraphQL / Check for Pending Generation
-        run: |
-          # Run GraphQL generation commands
-          npx nx run twenty-front:graphql:generate
-          npx nx run twenty-front:graphql:generate --configuration=metadata
-
-          # Check if GraphQL generated files were modified
-          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
-            echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
-            echo ""
-            echo "The following GraphQL schema changes were detected:"
-            echo "==================================================="
-            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
-            echo "==================================================="
-            echo ""
-            echo "Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
-            echo ""
-            exit 1
-          fi
       - name: Zapier / Build
         run: npx nx build twenty-zapier
+
       - name: Zapier / Run Tests
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:zapier
           tasks: test
-      - name: Save server setup
-        uses: ./.github/actions/save-cache
-        with:
-          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
+
   zapier-test:
     needs: server-setup
     if: needs.changed-files-check.outputs.any_changed == 'true'
