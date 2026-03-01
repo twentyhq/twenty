@@ -4,16 +4,12 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  matchPath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -35,18 +31,22 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
-import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
-import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { useStore } from 'jotai';
 
 const AUTH_AND_ONBOARDING_PATHS = [
   ...ONGOING_USER_CREATION_PATHS,
@@ -155,7 +155,9 @@ export const PageChangeEffect = () => {
         pageChangeEffectNavigateLocation === AppPath.SignInUp &&
         !isOnAuthOrOnboardingPage
       ) {
-        saveReturnToPath(`${location.pathname}${location.search}`);
+        saveReturnToPath(
+          `${location.pathname}${location.search}${location.hash}`,
+        );
       }
 
       navigate(pageChangeEffectNavigateLocation);
@@ -169,6 +171,7 @@ export const PageChangeEffect = () => {
     saveReturnToPath,
     location.pathname,
     location.search,
+    location.hash,
   ]);
 
   useEffect(() => {

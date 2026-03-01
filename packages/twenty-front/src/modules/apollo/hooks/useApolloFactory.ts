@@ -78,7 +78,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(location, AppPath.Invite) &&
           !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
-          const path = `${location.pathname}${location.search}`;
+          const path = `${location.pathname}${location.search}${location.hash}`;
 
           if (isValidReturnToPath(path)) {
             setReturnToPath(path);
