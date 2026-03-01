@@ -1,6 +1,10 @@
-import { camelToKebab, isPlainObject } from 'twenty-shared/utils';
-
 import { SPACING_VALUES } from '@ui/theme/utils/spacingValues';
+
+const camelToKebab = (str: string): string =>
+  str.replace(/([A-Z])/g, (match) => `-${match.toLowerCase()}`);
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const formatSpacingKey = (n: number): string => String(n).replace('.', '_');
 
