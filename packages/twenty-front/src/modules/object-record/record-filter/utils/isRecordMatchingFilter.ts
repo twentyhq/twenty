@@ -212,6 +212,11 @@ export const isRecordMatchingFilter = ({
             fieldMetadataItem: field,
             key: filterKey,
           }),
+      ) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          filterKey === `${field.name}Id`,
       );
 
     if (!isDefined(objectMetadataField)) {
@@ -418,6 +423,8 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
           objectMetadataField.settings?.joinColumnName === filterKey ||
+          (objectMetadataField.type === FieldMetadataType.RELATION &&
+            filterKey === `${objectMetadataField.name}Id`) ||
           (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
             isMorphRelationJoinColumnKey({
               fieldMetadataItem: objectMetadataField,
