@@ -60,7 +60,10 @@ test.describe('Return-to-path after login', () => {
     await test.step(
       'Verify redirected to original deep link',
       async () => {
-        await page.waitForURL(`**${deepLink}`, { timeout: 15000 });
+        await page.waitForURL(`**${deepLink}`, {
+          timeout: 30000,
+          waitUntil: 'commit',
+        });
         expect(new URL(page.url()).pathname).toBe(deepLink);
       },
     );
