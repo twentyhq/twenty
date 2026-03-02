@@ -163,150 +163,148 @@ export const SettingsSecurity = () => {
   const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   return (
-    <>
-      <SettingsRolesQueryEffect />
-      <SubMenuTopBarContainer
-        title={t`Security`}
-        links={[
-          {
-            children: <Trans>Workspace</Trans>,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          { children: <Trans>Security</Trans> },
-        ]}
-      >
-        <SettingsPageContainer>
-          <StyledMainContent>
-            <StyledSection>
-              <H2Title
-                title={t`SSO`}
-                description={t`Configure an SSO connection`}
-                adornment={
-                  <Tag
-                    text={t`Enterprise`}
-                    color="transparent"
-                    Icon={IconLock}
-                    variant="border"
-                  />
-                }
-              />
-              <SettingsSSOIdentitiesProvidersListCard />
-            </StyledSection>
+    <SubMenuTopBarContainer
+      title={t`Security`}
+      links={[
+        {
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        { children: <Trans>Security</Trans> },
+      ]}
+    >
+      <SettingsPageContainer>
+        <SettingsRolesQueryEffect />
+        <StyledMainContent>
+          <StyledSection>
+            <H2Title
+              title={t`SSO`}
+              description={t`Configure an SSO connection`}
+              adornment={
+                <Tag
+                  text={t`Enterprise`}
+                  color="transparent"
+                  Icon={IconLock}
+                  variant="border"
+                />
+              }
+            />
+            <SettingsSSOIdentitiesProvidersListCard />
+          </StyledSection>
 
+          <Section>
+            <StyledContainer>
+              <H2Title
+                title={t`Authentication`}
+                description={t`Customize your workspace security`}
+              />
+              <SettingsSecurityAuthProvidersOptionsList />
+            </StyledContainer>
+          </Section>
+          <Section>
+            <StyledContainer>
+              <H2Title
+                title={t`Editable Profile Fields`}
+                description={t`Choose which profile fields users with the Edit Profile permission can modify`}
+              />
+              <SettingsSecurityEditableProfileFields />
+            </StyledContainer>
+          </Section>
+          <SettingsRoleDefaultRole roles={roles} />
+          {shouldShowBypassSection && (
             <Section>
               <StyledContainer>
                 <H2Title
-                  title={t`Authentication`}
-                  description={t`Customize your workspace security`}
+                  title={t`SSO Bypass`}
+                  description={t`Configure fallback login methods for users with SSO bypass permissions`}
                 />
-                <SettingsSecurityAuthProvidersOptionsList />
+                <SettingsSecurityAuthBypassOptionsList />
               </StyledContainer>
             </Section>
-            <Section>
-              <StyledContainer>
-                <H2Title
-                  title={t`Editable Profile Fields`}
-                  description={t`Choose which profile fields users with the Edit Profile permission can modify`}
-                />
-                <SettingsSecurityEditableProfileFields />
-              </StyledContainer>
-            </Section>
-            <SettingsRoleDefaultRole roles={roles} />
-            {shouldShowBypassSection && (
-              <Section>
-                <StyledContainer>
-                  <H2Title
-                    title={t`SSO Bypass`}
-                    description={t`Configure fallback login methods for users with SSO bypass permissions`}
-                  />
-                  <SettingsSecurityAuthBypassOptionsList />
-                </StyledContainer>
-              </Section>
-            )}
-            {isMultiWorkspaceEnabled && (
-              <Section>
-                <H2Title
-                  title={t`Support`}
-                  description={t`Manage support access settings`}
-                />
-                <ToggleImpersonate />
-              </Section>
-            )}
+          )}
+          {isMultiWorkspaceEnabled && (
             <Section>
               <H2Title
-                title={t`Audit Logs`}
-                description={t`View workspace activity logs`}
-                adornment={
-                  <Tag
-                    text={t`Enterprise`}
-                    color="transparent"
-                    Icon={IconLock}
-                    variant="border"
-                  />
+                title={t`Support`}
+                description={t`Manage support access settings`}
+              />
+              <ToggleImpersonate />
+            </Section>
+          )}
+          <Section>
+            <H2Title
+              title={t`Audit Logs`}
+              description={t`View workspace activity logs`}
+              adornment={
+                <Tag
+                  text={t`Enterprise`}
+                  color="transparent"
+                  Icon={IconLock}
+                  variant="border"
+                />
+              }
+            />
+            <Card rounded>
+              <SettingsOptionCardContentButton
+                Icon={IconHistory}
+                title={t`Workspace Events`}
+                description={
+                  !isClickHouseConfigured
+                    ? t`ClickHouse is required for audit logs. Contact your administrator.`
+                    : !hasEnterpriseAccess
+                      ? t`Upgrade to Enterprise to access audit logs`
+                      : t`View and filter events, page views, object changes`
+                }
+                Button={
+                  <StyledLink
+                    to={getSettingsPath(SettingsPath.EventLogs)}
+                    isDisabled={!isEventLogsEnabled}
+                  >
+                    <Button
+                      title={t`View Logs`}
+                      variant="secondary"
+                      size="small"
+                      disabled={!isEventLogsEnabled}
+                    />
+                  </StyledLink>
                 }
               />
-              <Card rounded>
-                <SettingsOptionCardContentButton
-                  Icon={IconHistory}
-                  title={t`Workspace Events`}
-                  description={
-                    !isClickHouseConfigured
-                      ? t`ClickHouse is required for audit logs. Contact your administrator.`
-                      : !hasEnterpriseAccess
-                        ? t`Upgrade to Enterprise to access audit logs`
-                        : t`View and filter events, page views, object changes`
-                  }
-                  Button={
-                    <StyledLink
-                      to={getSettingsPath(SettingsPath.EventLogs)}
-                      isDisabled={!isEventLogsEnabled}
-                    >
-                      <Button
-                        title={t`View Logs`}
-                        variant="secondary"
-                        size="small"
-                        disabled={!isEventLogsEnabled}
-                      />
-                    </StyledLink>
-                  }
-                />
-                {isEventLogsEnabled && (
-                  <>
-                    <Separator />
-                    <SettingsOptionCardContentCounter
-                      Icon={IconClockHour8}
-                      title={t`Log retention`}
-                      description={t`Number of days to retain audit logs (30-1095 days)`}
-                      value={currentWorkspace?.eventLogRetentionDays ?? 90}
-                      onChange={handleEventLogRetentionDaysChange}
-                      minValue={30}
-                      maxValue={1095}
-                      showButtons={false}
-                    />
-                  </>
-                )}
-              </Card>
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Other`}
-                description={t`Other security settings`}
+              {isEventLogsEnabled && (
+                <>
+                  <Separator />
+                  <SettingsOptionCardContentCounter
+                    Icon={IconClockHour8}
+                    title={t`Log retention`}
+                    description={t`Number of days to retain audit logs (30-1095 days)`}
+                    value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                    onChange={handleEventLogRetentionDaysChange}
+                    minValue={30}
+                    maxValue={1095}
+                    showButtons={false}
+                  />
+                </>
+              )}
+            </Card>
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Other`}
+              description={t`Other security settings`}
+            />
+            <Card rounded>
+              <SettingsOptionCardContentCounter
+                Icon={IconTrash}
+                title={t`Erasure of soft-deleted records`}
+                description={t`Permanent deletion. Enter the number of days.`}
+                value={currentWorkspace?.trashRetentionDays ?? 14}
+                onChange={handleTrashRetentionDaysChange}
+                minValue={0}
+                showButtons={false}
               />
-              <Card rounded>
-                <SettingsOptionCardContentCounter
-                  Icon={IconTrash}
-                  title={t`Erasure of soft-deleted records`}
-                  description={t`Permanent deletion. Enter the number of days.`}
-                  value={currentWorkspace?.trashRetentionDays ?? 14}
-                  onChange={handleTrashRetentionDaysChange}
-                  minValue={0}
-                  showButtons={false}
-                />
-              </Card>
-            </Section>
-          </StyledMainContent>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </>
+            </Card>
+          </Section>
+        </StyledMainContent>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };
