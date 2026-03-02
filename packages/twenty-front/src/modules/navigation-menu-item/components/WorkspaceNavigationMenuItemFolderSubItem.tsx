@@ -49,11 +49,14 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
           views,
         )
       : null;
-  const handleEditModeClick =
+  const isEditableInEditMode =
     isNavigationMenuInEditMode &&
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.itemType === NavigationMenuItemType.LINK ||
-      isDefined(objectMetadataItem))
+      isDefined(objectMetadataItem));
+
+  const handleEditModeClick =
+    isEditableInEditMode && onNavigationMenuItemClick
       ? () =>
           onNavigationMenuItemClick({
             item: navigationMenuItem,
