@@ -148,8 +148,13 @@ export const WorkspaceDndKitProvider = ({
       const group = s.group ?? t.group;
       const index = s.group === t.group ? s.index : t.index;
       if (group != null && index != null) {
-        setActiveDropTargetId(getDndKitDropTargetId(group, index));
-        setForbiddenDropTargetId(null);
+        if (sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+          setActiveDropTargetId(getDndKitDropTargetId(group, index));
+          setForbiddenDropTargetId(null);
+        } else {
+          setActiveDropTargetId(null);
+          setForbiddenDropTargetId(null);
+        }
         return;
       }
     }
@@ -161,9 +166,13 @@ export const WorkspaceDndKitProvider = ({
     ) {
       const dest = parseDropTargetIdToDestination(target.id);
       if (isDefined(dest) && isWorkspaceDroppableId(dest.droppableId)) {
-        setActiveDropTargetId(target.id);
-        setAddToNavigationFallbackDestination(dest);
-        setForbiddenDropTargetId(null);
+        if (sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+          setActiveDropTargetId(target.id);
+          setAddToNavigationFallbackDestination(dest);
+          setForbiddenDropTargetId(null);
+        } else {
+          setActiveDropTargetId(null);
+        }
         return;
       }
     }

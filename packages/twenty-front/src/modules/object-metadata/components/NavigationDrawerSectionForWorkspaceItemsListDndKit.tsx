@@ -1,3 +1,4 @@
+import React from 'react';
 import { IconPlus } from 'twenty-ui/display';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
@@ -37,28 +38,39 @@ export const WorkspaceSectionListDndKit = ({
       data-dnd-group={WORKSPACE_ORPHAN_DROPPABLE_ID}
     >
       {filteredItems.map((item, index) => (
-        <WorkspaceDndKitSortableItem
-          key={item.id}
-          id={item.id}
-          index={index}
-          group={WORKSPACE_ORPHAN_DROPPABLE_ID}
-          disabled={!isEditMode || workspaceDropDisabled}
-        >
-          <WorkspaceSectionItemContent
-            item={item}
-            editModeProps={getEditModeProps(item)}
-            useDndKit
-            isEditMode={isEditMode}
-            isDragging={isDragging}
-            folderChildrenById={folderChildrenById}
-            folderCount={folderCount}
-            selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-            onNavigationMenuItemClick={onNavigationMenuItemClick}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            objectMetadataItems={objectMetadataItems}
-            views={views}
+        <React.Fragment key={item.id}>
+          <NavigationItemDropTarget
+            folderId={null}
+            index={index}
+            sectionId={NavigationSections.WORKSPACE}
+            compact
+            dropTargetIdOverride={getDndKitDropTargetId(
+              WORKSPACE_ORPHAN_DROPPABLE_ID,
+              index,
+            )}
           />
-        </WorkspaceDndKitSortableItem>
+          <WorkspaceDndKitSortableItem
+            id={item.id}
+            index={index}
+            group={WORKSPACE_ORPHAN_DROPPABLE_ID}
+            disabled={!isEditMode || workspaceDropDisabled}
+          >
+            <WorkspaceSectionItemContent
+              item={item}
+              editModeProps={getEditModeProps(item)}
+              useDndKit
+              isEditMode={isEditMode}
+              isDragging={isDragging}
+              folderChildrenById={folderChildrenById}
+              folderCount={folderCount}
+              selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+              onNavigationMenuItemClick={onNavigationMenuItemClick}
+              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+              objectMetadataItems={objectMetadataItems}
+              views={views}
+            />
+          </WorkspaceDndKitSortableItem>
+        </React.Fragment>
       ))}
       <WorkspaceDndKitDroppableSlot
         droppableId={WORKSPACE_ORPHAN_DROPPABLE_ID}
