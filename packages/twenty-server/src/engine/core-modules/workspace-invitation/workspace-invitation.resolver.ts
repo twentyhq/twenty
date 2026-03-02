@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -18,7 +17,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -39,7 +37,6 @@ export class WorkspaceInvitationResolver {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly roleValidationService: RoleValidationService,
   ) {}
 
   @Mutation(() => String)
@@ -100,8 +97,6 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
-    const roleId = sendInviteLinkInput.roleId ?? undefined;
-
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
@@ -123,18 +118,11 @@ export class WorkspaceInvitationResolver {
         authContext,
       );
 
-    if (isDefined(roleId)) {
-      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
-        roleId,
-        workspace.id,
-      );
-    }
-
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
       workspace,
       workspaceMember,
-      roleId,
+      sendInviteLinkInput.roleId ?? undefined,
     );
   }
 }
