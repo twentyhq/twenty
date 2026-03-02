@@ -4,6 +4,7 @@ import { copyBaseApplicationProject } from '@/utils/app-template';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import createTwentyAppPackageJson from 'package.json';
 
 jest.mock('fs-extra', () => {
   const actual = jest.requireActual('fs-extra');
@@ -88,7 +89,9 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe('latest');
+    expect(packageJson.devDependencies['twenty-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
     expect(packageJson.scripts['twenty']).toBe('twenty');
   });
 
