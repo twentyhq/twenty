@@ -16,6 +16,5 @@ export const ALLOWED_PARAMETERS_IN_SHOULD_BE_REGISTERED = new Set([
   'viewType',
   'getTargetObjectReadPermission',
   'getTargetObjectWritePermission',
-  'forceRegisteredActionsByKey',
   'isFeatureFlagEnabled',
 ]);

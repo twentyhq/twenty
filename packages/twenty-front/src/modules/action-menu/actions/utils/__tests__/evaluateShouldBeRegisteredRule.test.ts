@@ -24,7 +24,6 @@ const baseParams: ShouldBeRegisteredFunctionParams = {
   getTargetObjectReadPermission: () => true,
   getTargetObjectWritePermission: () => true,
   isFeatureFlagEnabled: () => false,
-  forceRegisteredActionsByKey: {},
 };
 
 describe('evaluateShouldBeRegisteredRule', () => {
