@@ -81,8 +81,7 @@ export const appBuildAndSync = async (
 
   if (typecheckErrors.length > 0) {
     const errorMessages = typecheckErrors.map(
-      (error) =>
-        `${error.file}(${error.line},${error.column}): ${error.text}`,
+      (error) => `${error.file}(${error.line},${error.column}): ${error.text}`,
     );
 
     return {
