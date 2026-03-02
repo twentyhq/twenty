@@ -88,6 +88,7 @@ export const useFrontComponentExecutionContext = ({
         };
 
         openConfirmationModal({
+          frontComponentId,
           title,
           subtitle,
           confirmButtonText,

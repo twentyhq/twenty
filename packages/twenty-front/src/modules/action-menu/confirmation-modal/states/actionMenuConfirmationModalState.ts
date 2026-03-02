@@ -4,6 +4,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 import { type ButtonAccent } from 'twenty-ui/input';
 
 export type ActionMenuConfirmationModalConfig = {
+  frontComponentId: string;
   title: string;
   subtitle: ReactNode;
   confirmButtonText?: string;

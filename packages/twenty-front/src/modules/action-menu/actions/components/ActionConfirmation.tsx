@@ -39,6 +39,7 @@ export const ActionConfirmation = ({
 
   const handleClick = () => {
     openConfirmationModal({
+      frontComponentId: actionConfig.key,
       title,
       subtitle,
       onConfirmClick: async () => {

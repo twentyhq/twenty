@@ -11,6 +11,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { type ButtonAccent } from 'twenty-ui/input';
 
 export type OpenActionMenuConfirmationModalOptions = {
+  frontComponentId: string;
   title: string;
   subtitle: ReactNode;
   confirmButtonText?: string;
@@ -39,6 +40,8 @@ export const useActionMenuConfirmationModal = () => {
       });
 
       setActionMenuConfirmationModal({
+        frontComponentId:
+          openActionMenuConfirmationModalOptions.frontComponentId,
         title: openActionMenuConfirmationModalOptions.title,
         subtitle: openActionMenuConfirmationModalOptions.subtitle,
         confirmButtonText:
