@@ -28,12 +28,12 @@ describe('extractJsonLogicOperands', () => {
     expect(
       extractJsonLogicOperands({ rule: 'hello', operatorKey: 'or' }),
     ).toEqual(['hello']);
-    expect(
-      extractJsonLogicOperands({ rule: 42, operatorKey: 'and' }),
-    ).toEqual([42]);
-    expect(
-      extractJsonLogicOperands({ rule: null, operatorKey: 'or' }),
-    ).toEqual([null]);
+    expect(extractJsonLogicOperands({ rule: 42, operatorKey: 'and' })).toEqual([
+      42,
+    ]);
+    expect(extractJsonLogicOperands({ rule: null, operatorKey: 'or' })).toEqual(
+      [null],
+    );
   });
 
   it('wraps array rules in an array', () => {
