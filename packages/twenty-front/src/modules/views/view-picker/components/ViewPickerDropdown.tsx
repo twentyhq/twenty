@@ -24,8 +24,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.span`
   display: flex;

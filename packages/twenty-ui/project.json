@@ -46,9 +46,7 @@
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
-        "{projectRoot}/scripts/generateThemeConstants.ts",
-        "{projectRoot}/dist/theme.cjs",
-        "{projectRoot}/dist/theme-constants.cjs"
+        "{projectRoot}/scripts/generateThemeConstants.ts"
       ],
       "outputs": [
         "{projectRoot}/src/theme-constants/generated"
