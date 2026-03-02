@@ -48,4 +48,4 @@ jobs:
           token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
           repository: twentyhq/ci-privileged
           event-type: preview-env-url
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "keepalive_dispatch_time": "${{ github.event.pull_request.updated_at }}", "repo": "${{ github.repository }}"}'
+          client-payload: '{"pr_number": ${{ toJSON(github.event.pull_request.number) }}, "keepalive_dispatch_time": ${{ toJSON(github.event.pull_request.updated_at) }}, "repo": ${{ toJSON(github.repository) }}}'

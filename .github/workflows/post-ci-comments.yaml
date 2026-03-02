@@ -42,4 +42,4 @@ jobs:
           token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
           repository: twentyhq/ci-privileged
           event-type: breaking-changes-report
-          client-payload: '{"pr_number": "${{ steps.pr-info.outputs.pr_number }}", "run_id": "${{ steps.pr-info.outputs.run_id }}", "repo": "${{ github.repository }}", "branch_state": "${{ github.event.workflow_run.head_branch }}"}'
+          client-payload: '{"pr_number": ${{ toJSON(steps.pr-info.outputs.pr_number) }}, "run_id": ${{ toJSON(steps.pr-info.outputs.run_id) }}, "repo": ${{ toJSON(github.repository) }}, "branch_state": ${{ toJSON(github.event.workflow_run.head_branch) }}}'
