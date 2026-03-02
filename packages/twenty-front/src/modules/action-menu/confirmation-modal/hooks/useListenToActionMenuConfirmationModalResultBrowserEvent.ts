@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 
 export const useListenToActionMenuConfirmationModalResultBrowserEvent = ({
   onActionMenuConfirmationModalResultBrowserEvent,
-  frontComponentId,
+  requesterId,
 }: {
   onActionMenuConfirmationModalResultBrowserEvent: (
     detail: ActionMenuConfirmationModalResultBrowserEventDetail,
   ) => void;
-  frontComponentId: string | null;
+  requesterId: string | null;
 }) => {
   useEffect(() => {
-    if (frontComponentId === null) {
+    if (requesterId === null) {
       return;
     }
 
@@ -21,7 +21,7 @@ export const useListenToActionMenuConfirmationModalResultBrowserEvent = ({
         event as CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>
       ).detail;
 
-      if (detail.frontComponentId !== frontComponentId) {
+      if (detail.requesterId !== requesterId) {
         return;
       }
 
@@ -39,5 +39,5 @@ export const useListenToActionMenuConfirmationModalResultBrowserEvent = ({
         handleActionMenuConfirmationModalResultEvent,
       );
     };
-  }, [frontComponentId, onActionMenuConfirmationModalResultBrowserEvent]);
+  }, [requesterId, onActionMenuConfirmationModalResultBrowserEvent]);
 };

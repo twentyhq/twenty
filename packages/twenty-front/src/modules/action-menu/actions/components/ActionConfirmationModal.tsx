@@ -5,7 +5,10 @@ import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDi
 import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { useListenToActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/hooks/useListenToActionMenuConfirmationModalResultBrowserEvent';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ButtonAccent } from 'twenty-ui/input';
 
 type ActionConfirmationModalProps = {
@@ -28,11 +31,18 @@ export const ActionConfirmationModal = ({
   closeSidePanelOnCommandMenuListActionExecution,
 }: ActionConfirmationModalProps) => {
   const actionConfig = useContext(ActionConfigContext);
+  const actionMenuContext = useContext(ActionMenuContext);
+  const actionMenuComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
   const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { closeActionMenu } = useCloseActionMenu({
     closeSidePanelOnShowPageOptionsActionExecution,
     closeSidePanelOnCommandMenuListActionExecution,
   });
+  const requesterId = actionConfig
+    ? `${actionMenuComponentInstanceId}:${actionMenuContext.actionMenuType}:${actionMenuContext.displayType}:${actionConfig.key}`
+    : null;
 
   const handleResult = useCallback(
     async ({ result }: { result: 'confirm' | 'cancel' }) => {
@@ -46,16 +56,16 @@ export const ActionConfirmationModal = ({
 
   useListenToActionMenuConfirmationModalResultBrowserEvent({
     onActionMenuConfirmationModalResultBrowserEvent: handleResult,
-    frontComponentId: actionConfig?.key ?? null,
+    requesterId,
   });
 
-  if (!actionConfig) {
+  if (!actionConfig || requesterId === null) {
     return null;
   }
 
   const handleClick = () => {
     openConfirmationModal({
-      frontComponentId: actionConfig.key,
+      requesterId,
       title,
       subtitle,
       confirmButtonText,

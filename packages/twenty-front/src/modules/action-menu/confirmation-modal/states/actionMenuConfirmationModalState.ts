@@ -4,7 +4,11 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 import { type ButtonAccent } from 'twenty-ui/input';
 
 export type ActionMenuConfirmationModalConfig = {
-  frontComponentId: string;
+  // `requesterId` correlates modal results to the caller across both legacy
+  // action-menu actions and SDK front components.
+  // For SDK callers: requesterId = frontComponentId.
+  // TODO: Rename back to frontComponentId when all actions are front components.
+  requesterId: string;
   title: string;
   subtitle: ReactNode;
   confirmButtonText?: string;

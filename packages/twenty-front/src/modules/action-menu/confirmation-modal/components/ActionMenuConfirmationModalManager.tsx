@@ -29,7 +29,7 @@ export const ActionMenuConfirmationModalManager = () => {
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
+      requesterId: actionMenuConfirmationModalConfig.requesterId,
       result: 'confirm',
     });
 
@@ -42,7 +42,7 @@ export const ActionMenuConfirmationModalManager = () => {
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
+      requesterId: actionMenuConfirmationModalConfig.requesterId,
       result: 'cancel',
     });
 
