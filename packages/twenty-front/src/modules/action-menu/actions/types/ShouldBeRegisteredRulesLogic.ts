@@ -1,8 +1,8 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
-type ShouldBeRegisteredCustomOperations = {
-  isDefined?: [RulesLogic<ShouldBeRegisteredCustomOperations>];
-  isNonEmptyString?: [RulesLogic<ShouldBeRegisteredCustomOperations>];
+type JsonLogicCustomOperations = {
+  isDefined?: [RulesLogic<JsonLogicCustomOperations>];
+  isNonEmptyString?: [RulesLogic<JsonLogicCustomOperations>];
   hasReadPermission?: [string];
   hasWritePermission?: [string];
   isFeatureFlagEnabled?: [string];
@@ -10,4 +10,4 @@ type ShouldBeRegisteredCustomOperations = {
 } & AdditionalOperation;
 
 export type ShouldBeRegisteredRulesLogic =
-  RulesLogic<ShouldBeRegisteredCustomOperations>;
+  RulesLogic<JsonLogicCustomOperations>;
