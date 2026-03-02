@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};

@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -12,6 +11,8 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
@@ -47,11 +48,11 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
-  border: ${({ theme, $isSelectedInEditMode }) =>
+  border: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
-      ? `1px solid ${theme.color.blue}`
+      ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
 `;
 
 const StyledFolderDroppableContent = styled.div<{
@@ -59,7 +60,8 @@ const StyledFolderDroppableContent = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  padding-bottom: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
+  padding-bottom: ${({ $compact }) =>
+    $compact ? 0 : themeCssVariables.spacing[2]};
 `;
 
 const StyledFolderExpandableWrapper = styled.div`
@@ -97,7 +99,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   selectedNavigationMenuItemId = null,
   isDragging = false,
 }: WorkspaceNavigationMenuItemsFolderProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);

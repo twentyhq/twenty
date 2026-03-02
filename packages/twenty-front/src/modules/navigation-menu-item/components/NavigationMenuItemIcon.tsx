@@ -1,7 +1,8 @@
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
@@ -22,7 +23,7 @@ export const NavigationMenuItemIcon = ({
 }: {
   navigationMenuItem: ProcessedNavigationMenuItem;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,

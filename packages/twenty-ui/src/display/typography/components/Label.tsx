@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 export type LabelVariant = 'default' | 'small';
 

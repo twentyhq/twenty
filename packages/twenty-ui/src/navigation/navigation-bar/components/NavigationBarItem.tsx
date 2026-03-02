@@ -2,7 +2,8 @@ import { useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;

@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
 
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import createTwentyAppPackageJson from 'package.json';
 
 const SRC_FOLDER = 'src';
 
@@ -146,8 +147,7 @@ generated
 # dev
 /dist/
 
-.twenty/*
-!.twenty/output/
+.twenty
 
 # production
 /build
@@ -546,10 +546,9 @@ const createPackageJson = async ({
       lint: 'eslint',
       'lint:fix': 'eslint --fix',
     },
-    dependencies: {
-      'twenty-sdk': 'latest',
-    },
+    dependencies: {},
     devDependencies: {
+      'twenty-sdk': createTwentyAppPackageJson.version,
       typescript: '^5.9.3',
       '@types/node': '^24.7.2',
       '@types/react': '^18.2.0',

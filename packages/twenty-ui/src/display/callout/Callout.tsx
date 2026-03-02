@@ -4,7 +4,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightButton, LightIconButton } from '@ui/input';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 export type CalloutVariant =
   | 'info'
@@ -44,7 +44,6 @@ const StyledCalloutContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   max-width: 512px;
-  overflow: hidden;
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
     ${themeCssVariables.spacing[2]};
   width: 100%;

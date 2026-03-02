@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
 
 import { IconCheck } from '@ui/display';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {

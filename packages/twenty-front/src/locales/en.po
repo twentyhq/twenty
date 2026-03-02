@@ -2083,6 +2083,11 @@ msgstr "Authenticator App"
 msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 msgstr "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 
+#. js-lingui-id: SIFUTh
+#: src/pages/auth/Authorize.tsx
+msgid "Authorization failed. Please try again."
+msgstr "Authorization failed. Please try again."
+
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -2097,6 +2102,11 @@ msgstr "Authorized URI"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
 msgstr "Authorized URL copied to clipboard"
+
+#. js-lingui-id: 8RmQki
+#: src/pages/auth/Authorize.tsx
+msgid "Authorizing..."
+msgstr "Authorizing..."
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4160,6 +4170,7 @@ msgstr "delete"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
@@ -6646,6 +6657,11 @@ msgstr "Group"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
 msgstr "Group by"
+
+#. js-lingui-id: WcF1uL
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+msgid "Group name"
+msgstr "Group name"
 
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -10848,6 +10864,7 @@ msgid "Remove variable"
 msgstr "Remove variable"
 
 #. js-lingui-id: 2wxgft
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
@@ -12231,6 +12248,11 @@ msgstr "Some"
 msgid "Some folders"
 msgstr "Some folders"
 
+#. js-lingui-id: nwtY4N
+#: src/pages/auth/Authorize.tsx
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
 #. js-lingui-id: yHwG3y
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -13567,6 +13589,11 @@ msgstr "ul"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Unable to delete member right now"
 msgstr "Unable to delete member right now"
+
+#. js-lingui-id: HSLWzn
+#: src/pages/auth/Authorize.tsx
+msgid "Unable to load application details. Please try again later."
+msgstr "Unable to load application details. Please try again later."
 
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx

@@ -7,7 +7,7 @@ import {
   type FloatingIconButtonPosition,
   type FloatingIconButtonProps,
 } from './FloatingIconButton';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledFloatingIconButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
