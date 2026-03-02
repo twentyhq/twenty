@@ -5,10 +5,12 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isArray, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Toggle } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionIteratorProps = {
@@ -22,6 +24,18 @@ type WorkflowEditActionIteratorProps = {
         onActionUpdate: (action: WorkflowIteratorAction) => void;
       };
 };
+
+const StyledToggleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledToggleLabel = styled.label`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+`;
 
 const stringifyArrayItems = (array: FieldArrayValue) => {
   return array.map((item) => {
@@ -56,6 +70,8 @@ export const WorkflowEditActionIterator = ({
   const [formData, setFormData] = useState({
     items: parsedItems,
     initialLoopStepIds: action.settings.input.initialLoopStepIds || [],
+    shouldContinueOnIterationFailure:
+      action.settings.input.shouldContinueOnIterationFailure ?? false,
   });
 
   const saveAction = useDebouncedCallback(
@@ -71,6 +87,8 @@ export const WorkflowEditActionIterator = ({
           input: {
             items: updatedFormData.items,
             initialLoopStepIds: updatedFormData.initialLoopStepIds,
+            shouldContinueOnIterationFailure:
+              updatedFormData.shouldContinueOnIterationFailure,
           },
         },
       });
@@ -80,7 +98,7 @@ export const WorkflowEditActionIterator = ({
 
   const handleFieldChange = (
     field: string,
-    value: string | FieldArrayValue,
+    value: string | FieldArrayValue | boolean,
   ) => {
     if (actionOptions.readonly === true) {
       return;
@@ -104,6 +122,19 @@ export const WorkflowEditActionIterator = ({
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
+        <StyledToggleContainer>
+          <StyledToggleLabel>
+            {t`Continue on iteration failure`}
+          </StyledToggleLabel>
+          <Toggle
+            value={formData.shouldContinueOnIterationFailure}
+            onChange={(value) =>
+              handleFieldChange('shouldContinueOnIterationFailure', value)
+            }
+            disabled={actionOptions.readonly}
+            toggleSize="small"
+          />
+        </StyledToggleContainer>
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

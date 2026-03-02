@@ -1,13 +1,15 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
+import {
+  createMockCodeStep,
+  createMockIteratorStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
 import {
   type WorkflowAction,
   type WorkflowIteratorAction,
-  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// Mock the getAllStepIdsInLoop utility
 jest.mock(
   'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util',
   () => ({
@@ -20,49 +22,6 @@ const { getAllStepIdsInLoop } = jest.requireMock(
 );
 
 describe('shouldExecuteIteratorStep', () => {
-  const createMockIteratorStep = (
-    id: string,
-    initialLoopStepIds: string[] = [],
-  ): WorkflowIteratorAction => ({
-    id,
-    name: 'Iterator Step',
-    type: WorkflowActionType.ITERATOR,
-    settings: {
-      input: {
-        initialLoopStepIds,
-        items: [],
-      },
-      errorHandlingOptions: {
-        continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
-      },
-      outputSchema: {},
-    },
-    valid: true,
-    nextStepIds: [],
-  });
-
-  const createMockStep = (
-    id: string,
-    nextStepIds: string[] = [],
-  ): WorkflowAction => ({
-    id,
-    name: 'Mock Step',
-    type: WorkflowActionType.CODE,
-    settings: {
-      input: {
-        logicFunctionId: 'mock-function-id',
-        logicFunctionInput: {},
-      },
-      errorHandlingOptions: {
-        continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
-      },
-      outputSchema: {},
-    },
-    valid: true,
-    nextStepIds,
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -70,14 +29,14 @@ describe('shouldExecuteIteratorStep', () => {
 
   describe('when the step has not been started', () => {
     it('should return true when all parent steps are successful', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
-        createMockStep('step-3', ['step-4']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-3', ['step-4']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -104,13 +63,13 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false when some parent steps not in loop have failed', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -130,13 +89,13 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false when some parent steps are not started', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -156,10 +115,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return true even if loop step is not started', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']), // In loop
-        createMockStep('step-2', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-1', ['iterator-1']), // In loop
+        createMockCodeStep('step-2', ['iterator-1']), // Not in loop
         iteratorStep,
       ];
       const stepInfos = {
@@ -180,10 +139,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return true when there are no parent steps targeting the iterator', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', []);
+      const iteratorStep = createMockIteratorStep('iterator-1');
       const steps = [
-        createMockStep('step-1', ['step-2']),
-        createMockStep('step-2', []),
+        createMockCodeStep('step-1', ['step-2']),
+        createMockCodeStep('step-2', []),
         iteratorStep,
       ];
       const stepInfos = {
@@ -203,9 +162,9 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should handle undefined steps gracefully', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
         undefined as unknown as WorkflowAction,
         iteratorStep,
       ];
@@ -225,16 +184,16 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should work correctly with multiple steps targeting the same iterator', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
         'step-3',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
-        createMockStep('step-3', ['iterator-1']),
-        createMockStep('step-4', ['step-5']), // Not targeting iterator
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-3', ['iterator-1']),
+        createMockCodeStep('step-4', ['step-5']), // Not targeting iterator
         iteratorStep,
       ];
       const stepInfos = {
@@ -258,10 +217,10 @@ describe('shouldExecuteIteratorStep', () => {
 
   describe('when the step has been started', () => {
     it('should return true if all the steps targeting the iterator have been successful', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -282,10 +241,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false if some of the steps targeting the iterator have failed', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -306,10 +265,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false if some of the steps targeting the iterator are still running', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -330,8 +289,8 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return true when there are no steps targeting the iterator', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', []);
-      const steps = [createMockStep('step-1', ['step-2']), iteratorStep];
+      const iteratorStep = createMockIteratorStep('iterator-1');
+      const steps = [createMockCodeStep('step-1', ['step-2']), iteratorStep];
       const stepInfos = {
         'iterator-1': { status: StepStatus.RUNNING }, // Iterator has been started
         'step-1': { status: StepStatus.SUCCESS },
@@ -349,10 +308,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should check all steps targeting iterator including loop steps when iterator has been started', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']), // In loop and targeting iterator
-        createMockStep('step-2', ['iterator-1']), // Not in loop but targeting iterator
+        createMockCodeStep('step-1', ['iterator-1']), // In loop and targeting iterator
+        createMockCodeStep('step-2', ['iterator-1']), // Not in loop but targeting iterator
         iteratorStep,
       ];
       const stepInfos = {
@@ -373,10 +332,10 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false when loop step has NOT_STARTED status and iterator has been started', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']), // In loop
-        createMockStep('step-2', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-1', ['iterator-1']), // In loop
+        createMockCodeStep('step-2', ['iterator-1']), // Not in loop
         iteratorStep,
       ];
       const stepInfos = {
@@ -399,10 +358,10 @@ describe('shouldExecuteIteratorStep', () => {
 
   describe('edge cases', () => {
     it('should handle empty step info for parent steps', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockStep('step-1', ['iterator-1']),
-        createMockStep('step-2', ['iterator-1']),
+        createMockCodeStep('step-1', ['iterator-1']),
+        createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];
       const stepInfos = {
@@ -423,17 +382,17 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should work with complex loop structures', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
         'step-3',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']), // In loop
-        createMockStep('step-2', ['iterator-1']), // In loop
-        createMockStep('step-3', ['iterator-1']), // In loop
-        createMockStep('step-4', ['iterator-1']), // Not in loop
-        createMockStep('step-5', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-1', ['iterator-1']), // In loop
+        createMockCodeStep('step-2', ['iterator-1']), // In loop
+        createMockCodeStep('step-3', ['iterator-1']), // In loop
+        createMockCodeStep('step-4', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-5', ['iterator-1']), // Not in loop
         iteratorStep,
       ];
       const stepInfos = {
@@ -456,15 +415,15 @@ describe('shouldExecuteIteratorStep', () => {
     });
 
     it('should return false with complex loop when one non-loop parent is not successful', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [
+      const iteratorStep = createMockIteratorStep('iterator-1', [], [
         'step-1',
         'step-2',
       ]);
       const steps = [
-        createMockStep('step-1', ['iterator-1']), // In loop
-        createMockStep('step-2', ['iterator-1']), // In loop
-        createMockStep('step-3', ['iterator-1']), // Not in loop
-        createMockStep('step-4', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-1', ['iterator-1']), // In loop
+        createMockCodeStep('step-2', ['iterator-1']), // In loop
+        createMockCodeStep('step-3', ['iterator-1']), // Not in loop
+        createMockCodeStep('step-4', ['iterator-1']), // Not in loop
         iteratorStep,
       ];
       const stepInfos = {
@@ -501,7 +460,7 @@ describe('shouldExecuteIteratorStep', () => {
         },
       } as WorkflowIteratorAction;
 
-      const steps = [createMockStep('step-1', ['iterator-1']), iteratorStep];
+      const steps = [createMockCodeStep('step-1', ['iterator-1']), iteratorStep];
       const stepInfos = {
         'step-1': { status: StepStatus.SUCCESS },
       };

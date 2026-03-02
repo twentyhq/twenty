@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { TERMINAL_STEP_STATUSES } from 'src/modules/workflow/workflow-executor/constants/terminal-step-statuses.constant';
-import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
@@ -10,7 +9,7 @@ import {
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const shouldExecuteIteratorStep = ({
+export const shouldFailSafelyIteratorStep = ({
   step,
   steps,
   stepInfos,
@@ -18,7 +17,7 @@ export const shouldExecuteIteratorStep = ({
   step: WorkflowIteratorAction;
   steps: WorkflowAction[];
   stepInfos: WorkflowRunStepInfos;
-}) => {
+}): boolean => {
   const stepsTargetingIterator = steps.filter(
     (parentStep) =>
       isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
@@ -34,21 +33,48 @@ export const shouldExecuteIteratorStep = ({
       })
     : [];
 
-  const parentSteps = stepsTargetingIterator.filter(
+  const externalParentSteps = stepsTargetingIterator.filter(
     (parentStep) => !stepIdsInLoop.includes(parentStep.id),
   );
 
-  const stepsToCheck = stepHasBeenStarted(step.id, stepInfos)
-    ? stepsTargetingIterator
-    : parentSteps;
+  if (!stepHasBeenStarted(step.id, stepInfos)) {
+    if (externalParentSteps.length === 0) {
+      return false;
+    }
 
-  // When iterator has been started and has the continue-on-failure flag,
-  // allow re-execution even if all loop-back parents are FAILED_SAFELY/SKIPPED
-  // (i.e. don't require at least one SUCCESS parent)
-  if (
-    stepHasBeenStarted(step.id, stepInfos) &&
-    step.settings.input.shouldContinueOnIterationFailure
-  ) {
+    const areAllExternalParentsTerminal = externalParentSteps.every(
+      (parentStep) =>
+        TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
+    );
+
+    const hasFailedSafelyExternalParent = externalParentSteps.some(
+      (parentStep) =>
+        stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
+    );
+
+    return areAllExternalParentsTerminal && hasFailedSafelyExternalParent;
+  }
+
+  const areAllParentsTerminal = stepsTargetingIterator.every((parentStep) =>
+    TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
+  );
+
+  if (!areAllParentsTerminal) {
+    return false;
+  }
+
+  const hasFailedSafelyParent = stepsTargetingIterator.some(
+    (parentStep) =>
+      stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
+  );
+
+  if (!hasFailedSafelyParent) {
+    return false;
+  }
+
+  // If the iterator has the flag, check whether the failure originated from
+  // its own loop. If yes, the iterator handles it (re-execute) — not fail safely.
+  if (step.settings.input.shouldContinueOnIterationFailure) {
     const hasFailureFromOwnLoop = stepIdsInLoop.some(
       (loopStepId) =>
         stepInfos[loopStepId]?.status === StepStatus.FAILED_SAFELY &&
@@ -56,16 +82,9 @@ export const shouldExecuteIteratorStep = ({
     );
 
     if (hasFailureFromOwnLoop) {
-      const areAllParentsTerminal = stepsToCheck.every((parentStep) =>
-        TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
-      );
-
-      return areAllParentsTerminal;
+      return false;
     }
   }
 
-  return shouldExecuteChildStep({
-    parentSteps: stepsToCheck,
-    stepInfos,
-  });
+  return true;
 };
