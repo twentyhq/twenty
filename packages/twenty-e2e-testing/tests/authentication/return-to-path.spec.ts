@@ -9,23 +9,31 @@ const test = base.extend<{ loginPage: LoginPage }>({
 });
 
 const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
-  await page.waitForLoadState('domcontentloaded');
+  await page.waitForLoadState('networkidle');
   await loginPage.clickLoginWithEmailIfVisible();
   await loginPage.typeEmail(process.env.DEFAULT_LOGIN!);
   await loginPage.clickContinueButton();
   await loginPage.typePassword(process.env.DEFAULT_PASSWORD!);
-  await page.waitForLoadState('domcontentloaded');
+  await page.waitForLoadState('networkidle');
   await loginPage.clickSignInButton();
-  await page.waitForLoadState('domcontentloaded');
+  await page.waitForLoadState('networkidle');
 
   const workspaceButton = page.getByText('Apple', { exact: true });
 
-  if (await workspaceButton.isVisible().catch(() => false)) {
+  await workspaceButton.waitFor({ state: 'visible', timeout: 15000 }).catch(
+    () => {
+      // Single workspace mode — no workspace selection
+    },
+  );
+
+  if (await workspaceButton.isVisible()) {
     await workspaceButton.click();
   }
 
   await page.waitForFunction(
-    () => !window.location.href.includes('verify'),
+    () =>
+      !window.location.href.includes('verify') &&
+      !window.location.href.includes('welcome'),
     { timeout: 15000 },
   );
 };
