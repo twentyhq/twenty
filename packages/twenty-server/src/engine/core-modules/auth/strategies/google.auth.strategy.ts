@@ -85,8 +85,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     const user: GoogleRequest['user'] = {
       email: firstVerifiedEmail,
-      firstName: name.givenName,
-      lastName: name.familyName,
+      firstName: name?.givenName,
+      lastName: name?.familyName,
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,

@@ -36,8 +36,8 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
 
     const user: GoogleAPIsRequest['user'] = {
       emails,
-      firstName: name.givenName,
-      lastName: name.familyName,
+      firstName: name?.givenName,
+      lastName: name?.familyName,
       picture: photos?.[0]?.value,
       accessToken,
       refreshToken,

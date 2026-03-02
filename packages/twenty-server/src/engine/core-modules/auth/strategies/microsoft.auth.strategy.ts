@@ -83,8 +83,8 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
 
     const user: MicrosoftRequest['user'] = {
       email: userPrincipalName,
-      firstName: name.givenName,
-      lastName: name.familyName,
+      firstName: name?.givenName,
+      lastName: name?.familyName,
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,

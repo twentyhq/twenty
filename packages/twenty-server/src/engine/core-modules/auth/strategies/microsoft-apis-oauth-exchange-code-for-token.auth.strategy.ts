@@ -33,8 +33,8 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPI
 
     const user: MicrosoftAPIsRequest['user'] = {
       emails,
-      firstName: name.givenName,
-      lastName: name.familyName,
+      firstName: name?.givenName,
+      lastName: name?.familyName,
       picture: photos?.[0]?.value,
       accessToken,
       refreshToken,
