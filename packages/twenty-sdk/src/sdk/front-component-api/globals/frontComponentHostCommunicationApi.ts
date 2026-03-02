@@ -41,6 +41,10 @@ export type CloseSidePanelFunction = () => Promise<void>;
 
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
+export type OpenActionConfirmationModalHostFunction = (
+  params: Parameters<OpenActionConfirmationModalFunction>[0],
+) => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;

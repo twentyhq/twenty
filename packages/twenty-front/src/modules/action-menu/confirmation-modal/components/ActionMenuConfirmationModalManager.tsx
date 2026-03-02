@@ -1,5 +1,5 @@
 import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalId';
-import { actionMenuConfirmationModalState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
+import { actionMenuConfirmationModalConfigState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
 import { dispatchActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/utils/dispatchActionMenuConfirmationModalResultBrowserEvent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -8,28 +8,28 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const ActionMenuConfirmationModalManager = () => {
-  const actionMenuConfirmationModal = useAtomStateValue(
-    actionMenuConfirmationModalState,
+  const actionMenuConfirmationModalConfig = useAtomStateValue(
+    actionMenuConfirmationModalConfigState,
   );
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     ACTION_MENU_CONFIRMATION_MODAL_ID,
   );
-  const setActionMenuConfirmationModal = useSetAtomState(
-    actionMenuConfirmationModalState,
+  const setActionMenuConfirmationModalConfig = useSetAtomState(
+    actionMenuConfirmationModalConfigState,
   );
 
   const clearActionMenuConfirmationModal = () => {
-    setActionMenuConfirmationModal(null);
+    setActionMenuConfirmationModalConfig(null);
   };
 
   const handleConfirmClick = () => {
-    if (!actionMenuConfirmationModal) {
+    if (!actionMenuConfirmationModalConfig) {
       return;
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModal.frontComponentId,
+      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
       result: 'confirm',
     });
 
@@ -37,31 +37,33 @@ export const ActionMenuConfirmationModalManager = () => {
   };
 
   const handleClose = () => {
-    if (!actionMenuConfirmationModal) {
+    if (!actionMenuConfirmationModalConfig) {
       return;
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModal.frontComponentId,
+      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
       result: 'cancel',
     });
 
     clearActionMenuConfirmationModal();
   };
 
-  if (!actionMenuConfirmationModal || !isModalOpened) {
+  if (!actionMenuConfirmationModalConfig || !isModalOpened) {
     return null;
   }
 
   return (
     <ConfirmationModal
       modalId={ACTION_MENU_CONFIRMATION_MODAL_ID}
-      title={actionMenuConfirmationModal.title}
-      subtitle={actionMenuConfirmationModal.subtitle}
+      title={actionMenuConfirmationModalConfig.title}
+      subtitle={actionMenuConfirmationModalConfig.subtitle}
       onConfirmClick={handleConfirmClick}
       onClose={handleClose}
-      confirmButtonText={actionMenuConfirmationModal.confirmButtonText}
-      confirmButtonAccent={actionMenuConfirmationModal.confirmButtonAccent}
+      confirmButtonText={actionMenuConfirmationModalConfig.confirmButtonText}
+      confirmButtonAccent={
+        actionMenuConfirmationModalConfig.confirmButtonAccent
+      }
     />
   );
 };

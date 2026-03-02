@@ -11,8 +11,8 @@ export type ActionMenuConfirmationModalConfig = {
   confirmButtonAccent?: ButtonAccent;
 };
 
-export const actionMenuConfirmationModalState =
+export const actionMenuConfirmationModalConfigState =
   createAtomState<ActionMenuConfirmationModalConfig | null>({
-    key: 'actionMenuConfirmationModalState',
+    key: 'actionMenuConfirmationModalConfigState',
     defaultValue: null,
   });

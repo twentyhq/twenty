@@ -1,4 +1,4 @@
-import { ActionConfirmation } from '@/action-menu/actions/components/ActionConfirmation';
+import { ActionConfirmationModal } from '@/action-menu/actions/components/ActionConfirmationModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
@@ -30,7 +30,7 @@ export const RestoreSingleRecordAction = () => {
   };
 
   return (
-    <ActionConfirmation
+    <ActionConfirmationModal
       title={t`Restore Record`}
       subtitle={t`Are you sure you want to restore this record?`}
       onConfirmClick={handleRestoreClick}

@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useContext, useState } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
@@ -8,7 +8,7 @@ import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext'
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { type ButtonAccent } from 'twenty-ui/input';
 
-type ActionConfirmationProps = {
+type ActionConfirmationModalProps = {
   title: string;
   subtitle: ReactNode;
   onConfirmClick: () => void | Promise<void>;
@@ -18,7 +18,7 @@ type ActionConfirmationProps = {
   closeSidePanelOnCommandMenuListActionExecution?: boolean;
 };
 
-export const ActionConfirmation = ({
+export const ActionConfirmationModal = ({
   title,
   subtitle,
   onConfirmClick,
@@ -26,7 +26,7 @@ export const ActionConfirmation = ({
   confirmButtonAccent = 'danger',
   closeSidePanelOnShowPageOptionsActionExecution,
   closeSidePanelOnCommandMenuListActionExecution,
-}: ActionConfirmationProps) => {
+}: ActionConfirmationModalProps) => {
   const actionConfig = useContext(ActionConfigContext);
   const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { closeActionMenu } = useCloseActionMenu({
@@ -34,14 +34,8 @@ export const ActionConfirmation = ({
     closeSidePanelOnCommandMenuListActionExecution,
   });
 
-  const [pendingFrontComponentId, setPendingFrontComponentId] = useState<
-    string | null
-  >(null);
-
   const handleResult = useCallback(
     async ({ result }: { result: 'confirm' | 'cancel' }) => {
-      setPendingFrontComponentId(null);
-
       if (result === 'confirm') {
         await onConfirmClick();
         closeActionMenu();
@@ -52,7 +46,7 @@ export const ActionConfirmation = ({
 
   useListenToActionMenuConfirmationModalResultBrowserEvent({
     onActionMenuConfirmationModalResultBrowserEvent: handleResult,
-    frontComponentId: pendingFrontComponentId,
+    frontComponentId: actionConfig?.key ?? null,
   });
 
   if (!actionConfig) {
@@ -60,8 +54,6 @@ export const ActionConfirmation = ({
   }
 
   const handleClick = () => {
-    setPendingFrontComponentId(actionConfig.key);
-
     openConfirmationModal({
       frontComponentId: actionConfig.key,
       title,

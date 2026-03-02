@@ -9,4 +9,5 @@ export type WorkerExports = {
   ) => Promise<void>;
   initializeHostCommunicationApi: () => Promise<void>;
   updateContext: (context: FrontComponentExecutionContext) => Promise<void>;
+  onConfirmationModalResult: (result: 'confirm' | 'cancel') => Promise<void>;
 };

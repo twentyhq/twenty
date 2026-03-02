@@ -1,4 +1,4 @@
-import { ActionConfirmation } from '@/action-menu/actions/components/ActionConfirmation';
+import { ActionConfirmationModal } from '@/action-menu/actions/components/ActionConfirmationModal';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -90,7 +90,7 @@ export const RestoreMultipleRecordsAction = () => {
   };
 
   return (
-    <ActionConfirmation
+    <ActionConfirmationModal
       title={t`Restore Records`}
       subtitle={t`Are you sure you want to restore these records?`}
       onConfirmClick={handleRestoreClick}
