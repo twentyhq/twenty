@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AvatarChip,
+  AvatarOrIcon,
   Chip,
   type ChipSize,
   ChipVariant,
@@ -91,7 +91,7 @@ export const RecordChip = ({
         variant={ChipVariant.Transparent}
         leftComponent={
           isIconHidden ? null : (
-            <AvatarChip
+            <AvatarOrIcon
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
               avatarType={recordChipData.avatarType}
@@ -112,7 +112,7 @@ export const RecordChip = ({
       isLabelHidden={isLabelHidden}
       leftComponent={
         isIconHidden ? null : (
-          <AvatarChip
+          <AvatarOrIcon
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
             avatarType={recordChipData.avatarType}

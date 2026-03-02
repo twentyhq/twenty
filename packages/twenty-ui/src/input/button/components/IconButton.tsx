@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { GRAY_SCALE_LIGHT, ThemeContext, themeCssVariables } from '@ui/theme';
+import { GRAY_SCALE_LIGHT, ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import React, { useContext, useMemo } from 'react';
 
 export type IconButtonSize = 'medium' | 'small';

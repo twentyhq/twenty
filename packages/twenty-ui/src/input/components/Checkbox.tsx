@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import * as React from 'react';
 
 export enum CheckboxVariant {

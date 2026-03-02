@@ -1,8 +1,7 @@
-import type { Theme } from '@emotion/react';
-import type { ThemeColor } from 'twenty-ui/theme';
+import type { ThemeColor, ThemeType } from 'twenty-ui/theme';
 
 export const getColorFromTheme = (
-  theme: Theme,
+  theme: ThemeType,
   themeColor: ThemeColor,
   shade: number,
 ): string => {

@@ -1,16 +1,16 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
 import { ComponentDecorator, JotaiRootDecorator } from '@ui/testing';
-import { AvatarChip } from '../AvatarChip';
+import { AvatarOrIcon } from '../AvatarOrIcon';
 
-const meta: Meta<typeof AvatarChip> = {
-  title: 'UI/Components/AvatarChip',
-  component: AvatarChip,
+const meta: Meta<typeof AvatarOrIcon> = {
+  title: 'UI/Components/AvatarOrIcon',
+  component: AvatarOrIcon,
   decorators: [ComponentDecorator, JotaiRootDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof AvatarChip>;
+type Story = StoryObj<typeof AvatarOrIcon>;
 
 export const Default: Story = {
   args: {
@@ -47,26 +47,11 @@ export const WithInvertedIcon: Story = {
   },
 };
 
-export const WithRightDivider: Story = {
-  args: {
-    placeholder: 'JD',
-    placeholderColorSeed: 'John Doe',
-    divider: 'right',
-  },
-};
-
-export const WithLeftDivider: Story = {
-  args: {
-    Icon: IconUser,
-    divider: 'left',
-  },
-};
-
 export const Clickable: Story = {
   args: {
     placeholder: 'JD',
     placeholderColorSeed: 'John Doe',
-    onClick: () => alert('AvatarChip clicked'),
+    onClick: () => alert('AvatarOrIcon clicked'),
   },
 };
 
@@ -74,6 +59,6 @@ export const ClickableIcon: Story = {
   args: {
     Icon: IconBuildingSkyscraper,
     isIconInverted: true,
-    onClick: () => alert('Icon AvatarChip clicked'),
+    onClick: () => alert('Icon AvatarOrIcon clicked'),
   },
 };

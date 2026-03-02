@@ -14,6 +14,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -28,6 +29,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ]),
     SecretEncryptionModule,
     PermissionsModule,
+    ThrottlerModule,
     TokenModule,
     ApplicationModule,
   ],

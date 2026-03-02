@@ -3,7 +3,8 @@ import { useContext } from 'react';
 
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { type ThemeColor, ThemeContext, themeCssVariables } from '@ui/theme';
+import { type ThemeColor, ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledTag = styled.h3<{

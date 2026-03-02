@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 

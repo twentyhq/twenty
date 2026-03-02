@@ -1,33 +1,31 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 
-import { type ThemeType } from '@ui/theme/types/ThemeType';
-import { prepareThemeForRootCssVariableInjection } from '@ui/theme/utils/prepareThemeForRootCssVariableInjection';
+import {
+  THEME_DARK_CSS_VARIABLE_ENTRIES,
+  THEME_LIGHT_CSS_VARIABLE_ENTRIES,
+} from '@ui/theme-constants';
 
 export const ThemeCssVariableInjectorEffect = ({
   theme,
 }: {
-  theme: ThemeType;
+  theme: { name: string };
 }) => {
-  const themeCssVariableEntries = useMemo(
-    () =>
-      prepareThemeForRootCssVariableInjection({
-        themeNode: theme as unknown as Record<string, unknown>,
-        prefix: 't',
-      }),
-    [theme],
-  );
+  const entries =
+    theme.name === 'dark'
+      ? THEME_DARK_CSS_VARIABLE_ENTRIES
+      : THEME_LIGHT_CSS_VARIABLE_ENTRIES;
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    for (const [name, value] of themeCssVariableEntries) {
+    for (const [name, value] of entries) {
       root.style.setProperty(name, value);
     }
     return () => {
-      for (const [name] of themeCssVariableEntries) {
+      for (const [name] of entries) {
         root.style.removeProperty(name);
       }
     };
-  }, [themeCssVariableEntries]);
+  }, [entries]);
 
   return null;
 };

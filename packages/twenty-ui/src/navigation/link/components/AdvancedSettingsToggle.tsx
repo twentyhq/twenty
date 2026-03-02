@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { useContext, useId } from 'react';
 
 const StyledContainer = styled.div`

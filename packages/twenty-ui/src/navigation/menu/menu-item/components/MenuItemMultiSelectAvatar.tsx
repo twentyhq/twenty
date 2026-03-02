@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
