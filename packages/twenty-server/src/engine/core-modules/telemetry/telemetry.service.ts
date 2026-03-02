@@ -30,12 +30,12 @@ export class TelemetryService {
       });
 
       await Promise.all(
-        payload.events.map((event) => {
+        payload.events.map((event) =>
           httpClient.post(`/selfHostingEvent`, {
             action: payload.action,
             ...event,
-          });
-        }),
+          }),
+        ),
       );
     } catch {
       return { success: false };
