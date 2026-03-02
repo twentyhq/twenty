@@ -261,7 +261,7 @@ export class LocalDriver implements LogicFunctionDriver {
           if (process.send) {
             process.send({ ok: false, error: msg, stack: err?.stack });
           } else {
-            console.error(msg);
+            process.stdout.write(msg);
           }
           process.exit(1);
         }
