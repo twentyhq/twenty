@@ -3,6 +3,8 @@ import { RemoteNavigationDrawerSection } from '@/object-metadata/components/Remo
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 
+import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
+
 const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
   import(
     '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
@@ -36,6 +38,7 @@ export const MainNavigationDrawerScrollableItems = () => {
         <WorkspaceNavigationMenuItemsDispatcher />
       </Suspense>
       <RemoteNavigationDrawerSection />
+      <NavigationDrawerOtherSection />
     </StyledScrollableItemsContainer>
   );
 };

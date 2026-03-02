@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import { type ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 
 import {
   StyledMenuItemIconCheck,
@@ -8,8 +7,9 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -28,7 +28,7 @@ const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1 0 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -45,7 +45,7 @@ export const MenuItemSelectAvatar = ({
   focused,
   testId,
 }: MenuItemSelectAvatarProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemSelect

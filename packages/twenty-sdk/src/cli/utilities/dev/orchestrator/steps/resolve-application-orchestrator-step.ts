@@ -28,6 +28,7 @@ export class ResolveApplicationOrchestratorStep {
 
   async execute(input: {
     manifest: Manifest;
+    applicationRegistrationId?: string;
   }): Promise<ResolveApplicationOrchestratorStepOutput> {
     const step = this.state.steps.resolveApplication;
 
@@ -65,6 +66,7 @@ export class ResolveApplicationOrchestratorStep {
 
     const createResult = await this.apiService.createApplication(
       input.manifest,
+      { applicationRegistrationId: input.applicationRegistrationId },
     );
 
     if (!createResult.success) {

@@ -17,11 +17,11 @@ Um seletor de ícones baseado em lista suspensa que permite aos usuários seleci
 import React, { useState } from "react";
 import { IconPicker } from "@/ui/input/components/IconPicker";
 
-export const MyComponent = () => {
+export const MeuComponente = () => {
 
    const [selectedIcon, setSelectedIcon] = useState("");
    const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
+     console.log("Ícone Selecionado:", iconKey);
      setSelectedIcon(iconKey);
    };
 

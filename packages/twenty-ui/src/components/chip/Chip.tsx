@@ -1,8 +1,8 @@
-import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { themeCssVariables } from '@ui/theme';
 
 export enum ChipSize {
   Large = 'large',
@@ -38,28 +38,28 @@ export type ChipProps = {
   emptyLabel?: string;
 };
 
-const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`);
+const StyledDiv = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
 
-const StyledContainer = withTheme(styled.div<
+const StyledContainer = styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  > & { theme: Theme }
+  >
 >`
-  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
+  --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
+  --chip-vertical-padding: ${themeCssVariables.spacing[1]};
 
   text-decoration: none;
   align-items: center;
 
-  color: ${({ theme, accent, disabled }) =>
+  color: ${({ accent, disabled }) =>
     disabled
-      ? theme.font.color.light
+      ? themeCssVariables.font.color.light
       : accent === ChipAccent.TextPrimary
-        ? theme.font.color.primary
-        : theme.font.color.secondary};
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.secondary};
 
   cursor: ${({ clickable, disabled, variant }) =>
     variant === ChipVariant.Transparent
@@ -72,9 +72,11 @@ const StyledContainer = withTheme(styled.div<
 
   display: inline-flex;
   justify-content: flex-start;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme, size }) =>
-    size === ChipSize.Large ? theme.spacing(4) : theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${({ size }) =>
+    size === ChipSize.Large
+      ? themeCssVariables.spacing[4]
+      : themeCssVariables.spacing[3]};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -83,51 +85,52 @@ const StyledContainer = withTheme(styled.div<
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
 
-  font-weight: ${({ theme, accent }) =>
-    accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
+  font-weight: ${({ accent }) =>
+    accent === ChipAccent.TextSecondary
+      ? themeCssVariables.font.weight.medium
+      : 'inherit'};
 
   &:hover {
-    background-color: ${({ theme, variant, disabled }) =>
+    background-color: ${({ variant, disabled }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.light
+        ? themeCssVariables.background.transparent.light
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.medium
+          ? themeCssVariables.background.transparent.medium
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : 'inherit'};
   }
 
   &:active {
-    background-color: ${({ theme, disabled, variant }) =>
+    background-color: ${({ disabled, variant }) =>
       variant === ChipVariant.Regular && !disabled
-        ? theme.background.transparent.medium
+        ? themeCssVariables.background.transparent.medium
         : variant === ChipVariant.Highlighted
-          ? theme.background.transparent.strong
+          ? themeCssVariables.background.transparent.strong
           : variant === ChipVariant.Static
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : 'inherit'};
   }
 
-  background-color: ${({ theme, variant }) =>
+  background-color: ${({ variant }) =>
     variant === ChipVariant.Highlighted || variant === ChipVariant.Static
-      ? theme.background.transparent.light
+      ? themeCssVariables.background.transparent.light
       : 'inherit'};
 
   border: none;
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
 
   & > svg {
     flex-shrink: 0;
   }
 
-  padding-left: ${({ theme, variant }) =>
+  padding-left: ${({ variant }) =>
     variant === ChipVariant.Transparent
-      ? theme.spacing(0)
+      ? themeCssVariables.spacing[0]
       : 'var(--chip-horizontal-padding)'};
-`);
+`;
 
-// TODO: refactor this
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
 ) => {

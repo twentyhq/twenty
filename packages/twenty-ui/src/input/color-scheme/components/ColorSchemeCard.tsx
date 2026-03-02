@@ -1,7 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { GRAY_SCALE_DARK, GRAY_SCALE_LIGHT } from '@ui/theme';
+import {
+  GRAY_SCALE_DARK,
+  GRAY_SCALE_LIGHT,
+  themeCssVariables,
+} from '@ui/theme';
 import {
   AnimatePresence,
   type AnimationControls,
@@ -32,19 +36,19 @@ const StyledColorSchemeBackground = styled.div<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   height: 80px;
   justify-content: flex-end;
   overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[6]};
   width: 160px;
 `;
 
-const StyledColorSchemeContent = styled(motion.div)<
+const StyledColorSchemeContentBase = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
   background: ${({ variant }) => {
@@ -54,6 +58,7 @@ const StyledColorSchemeContent = styled(motion.div)<
       case 'Light':
         return GRAY_SCALE_LIGHT.gray1;
     }
+    return '';
   }};
 
   border-left: ${({ variant }) => {
@@ -65,7 +70,7 @@ const StyledColorSchemeContent = styled(motion.div)<
         return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
+  border-radius: ${themeCssVariables.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
@@ -89,9 +94,11 @@ const StyledColorSchemeContent = styled(motion.div)<
   flex: 1;
   font-size: 20px;
   height: 56px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
+
+const StyledColorSchemeContent = motion.create(StyledColorSchemeContentBase);
 
 export type ColorSchemeSegmentProps = {
   variant: ColorScheme;
@@ -107,16 +114,18 @@ const ColorSchemeSegment = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
-}: ColorSchemeSegmentProps) => (
-  <StyledColorSchemeBackground
-    className={className}
-    {...{ variant, style, onClick, onMouseEnter, onMouseLeave }}
-  >
-    <StyledColorSchemeContent animate={controls} variant={variant}>
-      Aa
-    </StyledColorSchemeContent>
-  </StyledColorSchemeBackground>
-);
+}: ColorSchemeSegmentProps) => {
+  return (
+    <StyledColorSchemeBackground
+      className={className}
+      {...{ variant, style, onClick, onMouseEnter, onMouseLeave }}
+    >
+      <StyledColorSchemeContent animate={controls} variant={variant}>
+        Aa
+      </StyledColorSchemeContent>
+    </StyledColorSchemeBackground>
+  );
+};
 
 const StyledContainer = styled.div`
   position: relative;
@@ -124,7 +133,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;
   display: flex;
   height: 80px;
@@ -133,12 +142,14 @@ const StyledMixedColorSchemeSegment = styled.div`
   width: 160px;
 `;
 
-const StyledCheckmarkContainer = styled(motion.div)`
+const StyledCheckmarkContainerBase = styled.div`
   bottom: 0px;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   right: 0px;
 `;
+
+const StyledCheckmarkContainer = motion.create(StyledCheckmarkContainerBase);
 
 export type ColorSchemeCardProps = {
   variant: ColorScheme;

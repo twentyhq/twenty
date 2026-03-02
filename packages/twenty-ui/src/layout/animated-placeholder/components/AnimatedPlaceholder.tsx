@@ -1,11 +1,11 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background';
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
+import { ThemeContext } from '@ui/theme';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -26,14 +26,8 @@ const StyledBackgroundImage = styled.img<StyledImageProps>`
     type === 'error500' || type === 'error404' ? '245px' : '160px'};
 `;
 
-const StyledMovingImage = styled(motion.img)<StyledImageProps>`
-  position: absolute;
-  max-width: ${({ type }) =>
-    type === 'error500' || type === 'error404' ? '185px' : '130px'};
-  max-height: ${({ type }) =>
-    type === 'error500' || type === 'error404' ? '185px' : '130px'};
-  z-index: 2;
-`;
+const getMovingImageSize = (type: string) =>
+  type === 'error500' || type === 'error404' ? '185px' : '130px';
 
 export type AnimatedPlaceholderType =
   | keyof typeof BACKGROUND
@@ -44,7 +38,7 @@ interface AnimatedPlaceholderProps {
 }
 
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const x = useMotionValue(window.innerWidth / 2);
   const y = useMotionValue(window.innerHeight / 2);
@@ -94,14 +88,20 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
         alt=""
         type={type}
       />
-      <StyledMovingImage
+      <motion.img
         src={
           theme.name === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
         }
         alt=""
-        style={{ translateX, translateY }}
+        style={{
+          position: 'absolute',
+          maxWidth: getMovingImageSize(type),
+          maxHeight: getMovingImageSize(type),
+          zIndex: 2,
+          translateX,
+          translateY,
+        }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
-        type={type}
       />
     </StyledContainer>
   );

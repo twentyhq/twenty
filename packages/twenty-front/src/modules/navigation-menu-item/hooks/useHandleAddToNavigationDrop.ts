@@ -18,11 +18,13 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useStore } from 'jotai';
@@ -128,15 +130,27 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
+          const views = coreViews.map(convertCoreViewToView);
+          const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
+            currentDraft,
+            views,
+          );
+          if (objectMetadataIdsInWorkspace.has(payload.objectMetadataId)) {
+            return;
+          }
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) => item.id === payload.objectMetadataId,
+          );
           const newItemId = addObjectToDraft(
             payload.objectMetadataId,
             payload.defaultViewId,
             currentDraft,
             folderId,
             index,
-          );
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) => item.id === payload.objectMetadataId,
+            payload.iconColor ??
+              (objectMetadataItem
+                ? getStandardObjectIconColor(objectMetadataItem.nameSingular)
+                : undefined),
           );
           openEditForNewNavItem(newItemId, {
             pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
@@ -147,14 +161,22 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.VIEW: {
+          const views = coreViews.map(convertCoreViewToView);
+          const view = views.find((v) => v.id === payload.viewId);
+          const viewObjectMetadataItem = view
+            ? objectMetadataItems.find(
+                (item) => item.id === view.objectMetadataId,
+              )
+            : undefined;
           const newItemId = addViewToDraft(
             payload.viewId,
             currentDraft,
             folderId,
             index,
+            viewObjectMetadataItem
+              ? getStandardObjectIconColor(viewObjectMetadataItem.nameSingular)
+              : undefined,
           );
-          const views = coreViews.map(convertCoreViewToView);
-          const view = views.find((v) => v.id === payload.viewId);
           openEditForNewNavItem(newItemId, {
             pageTitle: view?.name ?? payload.label,
             pageIcon: view ? getIcon(view.icon) : IconFolder,
