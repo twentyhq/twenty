@@ -1,9 +1,9 @@
 import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const fieldsWidgetModeDraftComponentState = createComponentState<
+export const fieldsWidgetModeDraftComponentState = createAtomComponentState<
   Record<string, FieldsWidgetEditorMode>
 >({
   key: 'fieldsWidgetModeDraftComponentState',

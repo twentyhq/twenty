@@ -8,6 +8,8 @@ export type TwentyConfig = {
   apiKey?: string;
   applicationAccessToken?: string;
   applicationRefreshToken?: string;
+  oauthClientId?: string;
+  oauthClientSecret?: string;
 };
 
 type PersistedConfig = TwentyConfig & {

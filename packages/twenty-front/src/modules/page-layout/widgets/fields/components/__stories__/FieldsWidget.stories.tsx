@@ -5,7 +5,6 @@ import {
 } from '@apollo/client';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { type MutableSnapshot } from 'recoil';
 import { expect, within } from 'storybook/test';
 
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
@@ -13,7 +12,6 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -113,14 +111,9 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
-// Sets a record in both Recoil and Jotai stores so field display hooks can read it
-const setRecordInStores = (
-  snapshot: MutableSnapshot,
-  recordId: string,
-  record: ObjectRecord,
-) => {
-  snapshot.set(recordStoreFamilyState(recordId), record);
-  jotaiStore.set(recordStoreFamilyStateV2.atomFamily(recordId), record);
+// Sets a record in the Jotai store so field display hooks can read it
+const setRecordInStore = (recordId: string, record: ObjectRecord) => {
+  jotaiStore.set(recordStoreFamilyState.atomFamily(recordId), record);
 };
 
 const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
@@ -317,41 +310,36 @@ export const WithViewFieldGroups: Story = {
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      jotaiStore.set(
-        objectMetadataItemsState.atom,
-        generatedMockObjectMetadataItems,
-      );
-      jotaiStore.set(isAppMetadataReadyState.atom, true);
-      jotaiStore.set(coreViewsState.atom, [coreView]);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      companyObjectMetadataItem.id,
+    );
 
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        companyObjectMetadataItem.id,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    setRecordInStore(TEST_RECORD_ID, mockCompanyRecord);
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper
-              initializeState={initializeState}
-              store={jotaiStore}
-            >
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -435,41 +423,36 @@ export const WithInlineViewFields: Story = {
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      jotaiStore.set(
-        objectMetadataItemsState.atom,
-        generatedMockObjectMetadataItems,
-      );
-      jotaiStore.set(isAppMetadataReadyState.atom, true);
-      jotaiStore.set(coreViewsState.atom, [coreView]);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      companyObjectMetadataItem.id,
+    );
 
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        companyObjectMetadataItem.id,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    setRecordInStore(TEST_RECORD_ID, mockCompanyRecord);
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper
-              initializeState={initializeState}
-              store={jotaiStore}
-            >
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -534,41 +517,36 @@ export const Empty: Story = {
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      jotaiStore.set(
-        objectMetadataItemsState.atom,
-        generatedMockObjectMetadataItems,
-      );
-      jotaiStore.set(isAppMetadataReadyState.atom, true);
-      jotaiStore.set(coreViewsState.atom, [coreView]);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      companyObjectMetadataItem.id,
+    );
 
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        companyObjectMetadataItem.id,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    setRecordInStore(TEST_RECORD_ID, mockCompanyRecord);
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper
-              initializeState={initializeState}
-              store={jotaiStore}
-            >
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,

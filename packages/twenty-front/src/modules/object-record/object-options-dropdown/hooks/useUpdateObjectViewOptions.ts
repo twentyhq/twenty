@@ -1,6 +1,6 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -8,20 +8,19 @@ import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const useUpdateObjectViewOptions = () => {
   const store = useStore();
 
-  const setRecordIndexOpenRecordIn = useSetRecoilState(
+  const setRecordIndexOpenRecordIn = useSetAtomState(
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexViewName = useSetRecoilComponentState(
+  const setViewPickerInputName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
 
-  const setRecordIndexViewIcon = useSetRecoilComponentState(
+  const setViewPickerSelectedIcon = useSetAtomComponentState(
     viewPickerSelectedIconComponentState,
   );
 
@@ -31,7 +30,7 @@ export const useUpdateObjectViewOptions = () => {
     (openRecordIn: ViewOpenRecordInType, view: GraphQLView | undefined) => {
       if (!view) return;
       setRecordIndexOpenRecordIn(openRecordIn);
-      store.set(recordIndexOpenRecordInStateV2.atom, openRecordIn);
+      store.set(recordIndexOpenRecordInState.atom, openRecordIn);
       updateCurrentView({
         openRecordIn,
       });
@@ -42,23 +41,23 @@ export const useUpdateObjectViewOptions = () => {
   const setAndPersistViewName = useCallback(
     (viewName: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewName(viewName);
+      setViewPickerInputName(viewName);
       updateCurrentView({
         name: viewName,
       });
     },
-    [setRecordIndexViewName, updateCurrentView],
+    [setViewPickerInputName, updateCurrentView],
   );
 
   const setAndPersistViewIcon = useCallback(
     (viewIcon: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewIcon(viewIcon);
+      setViewPickerSelectedIcon(viewIcon);
       updateCurrentView({
         icon: viewIcon,
       });
     },
-    [setRecordIndexViewIcon, updateCurrentView],
+    [setViewPickerSelectedIcon, updateCurrentView],
   );
 
   return {

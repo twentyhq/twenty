@@ -4,8 +4,8 @@ import { copyBaseApplicationProject } from '@/utils/app-template';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import createTwentyAppPackageJson from 'package.json';
 
-// Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
   const actual = jest.requireActual('fs-extra');
   return {
@@ -41,7 +41,6 @@ describe('copyBaseApplicationProject', () => {
   let testAppDirectory: string;
 
   beforeEach(async () => {
-    // Create a unique temp directory for each test
     testAppDirectory = join(
       tmpdir(),
       `test-twenty-app-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -51,7 +50,6 @@ describe('copyBaseApplicationProject', () => {
   });
 
   afterEach(async () => {
-    // Clean up temp directory after each test
     if (testAppDirectory && (await fs.pathExists(testAppDirectory))) {
       await fs.remove(testAppDirectory);
     }
@@ -66,15 +64,12 @@ describe('copyBaseApplicationProject', () => {
       exampleOptions: ALL_EXAMPLES,
     });
 
-    // Verify src/ folder exists
     const srcAppPath = join(testAppDirectory, 'src');
     expect(await fs.pathExists(srcAppPath)).toBe(true);
 
-    // Verify application-config.ts exists in src/
     const appConfigPath = join(srcAppPath, APPLICATION_FILE_NAME);
     expect(await fs.pathExists(appConfigPath)).toBe(true);
 
-    // Verify default-role.ts exists in src/
     const roleConfigPath = join(srcAppPath, 'roles', DEFAULT_ROLE_FILE_NAME);
     expect(await fs.pathExists(roleConfigPath)).toBe(true);
   });
@@ -94,7 +89,9 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe('latest');
+    expect(packageJson.devDependencies['twenty-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
     expect(packageJson.scripts['twenty']).toBe('twenty');
   });
 
@@ -143,27 +140,22 @@ describe('copyBaseApplicationProject', () => {
     const appConfigPath = join(testAppDirectory, 'src', APPLICATION_FILE_NAME);
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
 
-    // Verify it uses defineApplication
     expect(appConfigContent).toContain(
       "import { defineApplication } from 'twenty-sdk'",
     );
     expect(appConfigContent).toContain('export default defineApplication({');
 
-    // Verify it imports the role identifier
     expect(appConfigContent).toContain(
       "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role'",
     );
 
-    // Verify display name and description
     expect(appConfigContent).toContain("displayName: 'My Test App'");
     expect(appConfigContent).toContain("description: 'A test application'");
 
-    // Verify it has a universalIdentifier (UUID format)
     expect(appConfigContent).toMatch(
       /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
     );
 
-    // Verify it references the role
     expect(appConfigContent).toContain(
       'defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
@@ -186,29 +178,24 @@ describe('copyBaseApplicationProject', () => {
     );
     const roleConfigContent = await fs.readFile(roleConfigPath, 'utf8');
 
-    // Verify it uses defineRole
     expect(roleConfigContent).toContain(
       "import { defineRole } from 'twenty-sdk'",
     );
     expect(roleConfigContent).toContain('export default defineRole({');
 
-    // Verify it exports the universal identifier constant
     expect(roleConfigContent).toContain(
       'export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
 
-    // Verify role label includes app name
     expect(roleConfigContent).toContain(
       "label: 'My Test App default function role'",
     );
 
-    // Verify default permissions
     expect(roleConfigContent).toContain('canReadAllObjectRecords: true');
     expect(roleConfigContent).toContain('canUpdateAllObjectRecords: true');
     expect(roleConfigContent).toContain('canSoftDeleteAllObjectRecords: true');
     expect(roleConfigContent).toContain('canDestroyAllObjectRecords: false');
 
-    // Verify it has a universalIdentifier (UUID format)
     expect(roleConfigContent).toMatch(
       /universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER/,
     );
@@ -223,7 +210,6 @@ describe('copyBaseApplicationProject', () => {
       exampleOptions: ALL_EXAMPLES,
     });
 
-    // Verify fs.copy was called with correct destination
     expect(fs.copy).toHaveBeenCalledTimes(1);
     expect(fs.copy).toHaveBeenCalledWith(
       expect.stringContaining('base-application'),
@@ -247,7 +233,6 @@ describe('copyBaseApplicationProject', () => {
   });
 
   it('should generate unique UUIDs for each application', async () => {
-    // Create first app
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
     await copyBaseApplicationProject({
@@ -258,7 +243,6 @@ describe('copyBaseApplicationProject', () => {
       exampleOptions: ALL_EXAMPLES,
     });
 
-    // Create second app
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
     await copyBaseApplicationProject({
@@ -269,7 +253,6 @@ describe('copyBaseApplicationProject', () => {
       exampleOptions: ALL_EXAMPLES,
     });
 
-    // Read both app configs
     const firstAppConfig = await fs.readFile(
       join(firstAppDir, 'src', APPLICATION_FILE_NAME),
       'utf8',
@@ -279,7 +262,6 @@ describe('copyBaseApplicationProject', () => {
       'utf8',
     );
 
-    // Extract UUIDs using regex
     const uuidRegex =
       /universalIdentifier: '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstAppConfig.match(uuidRegex)?.[1];
@@ -291,7 +273,6 @@ describe('copyBaseApplicationProject', () => {
   });
 
   it('should generate unique role UUIDs for each application', async () => {
-    // Create first app
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
     await copyBaseApplicationProject({
@@ -302,7 +283,6 @@ describe('copyBaseApplicationProject', () => {
       exampleOptions: ALL_EXAMPLES,
     });
 
-    // Create second app
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
     await copyBaseApplicationProject({
@@ -323,7 +303,6 @@ describe('copyBaseApplicationProject', () => {
       'utf8',
     );
 
-    // Extract UUIDs using regex
     const uuidRegex =
       /DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstRoleConfig.match(uuidRegex)?.[1];
@@ -375,6 +354,18 @@ describe('copyBaseApplicationProject', () => {
             ),
           ),
         ).toBe(true);
+
+        // Install functions should always exist
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'pre-install.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'post-install.ts'),
+          ),
+        ).toBe(true);
       });
     });
 
@@ -390,7 +381,6 @@ describe('copyBaseApplicationProject', () => {
 
         const srcPath = join(testAppDirectory, 'src');
 
-        // Core files should exist
         expect(await fs.pathExists(join(srcPath, APPLICATION_FILE_NAME))).toBe(
           true,
         );
@@ -398,7 +388,18 @@ describe('copyBaseApplicationProject', () => {
           await fs.pathExists(join(srcPath, 'roles', DEFAULT_ROLE_FILE_NAME)),
         ).toBe(true);
 
-        // Example files should not exist
+        // Install functions should always exist (not gated by exampleOptions)
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'pre-install.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'post-install.ts'),
+          ),
+        ).toBe(true);
+
         expect(
           await fs.pathExists(join(srcPath, 'objects', 'example-object.ts')),
         ).toBe(false);
@@ -674,6 +675,126 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain("name: 'example-navigation-menu-item'");
       expect(content).toContain("icon: 'IconList'");
       expect(content).toContain('position: 0');
+    });
+  });
+
+  describe('pre-install logic function', () => {
+    it('should create pre-install.ts with definePreInstallLogicFunction and typed payload', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const preInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'pre-install.ts',
+      );
+
+      expect(await fs.pathExists(preInstallPath)).toBe(true);
+
+      const content = await fs.readFile(preInstallPath, 'utf8');
+
+      expect(content).toContain(
+        "import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        'export default definePreInstallLogicFunction({',
+      );
+      expect(content).toContain("name: 'pre-install'");
+      expect(content).toContain('timeoutSeconds: 300');
+      expect(content).toContain(
+        'const handler = async (payload: InstallLogicFunctionPayload): Promise<void>',
+      );
+      expect(content).toContain('payload.previousVersion');
+
+      // Verify it has a universalIdentifier (UUID format)
+      expect(content).toMatch(
+        /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      );
+    });
+
+    it('should always create pre-install.ts regardless of example options', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const preInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'pre-install.ts',
+      );
+
+      expect(await fs.pathExists(preInstallPath)).toBe(true);
+    });
+  });
+
+  describe('post-install logic function', () => {
+    it('should create post-install.ts with definePostInstallLogicFunction and typed payload', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const postInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'post-install.ts',
+      );
+
+      expect(await fs.pathExists(postInstallPath)).toBe(true);
+
+      const content = await fs.readFile(postInstallPath, 'utf8');
+
+      expect(content).toContain(
+        "import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        'export default definePostInstallLogicFunction({',
+      );
+      expect(content).toContain("name: 'post-install'");
+      expect(content).toContain('timeoutSeconds: 300');
+      expect(content).toContain(
+        'const handler = async (payload: InstallLogicFunctionPayload): Promise<void>',
+      );
+      expect(content).toContain('payload.previousVersion');
+
+      // Verify it has a universalIdentifier (UUID format)
+      expect(content).toMatch(
+        /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      );
+    });
+
+    it('should always create post-install.ts regardless of example options', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const postInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'post-install.ts',
+      );
+
+      expect(await fs.pathExists(postInstallPath)).toBe(true);
     });
   });
 });

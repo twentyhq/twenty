@@ -14,8 +14,8 @@ import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
@@ -36,8 +36,8 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyState(
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
+    useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
     );
@@ -51,7 +51,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilComponentState(
+  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );
@@ -60,8 +60,8 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
-    setIsCurrentCardSelected(true);
-    setActionMenuDropdownPosition({
+    setIsRecordCalendarCardSelected(true);
+    setRecordIndexActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
@@ -85,7 +85,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
       >
         <StyledContainer onContextMenu={handleContextMenuOpen}>
           <StyledRecordCard
-            data-selected={isCurrentCardSelected}
+            data-selected={isRecordCalendarCardSelected}
             data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
           >
             <RecordCalendarCardHeader recordId={recordId} />

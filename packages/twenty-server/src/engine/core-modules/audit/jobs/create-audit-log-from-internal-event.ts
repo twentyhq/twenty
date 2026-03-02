@@ -30,7 +30,7 @@ export class CreateAuditLogFromInternalEvent {
 
       const auditService = this.auditService.createContext({
         workspaceId: workspaceEventBatch.workspaceId,
-        userWorkspaceId: eventData.userWorkspaceId,
+        userId: eventData.userId,
       });
 
       // Since these are object record events, we use createObjectEvent

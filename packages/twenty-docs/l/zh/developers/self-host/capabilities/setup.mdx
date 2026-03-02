@@ -5,7 +5,7 @@ title: 设置
 # 配置管理
 
 <Warning>
-  **第一次安装？** 请按照 [Docker Compose 安装指南](/l/zh/developers/self-host/capabilities/docker-compose) 获得 Twenty 运行，然后返回此处进行配置。
+**第一次安装？** 请按照 [Docker Compose 安装指南](/l/zh/developers/self-host/capabilities/docker-compose) 获得 Twenty 运行，然后返回此处进行配置。
 </Warning>
 
 Twenty 提供**两种配置模式**以适应不同的部署需求：
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. 更改会立即生效（多容器部署在 15 秒内）
 
 <Warning>
-  **多容器部署：** 当使用数据库配置（`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`）时，server 和 worker 容器都会从同一个数据库读取。 管理员面板更改会自动影响两者，无需在容器之间重复环境变量（基础设施变量除外）。
+**多容器部署：** 当使用数据库配置（`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`）时，server 和 worker 容器都会从同一个数据库读取。 管理员面板更改会自动影响两者，无需在容器之间重复环境变量（基础设施变量除外）。
 </Warning>
 
 **通过管理员面板可以配置的内容：**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![管理员面板配置变量](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
-  某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
+每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
+某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
 
-  [完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. 仅限环境配置
@@ -93,7 +93,7 @@ DEFAULT_SUBDOMAIN=app  # default value
 * 子域、自定义域名等与工作区相关的设置将在工作区设置中可用。
 
 <Warning>
-  **仅限环境的设置：**`IS_MULTIWORKSPACE_ENABLED` 只能通过 `.env` 文件进行配置，并且需要重启。 无法通过管理面板进行更改。
+**仅限环境的设置：**`IS_MULTIWORKSPACE_ENABLED` 只能通过 `.env` 文件进行配置，并且需要重启。 无法通过管理面板进行更改。
 </Warning>
 
 ### 多工作区模式的 DNS 配置
@@ -149,7 +149,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+**仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
 **所需范围**（自动配置）：
@@ -168,7 +168,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## Microsoft 365 集成
 
 <Warning>
-  用户必须拥有 [Microsoft 365 许可证](https://admin.microsoft.com/Adminportal/Home) 才能使用日历和消息传递 API。 没有许可证，他们将无法在 Twenty 上同步他们的帐户。
+用户必须拥有 [Microsoft 365 许可证](https://admin.microsoft.com/Adminportal/Home) 才能使用日历和消息传递 API。 没有许可证，他们将无法在 Twenty 上同步他们的帐户。
 </Warning>
 
 ### 在 Microsoft Azure 中创建项目
@@ -211,7 +211,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+**仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
 ### 配置范围
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. 配置你的 SMTP 设置：
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    你需要提供一个 [应用密码](https://support.google.com/accounts/answer/185833)。
 
+  <ArticleTab>
+
+  你需要提供一个 [应用密码](https://support.google.com/accounts/answer/185833)。
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  请记住，如果您启用了双重身份验证，您需要提供一个 [应用密码](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)。
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** 是一个用于开发和测试的假 SMTP 电子邮件服务器。
+  * 运行 smtp4dev 镜像： `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * 在此处访问 smtp4dev UI：[http://localhost:8090](http://localhost:8090)
+  * 设置以下变量：
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    请记住，如果您启用了双重身份验证，您需要提供一个 [应用密码](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)。
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** 是一个用于开发和测试的假 SMTP 电子邮件服务器。
-
-    * 运行 smtp4dev 镜像： `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * 在此处访问 smtp4dev UI：[http://localhost:8090](http://localhost:8090)
-    * 设置以下变量：
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+**仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
 ## 逻辑函数
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty 支持用于工作流和自定义逻辑的逻辑函数。 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
 
 <Warning>
-  \*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
+\*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
 </Warning>
 
 ### 可用驱动
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
+使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
 </Note>

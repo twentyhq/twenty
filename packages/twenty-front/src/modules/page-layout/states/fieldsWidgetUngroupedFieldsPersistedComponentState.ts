@@ -1,10 +1,10 @@
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const fieldsWidgetUngroupedFieldsPersistedComponentState =
-  createComponentState<Record<string, FieldsWidgetGroupField[]>>({
+  createAtomComponentState<Record<string, FieldsWidgetGroupField[]>>({
     key: 'fieldsWidgetUngroupedFieldsPersistedComponentState',
     defaultValue: {},
     componentInstanceContext: PageLayoutComponentInstanceContext,

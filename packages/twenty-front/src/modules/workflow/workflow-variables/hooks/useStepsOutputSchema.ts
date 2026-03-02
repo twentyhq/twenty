@@ -15,140 +15,155 @@ import {
   shouldComputeOutputSchemaOnFrontend,
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useStepsOutputSchema = () => {
   const store = useStore();
 
-  const populateStepsOutputSchema = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (workflowVersion: WorkflowVersion) => {
-        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+  const populateStepsOutputSchema = useCallback(
+    (workflowVersion: WorkflowVersion) => {
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
-        workflowVersion.steps?.forEach((step) => {
-          const stepKey = getStepOutputSchemaFamilyStateKey(
-            workflowVersion.id,
-            step.id,
-          );
+      workflowVersion.steps?.forEach((step) => {
+        const stepKey = getStepOutputSchemaFamilyStateKey(
+          workflowVersion.id,
+          step.id,
+        );
 
-          const shouldRecompute = snapshot
-            .getLoadable(shouldRecomputeOutputSchemaFamilyState(stepKey))
-            .getValue();
+        const shouldRecompute = store.get(
+          shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
+        );
 
-          const shouldComputeOnFrontend = shouldComputeOutputSchemaOnFrontend(
-            step.type,
-          );
+        const shouldComputeOnFrontend = shouldComputeOutputSchemaOnFrontend(
+          step.type,
+        );
 
-          if (!shouldRecompute) {
-            return;
-          }
-
-          const outputSchema = shouldComputeOnFrontend
-            ? computeStepOutputSchema({
-                step,
-                objectMetadataItems,
-              })
-            : step.settings?.outputSchema;
-
-          const stepOutputSchema: StepOutputSchemaV2 = {
-            id: step.id,
-            name: step.name,
-            type: step.type,
-            icon: getActionIcon(step.type),
-            outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
-            objectName: (step.settings?.input as { objectName?: string })
-              ?.objectName,
-          };
-
-          set(stepsOutputSchemaFamilyState(stepKey), stepOutputSchema);
-          set(shouldRecomputeOutputSchemaFamilyState(stepKey), false);
-        });
-
-        const trigger = workflowVersion.trigger;
-
-        if (isDefined(trigger)) {
-          const triggerKey = getStepOutputSchemaFamilyStateKey(
-            workflowVersion.id,
-            TRIGGER_STEP_ID,
-          );
-
-          const shouldRecompute = snapshot
-            .getLoadable(shouldRecomputeOutputSchemaFamilyState(triggerKey))
-            .getValue();
-
-          const shouldComputeOnFrontend = shouldComputeOutputSchemaOnFrontend(
-            trigger.type,
-          );
-
-          if (!shouldRecompute) {
-            return;
-          }
-
-          const triggerIconKey = getTriggerIcon(trigger);
-
-          const outputSchema = shouldComputeOnFrontend
-            ? computeStepOutputSchema({
-                step: trigger,
-                objectMetadataItems,
-              })
-            : trigger.settings?.outputSchema;
-
-          const triggerOutputSchema: StepOutputSchemaV2 = {
-            id: TRIGGER_STEP_ID,
-            name: isDefined(trigger.name)
-              ? trigger.name
-              : getTriggerDefaultLabel(trigger),
-            type: trigger.type,
-            icon: triggerIconKey,
-            outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
-          };
-
-          set(stepsOutputSchemaFamilyState(triggerKey), triggerOutputSchema);
-          set(shouldRecomputeOutputSchemaFamilyState(triggerKey), false);
+        if (!shouldRecompute) {
+          return;
         }
-      },
+
+        const outputSchema = shouldComputeOnFrontend
+          ? computeStepOutputSchema({
+              step,
+              objectMetadataItems,
+            })
+          : step.settings?.outputSchema;
+
+        const stepOutputSchema: StepOutputSchemaV2 = {
+          id: step.id,
+          name: step.name,
+          type: step.type,
+          icon: getActionIcon(step.type),
+          outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
+          objectName: (step.settings?.input as { objectName?: string })
+            ?.objectName,
+        };
+
+        store.set(
+          stepsOutputSchemaFamilyState.atomFamily(stepKey),
+          stepOutputSchema,
+        );
+        store.set(
+          shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
+          false,
+        );
+      });
+
+      const trigger = workflowVersion.trigger;
+
+      if (isDefined(trigger)) {
+        const triggerKey = getStepOutputSchemaFamilyStateKey(
+          workflowVersion.id,
+          TRIGGER_STEP_ID,
+        );
+
+        const shouldRecompute = store.get(
+          shouldRecomputeOutputSchemaFamilyState.atomFamily(triggerKey),
+        );
+
+        const shouldComputeOnFrontend = shouldComputeOutputSchemaOnFrontend(
+          trigger.type,
+        );
+
+        if (!shouldRecompute) {
+          return;
+        }
+
+        const triggerIconKey = getTriggerIcon(trigger);
+
+        const outputSchema = shouldComputeOnFrontend
+          ? computeStepOutputSchema({
+              step: trigger,
+              objectMetadataItems,
+            })
+          : trigger.settings?.outputSchema;
+
+        const triggerOutputSchema: StepOutputSchemaV2 = {
+          id: TRIGGER_STEP_ID,
+          name: isDefined(trigger.name)
+            ? trigger.name
+            : getTriggerDefaultLabel(trigger),
+          type: trigger.type,
+          icon: triggerIconKey,
+          outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
+        };
+
+        store.set(
+          stepsOutputSchemaFamilyState.atomFamily(triggerKey),
+          triggerOutputSchema,
+        );
+        store.set(
+          shouldRecomputeOutputSchemaFamilyState.atomFamily(triggerKey),
+          false,
+        );
+      }
+    },
     [store],
   );
 
-  const markStepForRecomputation = useRecoilCallback(
-    ({ set }) =>
-      ({
-        stepId,
+  const markStepForRecomputation = useCallback(
+    ({
+      stepId,
+      workflowVersionId,
+    }: {
+      stepId: string;
+      workflowVersionId: string;
+    }) => {
+      const stepKey = getStepOutputSchemaFamilyStateKey(
         workflowVersionId,
-      }: {
-        stepId: string;
-        workflowVersionId: string;
-      }) => {
+        stepId,
+      );
+      store.set(
+        shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
+        true,
+      );
+    },
+    [store],
+  );
+
+  const deleteStepsOutputSchema = useCallback(
+    ({
+      stepIds,
+      workflowVersionId,
+    }: {
+      stepIds: string[];
+      workflowVersionId: string;
+    }) => {
+      stepIds.forEach((stepId) => {
         const stepKey = getStepOutputSchemaFamilyStateKey(
           workflowVersionId,
           stepId,
         );
-        set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
-      },
-    [],
-  );
-
-  const deleteStepsOutputSchema = useRecoilCallback(
-    ({ set }) =>
-      ({
-        stepIds,
-        workflowVersionId,
-      }: {
-        stepIds: string[];
-        workflowVersionId: string;
-      }) => {
-        stepIds.forEach((stepId) => {
-          const stepKey = getStepOutputSchemaFamilyStateKey(
-            workflowVersionId,
-            stepId,
-          );
-          set(stepsOutputSchemaFamilyState(stepKey), null);
-          set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
-        });
-      },
-    [],
+        store.set(stepsOutputSchemaFamilyState.atomFamily(stepKey), null);
+        store.set(
+          shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
+          true,
+        );
+      });
+    },
+    [store],
   );
 
   return {

@@ -1,5 +1,3 @@
-import { useSetRecoilState } from 'recoil';
-
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
@@ -7,6 +5,7 @@ import { viewableRecordNameSingularState } from '@/object-record/record-right-dr
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Note } from '@/activities/types/Note';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
@@ -40,15 +39,15 @@ export const useOpenCreateActivityDrawer = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const setActivityTargetableEntityArray = useSetRecoilState(
+  const setActivityTargetableEntityArray = useSetAtomState(
     activityTargetableEntityArrayState,
   );
-  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetRecoilState(
+  const setViewableRecordId = useSetAtomState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetAtomState(
     viewableRecordNameSingularState,
   );
 
-  const setIsUpsertingActivityInDB = useSetRecoilState(
+  const setIsUpsertingActivityInDB = useSetAtomState(
     isUpsertingActivityInDBState,
   );
 

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';
 import { billingState } from '@/client-config/states/billingState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { usePlans } from '@/billing/hooks/usePlans';
 
 const StyledChooseYourPlanPlaceholder = styled.div`
@@ -12,7 +12,7 @@ const StyledChooseYourPlanPlaceholder = styled.div`
 
 export const ChooseYourPlan = () => {
   const { isPlansLoaded } = usePlans();
-  const billing = useRecoilValueV2(billingState);
+  const billing = useAtomStateValue(billingState);
   return (
     <Modal.Content isVerticalCentered>
       {isDefined(billing) && isPlansLoaded ? (

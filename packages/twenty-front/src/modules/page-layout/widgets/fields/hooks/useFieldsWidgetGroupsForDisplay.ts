@@ -6,7 +6,7 @@ import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFie
 import { type FieldsWidgetDisplayMode } from '@/page-layout/widgets/fields/types/FieldsWidgetDisplayMode';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,28 +24,30 @@ export const useFieldsWidgetGroupsForDisplay = ({
 }: UseFieldsWidgetGroupsForDisplayParams) => {
   const { t } = useLingui();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const allDraftGroups = useRecoilComponentValue(
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,
   );
 
-  const allUngroupedFieldsDraft = useRecoilComponentValue(
+  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateValue(
     fieldsWidgetUngroupedFieldsDraftComponentState,
   );
 
-  const allModes = useRecoilComponentValue(fieldsWidgetModeDraftComponentState);
+  const fieldsWidgetModeDraft = useAtomComponentStateValue(
+    fieldsWidgetModeDraftComponentState,
+  );
 
   const viewGroups = useFieldsWidgetGroups({
     viewId,
     objectNameSingular,
   });
 
-  const draftGroupsForWidget = allDraftGroups[widgetId];
-  const draftMode = allModes[widgetId];
-  const ungroupedFieldsForWidget = allUngroupedFieldsDraft[widgetId];
+  const draftGroupsForWidget = fieldsWidgetGroupsDraft[widgetId];
+  const draftMode = fieldsWidgetModeDraft[widgetId];
+  const ungroupedFieldsForWidget = fieldsWidgetUngroupedFieldsDraft[widgetId];
 
   const hasDraftGroups =
     isDefined(draftGroupsForWidget) && draftGroupsForWidget.length > 0;

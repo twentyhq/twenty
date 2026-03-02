@@ -1,9 +1,6 @@
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
-import {
-  THEME_LIGHT,
-  ThemeContextProvider,
-  ThemeProvider,
-} from 'twenty-ui/theme';
+import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
@@ -46,14 +43,14 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
 
 const renderAssistantRenderer = (messageParts: ExtendedUIMessagePart[]) => {
   return render(
-    <ThemeProvider theme={THEME_LIGHT}>
+    <EmotionThemeProvider theme={THEME_LIGHT}>
       <ThemeContextProvider theme={THEME_LIGHT}>
         <AIChatAssistantMessageRenderer
           messageParts={messageParts}
           isLastMessageStreaming={false}
         />
       </ThemeContextProvider>
-    </ThemeProvider>,
+    </EmotionThemeProvider>,
   );
 };
 

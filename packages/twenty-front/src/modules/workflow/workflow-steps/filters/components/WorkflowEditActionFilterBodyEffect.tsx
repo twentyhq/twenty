@@ -1,6 +1,6 @@
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
@@ -31,7 +31,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilters,
-  ] = useRecoilComponentFamilyState(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentStepFiltersComponentFamilyState,
     { stepId },
   );
@@ -39,23 +39,23 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilterGroups,
     setHasInitializedCurrentStepFilterGroups,
-  ] = useRecoilComponentFamilyState(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentStepFilterGroupsComponentFamilyState,
     { stepId },
   );
 
-  const currentStepFilters = useRecoilComponentValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useRecoilComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
 
-  const setCurrentStepFilters = useSetRecoilComponentState(
+  const setCurrentStepFilters = useSetAtomComponentState(
     currentStepFiltersComponentState,
   );
 
-  const setCurrentStepFilterGroups = useSetRecoilComponentState(
+  const setCurrentStepFilterGroups = useSetAtomComponentState(
     currentStepFilterGroupsComponentState,
   );
 

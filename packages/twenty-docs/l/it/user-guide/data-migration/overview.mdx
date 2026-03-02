@@ -44,16 +44,15 @@ Puoi importare le relazioni tra oggetti utilizzando la funzione di importazione 
 <Note>**I record eliminati influiscono sull'unicità.** I record eliminati in modo non definitivo (visibili nel Menu comandi → Vedi record eliminati) sono inclusi nei controlli di unicità. Se importi un record con lo stesso valore univoco di un record eliminato, il record eliminato verrà ripristinato.</Note>
 
 <Warning>
-  **L'ordine di importazione è importante!**
+**L'ordine di importazione è importante!**
 
-  Quando importi oggetti correlati, carica i file in questo ordine:
+Quando importi oggetti correlati, carica i file in questo ordine:
+1. **Aziende** per prime (il lato "uno" delle relazioni)
+2. **Persone** in secondo luogo (collegate alle aziende tramite companyId)
+3. **Opportunità** in terzo luogo (collegate ad aziende/persone)
+4. **Oggetti personalizzati** con relazioni per ultimi
 
-  1. **Aziende** per prime (il lato "uno" delle relazioni)
-  2. **Persone** in secondo luogo (collegate alle aziende tramite companyId)
-  3. **Opportunità** in terzo luogo (collegate ad aziende/persone)
-  4. **Oggetti personalizzati** con relazioni per ultimi
-
-  Perché? Il lato "uno" di una relazione uno-a-molti deve esistere prima di potervi fare riferimento. Ad esempio, il record Azienda deve esistere prima di importare una Persona con l'ID di quella azienda.
+Perché? Il lato "uno" di una relazione uno-a-molti deve esistere prima di potervi fare riferimento. Ad esempio, il record Azienda deve esistere prima di importare una Persona con l'ID di quella azienda.
 </Warning>
 
 Consulta [questo articolo](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per una guida passo passo su come procedere.

@@ -1,20 +1,23 @@
-import { selectorFamily } from 'recoil';
-
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { createAtomWritableFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomWritableFamilySelector';
 
-export const recordStoreFamilySelector = selectorFamily({
+export const recordStoreFamilySelector = createAtomWritableFamilySelector<
+  unknown,
+  { recordId: string; fieldName: string }
+>({
   key: 'recordStoreFamilySelector',
   get:
-    <T>({ fieldName, recordId }: { fieldName: string; recordId: string }) =>
+    ({ recordId, fieldName }) =>
     ({ get }) =>
-      get(recordStoreFamilyState(recordId))?.[fieldName] as T,
+      get(recordStoreFamilyState, recordId)?.[fieldName],
   set:
-    <T>({ fieldName, recordId }: { fieldName: string; recordId: string }) =>
-    ({ set }, newValue: T) =>
-      set(recordStoreFamilyState(recordId), (prevState) =>
-        prevState
-          ? { ...prevState, [fieldName]: newValue }
+    ({ recordId, fieldName }) =>
+    ({ set }, newValue) => {
+      set(recordStoreFamilyState, recordId, (prev) =>
+        prev
+          ? { ...prev, [fieldName]: newValue }
           : ({ [fieldName]: newValue } as ObjectRecord),
-      ),
+      );
+    },
 });

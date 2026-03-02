@@ -10,9 +10,9 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback, useEffect } from 'react';
 
 type UseInitializeFieldsWidgetGroupsDraftParams = {
   pageLayoutId: string;
@@ -29,119 +29,115 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
   serverUngroupedFields,
   serverMode,
 }: UseInitializeFieldsWidgetGroupsDraftParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsPersistedComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetUngroupedFieldsDraftState = useRecoilComponentCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetUngroupedFieldsDraftState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
+    );
 
   const fieldsWidgetUngroupedFieldsPersistedState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       fieldsWidgetUngroupedFieldsPersistedComponentState,
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetModeDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetModePersistedState = useRecoilComponentCallbackState(
+  const fieldsWidgetModePersistedState = useAtomComponentStateCallbackState(
     fieldsWidgetModePersistedComponentState,
     pageLayoutId,
   );
 
   const hasInitializedFieldsWidgetGroupsDraftState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       hasInitializedFieldsWidgetGroupsDraftComponentState,
       pageLayoutId,
     );
 
-  const initializeDraft = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const hasInitialized = snapshot
-          .getLoadable(hasInitializedFieldsWidgetGroupsDraftState)
-          .getValue();
+  const store = useStore();
 
-        if (hasInitialized[widgetId]) {
-          return;
-        }
-
-        const currentDraft = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
-
-        const hasDraftForWidget = widgetId in currentDraft;
-
-        if (!hasDraftForWidget) {
-          set(fieldsWidgetGroupsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: serverGroups,
-          }));
-
-          set(fieldsWidgetGroupsPersistedState, (prev) => ({
-            ...prev,
-            [widgetId]: serverGroups,
-          }));
-
-          set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: serverUngroupedFields,
-          }));
-
-          set(fieldsWidgetUngroupedFieldsPersistedState, (prev) => ({
-            ...prev,
-            [widgetId]: serverUngroupedFields,
-          }));
-        }
-
-        // Mode initialization is independent so it's always set,
-        // even if draft already existed from a previous code version.
-        const currentModes = snapshot
-          .getLoadable(fieldsWidgetModeDraftState)
-          .getValue();
-
-        if (!(widgetId in currentModes)) {
-          set(fieldsWidgetModeDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: serverMode,
-          }));
-
-          set(fieldsWidgetModePersistedState, (prev) => ({
-            ...prev,
-            [widgetId]: serverMode,
-          }));
-        }
-
-        set(hasInitializedFieldsWidgetGroupsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: true,
-        }));
-      },
-    [
+  const initializeDraft = useCallback(() => {
+    const hasInitialized = store.get(
       hasInitializedFieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
-      fieldsWidgetUngroupedFieldsDraftState,
-      fieldsWidgetUngroupedFieldsPersistedState,
-      fieldsWidgetModeDraftState,
-      fieldsWidgetModePersistedState,
-      widgetId,
-      serverGroups,
-      serverUngroupedFields,
-      serverMode,
-    ],
-  );
+    );
+
+    if (hasInitialized[widgetId]) {
+      return;
+    }
+
+    const currentDraft = store.get(fieldsWidgetGroupsDraftState);
+
+    const hasDraftForWidget = widgetId in currentDraft;
+
+    if (!hasDraftForWidget) {
+      store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: serverGroups,
+      }));
+
+      store.set(fieldsWidgetGroupsPersistedState, (prev) => ({
+        ...prev,
+        [widgetId]: serverGroups,
+      }));
+
+      store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: serverUngroupedFields,
+      }));
+
+      store.set(fieldsWidgetUngroupedFieldsPersistedState, (prev) => ({
+        ...prev,
+        [widgetId]: serverUngroupedFields,
+      }));
+    }
+
+    // Mode initialization is independent so it's always set,
+    // even if draft already existed from a previous code version.
+    const currentModes = store.get(fieldsWidgetModeDraftState);
+
+    if (!(widgetId in currentModes)) {
+      store.set(fieldsWidgetModeDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: serverMode,
+      }));
+
+      store.set(fieldsWidgetModePersistedState, (prev) => ({
+        ...prev,
+        [widgetId]: serverMode,
+      }));
+    }
+
+    store.set(hasInitializedFieldsWidgetGroupsDraftState, (prev) => ({
+      ...prev,
+      [widgetId]: true,
+    }));
+  }, [
+    hasInitializedFieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsPersistedState,
+    fieldsWidgetUngroupedFieldsDraftState,
+    fieldsWidgetUngroupedFieldsPersistedState,
+    fieldsWidgetModeDraftState,
+    fieldsWidgetModePersistedState,
+    widgetId,
+    serverGroups,
+    serverUngroupedFields,
+    serverMode,
+    store,
+  ]);
 
   useEffect(() => {
     const hasData = serverGroups.length > 0 || serverUngroupedFields.length > 0;

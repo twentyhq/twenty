@@ -9,7 +9,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { FieldsWidgetFieldItem } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldItem';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type FieldsWidgetFieldListProps = {
   fields: FieldsWidgetGroupField[];
@@ -42,7 +42,7 @@ export const FieldsWidgetFieldList = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+  const setRecordFieldListHoverPosition = useSetAtomComponentState(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );

@@ -1,9 +1,9 @@
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const recordIndexRecordIdsByGroupComponentFamilyState =
-  createComponentFamilyState<string[], RecordGroupDefinition['id']>({
+  createAtomComponentFamilyState<string[], RecordGroupDefinition['id']>({
     key: 'recordIndexRecordIdsByGroupComponentFamilyState',
     defaultValue: [],
     componentInstanceContext: ViewComponentInstanceContext,

@@ -5,10 +5,11 @@ import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fields
 import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewFragmentFragment } from '~/generated-metadata/graphql';
 
@@ -43,33 +44,34 @@ type UseSaveFieldsWidgetGroupsParams = {
 export const useSaveFieldsWidgetGroups = ({
   pageLayoutId,
 }: UseSaveFieldsWidgetGroupsParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsPersistedComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetUngroupedFieldsDraftState = useRecoilComponentCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetUngroupedFieldsDraftState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
+    );
 
   const fieldsWidgetUngroupedFieldsPersistedState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       fieldsWidgetUngroupedFieldsPersistedComponentState,
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetModeDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetModePersistedState = useRecoilComponentCallbackState(
+  const fieldsWidgetModePersistedState = useAtomComponentStateCallbackState(
     fieldsWidgetModePersistedComponentState,
     pageLayoutId,
   );
@@ -81,105 +83,101 @@ export const useSaveFieldsWidgetGroups = ({
 
   const { refreshAllCoreViews } = useRefreshAllCoreViews();
 
-  const saveFieldsWidgetGroups = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        const allDraftGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
-        const allPersistedGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsPersistedState)
-          .getValue();
-        const allUngroupedFieldsDraft = snapshot
-          .getLoadable(fieldsWidgetUngroupedFieldsDraftState)
-          .getValue();
-        const allModes = snapshot
-          .getLoadable(fieldsWidgetModeDraftState)
-          .getValue();
+  const store = useStore();
 
-        const widgetIds = new Set([
-          ...Object.keys(allDraftGroups),
-          ...Object.keys(allPersistedGroups),
-          ...Object.keys(allUngroupedFieldsDraft),
-        ]);
-
-        for (const widgetId of widgetIds) {
-          const mode = allModes[widgetId] ?? 'ungrouped';
-
-          if (mode === 'grouped') {
-            const draftGroups = allDraftGroups[widgetId] ?? [];
-
-            await upsertFieldsWidgetMutation({
-              variables: {
-                input: {
-                  widgetId,
-                  groups: draftGroups.map((group) => ({
-                    id: group.id,
-                    name: group.name,
-                    position: group.position,
-                    isVisible: group.isVisible,
-                    fields: group.fields.flatMap((field) => {
-                      if (!isDefined(field.viewFieldId)) {
-                        return [];
-                      }
-
-                      return [
-                        {
-                          viewFieldId: field.viewFieldId,
-                          isVisible: field.isVisible,
-                          position: field.position,
-                        },
-                      ];
-                    }),
-                  })),
-                },
-              },
-            });
-          } else {
-            const ungroupedFields = allUngroupedFieldsDraft[widgetId] ?? [];
-
-            await upsertFieldsWidgetMutation({
-              variables: {
-                input: {
-                  widgetId,
-                  fields: ungroupedFields.flatMap((field) => {
-                    if (!isDefined(field.viewFieldId)) {
-                      return [];
-                    }
-
-                    return [
-                      {
-                        viewFieldId: field.viewFieldId,
-                        isVisible: field.isVisible,
-                        position: field.position,
-                      },
-                    ];
-                  }),
-                },
-              },
-            });
-          }
-        }
-
-        set(fieldsWidgetGroupsPersistedState, allDraftGroups);
-        set(fieldsWidgetUngroupedFieldsPersistedState, allUngroupedFieldsDraft);
-        set(fieldsWidgetModePersistedState, allModes);
-
-        await refreshAllCoreViews();
-
-        return { status: 'successful' as const };
-      },
-    [
-      fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
+  const saveFieldsWidgetGroups = useCallback(async () => {
+    const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
+    const allPersistedGroups = store.get(fieldsWidgetGroupsPersistedState);
+    const allUngroupedFieldsDraft = store.get(
       fieldsWidgetUngroupedFieldsDraftState,
+    );
+    const allModes = store.get(fieldsWidgetModeDraftState);
+
+    const widgetIds = new Set([
+      ...Object.keys(allDraftGroups),
+      ...Object.keys(allPersistedGroups),
+      ...Object.keys(allUngroupedFieldsDraft),
+    ]);
+
+    for (const widgetId of widgetIds) {
+      const mode = allModes[widgetId] ?? 'ungrouped';
+
+      if (mode === 'grouped') {
+        const draftGroups = allDraftGroups[widgetId] ?? [];
+
+        await upsertFieldsWidgetMutation({
+          variables: {
+            input: {
+              widgetId,
+              groups: draftGroups.map((group) => ({
+                id: group.id,
+                name: group.name,
+                position: group.position,
+                isVisible: group.isVisible,
+                fields: group.fields.flatMap((field) => {
+                  if (!isDefined(field.viewFieldId)) {
+                    return [];
+                  }
+
+                  return [
+                    {
+                      viewFieldId: field.viewFieldId,
+                      isVisible: field.isVisible,
+                      position: field.position,
+                    },
+                  ];
+                }),
+              })),
+            },
+          },
+        });
+      } else {
+        const ungroupedFields = allUngroupedFieldsDraft[widgetId] ?? [];
+
+        await upsertFieldsWidgetMutation({
+          variables: {
+            input: {
+              widgetId,
+              fields: ungroupedFields.flatMap((field) => {
+                if (!isDefined(field.viewFieldId)) {
+                  return [];
+                }
+
+                return [
+                  {
+                    viewFieldId: field.viewFieldId,
+                    isVisible: field.isVisible,
+                    position: field.position,
+                  },
+                ];
+              }),
+            },
+          },
+        });
+      }
+    }
+
+    store.set(fieldsWidgetGroupsPersistedState, allDraftGroups);
+    store.set(
       fieldsWidgetUngroupedFieldsPersistedState,
-      fieldsWidgetModeDraftState,
-      fieldsWidgetModePersistedState,
-      upsertFieldsWidgetMutation,
-      refreshAllCoreViews,
-    ],
-  );
+      allUngroupedFieldsDraft,
+    );
+    store.set(fieldsWidgetModePersistedState, allModes);
+
+    await refreshAllCoreViews();
+
+    return { status: 'successful' as const };
+  }, [
+    fieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsPersistedState,
+    fieldsWidgetUngroupedFieldsDraftState,
+    fieldsWidgetUngroupedFieldsPersistedState,
+    fieldsWidgetModeDraftState,
+    fieldsWidgetModePersistedState,
+    upsertFieldsWidgetMutation,
+    refreshAllCoreViews,
+    store,
+  ]);
 
   return { saveFieldsWidgetGroups };
 };

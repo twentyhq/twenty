@@ -1,16 +1,21 @@
-import { selectorFamily } from 'recoil';
-
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const recordStoreRecordsSelector = selectorFamily({
+type RecordStoreRecordsFamilyKey = {
+  recordIds: string[];
+};
+
+export const recordStoreRecordsSelector = createAtomFamilySelector<
+  ObjectRecord[],
+  RecordStoreRecordsFamilyKey
+>({
   key: 'recordStoreRecordsSelector',
   get:
-    ({ recordIds }: { recordIds: string[] }) =>
-    ({ get }) => {
-      const records = recordIds
-        .map((recordId) => get(recordStoreFamilyState(recordId)))
-        .filter(isDefined);
-      return records;
-    },
+    ({ recordIds }: RecordStoreRecordsFamilyKey) =>
+    ({ get }) =>
+      recordIds
+        .map((recordId) => get(recordStoreFamilyState, recordId))
+        .filter(isDefined),
 });

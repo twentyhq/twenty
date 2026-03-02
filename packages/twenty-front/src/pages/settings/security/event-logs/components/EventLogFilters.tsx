@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { IconUser, IconBox, useIcons } from 'twenty-ui/display';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { IconBox, IconUser, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
@@ -38,7 +38,7 @@ export const EventLogFilters = ({
   onChange,
 }: EventLogFiltersProps) => {
   const { t } = useLingui();
-  const currentWorkspaceMembers = useRecoilValueV2(
+  const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();

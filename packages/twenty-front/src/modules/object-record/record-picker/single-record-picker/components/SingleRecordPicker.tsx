@@ -9,7 +9,7 @@ import { singleRecordPickerSearchFilterComponentState } from '@/object-record/re
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
@@ -33,13 +33,13 @@ export const SingleRecordPicker = ({
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
   const handleCancel = () => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onCancel?.();
   };
@@ -47,7 +47,7 @@ export const SingleRecordPicker = ({
   const handleMorphItemSelected = (
     selectedMorphItem?: RecordPickerPickableMorphItem | undefined,
   ) => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onMorphItemSelected?.(selectedMorphItem);
   };

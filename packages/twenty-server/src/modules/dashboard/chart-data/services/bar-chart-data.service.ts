@@ -19,7 +19,7 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
-import { BarChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-data-output.dto';
+import { BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart-data.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -59,7 +59,7 @@ export class BarChartDataService {
     objectMetadataId,
     configuration,
     authContext,
-  }: GetBarChartDataParams): Promise<BarChartDataOutputDTO> {
+  }: GetBarChartDataParams): Promise<BarChartDataDTO> {
     try {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -218,7 +218,7 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
-  }): BarChartDataOutputDTO {
+  }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
@@ -354,7 +354,7 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
-  }): BarChartDataOutputDTO {
+  }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 

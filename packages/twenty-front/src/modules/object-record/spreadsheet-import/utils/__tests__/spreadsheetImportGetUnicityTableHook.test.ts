@@ -2,11 +2,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { IndexType } from '~/generated-metadata/graphql';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('spreadsheetImportGetUnicityTableHook', () => {
-  const baseMockCompany = getMockCompanyObjectMetadataItem();
+  const baseMockCompany = getMockObjectMetadataItemOrThrow('company');
 
   const nameField = getMockFieldMetadataItemOrThrow({
     objectMetadataItem: baseMockCompany,

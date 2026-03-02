@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
+import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 
-type CreateEventInput = {
-  action: string;
-  payload: object;
+type TelemetrySignUpEvent = {
+  action: typeof USER_SIGNUP_EVENT_NAME;
+  events: TelemetryEventType[];
 };
+
+type TelemetryEventPayload = TelemetrySignUpEvent;
 
 @Injectable()
 export class TelemetryService {
@@ -15,32 +19,24 @@ export class TelemetryService {
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
-  async create(
-    createEventInput: CreateEventInput,
-    userId: string | null | undefined,
-    workspaceId: string | null | undefined,
-  ) {
+  async publish(payload: TelemetryEventPayload) {
     if (!this.twentyConfigService.get('TELEMETRY_ENABLED')) {
       return { success: true };
     }
-
-    const data = {
-      action: createEventInput.action,
-      timestamp: new Date().toISOString(),
-      version: '1',
-      payload: {
-        userId: userId,
-        workspaceId: workspaceId,
-        ...createEventInput.payload,
-      },
-    };
 
     try {
       const httpClient = this.secureHttpClientService.getHttpClient({
         baseURL: 'https://twenty-telemetry.com/api/v2',
       });
 
-      await httpClient.post(`/selfHostingEvent`, data);
+      await Promise.all(
+        payload.events.map((event) =>
+          httpClient.post(`/selfHostingEvent`, {
+            action: payload.action,
+            ...event,
+          }),
+        ),
+      );
     } catch {
       return { success: false };
     }

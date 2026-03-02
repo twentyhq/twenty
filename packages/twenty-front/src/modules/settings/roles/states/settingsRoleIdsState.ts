@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const settingsRoleIdsState = atom<string[]>({
+export const settingsRoleIdsState = createAtomState<string[]>({
   key: 'settingsRoleIdsState',
-  default: [],
+  defaultValue: [],
 });

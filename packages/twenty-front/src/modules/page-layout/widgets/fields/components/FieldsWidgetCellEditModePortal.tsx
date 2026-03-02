@@ -7,7 +7,7 @@ import { FieldInput } from '@/object-record/record-field/ui/components/FieldInpu
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type FieldsWidgetCellEditModePortalProps = {
@@ -25,15 +25,18 @@ export const FieldsWidgetCellEditModePortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const editModePosition = useRecoilComponentValue(
+  const recordFieldListCellEditModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 
-  const editedFieldMetadataItem = isDefined(editModePosition)
-    ? flattenedFieldMetadataItems.at(editModePosition)
+  const editedFieldMetadataItem = isDefined(recordFieldListCellEditModePosition)
+    ? flattenedFieldMetadataItems.at(recordFieldListCellEditModePosition)
     : undefined;
 
-  if (!isDefined(editModePosition) || !isDefined(editedFieldMetadataItem)) {
+  if (
+    !isDefined(recordFieldListCellEditModePosition) ||
+    !isDefined(editedFieldMetadataItem)
+  ) {
     return null;
   }
 

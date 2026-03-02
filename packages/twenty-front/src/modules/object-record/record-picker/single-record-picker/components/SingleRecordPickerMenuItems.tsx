@@ -18,9 +18,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItems = ({
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     selectableListComponentInstanceId,
     'select-none',
@@ -72,15 +72,14 @@ export const SingleRecordPickerMenuItems = ({
   const selectableItemIds = pickableMorphItems.map(
     (morphItem) => morphItem.recordId,
   );
-  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentState(
-    singleRecordPickerSelectedIdComponentState,
-  );
+  const [singleRecordPickerSelectedId, setSingleRecordPickerSelectedId] =
+    useAtomComponentState(singleRecordPickerSelectedIdComponentState);
 
-  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const singleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
+  const singleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 
@@ -101,19 +100,19 @@ export const SingleRecordPickerMenuItems = ({
           key="select-none"
           itemId="select-none"
           onEnter={() => {
-            setSelectedRecordId(undefined);
+            setSingleRecordPickerSelectedId(undefined);
             onMorphItemSelected();
           }}
         >
           <MenuItemSelect
             onClick={() => {
-              setSelectedRecordId(undefined);
+              setSingleRecordPickerSelectedId(undefined);
               onMorphItemSelected();
             }}
             LeftIcon={EmptyIcon}
             text={emptyLabel}
-            selected={isUndefined(selectedRecordId)}
-            focused={isSelectedSelectNoneButton}
+            selected={isUndefined(singleRecordPickerSelectedId)}
+            focused={isSelectedItemId}
           />
         </SelectableListItem>
       )}
@@ -127,7 +126,9 @@ export const SingleRecordPickerMenuItems = ({
             key={morphItem.recordId}
             morphItem={morphItem}
             onMorphItemSelected={onMorphItemSelected}
-            isRecordSelected={selectedRecordId === morphItem.recordId}
+            isRecordSelected={
+              singleRecordPickerSelectedId === morphItem.recordId
+            }
           />
         ))
       )}

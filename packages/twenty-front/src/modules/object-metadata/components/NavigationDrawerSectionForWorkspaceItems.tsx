@@ -1,5 +1,4 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
@@ -18,7 +17,6 @@ import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
@@ -26,7 +24,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -67,15 +65,14 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
@@ -206,6 +203,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                             folderId={item.id}
                             folderName={item.name ?? 'Folder'}
                             folderIconKey={item.Icon}
+                            folderColor={
+                              'color' in item ? item.color : undefined
+                            }
                             navigationMenuItems={
                               folderChildrenById.get(item.id) ?? []
                             }
@@ -231,7 +231,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
                 if (type === 'link') {
                   const linkItem = item as ProcessedNavigationMenuItem;
-                  const iconColors = getNavigationMenuItemIconColors(theme);
                   return (
                     <NavigationItemDropTarget
                       key={item.id}
@@ -259,7 +258,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                                 : undefined
                             }
                             Icon={IconLink}
-                            iconBackgroundColor={iconColors.link}
+                            iconColor={linkItem.color}
                             active={false}
                             isSelectedInEditMode={
                               editModeProps.isSelectedInEditMode

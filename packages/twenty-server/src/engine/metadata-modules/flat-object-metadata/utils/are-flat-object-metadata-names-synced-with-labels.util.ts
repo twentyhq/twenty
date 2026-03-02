@@ -5,18 +5,18 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 export const areFlatObjectMetadataNamesSyncedWithLabels = ({
-  flatObjectdMetadata,
+  flatObjectMetadata,
   buildOptions,
 }: {
   buildOptions: WorkspaceMigrationBuilderOptions;
-  flatObjectdMetadata: Pick<
+  flatObjectMetadata: Pick<
     UniversalFlatObjectMetadata,
     'namePlural' | 'nameSingular' | 'labelPlural' | 'labelSingular'
   >;
 }) => {
   const [computedSingularName, computedPluralName] = [
-    flatObjectdMetadata.labelSingular,
-    flatObjectdMetadata.labelPlural,
+    flatObjectMetadata.labelSingular,
+    flatObjectMetadata.labelPlural,
   ].map((label) =>
     computeMetadataNameFromLabel({
       label,
@@ -25,7 +25,7 @@ export const areFlatObjectMetadataNamesSyncedWithLabels = ({
   );
 
   return (
-    flatObjectdMetadata.nameSingular === computedSingularName &&
-    flatObjectdMetadata.namePlural === computedPluralName
+    flatObjectMetadata.nameSingular === computedSingularName &&
+    flatObjectMetadata.namePlural === computedPluralName
   );
 };

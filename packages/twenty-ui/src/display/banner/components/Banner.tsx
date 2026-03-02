@@ -1,21 +1,24 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledBanner = styled.div<{ variant?: BannerVariant }>`
   align-items: center;
   backdrop-filter: blur(5px);
-  background: ${({ theme, variant }) =>
-    variant === 'danger' ? theme.color.red : theme.color.blue};
+  background: ${({ variant }) =>
+    variant === 'danger'
+      ? themeCssVariables.color.red
+      : themeCssVariables.color.blue};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   height: 40px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${themeCssVariables.font.color.inverted};
   font-family: Inter;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 150%;
   box-sizing: border-box;
 `;
@@ -32,8 +35,10 @@ export const Banner = ({
   variant = 'default',
   className,
   children,
-}: BannerProps) => (
-  <StyledBanner variant={variant} className={className}>
-    {children}
-  </StyledBanner>
-);
+}: BannerProps) => {
+  return (
+    <StyledBanner variant={variant} className={className}>
+      {children}
+    </StyledBanner>
+  );
+};

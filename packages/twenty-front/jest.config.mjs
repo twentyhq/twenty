@@ -86,7 +86,8 @@ const jestConfig = {
     'display/icon/index.ts',
   ],
   coverageDirectory: './coverage',
-  maxWorkers: '50%',
+  maxWorkers: 3,
+  workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
 };
 

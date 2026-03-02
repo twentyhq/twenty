@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const playgroundApiKeyState = atom<string | null>({
+export const playgroundApiKeyState = createAtomState<string | null>({
   key: 'playgroundApiKeyState',
-  default: null,
-  effects: [localStorageEffect()],
+  defaultValue: null,
+  useLocalStorage: true,
 });

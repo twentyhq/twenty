@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const navigationMemorizedUrlState = createStateV2<string>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const navigationMemorizedUrlState = createAtomState<string>({
   key: 'navigationMemorizedUrlState',
   defaultValue: '/',
 });

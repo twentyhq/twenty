@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 
@@ -40,15 +39,13 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
     'workflow-visualizer-instance-id';
 
   return (
-    <RecoilRoot>
-      <WorkflowVisualizerComponentInstanceContext.Provider
-        value={{
-          instanceId: workflowVisualizerComponentInstanceId,
-        }}
-      >
-        {children}
-      </WorkflowVisualizerComponentInstanceContext.Provider>
-    </RecoilRoot>
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: workflowVisualizerComponentInstanceId,
+      }}
+    >
+      {children}
+    </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };
 

@@ -1,5 +1,5 @@
 const jestConfig = {
-  displayName: 'twenty-cli',
+  displayName: 'create-twenty-app',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transformIgnorePatterns: ['../../node_modules/'],
@@ -15,6 +15,7 @@ const jestConfig = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^package.json$': '<rootDir>/package.json',
   },
   moduleFileExtensions: ['ts', 'js'],
   extensionsToTreatAsEsm: ['.ts'],

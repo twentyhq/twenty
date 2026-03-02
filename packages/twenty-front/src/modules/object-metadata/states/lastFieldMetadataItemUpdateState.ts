@@ -1,8 +1,8 @@
 import type { FieldMetadataItemUpdate } from '@/object-metadata/types/FieldMetadataItemUpdate';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const lastFieldMetadataItemUpdateState =
-  createStateV2<FieldMetadataItemUpdate | null>({
+  createAtomState<FieldMetadataItemUpdate | null>({
     key: 'lastFieldMetadataItemUpdateState',
     defaultValue: null,
   });

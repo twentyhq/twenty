@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const captchaTokenState = createStateV2<string | undefined>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const captchaTokenState = createAtomState<string | undefined>({
   key: 'captchaTokenState',
   defaultValue: undefined,
 });

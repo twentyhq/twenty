@@ -3,6 +3,7 @@ import {
   extractDefineEntity,
   ManifestEntityKey,
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
+  TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import {
@@ -72,6 +73,8 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
+  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
+  const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -207,6 +210,23 @@ export const buildManifest = async (
 
         logicFunctions.push(config);
         logicFunctionsFilePaths.push(relativePath);
+
+        if (
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+        ) {
+          preInstallLogicFunctionUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
+        if (
+          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
+        ) {
+          postInstallLogicFunctionUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -302,6 +322,34 @@ export const buildManifest = async (
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
+  }
+
+  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
+  if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one post install logic function is allowed per application',
+    );
+  }
+
+  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+    application = {
+      ...application,
+      preInstallLogicFunctionUniversalIdentifier:
+        preInstallLogicFunctionUniversalIdentifiers[0],
+    };
+  }
+
+  if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+    application = {
+      ...application,
+      postInstallLogicFunctionUniversalIdentifier:
+        postInstallLogicFunctionUniversalIdentifiers[0],
+    };
   }
 
   const manifest = !application

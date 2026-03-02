@@ -4,7 +4,7 @@ import { Args, Context, Mutation } from '@nestjs/graphql';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.input';
-import { ResendEmailVerificationTokenOutput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.output';
+import { ResendEmailVerificationTokenDTO } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.dto';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -26,14 +26,14 @@ export class EmailVerificationResolver {
   ) {}
 
   // TODO: this should be an authenticated endpoint
-  @Mutation(() => ResendEmailVerificationTokenOutput)
+  @Mutation(() => ResendEmailVerificationTokenDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async resendEmailVerificationToken(
     @Args()
     resendEmailVerificationTokenInput: ResendEmailVerificationTokenInput,
     @Args('origin') origin: string,
     @Context() context: I18nContext,
-  ): Promise<ResendEmailVerificationTokenOutput> {
+  ): Promise<ResendEmailVerificationTokenDTO> {
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,

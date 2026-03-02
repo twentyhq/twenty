@@ -1,18 +1,17 @@
-import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { SuggestionMenu } from '@blocknote/core/extensions';
+import { useExtensionState } from '@blocknote/react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
+
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-export type BlockEditorDropdownFocusEffectProps = {
-  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
-};
+export const BlockEditorDropdownFocusEffect = () => {
+  const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
 
-export const BlockEditorDropdownFocusEffect = ({
-  editor,
-}: BlockEditorDropdownFocusEffectProps) => {
-  const isSlashMenuOpenState = useRecoilComponentCallbackState(
+  const isSlashMenuOpenState = useAtomComponentStateCallbackState(
     isSlashMenuOpenComponentState,
   );
 
@@ -22,45 +21,37 @@ export const BlockEditorDropdownFocusEffect = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const updateCallBack = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (event: any) => {
-        // TODO: This triggers before the onClick event of the slash menu item, so the click outside of the editor dropdown is triggered and everything closes.
-        // This is due to useRecoilCallback being executed before the onClick event of the slash menu item.
-        const eventWantsToOpen = event.show === true;
+  const store = useStore();
 
-        const isAlreadyOpen = snapshot
-          .getLoadable(isSlashMenuOpenState)
-          .getValue();
+  const suggestionState = useExtensionState(SuggestionMenu);
 
-        const shouldOpen = eventWantsToOpen && !isAlreadyOpen;
+  const isSlashMenuShowing =
+    suggestionState?.show === true && suggestionState?.triggerCharacter === '/';
 
-        if (shouldOpen) {
-          setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
-          set(isSlashMenuOpenState, true);
-          return;
-        }
+  const syncSlashMenuState = useCallback(
+    (showing: boolean) => {
+      const isAlreadyOpen = store.get(isSlashMenuOpenState);
 
-        const eventWantsToClose = event.show === false;
-
-        const isAlreadyClosed = !isAlreadyOpen;
-
-        const shouldClose = eventWantsToClose && !isAlreadyClosed;
-
-        if (shouldClose) {
-          goBackToPreviousDropdownFocusId();
-          set(isSlashMenuOpenState, false);
-          return;
-        }
-      },
+      if (showing && isAlreadyOpen !== true) {
+        setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
+        store.set(isSlashMenuOpenState, true);
+      } else if (!showing && isAlreadyOpen === true) {
+        goBackToPreviousDropdownFocusId();
+        store.set(isSlashMenuOpenState, false);
+      }
+    },
     [
       isSlashMenuOpenState,
       setActiveDropdownFocusIdAndMemorizePrevious,
       goBackToPreviousDropdownFocusId,
+      store,
     ],
   );
 
-  editor.suggestionMenus.on('update /', updateCallBack);
+  if (prevShowing !== isSlashMenuShowing) {
+    setPrevShowing(isSlashMenuShowing);
+    syncSlashMenuState(isSlashMenuShowing);
+  }
 
   return <></>;
 };

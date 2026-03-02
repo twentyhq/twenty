@@ -1,1 +1,1 @@
-module.exports = require('./lib').default;
+module.exports = require('./lib/index.cjs').default;

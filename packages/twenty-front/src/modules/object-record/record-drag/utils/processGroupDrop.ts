@@ -1,11 +1,9 @@
 import { type DropResult } from '@hello-pangea/dnd';
-import { type Snapshot } from 'recoil';
+import type { Store } from 'jotai/vanilla/store';
 import { isDefined } from 'twenty-shared/utils';
 
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-
 import { processSingleDrag } from '@/object-record/record-drag/utils/processSingleDrag';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { extractRecordPositions } from './extractRecordPositions';
 import { getDragOperationType } from './getDragOperationType';
@@ -13,7 +11,7 @@ import { processMultiDrag } from './processMultiDrag';
 
 type ProcessGroupDropParams = {
   groupDropResult: DropResult;
-  snapshot: Snapshot;
+  store: Store;
   selectedRecordIds: string[];
   recordIdsByGroupFamilyState: any;
   onUpdateRecord: (
@@ -24,7 +22,7 @@ type ProcessGroupDropParams = {
 
 export const processGroupDrop = ({
   groupDropResult,
-  snapshot,
+  store,
   selectedRecordIds,
   recordIdsByGroupFamilyState,
   onUpdateRecord,
@@ -35,17 +33,15 @@ export const processGroupDrop = ({
 
   const destinationGroupId = groupDropResult.destination.droppableId;
 
-  const recordGroup = getSnapshotValue(
-    snapshot,
-    recordGroupDefinitionFamilyState(destinationGroupId),
+  const recordGroup = store.get(
+    recordGroupDefinitionFamilyState.atomFamily(destinationGroupId),
   );
 
   if (!isDefined(recordGroup)) {
     throw new Error('Record group is not defined');
   }
 
-  const destinationRecordIds = getSnapshotValue(
-    snapshot,
+  const destinationRecordIds = store.get(
     recordIdsByGroupFamilyState(destinationGroupId),
   ) as string[];
 
@@ -84,7 +80,7 @@ export const processGroupDrop = ({
 
   const recordsWithPosition = extractRecordPositions(
     destinationRecordIds,
-    snapshot,
+    store,
   );
 
   const destinationIndex = groupDropResult.destination.index;

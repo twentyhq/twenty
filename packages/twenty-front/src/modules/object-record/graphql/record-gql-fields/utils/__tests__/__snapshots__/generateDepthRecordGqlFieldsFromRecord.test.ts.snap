@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record gql fields from empty record 1`] = `
 {
@@ -7,6 +7,7 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "address": false,
   "annualRecurringRevenue": false,
   "attachments": false,
+  "caredForPets": false,
   "createdAt": false,
   "createdBy": false,
   "deletedAt": false,
@@ -22,11 +23,13 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "opportunities": false,
   "people": false,
   "position": false,
+  "previousEmployees": false,
   "searchVector": false,
   "tagline": false,
   "taskTargets": false,
   "timelineActivities": false,
   "updatedAt": false,
+  "updatedBy": false,
   "visaSponsorship": false,
   "workPolicy": false,
   "xLink": false,
@@ -40,6 +43,7 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "address": false,
   "annualRecurringRevenue": false,
   "attachments": false,
+  "caredForPets": false,
   "createdAt": false,
   "createdBy": false,
   "deletedAt": false,
@@ -55,11 +59,13 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "opportunities": false,
   "people": false,
   "position": false,
+  "previousEmployees": false,
   "searchVector": false,
   "tagline": false,
   "taskTargets": false,
   "timelineActivities": false,
   "updatedAt": false,
+  "updatedBy": false,
   "visaSponsorship": false,
   "workPolicy": false,
   "xLink": false,
@@ -85,6 +91,7 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth zero recor
   "searchVector": false,
   "tagline": false,
   "updatedAt": false,
+  "updatedBy": false,
   "visaSponsorship": false,
   "workPolicy": false,
   "xLink": false,

@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const shouldRecomputeOutputSchemaFamilyState = createFamilyState<
+export const shouldRecomputeOutputSchemaFamilyState = createAtomFamilyState<
   boolean,
   string | undefined
 >({

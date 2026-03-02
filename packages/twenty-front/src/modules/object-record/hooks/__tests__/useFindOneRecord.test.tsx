@@ -5,7 +5,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
+import { generateMockRecordNode } from '~/testing/utils/generateMockRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mocks = [
@@ -16,7 +16,7 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: {
-        person: generateEmptyJestRecordNode({
+        person: generateMockRecordNode({
           objectNameSingular: 'person',
           input: { id: '6205681e-7c11-40b4-9e32-f523dbe54590' },
           withDepthOneRelation: true,

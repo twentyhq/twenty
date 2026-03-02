@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -20,7 +19,7 @@ import {
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -34,43 +33,39 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <RecordTableComponentInstance recordTableId={recordTableId}>
-          <RecordTableContextProvider
-            recordTableId={recordTableId}
-            viewBarId="viewBarId"
-            objectNameSingular={CoreObjectNameSingular.Person}
-            onRecordIdentifierClick={() => {}}
+      <RecordTableComponentInstance recordTableId={recordTableId}>
+        <RecordTableContextProvider
+          recordTableId={recordTableId}
+          viewBarId="viewBarId"
+          objectNameSingular={CoreObjectNameSingular.Person}
+          onRecordIdentifierClick={() => {}}
+        >
+          <RecordComponentInstanceContextsWrapper
+            componentInstanceId={recordTableId}
           >
-            <RecordComponentInstanceContextsWrapper
-              componentInstanceId={recordTableId}
+            <FieldContext.Provider
+              value={{
+                fieldDefinition: textfieldDefinition,
+                recordId: 'recordId',
+                isLabelIdentifier: false,
+                isRecordFieldReadOnly: false,
+              }}
             >
-              <FieldContext.Provider
-                value={{
-                  fieldDefinition: textfieldDefinition,
-                  recordId: 'recordId',
-                  isLabelIdentifier: false,
-                  isRecordFieldReadOnly: false,
-                }}
-              >
-                <RecordTableRowContextProvider
-                  value={recordTableRowContextValue}
+              <RecordTableRowContextProvider value={recordTableRowContextValue}>
+                <RecordTableRowDraggableContextProvider
+                  value={recordTableRowDraggableContextValue}
                 >
-                  <RecordTableRowDraggableContextProvider
-                    value={recordTableRowDraggableContextValue}
+                  <RecordTableCellContext.Provider
+                    value={{ ...recordTableCellContextValue }}
                   >
-                    <RecordTableCellContext.Provider
-                      value={{ ...recordTableCellContextValue }}
-                    >
-                      {children}
-                    </RecordTableCellContext.Provider>
-                  </RecordTableRowDraggableContextProvider>
-                </RecordTableRowContextProvider>
-              </FieldContext.Provider>
-            </RecordComponentInstanceContextsWrapper>
-          </RecordTableContextProvider>
-        </RecordTableComponentInstance>
-      </RecoilRoot>
+                    {children}
+                  </RecordTableCellContext.Provider>
+                </RecordTableRowDraggableContextProvider>
+              </RecordTableRowContextProvider>
+            </FieldContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
+        </RecordTableContextProvider>
+      </RecordTableComponentInstance>
     </JotaiProvider>
   );
 };
@@ -79,14 +74,15 @@ describe('useCloseRecordTableCellNoGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const currentTableCellInEditModePosition = useRecoilComponentValue(
+        const recordTableCellEditModePosition = useAtomComponentStateValue(
           recordTableCellEditModePositionComponentState,
+          recordTableId,
         );
 
         return {
           ...useCloseRecordTableCellNoGroup(),
           ...useDragSelect(),
-          currentTableCellInEditModePosition,
+          recordTableCellEditModePosition,
         };
       },
       {
@@ -99,6 +95,6 @@ describe('useCloseRecordTableCellNoGroup', () => {
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
-    expect(result.current.currentTableCellInEditModePosition).toBe(null);
+    expect(result.current.recordTableCellEditModePosition).toBe(null);
   });
 });

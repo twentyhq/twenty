@@ -1,9 +1,9 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 type UseCreateFieldsWidgetEditorGroupParams = {
@@ -15,109 +15,103 @@ export const useCreateFieldsWidgetEditorGroup = ({
   pageLayoutId,
   widgetId,
 }: UseCreateFieldsWidgetEditorGroupParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetUngroupedFieldsDraftState = useRecoilComponentCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetUngroupedFieldsDraftState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
+    );
 
-  const fieldsWidgetModeDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetModeDraftComponentState,
     pageLayoutId,
   );
 
-  const createGroup = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (name: string) => {
-        const allModes = snapshot
-          .getLoadable(fieldsWidgetModeDraftState)
-          .getValue();
+  const store = useStore();
 
-        const currentMode = allModes[widgetId] ?? 'ungrouped';
+  const createGroup = useCallback(
+    (name: string) => {
+      const allModes = store.get(fieldsWidgetModeDraftState);
 
-        const newId = v4();
+      const currentMode = allModes[widgetId] ?? 'ungrouped';
 
-        if (currentMode === 'ungrouped') {
-          // Absorb all ungrouped fields into the new group
-          const allUngroupedFields = snapshot
-            .getLoadable(fieldsWidgetUngroupedFieldsDraftState)
-            .getValue();
+      const newId = v4();
 
-          const ungroupedFields = allUngroupedFields[widgetId] ?? [];
+      if (currentMode === 'ungrouped') {
+        // Absorb all ungrouped fields into the new group
+        const allUngroupedFields = store.get(
+          fieldsWidgetUngroupedFieldsDraftState,
+        );
 
-          set(fieldsWidgetGroupsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: [
-              {
-                id: newId,
-                name,
-                position: 0,
-                isVisible: true,
-                fields: ungroupedFields.map((field, index) => ({
-                  ...field,
-                  position: index,
-                  globalIndex: index,
-                })),
-              },
-            ],
-          }));
+        const ungroupedFields = allUngroupedFields[widgetId] ?? [];
 
-          // Clear ungrouped fields
-          set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: [],
-          }));
+        store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [
+            {
+              id: newId,
+              name,
+              position: 0,
+              isVisible: true,
+              fields: ungroupedFields.map((field, index) => ({
+                ...field,
+                position: index,
+                globalIndex: index,
+              })),
+            },
+          ],
+        }));
 
-          // Switch to grouped mode
-          set(fieldsWidgetModeDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: 'grouped' as const,
-          }));
-        } else {
-          // Grouped mode: append a new empty group
-          const allDraftGroups = snapshot
-            .getLoadable(fieldsWidgetGroupsDraftState)
-            .getValue();
+        // Clear ungrouped fields
+        store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [],
+        }));
 
-          const currentGroups = allDraftGroups[widgetId] ?? [];
-          const maxPosition = Math.max(
-            ...currentGroups.map((g) => g.position),
-            -1,
-          );
+        // Switch to grouped mode
+        store.set(fieldsWidgetModeDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: 'grouped' as const,
+        }));
+      } else {
+        // Grouped mode: append a new empty group
+        const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
 
-          set(fieldsWidgetGroupsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: [
-              ...(prev[widgetId] ?? []),
-              {
-                id: newId,
-                name,
-                position: maxPosition + 1,
-                isVisible: true,
-                fields: [],
-              },
-            ],
-          }));
-        }
+        const currentGroups = allDraftGroups[widgetId] ?? [];
+        const maxPosition = Math.max(
+          ...currentGroups.map((g) => g.position),
+          -1,
+        );
 
-        return newId;
-      },
+        store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [
+            ...(prev[widgetId] ?? []),
+            {
+              id: newId,
+              name,
+              position: maxPosition + 1,
+              isVisible: true,
+              fields: [],
+            },
+          ],
+        }));
+      }
+
+      return newId;
+    },
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetModeDraftState,
       widgetId,
+      store,
     ],
   );
 
-  const createGroupCallback = useCallback(
-    (name: string) => createGroup(name),
-    [createGroup],
-  );
-
-  return { createGroup: createGroupCallback };
+  return { createGroup };
 };

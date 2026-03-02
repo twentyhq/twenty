@@ -1,6 +1,6 @@
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 
 type UseFieldsWidgetUngroupedFieldsDraftParams = {
@@ -14,14 +14,14 @@ export const useFieldsWidgetUngroupedFieldsDraft = ({
 }: UseFieldsWidgetUngroupedFieldsDraftParams): {
   ungroupedFields: FieldsWidgetGroupField[];
 } => {
-  const allUngroupedFields = useRecoilComponentValue(
+  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateValue(
     fieldsWidgetUngroupedFieldsDraftComponentState,
     pageLayoutId,
   );
 
   const ungroupedFields = useMemo(
-    () => allUngroupedFields[widgetId] ?? [],
-    [allUngroupedFields, widgetId],
+    () => fieldsWidgetUngroupedFieldsDraft[widgetId] ?? [],
+    [fieldsWidgetUngroupedFieldsDraft, widgetId],
   );
 
   return { ungroupedFields };
