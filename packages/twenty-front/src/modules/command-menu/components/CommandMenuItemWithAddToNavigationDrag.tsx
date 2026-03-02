@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
-import { Draggable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, lazy, Suspense, useContext, useState } from 'react';
+import { type ReactNode, lazy, Suspense, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { AddToNavigationDragHandle } from '@/navigation-menu-item/components/AddToNavigationDragHandle';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
-import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const CommandMenuItemWithAddToNavigationDragDndKit = lazy(() =>
@@ -69,7 +68,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   );
 
   const registerPayload = () => {
-    if (dragIndex !== undefined) {
+    if (isDefined(dragIndex)) {
       setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
     }
   };
@@ -93,37 +92,17 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
     </StyledDraggableMenuItem>
   );
 
-  const isDndKit = useContext(WorkspaceDndKitContext);
-
-  if (dragIndex !== undefined && isDndKit) {
-    return (
-      <Suspense fallback={menuItemContent}>
-        <CommandMenuItemWithAddToNavigationDragDndKit
-          id={id}
-          dragIndex={dragIndex}
-          menuItemContent={menuItemContent}
-        />
-      </Suspense>
-    );
+  if (!isDefined(dragIndex)) {
+    return menuItemContent;
   }
 
-  if (dragIndex !== undefined) {
-    return (
-      <Draggable draggableId={id} index={dragIndex} isDragDisabled={false}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.draggableProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.dragHandleProps}
-          >
-            {menuItemContent}
-          </div>
-        )}
-      </Draggable>
-    );
-  }
-
-  return menuItemContent;
+  return (
+    <Suspense fallback={menuItemContent}>
+      <CommandMenuItemWithAddToNavigationDragDndKit
+        id={id}
+        dragIndex={dragIndex}
+        menuItemContent={menuItemContent}
+      />
+    </Suspense>
+  );
 };
