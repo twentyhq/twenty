@@ -10,13 +10,13 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
@@ -26,6 +26,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
 import { AISystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
+import { ChatThreadsQueryResult } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-threads-query-result.dto';
+import { ChatThreadsQueryInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-threads-query.input';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -42,10 +44,13 @@ export class AgentChatResolver {
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
   ) {}
 
-  @Query(() => [AgentChatThreadDTO])
+  @Query(() => ChatThreadsQueryResult)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
-    return this.agentChatService.getThreadsForUser(userWorkspaceId);
+  async chatThreads(
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('input', { nullable: true }) input?: ChatThreadsQueryInput,
+  ) {
+    return this.agentChatService.getThreadsForUser(userWorkspaceId, input);
   }
 
   @Query(() => AgentChatThreadDTO)

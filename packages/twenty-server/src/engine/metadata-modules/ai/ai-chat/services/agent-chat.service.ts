@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, LessThan, Repository } from 'typeorm';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
@@ -17,7 +18,13 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import type { ChatThreadsQueryResult } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-threads-query-result.dto';
+import { ChatThreadsQueryInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-threads-query.input';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import {
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
@@ -43,13 +50,48 @@ export class AgentChatService {
     return this.threadRepository.save(thread);
   }
 
-  async getThreadsForUser(userWorkspaceId: string) {
-    return this.threadRepository.find({
-      where: {
-        userWorkspaceId,
-      },
+  async getThreadsForUser(
+    userWorkspaceId: string,
+    input?: ChatThreadsQueryInput,
+  ): Promise<ChatThreadsQueryResult> {
+    const first = Math.min(input?.first ?? 20, 100);
+    const take = first + 1;
+
+    const where: FindOptionsWhere<AgentChatThreadEntity> = {
+      userWorkspaceId,
+    };
+
+    if (isDefined(input?.after)) {
+      const { createdAt: cursorMs } = decodeCursor<{ createdAt: number }>(
+        input.after,
+      );
+
+      where.createdAt = LessThan(new Date(cursorMs));
+    }
+
+    const threads = await this.threadRepository.find({
+      where,
       order: { createdAt: 'DESC' },
+      take,
     });
+
+    const hasNextPage = threads.length > first;
+    const pageThreads = hasNextPage ? threads.slice(0, first) : threads;
+    const lastThread = pageThreads[pageThreads.length - 1];
+    const endCursor =
+      hasNextPage && lastThread
+        ? encodeCursorData({
+            createdAt: lastThread.createdAt.getTime(),
+          })
+        : undefined;
+
+    return {
+      threads: pageThreads,
+      pageInfo: {
+        endCursor,
+        hasNextPage,
+      },
+    };
   }
 
   async getThreadById(threadId: string, userWorkspaceId: string) {
