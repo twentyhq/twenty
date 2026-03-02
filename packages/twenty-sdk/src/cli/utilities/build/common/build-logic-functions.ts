@@ -1,33 +1,24 @@
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import {
-  createLogicFunctionsWatcher,
   createSdkGeneratedResolverPlugin,
-  type EsbuildWatcher,
   LOGIC_FUNCTION_EXTERNAL_MODULES,
 } from '@/cli/utilities/build/common/esbuild-watcher';
-import {
-  type BuildEntityFilesOptions,
-  startWatcher,
-} from '@/cli/utilities/build/common/start-watcher';
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { join } from 'path';
 import { NODE_ESM_CJS_BANNER, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+
+export type BuildLogicFunctionsOptions = {
+  appPath: string;
+  sourcePaths: string[];
+  onFileBuilt: OnFileBuiltCallback;
+};
 
 export const buildLogicFunctions = async ({
   appPath,
   sourcePaths,
   onFileBuilt,
-  createWatcher,
-}: BuildEntityFilesOptions): Promise<EsbuildWatcher | null> => {
-  if (createWatcher) {
-    return startWatcher({
-      appPath,
-      sourcePaths,
-      onFileBuilt,
-      watcherFactory: createLogicFunctionsWatcher,
-    });
-  }
-
+}: BuildLogicFunctionsOptions): Promise<void> => {
   await esbuildOneShotBuild({
     appPath,
     sourcePaths,
@@ -49,6 +40,4 @@ export const buildLogicFunctions = async ({
     },
     onFileBuilt,
   });
-
-  return null;
 };

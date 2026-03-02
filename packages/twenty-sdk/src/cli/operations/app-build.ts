@@ -1,6 +1,5 @@
 import { buildFrontComponents } from '@/cli/utilities/build/common/build-front-components';
 import { buildLogicFunctions } from '@/cli/utilities/build/common/build-logic-functions';
-import { type EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import crypto from 'crypto';
@@ -13,7 +12,6 @@ export type AppBuildOptions = {
   appPath: string;
   manifest: Manifest;
   filePaths: EntityFilePaths;
-  createWatchers?: boolean;
 };
 
 export type BuiltFileInfo = {
@@ -25,8 +23,6 @@ export type BuiltFileInfo = {
 
 export type AppBuildResult = {
   builtFileInfos: Map<string, BuiltFileInfo>;
-  logicFunctionsWatcher: EsbuildWatcher | null;
-  frontComponentsWatcher: EsbuildWatcher | null;
 };
 
 export const appBuild = async (
@@ -50,18 +46,16 @@ export const appBuild = async (
 
   const { logicFunctions, frontComponents } = options.filePaths;
 
-  const logicFunctionsWatcher = await buildLogicFunctions({
+  await buildLogicFunctions({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
     onFileBuilt: collectFileBuilt,
-    createWatcher: options.createWatchers,
   });
 
-  const frontComponentsWatcher = await buildFrontComponents({
+  await buildFrontComponents({
     appPath: options.appPath,
     sourcePaths: frontComponents,
     onFileBuilt: collectFileBuilt,
-    createWatcher: options.createWatchers,
   });
 
   await copyStaticFiles({
@@ -80,11 +74,7 @@ export const appBuild = async (
     collectFileBuilt,
   });
 
-  return {
-    builtFileInfos,
-    logicFunctionsWatcher,
-    frontComponentsWatcher,
-  };
+  return { builtFileInfos };
 };
 
 const copyStaticFiles = async ({

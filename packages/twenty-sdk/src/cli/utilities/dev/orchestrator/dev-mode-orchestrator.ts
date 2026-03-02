@@ -1,4 +1,3 @@
-import { appBuild, type AppBuildResult } from '@/cli/operations/app-build';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -188,35 +187,7 @@ export class DevModeOrchestrator {
       return;
     }
 
-    const isFirstSync = !this.state.steps.startWatchers.output.watchersStarted;
-
-    let appBuildResult: AppBuildResult | null = null;
-
-    if (isFirstSync) {
-      appBuildResult = await appBuild({
-        appPath: this.state.appPath,
-        manifest: buildResult.manifest!,
-        filePaths: buildResult.filePaths,
-        createWatchers: true,
-      });
-
-      for (const [builtPath, fileInfo] of appBuildResult.builtFileInfos) {
-        this.state.steps.uploadFiles.output.builtFileInfos.set(
-          builtPath,
-          fileInfo,
-        );
-      }
-    }
-
-    await this.startWatchersStep.handleWatcherRestarts(
-      buildResult,
-      appBuildResult
-        ? {
-            logicFunctionsWatcher: appBuildResult.logicFunctionsWatcher,
-            frontComponentsWatcher: appBuildResult.frontComponentsWatcher,
-          }
-        : undefined,
-    );
+    await this.startWatchersStep.handleWatcherRestarts(buildResult);
 
     if (!this.uploadFilesStep.isInitialized) {
       const initialized = await this.initializePipeline(buildResult.manifest!);

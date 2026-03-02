@@ -18,13 +18,15 @@ export const authLogin = async (
   }
 
   const configService = new ConfigService();
-  const apiService = new ApiService();
 
   await configService.setConfig({ apiUrl, apiKey });
 
+  const apiService = new ApiService();
   const validateAuth = await apiService.validateAuth();
 
   if (!validateAuth.authValid) {
+    await configService.clearConfig();
+
     return {
       success: false,
       error: {
