@@ -87,7 +87,7 @@ jobs:
             exit 0
           fi
           ISSUE_NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
-          ENCODED_BRANCH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$BRANCH', safe=''))")
+          ENCODED_BRANCH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$BRANCH")
           PR_URL="https://github.com/${{ github.repository }}/compare/main...${ENCODED_BRANCH}?quick_pull=1"
           BODY="⚠️ Claude ran out of turns before creating a PR. Work has been pushed to [\`$BRANCH\`](https://github.com/${{ github.repository }}/tree/$ENCODED_BRANCH).\n\n[**Create PR →**]($PR_URL)"
           if [ -n "$ISSUE_NUMBER" ]; then
