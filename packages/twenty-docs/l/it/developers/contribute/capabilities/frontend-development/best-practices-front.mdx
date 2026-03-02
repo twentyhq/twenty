@@ -6,9 +6,9 @@ Questo documento descrive le migliori pratiche da seguire quando si lavora sul f
 
 ## Gestione dello Stato
 
-React e Jotai gestiscono la gestione dello stato nella base di codice.
+React e Jotai gestiscono lo stato nella base di codice.
 
-### Usa `useAtomState` per memorizzare lo stato
+### Usa gli atomi di Jotai per memorizzare lo stato
 
 È buona pratica creare tanti atomi quanti servono per memorizzare il tuo stato.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Evita di usare `useRef` per memorizzare lo stato.
 
-Se vuoi memorizzare lo stato, dovresti usare `useState` o `useAtomState`.
+Se vuoi memorizzare lo stato, dovresti usare `useState` o gli atomi di Jotai con `useAtomState`.
 
 Consulta [come gestire i re-render](#managing-re-renders) se senti che hai bisogno di `useRef` per evitare alcuni re-render.
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Usa stati di famiglia jotai e selettori di famiglia jotai
+### Usa gli stati e i selettori della famiglia di atomi
 
-Gli stati e i selettori di famiglia Jotai sono un ottimo modo per evitare re-render.
+Gli stati e i selettori della famiglia di atomi sono un ottimo modo per evitare re-render.
 
 Sono utili quando hai bisogno di memorizzare una lista di elementi.
 

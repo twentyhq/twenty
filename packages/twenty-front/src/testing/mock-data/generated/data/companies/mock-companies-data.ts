@@ -1,11 +1,11 @@
 /* eslint-disable */
 // @ts-nocheck
-
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 // This file was automatically generated — do not edit manually.
 
 // prettier-ignore
-export const mockedCompanyRecords: Record<string, unknown>[] =
+export const mockedCompanyRecords: ObjectRecord[] =
 [
   {
     "__typename": "Company",
@@ -43,7 +43,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -179,10 +179,26 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
             "id": "20202020-0651-2001-8001-000021ea0001",
             "name": "linked-task.created"
           }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-000025d30001",
+            "name": "calendarEvent.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-0000292f0001",
+            "name": "calendarEvent.linked"
+          }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -235,7 +251,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -376,13 +392,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-0000330b0001",
+            "id": "20202020-0751-2001-8001-000032750001",
             "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -435,7 +451,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -571,34 +587,10 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
             "id": "20202020-0651-2001-8001-000021920001",
             "name": "linked-task.created"
           }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026f30001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000027d70001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-00002dd50001",
-            "name": "message.linked"
-          }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -668,7 +660,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -809,21 +801,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026750001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-0000275b0001",
+            "id": "20202020-0701-2001-8001-000023e90001",
             "name": "calendarEvent.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -885,7 +869,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "WORKFLOW",
@@ -1026,7 +1010,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026950001",
+            "id": "20202020-0701-2001-8001-000026df0001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1034,7 +1018,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026cf0001",
+            "id": "20202020-0701-2001-8001-0000275d0001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1042,29 +1026,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-0000288f0001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-000030210001",
-            "name": "message.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-000030b90001",
+            "id": "20202020-0751-2001-8001-000033790001",
             "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "WORKFLOW",
@@ -1117,7 +1085,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1258,37 +1226,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026d50001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026eb0001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-00002d5d0001",
-            "name": "message.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-000034d30001",
+            "id": "20202020-0751-2001-8001-00002a470001",
             "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1341,7 +1285,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "API",
@@ -1482,7 +1426,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000025e50001",
+            "id": "20202020-0701-2001-8001-0000243d0001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1490,7 +1434,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000028130001",
+            "id": "20202020-0701-2001-8001-000025b50001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1498,21 +1442,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-00002c390001",
-            "name": "message.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-00002fdd0001",
-            "name": "message.linked"
+            "id": "20202020-0701-2001-8001-000028c30001",
+            "name": "calendarEvent.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "API",
@@ -1565,7 +1501,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "SYSTEM",
@@ -1706,7 +1642,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000025a70001",
+            "id": "20202020-0701-2001-8001-0000269f0001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1714,13 +1650,21 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-0000313b0001",
+            "id": "20202020-0751-2001-8001-000031290001",
+            "name": "message.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-2001-8001-000031af0001",
             "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "SYSTEM",
@@ -1773,7 +1717,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1909,10 +1853,58 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
             "id": "20202020-0651-2001-8001-000021aa0001",
             "name": "linked-task.created"
           }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-0000245f0001",
+            "name": "calendarEvent.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-000025af0001",
+            "name": "calendarEvent.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-000025f30001",
+            "name": "calendarEvent.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0701-2001-8001-000026630001",
+            "name": "calendarEvent.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-2001-8001-000033a70001",
+            "name": "message.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-2001-8001-000034b50001",
+            "name": "message.linked"
+          }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1982,7 +1974,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "__typename": "PetCareAgreementConnection",
       "edges": []
     },
-    "createdAt": "2026-02-26T11:55:19.497Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "WEBHOOK",
@@ -2123,7 +2115,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-000026bb0001",
+            "id": "20202020-0701-2001-8001-000024930001",
             "name": "calendarEvent.linked"
           }
         },
@@ -2131,7 +2123,7 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-2001-8001-0000276d0001",
+            "id": "20202020-0701-2001-8001-000025590001",
             "name": "calendarEvent.linked"
           }
         },
@@ -2139,13 +2131,13 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-2001-8001-00002b510001",
-            "name": "message.linked"
+            "id": "20202020-0701-2001-8001-000027ff0001",
+            "name": "calendarEvent.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-02-26T11:55:19.497Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "WEBHOOK",

@@ -17,6 +17,10 @@ export class AppDevCommand {
     await this.orchestrator?.close();
   }
 
+  getOrchestrator(): DevModeOrchestrator | null {
+    return this.orchestrator;
+  }
+
   async execute(options: AppDevOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 

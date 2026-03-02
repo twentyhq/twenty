@@ -26,6 +26,19 @@ const mockApiService = {
       },
     },
   }),
+  findApplicationRegistrationByUniversalIdentifier: vi
+    .fn()
+    .mockResolvedValue({ success: true, data: null }),
+  createApplicationRegistration: vi.fn().mockResolvedValue({
+    success: true,
+    data: {
+      applicationRegistration: {
+        id: 'mock-registration-id',
+        oAuthClientId: 'mock-client-id',
+      },
+      clientSecret: 'mock-client-secret',
+    },
+  }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
   uploadFile: vi.fn().mockResolvedValue({ success: true, data: true }),
 };
@@ -37,6 +50,10 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
     createApplication = mockApiService.createApplication;
     generateApplicationToken = mockApiService.generateApplicationToken;
     renewApplicationToken = mockApiService.renewApplicationToken;
+    findApplicationRegistrationByUniversalIdentifier =
+      mockApiService.findApplicationRegistrationByUniversalIdentifier;
+    createApplicationRegistration =
+      mockApiService.createApplicationRegistration;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
   },

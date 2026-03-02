@@ -17,8 +17,8 @@ import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
@@ -42,7 +42,7 @@ const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
-const objectMetadataItem = getMockPersonObjectMetadataItem();
+const objectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const objectMetadataItems = generatedMockObjectMetadataItems;
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({

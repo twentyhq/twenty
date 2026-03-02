@@ -1,12 +1,13 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext } from 'react';
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
@@ -19,92 +20,89 @@ const StyledMenuPicker = styled.button<{
   outline: inherit;
   color: inherit;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
-  min-height: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => `${theme.spacing(1.5)} ${theme.spacing(1)}`};
-  transition: all ${({ theme }) => theme.animation.duration.instant}s ease;
+  min-height: ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[1.5]} ${themeCssVariables.spacing[1]};
+  transition: all calc(${themeCssVariables.animation.duration.instant} * 1s)
+    ease;
   user-select: none;
   width: 100%;
 
-  ${({ theme, selected, disabled }) => {
+  background: ${({ disabled }) =>
+    disabled ? themeCssVariables.background.secondary : 'transparent'};
+
+  border-color: ${({ selected, disabled }) => {
     if (disabled) {
-      return css`
-        background: ${theme.background.secondary};
-        border-color: ${theme.border.color.medium};
-        color: ${theme.font.color.extraLight};
-        cursor: default;
-      `;
+      return themeCssVariables.border.color.medium;
     }
-
     if (selected) {
-      return css`
-        background: transparent;
-        border-color: ${theme.color.blue};
-        color: ${theme.color.blue};
-
-        &:hover {
-          background: ${theme.background.transparent.primary};
-        }
-      `;
+      return themeCssVariables.color.blue;
     }
+    return themeCssVariables.border.color.medium;
+  }};
 
-    return css`
-      background: transparent;
-      border-color: ${theme.border.color.medium};
-      color: ${theme.font.color.tertiary};
+  color: ${({ selected, disabled }) => {
+    if (disabled) {
+      return themeCssVariables.font.color.extraLight;
+    }
+    if (selected) {
+      return themeCssVariables.color.blue;
+    }
+    return themeCssVariables.font.color.tertiary;
+  }};
 
-      &:hover {
-        background: ${theme.background.transparent.light};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+
+  &:hover {
+    background: ${({ selected, disabled }) => {
+      if (disabled) {
+        return themeCssVariables.background.secondary;
       }
-    `;
-  }}
+      if (selected) {
+        return themeCssVariables.background.transparent.primary;
+      }
+      return themeCssVariables.background.transparent.light;
+    }};
+  }
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  height: ${({ theme }) => theme.icon.size.md}px;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   justify-content: center;
-  width: ${({ theme }) => theme.icon.size.md}px;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledLabel = styled.div<{
   disabled: boolean;
   selected: boolean;
 }>`
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${({ selected, disabled }) => {
+    if (disabled) {
+      return themeCssVariables.font.color.extraLight;
+    }
+    if (selected) {
+      return themeCssVariables.color.blue;
+    }
+    return themeCssVariables.font.color.tertiary;
+  }};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   max-width: 100%;
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
+
   white-space: nowrap;
-
-  ${({ theme, selected, disabled }) => {
-    if (disabled) {
-      return css`
-        color: ${theme.font.color.extraLight};
-      `;
-    }
-
-    if (selected) {
-      return css`
-        color: ${theme.color.blue};
-      `;
-    }
-
-    return css`
-      color: ${theme.font.color.tertiary};
-    `;
-  }}
 `;
 
 export type MenuPickerProps = {
@@ -136,7 +134,7 @@ export const MenuPicker = ({
   tooltipDelay = TooltipDelay.noDelay,
   tooltipOffset = 5,
 }: MenuPickerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <>

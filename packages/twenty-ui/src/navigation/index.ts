@@ -41,13 +41,14 @@ export {
   MenuItemSelect,
 } from './menu/menu-item/components/MenuItemSelect';
 export { MenuItemSelectAvatar } from './menu/menu-item/components/MenuItemSelectAvatar';
-export type { ColorLabels } from './menu/menu-item/components/MenuItemSelectColor';
 export { MenuItemSelectColor } from './menu/menu-item/components/MenuItemSelectColor';
 export { MenuItemSelectTag } from './menu/menu-item/components/MenuItemSelectTag';
 export type { MenuItemSuggestionProps } from './menu/menu-item/components/MenuItemSuggestion';
 export { MenuItemSuggestion } from './menu/menu-item/components/MenuItemSuggestion';
 export type { MenuItemToggleProps } from './menu/menu-item/components/MenuItemToggle';
 export { MenuItemToggle } from './menu/menu-item/components/MenuItemToggle';
+export type { ColorLabels } from './menu/menu-item/constants/DefaultColorLabels';
+export { DEFAULT_COLOR_LABELS } from './menu/menu-item/constants/DefaultColorLabels';
 export type { MenuItemIconProps } from './menu/menu-item/internals/components/MenuItemIcon';
 export { MenuItemIcon } from './menu/menu-item/internals/components/MenuItemIcon';
 export {

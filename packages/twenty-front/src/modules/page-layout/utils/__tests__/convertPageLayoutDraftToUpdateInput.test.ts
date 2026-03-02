@@ -84,6 +84,13 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
       rowSpan: 4,
       columnSpan: 5,
     });
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: 'GRID',
+      row: 2,
+      column: 3,
+      rowSpan: 4,
+      columnSpan: 5,
+    });
   });
 
   it('should handle objectMetadataId as null when not provided', () => {

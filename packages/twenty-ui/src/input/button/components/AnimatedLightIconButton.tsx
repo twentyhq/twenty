@@ -1,12 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { motion, type MotionProps } from 'framer-motion';
-import { type ComponentProps, type MouseEvent } from 'react';
+import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
 export type AnimatedLightIconButtonProps = {
   className?: string;
@@ -29,37 +29,38 @@ const StyledButton = styled.button<
   background: transparent;
   border: none;
 
-  border: ${({ disabled, theme, focus }) =>
-    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ disabled, theme, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${theme.color.blue3}` : 'none'};
-  color: ${({ theme, accent, active, disabled, focus }) => {
+  border: ${({ disabled, focus }) =>
+    !disabled && focus ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-shadow: ${({ disabled, focus }) =>
+    !disabled && focus ? `0 0 0 3px ${themeCssVariables.color.blue3}` : 'none'};
+  color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? theme.color.blue
+          ? themeCssVariables.color.blue
           : !disabled
-            ? theme.font.color.secondary
-            : theme.font.color.extraLight;
+            ? themeCssVariables.font.color.secondary
+            : themeCssVariables.font.color.extraLight;
       case 'tertiary':
         return active || focus
-          ? theme.color.blue
+          ? themeCssVariables.color.blue
           : !disabled
-            ? theme.font.color.tertiary
-            : theme.font.color.extraLight;
+            ? themeCssVariables.font.color.tertiary
+            : themeCssVariables.font.color.extraLight;
     }
+    return '';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   transition: background 0.1s ease;
 
   white-space: nowrap;
@@ -67,8 +68,10 @@ const StyledButton = styled.button<
   min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.light : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 
   &:focus {
@@ -76,8 +79,10 @@ const StyledButton = styled.button<
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled
+        ? themeCssVariables.background.transparent.medium
+        : 'transparent'};
   }
 `;
 
@@ -102,7 +107,7 @@ export const AnimatedLightIconButton = ({
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledButton

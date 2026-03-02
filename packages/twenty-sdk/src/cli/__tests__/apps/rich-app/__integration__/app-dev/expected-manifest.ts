@@ -28,6 +28,18 @@ export const EXPECTED_MANIFEST: Manifest = {
         value: 'Alex Karp',
       },
     },
+    serverVariables: {
+      POSTCARD_API_KEY: {
+        description: 'API key for the postcard printing service',
+        isSecret: true,
+        isRequired: true,
+      },
+      POSTCARD_SENDER_NAME: {
+        description: 'Default sender name on postcards',
+        isSecret: false,
+        isRequired: false,
+      },
+    },
     description: 'A simple rich app',
     displayName: 'Rich App',
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',

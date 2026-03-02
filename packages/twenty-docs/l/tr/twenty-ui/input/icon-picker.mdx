@@ -21,17 +21,17 @@ export const MyComponent = () => {
 
    const [selectedIcon, setSelectedIcon] = useState("");
    const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
+     console.log("Seçilen Simge:", iconKey);
      setSelectedIcon(iconKey);
    };
 
   return (
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
+    <IconPicker
+      disabled={false}
+      onChange={handleIconChange}
+      selectedIconKey={selectedIcon}
+      variant="primary"
+    />
   );
 };
 ```

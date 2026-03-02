@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import * as React from 'react';
+
+import { themeCssVariables } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -30,12 +32,12 @@ type RadioInputProps = {
   'radio-size'?: RadioSize;
 };
 
-const StyledRadioInput = styled(motion.input)<RadioInputProps>`
+const StyledRadioInputBase = styled.input<RadioInputProps>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.font.color.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  border: 1px solid ${themeCssVariables.font.color.secondary};
+  border-radius: ${themeCssVariables.border.radius.rounded};
   height: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
   margin: 0;
@@ -45,25 +47,26 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
     radioSize === RadioSize.Large ? '18px' : '16px'};
 
   :hover {
-    background-color: ${({ theme, checked }) => {
+    background-color: ${({ checked }) => {
       if (!checked) {
-        return theme.background.tertiary;
+        return themeCssVariables.background.tertiary;
       }
+      return '';
     }};
     outline: 4px solid
-      ${({ theme, checked }) => {
+      ${({ checked }) => {
         if (!checked) {
-          return theme.background.tertiary;
+          return themeCssVariables.background.tertiary;
         }
-        return theme.color.transparent.blue2;
+        return themeCssVariables.color.transparent.blue2;
       }};
   }
 
   &:checked {
-    background-color: ${({ theme }) => theme.color.blue};
+    background-color: ${themeCssVariables.color.blue};
     border: none;
     &::after {
-      background-color: ${({ theme }) => theme.grayScale.gray1};
+      background-color: ${themeCssVariables.grayScale.gray1};
       border-radius: 50%;
       content: '';
       height: ${({ 'radio-size': radioSize }) =>
@@ -83,20 +86,26 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
   }
 `;
 
+const StyledRadioInput = motion.create(StyledRadioInputBase);
+
 type LabelProps = {
   disabled?: boolean;
   labelPosition?: LabelPosition;
 };
 
 const StyledLabel = styled.label<LabelProps>`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-left: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Right ? theme.spacing(2) : '0px'};
-  margin-right: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Left ? theme.spacing(2) : '0px'};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  margin-left: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Right
+      ? themeCssVariables.spacing[2]
+      : '0px'};
+  margin-right: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Left
+      ? themeCssVariables.spacing[2]
+      : '0px'};
   opacity: ${({ disabled }) => (disabled ? 0.32 : 1)};
 `;
 

@@ -28,11 +28,11 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
-import { DeleteTwoFactorAuthenticationMethodOutput } from './dto/delete-two-factor-authentication-method.output';
+import { DeleteTwoFactorAuthenticationMethodDTO } from './dto/delete-two-factor-authentication-method.dto';
 import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
-import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
+import { InitiateTwoFactorAuthenticationProvisioningDTO } from './dto/initiate-two-factor-authentication-provisioning.dto';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
-import { VerifyTwoFactorAuthenticationMethodOutput } from './dto/verify-two-factor-authentication-method.output';
+import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @MetadataResolver()
@@ -47,13 +47,13 @@ export class TwoFactorAuthenticationResolver {
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
   ) {}
 
-  @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
+  @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async initiateOTPProvisioning(
     @Args()
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
-  ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
+  ): Promise<InitiateTwoFactorAuthenticationProvisioningDTO> {
     const { sub: userEmail, workspaceId: tokenWorkspaceId } =
       await this.loginTokenService.verifyLoginToken(
         initiateTwoFactorAuthenticationProvisioningInput.loginToken,
@@ -99,12 +99,12 @@ export class TwoFactorAuthenticationResolver {
     return { uri };
   }
 
-  @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
+  @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async initiateOTPProvisioningForAuthenticatedUser(
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
+  ): Promise<InitiateTwoFactorAuthenticationProvisioningDTO> {
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
         user.id,
@@ -123,14 +123,14 @@ export class TwoFactorAuthenticationResolver {
     return { uri };
   }
 
-  @Mutation(() => DeleteTwoFactorAuthenticationMethodOutput)
+  @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
   async deleteTwoFactorAuthenticationMethod(
     @Args()
     deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
-  ): Promise<DeleteTwoFactorAuthenticationMethodOutput> {
+  ): Promise<DeleteTwoFactorAuthenticationMethodDTO> {
     const twoFactorMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {
@@ -163,14 +163,14 @@ export class TwoFactorAuthenticationResolver {
     return { success: true };
   }
 
-  @Mutation(() => VerifyTwoFactorAuthenticationMethodOutput)
+  @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
-  ): Promise<VerifyTwoFactorAuthenticationMethodOutput> {
+  ): Promise<VerifyTwoFactorAuthenticationMethodDTO> {
     return await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       user.id,
       verifyTwoFactorAuthenticationMethodInput.otp,
