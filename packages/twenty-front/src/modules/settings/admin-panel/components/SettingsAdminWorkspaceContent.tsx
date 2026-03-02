@@ -22,7 +22,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -151,7 +151,7 @@ export const SettingsAdminWorkspaceContent = ({
           label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           leftComponent={
-            <AvatarChip
+            <AvatarOrIcon
               avatarUrl={
                 getImageAbsoluteURI({
                   imageUrl: isNonEmptyString(activeWorkspace?.logo)

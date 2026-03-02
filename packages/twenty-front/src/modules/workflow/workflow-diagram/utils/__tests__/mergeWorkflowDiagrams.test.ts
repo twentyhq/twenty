@@ -56,6 +56,7 @@ it('Preserves the properties defined in the previous version but not in the next
         "stepId": "",
       },
       "id": "1",
+      "measured": undefined,
       "position": {
         "x": 0,
         "y": 0,
@@ -121,6 +122,7 @@ it('Replaces duplicated properties with the next value', () => {
         "stepId": "",
       },
       "id": "1",
+      "measured": undefined,
       "position": {
         "x": 0,
         "y": 0,

@@ -5,7 +5,7 @@ const StyledCardBodyContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2.5)};
+  padding-left: 10px;
   padding-right: ${({ theme }) => theme.spacing(2)};
   span {
     align-items: center;

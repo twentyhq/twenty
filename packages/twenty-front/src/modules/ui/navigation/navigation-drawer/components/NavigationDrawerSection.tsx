@@ -21,13 +21,15 @@ const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
 
 export const NavigationDrawerSection = ({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) => {
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   return (
-    <StyledSection isSettingsDrawer={isSettingsDrawer}>
+    <StyledSection isSettingsDrawer={isSettingsDrawer} className={className}>
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
         isSettingsDrawer={isSettingsDrawer}

@@ -1,4 +1,5 @@
-import { themeColorSchema, type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { themeColorSchema } from 'twenty-ui/utilities';
 
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultIconColor.constant';
 

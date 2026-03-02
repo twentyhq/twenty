@@ -12,7 +12,7 @@ import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-tabl
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;

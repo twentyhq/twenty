@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +8,8 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
@@ -34,11 +35,11 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
-  border: ${({ theme, $isSelectedInEditMode }) =>
+  border: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
-      ? `1px solid ${theme.color.blue}`
+      ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
 `;
 
 const StyledFolderDroppableContent = styled.div<{
@@ -46,7 +47,8 @@ const StyledFolderDroppableContent = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  padding-bottom: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
+  padding-bottom: ${({ $compact }) =>
+    $compact ? 0 : themeCssVariables.spacing[2]};
 `;
 
 const StyledFolderExpandableWrapper = styled.div`
@@ -85,7 +87,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const isMobile = useIsMobile();

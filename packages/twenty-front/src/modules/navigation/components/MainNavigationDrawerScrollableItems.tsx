@@ -6,6 +6,8 @@ import { NavigationDrawerOtherSection } from '@/navigation/components/Navigation
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
   import(
     '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
@@ -25,7 +27,7 @@ const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
 const StyledScrollableItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const MainNavigationDrawerScrollableItems = () => {

@@ -16,7 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledDebugRow = styled.div`
   position: absolute;
   left: 250px;
-  top: ${({ theme }) => theme.spacing(1.25)};
+  top: 5px;
   z-index: 20;
   color: ${({ theme }) => theme.font.color.primary};
   background-color: ${({ theme }) => theme.color.gray3};

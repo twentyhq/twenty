@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';
@@ -7,11 +8,11 @@ import { MainButton } from 'twenty-ui/input';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooter = styled(Modal.Footer)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  gap: ${({ theme }) => theme.spacing(2.5)};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  gap: 10px;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
   height: auto;
 `;
 
