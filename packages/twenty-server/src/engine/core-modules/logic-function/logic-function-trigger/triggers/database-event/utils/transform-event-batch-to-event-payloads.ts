@@ -1,9 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import type {
-  DatabaseEventPayload,
-  ObjectRecordEvent,
-} from 'twenty-shared/database-events';
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -34,7 +31,7 @@ export const transformEventBatchToEventPayloads = ({
     });
 
     for (const event of filteredEvents) {
-      const payload: DatabaseEventPayload = { ...batchEventInfo, ...event };
+      const payload = { ...batchEventInfo, ...event };
 
       result.push({
         logicFunctionId: logicFunction.id,

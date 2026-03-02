@@ -103,7 +103,7 @@ export const mockCurrentWorkspace = {
     phases: [],
     billingSubscriptionItems: [
       {
-        __typename: 'BillingSubscriptionItemDTO',
+        __typename: 'BillingSubscriptionItem',
         id: '11111111-1111-4111-8111-111111111111',
         hasReachedCurrentPeriodCap: false,
         quantity: 1,
@@ -116,7 +116,7 @@ export const mockCurrentWorkspace = {
         },
       },
       {
-        __typename: 'BillingSubscriptionItemDTO',
+        __typename: 'BillingSubscriptionItem',
         id: '11111111-1111-4111-8111-111111111112',
         hasReachedCurrentPeriodCap: false,
         quantity: null,
@@ -140,7 +140,7 @@ export const mockCurrentWorkspace = {
       phases: [],
       billingSubscriptionItems: [
         {
-          __typename: 'BillingSubscriptionItemDTO',
+          __typename: 'BillingSubscriptionItem',
           id: '22222222-2222-4222-8222-222222222222',
           hasReachedCurrentPeriodCap: false,
           quantity: 1,

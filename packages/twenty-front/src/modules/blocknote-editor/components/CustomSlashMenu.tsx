@@ -1,5 +1,5 @@
 import { useBlockNoteEditor } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { createPortal } from 'react-dom';
@@ -33,7 +33,7 @@ export const CustomSlashMenu = ({
   const currentBlock = editor?.getTextCursorPosition()?.block;
   const blockType = currentBlock?.type;
   const headingLevel =
-    blockType === 'heading' ? (currentBlock?.props?.level as number) : null;
+    blockType === 'heading' ? Number(currentBlock?.props?.level) : null;
 
   const getOffsetValue = (placement: string) => {
     if (!placement.startsWith('top')) return 0;

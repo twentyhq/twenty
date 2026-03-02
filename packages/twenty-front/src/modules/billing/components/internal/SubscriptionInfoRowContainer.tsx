@@ -1,8 +1,9 @@
 import { type IconComponent } from 'twenty-ui/display';
-import React from 'react';
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import React, { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
@@ -13,16 +14,16 @@ type SubscriptionInfoRowContainerProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.primary};
+  gap: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.primary};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 `;
 
 const StyledIconLabelContainer = styled.div`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
 `;
 
@@ -33,8 +34,8 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledHeaderText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
@@ -54,7 +55,7 @@ export const SubscriptionInfoRowContainer = ({
   currentValue,
   nextValue,
 }: SubscriptionInfoRowContainerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledContainer>
       <StyledIconLabelContainer>

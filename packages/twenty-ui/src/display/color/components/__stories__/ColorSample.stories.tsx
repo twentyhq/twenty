@@ -9,10 +9,6 @@ const meta: Meta<typeof ColorSample> = {
   component: ColorSample,
   decorators: [ComponentDecorator],
   args: { colorName: 'green' },
-  argTypes: {
-    as: { control: false },
-    theme: { control: false },
-  },
 };
 
 export default meta;

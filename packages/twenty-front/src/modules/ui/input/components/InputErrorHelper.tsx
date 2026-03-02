@@ -5,7 +5,7 @@ const StyledInputErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.xs};
   position: absolute;
-  margin-top: ${({ theme }) => theme.spacing(0.25)};
+  margin-top: 1px;
 `;
 
 export const InputErrorHelper = ({

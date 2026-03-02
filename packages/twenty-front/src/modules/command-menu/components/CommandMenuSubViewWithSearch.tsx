@@ -12,9 +12,12 @@ const StyledSubViewContainer = styled.div`
 `;
 
 const StyledSearchContainer = styled.div`
+  align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(10)};
   min-width: 0;
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  padding-inline: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledSearchInput = styled.input`
@@ -22,8 +25,7 @@ const StyledSearchInput = styled.input`
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+
   padding: 0;
   width: 100%;
   outline: none;

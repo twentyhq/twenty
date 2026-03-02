@@ -7,7 +7,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
+import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,7 +50,7 @@ export class WorkspaceInvitationResolver {
     );
   }
 
-  @Mutation(() => SendInvitationsOutput)
+  @Mutation(() => SendInvitationsDTO)
   @UseGuards(UserAuthGuard)
   async resendWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
@@ -90,13 +90,13 @@ export class WorkspaceInvitationResolver {
     return this.workspaceInvitationService.loadWorkspaceInvitations(workspace);
   }
 
-  @Mutation(() => SendInvitationsOutput)
+  @Mutation(() => SendInvitationsDTO)
   @UseGuards(UserAuthGuard)
   async sendInvitations(
     @Args() sendInviteLinkInput: SendInvitationsInput,
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<SendInvitationsOutput> {
+  ): Promise<SendInvitationsDTO> {
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =

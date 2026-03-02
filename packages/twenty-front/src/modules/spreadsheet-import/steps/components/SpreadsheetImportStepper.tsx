@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useCallback, useContext, useState } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -31,7 +31,7 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { initialStepState } = useSpreadsheetImportInternal();
 

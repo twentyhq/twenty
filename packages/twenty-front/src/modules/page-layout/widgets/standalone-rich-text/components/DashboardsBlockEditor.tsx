@@ -1,4 +1,4 @@
-import { filterSuggestionItems } from '@blocknote/core';
+import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
@@ -25,7 +25,7 @@ type DashboardsBlockEditorProps = {
 };
 
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
-// (DashboardBlockDragHandleMenu, DashboardEditorSideMenu, DashboardColorSelectionMenu).
+// (DashboardEditorSideMenu, DashboardColorSelectionMenu).
 // Test removing each selector and move necessary styles to appropriate components.
 // eslint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
@@ -183,10 +183,7 @@ export const DashboardsBlockEditor = ({
         {!readonly && (
           <>
             <DashboardFormattingToolbar boundaryElement={boundaryElement} />
-            <DashboardEditorSideMenu
-              editor={editor}
-              boundaryElement={boundaryElement}
-            />
+            <DashboardEditorSideMenu editor={editor} />
             <SuggestionMenuController
               triggerCharacter="/"
               getItems={async (query) => {

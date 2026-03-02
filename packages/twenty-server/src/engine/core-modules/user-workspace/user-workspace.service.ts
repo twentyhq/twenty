@@ -14,7 +14,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';

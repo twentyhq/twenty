@@ -10,12 +10,10 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-
-const companiesMock = getCompaniesMock();
 
 const companyMockObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('company');
@@ -44,9 +42,9 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
-      value: companiesMock[0].name,
+      value: mockedCompanyRecords[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
-      displayValue: companiesMock[0].name,
+      displayValue: mockedCompanyRecords[0].name,
       operand: RecordFilterOperand.CONTAINS,
       type: 'TEXT',
       label: 'Name',
@@ -61,7 +59,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     expect(result).toEqual({
       name: {
-        ilike: `%${companiesMock[0].name}%`,
+        ilike: `%${mockedCompanyRecords[0].name}%`,
       },
     });
   });
@@ -87,9 +85,9 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
-      value: companiesMock[0].name,
+      value: mockedCompanyRecords[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
-      displayValue: companiesMock[0].name,
+      displayValue: mockedCompanyRecords[0].name,
       operand: ViewFilterOperand.CONTAINS,
       type: FieldMetadataType.TEXT,
       label: 'Name',
@@ -116,7 +114,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       and: [
         {
           name: {
-            ilike: `%${companiesMock[0].name}%`,
+            ilike: `%${mockedCompanyRecords[0].name}%`,
           },
         },
         {

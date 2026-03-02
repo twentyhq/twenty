@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -141,7 +141,7 @@ export class ImpersonationService {
   ) {
     const auditService = this.auditService.createContext({
       workspaceId: impersonatorUserWorkspace.workspace.id,
-      userWorkspaceId: impersonatorUserWorkspace.id,
+      userId: impersonatorUserWorkspace.userId,
     });
 
     auditService.insertWorkspaceEvent(MONITORING_EVENT, {
