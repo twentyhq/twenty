@@ -40,6 +40,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -64,23 +65,9 @@ export class ResetPasswordService {
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
     );
 
-    let targetWorkspaceId = workspaceId ?? null;
-
-    if (!targetWorkspaceId) {
-      try {
-        const firstWorkspace =
-          await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id);
-
-        targetWorkspaceId = firstWorkspace.id;
-      } catch (error) {
-        if (
-          !(error instanceof AuthException) ||
-          error.code !== AuthExceptionCode.WORKSPACE_NOT_FOUND
-        ) {
-          throw error;
-        }
-      }
-    }
+    const targetWorkspaceId =
+      workspaceId ??
+      (await this.findFirstPasswordAuthEnabledWorkspaceId(user.id));
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -93,6 +80,8 @@ export class ResetPasswordService {
       );
     }
 
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
     const existingToken = await this.appTokenRepository.findOne({
       where: {
         userId: user.id,
@@ -102,7 +91,7 @@ export class ResetPasswordService {
       },
     });
 
-    if (existingToken) {
+    if (existingToken && targetWorkspaceId) {
       const timeToWait = ms(
         differenceInMilliseconds(existingToken.expiresAt, new Date()),
         { long: true },
@@ -120,15 +109,20 @@ export class ResetPasswordService {
       .update(plainResetToken)
       .digest('hex');
 
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    await this.appTokenRepository.save({
-      userId: user.id,
-      workspaceId: targetWorkspaceId,
-      value: hashedResetToken,
-      expiresAt,
-      type: AppTokenType.PasswordResetToken,
-    });
+    if (targetWorkspaceId) {
+      await this.appTokenRepository.save({
+        userId: user.id,
+        workspaceId: targetWorkspaceId,
+        value: hashedResetToken,
+        expiresAt,
+        type: AppTokenType.PasswordResetToken,
+      });
+    } else {
+      // Mimic save timing to prevent timing attacks
+      await this.appTokenRepository.count({
+        where: { userId: user.id },
+      });
+    }
 
     return {
       workspaceId: targetWorkspaceId,
@@ -142,6 +136,10 @@ export class ResetPasswordService {
     email: string,
     locale: keyof typeof APP_LOCALES,
   ): Promise<EmailPasswordResetLinkDTO> {
+    if (!resetToken.workspaceId) {
+      return { success: true };
+    }
+
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
@@ -152,24 +150,16 @@ export class ResetPasswordService {
       passwordResetToken: resetToken.passwordResetToken,
     });
 
-    let link: URL;
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: resetToken.workspaceId,
+    });
 
-    if (resetToken.workspaceId) {
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: resetToken.workspaceId,
-      });
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-      link = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
-        pathname: resetPasswordPath,
-      });
-    } else {
-      link = this.domainServerConfigService.getFrontUrl();
-      link.pathname = resetPasswordPath;
-      link.search = '';
-    }
+    const link = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: resetPasswordPath,
+    });
 
     const emailData = {
       link: link.toString(),
@@ -265,5 +255,18 @@ export class ResetPasswordService {
     );
 
     return { success: true };
+  }
+
+  private async findFirstPasswordAuthEnabledWorkspaceId(
+    userId: string,
+  ): Promise<string | null> {
+    const workspaces =
+      await this.userWorkspaceService.findWorkspacesByUserId(userId);
+
+    const passwordAuthEnabledWorkspace = workspaces.find(
+      (workspace) => workspace.isPasswordAuthEnabled,
+    );
+
+    return passwordAuthEnabledWorkspace?.id ?? null;
   }
 }

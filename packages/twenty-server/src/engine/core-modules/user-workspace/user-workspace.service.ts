@@ -249,6 +249,28 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     return workspace;
   }
 
+  async findWorkspacesByUserId(userId: string): Promise<WorkspaceEntity[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: { userWorkspaces: { workspace: true } },
+      order: {
+        userWorkspaces: {
+          workspace: {
+            createdAt: 'ASC',
+          },
+        },
+      },
+    });
+
+    return (
+      user?.userWorkspaces
+        ?.map((userWorkspace) => userWorkspace.workspace)
+        .filter(isDefined) ?? []
+    );
+  }
+
   async countUserWorkspaces(userId: string): Promise<number> {
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }

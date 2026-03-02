@@ -1,6 +1,8 @@
+import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   THEME_LIGHT,
   ThemeContextProvider,
@@ -12,8 +14,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { i18n } from '@lingui/core';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const buildWorkspaceUrlMock = jest.fn();
@@ -85,12 +86,10 @@ describe('SignInUpGlobalScopeForm', () => {
   });
 
   it('renders forgot-password link on password step and triggers reset callback', () => {
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Password);
+
     render(
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(signInUpStepState, SignInUpStep.Password);
-        }}
-      >
+      <JotaiProvider store={jotaiStore}>
         <ThemeProvider theme={THEME_LIGHT}>
           <ThemeContextProvider theme={THEME_LIGHT}>
             <I18nProvider i18n={i18n}>
@@ -98,7 +97,7 @@ describe('SignInUpGlobalScopeForm', () => {
             </I18nProvider>
           </ThemeContextProvider>
         </ThemeProvider>
-      </RecoilRoot>,
+      </JotaiProvider>,
     );
 
     const forgotPasswordLink = screen.getByText('Forgot your password?');

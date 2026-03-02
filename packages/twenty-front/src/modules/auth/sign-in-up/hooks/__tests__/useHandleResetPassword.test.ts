@@ -38,14 +38,15 @@ const renderHooks = () => {
 };
 
 const renderHooksWithoutWorkspace = () => {
+  jotaiStore.set(workspacePublicDataState.atom, null);
+
   const { result } = renderHook(() => useHandleResetPassword(), {
-    wrapper: ({ children }) =>
-      RecoilRoot({
-        initializeState: ({ set }) => {
-          set(workspacePublicDataState, null);
-        },
-        children: I18nProvider({ i18n, children }),
-      }),
+    wrapper: ({ children }: { children: ReactNode }) =>
+      createElement(
+        JotaiProvider,
+        { store: jotaiStore },
+        createElement(I18nProvider, { i18n }, children),
+      ),
   });
   return { result };
 };

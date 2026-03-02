@@ -828,11 +828,14 @@ export class AuthResolver {
         emailPasswordResetInput.workspaceId,
       );
 
-    return await this.resetPasswordService.sendEmailPasswordResetLink(
+    // Fire-and-forget to prevent timing attacks
+    this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
       context.req.locale,
     );
+
+    return { success: true };
   }
 
   @Mutation(() => InvalidatePasswordDTO)
