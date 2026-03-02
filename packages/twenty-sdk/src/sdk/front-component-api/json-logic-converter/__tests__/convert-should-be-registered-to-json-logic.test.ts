@@ -43,43 +43,43 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
     });
   });
 
-  describe('Tier 2 - isDefined and property access', () => {
-    it('converts isDefined with param', () => {
+  describe('Tier 2 - Null checks and property access', () => {
+    it('converts !== null check', () => {
       expect(
-        convert('({ selectedRecord }) => isDefined(selectedRecord)'),
+        convert('({ selectedRecord }) => selectedRecord !== null'),
       ).toEqual({
-        isDefined: [{ var: 'selectedRecord' }],
+        '!==': [{ var: 'selectedRecord' }, null],
       });
     });
 
-    it('converts !isDefined', () => {
+    it('converts === null check (negated defined)', () => {
       expect(
         convert(
-          '({ selectedRecord }) => !isDefined(selectedRecord?.deletedAt)',
+          '({ selectedRecord }) => selectedRecord?.deletedAt === null',
         ),
       ).toEqual({
-        '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }],
+        '===': [{ var: 'selectedRecord.deletedAt' }, null],
       });
     });
 
-    it('converts AND chain with isDefined and permissions', () => {
+    it('converts AND chain with null checks and permissions', () => {
       const result = convert(
         `({ selectedRecord, hasAnySoftDeleteFilterOnView, objectPermissions }) =>
-        (isDefined(selectedRecord) &&
+        (selectedRecord !== null &&
           !selectedRecord.isRemote &&
           !hasAnySoftDeleteFilterOnView &&
           objectPermissions.canSoftDeleteObjectRecords &&
-          !isDefined(selectedRecord?.deletedAt)) ??
+          selectedRecord?.deletedAt === null) ??
         false`,
       );
 
       expect(result).toEqual({
         and: [
-          { isDefined: [{ var: 'selectedRecord' }] },
+          { '!==': [{ var: 'selectedRecord' }, null] },
           { '!': [{ var: 'selectedRecord.isRemote' }] },
           { '!': [{ var: 'hasAnySoftDeleteFilterOnView' }] },
           { var: 'objectPermissions.canSoftDeleteObjectRecords' },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
         ],
       });
     });
@@ -106,7 +106,7 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
         (objectPermissions.canSoftDeleteObjectRecords &&
           !isRemote &&
           !hasAnySoftDeleteFilterOnView &&
-          isDefined(numberOfSelectedRecords) &&
+          numberOfSelectedRecords !== null &&
           numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
         false`,
       );
@@ -116,7 +116,7 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
           { var: 'objectPermissions.canSoftDeleteObjectRecords' },
           { '!': [{ var: 'isRemote' }] },
           { '!': [{ var: 'hasAnySoftDeleteFilterOnView' }] },
-          { isDefined: [{ var: 'numberOfSelectedRecords' }] },
+          { '!==': [{ var: 'numberOfSelectedRecords' }, null] },
           { '<': [{ var: 'numberOfSelectedRecords' }, 10000] },
         ],
       });
@@ -127,7 +127,7 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
         `({ selectedRecord, isFavorite, hasAnySoftDeleteFilterOnView }) =>
         !selectedRecord?.isRemote &&
         !isFavorite &&
-        !isDefined(selectedRecord?.deletedAt) &&
+        selectedRecord?.deletedAt === null &&
         !hasAnySoftDeleteFilterOnView`,
       );
 
@@ -135,38 +135,40 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
         and: [
           { '!': [{ var: 'selectedRecord.isRemote' }] },
           { '!': [{ var: 'isFavorite' }] },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
           { '!': [{ var: 'hasAnySoftDeleteFilterOnView' }] },
         ],
       });
     });
 
-    it('converts isNonEmptyString', () => {
+    it('converts non-empty string check with null and empty comparisons', () => {
       const result = convert(
         `({ selectedRecord, isNoteOrTask }) =>
-        isDefined(isNoteOrTask) &&
+        isNoteOrTask !== null &&
         isNoteOrTask &&
-        isNonEmptyString(selectedRecord?.bodyV2?.blocknote)`,
+        selectedRecord?.bodyV2?.blocknote !== null &&
+        selectedRecord?.bodyV2?.blocknote !== ''`,
       );
 
       expect(result).toEqual({
         and: [
-          { isDefined: [{ var: 'isNoteOrTask' }] },
+          { '!==': [{ var: 'isNoteOrTask' }, null] },
           { var: 'isNoteOrTask' },
-          { isNonEmptyString: [{ var: 'selectedRecord.bodyV2.blocknote' }] },
+          { '!==': [{ var: 'selectedRecord.bodyV2.blocknote' }, null] },
+          { '!==': [{ var: 'selectedRecord.bodyV2.blocknote' }, ''] },
         ],
       });
     });
 
-    it('converts isDefined with hasAnySoftDeleteFilterOnView AND check', () => {
+    it('converts null check with AND check', () => {
       const result = convert(
         `({ hasAnySoftDeleteFilterOnView }) =>
-        isDefined(hasAnySoftDeleteFilterOnView) && hasAnySoftDeleteFilterOnView`,
+        hasAnySoftDeleteFilterOnView !== null && hasAnySoftDeleteFilterOnView`,
       );
 
       expect(result).toEqual({
         and: [
-          { isDefined: [{ var: 'hasAnySoftDeleteFilterOnView' }] },
+          { '!==': [{ var: 'hasAnySoftDeleteFilterOnView' }, null] },
           { var: 'hasAnySoftDeleteFilterOnView' },
         ],
       });
@@ -175,37 +177,37 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
     it('converts merge records pattern', () => {
       const result = convert(
         `({ objectMetadataItem, numberOfSelectedRecords, objectPermissions }) =>
-        isDefined(objectMetadataItem?.duplicateCriteria) &&
-        isDefined(numberOfSelectedRecords) &&
-        Boolean(objectPermissions.canUpdateObjectRecords) &&
-        Boolean(objectPermissions.canDestroyObjectRecords) &&
+        objectMetadataItem?.duplicateCriteria !== null &&
+        numberOfSelectedRecords !== null &&
+        objectPermissions.canUpdateObjectRecords &&
+        objectPermissions.canDestroyObjectRecords &&
         numberOfSelectedRecords <= MUTATION_MAX_MERGE_RECORDS`,
       );
 
       expect(result).toEqual({
         and: [
-          { isDefined: [{ var: 'objectMetadataItem.duplicateCriteria' }] },
-          { isDefined: [{ var: 'numberOfSelectedRecords' }] },
-          { '!!': [{ var: 'objectPermissions.canUpdateObjectRecords' }] },
-          { '!!': [{ var: 'objectPermissions.canDestroyObjectRecords' }] },
+          { '!==': [{ var: 'objectMetadataItem.duplicateCriteria' }, null] },
+          { '!==': [{ var: 'numberOfSelectedRecords' }, null] },
+          { var: 'objectPermissions.canUpdateObjectRecords' },
+          { var: 'objectPermissions.canDestroyObjectRecords' },
           { '<=': [{ var: 'numberOfSelectedRecords' }, 9] },
         ],
       });
     });
   });
 
-  describe('Tier 3 - Function calls and complex patterns', () => {
-    it('converts getTargetObjectReadPermission', () => {
+  describe('Tier 3 - Map access and complex patterns', () => {
+    it('converts targetObjectReadPermissions map access', () => {
       const result = convert(
-        `({ objectMetadataItem, viewType, getTargetObjectReadPermission }) =>
-        getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) &&
+        `({ objectMetadataItem, viewType, targetObjectReadPermissions }) =>
+        targetObjectReadPermissions.workflow &&
         (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
           viewType === ActionViewType.SHOW_PAGE)`,
       );
 
       expect(result).toEqual({
         and: [
-          { hasReadPermission: ['workflow'] },
+          { var: 'targetObjectReadPermissions.workflow' },
           {
             or: [
               {
@@ -218,25 +220,23 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
       });
     });
 
-    it('converts isFeatureFlagEnabled', () => {
+    it('converts featureFlags map access', () => {
       const result = convert(
-        `({ selectedRecord, objectPermissions, objectMetadataItem, isFeatureFlagEnabled }) =>
-        isFeatureFlagEnabled(
-          FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-        ) &&
-        isDefined(selectedRecord) &&
+        `({ selectedRecord, objectPermissions, objectMetadataItem, featureFlags }) =>
+        featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED &&
+        selectedRecord !== null &&
         !selectedRecord?.isRemote &&
-        !isDefined(selectedRecord?.deletedAt) &&
+        selectedRecord?.deletedAt === null &&
         objectPermissions.canUpdateObjectRecords &&
         objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard`,
       );
 
       expect(result).toEqual({
         and: [
-          { isFeatureFlagEnabled: ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED'] },
-          { isDefined: [{ var: 'selectedRecord' }] },
+          { var: 'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' },
+          { '!==': [{ var: 'selectedRecord' }, null] },
           { '!': [{ var: 'selectedRecord.isRemote' }] },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
           { var: 'objectPermissions.canUpdateObjectRecords' },
           {
             '!==': [{ var: 'objectMetadataItem.nameSingular' }, 'dashboard'],
@@ -249,10 +249,10 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
       const result = convert(
         `({ selectedRecord, objectPermissions, isRemote, isShowPage, hasAnySoftDeleteFilterOnView }) =>
         (!isRemote &&
-          isDefined(selectedRecord?.deletedAt) &&
+          selectedRecord?.deletedAt !== null &&
           objectPermissions.canSoftDeleteObjectRecords &&
-          ((isDefined(isShowPage) && isShowPage) ||
-            (isDefined(hasAnySoftDeleteFilterOnView) &&
+          ((isShowPage !== null && isShowPage) ||
+            (hasAnySoftDeleteFilterOnView !== null &&
               hasAnySoftDeleteFilterOnView))) ??
         false`,
       );
@@ -260,21 +260,19 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
       expect(result).toEqual({
         and: [
           { '!': [{ var: 'isRemote' }] },
-          { isDefined: [{ var: 'selectedRecord.deletedAt' }] },
+          { '!==': [{ var: 'selectedRecord.deletedAt' }, null] },
           { var: 'objectPermissions.canSoftDeleteObjectRecords' },
           {
             or: [
               {
                 and: [
-                  { isDefined: [{ var: 'isShowPage' }] },
+                  { '!==': [{ var: 'isShowPage' }, null] },
                   { var: 'isShowPage' },
                 ],
               },
               {
                 and: [
-                  {
-                    isDefined: [{ var: 'hasAnySoftDeleteFilterOnView' }],
-                  },
+                  { '!==': [{ var: 'hasAnySoftDeleteFilterOnView' }, null] },
                   { var: 'hasAnySoftDeleteFilterOnView' },
                 ],
               },
@@ -287,12 +285,12 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
     it('converts workflow version status check', () => {
       const result = convert(
         `({ selectedRecord }) =>
-        isDefined(selectedRecord) && selectedRecord.status !== 'DRAFT'`,
+        selectedRecord !== null && selectedRecord.status !== 'DRAFT'`,
       );
 
       expect(result).toEqual({
         and: [
-          { isDefined: [{ var: 'selectedRecord' }] },
+          { '!==': [{ var: 'selectedRecord' }, null] },
           { '!==': [{ var: 'selectedRecord.status' }, 'DRAFT'] },
         ],
       });
@@ -300,11 +298,11 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
 
     it('converts nested property access through optional chain', () => {
       const result = convert(
-        '({ selectedRecord }) => isDefined(selectedRecord?.workflow?.id)',
+        '({ selectedRecord }) => selectedRecord?.workflow?.id !== null',
       );
 
       expect(result).toEqual({
-        isDefined: [{ var: 'selectedRecord.workflow.id' }],
+        '!==': [{ var: 'selectedRecord.workflow.id' }, null],
       });
     });
 
@@ -338,7 +336,7 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
         `({ workflowWithCurrentVersion, selectedRecord }) =>
         (workflowWithCurrentVersion?.statuses?.includes('ACTIVE') || false) &&
         (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false) &&
-        !isDefined(selectedRecord?.deletedAt)`,
+        selectedRecord?.deletedAt === null`,
       );
 
       expect(result).toEqual({
@@ -349,7 +347,7 @@ describe('convertShouldBeRegisteredToJsonLogic', () => {
           {
             in: ['DRAFT', { var: 'workflowWithCurrentVersion.statuses' }],
           },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
         ],
       });
     });

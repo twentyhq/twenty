@@ -25,12 +25,12 @@ describe('tryResolveKnownConstant', () => {
     ).toBe('company');
   });
 
-  it('resolves a nested FeatureFlagKey property', () => {
+  it('returns undefined for removed FeatureFlagKey constant', () => {
     expect(
       tryResolveKnownConstant({
         constantPath: 'FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
       }),
-    ).toBe('IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED');
+    ).toBeUndefined();
   });
 
   it('resolves a nested ActionViewType property', () => {

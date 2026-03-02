@@ -4,10 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
-import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 import { convertIncludesCallToJsonLogic } from './convert-includes-call-to-json-logic';
 import { convertSomeCallToJsonLogic } from './convert-some-call-to-json-logic';
-import { resolveExpressionToStringValue } from './resolve-expression-to-string-value';
 
 const getRequiredFirstArgument = ({
   callArguments,
@@ -33,24 +31,6 @@ const getRequiredFirstArgument = ({
   return firstArgument;
 };
 
-const convertParamCallbackToJsonLogic = ({
-  operatorName,
-  callArguments,
-  context,
-}: {
-  operatorName: string;
-  callArguments: Node[];
-  context: string;
-}): JsonLogicRule => {
-  const argument = getRequiredFirstArgument({ callArguments, context });
-
-  return {
-    [operatorName]: [
-      resolveExpressionToStringValue({ argumentExpression: argument }),
-    ],
-  };
-};
-
 export const convertCallExpressionToJsonLogic = ({
   node,
 }: {
@@ -66,60 +46,9 @@ export const convertCallExpressionToJsonLogic = ({
   const callArguments = node.getArguments();
 
   if (Node.isIdentifier(calleeExpression)) {
-    const functionName = calleeExpression.getText();
-
-    switch (functionName) {
-      case 'isDefined': {
-        const argument = getRequiredFirstArgument({
-          callArguments,
-          context: 'isDefined()',
-        });
-
-        return {
-          isDefined: [convertExpressionToJsonLogic({ node: argument })],
-        };
-      }
-      case 'isNonEmptyString': {
-        const argument = getRequiredFirstArgument({
-          callArguments,
-          context: 'isNonEmptyString()',
-        });
-
-        return {
-          isNonEmptyString: [convertExpressionToJsonLogic({ node: argument })],
-        };
-      }
-      case 'Boolean': {
-        const argument = getRequiredFirstArgument({
-          callArguments,
-          context: 'Boolean()',
-        });
-
-        return { '!!': [convertExpressionToJsonLogic({ node: argument })] };
-      }
-      case 'getTargetObjectReadPermission':
-        return convertParamCallbackToJsonLogic({
-          operatorName: 'hasReadPermission',
-          callArguments,
-          context: 'getTargetObjectReadPermission()',
-        });
-      case 'getTargetObjectWritePermission':
-        return convertParamCallbackToJsonLogic({
-          operatorName: 'hasWritePermission',
-          callArguments,
-          context: 'getTargetObjectWritePermission()',
-        });
-      case 'isFeatureFlagEnabled':
-        return convertParamCallbackToJsonLogic({
-          operatorName: 'isFeatureFlagEnabled',
-          callArguments,
-          context: 'isFeatureFlagEnabled()',
-        });
-      default:
-        throw new JsonLogicConversionError(
-          `Unknown function call: ${functionName}`,
-        );
-    }
+    throw new JsonLogicConversionError(
+      `Function calls are not supported in shouldBeRegistered: ${calleeExpression.getText()}(). Use explicit comparisons instead.`,
+    );
   }
 
   if (Node.isPropertyAccessExpression(calleeExpression)) {

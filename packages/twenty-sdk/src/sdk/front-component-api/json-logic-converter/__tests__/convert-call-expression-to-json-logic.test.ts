@@ -14,46 +14,6 @@ const getCallExpression = (code: string): Expression => {
 };
 
 describe('convertCallExpressionToJsonLogic', () => {
-  describe('isDefined', () => {
-    it('converts isDefined(param) to isDefined operator', () => {
-      expect(
-        convertCallExpressionToJsonLogic({
-          node: getCallExpression('isDefined(selectedRecord);'),
-        }),
-      ).toEqual({ isDefined: [{ var: 'selectedRecord' }] });
-    });
-  });
-
-  describe('isNonEmptyString', () => {
-    it('converts isNonEmptyString(param) to isNonEmptyString operator', () => {
-      expect(
-        convertCallExpressionToJsonLogic({
-          node: getCallExpression('isNonEmptyString(name);'),
-        }),
-      ).toEqual({ isNonEmptyString: [{ var: 'name' }] });
-    });
-  });
-
-  describe('Boolean', () => {
-    it('converts Boolean(param) to !! operator', () => {
-      expect(
-        convertCallExpressionToJsonLogic({
-          node: getCallExpression('Boolean(value);'),
-        }),
-      ).toEqual({ '!!': [{ var: 'value' }] });
-    });
-  });
-
-  describe('known function calls', () => {
-    it('converts getTargetObjectReadPermission to hasReadPermission', () => {
-      expect(
-        convertCallExpressionToJsonLogic({
-          node: getCallExpression('getTargetObjectReadPermission("workflow");'),
-        }),
-      ).toEqual({ hasReadPermission: ['workflow'] });
-    });
-  });
-
   describe('.includes()', () => {
     it('converts property.includes(value) to in operator', () => {
       expect(
@@ -69,6 +29,14 @@ describe('convertCallExpressionToJsonLogic', () => {
   });
 
   describe('error cases', () => {
+    it('throws for any identifier-based function call', () => {
+      expect(() =>
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('isDefined(selectedRecord);'),
+        }),
+      ).toThrow(JsonLogicConversionError);
+    });
+
     it('throws for unknown function calls', () => {
       expect(() =>
         convertCallExpressionToJsonLogic({

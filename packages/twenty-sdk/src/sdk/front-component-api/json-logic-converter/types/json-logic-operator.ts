@@ -12,10 +12,4 @@ export type JsonLogicOperator =
   | '>='
   | 'in'
   | 'some'
-  | 'var'
-  | 'isDefined'
-  | 'isNonEmptyString'
-  | 'hasReadPermission'
-  | 'hasWritePermission'
-  | 'isFeatureFlagEnabled'
-  | 'areWorkflowTriggerAndStepsDefined';
+  | 'var';

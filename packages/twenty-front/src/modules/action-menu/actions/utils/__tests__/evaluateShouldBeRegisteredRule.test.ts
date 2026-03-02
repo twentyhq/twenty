@@ -21,9 +21,9 @@ const baseParams: ShouldBeRegisteredFunctionParams = {
     rowLevelPermissionPredicates: [],
     rowLevelPermissionPredicateGroups: [],
   },
-  getTargetObjectReadPermission: () => true,
-  getTargetObjectWritePermission: () => true,
-  isFeatureFlagEnabled: () => false,
+  targetObjectReadPermissions: { workflow: true, person: true },
+  targetObjectWritePermissions: { person: true },
+  featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false },
 };
 
 describe('evaluateShouldBeRegisteredRule', () => {
@@ -40,9 +40,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
     expect(evaluateShouldBeRegisteredRule(false, baseParams)).toBe(false);
   });
 
-  describe('isDefined custom operator', () => {
+  describe('null check (!== null) replacing isDefined', () => {
     const rule: ShouldBeRegisteredRulesLogic = {
-      isDefined: [{ var: 'selectedRecord' }],
+      '!==': [{ var: 'selectedRecord' }, null],
     };
 
     it('returns true when value is defined', () => {
@@ -73,9 +73,12 @@ describe('evaluateShouldBeRegisteredRule', () => {
     });
   });
 
-  describe('isNonEmptyString custom operator', () => {
+  describe('non-empty string check (!== null && !== empty)', () => {
     const rule: ShouldBeRegisteredRulesLogic = {
-      isNonEmptyString: [{ var: 'selectedRecord.bodyV2.blocknote' }],
+      and: [
+        { '!==': [{ var: 'selectedRecord.bodyV2.blocknote' }, null] },
+        { '!==': [{ var: 'selectedRecord.bodyV2.blocknote' }, ''] },
+      ],
     };
 
     it('returns true for non-empty string', () => {
@@ -106,15 +109,15 @@ describe('evaluateShouldBeRegisteredRule', () => {
     });
   });
 
-  describe('hasReadPermission custom operator', () => {
+  describe('read permission via map access', () => {
     const rule: ShouldBeRegisteredRulesLogic = {
-      hasReadPermission: ['workflow'],
+      var: 'targetObjectReadPermissions.workflow',
     };
 
     it('returns true when permission granted', () => {
       const params = {
         ...baseParams,
-        getTargetObjectReadPermission: () => true,
+        targetObjectReadPermissions: { workflow: true },
       };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
@@ -123,49 +126,44 @@ describe('evaluateShouldBeRegisteredRule', () => {
     it('returns false when permission denied', () => {
       const params = {
         ...baseParams,
-        getTargetObjectReadPermission: () => false,
+        targetObjectReadPermissions: { workflow: false },
       };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
-
-    it('passes the object name to the callback', () => {
-      const mockFn = jest.fn().mockReturnValue(true);
-      const params = {
-        ...baseParams,
-        getTargetObjectReadPermission: mockFn,
-      };
-
-      evaluateShouldBeRegisteredRule(rule, params);
-      expect(mockFn).toHaveBeenCalledWith('workflow');
-    });
   });
 
-  describe('hasWritePermission custom operator', () => {
-    it('delegates to getTargetObjectWritePermission', () => {
+  describe('write permission via map access', () => {
+    it('reads from targetObjectWritePermissions', () => {
       const rule: ShouldBeRegisteredRulesLogic = {
-        hasWritePermission: ['person'],
-      };
-      const mockFn = jest.fn().mockReturnValue(false);
-      const params = {
-        ...baseParams,
-        getTargetObjectWritePermission: mockFn,
+        var: 'targetObjectWritePermissions.person',
       };
 
-      expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
-      expect(mockFn).toHaveBeenCalledWith('person');
+      const denied = {
+        ...baseParams,
+        targetObjectWritePermissions: { person: false },
+      };
+
+      expect(evaluateShouldBeRegisteredRule(rule, denied)).toBe(false);
+
+      const granted = {
+        ...baseParams,
+        targetObjectWritePermissions: { person: true },
+      };
+
+      expect(evaluateShouldBeRegisteredRule(rule, granted)).toBe(true);
     });
   });
 
-  describe('isFeatureFlagEnabled custom operator', () => {
+  describe('feature flag via map access', () => {
     const rule: ShouldBeRegisteredRulesLogic = {
-      isFeatureFlagEnabled: ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED'],
+      var: 'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
     };
 
     it('returns true when flag enabled', () => {
       const params = {
         ...baseParams,
-        isFeatureFlagEnabled: () => true,
+        featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: true },
       };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
@@ -174,64 +172,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
     it('returns false when flag disabled', () => {
       const params = {
         ...baseParams,
-        isFeatureFlagEnabled: () => false,
-      };
-
-      expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
-    });
-  });
-
-  describe('areWorkflowTriggerAndStepsDefined custom operator', () => {
-    const rule: ShouldBeRegisteredRulesLogic = {
-      areWorkflowTriggerAndStepsDefined: [],
-    };
-
-    it('returns true when trigger and steps defined', () => {
-      const params = {
-        ...baseParams,
-        workflowWithCurrentVersion: {
-          currentVersion: {
-            trigger: { type: 'MANUAL' },
-            steps: [{ id: 'step1' }],
-          },
-        },
-      } as unknown as ShouldBeRegisteredFunctionParams;
-
-      expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
-    });
-
-    it('returns false when no trigger', () => {
-      const params = {
-        ...baseParams,
-        workflowWithCurrentVersion: {
-          currentVersion: {
-            trigger: null,
-            steps: [{ id: 'step1' }],
-          },
-        },
-      } as unknown as ShouldBeRegisteredFunctionParams;
-
-      expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
-    });
-
-    it('returns false when no steps', () => {
-      const params = {
-        ...baseParams,
-        workflowWithCurrentVersion: {
-          currentVersion: {
-            trigger: { type: 'MANUAL' },
-            steps: [],
-          },
-        },
-      } as unknown as ShouldBeRegisteredFunctionParams;
-
-      expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
-    });
-
-    it('returns false when workflow undefined', () => {
-      const params = {
-        ...baseParams,
-        workflowWithCurrentVersion: undefined,
+        featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false },
       };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
@@ -242,11 +183,11 @@ describe('evaluateShouldBeRegisteredRule', () => {
     it('evaluates delete single record rule', () => {
       const rule: ShouldBeRegisteredRulesLogic = {
         and: [
-          { isDefined: [{ var: 'selectedRecord' }] },
+          { '!==': [{ var: 'selectedRecord' }, null] },
           { '!': [{ var: 'selectedRecord.isRemote' }] },
           { '!': [{ var: 'hasAnySoftDeleteFilterOnView' }] },
           { var: 'objectPermissions.canSoftDeleteObjectRecords' },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
         ],
       };
 
@@ -289,7 +230,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
     it('evaluates navigate action rule', () => {
       const rule: ShouldBeRegisteredRulesLogic = {
         and: [
-          { hasReadPermission: ['workflow'] },
+          { var: 'targetObjectReadPermissions.workflow' },
           {
             or: [
               {
@@ -305,7 +246,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ...baseParams,
         objectMetadataItem: { nameSingular: 'person' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
-        getTargetObjectReadPermission: () => true,
+        targetObjectReadPermissions: { workflow: true },
       } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onDifferentObject)).toBe(
@@ -316,7 +257,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ...baseParams,
         objectMetadataItem: { nameSingular: 'workflow' },
         viewType: ActionViewType.SHOW_PAGE,
-        getTargetObjectReadPermission: () => true,
+        targetObjectReadPermissions: { workflow: true },
       } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onSameObjectShowPage)).toBe(
@@ -327,7 +268,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ...baseParams,
         objectMetadataItem: { nameSingular: 'workflow' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
-        getTargetObjectReadPermission: () => true,
+        targetObjectReadPermissions: { workflow: true },
       } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onSameObjectIndexPage)).toBe(
@@ -338,7 +279,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ...baseParams,
         objectMetadataItem: { nameSingular: 'person' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
-        getTargetObjectReadPermission: () => false,
+        targetObjectReadPermissions: { workflow: false },
       } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, noPermission)).toBe(false);
@@ -385,10 +326,10 @@ describe('evaluateShouldBeRegisteredRule', () => {
     it('evaluates feature flag + permissions rule', () => {
       const rule: ShouldBeRegisteredRulesLogic = {
         and: [
-          { isFeatureFlagEnabled: ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED'] },
-          { isDefined: [{ var: 'selectedRecord' }] },
+          { var: 'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' },
+          { '!==': [{ var: 'selectedRecord' }, null] },
           { '!': [{ var: 'selectedRecord.isRemote' }] },
-          { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
+          { '===': [{ var: 'selectedRecord.deletedAt' }, null] },
           { var: 'objectPermissions.canUpdateObjectRecords' },
           {
             '!==': [{ var: 'objectMetadataItem.nameSingular' }, 'dashboard'],
@@ -398,7 +339,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
 
       const allConditionsMet = {
         ...baseParams,
-        isFeatureFlagEnabled: () => true,
+        featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: true },
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'person' },
       } as unknown as ShouldBeRegisteredFunctionParams;
@@ -407,7 +348,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
 
       const flagDisabled = {
         ...baseParams,
-        isFeatureFlagEnabled: () => false,
+        featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false },
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'person' },
       } as unknown as ShouldBeRegisteredFunctionParams;
@@ -416,7 +357,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
 
       const isDashboard = {
         ...baseParams,
-        isFeatureFlagEnabled: () => true,
+        featureFlags: { IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: true },
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'dashboard' },
       } as unknown as ShouldBeRegisteredFunctionParams;

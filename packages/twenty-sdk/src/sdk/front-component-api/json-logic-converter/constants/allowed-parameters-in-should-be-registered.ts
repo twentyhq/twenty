@@ -14,7 +14,7 @@ export const ALLOWED_PARAMETERS_IN_SHOULD_BE_REGISTERED = new Set([
   'numberOfSelectedRecords',
   'workflowWithCurrentVersion',
   'viewType',
-  'getTargetObjectReadPermission',
-  'getTargetObjectWritePermission',
-  'isFeatureFlagEnabled',
+  'targetObjectReadPermissions',
+  'targetObjectWritePermissions',
+  'featureFlags',
 ]);

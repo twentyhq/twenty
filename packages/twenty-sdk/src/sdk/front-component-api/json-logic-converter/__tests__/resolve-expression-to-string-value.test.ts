@@ -30,14 +30,14 @@ describe('resolveExpressionToStringValue', () => {
     ).toBe('company');
   });
 
-  it('resolves a FeatureFlagKey constant to string', () => {
-    expect(
+  it('throws for removed FeatureFlagKey constant', () => {
+    expect(() =>
       resolveExpressionToStringValue({
         argumentExpression: getExpression(
           'FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED;',
         ),
       }),
-    ).toBe('IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED');
+    ).toThrow(JsonLogicConversionError);
   });
 
   it('throws for unresolvable expression', () => {
