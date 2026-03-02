@@ -35,13 +35,11 @@ export const WorkspaceDndKitDroppableSlot = ({
     collisionPriority: SLOT_COLLISION_PRIORITY,
   });
 
+  const isEmpty =
+    children == null || (Array.isArray(children) && children.length === 0);
+
   return (
-    <StyledSlotWrapper
-      ref={ref}
-      $empty={
-        children == null || (Array.isArray(children) && children.length === 0)
-      }
-    >
+    <StyledSlotWrapper ref={ref} $empty={isEmpty}>
       {children}
     </StyledSlotWrapper>
   );
