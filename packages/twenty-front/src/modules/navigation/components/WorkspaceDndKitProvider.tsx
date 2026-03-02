@@ -5,6 +5,7 @@ import {
   PointerSensor,
 } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
+import type { ResponderProvided } from '@hello-pangea/dnd';
 import { type ReactNode, useState } from 'react';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
@@ -36,6 +37,34 @@ type DraggableData = {
 };
 
 type DropDestination = { droppableId: string; index: number };
+
+type SortableNode = Parameters<typeof isSortable>[0];
+
+type DragOperationSource = {
+  id: string;
+  data?: DraggableData;
+  group?: string;
+  index?: number;
+  initialGroup?: string;
+  initialIndex?: number;
+  sortable?: { element?: Element };
+};
+
+type DragOperationTarget = {
+  id: string;
+  group?: string;
+  index?: number;
+} | null;
+
+type DragEventOperation = {
+  source?: DragOperationSource;
+  target?: DragOperationTarget;
+};
+
+type DragEventWithOperation = {
+  operation?: DragEventOperation;
+  preventDefault?: () => void;
+};
 
 const toDropResult = (
   draggableId: string,
@@ -100,9 +129,7 @@ export const WorkspaceDndKitProvider = ({
   ).length;
 
   const handleDragStart = (event: unknown) => {
-    const e = event as {
-      operation?: { source?: { id: string; data?: DraggableData } };
-    };
+    const e = event as DragEventWithOperation;
     setIsDragging(true);
     const source = e.operation?.source;
     const sourceId = source?.data?.sourceDroppableId ?? null;
@@ -125,38 +152,23 @@ export const WorkspaceDndKitProvider = ({
   };
 
   const handleDragOver = (event: unknown) => {
-    const e = event as {
-      preventDefault?: () => void;
-      operation?: {
-        source?: {
-          id: string;
-          group?: string;
-          index?: number;
-          initialGroup?: string;
-          initialIndex?: number;
-        };
-        target?: {
-          id: string;
-          group?: string;
-          index?: number;
-        } | null;
-      };
-    };
+    const e = event as DragEventWithOperation;
     const source = e.operation?.source;
     const target = e.operation?.target;
     const isAddToNavDrag = sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
 
-    const sourceIsSortable =
-      source && isSortable(source as Parameters<typeof isSortable>[0]);
-    const targetIsSortable =
-      target && isSortable(target as Parameters<typeof isSortable>[0]);
+    const sourceIsSortable = source && isSortable(source as SortableNode);
+    const targetIsSortable = target && isSortable(target as SortableNode);
 
-    if (isDefined(sourceIsSortable) && isDefined(targetIsSortable)) {
-      const s = source as { group?: string; index?: number };
-      const t = target as { group?: string; index?: number };
-      const group = s.group ?? t.group;
-      const index = s.group === t.group ? s.index : t.index;
-      if (group != null && index != null) {
+    if (
+      isDefined(sourceIsSortable) &&
+      isDefined(targetIsSortable) &&
+      isDefined(source) &&
+      isDefined(target)
+    ) {
+      const group = source.group ?? target.group;
+      const index = source.group === target.group ? source.index : target.index;
+      if (isDefined(group) && isDefined(index)) {
         if (isAddToNavDrag) {
           setActiveDropTargetId(getDndKitDropTargetId(group, index));
           setForbiddenDropTargetId(null);
@@ -173,11 +185,14 @@ export const WorkspaceDndKitProvider = ({
       isDefined(target) &&
       typeof target.id === 'string'
     ) {
-      const dest = parseDropTargetIdToDestination(target.id);
-      if (isDefined(dest) && isWorkspaceDroppableId(dest.droppableId)) {
+      const parsedDestination = parseDropTargetIdToDestination(target.id);
+      if (
+        isDefined(parsedDestination) &&
+        isWorkspaceDroppableId(parsedDestination.droppableId)
+      ) {
         if (isAddToNavDrag) {
           setActiveDropTargetId(target.id);
-          setAddToNavigationFallbackDestination(dest);
+          setAddToNavigationFallbackDestination(parsedDestination);
           setForbiddenDropTargetId(null);
         } else {
           setActiveDropTargetId(null);
@@ -192,17 +207,16 @@ export const WorkspaceDndKitProvider = ({
 
     if (
       isDefined(target) &&
-      isSortable(target as Parameters<typeof isSortable>[0]) &&
+      Boolean(targetIsSortable) &&
       isDefined(target.group) &&
       isDefined(target.index)
     ) {
-      const t = target as { group: string; index: number };
       const destination = {
-        droppableId: t.group,
-        index: t.index,
+        droppableId: target.group,
+        index: target.index,
       };
       setAddToNavigationFallbackDestination(destination);
-      setActiveDropTargetId(getDndKitDropTargetId(t.group, t.index));
+      setActiveDropTargetId(getDndKitDropTargetId(target.group, target.index));
       const payload =
         store.get(addToNavPayloadRegistryState.atom).get(String(source?.id)) ??
         null;
@@ -210,9 +224,11 @@ export const WorkspaceDndKitProvider = ({
         destination.droppableId,
       );
       const isFolderOverFolder =
-        payload?.type === 'folder' && folderId !== null;
+        payload?.type === 'folder' && isDefined(folderId);
       setForbiddenDropTargetId(
-        isFolderOverFolder ? getDndKitDropTargetId(t.group, t.index) : null,
+        isFolderOverFolder
+          ? getDndKitDropTargetId(target.group, target.index)
+          : null,
       );
       return;
     }
@@ -245,28 +261,17 @@ export const WorkspaceDndKitProvider = ({
     const folderId = validateAndExtractWorkspaceFolderId(
       parsedDestination.droppableId,
     );
-    const isFolderOverFolder = payload?.type === 'folder' && folderId !== null;
+    const isFolderOverFolder =
+      payload?.type === 'folder' && isDefined(folderId);
     setForbiddenDropTargetId(isFolderOverFolder ? overId : null);
   };
 
   const handleDragEnd = (event: unknown) => {
-    const e = event as {
-      operation?: {
-        source?: {
-          id: string;
-          data?: DraggableData;
-          group?: string;
-          index?: number;
-          initialGroup?: string;
-          initialIndex?: number;
-        };
-        target?: { id: string; group?: string; index?: number } | null;
-      };
-    };
+    const e = event as DragEventWithOperation;
     const source = e.operation?.source;
     const target = e.operation?.target;
     const draggableId = String(source?.id);
-    const data = source?.data as DraggableData | undefined;
+    const data = source?.data;
     const sourceId = data?.sourceDroppableId ?? null;
     const fallback = addToNavigationFallbackDestination;
 
@@ -276,35 +281,29 @@ export const WorkspaceDndKitProvider = ({
     setForbiddenDropTargetId(null);
     setAddToNavigationFallbackDestination(null);
 
-    if (
-      isDefined(source) &&
-      isSortable(source as Parameters<typeof isSortable>[0])
-    ) {
-      const targetAsSortable =
-        target && isSortable(target as Parameters<typeof isSortable>[0]);
-      const initialGroup =
-        (source as { initialGroup?: string }).initialGroup ?? '';
-      const initialIndex =
-        (source as { initialIndex?: number }).initialIndex ?? 0;
-      const t = target as { group?: string; index?: number } | null;
-      const destGroup = t?.group ?? '';
-      const destIndex = t?.index ?? 0;
+    const sourceIsSortable =
+      isDefined(source) && isSortable(source as SortableNode);
+    const targetIsSortable =
+      isDefined(target) && isSortable(target as SortableNode);
+
+    if (sourceIsSortable) {
+      const initialGroup = source.initialGroup ?? '';
+      const initialIndex = source.initialIndex ?? 0;
+      const destGroup = target?.group ?? '';
+      const destIndex = target?.index ?? 0;
       if (
-        isDefined(targetAsSortable) &&
+        targetIsSortable &&
         isWorkspaceDroppableId(initialGroup) &&
         isWorkspaceDroppableId(destGroup)
       ) {
         const isCrossGroup = initialGroup !== destGroup;
         if (isCrossGroup) {
-          const sourceWithSortable = source as {
-            sortable?: { element?: Element };
-          };
-          const sourceElement = sourceWithSortable.sortable?.element;
+          const sourceElement = source.sortable?.element;
           const sourceContainer =
             typeof document !== 'undefined'
               ? document.querySelector(`[data-dnd-group="${initialGroup}"]`)
               : null;
-          if (sourceElement != null && sourceContainer != null) {
+          if (isDefined(sourceElement) && isDefined(sourceContainer)) {
             const child = sourceContainer.children[initialIndex] ?? null;
             sourceContainer.insertBefore(sourceElement, child);
           }
@@ -314,7 +313,7 @@ export const WorkspaceDndKitProvider = ({
           { sourceDroppableId: initialGroup, sourceIndex: initialIndex },
           { droppableId: destGroup, index: destIndex },
         );
-        const provided = {} as Parameters<typeof handleAddToNavigationDrop>[1];
+        const provided: ResponderProvided = { announce: () => {} };
         handleWorkspaceNavigationMenuItemDragAndDrop(
           { ...result, ...DROP_RESULT_OPTIONS },
           provided,
@@ -324,27 +323,25 @@ export const WorkspaceDndKitProvider = ({
     }
 
     const overId = target?.id;
-    const targetAsSortable = target as {
-      group?: string;
-      index?: number;
-    } | null;
-    const destination =
-      target &&
-      isSortable(target as Parameters<typeof isSortable>[0]) &&
-      targetAsSortable?.group != null &&
-      targetAsSortable?.index != null
-        ? {
-            droppableId: targetAsSortable.group as string,
-            index: targetAsSortable.index as number,
-          }
-        : typeof overId === 'string'
-          ? parseDropTargetIdToDestination(overId)
-          : sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID && fallback
-            ? fallback
-            : null;
+    let destination: DropDestination | null = null;
+    if (
+      isDefined(target) &&
+      targetIsSortable &&
+      isDefined(target.group) &&
+      isDefined(target.index)
+    ) {
+      destination = { droppableId: target.group, index: target.index };
+    } else if (typeof overId === 'string') {
+      destination = parseDropTargetIdToDestination(overId);
+    } else if (
+      sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID &&
+      isDefined(fallback)
+    ) {
+      destination = fallback;
+    }
 
     const result = toDropResult(draggableId, data, destination);
-    const provided = {} as Parameters<typeof handleAddToNavigationDrop>[1];
+    const provided: ResponderProvided = { announce: () => {} };
     const dropResult = { ...result, ...DROP_RESULT_OPTIONS };
 
     if (sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
