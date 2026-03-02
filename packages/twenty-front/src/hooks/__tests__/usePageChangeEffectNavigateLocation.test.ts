@@ -52,9 +52,11 @@ jest.mocked(useDefaultHomePagePath).mockReturnValue({
 });
 
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
-jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
-  isOnAWorkspace: true,
-});
+const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
+  jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
+    isOnAWorkspace,
+  });
+};
 
 jest.mock('react-router-dom');
 const setupMockUseParams = (objectNamePlural?: string) => {
@@ -85,6 +87,7 @@ const testCases: {
   isWorkspaceSuspended: boolean;
   onboardingStatus: OnboardingStatus | undefined;
   res: string | undefined;
+  isOnAWorkspace?: boolean;
   objectNamePluralFromParams?: string;
   objectNamePluralFromMetadata?: string;
   verifyEmailRedirectPath?: string;
@@ -328,6 +331,10 @@ const testCases: {
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/authorize?clientId=abc', res: '/authorize?clientId=abc' },
   { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
   { loc: AppPath.Index, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
+
+  // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
+  { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
+  { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
 ];
 
 describe('usePageChangeEffectNavigateLocation', () => {
@@ -338,6 +345,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       onboardingStatus,
       isWorkspaceSuspended,
       isLoggedIn,
+      isOnAWorkspace,
       objectNamePluralFromParams,
       objectNamePluralFromMetadata,
       verifyEmailRedirectPath,
@@ -348,6 +356,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockOnboardingStatus(onboardingStatus);
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLoggedIn);
+      setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseParams(objectNamePluralFromParams);
       setupMockState(
         objectNamePluralFromMetadata,
@@ -371,7 +380,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
           ['returnToPath:verify', 'returnToPath:signInUp', 'returnToPath:index']
-            .length,
+            .length +
+          ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length,
       );
     });
   });

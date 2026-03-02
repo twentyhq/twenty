@@ -3,7 +3,7 @@ import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { readReturnToPathFromSessionStorage } from '@/auth/utils/returnToPathSessionStorage';
+import { readReturnToPathFromSessionStorage } from '@/auth/utils/readReturnToPathFromSessionStorage';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -134,7 +134,8 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    isLoggedIn
+    isLoggedIn &&
+    isOnAWorkspace
   ) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }

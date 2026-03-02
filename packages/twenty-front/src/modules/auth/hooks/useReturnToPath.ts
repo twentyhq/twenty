@@ -2,11 +2,9 @@ import { useCallback } from 'react';
 
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
-import {
-  clearReturnToPathFromSessionStorage,
-  readReturnToPathFromSessionStorage,
-  writeReturnToPathToSessionStorage,
-} from '@/auth/utils/returnToPathSessionStorage';
+import { clearReturnToPathFromSessionStorage } from '@/auth/utils/clearReturnToPathFromSessionStorage';
+import { readReturnToPathFromSessionStorage } from '@/auth/utils/readReturnToPathFromSessionStorage';
+import { writeReturnToPathToSessionStorage } from '@/auth/utils/writeReturnToPathToSessionStorage';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
