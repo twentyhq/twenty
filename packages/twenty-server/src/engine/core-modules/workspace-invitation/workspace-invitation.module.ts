@@ -13,6 +13,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceInvitationResolver } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.resolver';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       UserWorkspaceEntity,
       WorkspaceEntity,
     ]),
+    RoleValidationModule,
     FileModule,
     OnboardingModule,
     PermissionsModule,

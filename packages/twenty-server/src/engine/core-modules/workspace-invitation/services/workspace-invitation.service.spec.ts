@@ -16,6 +16,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -59,6 +60,12 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
+        },
+        {
+          provide: RoleValidationService,
+          useValue: {
+            validateRoleAssignableToUsersOrThrow: jest.fn(),
+          },
         },
         {
           provide: WorkspaceDomainsService,
