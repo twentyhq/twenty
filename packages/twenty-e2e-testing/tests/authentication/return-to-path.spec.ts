@@ -66,13 +66,11 @@ test.describe('Return-to-path after login', () => {
     );
 
     await test.step(
-      'Verify return-to-path was cleared after use',
+      'Verify return-to-path query param was consumed',
       async () => {
-        const savedPath = await page.evaluate(() =>
-          sessionStorage.getItem('twenty:returnToPath'),
-        );
+        const url = new URL(page.url());
 
-        expect(savedPath).toBeNull();
+        expect(url.searchParams.has('returnToPath')).toBe(false);
       },
     );
   });
