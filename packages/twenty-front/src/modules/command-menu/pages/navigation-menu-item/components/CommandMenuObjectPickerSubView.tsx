@@ -2,7 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 import { IconSettings } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
@@ -69,29 +68,15 @@ export const CommandMenuObjectPickerSubView = ({
           dragIndex={isAddVariant ? index : undefined}
         />
       ))}
-      {isAddVariant ? (
-        <CommandMenuAddToNavDraggablePlaceholder index={filteredItems.length}>
-          <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
-            <CommandMenuItem
-              Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
-              label={t`System objects`}
-              id="system"
-              hasSubMenu
-              onClick={onOpenSystemPicker}
-            />
-          </SelectableListItem>
-        </CommandMenuAddToNavDraggablePlaceholder>
-      ) : (
-        <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
-          <CommandMenuItem
-            Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
-            label={t`System objects`}
-            id="system"
-            hasSubMenu
-            onClick={onOpenSystemPicker}
-          />
-        </SelectableListItem>
-      )}
+      <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
+        <CommandMenuItem
+          Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
+          label={t`System objects`}
+          id="system"
+          hasSubMenu
+          onClick={onOpenSystemPicker}
+        />
+      </SelectableListItem>
     </CommandGroup>
   );
 

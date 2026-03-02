@@ -9,7 +9,6 @@ import {
 } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
@@ -46,55 +45,49 @@ export const CommandMenuNewSidebarItemMainMenu = ({
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <CommandGroup heading={t`Data`}>
-              <CommandMenuAddToNavDraggablePlaceholder index={0}>
-                <SelectableListItem itemId="object" onEnter={onSelectObject}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <NavigationMenuItemStyleIcon
-                        Icon={IconBuildingSkyscraper}
-                        color="blue"
-                      />
-                    )}
-                    label={t`Object`}
-                    id="object"
-                    hasSubMenu={true}
-                    onClick={onSelectObject}
-                  />
-                </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
-              <CommandMenuAddToNavDraggablePlaceholder index={1}>
-                <SelectableListItem itemId="view" onEnter={onSelectView}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <NavigationMenuItemStyleIcon
-                        Icon={IconTable}
-                        color="gray"
-                      />
-                    )}
-                    label={t`View`}
-                    id="view"
-                    hasSubMenu={true}
-                    onClick={onSelectView}
-                  />
-                </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
-              <CommandMenuAddToNavDraggablePlaceholder index={2}>
-                <SelectableListItem itemId="record" onEnter={onSelectRecord}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <Avatar
-                        placeholder="L"
-                        type="rounded"
-                        backgroundColor={theme.color.green4}
-                      />
-                    )}
-                    label={t`Record`}
-                    id="record"
-                    hasSubMenu={true}
-                    onClick={onSelectRecord}
-                  />
-                </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
+              <SelectableListItem itemId="object" onEnter={onSelectObject}>
+                <CommandMenuItem
+                  Icon={() => (
+                    <NavigationMenuItemStyleIcon
+                      Icon={IconBuildingSkyscraper}
+                      color="blue"
+                    />
+                  )}
+                  label={t`Object`}
+                  id="object"
+                  hasSubMenu={true}
+                  onClick={onSelectObject}
+                />
+              </SelectableListItem>
+              <SelectableListItem itemId="view" onEnter={onSelectView}>
+                <CommandMenuItem
+                  Icon={() => (
+                    <NavigationMenuItemStyleIcon
+                      Icon={IconTable}
+                      color="gray"
+                    />
+                  )}
+                  label={t`View`}
+                  id="view"
+                  hasSubMenu={true}
+                  onClick={onSelectView}
+                />
+              </SelectableListItem>
+              <SelectableListItem itemId="record" onEnter={onSelectRecord}>
+                <CommandMenuItem
+                  Icon={() => (
+                    <Avatar
+                      placeholder="L"
+                      type="rounded"
+                      backgroundColor={theme.color.green4}
+                    />
+                  )}
+                  label={t`Record`}
+                  id="record"
+                  hasSubMenu={true}
+                  onClick={onSelectRecord}
+                />
+              </SelectableListItem>
             </CommandGroup>
             <CommandGroup heading={t`Other`}>
               <SelectableListItem itemId="folder" onEnter={handleAddFolder}>
