@@ -1,19 +1,21 @@
 import {
   type Bundle,
   createAppTester,
+  tools,
   type ZObject,
 } from 'zapier-platform-core';
 
 import App from 'src/index';
 import { triggerRecordKey } from 'src/triggers/trigger_record';
-import { getBundle } from 'src/utils/getBundle';
+import { getBundleForTest } from 'src/utils/getBundleForTest';
 import requestDb from 'src/utils/requestDb';
 import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
+tools.env.inject();
 const appTester = createAppTester(App);
 
 describe('triggers.trigger_record.created', () => {
   test('should succeed to subscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.CREATED;
@@ -42,7 +44,7 @@ describe('triggers.trigger_record.created', () => {
   });
 
   test('should succeed to unsubscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.CREATED;
@@ -53,7 +55,7 @@ describe('triggers.trigger_record.created', () => {
       bundle,
     );
 
-    const unsubscribeBundle = getBundle({});
+    const unsubscribeBundle = getBundleForTest({});
 
     unsubscribeBundle.subscribeData = { id: result.id };
 
@@ -111,7 +113,7 @@ describe('triggers.trigger_record.created', () => {
     expect(company.record.id).toEqual('d6ccb1d1-a90b-4822-a992-a0dd946592c9');
   });
   it('should load companies from list', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.CREATED;
@@ -131,7 +133,7 @@ describe('triggers.trigger_record.created', () => {
 
 describe('triggers.trigger_record.update', () => {
   test('should succeed to subscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.UPDATED;
@@ -159,7 +161,7 @@ describe('triggers.trigger_record.update', () => {
     expect(checkDbResult.data.webhook.operations[0]).toEqual('company.updated');
   });
   test('should succeed to unsubscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.UPDATED;
@@ -170,7 +172,7 @@ describe('triggers.trigger_record.update', () => {
       bundle,
     );
 
-    const unsubscribeBundle = getBundle({});
+    const unsubscribeBundle = getBundleForTest({});
 
     unsubscribeBundle.subscribeData = { id: result.id };
 
@@ -198,7 +200,7 @@ describe('triggers.trigger_record.update', () => {
     ).toEqual(0);
   });
   it('should load companies from list', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.UPDATED;
@@ -219,7 +221,7 @@ describe('triggers.trigger_record.update', () => {
 
 describe('triggers.trigger_record.delete', () => {
   test('should succeed to subscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.DELETED;
@@ -247,7 +249,7 @@ describe('triggers.trigger_record.delete', () => {
     expect(checkDbResult.data.webhook.operations[0]).toEqual('company.deleted');
   });
   test('should succeed to unsubscribe', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.DELETED;
@@ -258,7 +260,7 @@ describe('triggers.trigger_record.delete', () => {
       bundle,
     );
 
-    const unsubscribeBundle = getBundle({});
+    const unsubscribeBundle = getBundleForTest({});
 
     unsubscribeBundle.subscribeData = { id: result.id };
 
@@ -286,7 +288,7 @@ describe('triggers.trigger_record.delete', () => {
     ).toEqual(0);
   });
   it('should load companies from list', async () => {
-    const bundle = getBundle({});
+    const bundle = getBundleForTest({});
 
     bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = DatabaseEventAction.DELETED;

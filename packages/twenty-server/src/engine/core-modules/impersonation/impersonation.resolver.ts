@@ -2,7 +2,7 @@ import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
-import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
+import { ImpersonateDTO } from 'src/engine/core-modules/admin-panel/dtos/impersonate.dto';
 import {
   AuthException,
   AuthExceptionCode,
@@ -29,11 +29,11 @@ export class ImpersonationResolver {
     ImpersonatePermissionGuard,
     CustomPermissionGuard,
   )
-  @Mutation(() => ImpersonateOutput)
+  @Mutation(() => ImpersonateDTO)
   async impersonate(
     @Args() { workspaceId, userId: toImpersonateUserId }: ImpersonateInput,
     @AuthUserWorkspaceId() impersonatorUserWorkspaceId: string,
-  ): Promise<ImpersonateOutput> {
+  ): Promise<ImpersonateDTO> {
     if (!impersonatorUserWorkspaceId) {
       throw new AuthException(
         'Impersonator user not found',

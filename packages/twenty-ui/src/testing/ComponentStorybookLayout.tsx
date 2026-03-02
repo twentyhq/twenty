@@ -1,10 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const StyledLayout = styled.div<{
   width?: number;
   backgroundColor?: string | undefined;
   height: number | 'fit-content';
+  theme: ThemeType;
 }>`
   background: ${({ theme, backgroundColor }) =>
     backgroundColor ?? theme.background.primary};
@@ -38,12 +41,17 @@ export const ComponentStorybookLayout = ({
   backgroundColor,
   height,
   children,
-}: ComponentStorybookLayoutProps) => (
-  <StyledLayout
-    width={width}
-    backgroundColor={backgroundColor}
-    height={isDefined(height) ? height : 'fit-content'}
-  >
-    {children}
-  </StyledLayout>
-);
+}: ComponentStorybookLayoutProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledLayout
+      width={width}
+      backgroundColor={backgroundColor}
+      height={isDefined(height) ? height : 'fit-content'}
+      theme={theme}
+    >
+      {children}
+    </StyledLayout>
+  );
+};

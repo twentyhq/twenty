@@ -14,5 +14,17 @@ export default defineApplication({
       isSecret: false,
     },
   },
+  serverVariables: {
+    POSTCARD_API_KEY: {
+      description: 'API key for the postcard printing service',
+      isSecret: true,
+      isRequired: true,
+    },
+    POSTCARD_SENDER_NAME: {
+      description: 'Default sender name on postcards',
+      isSecret: false,
+      isRequired: false,
+    },
+  },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });

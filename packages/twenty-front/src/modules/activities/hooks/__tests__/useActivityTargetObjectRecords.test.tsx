@@ -11,8 +11,10 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const cache = new InMemoryCache();
@@ -131,7 +133,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useActivityTargetObjectRecords', () => {
   it('return targetObjects', async () => {
-    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMembers[0]);
+    jotaiStore.set(
+      currentWorkspaceMemberState.atom,
+      getRecordFromRecordNode<WorkspaceMember>({
+        recordNode: mockedWorkspaceMemberRecords[0],
+      }),
+    );
 
     jotaiStore.set(
       objectMetadataItemsState.atom,

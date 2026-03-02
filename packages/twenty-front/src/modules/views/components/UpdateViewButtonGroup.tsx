@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -26,11 +26,12 @@ import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/display';
 import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: inline-flex;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${themeCssVariables.spacing[2]};
   position: relative;
 `;
 

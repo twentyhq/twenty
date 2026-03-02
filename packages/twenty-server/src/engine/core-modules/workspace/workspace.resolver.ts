@@ -28,7 +28,7 @@ import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/dom
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
+import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
@@ -43,8 +43,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProvidersDTO,
-  PublicWorkspaceDataOutput,
-} from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+  PublicWorkspaceDataDTO,
+} from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -416,12 +416,12 @@ export class WorkspaceResolver {
     return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
   }
 
-  @Query(() => PublicWorkspaceDataOutput)
+  @Query(() => PublicWorkspaceDataDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicWorkspaceDataByDomain(
     @OriginHeader() originHeader: string,
     @Args('origin', { nullable: true }) origin?: string,
-  ): Promise<PublicWorkspaceDataOutput | undefined> {
+  ): Promise<PublicWorkspaceDataDTO | undefined> {
     try {
       const systemEnabledProviders: AuthProvidersDTO = {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),

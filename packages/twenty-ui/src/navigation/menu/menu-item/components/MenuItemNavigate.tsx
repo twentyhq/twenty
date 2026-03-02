@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 
 import { IconChevronRight, type IconComponent } from '@ui/display';
+import { ThemeContext } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -22,7 +23,7 @@ export const MenuItemNavigate = ({
   className,
   onClick,
 }: MenuItemNavigateProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemBase onClick={onClick} className={className}>

@@ -1,42 +1,36 @@
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
-
-import { useComponentsContext } from '@blocknote/react';
+import { SuggestionMenu } from '@blocknote/core/extensions';
+import { useBlockNoteEditor, useComponentsContext } from '@blocknote/react';
 
 type CustomAddBlockItemProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
-  children: React.ReactNode; // Adding the children prop
+  children: React.ReactNode;
 };
 
-type ContentItem = {
-  type: string;
-  text: string;
-  styles: any;
-};
 export const CustomAddBlockItem = ({
   editor,
   children,
 }: CustomAddBlockItemProps) => {
   const Components = useComponentsContext();
+  const blockNoteEditor = useBlockNoteEditor();
 
   if (!Components) {
     return null;
   }
 
   const handleClick = () => {
-    const blockIdentifier = editor.getTextCursorPosition().block;
-    const currentBlockContent = blockIdentifier?.content as
-      | Array<ContentItem>
-      | undefined;
+    const currentBlock = blockNoteEditor.getTextCursorPosition().block;
+    const blockContent = currentBlock?.content;
 
-    const [firstElement] = currentBlockContent || [];
+    const isEmpty = Array.isArray(blockContent) && blockContent.length === 0;
 
-    if (firstElement === undefined) {
-      editor.openSuggestionMenu('/');
-    } else {
-      editor.openSuggestionMenu('/');
-      editor.sideMenu.unfreezeMenu();
+    if (isEmpty) {
+      editor.setTextCursorPosition(currentBlock);
     }
+
+    blockNoteEditor.getExtension(SuggestionMenu)?.openSuggestionMenu('/');
   };
+
   return (
     <Components.Generic.Menu.Item onClick={handleClick}>
       {children}

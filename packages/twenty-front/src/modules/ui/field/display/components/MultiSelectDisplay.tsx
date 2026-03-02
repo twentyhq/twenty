@@ -2,14 +2,11 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
-import { THEME_COMMON } from 'twenty-ui/theme';
-
-const spacing1 = THEME_COMMON.spacing(1);
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${spacing1};
+  gap: 4px;
   justify-content: flex-start;
 
   max-width: 100%;

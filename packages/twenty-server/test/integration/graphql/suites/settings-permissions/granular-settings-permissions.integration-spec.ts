@@ -276,7 +276,10 @@ describe('Granular settings permissions', () => {
       const inviteWorkspaceMemberQuery = {
         query: `
           mutation SendWorkspaceInvitation {
-            sendInvitations(emails: ["test@example.com"]) {
+            sendInvitations(
+              emails: ["test@example.com"],
+              roleId: "${originalMemberRoleId}"
+            ) {
               success
             }
           }

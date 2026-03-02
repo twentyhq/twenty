@@ -4,6 +4,7 @@ import {
   AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuditResolver } from './audit.resolver';
@@ -55,12 +56,12 @@ describe('AuditResolver', () => {
     const result = await resolver.trackAnalytics(
       input,
       { id: 'workspace-1' } as WorkspaceEntity,
-      'user-workspace-1',
+      { id: 'user-1' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
-      userWorkspaceId: 'user-workspace-1',
+      userId: 'user-1',
     });
     expect(mockInsertPageviewEvent).toHaveBeenCalledWith('Test Page', {});
     expect(result).toBe('Pageview created');
@@ -85,12 +86,12 @@ describe('AuditResolver', () => {
     const result = await resolver.trackAnalytics(
       input,
       { id: 'workspace-2' } as WorkspaceEntity,
-      'user-workspace-2',
+      { id: 'user-2' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-2',
-      userWorkspaceId: 'user-workspace-2',
+      userId: 'user-2',
     });
     expect(mockInsertWorkspaceEvent).toHaveBeenCalledWith(
       'Custom Domain Activated',
@@ -120,12 +121,12 @@ describe('AuditResolver', () => {
     const result = await resolver.createObjectEvent(
       input,
       { id: 'workspace-3' } as WorkspaceEntity,
-      'user-workspace-3',
+      { id: 'user-3' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-3',
-      userWorkspaceId: 'user-workspace-3',
+      userId: 'user-3',
     });
 
     expect(mockInsertObjectEvent).toHaveBeenCalledWith(

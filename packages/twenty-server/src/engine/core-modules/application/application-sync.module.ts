@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationRegistrationModule } from 'src/engine/core-modules/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/resolvers/application-development.resolver';
 import { ApplicationResolver } from 'src/engine/core-modules/application/resolvers/application.resolver';
@@ -24,6 +25,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
 @Module({
   imports: [
     TypeOrmModule.forFeature([FileEntity]),
+    ApplicationRegistrationModule,
     ApplicationModule,
     ApplicationVariableEntityModule,
     TokenModule,
