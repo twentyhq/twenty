@@ -11,7 +11,7 @@ import {
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
+import { generateMockRecordNode } from '~/testing/utils/generateMockRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -84,7 +84,7 @@ const mocks = [
         messages: {
           edges: [
             {
-              node: generateEmptyJestRecordNode({
+              node: generateMockRecordNode({
                 objectNameSingular: 'message',
                 input: {
                   id: '1',
@@ -95,7 +95,7 @@ const mocks = [
               cursor: '1',
             },
             {
-              node: generateEmptyJestRecordNode({
+              node: generateMockRecordNode({
                 objectNameSingular: 'message',
                 input: {
                   id: '2',
@@ -135,7 +135,7 @@ const mocks = [
         messageParticipants: {
           edges: [
             {
-              node: generateEmptyJestRecordNode({
+              node: generateMockRecordNode({
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-1',
@@ -146,7 +146,7 @@ const mocks = [
               cursor: '1',
             },
             {
-              node: generateEmptyJestRecordNode({
+              node: generateMockRecordNode({
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-2',

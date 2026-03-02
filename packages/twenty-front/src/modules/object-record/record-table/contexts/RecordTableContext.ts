@@ -8,6 +8,7 @@ type RecordTableContextValue = {
   viewBarId: string;
   objectNameSingular: string;
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   objectPermissions: ObjectPermission;
   visibleRecordFields: RecordField[];
   onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;

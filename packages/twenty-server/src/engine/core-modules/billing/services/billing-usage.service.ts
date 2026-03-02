@@ -10,7 +10,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
+import { type BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-metered-product-usage.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -90,7 +90,7 @@ export class BillingUsageService {
 
   async getMeteredProductsUsage(
     workspace: WorkspaceEntity,
-  ): Promise<BillingMeteredProductUsageOutput[]> {
+  ): Promise<BillingMeteredProductUsageDTO[]> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },
@@ -146,7 +146,7 @@ export class BillingUsageService {
     >[number],
     periodStart: Date,
     periodEnd: Date,
-  ): Promise<BillingMeteredProductUsageOutput> {
+  ): Promise<BillingMeteredProductUsageDTO> {
     const meterEventsSum =
       await this.stripeBillingMeterEventService.sumMeterEvents(
         item.stripeMeterId,

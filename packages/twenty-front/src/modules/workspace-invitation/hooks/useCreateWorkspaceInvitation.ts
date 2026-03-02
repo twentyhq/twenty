@@ -10,9 +10,11 @@ export const useCreateWorkspaceInvitation = () => {
 
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
 
-  const sendInvitation = async (emails: SendInvitationsMutationVariables) => {
+  const sendInvitation = async (
+    variables: SendInvitationsMutationVariables,
+  ) => {
     return await sendInvitationsMutation({
-      variables: emails,
+      variables,
       onCompleted: (data) => {
         setWorkspaceInvitations((workspaceInvitations) => [
           ...workspaceInvitations,

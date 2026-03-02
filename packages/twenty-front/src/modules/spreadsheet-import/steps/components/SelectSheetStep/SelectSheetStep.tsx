@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -12,6 +12,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 
 const StyledContent = styled(Modal.Content)`
@@ -19,7 +20,7 @@ const StyledContent = styled(Modal.Content)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledHeading = styled(Heading)`
@@ -32,7 +33,7 @@ const StyledRadioContainer = styled.div`
 `;
 
 const StyledRadio = styled(Radio)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 type SelectSheetStepProps = {

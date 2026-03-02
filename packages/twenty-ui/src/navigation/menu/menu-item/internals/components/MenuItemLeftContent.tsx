@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { ThemeContext } from '@ui/theme';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -55,7 +55,7 @@ export const MenuItemLeftContent = ({
   gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const gripIconColor = withIconContainer
     ? theme.font.color.tertiary

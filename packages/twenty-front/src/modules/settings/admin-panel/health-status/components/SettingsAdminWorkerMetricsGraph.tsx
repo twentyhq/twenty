@@ -16,7 +16,7 @@ const StyledGraphContainer = styled.div`
   height: 240px;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(2.5)};
+  padding-top: 10px;
   width: 100%;
 `;
 

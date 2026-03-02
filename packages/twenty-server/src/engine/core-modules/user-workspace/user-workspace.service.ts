@@ -14,7 +14,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -35,6 +35,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -51,6 +52,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -148,47 +150,71 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
+    roleId?: string | null,
   ) {
-    let userWorkspace = await this.checkUserWorkspaceExists(
+    const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
-    if (!userWorkspace) {
-      userWorkspace = await this.create({
-        userId: user.id,
-        workspaceId: workspace.id,
-        isExistingUser: true,
-      });
+    if (existingUserWorkspace) {
+      return;
+    }
 
-      await this.createWorkspaceMember(workspace.id, user);
+    const resolvedRoleId = await this.resolveRoleIdForNewMember(
+      roleId,
+      workspace,
+    );
 
-      const defaultRoleId = workspace.defaultRoleId;
+    const userWorkspace = await this.create({
+      userId: user.id,
+      workspaceId: workspace.id,
+      isExistingUser: true,
+    });
 
-      if (!isDefined(defaultRoleId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
-        );
-      }
+    await this.createWorkspaceMember(workspace.id, user);
 
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId: workspace.id,
-        userWorkspaceIds: [userWorkspace.id],
-        roleId: defaultRoleId,
-      });
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId: workspace.id,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId: resolvedRoleId,
+    });
 
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
+
+    await this.onboardingService.setOnboardingCreateProfilePending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+  }
+
+  private async resolveRoleIdForNewMember(
+    roleId: string | null | undefined,
+    workspace: WorkspaceEntity,
+  ): Promise<string> {
+    if (isDefined(roleId)) {
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        roleId,
         workspace.id,
-        user.email,
       );
 
-      await this.onboardingService.setOnboardingCreateProfilePending({
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      });
+      return roleId;
     }
+
+    const defaultRoleId = workspace.defaultRoleId;
+
+    if (!isDefined(defaultRoleId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      );
+    }
+
+    return defaultRoleId;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {

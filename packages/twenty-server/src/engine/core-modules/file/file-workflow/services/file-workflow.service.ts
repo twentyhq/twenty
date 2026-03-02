@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
@@ -27,7 +27,7 @@ export class FileWorkflowService {
     file: Buffer;
     filename: string;
     workspaceId: string;
-  }): Promise<FileWithSignedUrlDto> {
+  }): Promise<FileWithSignedUrlDTO> {
     const { mimeType, ext } = await extractFileInfo({
       file,
       filename,

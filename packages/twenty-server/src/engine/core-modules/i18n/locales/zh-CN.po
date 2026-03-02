@@ -381,6 +381,16 @@ msgstr "未找到 API 密钥角色。"
 msgid "Application not found."
 msgstr "未找到应用程序。"
 
+#. js-lingui-id: DE/icK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration not found."
+msgstr ""
+
+#. js-lingui-id: eiOt+9
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration variable not found."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/applicationVariable/application-variable.exception.ts
 msgid "Application variable not found."
@@ -2939,6 +2949,16 @@ msgstr "您尝试设置权限的一个或多个对象未找到。它们可能已
 msgid "One or more records were not found."
 msgstr ""
 
+#. js-lingui-id: kx632Q
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more redirect URIs are invalid."
+msgstr ""
+
+#. js-lingui-id: PUBUbK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more requested scopes are invalid."
+msgstr ""
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -4092,6 +4112,11 @@ msgstr "该子域名已被占用。"
 msgid "This type of record cannot be merged."
 msgstr ""
 
+#. js-lingui-id: nZbise
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "This universal identifier is already claimed by another registration."
+msgstr ""
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -4256,15 +4281,11 @@ msgstr "用户已分配角色。"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "用户未在工作空间中"
-
-#. js-lingui-id: kZ0tmK
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-msgid "User does not have access to this workspace."
-msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts

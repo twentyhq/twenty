@@ -14,6 +14,6 @@ export const mockResponse = {
   opportunities: {
     totalCount: 42,
     sumAmount: 1000000,
-    avgAmount: 23800
-  }
+    avgAmount: 23800,
+  },
 };

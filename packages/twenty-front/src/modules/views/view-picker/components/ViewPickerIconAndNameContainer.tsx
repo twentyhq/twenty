@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconAndNameContainer = styled.div`
   align-items: center;
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  gap: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${themeCssVariables.spacing[1]};
+  margin-right: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export { StyledIconAndNameContainer as ViewPickerIconAndNameContainer };

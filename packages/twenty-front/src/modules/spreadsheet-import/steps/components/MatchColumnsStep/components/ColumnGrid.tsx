@@ -1,6 +1,7 @@
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import React from 'react';
 
 const StyledGridContainer = styled.div`
@@ -25,8 +26,8 @@ type HeightProps = {
 };
 
 const StyledGridRow = styled.div<HeightProps>`
-  border-bottom: ${({ withBorder, theme }) =>
-    withBorder && `1px solid ${theme.border.color.medium}`};
+  border-bottom: ${({ withBorder }) =>
+    withBorder ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -43,44 +44,44 @@ const StyledGridCell = styled.div<PositionProps>`
   display: flex;
   flex: 1;
   overflow-x: auto;
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  ${({ position, theme }) => {
+  padding-bottom: ${themeCssVariables.spacing[4]};
+  padding-top: ${themeCssVariables.spacing[4]};
+  ${({ position }) => {
     if (position === 'left') {
       return `
-        padding-left: ${theme.spacing(4)};
-        padding-right: ${theme.spacing(2)};
-        padding-top:  ${theme.spacing(4)};
+        padding-left: ${themeCssVariables.spacing[4]};
+        padding-right: ${themeCssVariables.spacing[2]};
+        padding-top:  ${themeCssVariables.spacing[4]};
       `;
     }
     if (position === 'full-line') {
       return `
-        padding-left: ${theme.spacing(2)};
-        padding-right: ${theme.spacing(4)};
-        padding-top:  ${theme.spacing(0)};
+        padding-left: ${themeCssVariables.spacing[2]};
+        padding-right: ${themeCssVariables.spacing[4]};
+        padding-top:  ${themeCssVariables.spacing[0]};
         width: 100%;
       `;
     }
     return `
-      padding-left: ${theme.spacing(2)};
-      padding-right: ${theme.spacing(4)};
-      padding-top:  ${theme.spacing(4)};
+      padding-left: ${themeCssVariables.spacing[2]};
+      padding-right: ${themeCssVariables.spacing[4]};
+      padding-top:  ${themeCssVariables.spacing[4]};
     `;
   }};
 `;
 
 const StyledGridHeader = styled.div<PositionProps>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-left: ${themeCssVariables.spacing[4]};
+  padding-right: ${themeCssVariables.spacing[4]};
 `;
 
 type ColumnGridProps = {

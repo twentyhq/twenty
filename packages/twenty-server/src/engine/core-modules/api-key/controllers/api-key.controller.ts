@@ -15,8 +15,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

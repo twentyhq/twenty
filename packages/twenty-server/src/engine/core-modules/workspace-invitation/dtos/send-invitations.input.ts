@@ -1,6 +1,14 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { ArrayUnique, IsArray, IsEmail } from 'class-validator';
+import {
+  ArrayUnique,
+  IsArray,
+  IsEmail,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 export class SendInvitationsInput {
@@ -9,4 +17,9 @@ export class SendInvitationsInput {
   @IsEmail({}, { each: true })
   @ArrayUnique()
   emails: string[];
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  roleId?: string | null;
 }

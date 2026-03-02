@@ -28,16 +28,16 @@ export const MyComponent = () => {
   };
 
   return (
-      <TextInput
-        className
-        label="Kullanıcı adı"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Geçersiz kullanıcı adı"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
+    <TextInput
+      className
+      label="Kullanıcı adı"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Geçersiz kullanıcı adı"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
 },{
@@ -82,15 +82,15 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
-        minRows={1}
-        placeholder="Bir yorum yazın"
-        onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
-        variant="icon"
-        buttonTitle
-        value="Görev: "
-      />
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
+      minRows={1}
+      placeholder="Bir yorum yazın"
+      onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
+      variant="icon"
+      buttonTitle
+      value="Görev: "
+    />
   );
 };
 ```
