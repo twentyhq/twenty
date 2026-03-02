@@ -91,9 +91,7 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   padding: ${({ isExpanded }) =>
     isExpanded ? '3px' : themeCssVariables.spacing[0.5]};
   width: ${({ isExpanded }) =>
-    isExpanded
-      ? '103px'
-      : themeCssVariables.spacing[6]};
+    isExpanded ? '103px' : themeCssVariables.spacing[6]};
   transition:
     height calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
     padding calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
