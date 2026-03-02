@@ -136,9 +136,6 @@ export const WorkspaceNavigationMenuItems = () => {
     });
   };
 
-  const isEditMode =
-    isNavigationMenuItemEditingEnabled && isNavigationMenuInEditMode;
-
   if (loading) {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
@@ -150,7 +147,7 @@ export const WorkspaceNavigationMenuItems = () => {
       rightIcon={
         isNavigationMenuItemEditingEnabled ? (
           <StyledRightIconsContainer>
-            {isEditMode ? (
+            {isNavigationMenuInEditMode ? (
               <LightIconButton
                 Icon={IconPlus}
                 accent="tertiary"
@@ -169,14 +166,13 @@ export const WorkspaceNavigationMenuItems = () => {
         ) : undefined
       }
       onAddMenuItem={
-        isNavigationMenuItemEditingEnabled && isEditMode
+        isNavigationMenuItemEditingEnabled && isNavigationMenuInEditMode
           ? handleAddMenuItem
           : undefined
       }
-      isEditMode={isEditMode}
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
-        isEditMode ? handleNavigationMenuItemClick : undefined
+        isNavigationMenuInEditMode ? handleNavigationMenuItemClick : undefined
       }
       onActiveObjectMetadataItemClick={
         isNavigationMenuItemEditingEnabled

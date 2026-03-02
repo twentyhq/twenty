@@ -6,7 +6,9 @@ import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { type View } from '@/views/types/View';
@@ -19,7 +21,6 @@ type WorkspaceNavigationMenuItemFolderSubItemProps = {
   selectedNavigationMenuItemIndex: number;
   objectMetadataItems: ObjectMetadataItem[];
   views: View[];
-  isEditMode: boolean;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   selectedNavigationMenuItemId: string | null;
   isContextDragging: boolean;
@@ -32,11 +33,13 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   selectedNavigationMenuItemIndex,
   objectMetadataItems,
   views,
-  isEditMode,
   onNavigationMenuItemClick,
   selectedNavigationMenuItemId,
   isContextDragging,
 }: WorkspaceNavigationMenuItemFolderSubItemProps) => {
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   const objectMetadataItem =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD
@@ -47,7 +50,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
         )
       : null;
   const handleEditModeClick =
-    isEditMode &&
+    isNavigationMenuInEditMode &&
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.itemType === NavigationMenuItemType.LINK ||
       isDefined(objectMetadataItem))

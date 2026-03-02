@@ -14,7 +14,6 @@ export type EditModeProps = {
 export type WorkspaceSectionItemContentProps = {
   item: FlatWorkspaceItem;
   editModeProps: EditModeProps;
-  isEditMode: boolean;
   isDragging: boolean;
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
   folderCount: number;
@@ -34,7 +33,6 @@ export type WorkspaceSectionListCommonProps = {
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
   folderCount: number;
   workspaceDropDisabled: boolean;
-  isEditMode: boolean;
   isDragging: boolean;
   selectedNavigationMenuItemId: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;

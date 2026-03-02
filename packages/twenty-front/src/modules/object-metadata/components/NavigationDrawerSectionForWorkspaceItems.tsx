@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
@@ -11,11 +12,11 @@ import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { WorkspaceSectionListDndKit } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit';
 import { WorkspaceSectionListHelloPangea } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListHelloPangea';
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import type { EditModeProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -34,7 +35,6 @@ type NavigationDrawerSectionForWorkspaceItemsProps = {
   items: FlatWorkspaceItem[];
   rightIcon?: React.ReactNode;
   onAddMenuItem?: () => void;
-  isEditMode?: boolean;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
@@ -48,12 +48,14 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   items,
   rightIcon,
   onAddMenuItem,
-  isEditMode = false,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -141,7 +143,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   };
 
   const isAddMenuItemButtonVisible =
-    isEditMode && isDefined(onAddMenuItem) && !isDragging;
+    isNavigationMenuInEditMode && isDefined(onAddMenuItem) && !isDragging;
 
   if (flatItems.length === 0 && !isAddToNavigationDropTargetVisible) {
     return null;
@@ -156,7 +158,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           label={sectionTitle}
           onClick={() => toggleNavigationSection()}
           rightIcon={rightIcon}
-          alwaysShowRightIcon={isEditMode}
+          alwaysShowRightIcon={isNavigationMenuInEditMode}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) &&
@@ -167,7 +169,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             folderChildrenById={folderChildrenById}
             folderCount={folderCount}
             workspaceDropDisabled={workspaceDropDisabled}
-            isEditMode={isEditMode}
             isDragging={isDragging}
             selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}
@@ -188,7 +189,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             folderChildrenById={folderChildrenById}
             folderCount={folderCount}
             workspaceDropDisabled={workspaceDropDisabled}
-            isEditMode={isEditMode}
             isDragging={isDragging}
             selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}

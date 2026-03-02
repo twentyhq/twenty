@@ -3,6 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
@@ -29,7 +30,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
   navigationMenuItem?: ProcessedNavigationMenuItem;
-  isEditMode?: boolean;
   isSelectedInEditMode?: boolean;
   onEditModeClick?: () => void;
   onActiveItemClickWhenNotInEditMode?: () => void;
@@ -39,12 +39,14 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
 export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
   navigationMenuItem,
-  isEditMode = false,
   isSelectedInEditMode = false,
   onEditModeClick,
   onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
@@ -100,18 +102,19 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const shouldUseClickHandler = isEditMode
+  const shouldUseClickHandler = isNavigationMenuInEditMode
     ? Boolean(onEditModeClick)
     : isActive && Boolean(onActiveItemClickWhenNotInEditMode);
 
   const handleClick = shouldUseClickHandler
-    ? isEditMode
+    ? isNavigationMenuInEditMode
       ? onEditModeClick
       : onActiveItemClickWhenNotInEditMode
     : undefined;
 
   const shouldNavigate =
-    !isEditMode && !(isActive && onActiveItemClickWhenNotInEditMode);
+    !isNavigationMenuInEditMode &&
+    !(isActive && onActiveItemClickWhenNotInEditMode);
 
   const isViewWithCustomName =
     isView &&
@@ -219,7 +222,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       label={label}
       secondaryLabel={secondaryLabel}
       to={
-        isEditMode || isDragging
+        isNavigationMenuInEditMode || isDragging
           ? undefined
           : shouldNavigate
             ? navigationPath
@@ -231,7 +234,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
-      triggerEvent={isEditMode ? 'CLICK' : undefined}
+      triggerEvent={isNavigationMenuInEditMode ? 'CLICK' : undefined}
     />
   );
 };

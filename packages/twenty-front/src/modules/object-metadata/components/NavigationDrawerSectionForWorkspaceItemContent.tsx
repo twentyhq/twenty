@@ -1,18 +1,19 @@
 import { IconLink } from 'twenty-ui/display';
 
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 
 export const WorkspaceSectionItemContent = ({
   item,
   editModeProps,
-  isEditMode,
   isDragging,
   folderChildrenById,
   folderCount,
@@ -22,6 +23,9 @@ export const WorkspaceSectionItemContent = ({
   objectMetadataItems,
   views,
 }: WorkspaceSectionItemContentProps) => {
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   const type = item.itemType;
 
   if (type === 'folder') {
@@ -33,7 +37,6 @@ export const WorkspaceSectionItemContent = ({
         folderColor={'color' in item ? (item.color ?? undefined) : undefined}
         navigationMenuItems={folderChildrenById.get(item.id) ?? []}
         isGroup={folderCount > 1}
-        isEditMode={isEditMode}
         isSelectedInEditMode={editModeProps.isSelectedInEditMode}
         onEditModeClick={editModeProps.onEditModeClick}
         onNavigationMenuItemClick={onNavigationMenuItemClick}
@@ -48,8 +51,12 @@ export const WorkspaceSectionItemContent = ({
     return (
       <NavigationDrawerItem
         label={linkItem.labelIdentifier}
-        to={isEditMode || isDragging ? undefined : linkItem.link}
-        onClick={isEditMode ? editModeProps.onEditModeClick : undefined}
+        to={
+          isNavigationMenuInEditMode || isDragging ? undefined : linkItem.link
+        }
+        onClick={
+          isNavigationMenuInEditMode ? editModeProps.onEditModeClick : undefined
+        }
         Icon={IconLink}
         iconColor={getEffectiveNavigationMenuItemColor(linkItem) ?? undefined}
         active={false}
@@ -73,7 +80,6 @@ export const WorkspaceSectionItemContent = ({
     <NavigationDrawerItemForObjectMetadataItem
       objectMetadataItem={objectMetadataItem}
       navigationMenuItem={item as ProcessedNavigationMenuItem}
-      isEditMode={isEditMode}
       isSelectedInEditMode={editModeProps.isSelectedInEditMode}
       onEditModeClick={editModeProps.onEditModeClick}
       isDragging={isDragging}

@@ -5,8 +5,10 @@ import { IconPlus } from 'twenty-ui/display';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 import type { WorkspaceSectionListHelloPangeaProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
@@ -23,7 +25,6 @@ export const WorkspaceSectionListHelloPangea = ({
   folderChildrenById,
   folderCount,
   workspaceDropDisabled,
-  isEditMode,
   isDragging,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
@@ -35,6 +36,9 @@ export const WorkspaceSectionListHelloPangea = ({
   onAddMenuItem,
   addMenuItemLabel,
 }: WorkspaceSectionListHelloPangeaProps) => {
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   return (
     <Droppable
       droppableId={
@@ -59,13 +63,12 @@ export const WorkspaceSectionListHelloPangea = ({
                 draggableId={item.id}
                 index={index}
                 isInsideScrollableContainer
-                isDragDisabled={!isEditMode}
-                disableInteractiveElementBlocking={isEditMode}
+                isDragDisabled={!isNavigationMenuInEditMode}
+                disableInteractiveElementBlocking={isNavigationMenuInEditMode}
                 itemComponent={
                   <WorkspaceSectionItemContent
                     item={item}
                     editModeProps={getEditModeProps(item)}
-                    isEditMode={isEditMode}
                     isDragging={isDragging}
                     folderChildrenById={folderChildrenById}
                     folderCount={folderCount}

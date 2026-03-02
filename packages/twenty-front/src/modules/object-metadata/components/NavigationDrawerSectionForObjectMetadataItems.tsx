@@ -28,7 +28,6 @@ type NavigationDrawerSectionForObjectMetadataItemsProps = {
   isRemote: boolean;
   objectMetadataItems: ObjectMetadataItem[];
   rightIcon?: React.ReactNode;
-  isEditMode?: boolean;
   selectedObjectMetadataItemId?: string | null;
   onObjectMetadataItemClick?: (objectMetadataItem: ObjectMetadataItem) => void;
   onActiveObjectMetadataItemClick?: (
@@ -41,7 +40,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   isRemote,
   objectMetadataItems,
   rightIcon,
-  isEditMode = false,
   selectedObjectMetadataItemId = null,
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
@@ -127,7 +125,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}
-                isEditMode={isEditMode}
                 isSelectedInEditMode={
                   selectedObjectMetadataItemId === objectMetadataItem.id
                 }

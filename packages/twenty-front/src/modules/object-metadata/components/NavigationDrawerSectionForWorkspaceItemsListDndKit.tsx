@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { IconPlus } from 'twenty-ui/display';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
@@ -23,7 +25,6 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   folderCount,
   workspaceDropDisabled,
-  isEditMode,
   isDragging,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
@@ -35,6 +36,9 @@ export const WorkspaceSectionListDndKit = ({
   onAddMenuItem,
   addMenuItemLabel,
 }: WorkspaceSectionListDndKitProps) => {
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   return (
     <StyledList
       data-dnd-group={
@@ -50,12 +54,11 @@ export const WorkspaceSectionListDndKit = ({
             group={
               NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
             }
-            disabled={!isEditMode || workspaceDropDisabled}
+            disabled={!isNavigationMenuInEditMode || workspaceDropDisabled}
           >
             <WorkspaceSectionItemContent
               item={item}
               editModeProps={getEditModeProps(item)}
-              isEditMode={isEditMode}
               isDragging={isDragging}
               folderChildrenById={folderChildrenById}
               folderCount={folderCount}
