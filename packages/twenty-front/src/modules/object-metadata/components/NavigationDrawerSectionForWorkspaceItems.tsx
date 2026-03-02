@@ -1,5 +1,4 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
 import { useLingui } from '@lingui/react/macro';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +15,6 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { WorkspaceSectionListDndKit } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit';
-import { WorkspaceSectionListHelloPangea } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListHelloPangea';
 import type { EditModeProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -68,7 +66,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
   );
-  const isDndKit = useContext(WorkspaceDndKitContext);
 
   const flatItems = items.filter((item) => !isDefined(item.folderId));
   const isAddToNavigationDropTargetVisible =
@@ -161,44 +158,25 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           alwaysShowRightIcon={isNavigationMenuInEditMode}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) &&
-        (isDndKit ? (
-          <WorkspaceSectionListDndKit
-            filteredItems={filteredItems}
-            getEditModeProps={getEditModeProps}
-            folderChildrenById={folderChildrenById}
-            folderCount={folderCount}
-            workspaceDropDisabled={workspaceDropDisabled}
-            isDragging={isDragging}
-            selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-            onNavigationMenuItemClick={onNavigationMenuItemClick}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
-            addToNavigationFallbackDestination={
-              addToNavigationFallbackDestination
-            }
-            onAddMenuItem={onAddMenuItem}
-            addMenuItemLabel={addMenuItemLabel}
-          />
-        ) : (
-          <WorkspaceSectionListHelloPangea
-            filteredItems={filteredItems}
-            getEditModeProps={getEditModeProps}
-            folderChildrenById={folderChildrenById}
-            folderCount={folderCount}
-            workspaceDropDisabled={workspaceDropDisabled}
-            isDragging={isDragging}
-            selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-            onNavigationMenuItemClick={onNavigationMenuItemClick}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
-            addToNavigationFallbackDestination={
-              addToNavigationFallbackDestination
-            }
-            onAddMenuItem={onAddMenuItem}
-            addMenuItemLabel={addMenuItemLabel}
-          />
-        ))}
+      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) && (
+        <WorkspaceSectionListDndKit
+          filteredItems={filteredItems}
+          getEditModeProps={getEditModeProps}
+          folderChildrenById={folderChildrenById}
+          folderCount={folderCount}
+          workspaceDropDisabled={workspaceDropDisabled}
+          isDragging={isDragging}
+          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+          onNavigationMenuItemClick={onNavigationMenuItemClick}
+          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+          isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
+          addToNavigationFallbackDestination={
+            addToNavigationFallbackDestination
+          }
+          onAddMenuItem={onAddMenuItem}
+          addMenuItemLabel={addMenuItemLabel}
+        />
+      )}
     </NavigationDrawerSection>
   );
 };

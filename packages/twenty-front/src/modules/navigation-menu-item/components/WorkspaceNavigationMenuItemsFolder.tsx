@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useContext } from 'react';
@@ -18,10 +17,8 @@ import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpen
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
-import { WorkspaceNavigationMenuItemFolderDragClone } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderDragClone';
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
@@ -34,8 +31,6 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -94,7 +89,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   selectedNavigationMenuItemId = null,
   isDragging = false,
 }: WorkspaceNavigationMenuItemsFolderProps) => {
-  const useDndKit = useContext(WorkspaceDndKitContext);
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -179,6 +173,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 
   const folderHeaderDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`;
   const folderContentDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}${folderId}`;
+  const isCompact =
+    isNavigationMenuInEditMode || navigationMenuItems.length === 0;
 
   const headerItem = (
     <NavigationDrawerItem
@@ -212,80 +208,18 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     />
   );
 
-  if (useDndKit) {
-    return (
-      <StyledFolderContainer $isSelectedInEditMode={isSelectedInEditMode}>
-        <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
-          <div ref={setSortableDropTargetRef ?? undefined}>
-            <WorkspaceDndKitDroppableSlot
-              droppableId={folderHeaderDroppableId}
-              index={0}
-              disabled={folderContentDropDisabled}
-            >
-              {headerItem}
-            </WorkspaceDndKitDroppableSlot>
-          </div>
-          <StyledFolderExpandableWrapper>
-            <AnimatedExpandableContainer
-              isExpanded={isOpen}
-              dimension="height"
-              mode="fit-content"
-              containAnimation
-            >
-              <StyledFolderDroppableContent
-                $compact={
-                  isNavigationMenuInEditMode || navigationMenuItems.length === 0
-                }
-                data-dnd-group={folderContentDroppableId}
-              >
-                {navigationMenuItems.map((navigationMenuItem, index) => (
-                  <WorkspaceDndKitSortableItem
-                    key={navigationMenuItem.id}
-                    id={navigationMenuItem.id}
-                    index={index}
-                    group={folderContentDroppableId}
-                    disabled={
-                      !isNavigationMenuInEditMode || folderContentDropDisabled
-                    }
-                  >
-                    <WorkspaceNavigationMenuItemFolderSubItem
-                      navigationMenuItem={navigationMenuItem}
-                      index={index}
-                      arrayLength={navigationMenuItemFolderContentLength}
-                      selectedNavigationMenuItemIndex={
-                        selectedNavigationMenuItemIndex
-                      }
-                      onNavigationMenuItemClick={onNavigationMenuItemClick}
-                      selectedNavigationMenuItemId={
-                        selectedNavigationMenuItemId ?? null
-                      }
-                      isContextDragging={isContextDragging}
-                    />
-                  </WorkspaceDndKitSortableItem>
-                ))}
-                <WorkspaceDndKitDroppableSlot
-                  droppableId={folderContentDroppableId}
-                  index={navigationMenuItems.length}
-                  disabled={folderContentDropDisabled}
-                />
-              </StyledFolderDroppableContent>
-            </AnimatedExpandableContainer>
-          </StyledFolderExpandableWrapper>
-        </NavigationDrawerItemsCollapsableContainer>
-      </StyledFolderContainer>
-    );
-  }
-
   return (
     <StyledFolderContainer $isSelectedInEditMode={isSelectedInEditMode}>
       <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
-        <NavigationMenuItemDroppable
-          droppableId={folderHeaderDroppableId}
-          isWorkspaceSection={true}
-        >
-          {headerItem}
-        </NavigationMenuItemDroppable>
-
+        <div ref={setSortableDropTargetRef ?? undefined}>
+          <WorkspaceDndKitDroppableSlot
+            droppableId={folderHeaderDroppableId}
+            index={0}
+            disabled={folderContentDropDisabled}
+          >
+            {headerItem}
+          </WorkspaceDndKitDroppableSlot>
+        </div>
         <StyledFolderExpandableWrapper>
           <AnimatedExpandableContainer
             isExpanded={isOpen}
@@ -293,80 +227,54 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             mode="fit-content"
             containAnimation
           >
-            <Droppable
-              droppableId={folderContentDroppableId}
-              isDropDisabled={folderContentDropDisabled}
-              ignoreContainerClipping
-              renderClone={(provided, snapshot, rubric) => (
-                <WorkspaceNavigationMenuItemFolderDragClone
-                  draggableProvided={provided}
-                  draggableSnapshot={snapshot}
-                  rubric={rubric}
-                  navigationMenuItems={navigationMenuItems}
-                  navigationMenuItemFolderContentLength={
-                    navigationMenuItemFolderContentLength
+            <StyledFolderDroppableContent
+              $compact={isCompact}
+              data-dnd-group={folderContentDroppableId}
+            >
+              {navigationMenuItems.map((navigationMenuItem, index) => (
+                <WorkspaceDndKitSortableItem
+                  key={navigationMenuItem.id}
+                  id={navigationMenuItem.id}
+                  index={index}
+                  group={folderContentDroppableId}
+                  disabled={
+                    !isNavigationMenuInEditMode || folderContentDropDisabled
                   }
-                  selectedNavigationMenuItemIndex={
-                    selectedNavigationMenuItemIndex
-                  }
+                >
+                  <WorkspaceNavigationMenuItemFolderSubItem
+                    navigationMenuItem={navigationMenuItem}
+                    index={index}
+                    arrayLength={navigationMenuItemFolderContentLength}
+                    selectedNavigationMenuItemIndex={
+                      selectedNavigationMenuItemIndex
+                    }
+                    onNavigationMenuItemClick={onNavigationMenuItemClick}
+                    selectedNavigationMenuItemId={
+                      selectedNavigationMenuItemId ?? null
+                    }
+                    isContextDragging={isContextDragging}
+                  />
+                </WorkspaceDndKitSortableItem>
+              ))}
+              <WorkspaceDndKitDroppableSlot
+                droppableId={folderContentDroppableId}
+                index={navigationMenuItems.length}
+                disabled={folderContentDropDisabled}
+              />
+              {isNavigationMenuInEditMode && isSelectedInEditMode && (
+                <NavigationDrawerSubItem
+                  label={t`Add menu item`}
+                  Icon={IconPlus}
+                  onClick={handleAddMenuItemToFolder}
+                  triggerEvent="CLICK"
+                  subItemState={getNavigationSubItemLeftAdornment({
+                    index: navigationMenuItems.length,
+                    arrayLength: folderContentLengthForTree,
+                    selectedIndex: selectedNavigationMenuItemIndex,
+                  })}
                 />
               )}
-              getContainerForClone={() => document.body}
-            >
-              {(provided) => (
-                <StyledFolderDroppableContent
-                  ref={provided.innerRef}
-                  $compact={
-                    isNavigationMenuInEditMode ||
-                    navigationMenuItems.length === 0
-                  }
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...provided.droppableProps}
-                >
-                  {navigationMenuItems.map((navigationMenuItem, index) => (
-                    <DraggableItem
-                      key={navigationMenuItem.id}
-                      draggableId={navigationMenuItem.id}
-                      index={index}
-                      isInsideScrollableContainer
-                      isDragDisabled={!isNavigationMenuInEditMode}
-                      disableInteractiveElementBlocking={
-                        isNavigationMenuInEditMode
-                      }
-                      itemComponent={
-                        <WorkspaceNavigationMenuItemFolderSubItem
-                          navigationMenuItem={navigationMenuItem}
-                          index={index}
-                          arrayLength={folderContentLengthForTree}
-                          selectedNavigationMenuItemIndex={
-                            selectedNavigationMenuItemIndex
-                          }
-                          onNavigationMenuItemClick={onNavigationMenuItemClick}
-                          selectedNavigationMenuItemId={
-                            selectedNavigationMenuItemId ?? null
-                          }
-                          isContextDragging={isContextDragging}
-                        />
-                      }
-                    />
-                  ))}
-                  {provided.placeholder}
-                </StyledFolderDroppableContent>
-              )}
-            </Droppable>
-            {isNavigationMenuInEditMode && isSelectedInEditMode && (
-              <NavigationDrawerSubItem
-                label={t`Add menu item`}
-                Icon={IconPlus}
-                onClick={handleAddMenuItemToFolder}
-                triggerEvent="CLICK"
-                subItemState={getNavigationSubItemLeftAdornment({
-                  index: navigationMenuItems.length,
-                  arrayLength: folderContentLengthForTree,
-                  selectedIndex: selectedNavigationMenuItemIndex,
-                })}
-              />
-            )}
+            </StyledFolderDroppableContent>
           </AnimatedExpandableContainer>
         </StyledFolderExpandableWrapper>
       </NavigationDrawerItemsCollapsableContainer>

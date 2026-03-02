@@ -26,17 +26,17 @@ export const PageDragDropProvider = ({
     preloadWorkspaceDndKit();
   }, []);
 
-  if (isNavigationMenuItemEditingEnabled) {
-    return (
-      <Suspense fallback={null}>
-        <LazyWorkspaceDndKitProvider>{children}</LazyWorkspaceDndKitProvider>
-      </Suspense>
-    );
-  }
-
-  return (
+  const content = isNavigationMenuItemEditingEnabled ? (
+    children
+  ) : (
     <FavoritesDragDropProviderContent>
       {children}
     </FavoritesDragDropProviderContent>
+  );
+
+  return (
+    <Suspense fallback={null}>
+      <LazyWorkspaceDndKitProvider>{content}</LazyWorkspaceDndKitProvider>
+    </Suspense>
   );
 };

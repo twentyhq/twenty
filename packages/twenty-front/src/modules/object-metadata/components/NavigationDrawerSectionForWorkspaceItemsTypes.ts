@@ -24,7 +24,7 @@ export type WorkspaceSectionItemContentProps = {
   ) => void;
 };
 
-export type WorkspaceSectionListCommonProps = {
+export type WorkspaceSectionListDndKitProps = {
   filteredItems: FlatWorkspaceItem[];
   getEditModeProps: (item: FlatWorkspaceItem) => EditModeProps;
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
@@ -45,7 +45,3 @@ export type WorkspaceSectionListCommonProps = {
   onAddMenuItem?: () => void;
   addMenuItemLabel: string;
 };
-
-export type WorkspaceSectionListDndKitProps = WorkspaceSectionListCommonProps;
-export type WorkspaceSectionListHelloPangeaProps =
-  WorkspaceSectionListCommonProps;
