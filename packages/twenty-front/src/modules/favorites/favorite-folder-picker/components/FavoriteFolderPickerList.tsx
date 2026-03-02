@@ -6,7 +6,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledItemsContainer = styled.div`
   width: 100%;

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';

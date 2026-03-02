@@ -112,6 +112,7 @@ export default defineConfig(({ command, mode }) => {
         ...wyw({
           include: [
             '**/twenty-ui/src/**/*.{ts,tsx}',
+            '**/theme-css-variables-static.ts',
             '**/AdvancedTextEditor.tsx',
             '**/BubbleMenuIconButton.tsx',
             '**/TextBubbleMenu.tsx',
@@ -357,31 +358,11 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     resolve: {
-      alias: [
-        {
-          find: /^twenty-ui\/(?!style\.css)(.+)$/,
-          replacement: path.resolve(__dirname, '../twenty-ui/src/$1/index.ts'),
-        },
-        {
-          find: /^@ui\/(.+)$/,
-          replacement: path.resolve(__dirname, '../twenty-ui/src/$1'),
-        },
-        {
-          find: /^@assets\/(.+)$/,
-          replacement: path.resolve(
-            __dirname,
-            '../twenty-ui/src/assets/$1',
-          ),
-        },
-        {
-          find: 'path',
-          replacement: 'rollup-plugin-node-polyfills/polyfills/path',
-        },
-        {
-          find: '@tabler/icons-react',
-          replacement: '@tabler/icons-react/dist/esm/icons/index.mjs',
-        },
-      ],
+      alias: {
+        path: 'rollup-plugin-node-polyfills/polyfills/path',
+        '@tabler/icons-react':
+          '@tabler/icons-react/dist/esm/icons/index.mjs',
+      },
     },
   };
 });

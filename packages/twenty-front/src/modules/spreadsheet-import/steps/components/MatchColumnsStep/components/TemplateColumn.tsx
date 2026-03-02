@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';

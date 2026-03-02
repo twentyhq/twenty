@@ -11,7 +11,8 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';

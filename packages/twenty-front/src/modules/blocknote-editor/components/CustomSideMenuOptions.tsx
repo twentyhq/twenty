@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
   color: ${({ Variant }) =>

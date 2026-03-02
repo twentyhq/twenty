@@ -24,7 +24,7 @@ import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarF
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 export const StyledInput = styled.input`
   background: transparent;

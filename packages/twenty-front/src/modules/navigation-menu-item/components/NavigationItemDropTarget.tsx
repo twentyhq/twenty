@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { type NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';

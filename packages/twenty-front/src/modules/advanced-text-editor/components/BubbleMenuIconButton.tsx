@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import React from 'react';
 import type { IconComponent } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 type BubbleMenuIconButtonProps = {
   className?: string;

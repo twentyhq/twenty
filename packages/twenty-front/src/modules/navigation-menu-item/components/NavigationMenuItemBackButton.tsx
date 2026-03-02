@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';

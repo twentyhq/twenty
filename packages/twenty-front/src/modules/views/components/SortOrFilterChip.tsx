@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/display';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;

@@ -31,7 +31,7 @@ import { type SpreadsheetImportField } from '@/spreadsheet-import/types/Spreadsh
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;

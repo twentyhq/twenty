@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import {
   useSetMeteredSubscriptionPriceMutation,
   SubscriptionInterval,

@@ -3,7 +3,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledBackButton = styled.button`
   display: flex;

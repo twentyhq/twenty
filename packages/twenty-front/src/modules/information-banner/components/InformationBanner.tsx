@@ -10,7 +10,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
-import { GRAY_SCALE_LIGHT, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledText = styled.div`
   overflow: hidden;
@@ -19,7 +19,7 @@ const StyledText = styled.div`
 `;
 
 const StyledCloseButton = styled(IconButton)`
-  color: ${GRAY_SCALE_LIGHT.gray1};
+  color: ${themeCssVariables.grayScale.gray1};
   display: flex;
 `;
 

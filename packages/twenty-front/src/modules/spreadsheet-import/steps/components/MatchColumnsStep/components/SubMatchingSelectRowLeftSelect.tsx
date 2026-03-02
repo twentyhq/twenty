@@ -2,7 +2,7 @@ import { SubMatchingSelectControlContainer } from '@/spreadsheet-import/steps/co
 
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};

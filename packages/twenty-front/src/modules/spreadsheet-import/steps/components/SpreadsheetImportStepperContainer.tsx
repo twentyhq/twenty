@@ -10,7 +10,8 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledHeader = styled(Modal.Header)`

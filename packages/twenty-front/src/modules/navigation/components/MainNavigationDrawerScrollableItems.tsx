@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
 import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
   import(

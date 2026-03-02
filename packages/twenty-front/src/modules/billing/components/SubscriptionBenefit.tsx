@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import React, { useContext } from 'react';
 import { IconCheck } from 'twenty-ui/display';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledBenefitContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};

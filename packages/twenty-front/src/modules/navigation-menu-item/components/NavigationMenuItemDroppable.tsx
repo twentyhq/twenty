@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 

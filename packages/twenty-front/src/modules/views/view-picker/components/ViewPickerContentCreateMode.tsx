@@ -39,7 +39,7 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${themeCssVariables.font.color.light};

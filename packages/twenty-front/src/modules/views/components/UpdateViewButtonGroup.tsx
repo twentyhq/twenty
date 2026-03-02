@@ -26,7 +26,7 @@ import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/display';
 import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};

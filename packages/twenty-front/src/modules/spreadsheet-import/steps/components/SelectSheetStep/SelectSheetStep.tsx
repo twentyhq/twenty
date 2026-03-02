@@ -12,7 +12,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { type WorkBook } from 'xlsx-ugnis';
 
 const StyledContent = styled(Modal.Content)`

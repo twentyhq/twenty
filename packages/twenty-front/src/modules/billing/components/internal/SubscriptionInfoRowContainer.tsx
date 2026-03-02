@@ -2,7 +2,8 @@ import { type IconComponent } from 'twenty-ui/display';
 import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;

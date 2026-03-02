@@ -14,7 +14,7 @@ import {
   IconStrikethrough,
   IconUnderline,
 } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 export const StyledBubbleMenuContainer = styled.div`
   backdrop-filter: blur(20px);

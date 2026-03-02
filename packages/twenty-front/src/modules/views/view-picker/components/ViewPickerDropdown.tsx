@@ -23,11 +23,9 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledIconContainer = styled.span`
   display: flex;

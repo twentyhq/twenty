@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 const StyledBanner = styled(Banner)<{ allMatched: boolean }>`
   background: ${({ allMatched }) =>

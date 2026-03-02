@@ -23,7 +23,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { v4 } from 'uuid';
 
 const StyledPill = styled(Pill)`

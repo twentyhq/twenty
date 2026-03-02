@@ -24,7 +24,7 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 

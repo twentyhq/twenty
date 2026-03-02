@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
 

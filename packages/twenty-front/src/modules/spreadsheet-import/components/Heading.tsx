@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 
 export type HeadingProps = {
   title: string;

@@ -6,7 +6,7 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from '@/utils/theme-css-variables-static';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
