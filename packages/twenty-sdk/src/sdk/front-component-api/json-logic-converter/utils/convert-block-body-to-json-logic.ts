@@ -46,6 +46,8 @@ export const convertBlockBodyToJsonLogic = ({
       defaultReturnValue = convertExpressionToJsonLogic({
         node: returnExpression,
       });
+
+      continue;
     }
 
     throw new JsonLogicConversionError(

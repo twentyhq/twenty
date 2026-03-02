@@ -9,8 +9,8 @@ import {
 } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type JsonLogicRule } from '../types/json-logic-rule';
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
+import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertArrowFunctionToJsonLogic } from './convert-arrow-function-to-json-logic';
 import { convertBinaryExpressionToJsonLogic } from './convert-binary-expression-to-json-logic';
