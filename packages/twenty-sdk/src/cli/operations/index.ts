@@ -10,8 +10,16 @@ export type { AuthSwitchOptions, AuthSwitchResult } from './auth-switch';
 export { authList } from './auth-list';
 
 // App
+export { appBuild } from './app-build';
+export type {
+  AppBuildOptions,
+  AppBuildResult,
+  BuiltFileInfo,
+} from './app-build';
 export { appTypecheck } from './app-typecheck';
 export type { AppTypecheckOptions } from './app-typecheck';
+export { appSync } from './app-sync';
+export type { AppSyncOptions } from './app-sync';
 export { appUninstall } from './app-uninstall';
 export type { AppUninstallOptions } from './app-uninstall';
 

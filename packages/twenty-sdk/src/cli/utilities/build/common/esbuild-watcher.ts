@@ -12,9 +12,9 @@ import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-pl
 import * as esbuild from 'esbuild';
 import path from 'path';
 import {
-  OUTPUT_DIR,
-  NODE_ESM_CJS_BANNER,
   GENERATED_DIR,
+  NODE_ESM_CJS_BANNER,
+  OUTPUT_DIR,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -88,6 +88,23 @@ export class EsbuildWatcher implements RestartableWatcher {
   async start(): Promise<void> {
     if (this.sourcePaths.length > 0) {
       await this.createContext();
+    }
+  }
+
+  // Transitions an already-built watcher to watch mode with new callbacks.
+  // The esbuild context's onEnd plugin reads callbacks from instance
+  // properties at call time, so updating them here takes effect on
+  // subsequent incremental builds.
+  async transitionToWatchMode(callbacks: {
+    handleFileBuilt: OnFileBuiltCallback;
+    handleBuildError: OnBuildErrorCallback;
+  }): Promise<void> {
+    this.onFileBuilt = callbacks.handleFileBuilt;
+    this.onBuildError = callbacks.handleBuildError;
+    this.watchMode = true;
+
+    if (this.esBuildContext) {
+      await this.esBuildContext.watch();
     }
   }
 
@@ -195,7 +212,9 @@ export class EsbuildWatcher implements RestartableWatcher {
 
 // Resolves twenty-sdk/generated to the actual file path so esbuild
 // bundles it instead of treating it as external (via twenty-sdk/*)
-const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
+export const createSdkGeneratedResolverPlugin = (
+  appPath: string,
+): esbuild.Plugin => ({
   name: 'sdk-generated-resolver',
   setup: (build) => {
     build.onResolve({ filter: /^twenty-sdk\/generated/ }, () => ({
