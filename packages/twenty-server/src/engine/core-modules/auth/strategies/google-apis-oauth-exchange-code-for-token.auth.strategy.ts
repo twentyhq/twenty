@@ -4,11 +4,11 @@ import {
   type Profile as GoogleProfile,
   type VerifyCallback,
 } from 'passport-google-oauth20';
+import { parseJson } from 'twenty-shared/utils';
 
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
 import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 import { type APIsOAuthState } from 'src/engine/core-modules/auth/types/apis-oauth-state.type';
-import { parseOAuthState } from 'src/engine/core-modules/auth/utils/parse-oauth-state.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
-    const state = parseOAuthState<APIsOAuthState>(request.query.state);
+    const state = parseJson<APIsOAuthState>(request.query.state as string);
 
     const user: APIsOAuthRequest['user'] = {
       emails: emails ?? [],

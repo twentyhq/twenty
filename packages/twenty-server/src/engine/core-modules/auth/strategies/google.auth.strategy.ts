@@ -8,6 +8,7 @@ import {
   type VerifyCallback,
 } from 'passport-google-oauth20';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { parseJson } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -15,7 +16,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
-import { parseOAuthState } from 'src/engine/core-modules/auth/utils/parse-oauth-state.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<
@@ -73,7 +73,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
-    const state = parseOAuthState<SocialSSOState>(request.query.state);
+    const state = parseJson<SocialSSOState>(request.query.state as string);
 
     const firstVerifiedEmail = emails?.find(
       (email) => email?.verified === true,
