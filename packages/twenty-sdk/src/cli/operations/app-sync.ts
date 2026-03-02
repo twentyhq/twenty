@@ -163,9 +163,5 @@ const serializeApiError = (error: unknown): string => {
     return error;
   }
 
-  if (error === undefined) {
-    return 'Unknown error';
-  }
-
-  return JSON.stringify(error);
+  return JSON.stringify(error) ?? 'Unknown error';
 };

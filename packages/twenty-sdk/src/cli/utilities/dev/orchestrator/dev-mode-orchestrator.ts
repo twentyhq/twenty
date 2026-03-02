@@ -1,4 +1,4 @@
-import { appBuild } from '@/cli/operations/app-build';
+import { appBuild, type AppBuildResult } from '@/cli/operations/app-build';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -32,6 +32,7 @@ export class DevModeOrchestrator {
   private serverCheckInterval: NodeJS.Timeout | null = null;
 
   private clientService: ClientService;
+  private skipTypecheck = true;
   private checkServerStep: CheckServerOrchestratorStep;
   private ensureValidTokensStep: EnsureValidTokensOrchestratorStep;
   private buildManifestStep: BuildManifestOrchestratorStep;
@@ -84,6 +85,7 @@ export class DevModeOrchestrator {
       ...stepDeps,
       scheduleSync: this.scheduleSync.bind(this),
       onFileBuilt: this.handleFileBuilt.bind(this),
+      shouldSkipTypecheck: () => this.skipTypecheck,
     });
   }
 
@@ -188,21 +190,33 @@ export class DevModeOrchestrator {
 
     const isFirstSync = !this.state.steps.startWatchers.output.watchersStarted;
 
+    let appBuildResult: AppBuildResult | null = null;
+
     if (isFirstSync) {
-      const appBuildResult = await appBuild({
+      appBuildResult = await appBuild({
         appPath: this.state.appPath,
         manifest: buildResult.manifest!,
         filePaths: buildResult.filePaths,
-        watcherCallbacks: this.startWatchersStep.getWatcherCallbacks(),
+        createWatchers: true,
       });
 
-      await this.startWatchersStep.handleFirstSync({
-        logicFunctionsWatcher: appBuildResult.logicFunctionsWatcher,
-        frontComponentsWatcher: appBuildResult.frontComponentsWatcher,
-      });
-    } else {
-      await this.startWatchersStep.handleWatcherRestarts(buildResult);
+      for (const [builtPath, fileInfo] of appBuildResult.builtFileInfos) {
+        this.state.steps.uploadFiles.output.builtFileInfos.set(
+          builtPath,
+          fileInfo,
+        );
+      }
     }
+
+    await this.startWatchersStep.handleWatcherRestarts(
+      buildResult,
+      appBuildResult
+        ? {
+            logicFunctionsWatcher: appBuildResult.logicFunctionsWatcher,
+            frontComponentsWatcher: appBuildResult.frontComponentsWatcher,
+          }
+        : undefined,
+    );
 
     if (!this.uploadFilesStep.isInitialized) {
       const initialized = await this.initializePipeline(buildResult.manifest!);
@@ -228,6 +242,8 @@ export class DevModeOrchestrator {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
       });
+
+      this.skipTypecheck = false;
 
       await this.uploadFilesStep.copyAndUploadApiClientFiles(
         this.state.appPath,

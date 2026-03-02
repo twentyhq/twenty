@@ -91,6 +91,23 @@ export class EsbuildWatcher implements RestartableWatcher {
     }
   }
 
+  // Transitions an already-built watcher to watch mode with new callbacks.
+  // The esbuild context's onEnd plugin reads callbacks from instance
+  // properties at call time, so updating them here takes effect on
+  // subsequent incremental builds.
+  async transitionToWatchMode(callbacks: {
+    handleFileBuilt: OnFileBuiltCallback;
+    handleBuildError: OnBuildErrorCallback;
+  }): Promise<void> {
+    this.onFileBuilt = callbacks.handleFileBuilt;
+    this.onBuildError = callbacks.handleBuildError;
+    this.watchMode = true;
+
+    if (this.esBuildContext) {
+      await this.esBuildContext.watch();
+    }
+  }
+
   async close(): Promise<void> {
     await this.esBuildContext?.dispose();
     this.esBuildContext = null;

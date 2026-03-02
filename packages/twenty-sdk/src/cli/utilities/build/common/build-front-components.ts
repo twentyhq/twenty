@@ -18,13 +18,13 @@ export const buildFrontComponents = async ({
   appPath,
   sourcePaths,
   onFileBuilt,
-  watcherCallbacks,
+  createWatcher,
 }: BuildEntityFilesOptions): Promise<EsbuildWatcher | null> => {
-  if (watcherCallbacks) {
+  if (createWatcher) {
     return startWatcher({
       appPath,
       sourcePaths,
-      watcherCallbacks,
+      onFileBuilt,
       watcherFactory: createFrontComponentsWatcher,
     });
   }

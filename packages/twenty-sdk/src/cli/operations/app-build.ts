@@ -2,7 +2,6 @@ import { buildFrontComponents } from '@/cli/utilities/build/common/build-front-c
 import { buildLogicFunctions } from '@/cli/utilities/build/common/build-logic-functions';
 import { type EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { type WatcherCallbacks } from '@/cli/utilities/build/common/start-watcher';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import crypto from 'crypto';
 import * as fs from 'fs-extra';
@@ -14,7 +13,7 @@ export type AppBuildOptions = {
   appPath: string;
   manifest: Manifest;
   filePaths: EntityFilePaths;
-  watcherCallbacks?: WatcherCallbacks;
+  createWatchers?: boolean;
 };
 
 export type BuiltFileInfo = {
@@ -51,28 +50,19 @@ export const appBuild = async (
 
   const { logicFunctions, frontComponents } = options.filePaths;
 
-  let logicFunctionsWatcher: EsbuildWatcher | null = null;
-  let frontComponentsWatcher: EsbuildWatcher | null = null;
+  const logicFunctionsWatcher = await buildLogicFunctions({
+    appPath: options.appPath,
+    sourcePaths: logicFunctions,
+    onFileBuilt: collectFileBuilt,
+    createWatcher: options.createWatchers,
+  });
 
-  try {
-    logicFunctionsWatcher = await buildLogicFunctions({
-      appPath: options.appPath,
-      sourcePaths: logicFunctions,
-      onFileBuilt: collectFileBuilt,
-      watcherCallbacks: options.watcherCallbacks,
-    });
-
-    frontComponentsWatcher = await buildFrontComponents({
-      appPath: options.appPath,
-      sourcePaths: frontComponents,
-      onFileBuilt: collectFileBuilt,
-      watcherCallbacks: options.watcherCallbacks,
-    });
-  } catch (error) {
-    await logicFunctionsWatcher?.close();
-    await frontComponentsWatcher?.close();
-    throw error;
-  }
+  const frontComponentsWatcher = await buildFrontComponents({
+    appPath: options.appPath,
+    sourcePaths: frontComponents,
+    onFileBuilt: collectFileBuilt,
+    createWatcher: options.createWatchers,
+  });
 
   await copyStaticFiles({
     appPath: options.appPath,
