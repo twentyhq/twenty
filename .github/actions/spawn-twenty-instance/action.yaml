@@ -45,17 +45,17 @@ runs:
         fi
 
         if [ -n "$REF" ]; then
-          echo "MODE=build" >> "$GITHUB_ENV"
+          echo "TWENTY_COMPOSE_CMD=docker compose -f docker-compose.yml -f docker-compose.build.yml" >> "$GITHUB_ENV"
           echo "Will build Twenty from ref: $REF on ${{ inputs.twenty-repository }}"
         else
           TAG="${VERSION:-latest}"
-          echo "MODE=pull" >> "$GITHUB_ENV"
+          echo "TWENTY_COMPOSE_CMD=docker compose -f docker-compose.yml" >> "$GITHUB_ENV"
           echo "TWENTY_TAG=$TAG" >> "$GITHUB_ENV"
           echo "Will pull Twenty image: twentycrm/twenty:$TAG"
         fi
 
     - name: Checkout full repo (build from source)
-      if: env.MODE == 'build'
+      if: inputs.twenty-ref != ''
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.twenty-repository }}
@@ -64,7 +64,7 @@ runs:
         path: .twenty-spawn
 
     - name: Checkout docker compose files only (pull from Docker Hub)
-      if: env.MODE == 'pull'
+      if: inputs.twenty-ref == ''
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.twenty-repository }}
@@ -84,22 +84,8 @@ runs:
         echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
         echo "SERVER_URL=http://localhost:3000" >> .env
 
-    - name: Build image from source
-      if: env.MODE == 'build'
-      shell: bash
-      working-directory: ./.twenty-spawn/packages/twenty-docker
-      run: |
-        echo "Building Twenty image from source..."
-        yq eval 'del(.services.server.image)' -i docker-compose.yml
-        yq eval '.services.server.build.context = "../../"' -i docker-compose.yml
-        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
-
-        yq eval 'del(.services.worker.image)' -i docker-compose.yml
-        yq eval '.services.worker.build.context = "../../"' -i docker-compose.yml
-        yq eval '.services.worker.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
-
     - name: Set image tag for Docker Hub pull
-      if: env.MODE == 'pull'
+      if: inputs.twenty-ref == ''
       shell: bash
       working-directory: ./.twenty-spawn/packages/twenty-docker
       run: echo "TAG=${{ env.TWENTY_TAG }}" >> .env
@@ -108,12 +94,12 @@ runs:
       shell: bash
       working-directory: ./.twenty-spawn/packages/twenty-docker
       run: |
-        docker compose up -d || {
+        $TWENTY_COMPOSE_CMD up -d || {
           echo "::error::Docker compose failed to start"
-          docker compose logs
+          $TWENTY_COMPOSE_CMD logs
           exit 1
         }
-        docker compose logs db server worker -f &
+        $TWENTY_COMPOSE_CMD logs db server worker -f &
 
     - name: Wait for database to be healthy
       shell: bash
@@ -128,13 +114,13 @@ runs:
           status=$(docker inspect --format='{{.State.Status}}' twenty-db-1 2>/dev/null || echo "not found")
           if [ "$status" = "exited" ]; then
             echo "::error::Database container exited unexpectedly"
-            docker compose logs db
+            $TWENTY_COMPOSE_CMD logs db
             exit 1
           fi
 
           if [ $count -gt 120 ]; then
             echo "::error::Database did not become healthy within 2 minutes"
-            docker compose logs db
+            $TWENTY_COMPOSE_CMD logs db
             exit 1
           fi
 
@@ -156,13 +142,13 @@ runs:
           status=$(docker inspect --format='{{.State.Status}}' twenty-server-1 2>/dev/null || echo "not found")
           if [ "$status" = "exited" ]; then
             echo "::error::Server container exited unexpectedly"
-            docker compose logs server
+            $TWENTY_COMPOSE_CMD logs server
             exit 1
           fi
 
           if [ $count -gt 300 ]; then
             echo "::error::Server did not become healthy within 5 minutes"
-            docker compose logs server
+            $TWENTY_COMPOSE_CMD logs server
             exit 1
           fi
 

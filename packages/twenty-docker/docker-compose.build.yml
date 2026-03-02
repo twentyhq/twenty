@@ -1,0 +1,11 @@
+services:
+  server:
+    image: !reset null
+    build:
+      context: ../../
+      dockerfile: ./packages/twenty-docker/twenty/Dockerfile
+  worker:
+    image: !reset null
+    build:
+      context: ../../
+      dockerfile: ./packages/twenty-docker/twenty/Dockerfile
