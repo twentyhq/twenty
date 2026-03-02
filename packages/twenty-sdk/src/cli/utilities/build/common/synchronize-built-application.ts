@@ -1,4 +1,4 @@
-import { APP_ERROR_CODES, type CommandResult } from '@/cli/operations/types';
+import { APP_ERROR_CODES, type CommandResult } from '@/cli/public-operations/types';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { findOrCreateApplication } from '@/cli/utilities/application/find-or-create-application';
 import { type BuiltFileInfo } from '@/cli/utilities/build/common/build-application';

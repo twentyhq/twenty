@@ -1,6 +1,6 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { type AuthStatusResult, type CommandResult } from './types';
+import { type AuthStatusResult, type CommandResult } from '@/cli/public-operations/types';
 
 export type AuthStatusOptions = {
   workspace?: string;

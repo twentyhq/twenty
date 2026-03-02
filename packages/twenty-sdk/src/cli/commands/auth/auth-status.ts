@@ -1,4 +1,4 @@
-import { authStatus } from '@/cli/operations/auth-status';
+import { authStatus } from '@/cli/private-operations/auth-status';
 import chalk from 'chalk';
 
 export class AuthStatusCommand {

@@ -1,5 +1,5 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { type AuthListWorkspace, type CommandResult } from './types';
+import { type AuthListWorkspace, type CommandResult } from '@/cli/public-operations/types';
 
 export const authList = async (): Promise<
   CommandResult<AuthListWorkspace[]>

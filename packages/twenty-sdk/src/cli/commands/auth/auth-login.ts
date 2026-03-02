@@ -1,4 +1,4 @@
-import { authLogin } from '@/cli/operations/auth-login';
+import { authLogin } from '@/cli/public-operations/auth-login';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import inquirer from 'inquirer';

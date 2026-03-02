@@ -1,4 +1,4 @@
-import { appTypecheck } from '@/cli/operations/app-typecheck';
+import { appTypecheck } from '@/cli/private-operations/app-typecheck';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';

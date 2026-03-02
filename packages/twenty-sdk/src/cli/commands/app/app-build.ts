@@ -2,7 +2,7 @@ import {
   APP_BUILD_AND_SYNC_STEPS,
   appBuildAndSync,
   type AppBuildAndSyncStep,
-} from '@/cli/operations/app-build-and-sync';
+} from '@/cli/public-operations/app-build-and-sync';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 

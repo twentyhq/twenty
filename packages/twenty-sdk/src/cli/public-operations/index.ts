@@ -1,13 +1,8 @@
 // Auth
-export { authList } from './auth-list';
 export { authLogin } from './auth-login';
 export type { AuthLoginOptions } from './auth-login';
 export { authLogout } from './auth-logout';
 export type { AuthLogoutOptions } from './auth-logout';
-export { authStatus } from './auth-status';
-export type { AuthStatusOptions } from './auth-status';
-export { authSwitch } from './auth-switch';
-export type { AuthSwitchOptions, AuthSwitchResult } from './auth-switch';
 
 // App
 export {
@@ -19,8 +14,6 @@ export type {
   AppBuildAndSyncResult,
   AppBuildAndSyncStep,
 } from './app-build-and-sync';
-export { appTypecheck } from './app-typecheck';
-export type { AppTypecheckOptions } from './app-typecheck';
 export { appUninstall } from './app-uninstall';
 export type { AppUninstallOptions } from './app-uninstall';
 

@@ -1,6 +1,6 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { AUTH_ERROR_CODES, type CommandResult } from './types';
+import { AUTH_ERROR_CODES, type CommandResult } from '@/cli/public-operations/types';
 
 export type AuthSwitchOptions = {
   workspace: string;

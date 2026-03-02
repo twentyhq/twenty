@@ -1,4 +1,4 @@
-import { authList } from '@/cli/operations/auth-list';
+import { authList } from '@/cli/private-operations/auth-list';
 import chalk from 'chalk';
 
 export class AuthListCommand {

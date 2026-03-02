@@ -2,7 +2,7 @@ import {
   runTypecheck,
   type TypecheckError,
 } from '@/cli/utilities/build/common/typecheck-plugin';
-import { type CommandResult, type TypecheckResult } from './types';
+import { type CommandResult, type TypecheckResult } from '@/cli/public-operations/types';
 
 export type AppTypecheckOptions = {
   appPath: string;
