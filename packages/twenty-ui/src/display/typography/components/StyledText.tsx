@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from '@ui/theme';
 
 type StyledTextProps = {
   PrefixComponent?: ReactElement;
@@ -8,8 +9,8 @@ type StyledTextProps = {
 };
 
 export const StyledTextContent = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
 
   overflow: hidden;
   padding-left: 0;
@@ -20,8 +21,8 @@ export const StyledTextContent = styled.div`
 export const StyledTextWrapper = styled.div<{
   color?: string;
 }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
 
   cursor: initial;
 
@@ -29,13 +30,13 @@ export const StyledTextWrapper = styled.div<{
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 
   padding: var(--vertical-padding) 0;
 
-  color: ${({ theme, color }) => color ?? theme.font.color.primary};
+  color: ${({ color }) => color ?? themeCssVariables.font.color.primary};
 `;
 
 export const StyledText = ({

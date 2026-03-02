@@ -20,6 +20,7 @@ export {
   stringToThemeColor,
   stringToThemeColorP3String,
 } from './color/utils/stringToThemeColorP3String';
+export { themeColorSchema } from './color/utils/themeColorSchema';
 export { REACT_APP_SERVER_BASE_URL } from './config';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
 export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';

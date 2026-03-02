@@ -1,8 +1,7 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { GRAY_SCALE_LIGHT } from '@ui/theme';
-import React from 'react';
+import { GRAY_SCALE_LIGHT, ThemeContext, themeCssVariables } from '@ui/theme';
+import React, { useContext, useMemo } from 'react';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -24,6 +23,192 @@ export type IconButtonProps = {
   to?: string;
 };
 
+type IconButtonDynamicStyles = {
+  background: string;
+  borderColor: string;
+  borderWidthOverride?: string;
+  boxShadow: string;
+  color: string;
+  opacity: number;
+  hoverBackground: string;
+  activeBackground: string;
+};
+
+const computeIconButtonDynamicStyles = (
+  variant: IconButtonVariant,
+  accent: IconButtonAccent,
+  disabled: boolean,
+  focus: boolean,
+): IconButtonDynamicStyles => {
+  const focusOverride = !disabled && focus;
+
+  switch (variant) {
+    case 'primary':
+      switch (accent) {
+        case 'default':
+          return {
+            background: themeCssVariables.background.secondary,
+            borderColor: focus
+              ? themeCssVariables.color.blue
+              : themeCssVariables.background.transparent.light,
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.accent.tertiary}`
+              : 'none',
+            color: !disabled
+              ? themeCssVariables.font.color.secondary
+              : themeCssVariables.font.color.extraLight,
+            opacity: 1,
+            hoverBackground: !disabled
+              ? themeCssVariables.background.tertiary
+              : themeCssVariables.background.secondary,
+            activeBackground: !disabled
+              ? themeCssVariables.background.quaternary
+              : themeCssVariables.background.secondary,
+          };
+        case 'blue':
+          return {
+            background: themeCssVariables.color.blue,
+            borderColor: !disabled
+              ? focus
+                ? themeCssVariables.color.blue
+                : themeCssVariables.background.transparent.light
+              : 'transparent',
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.accent.tertiary}`
+              : 'none',
+            color: GRAY_SCALE_LIGHT.gray1,
+            opacity: disabled ? 0.24 : 1,
+            hoverBackground: disabled
+              ? themeCssVariables.color.blue
+              : themeCssVariables.color.blue10,
+            activeBackground: disabled
+              ? themeCssVariables.color.blue
+              : themeCssVariables.color.blue12,
+          };
+        case 'danger':
+          return {
+            background: themeCssVariables.color.red,
+            borderColor: !disabled
+              ? focus
+                ? themeCssVariables.color.red
+                : themeCssVariables.background.transparent.light
+              : 'transparent',
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.color.red3}`
+              : 'none',
+            color: GRAY_SCALE_LIGHT.gray1,
+            opacity: disabled ? 0.24 : 1,
+            hoverBackground: disabled
+              ? themeCssVariables.color.red
+              : themeCssVariables.color.red10,
+            activeBackground: disabled
+              ? themeCssVariables.color.red
+              : themeCssVariables.color.red10,
+          };
+      }
+      break;
+    case 'secondary':
+    case 'tertiary':
+      switch (accent) {
+        case 'default':
+          return {
+            background: focus
+              ? themeCssVariables.background.transparent.primary
+              : 'transparent',
+            borderColor:
+              variant === 'secondary'
+                ? focusOverride
+                  ? themeCssVariables.color.blue
+                  : themeCssVariables.background.transparent.medium
+                : focus
+                  ? themeCssVariables.color.blue
+                  : 'transparent',
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.accent.tertiary}`
+              : 'none',
+            color: disabled
+              ? themeCssVariables.font.color.extraLight
+              : variant === 'secondary'
+                ? themeCssVariables.font.color.secondary
+                : themeCssVariables.font.color.tertiary,
+            opacity: 1,
+            hoverBackground: !disabled
+              ? themeCssVariables.background.transparent.light
+              : 'transparent',
+            activeBackground: !disabled
+              ? themeCssVariables.background.transparent.light
+              : 'transparent',
+          };
+        case 'blue':
+          return {
+            background: focus
+              ? themeCssVariables.background.transparent.primary
+              : 'transparent',
+            borderColor:
+              variant === 'secondary'
+                ? !disabled
+                  ? themeCssVariables.color.blue
+                  : themeCssVariables.color.blue5
+                : focus
+                  ? themeCssVariables.color.blue
+                  : 'transparent',
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.accent.tertiary}`
+              : 'none',
+            color: !disabled
+              ? themeCssVariables.color.blue
+              : themeCssVariables.accent.accent4060,
+            opacity: 1,
+            hoverBackground: !disabled
+              ? themeCssVariables.accent.tertiary
+              : 'transparent',
+            activeBackground: !disabled
+              ? themeCssVariables.accent.secondary
+              : 'transparent',
+          };
+        case 'danger':
+          return {
+            background: 'transparent',
+            borderColor:
+              variant === 'secondary'
+                ? themeCssVariables.border.color.danger
+                : focus
+                  ? themeCssVariables.color.red
+                  : 'transparent',
+            borderWidthOverride: focusOverride ? '1px 1px' : undefined,
+            boxShadow: focusOverride
+              ? `0 0 0 3px ${themeCssVariables.color.red3}`
+              : 'none',
+            color: !disabled
+              ? themeCssVariables.font.color.danger
+              : themeCssVariables.color.red5,
+            opacity: 1,
+            hoverBackground: !disabled
+              ? themeCssVariables.background.danger
+              : 'transparent',
+            activeBackground: !disabled
+              ? themeCssVariables.background.danger
+              : 'transparent',
+          };
+      }
+  }
+
+  return {
+    background: 'transparent',
+    borderColor: 'transparent',
+    boxShadow: 'none',
+    color: themeCssVariables.font.color.secondary,
+    opacity: 1,
+    hoverBackground: 'transparent',
+    activeBackground: 'transparent',
+  };
+};
+
 const StyledButton = styled.button<
   Pick<
     IconButtonProps,
@@ -31,206 +216,52 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  ${({ theme, variant, accent, disabled, focus }) => {
-    switch (variant) {
-      case 'primary':
-        switch (accent) {
-          case 'default':
-            return css`
-              background: ${theme.background.secondary};
-              border-color: ${focus
-                ? theme.color.blue
-                : theme.background.transparent.light};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
-                : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
-              &:hover {
-                background: ${!disabled
-                  ? theme.background.tertiary
-                  : theme.background.secondary};
-              }
-              &:active {
-                background: ${!disabled
-                  ? theme.background.quaternary
-                  : theme.background.secondary};
-              }
-            `;
-          case 'blue':
-            return css`
-              background: ${theme.color.blue};
-              border-color: ${!disabled
-                ? focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
-                : 'none'};
-              color: ${GRAY_SCALE_LIGHT.gray1};
-              opacity: ${disabled ? 0.24 : 1};
+  background: var(--ibtn-bg);
+  border-color: var(--ibtn-border-color);
+  box-shadow: var(--ibtn-box-shadow);
+  color: var(--ibtn-color);
+  opacity: var(--ibtn-opacity, 1);
+  &:hover {
+    background: var(--ibtn-hover-bg);
+  }
+  &:active {
+    background: var(--ibtn-active-bg);
+  }
 
-              ${disabled
-                ? ''
-                : css`
-                    &:hover {
-                      background: ${theme.color.blue10};
-                    }
-                    &:active {
-                      background: ${theme.color.blue12};
-                    }
-                  `}
-            `;
-          case 'danger':
-            return css`
-              background: ${theme.color.red};
-              border-color: ${!disabled
-                ? focus
-                  ? theme.color.red
-                  : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red3}`
-                : 'none'};
-              color: ${GRAY_SCALE_LIGHT.gray1};
-              opacity: ${disabled ? 0.24 : 1};
-
-              ${disabled
-                ? ''
-                : css`
-                    &:hover,
-                    &:active {
-                      background: ${theme.color.red10};
-                    }
-                  `}
-            `;
-        }
-        break;
-      case 'secondary':
-      case 'tertiary':
-        switch (accent) {
-          case 'default':
-            return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? !disabled && focus
-                  ? theme.color.blue
-                  : theme.background.transparent.medium
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
-                : 'none'};
-              color: ${disabled
-                ? theme.font.color.extraLight
-                : variant === 'secondary'
-                  ? theme.font.color.secondary
-                  : theme.font.color.tertiary};
-              &:hover {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
-              }
-              &:active {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
-              }
-            `;
-          case 'blue':
-            return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? !disabled
-                  ? theme.color.blue
-                  : theme.color.blue5
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
-                : 'none'};
-              color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
-              &:hover {
-                background: ${!disabled
-                  ? theme.accent.tertiary
-                  : 'transparent'};
-              }
-              &:active {
-                background: ${!disabled
-                  ? theme.accent.secondary
-                  : 'transparent'};
-              }
-            `;
-          case 'danger':
-            return css`
-              background: transparent;
-              border-color: ${variant === 'secondary'
-                ? theme.border.color.danger
-                : focus
-                  ? theme.color.red
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red3}`
-                : 'none'};
-              color: ${!disabled ? theme.font.color.danger : theme.color.red5};
-              &:hover {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
-              }
-              &:active {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
-              }
-            `;
-        }
-    }
-  }}
-
-  border-radius: ${({ position, theme }) => {
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return themeCssVariables.border.radius.sm;
     }
+    return '';
   }};
   border-style: solid;
-  border-width: ${({ variant, position }) => {
-    switch (variant) {
-      case 'primary':
-      case 'secondary':
-        return position === 'middle' ? '1px 0px' : '1px';
-      case 'tertiary':
-        return '0';
-    }
-  }};
+  border-width: var(
+    --ibtn-border-width,
+    ${({ variant, position }) => {
+      switch (variant) {
+        case 'primary':
+        case 'secondary':
+          return position === 'middle' ? '1px 0px' : '1px';
+        case 'tertiary':
+          return '0';
+      }
+      return '';
+    }}
+  );
   box-sizing: border-box;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
+  font-family: ${themeCssVariables.font.family};
   font-weight: 500;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
   padding: 0;
@@ -259,7 +290,26 @@ export const IconButton = ({
   onClick,
   to,
 }: IconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
+  const dynamicStyles = useMemo(() => {
+    const styles = computeIconButtonDynamicStyles(
+      variant,
+      accent,
+      disabled,
+      focus,
+    );
+    return {
+      '--ibtn-bg': styles.background,
+      '--ibtn-border-color': styles.borderColor,
+      '--ibtn-border-width': styles.borderWidthOverride || undefined,
+      '--ibtn-box-shadow': styles.boxShadow,
+      '--ibtn-color': styles.color,
+      '--ibtn-opacity': styles.opacity,
+      '--ibtn-hover-bg': styles.hoverBackground,
+      '--ibtn-active-bg': styles.activeBackground,
+    } as React.CSSProperties;
+  }, [variant, accent, disabled, focus]);
+
   return (
     <StyledButton
       data-testid={dataTestId}
@@ -273,6 +323,7 @@ export const IconButton = ({
       onClick={onClick}
       aria-label={ariaLabel}
       to={to}
+      style={dynamicStyles}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>

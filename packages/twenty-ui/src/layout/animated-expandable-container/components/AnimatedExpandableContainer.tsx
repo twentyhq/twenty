@@ -1,27 +1,13 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { type AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
 import { type AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
 import { type AnimationDurations } from '@ui/layout/animated-expandable-container/types/AnimationDurations';
 import { type AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
 import { type AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
 import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
+import { ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useContext, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledMotionContainer = styled(motion.div)<{
-  containAnimation: boolean;
-}>`
-  ${({ containAnimation }) =>
-    containAnimation &&
-    `
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    width: 100%;
-  `}
-`;
 
 type AnimatedExpandableContainerProps = {
   children: ReactNode;
@@ -42,7 +28,7 @@ export const AnimatedExpandableContainer = ({
   containAnimation = true,
   initial = true,
 }: AnimatedExpandableContainerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const contentRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<AnimationSize>(0);
 
@@ -75,17 +61,26 @@ export const AnimatedExpandableContainer = ({
   return (
     <AnimatePresence initial={initial}>
       {isExpanded && (
-        <StyledMotionContainer
-          containAnimation={containAnimation}
+        <motion.div
           ref={contentRef}
           initial="initial"
           animate="animate"
           exit="exit"
           variants={motionAnimationVariants}
           onAnimationStart={updateSize}
+          style={
+            containAnimation
+              ? {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  width: '100%',
+                }
+              : undefined
+          }
         >
           {children}
-        </StyledMotionContainer>
+        </motion.div>
       )}
     </AnimatePresence>
   );

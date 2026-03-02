@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { AnimatedExpandableContainer } from '../components/AnimatedExpandableContainer';
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ theme: ThemeType }>`
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
   background-color: ${({ theme }) => theme.color.blue10};
   color: ${({ theme }) => theme.font.color.primary};
@@ -19,11 +20,11 @@ const StyledButton = styled.button`
 `;
 
 const StyledButtonWrapper = styled.div<{ dimension: 'width' | 'height' }>`
-  ${({ dimension }) => dimension === 'height' && `width: 600px;`}
-  ${({ dimension }) => dimension === 'width' && `height: 300px;`}
+  height: ${({ dimension }) => (dimension === 'width' ? '300px' : 'auto')};
+  width: ${({ dimension }) => (dimension === 'height' ? '600px' : 'auto')};
 `;
 
-const StyledExpandableWrapper = styled.div`
+const StyledExpandableWrapper = styled.div<{ theme: ThemeType }>`
   background-color: ${({ theme }) => theme.background.primary};
   height: 100%;
   width: 100%;
@@ -32,11 +33,12 @@ const StyledExpandableWrapper = styled.div`
 const StyledContent = styled.div<{
   dimension: 'width' | 'height';
   mode: 'scroll-height' | 'fit-content';
+  theme: ThemeType;
 }>`
   padding: ${({ theme }) => theme.spacing(3)};
-  ${({ dimension, mode }) =>
-    dimension === 'height' && mode === 'scroll-height' && `height: 200px;`}
-  ${({ dimension }) => dimension === 'width' && `width: 400px;`}
+  height: ${({ dimension, mode }) =>
+    dimension === 'height' && mode === 'scroll-height' ? '200px' : 'auto'};
+  width: ${({ dimension }) => (dimension === 'width' ? '400px' : 'auto')};
 
   p {
     color: ${({ theme }) => theme.font.color.primary};
@@ -61,11 +63,12 @@ const AnimatedExpandableContainerWithButton = ({
   isExpanded: initialIsExpanded,
   ...args
 }: AnimatedExpandableContainerWithButtonProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
 
   return (
     <StyledButtonWrapper dimension={args.dimension}>
-      <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
+      <StyledButton theme={theme} onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded ? 'Collapse' : 'Expand'}
       </StyledButton>
       <AnimatedExpandableContainer
@@ -74,8 +77,12 @@ const AnimatedExpandableContainerWithButton = ({
         mode={args.mode}
         animationDurations={args.animationDurations}
       >
-        <StyledExpandableWrapper>
-          <StyledContent dimension={args.dimension} mode={args.mode}>
+        <StyledExpandableWrapper theme={theme}>
+          <StyledContent
+            dimension={args.dimension}
+            mode={args.mode}
+            theme={theme}
+          >
             <p>
               This is some content inside the AnimatedExpandableContainer. It
               will animate smoothly when expanding or collapsing.
