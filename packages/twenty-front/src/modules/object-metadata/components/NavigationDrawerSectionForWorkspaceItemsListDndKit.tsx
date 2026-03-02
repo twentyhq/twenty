@@ -1,17 +1,15 @@
 import React from 'react';
 import { IconPlus } from 'twenty-ui/display';
 
-import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
-import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 import {
   StyledWorkspaceDroppableList,
   WORKSPACE_ORPHAN_DROPPABLE_ID,
+  WorkspaceOrphanDropTarget,
 } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 
@@ -39,16 +37,7 @@ export const WorkspaceSectionListDndKit = ({
     >
       {filteredItems.map((item, index) => (
         <React.Fragment key={item.id}>
-          <NavigationItemDropTarget
-            folderId={null}
-            index={index}
-            sectionId={NavigationSections.WORKSPACE}
-            compact
-            dropTargetIdOverride={getDndKitDropTargetId(
-              WORKSPACE_ORPHAN_DROPPABLE_ID,
-              index,
-            )}
-          />
+          <WorkspaceOrphanDropTarget index={index} compact />
           <WorkspaceDndKitSortableItem
             id={item.id}
             index={index}
@@ -77,15 +66,9 @@ export const WorkspaceSectionListDndKit = ({
         index={filteredItems.length}
         disabled={workspaceDropDisabled}
       >
-        <NavigationItemDropTarget
-          folderId={null}
+        <WorkspaceOrphanDropTarget
           index={filteredItems.length}
-          sectionId={NavigationSections.WORKSPACE}
           compact={!isAddMenuItemButtonVisible}
-          dropTargetIdOverride={getDndKitDropTargetId(
-            WORKSPACE_ORPHAN_DROPPABLE_ID,
-            filteredItems.length,
-          )}
         >
           {isAddMenuItemButtonVisible && (
             <NavigationDrawerItem
@@ -95,7 +78,7 @@ export const WorkspaceSectionListDndKit = ({
               triggerEvent="CLICK"
             />
           )}
-        </NavigationItemDropTarget>
+        </WorkspaceOrphanDropTarget>
       </WorkspaceDndKitDroppableSlot>
       {addToNavigationFallbackDestination?.droppableId ===
         WORKSPACE_ORPHAN_DROPPABLE_ID &&
@@ -105,15 +88,9 @@ export const WorkspaceSectionListDndKit = ({
             index={addToNavigationFallbackDestination.index}
             disabled={workspaceDropDisabled}
           >
-            <NavigationItemDropTarget
-              folderId={null}
+            <WorkspaceOrphanDropTarget
               index={addToNavigationFallbackDestination.index}
-              sectionId={NavigationSections.WORKSPACE}
               compact
-              dropTargetIdOverride={getDndKitDropTargetId(
-                WORKSPACE_ORPHAN_DROPPABLE_ID,
-                addToNavigationFallbackDestination.index,
-              )}
             />
           </WorkspaceDndKitDroppableSlot>
         )}
