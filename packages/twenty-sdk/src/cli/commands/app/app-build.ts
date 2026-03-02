@@ -1,6 +1,7 @@
 import { appBuild } from '@/cli/operations/app-build';
 import { syncBuiltApp } from '@/cli/operations/app-sync';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
@@ -61,6 +62,24 @@ export class AppBuildCommand {
       console.log(chalk.gray('Generating API client...'));
 
       await clientService.generate({ appPath });
+
+      console.log(chalk.gray('Running typecheck...'));
+
+      const typecheckErrors = await runTypecheck(appPath);
+
+      if (typecheckErrors.length > 0) {
+        console.error(chalk.red('Typecheck failed:'));
+
+        for (const error of typecheckErrors) {
+          console.error(
+            chalk.red(
+              `  ${error.file}(${error.line},${error.column}): ${error.text}`,
+            ),
+          );
+        }
+
+        process.exit(1);
+      }
 
       console.log(chalk.gray('Rebuilding with generated client...'));
 

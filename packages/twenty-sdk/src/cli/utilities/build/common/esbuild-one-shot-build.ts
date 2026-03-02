@@ -12,9 +12,6 @@ export type EsbuildOneShotBuildOptions = {
   onFileBuilt: OnFileBuiltCallback;
 };
 
-// Runs a single esbuild.build() call without creating a persistent context.
-// Lighter than EsbuildWatcher for one-shot builds (no context allocation,
-// no dispose needed).
 export const esbuildOneShotBuild = async ({
   appPath,
   sourcePaths,
