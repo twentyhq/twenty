@@ -84,7 +84,7 @@ runs:
       run: |
         cp .env.example .env
         echo "" >> .env
-        echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
+        echo "APP_SECRET=replace_me_with_a_random_string" >> .env
         echo "SERVER_URL=http://localhost:3000" >> .env
 
     - name: Set image tag for Docker Hub pull
