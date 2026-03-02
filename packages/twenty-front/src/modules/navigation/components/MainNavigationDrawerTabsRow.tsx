@@ -31,7 +31,7 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
     isExpanded ? 'space-between' : 'center'};
   gap: ${({ isExpanded }) => (isExpanded ? themeCssVariables.spacing[2] : 0)};
   width: 100%;
-  transition: gap ${themeCssVariables.animation.duration.normal}s ease;
+  transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledTabsPill = styled.div`
@@ -92,11 +92,11 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
     isExpanded ? '3px' : themeCssVariables.spacing[0.5]};
   width: ${({ isExpanded }) =>
     isExpanded
-      ? themeCssVariables.spacing[25.75]
+      ? '103px'
       : themeCssVariables.spacing[6]};
   transition:
-    height ${themeCssVariables.animation.duration.normal}s ease,
-    padding ${themeCssVariables.animation.duration.normal}s ease;
+    height calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
+    padding calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledNewChatButton = styled.div`
@@ -112,8 +112,8 @@ const StyledNewChatButton = styled.div`
   border-radius: inherit;
   color: ${themeCssVariables.font.color.secondary};
   transition:
-    background ${themeCssVariables.animation.duration.fast}s ease,
-    color ${themeCssVariables.animation.duration.fast}s ease;
+    background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
+    color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};

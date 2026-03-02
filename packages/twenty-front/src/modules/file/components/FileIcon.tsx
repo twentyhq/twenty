@@ -1,4 +1,5 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { useFileIconColors } from '@/file/hooks/useFileIconColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -19,21 +20,6 @@ const StyledIconContainer = styled.div<{
   justify-content: center;
   padding: 5px;
 `;
-
-const useFileIconColors = () => {
-  const theme = useTheme();
-
-  return {
-    ARCHIVE: theme.color.gray,
-    AUDIO: theme.color.pink,
-    IMAGE: theme.color.amber,
-    PRESENTATION: theme.color.orange,
-    SPREADSHEET: theme.color.turquoise,
-    TEXT_DOCUMENT: theme.color.blue,
-    VIDEO: theme.color.purple,
-    OTHER: theme.color.gray,
-  };
-};
 
 export const FileIcon = ({
   fileCategory,

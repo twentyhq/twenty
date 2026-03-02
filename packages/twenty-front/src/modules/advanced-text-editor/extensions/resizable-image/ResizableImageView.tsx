@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const IMAGE_MIN_WIDTH = 32;
 const IMAGE_MAX_WIDTH = 600;
 
-const StyledNodeViewWrapperContainer = styled.div<{
+const StyledNodeViewWrapper = styled(NodeViewWrapper)<{
   align?: string;
 }>`
   height: 100%;
@@ -169,38 +169,36 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
   }, []);
 
   return (
-    <NodeViewWrapper>
-      <StyledNodeViewWrapperContainer
-        onMouseEnter={handleImageHover}
-        onMouseLeave={handleImageHoverEnd}
-        align={align}
+    <StyledNodeViewWrapper
+      onMouseEnter={handleImageHover}
+      onMouseLeave={handleImageHoverEnd}
+      align={align}
+    >
+      <StyledImageWrapper
+        ref={imageWrapperRef}
+        style={{ width: width ? `${width}px` : 'fit-content' }}
       >
-        <StyledImageWrapper
-          ref={imageWrapperRef}
-          style={{ width: width ? `${width}px` : 'fit-content' }}
-        >
-          <StyledImageContainer>
-            <StyledImage
-              src={src}
-              alt={alt}
-              draggable={false}
-              contentEditable={false}
-            />
-            {(isHovering || isDefined(resizeParams)) && (
-              <>
-                <StyledImageHandle
-                  handle="left"
-                  onMouseDown={(e) => handleImageHandleMouseDown('left', e)}
-                />
-                <StyledImageHandle
-                  handle="right"
-                  onMouseDown={(e) => handleImageHandleMouseDown('right', e)}
-                />
-              </>
-            )}
-          </StyledImageContainer>
-        </StyledImageWrapper>
-      </StyledNodeViewWrapperContainer>
-    </NodeViewWrapper>
+        <StyledImageContainer>
+          <StyledImage
+            src={src}
+            alt={alt}
+            draggable={false}
+            contentEditable={false}
+          />
+          {(isHovering || isDefined(resizeParams)) && (
+            <>
+              <StyledImageHandle
+                handle="left"
+                onMouseDown={(e) => handleImageHandleMouseDown('left', e)}
+              />
+              <StyledImageHandle
+                handle="right"
+                onMouseDown={(e) => handleImageHandleMouseDown('right', e)}
+              />
+            </>
+          )}
+        </StyledImageContainer>
+      </StyledImageWrapper>
+    </StyledNodeViewWrapper>
   );
 };

@@ -47,8 +47,6 @@ export type ViewBarDetailsProps = {
 
 const StyledBar = styled.div`
   align-items: center;
-  align-items: center;
-  border-top: 1px solid ${themeCssVariables.border.color.light};
   border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: row;
