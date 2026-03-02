@@ -1,10 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuObjectPickerItem } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerItem';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type CommandMenuSystemObjectPickerSubViewProps = {
@@ -45,6 +47,24 @@ export const CommandMenuSystemObjectPickerSubView = ({
     ? t`No results found`
     : (emptyNoResultsText ?? t`No system objects available`);
 
+  const isAddVariant = objectMenuItemVariant === 'add';
+
+  const listContent = (
+    <CommandGroup heading={t`System objects`}>
+      {filteredItems.map((objectMetadataItem, index) => (
+        <CommandMenuObjectPickerItem
+          key={objectMetadataItem.id}
+          objectMetadataItem={objectMetadataItem}
+          isViewItem={isViewItem}
+          onSelectObjectForViewEdit={onSelectObjectForViewEdit}
+          onChangeObject={onChangeObject}
+          objectMenuItemVariant={objectMenuItemVariant}
+          dragIndex={isAddVariant ? index : undefined}
+        />
+      ))}
+    </CommandGroup>
+  );
+
   return (
     <CommandMenuSubViewWithSearch
       backBarTitle={t`System objects`}
@@ -53,25 +73,37 @@ export const CommandMenuSystemObjectPickerSubView = ({
       searchValue={searchValue}
       onSearchChange={onSearchChange}
     >
-      <CommandMenuList
-        commandGroups={[]}
-        selectableItemIds={selectableItemIds}
-        noResults={isEmpty}
-        noResultsText={noResultsText}
-      >
-        <CommandGroup heading={t`System objects`}>
-          {filteredItems.map((objectMetadataItem) => (
-            <CommandMenuObjectPickerItem
-              key={objectMetadataItem.id}
-              objectMetadataItem={objectMetadataItem}
-              isViewItem={isViewItem}
-              onSelectObjectForViewEdit={onSelectObjectForViewEdit}
-              onChangeObject={onChangeObject}
-              objectMenuItemVariant={objectMenuItemVariant}
-            />
-          ))}
-        </CommandGroup>
-      </CommandMenuList>
+      {isAddVariant ? (
+        <CommandMenuAddToNavDroppable>
+          {({ innerRef, droppableProps, placeholder }) => (
+            <CommandMenuList
+              commandGroups={[]}
+              selectableItemIds={selectableItemIds}
+              noResults={isEmpty}
+              noResultsText={noResultsText}
+            >
+              <div
+                ref={innerRef}
+                data-dnd-group={ADD_TO_NAV_SOURCE_DROPPABLE_ID}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...droppableProps}
+              >
+                {listContent}
+                {placeholder}
+              </div>
+            </CommandMenuList>
+          )}
+        </CommandMenuAddToNavDroppable>
+      ) : (
+        <CommandMenuList
+          commandGroups={[]}
+          selectableItemIds={selectableItemIds}
+          noResults={isEmpty}
+          noResultsText={noResultsText}
+        >
+          {listContent}
+        </CommandMenuList>
+      )}
     </CommandMenuSubViewWithSearch>
   );
 };
