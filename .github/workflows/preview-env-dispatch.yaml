@@ -1,8 +1,7 @@
 name: 'Preview Environment Dispatch'
 
 permissions:
-  contents: read
-  actions: write
+  contents: write
 
 on:
   pull_request_target:
