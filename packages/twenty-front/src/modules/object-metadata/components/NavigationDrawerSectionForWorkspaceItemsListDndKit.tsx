@@ -1,17 +1,21 @@
+import styled from '@emotion/styled';
 import React from 'react';
 import { IconPlus } from 'twenty-ui/display';
 
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
-import {
-  StyledWorkspaceDroppableList,
-  WORKSPACE_ORPHAN_DROPPABLE_ID,
-  WorkspaceOrphanDropTarget,
-} from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+import { WorkspaceOrphanDropTarget } from '@/object-metadata/components/WorkspaceOrphanDropTarget';
+
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 
 export const WorkspaceSectionListDndKit = ({
   filteredItems,
@@ -32,8 +36,10 @@ export const WorkspaceSectionListDndKit = ({
   addMenuItemLabel,
 }: WorkspaceSectionListDndKitProps) => {
   return (
-    <StyledWorkspaceDroppableList
-      data-dnd-group={WORKSPACE_ORPHAN_DROPPABLE_ID}
+    <StyledList
+      data-dnd-group={
+        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+      }
     >
       {filteredItems.map((item, index) => (
         <React.Fragment key={item.id}>
@@ -41,7 +47,9 @@ export const WorkspaceSectionListDndKit = ({
           <WorkspaceDndKitSortableItem
             id={item.id}
             index={index}
-            group={WORKSPACE_ORPHAN_DROPPABLE_ID}
+            group={
+              NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+            }
             disabled={!isEditMode || workspaceDropDisabled}
           >
             <WorkspaceSectionItemContent
@@ -62,7 +70,9 @@ export const WorkspaceSectionListDndKit = ({
         </React.Fragment>
       ))}
       <WorkspaceDndKitDroppableSlot
-        droppableId={WORKSPACE_ORPHAN_DROPPABLE_ID}
+        droppableId={
+          NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+        }
         index={filteredItems.length}
         disabled={workspaceDropDisabled}
       >
@@ -81,10 +91,12 @@ export const WorkspaceSectionListDndKit = ({
         </WorkspaceOrphanDropTarget>
       </WorkspaceDndKitDroppableSlot>
       {addToNavigationFallbackDestination?.droppableId ===
-        WORKSPACE_ORPHAN_DROPPABLE_ID &&
+        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
         addToNavigationFallbackDestination.index > filteredItems.length && (
           <WorkspaceDndKitDroppableSlot
-            droppableId={WORKSPACE_ORPHAN_DROPPABLE_ID}
+            droppableId={
+              NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+            }
             index={addToNavigationFallbackDestination.index}
             disabled={workspaceDropDisabled}
           >
@@ -94,6 +106,6 @@ export const WorkspaceSectionListDndKit = ({
             />
           </WorkspaceDndKitDroppableSlot>
         )}
-    </StyledWorkspaceDroppableList>
+    </StyledList>
   );
 };

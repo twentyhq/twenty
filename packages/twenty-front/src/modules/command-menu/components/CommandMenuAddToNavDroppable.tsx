@@ -1,9 +1,11 @@
-import { Droppable, type DroppableProvided } from '@hello-pangea/dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import { lazy, Suspense, useContext, type ReactNode } from 'react';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
 import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
+
+import type { AddToNavDroppableProvided } from '@/command-menu/components/CommandMenuAddToNavDroppableTypes';
 
 const CommandMenuAddToNavDroppableDndKit = lazy(() =>
   import('@/command-menu/components/CommandMenuAddToNavDroppableDndKit').then(
@@ -12,7 +14,7 @@ const CommandMenuAddToNavDroppableDndKit = lazy(() =>
 );
 
 type CommandMenuAddToNavDroppableProps = {
-  children: (provided: DroppableProvided) => ReactNode;
+  children: (provided: AddToNavDroppableProvided) => ReactNode;
 };
 
 export const CommandMenuAddToNavDroppable = ({
@@ -29,7 +31,7 @@ export const CommandMenuAddToNavDroppable = ({
           innerRef: () => {},
           droppableProps: {},
           placeholder: null,
-        } as DroppableProvided)}
+        })}
       >
         <CommandMenuAddToNavDroppableDndKit
           children={children}

@@ -1,17 +1,21 @@
+import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { IconPlus } from 'twenty-ui/display';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
-import {
-  StyledWorkspaceDroppableList,
-  WORKSPACE_ORPHAN_DROPPABLE_ID,
-} from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
 import type { WorkspaceSectionListHelloPangeaProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 
 export const WorkspaceSectionListHelloPangea = ({
   filteredItems,
@@ -33,11 +37,13 @@ export const WorkspaceSectionListHelloPangea = ({
 }: WorkspaceSectionListHelloPangeaProps) => {
   return (
     <Droppable
-      droppableId={WORKSPACE_ORPHAN_DROPPABLE_ID}
+      droppableId={
+        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+      }
       isDropDisabled={workspaceDropDisabled}
     >
       {(provided) => (
-        <StyledWorkspaceDroppableList
+        <StyledList
           ref={provided.innerRef}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
@@ -92,7 +98,7 @@ export const WorkspaceSectionListHelloPangea = ({
             )}
           </NavigationItemDropTarget>
           {addToNavigationFallbackDestination?.droppableId ===
-            WORKSPACE_ORPHAN_DROPPABLE_ID &&
+            NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
             addToNavigationFallbackDestination.index > filteredItems.length && (
               <NavigationItemDropTarget
                 folderId={null}
@@ -102,7 +108,7 @@ export const WorkspaceSectionListHelloPangea = ({
               />
             )}
           {provided.placeholder}
-        </StyledWorkspaceDroppableList>
+        </StyledList>
       )}
     </Droppable>
   );

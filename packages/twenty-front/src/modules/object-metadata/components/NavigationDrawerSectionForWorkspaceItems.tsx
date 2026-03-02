@@ -15,7 +15,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { WorkspaceSectionListDndKit } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit';
 import { WorkspaceSectionListHelloPangea } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListHelloPangea';
-import { WORKSPACE_ORPHAN_DROPPABLE_ID } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsShared';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import type { EditModeProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -71,7 +71,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const flatItems = items.filter((item) => !isDefined(item.folderId));
   const isAddToNavigationDropTargetVisible =
     addToNavigationFallbackDestination?.droppableId ===
-    WORKSPACE_ORPHAN_DROPPABLE_ID;
+    NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
   const folderChildrenById = items.reduce<
     Map<string, ProcessedNavigationMenuItem[]>
   >((acc, item) => {

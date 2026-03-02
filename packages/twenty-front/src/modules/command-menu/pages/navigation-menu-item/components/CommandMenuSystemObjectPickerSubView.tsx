@@ -6,7 +6,6 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuObjectPickerItem } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerItem';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
-import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type CommandMenuSystemObjectPickerSubViewProps = {
@@ -82,12 +81,8 @@ export const CommandMenuSystemObjectPickerSubView = ({
               noResults={isEmpty}
               noResultsText={noResultsText}
             >
-              <div
-                ref={innerRef}
-                data-dnd-group={ADD_TO_NAV_SOURCE_DROPPABLE_ID}
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...droppableProps}
-              >
+              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+              <div ref={innerRef} {...droppableProps}>
                 {listContent}
                 {placeholder}
               </div>
