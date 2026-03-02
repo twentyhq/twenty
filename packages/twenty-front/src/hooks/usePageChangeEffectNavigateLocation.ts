@@ -11,6 +11,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -18,6 +19,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
+const readReturnToPathFromUrlSearchParams = (): string | null => {
+  const value = new URLSearchParams(window.location.search).get('returnToPath');
+
+  return value && isValidReturnToPath(value) ? value : null;
+};
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
@@ -45,7 +52,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   const returnToPath = useAtomStateValue(returnToPathState);
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
-    : readReturnToPathFromSessionStorage();
+    : (readReturnToPathFromSessionStorage() ??
+      readReturnToPathFromUrlSearchParams());
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
