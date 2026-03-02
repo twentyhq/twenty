@@ -24,7 +24,6 @@ import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/util
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
 
 type WorkspaceDndKitProviderProps = {
@@ -365,26 +364,24 @@ export const WorkspaceDndKitProvider = ({
     <WorkspaceDndKitContext.Provider value={true}>
       <NavigationDragSourceContext.Provider value={{ sourceDroppableId }}>
         <NavigationMenuItemDragContext.Provider value={{ isDragging }}>
-          <FavoritesDragContext.Provider value={{ isDragging }}>
-            <NavigationDropTargetContext.Provider
-              value={{
-                activeDropTargetId,
-                setActiveDropTargetId,
-                forbiddenDropTargetId,
-                setForbiddenDropTargetId,
-                addToNavigationFallbackDestination,
-              }}
+          <NavigationDropTargetContext.Provider
+            value={{
+              activeDropTargetId,
+              setActiveDropTargetId,
+              forbiddenDropTargetId,
+              setForbiddenDropTargetId,
+              addToNavigationFallbackDestination,
+            }}
+          >
+            <DragDropProvider
+              sensors={WORKSPACE_DND_SENSORS}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={handleDragEnd}
             >
-              <DragDropProvider
-                sensors={WORKSPACE_DND_SENSORS}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
-              >
-                {children}
-              </DragDropProvider>
-            </NavigationDropTargetContext.Provider>
-          </FavoritesDragContext.Provider>
+              {children}
+            </DragDropProvider>
+          </NavigationDropTargetContext.Provider>
         </NavigationMenuItemDragContext.Provider>
       </NavigationDragSourceContext.Provider>
     </WorkspaceDndKitContext.Provider>
