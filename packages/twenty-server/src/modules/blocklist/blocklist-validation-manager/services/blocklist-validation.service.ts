@@ -102,6 +102,18 @@ export class BlocklistValidationService {
         authContext,
       );
 
+    if (
+      payload.data.some(
+        (item) =>
+          item.workspaceMemberId &&
+          item.workspaceMemberId !== currentWorkspaceMember.id,
+      )
+    ) {
+      throw new BadRequestException(
+        'Cannot create blocklist entry for another workspace member',
+      );
+    }
+
     const currentBlocklist =
       await this.blocklistRepository.getByWorkspaceMemberId(
         currentWorkspaceMember.id,
