@@ -16,7 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledDebugRow = styled.div`
   position: absolute;
   left: 250px;
-  top: ${({ theme }) => theme.spacing(1.25)};
+  top: 5px;
   z-index: 20;
   color: ${({ theme }) => theme.font.color.primary};
   background-color: ${({ theme }) => theme.color.gray3};
@@ -46,26 +46,26 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useAtomComponentFamilyStateValue(
+  const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const dataLoadingStatus = useAtomComponentFamilySelectorValue(
     dataLoadingStatusByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const pixelsFromTop =
-    (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
+    (realIndexByVirtualIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useAtomFamilyStateValue(
+  const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     recordId ?? '',
   );
@@ -73,16 +73,21 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  const labelIdentifier = isDefined(record)
-    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
+  const labelIdentifier = isDefined(recordStore)
+    ? getLabelIdentifierFieldValue(
+        recordStore,
+        labelIdentifierFieldMetadataItem,
+      )
     : '-';
 
-  const position = record?.position;
+  const position = recordStore?.position;
 
   return (
     <StyledDebugRow>
       <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
-      <StyledDebugColumn width={70}>real :{realIndex}</StyledDebugColumn>
+      <StyledDebugColumn width={70}>
+        real :{realIndexByVirtualIndex}
+      </StyledDebugColumn>
       <StyledDebugColumn width={100}>pos :{position}</StyledDebugColumn>
       <StyledDebugColumn width={80}>
         px:

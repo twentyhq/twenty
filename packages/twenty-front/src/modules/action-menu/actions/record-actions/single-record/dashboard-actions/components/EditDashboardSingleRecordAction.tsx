@@ -8,12 +8,9 @@ import { useResetLocationHash } from 'twenty-ui/utilities';
 export const EditDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const pageLayoutId = selectedRecord?.pageLayoutId;
+  const pageLayoutId = recordStore?.pageLayoutId;
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);

@@ -74,6 +74,11 @@ export class ApplicationDTO {
   defaultRoleId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  settingsCustomTabFrontComponentId?: string;
+
+  @IsOptional()
   @Field(() => RoleDTO, { nullable: true })
   defaultLogicFunctionRole?: RoleDTO;
 

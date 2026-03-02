@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
 
@@ -14,7 +15,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { DropZone } from './components/DropZone';
 
 const StyledContent = styled(Modal.Content)`
-  padding: ${({ theme }) => theme.spacing(6)};
+  padding: ${themeCssVariables.spacing[6]};
 `;
 
 type UploadStepProps = {

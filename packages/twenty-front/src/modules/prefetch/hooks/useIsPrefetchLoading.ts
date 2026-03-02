@@ -8,18 +8,16 @@ export const useIsPrefetchLoading = () => {
   const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.ACTIVE,
   );
-  const isFavoriteFoldersPrefetched = useAtomFamilyStateValue(
+  const prefetchIsLoaded = useAtomFamilyStateValue(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const areFavoritesPrefetched = useAtomFamilyStateValue(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const prefetchIsLoadedFavorites = useAtomFamilyStateValue(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
 
-  return (
-    isWorkspaceActive &&
-    (!areFavoritesPrefetched || !isFavoriteFoldersPrefetched)
-  );
+  return isWorkspaceActive && (!prefetchIsLoadedFavorites || !prefetchIsLoaded);
 };

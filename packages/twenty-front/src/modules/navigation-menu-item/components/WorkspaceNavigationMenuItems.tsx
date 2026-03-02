@@ -1,8 +1,14 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
-import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
+import {
+  IconColumnInsertRight,
+  IconLink,
+  IconPlus,
+  IconTool,
+  useIcons,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
@@ -26,16 +32,15 @@ import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavi
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const WorkspaceNavigationMenuItems = () => {
@@ -64,7 +69,6 @@ export const WorkspaceNavigationMenuItems = () => {
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
-  const navigate = useNavigate();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
@@ -100,14 +104,14 @@ export const WorkspaceNavigationMenuItems = () => {
         pageIcon: IconLink,
       });
     } else if (isDefined(objectMetadataItem)) {
+      const pageTitle =
+        item.itemType === NavigationMenuItemType.VIEW
+          ? item.labelIdentifier
+          : objectMetadataItem.labelSingular;
       openNavigationMenuItemInCommandMenu({
-        pageTitle: objectMetadataItem.labelPlural,
+        pageTitle,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
-
-      if (isNonEmptyString(item.link)) {
-        navigate(item.link);
-      }
     }
   };
 
@@ -118,7 +122,7 @@ export const WorkspaceNavigationMenuItems = () => {
     enterEditMode();
     setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
     openNavigationMenuItemInCommandMenu({
-      pageTitle: objectMetadataItem.labelPlural,
+      pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
     });
   };
@@ -128,7 +132,7 @@ export const WorkspaceNavigationMenuItems = () => {
     navigateCommandMenu({
       page: CommandMenuPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
-      pageIcon: IconPlus,
+      pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,
     });
   };

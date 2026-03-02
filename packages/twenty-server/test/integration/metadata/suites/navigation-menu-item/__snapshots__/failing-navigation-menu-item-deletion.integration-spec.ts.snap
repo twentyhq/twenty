@@ -22,7 +22,7 @@ exports[`NavigationMenuItem deletion should fail when deleting with empty id 1`]
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;

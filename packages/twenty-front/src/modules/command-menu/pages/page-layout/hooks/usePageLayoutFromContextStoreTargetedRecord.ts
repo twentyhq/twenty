@@ -4,22 +4,22 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
-  const targetedRecordsRule = useAtomComponentStateValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
   if (
     !(
-      targetedRecordsRule.mode === 'selection' &&
-      targetedRecordsRule.selectedRecordIds.length === 1
+      contextStoreTargetedRecordsRule.mode === 'selection' &&
+      contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
     )
   ) {
-    throw new Error('Only one record should be selected');
+    throw new Error('Only one recordStore should be selected');
   }
 
-  const recordId: string = targetedRecordsRule.selectedRecordIds[0];
+  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  return { pageLayoutId: record?.pageLayoutId };
+  return { pageLayoutId: recordStore?.pageLayoutId };
 };

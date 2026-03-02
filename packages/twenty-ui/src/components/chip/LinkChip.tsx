@@ -37,6 +37,7 @@ export const LinkChip = ({
   variant = ChipVariant.Regular,
   leftComponent = null,
   rightComponent = null,
+  rightComponentDivider = false,
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
@@ -72,6 +73,7 @@ export const LinkChip = ({
         variant={variant}
         leftComponent={leftComponent}
         rightComponent={rightComponent}
+        rightComponentDivider={rightComponentDivider}
         accent={accent}
         className={className}
         maxWidth={maxWidth}

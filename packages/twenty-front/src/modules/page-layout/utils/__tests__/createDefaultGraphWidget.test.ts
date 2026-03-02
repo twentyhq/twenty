@@ -3,6 +3,7 @@ import {
   AxisNameDisplay,
   BarChartLayout,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
@@ -67,6 +68,14 @@ describe('createDefaultGraphWidget', () => {
       expect(widget.pageLayoutTabId).toBe('tab-1');
       expect(widget.title).toBe('Test Widget');
       expect(widget.gridPosition).toEqual(baseParams.gridPosition);
+      expect(widget.position).toEqual({
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 2,
+      });
       expect(widget.createdAt).toBeDefined();
       expect(widget.updatedAt).toBeDefined();
       expect(widget.deletedAt).toBeNull();

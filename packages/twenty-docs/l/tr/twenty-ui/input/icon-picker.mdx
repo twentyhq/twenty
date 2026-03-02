@@ -14,7 +14,6 @@ Kullanıcıların bir listeden simge seçmesine olanak tanıyan bir açılır me
 <Tab title="Kullanım">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import React, { useState } from "react";
 import { IconPicker } from "@/ui/input/components/IconPicker";
 
@@ -22,19 +21,17 @@ export const MyComponent = () => {
 
    const [selectedIcon, setSelectedIcon] = useState("");
    const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
+     console.log("Seçilen Simge:", iconKey);
      setSelectedIcon(iconKey);
    };
 
   return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
+    <IconPicker
+      disabled={false}
+      onChange={handleIconChange}
+      selectedIconKey={selectedIcon}
+      variant="primary"
+    />
   );
 };
 ```

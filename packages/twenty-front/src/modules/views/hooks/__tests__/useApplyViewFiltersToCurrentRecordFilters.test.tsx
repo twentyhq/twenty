@@ -42,11 +42,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useAtomComponentStateValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 
-        return { applyViewFiltersToCurrentRecordFilters, currentFilters };
+        return { applyViewFiltersToCurrentRecordFilters, currentRecordFilters };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -62,7 +62,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
       result.current.applyViewFiltersToCurrentRecordFilters([mockViewFilter]);
     });
 
-    expect(result.current.currentFilters).toEqual([
+    expect(result.current.currentRecordFilters).toEqual([
       {
         id: mockViewFilter.id,
         fieldMetadataId: mockViewFilter.fieldMetadataId,
@@ -83,11 +83,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useAtomComponentStateValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 
-        return { applyViewFiltersToCurrentRecordFilters, currentFilters };
+        return { applyViewFiltersToCurrentRecordFilters, currentRecordFilters };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -103,6 +103,6 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
       result.current.applyViewFiltersToCurrentRecordFilters([]);
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 });

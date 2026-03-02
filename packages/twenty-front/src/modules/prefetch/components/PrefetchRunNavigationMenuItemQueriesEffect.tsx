@@ -31,12 +31,12 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
-  const setIsPrefetchNavigationMenuItemsLoaded = useSetAtomFamilyState(
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllNavigationMenuItems,
   );
 
-  const setNavigationMenuItemsState = useSetAtomState(
+  const setPrefetchNavigationMenuItems = useSetAtomState(
     prefetchNavigationMenuItemsState,
   );
 
@@ -55,22 +55,22 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
         prefetchNavigationMenuItemsState.atom,
       );
       if (!isDeeplyEqual(existingNavigationMenuItems, navigationMenuItems)) {
-        setNavigationMenuItemsState(navigationMenuItems);
+        setPrefetchNavigationMenuItems(navigationMenuItems);
       }
     },
-    [setNavigationMenuItemsState, store],
+    [setPrefetchNavigationMenuItems, store],
   );
 
   useEffect(() => {
     if (!loading && isDefined(data?.navigationMenuItems)) {
       setPrefetchNavigationMenuItemsStateIfChanged(data.navigationMenuItems);
-      setIsPrefetchNavigationMenuItemsLoaded(true);
+      setPrefetchIsLoaded(true);
     }
   }, [
     data,
     loading,
     setPrefetchNavigationMenuItemsStateIfChanged,
-    setIsPrefetchNavigationMenuItemsLoaded,
+    setPrefetchIsLoaded,
   ]);
 
   return <></>;

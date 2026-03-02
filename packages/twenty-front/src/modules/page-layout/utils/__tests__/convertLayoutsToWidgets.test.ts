@@ -1,6 +1,7 @@
 import {
   AggregateOperations,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
@@ -73,7 +74,23 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 4,
       rowSpan: 5,
     });
+    expect(result[0].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      column: 2,
+      row: 3,
+      columnSpan: 4,
+      rowSpan: 5,
+    });
     expect(result[1].gridPosition).toEqual({
+      column: 6,
+      row: 7,
+      columnSpan: 8,
+      rowSpan: 9,
+    });
+    expect(result[1].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 6,
       row: 7,
       columnSpan: 8,

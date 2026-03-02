@@ -27,7 +27,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
 
-  const setIsRowFocusActive = useSetAtomComponentState(
+  const setIsRecordTableRowFocusActive = useSetAtomComponentState(
     isRecordTableRowFocusActiveComponentState,
   );
 
@@ -61,7 +61,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
   };
 
   const handleEnterRow = () => {
-    setIsRowFocusActive(false);
+    setIsRecordTableRowFocusActive(false);
     const cellPosition = {
       row: rowIndex,
       column: 0,

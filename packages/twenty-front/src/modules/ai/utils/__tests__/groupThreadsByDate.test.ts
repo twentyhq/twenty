@@ -2,9 +2,15 @@ import { type AgentChatThread } from '~/generated-metadata/graphql';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
-  const baseThread: Omit<AgentChatThread, 'createdAt' | 'id'> = {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(today.getDate() - 2);
+
+  const baseThread: Omit<AgentChatThread, 'updatedAt' | 'id'> = {
     title: 'Test Thread',
-    updatedAt: new Date().toISOString(),
+    createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,
     contextWindowTokens: null,
@@ -13,16 +19,10 @@ describe('groupThreadsByDate', () => {
     totalOutputCredits: 0,
   };
 
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  const twoDaysAgo = new Date(today);
-  twoDaysAgo.setDate(today.getDate() - 2);
-
   const threads: AgentChatThread[] = [
-    { ...baseThread, id: '1', createdAt: today.toISOString() },
-    { ...baseThread, id: '2', createdAt: yesterday.toISOString() },
-    { ...baseThread, id: '3', createdAt: twoDaysAgo.toISOString() },
+    { ...baseThread, id: '1', updatedAt: today.toISOString() },
+    { ...baseThread, id: '2', updatedAt: yesterday.toISOString() },
+    { ...baseThread, id: '3', updatedAt: twoDaysAgo.toISOString() },
   ];
 
   it('groups threads into today, yesterday, and older', () => {

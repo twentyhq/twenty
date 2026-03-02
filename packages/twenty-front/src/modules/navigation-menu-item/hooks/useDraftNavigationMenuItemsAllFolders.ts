@@ -8,7 +8,9 @@ export const useDraftNavigationMenuItemsAllFolders = () => {
     currentDraft?.filter(isNavigationMenuItemFolder).map((item) => ({
       id: item.id,
       name: item.name ?? 'Folder',
-      folderId: item.folderId ?? undefined,
+      folderId: item.folderId,
+      icon: item.icon,
+      color: item.color,
     })) ?? [];
 
   return { allFolders };

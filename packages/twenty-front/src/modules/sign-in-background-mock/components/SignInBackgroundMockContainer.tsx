@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -31,13 +31,14 @@ export const SignInBackgroundMockContainer = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+    (objectMetadataItem) =>
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const {

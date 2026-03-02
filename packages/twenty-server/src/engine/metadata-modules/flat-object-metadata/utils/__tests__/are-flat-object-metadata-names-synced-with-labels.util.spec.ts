@@ -130,8 +130,8 @@ describe('areFlatObjectMetadataNamesSyncedWithLabels', () => {
   it('should return true with complex labels', () => {
     const result = areFlatObjectMetadataNamesSyncedWithLabels({
       flatObjectMetadata: {
-        nameSingular: 'wrongCreatedAtObject',
-        namePlural: 'wrongCreatedAtObjects',
+        nameSingular: 'wrongCreatedatObject',
+        namePlural: 'wrongCreatedatObjects',
         labelSingular: 'Wrong CreatedAt Object',
         labelPlural: 'Wrong CreatedAt Objects',
       },

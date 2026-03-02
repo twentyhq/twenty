@@ -55,7 +55,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
     recordIndexId,
   );
 
-  const groupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -73,7 +73,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       }
 
       const fieldMetadata = objectMetadataItem.fields.find(
-        (field) => field.id === groupFieldMetadata?.id,
+        (field) => field.id === recordIndexGroupFieldMetadataItem?.id,
       );
 
       if (!isDefined(fieldMetadata)) {
@@ -121,7 +121,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       isDraggingRecord,
       selectedRowIds,
       recordIdsByGroupFamilyState,
-      groupFieldMetadata?.id,
+      recordIndexGroupFieldMetadataItem?.id,
       openModal,
       updateOneRecord,
     ],

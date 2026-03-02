@@ -2624,7 +2624,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-46d0-4e7f-bc26-74c0edaeb619',
       },
       calendarStartDay: {
-        universalIdentifier: '20202020-92d0-1d7f-a126-25ededa6b142',
+        universalIdentifier: '20202020-1ecc-4562-84c9-ff3a2f6cce85',
       },
       numberFormat: {
         universalIdentifier: '20202020-7f40-4e7f-b126-11c0eda6b141',

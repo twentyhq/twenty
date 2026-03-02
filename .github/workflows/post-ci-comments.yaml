@@ -1,0 +1,71 @@
+name: Post CI Comments
+
+on:
+  workflow_run:
+    workflows: ['GraphQL and OpenAPI Breaking Changes Detection']
+    types: [completed]
+
+permissions:
+  actions: read
+
+jobs:
+  dispatch-breaking-changes:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get PR number from workflow run
+        id: pr-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = context.payload.workflow_run.id;
+            const headSha = context.payload.workflow_run.head_sha;
+            const headBranch = context.payload.workflow_run.head_branch;
+            const headRepo = context.payload.workflow_run.head_repository;
+
+            // workflow_run.pull_requests is empty for fork PRs,
+            // so fall back to searching by head SHA
+            let pullRequests = context.payload.workflow_run.pull_requests;
+            let prNumber;
+
+            if (pullRequests && pullRequests.length > 0) {
+              prNumber = pullRequests[0].number;
+            } else {
+              core.info(`pull_requests is empty (likely a fork PR), searching by SHA ${headSha}`);
+              const owner = context.repo.owner;
+              const repo = context.repo.repo;
+              const headLabel = `${headRepo.owner.login}:${headBranch}`;
+
+              const { data: prs } = await github.rest.pulls.list({
+                owner,
+                repo,
+                state: 'open',
+                head: headLabel,
+                per_page: 1,
+              });
+
+              if (prs.length > 0) {
+                prNumber = prs[0].number;
+              }
+            }
+
+            if (!prNumber) {
+              core.info('No pull request found for this workflow run');
+              core.setOutput('has_pr', 'false');
+              return;
+            }
+
+            core.setOutput('pr_number', prNumber);
+            core.setOutput('run_id', runId);
+            core.setOutput('has_pr', 'true');
+            core.info(`PR #${prNumber}, Run ID: ${runId}`);
+
+      - name: Dispatch to ci-privileged
+        if: steps.pr-info.outputs.has_pr == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: breaking-changes-report
+          client-payload: '{"pr_number": ${{ toJSON(steps.pr-info.outputs.pr_number) }}, "run_id": ${{ toJSON(steps.pr-info.outputs.run_id) }}, "repo": ${{ toJSON(github.repository) }}, "branch_state": ${{ toJSON(github.event.workflow_run.head_branch) }}}'

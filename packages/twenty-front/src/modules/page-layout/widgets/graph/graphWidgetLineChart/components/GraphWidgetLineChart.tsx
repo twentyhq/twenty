@@ -131,18 +131,18 @@ export const GraphWidgetLineChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const setActiveLineTooltip = useSetAtomComponentState(
+  const setGraphWidgetLineTooltip = useSetAtomComponentState(
     graphWidgetLineTooltipComponentState,
   );
 
-  const setCrosshairX = useSetAtomComponentState(
+  const setGraphWidgetLineCrosshairX = useSetAtomComponentState(
     graphWidgetLineCrosshairXComponentState,
   );
 
   const hideTooltip = useCallback(() => {
-    setActiveLineTooltip(null);
-    setCrosshairX(null);
-  }, [setActiveLineTooltip, setCrosshairX]);
+    setGraphWidgetLineTooltip(null);
+    setGraphWidgetLineCrosshairX(null);
+  }, [setGraphWidgetLineTooltip, setGraphWidgetLineCrosshairX]);
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
@@ -189,8 +189,8 @@ export const GraphWidgetLineChart = ({
     const offsetTop = sliceData.mouseY + margins.top;
 
     debouncedHideTooltip.cancel();
-    setCrosshairX(sliceData.sliceX);
-    setActiveLineTooltip({
+    setGraphWidgetLineCrosshairX(sliceData.sliceX);
+    setGraphWidgetLineTooltip({
       slice,
       offsetLeft,
       offsetTop,

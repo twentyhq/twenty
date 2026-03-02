@@ -2,18 +2,19 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 const StyledSearchText = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 type ViewBarFilterDropdownAnyFieldSearchButtonMenuItemProps = {
@@ -29,7 +30,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const isSelected = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );
@@ -40,7 +41,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       onEnter={onClick}
     >
       <MenuItem
-        focused={isSelected}
+        focused={isSelectedItemId}
         onClick={onClick}
         LeftIcon={IconSearch}
         text={

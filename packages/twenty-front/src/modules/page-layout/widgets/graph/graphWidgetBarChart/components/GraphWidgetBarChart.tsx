@@ -91,30 +91,32 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setActiveBarTooltip = useSetAtomComponentState(
+  const setGraphWidgetBarTooltip = useSetAtomComponentState(
     graphWidgetBarTooltipComponentState,
   );
 
-  const setHoveredSliceIndex = useSetAtomComponentState(
+  const setGraphWidgetHoveredSliceIndex = useSetAtomComponentState(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useAtomComponentStateValue(
+  const graphWidgetHoveredSliceIndex = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useAtomComponentStateValue(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useAtomComponentStateValue(
+  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
   const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const isLayoutAnimating =
-    isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;
+    isSidePanelAnimating ||
+    pageLayoutDraggingWidgetId === id ||
+    pageLayoutResizingWidgetId === id;
 
   const allowDataTransitions = !isLayoutAnimating;
 
@@ -157,8 +159,8 @@ export const GraphWidgetBarChart = ({
   const hasClickableItems = isDefined(onSliceClick);
 
   const hideTooltip = () => {
-    setActiveBarTooltip(null);
-    setHoveredSliceIndex(null);
+    setGraphWidgetBarTooltip(null);
+    setGraphWidgetHoveredSliceIndex(null);
   };
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
@@ -172,8 +174,8 @@ export const GraphWidgetBarChart = ({
   const handleSliceHover = (sliceData: BarChartSliceHoverData | null) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
-      setHoveredSliceIndex(sliceData.slice.indexValue);
-      setActiveBarTooltip({
+      setGraphWidgetHoveredSliceIndex(sliceData.slice.indexValue);
+      setGraphWidgetBarTooltip({
         offsetLeft: sliceData.offsetLeft,
         offsetTop: sliceData.offsetTop,
         slice: sliceData.slice,
@@ -224,7 +226,7 @@ export const GraphWidgetBarChart = ({
             formatOptions={formatOptions}
             groupMode={groupMode}
             hasNoData={hasNoData}
-            hoveredSliceIndexValue={hoveredSliceIndexValue}
+            hoveredSliceIndexValue={graphWidgetHoveredSliceIndex}
             indexBy={indexBy}
             keys={orderedKeys}
             layout={layout}

@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"Invalid UUID"`;
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"Invalid UUID: 'non-uuid'"`;
 
 exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"["Invalid UUID value 'non-uuid' for field \\"uuidField\\""]"`;

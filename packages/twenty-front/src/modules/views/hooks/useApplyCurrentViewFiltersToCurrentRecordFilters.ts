@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
 export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -24,7 +24,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
   const applyCurrentViewFiltersToCurrentRecordFilters = useCallback(() => {
     const currentView = store.get(
       coreViewFromViewIdFamilySelector.selectorFamily({
-        viewId: currentViewId ?? '',
+        viewId: contextStoreCurrentViewId ?? '',
       }),
     );
 
@@ -34,7 +34,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
       );
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     mapViewFiltersToRecordFilters,
     setCurrentRecordFilters,
     store,

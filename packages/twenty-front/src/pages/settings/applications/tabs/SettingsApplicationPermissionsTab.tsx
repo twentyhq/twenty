@@ -284,7 +284,7 @@ const MarketplaceRoleEffect = ({
   ) => void;
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const setDraftRole = useSetAtomFamilyState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     defaultRole.id,
   );
@@ -310,8 +310,8 @@ const MarketplaceRoleEffect = ({
     }, [defaultRole, objectMetadataItems, marketplaceAppObjects]);
 
   useEffect(() => {
-    setDraftRole(resolvedRole);
-  }, [resolvedRole, setDraftRole]);
+    setSettingsDraftRole(resolvedRole);
+  }, [resolvedRole, setSettingsDraftRole]);
 
   useEffect(() => {
     onObjectMetadataItemsFromMarketplaceApp(

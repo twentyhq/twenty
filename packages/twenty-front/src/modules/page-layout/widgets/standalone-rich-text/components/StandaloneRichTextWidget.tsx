@@ -43,7 +43,7 @@ export const StandaloneRichTextWidget = ({
     isPageLayoutInEditModeComponentState,
   );
 
-  const editingWidgetId = useAtomComponentStateValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 
@@ -73,7 +73,7 @@ export const StandaloneRichTextWidget = ({
     skip: !isDefined(dashboardId),
   });
 
-  const isThisWidgetBeingEdited = editingWidgetId === widget.id;
+  const isThisWidgetBeingEdited = pageLayoutEditingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
 
   if (!isDefined(dashboardId)) {

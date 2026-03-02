@@ -116,14 +116,14 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetAtomComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
+    setSingleRecordPickerSearchFilter('');
+  }, [setSingleRecordPickerSearchFilter]);
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
@@ -148,7 +148,7 @@ export const FormSingleRecordPicker = ({
     onClear?.();
   };
 
-  const setRecordPickerSelectedId = useSetAtomComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -158,7 +158,7 @@ export const FormSingleRecordPicker = ({
       isDefined(draftValue?.value) &&
       !isStandaloneVariableString(draftValue.value)
     ) {
-      setRecordPickerSelectedId(draftValue.value);
+      setSingleRecordPickerSelectedId(draftValue.value);
     }
   };
 

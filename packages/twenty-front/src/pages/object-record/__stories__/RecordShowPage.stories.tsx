@@ -2,16 +2,19 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import {
-  allMockPersonRecords,
-  peopleQueryResult,
-} from '~/testing/mock-data/people';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { generateMockRecordConnection } from '~/testing/utils/generateMockRecordConnection';
 
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 
-const personRecord = allMockPersonRecords[0];
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
+const personRecord = flatPersonRecords[0];
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
   component: RecordShowPage,
@@ -27,7 +30,12 @@ const meta: Meta<PageDecoratorArgs> = {
       handlers: [
         graphql.query('FindManyPeople', () => {
           return HttpResponse.json({
-            data: peopleQueryResult,
+            data: {
+              people: generateMockRecordConnection({
+                objectNameSingular: 'person',
+                records: flatPersonRecords,
+              }),
+            },
           });
         }),
         graphql.query('FindOnePerson', () => {

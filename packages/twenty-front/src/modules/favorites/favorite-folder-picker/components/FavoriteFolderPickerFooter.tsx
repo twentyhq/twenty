@@ -5,10 +5,11 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const FavoriteFolderPickerFooter = ({
   dropdownId,
@@ -23,7 +24,7 @@ export const FavoriteFolderPickerFooter = ({
     isNavigationDrawerExpandedState,
   );
   const { openNavigationSection } = useNavigationSection('Favorites');
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
 
   return (

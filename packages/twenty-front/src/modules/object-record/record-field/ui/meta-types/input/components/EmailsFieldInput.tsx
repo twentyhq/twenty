@@ -68,12 +68,12 @@ export const EmailsFieldInput = () => {
     index === 0 && emails.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetAtomComponentState(
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const handleError = (hasError: boolean, values: any[]) => {
-    setIsFieldInError(hasError && values.length === 0);
+    setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
   const handleCopy = (email: string) => {

@@ -25,7 +25,7 @@ export const useDismissReconnectAccountBanner = (
     client: apolloCoreClient,
   });
 
-  const setInformationBannerIsOpenComponent = useSetAtomComponentState(
+  const setInformationBannerIsOpen = useSetAtomComponentState(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );
@@ -36,7 +36,7 @@ export const useDismissReconnectAccountBanner = (
         connectedAccountId,
       },
     });
-    setInformationBannerIsOpenComponent(false);
+    setInformationBannerIsOpen(false);
   };
 
   return {

@@ -80,6 +80,7 @@ test('Create and update record', async ({ page }) => {
     await page.getByPlaceholder('Intro').press('Enter');
 
     // Fill URL
+    await recordFieldList.getByText('Linkedin').first().click();
     const urlInput = recordFieldList.getByText('Linkedin').nth(1);
     await expect(urlInput).toBeVisible();
     await urlInput.click({ force: true });
@@ -87,11 +88,12 @@ test('Create and update record', async ({ page }) => {
     await page.getByPlaceholder('URL').press('Enter');
 
     // Click on 4th star to rate
-    recordFieldList.getByText('Performance Rating').first().click({ force: true });
+    await recordFieldList.getByText('Performance Rating').first().click({ force: true });
     const ratingContainer = recordFieldList.locator('div[aria-label="Rating"]');
     await ratingContainer.locator('svg').nth(3).click({force: true});
 
     // Fill phone field
+    await recordFieldList.getByText('Phones').first().click();
     const phoneInput = recordFieldList.getByText('Phones').nth(1);
     await expect(phoneInput).toBeVisible();
     await phoneInput.click({ force: true });

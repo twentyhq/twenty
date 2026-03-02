@@ -24,12 +24,14 @@ export const FieldWidgetCellEditModePortal = ({
 }: FieldWidgetCellEditModePortalProps) => {
   const { isEditing } = useIsFieldWidgetEditing();
 
-  const setIsHovered = useSetAtomComponentState(fieldWidgetHoverComponentState);
+  const setFieldWidgetHover = useSetAtomComponentState(
+    fieldWidgetHoverComponentState,
+  );
 
   const { closeFieldInput } = useOpenFieldWidgetFieldInputEditMode();
 
   const handleCloseEditMode = () => {
-    setIsHovered(false);
+    setFieldWidgetHover(false);
 
     closeFieldInput();
   };

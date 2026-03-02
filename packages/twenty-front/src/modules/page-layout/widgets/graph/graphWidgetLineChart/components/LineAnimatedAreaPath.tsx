@@ -18,11 +18,13 @@ export const LineAnimatedAreaPath = ({
 }: LineAnimatedAreaPathProps) => {
   const animatedPath = useAnimatedPath(path);
 
-  const highlightedLegendId = useAtomComponentStateValue(
+  const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const isDimmed = isDefined(highlightedLegendId) && highlightedLegendId !== id;
+  const isDimmed =
+    isDefined(graphWidgetHighlightedLegendId) &&
+    graphWidgetHighlightedLegendId !== id;
 
   return (
     <animated.path

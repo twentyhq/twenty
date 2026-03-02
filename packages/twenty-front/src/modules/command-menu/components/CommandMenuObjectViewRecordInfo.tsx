@@ -6,11 +6,15 @@ import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/Naviga
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
+import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
+import { ViewKey } from '@/views/types/ViewKey';
 
 export const CommandMenuObjectViewRecordInfo = () => {
   const { t } = useLingui();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
+  const { selectedItemObjectMetadata } =
+    useSelectedNavigationMenuItemEditItemObjectMetadata();
 
   const processedItem =
     selectedItem && selectedItem.itemType !== NavigationMenuItemType.FOLDER
@@ -30,11 +34,12 @@ export const CommandMenuObjectViewRecordInfo = () => {
     return null;
   }
 
-  const label = isViewOrRecord
-    ? processedItem.itemType === NavigationMenuItemType.RECORD
-      ? t`record`
-      : t`view`
-    : t`object`;
+  const label =
+    processedItem.itemType === NavigationMenuItemType.RECORD
+      ? selectedItemObjectMetadata?.labelSingular
+      : processedItem.viewKey === ViewKey.Index
+        ? t`Object`
+        : t`View`;
 
   return (
     <CommandMenuPageInfoLayout

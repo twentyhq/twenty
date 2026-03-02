@@ -3,17 +3,18 @@ import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-f
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledItemsContainer = styled.div`
   width: 100%;
 `;
 
 const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type FavoriteFolderPickerListProps = {
@@ -28,7 +29,7 @@ export const FavoriteFolderPickerList = ({
   toggleFolderSelection,
 }: FavoriteFolderPickerListProps) => {
   const { t } = useLingui();
-  const [favoriteFoldersSearchFilter] = useAtomComponentState(
+  const [favoriteFolderSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
@@ -39,12 +40,12 @@ export const FavoriteFolderPickerList = ({
   const filteredFolders = folders.filter((folder) =>
     folder.name
       .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+      .includes(favoriteFolderSearchFilter.toLowerCase()),
   );
 
   const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+    !favoriteFolderSearchFilter ||
+    'no folder'.includes(favoriteFolderSearchFilter.toLowerCase());
 
   return (
     <StyledItemsContainer>

@@ -10,16 +10,18 @@ export const useSingleRecordPickerRecords = ({
   objectNameSingulars: string[];
   excludedRecordIds?: string[];
 }) => {
-  const recordPickerSearchFilter = useAtomComponentStateValue(
+  const singleRecordPickerSearchFilter = useAtomComponentStateValue(
     singleRecordPickerSearchFilterComponentState,
   );
 
-  const selectedRecordId = useAtomComponentStateValue(
+  const singleRecordPickerSelectedId = useAtomComponentStateValue(
     singleRecordPickerSelectedIdComponentState,
   );
   const { pickableMorphItems, loading } = useSingleRecordPickerPerformSearch({
-    searchFilter: recordPickerSearchFilter,
-    selectedIds: selectedRecordId ? [selectedRecordId] : [],
+    searchFilter: singleRecordPickerSearchFilter,
+    selectedIds: singleRecordPickerSelectedId
+      ? [singleRecordPickerSelectedId]
+      : [],
     excludedRecordIds: excludedRecordIds,
     objectNameSingulars,
   });

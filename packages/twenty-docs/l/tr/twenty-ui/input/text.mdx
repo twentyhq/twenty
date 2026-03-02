@@ -16,7 +16,6 @@ Kullanıcıların metin girmelerine ve düzenlemelerine izin verir.
 <Tab title="Kullanım">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
@@ -29,18 +28,16 @@ export const MyComponent = () => {
   };
 
   return (
-    <RecoilRoot>
-      <TextInput
-        className
-        label="Kullanıcı adı"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Geçersiz kullanıcı adı"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
-    </RecoilRoot>
+    <TextInput
+      className
+      label="Kullanıcı adı"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Geçersiz kullanıcı adı"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
 },{
@@ -81,22 +78,19 @@ Metni içeriğe göre otomatik olarak ayarlayan metin giriş bileşeni.
 <Tab title="Kullanım">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
-        minRows={1}
-        placeholder="Bir yorum yazın"
-        onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
-        variant="icon"
-        buttonTitle
-        value="Görev: "
-      />
-    </RecoilRoot>
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
+      minRows={1}
+      placeholder="Bir yorum yazın"
+      onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
+      variant="icon"
+      buttonTitle
+      value="Görev: "
+    />
   );
 };
 ```
