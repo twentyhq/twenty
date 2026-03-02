@@ -12,7 +12,7 @@ import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/com
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
 
 export const WorkspaceSectionItemContent = ({
   item,

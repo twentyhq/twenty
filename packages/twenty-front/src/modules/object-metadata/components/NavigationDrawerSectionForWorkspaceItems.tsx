@@ -12,7 +12,7 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { WorkspaceSectionListDndKit } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit';
-import type { EditModeProps } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsTypes';
+import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
