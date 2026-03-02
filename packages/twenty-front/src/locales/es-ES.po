@@ -2088,6 +2088,11 @@ msgstr "Aplicación de Autenticación"
 msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 msgstr "Las aplicaciones de autenticación y las extensiones de navegador como 1Password, Authy, Microsoft Authenticator, etc., generan contraseñas de un solo uso que se utilizan como un segundo factor para verificar tu identidad cuando se te solicita durante el inicio de sesión."
 
+#. js-lingui-id: SIFUTh
+#: src/pages/auth/Authorize.tsx
+msgid "Authorization failed. Please try again."
+msgstr ""
+
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -2102,6 +2107,11 @@ msgstr "URI autorizado"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
 msgstr "URL autorizada copiada al portapapeles"
+
+#. js-lingui-id: 8RmQki
+#: src/pages/auth/Authorize.tsx
+msgid "Authorizing..."
+msgstr ""
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -12243,6 +12253,11 @@ msgstr "Alguno"
 msgid "Some folders"
 msgstr "Algunas carpetas"
 
+#. js-lingui-id: nwtY4N
+#: src/pages/auth/Authorize.tsx
+msgid "Something went wrong"
+msgstr ""
+
 #. js-lingui-id: yHwG3y
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -13578,6 +13593,11 @@ msgstr "ul"
 #. js-lingui-id: N/XI5S
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Unable to delete member right now"
+msgstr ""
+
+#. js-lingui-id: HSLWzn
+#: src/pages/auth/Authorize.tsx
+msgid "Unable to load application details. Please try again later."
 msgstr ""
 
 #. js-lingui-id: l+ALBd
