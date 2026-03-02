@@ -47,15 +47,9 @@ export const useInitializeQueryParamState = () => {
         }
       },
       returnToPath: (value: string) => {
-        try {
-          const decodedValue = decodeURIComponent(value);
-
-          if (isValidReturnToPath(decodedValue)) {
-            store.set(returnToPathState.atom, decodedValue);
-            writeReturnToPathToSessionStorage(decodedValue);
-          }
-        } catch {
-          // malformed URI — ignore silently
+        if (isValidReturnToPath(value)) {
+          store.set(returnToPathState.atom, value);
+          writeReturnToPathToSessionStorage(value);
         }
       },
     };

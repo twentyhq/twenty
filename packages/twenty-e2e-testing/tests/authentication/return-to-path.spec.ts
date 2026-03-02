@@ -20,20 +20,8 @@ const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
 
   const workspaceButton = page.getByText('Apple', { exact: true });
 
-  try {
-    await workspaceButton.waitFor({ state: 'visible', timeout: 5000 });
+  if (await workspaceButton.isVisible().catch(() => false)) {
     await workspaceButton.click();
-  } catch {
-    // Single workspace mode — no workspace selection
-  }
-
-  try {
-    await page.waitForFunction(
-      () => window.location.href.includes('verify'),
-      { timeout: 5000 },
-    );
-  } catch {
-    // Verify step may be skipped
   }
 
   await page.waitForFunction(

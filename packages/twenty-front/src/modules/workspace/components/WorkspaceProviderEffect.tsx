@@ -12,16 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
-const getCurrentSearchParams = (): Record<string, string> => {
-  const searchParams: Record<string, string> = {};
-  const urlSearchParams = new URLSearchParams(window.location.search);
-
-  urlSearchParams.forEach((value, key) => {
-    searchParams[key] = value;
-  });
-
-  return searchParams;
-};
+const getCurrentSearchParams = (): Record<string, string> =>
+  Object.fromEntries(new URLSearchParams(window.location.search));
 
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();

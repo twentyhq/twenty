@@ -7,12 +7,12 @@ import {
   readReturnToPathFromSessionStorage,
   writeReturnToPathToSessionStorage,
 } from '@/auth/utils/returnToPathSessionStorage';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 
 export const useReturnToPath = () => {
-  const returnToPath = useAtomStateValue(returnToPathState);
+  const store = useStore();
   const setReturnToPath = useSetAtomState(returnToPathState);
 
   const saveReturnToPath = useCallback(
@@ -28,8 +28,13 @@ export const useReturnToPath = () => {
   );
 
   const getReturnToPath = useCallback((): string | null => {
-    if (isNonEmptyString(returnToPath) && isValidReturnToPath(returnToPath)) {
-      return returnToPath;
+    const currentReturnToPath = store.get(returnToPathState.atom);
+
+    if (
+      isNonEmptyString(currentReturnToPath) &&
+      isValidReturnToPath(currentReturnToPath)
+    ) {
+      return currentReturnToPath;
     }
 
     const sessionPath = readReturnToPathFromSessionStorage();
@@ -39,7 +44,7 @@ export const useReturnToPath = () => {
     }
 
     return null;
-  }, [returnToPath]);
+  }, [store]);
 
   const clearReturnToPath = useCallback(() => {
     setReturnToPath('');
