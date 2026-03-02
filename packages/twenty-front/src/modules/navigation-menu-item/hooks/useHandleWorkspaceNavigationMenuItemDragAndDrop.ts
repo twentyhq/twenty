@@ -5,6 +5,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
 import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
@@ -108,21 +109,6 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     }
 
     const isSameList = sourceFolderId === destinationFolderId;
-
-    const getPositionBetween = (
-      prevPosition: number | null,
-      nextPosition: number | null,
-    ): number => {
-      if (!isDefined(prevPosition) && !isDefined(nextPosition)) return 0;
-      if (!isDefined(prevPosition) && isDefined(nextPosition))
-        return nextPosition - 1;
-      if (isDefined(prevPosition) && !isDefined(nextPosition))
-        return prevPosition + 1;
-      if (isDefined(prevPosition) && isDefined(nextPosition)) {
-        return (prevPosition + nextPosition) / 2;
-      }
-      return 0;
-    };
 
     if (isSameList) {
       const listWithoutDragged = sourceList.filter(
