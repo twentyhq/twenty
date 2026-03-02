@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledModal = styled(Modal)`

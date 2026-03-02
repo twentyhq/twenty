@@ -13,7 +13,8 @@ import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetCol
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type Dispatch,
@@ -37,10 +38,10 @@ const StyledContent = styled(Modal.Content)`
 
 const StyledToolbar = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.secondary};
-  bottom: ${({ theme }) => theme.spacing(3)};
+  border-radius: ${themeCssVariables.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  background-color: ${themeCssVariables.background.secondary};
+  bottom: ${themeCssVariables.spacing[3]};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -48,9 +49,9 @@ const StyledToolbar = styled.div`
   position: absolute;
   transform: translateX(-50%);
   width: 400px;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
   z-index: 1;
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
 `;
 
 const StyledButton = styled(Button)`
@@ -64,10 +65,10 @@ const StyledErrorToggle = styled.div`
 `;
 
 const StyledErrorToggleDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledScrollContainer = styled.div`
@@ -82,11 +83,11 @@ const StyledNoRowsContainer = styled.div`
   display: flex;
   grid-column: 1/-1;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledNoRowsWithErrorsContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   justify-content: center;
   margin: auto 0;

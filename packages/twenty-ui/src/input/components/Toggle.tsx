@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { VisibilityHiddenInput } from '@ui/accessibility';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 
 export type ToggleSize = 'small' | 'medium';

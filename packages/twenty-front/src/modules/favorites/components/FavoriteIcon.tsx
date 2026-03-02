@@ -1,10 +1,11 @@
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     favorite.objectNameSingular || '',

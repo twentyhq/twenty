@@ -4,7 +4,7 @@ import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListIt
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledListItem = styled(JsonListItem)`
   column-gap: ${themeCssVariables.spacing[2]};

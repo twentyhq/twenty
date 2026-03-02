@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { MOBILE_VIEWPORT, themeCssVariables } from '@ui/theme';
+import { MOBILE_VIEWPORT } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { ColorSchemeCard } from './ColorSchemeCard';
 
 const StyledContainer = styled.div`
