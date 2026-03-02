@@ -1,6 +1,4 @@
-import { css } from '@emotion/react';
-
-export const VISIBILITY_HIDDEN = css`
+export const VISIBILITY_HIDDEN = `
   position: absolute;
   width: 1px;
   height: 1px;

@@ -27,7 +27,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
@@ -42,7 +42,6 @@ const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyMetadata,
   fieldName: 'people',
 });
-const companiesMock = getCompaniesMock();
 
 const RelationWorkspaceSetterEffect = () => {
   const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
@@ -169,9 +168,13 @@ export const Submit: Story = {
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText(companiesMock[0].name, undefined, {
-      timeout: 3000,
-    });
+    const item = await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      undefined,
+      {
+        timeout: 3000,
+      },
+    );
 
     await userEvent.click(item);
 
@@ -186,7 +189,7 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
-    await canvas.findByText(companiesMock[0].name, undefined, {
+    await canvas.findByText(mockedCompanyRecords[0].name, undefined, {
       timeout: 3000,
     });
 

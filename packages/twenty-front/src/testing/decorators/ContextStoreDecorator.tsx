@@ -6,7 +6,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isUndefined } from '@sniptt/guards';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export const ContextStoreDecorator: Decorator = (Story, context) => {
   const { contextStore } = context.parameters;
@@ -24,7 +24,7 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const objectMetadataItem = getMockCompanyObjectMetadataItem();
+  const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
   useEffect(() => {
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);

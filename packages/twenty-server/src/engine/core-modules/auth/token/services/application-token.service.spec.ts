@@ -12,6 +12,7 @@ import {
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceException } from 'src/engine/core-modules/workspace/workspace.exception';
 
@@ -42,6 +43,12 @@ describe('ApplicationTokenService', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue('1h'),
+          },
         },
       ],
     }).compile();
@@ -79,7 +86,6 @@ describe('ApplicationTokenService', () => {
       const result = await service.generateApplicationAccessToken({
         workspaceId,
         applicationId,
-        expiresInSeconds: 10,
       });
 
       expect(result).toEqual({
@@ -117,7 +123,6 @@ describe('ApplicationTokenService', () => {
         applicationId,
         userWorkspaceId,
         userId,
-        expiresInSeconds: 10,
       });
 
       expect(result).toEqual({
@@ -151,7 +156,6 @@ describe('ApplicationTokenService', () => {
       service.generateApplicationAccessToken({
         applicationId: 'non-existent-application',
         workspaceId: 'workspace-id',
-        expiresInSeconds: 10,
       }),
     ).rejects.toThrow(ApplicationException);
   });
@@ -163,7 +167,6 @@ describe('ApplicationTokenService', () => {
       service.generateApplicationAccessToken({
         applicationId: 'application-id',
         workspaceId: 'non-existent-workspace',
-        expiresInSeconds: 10,
       }),
     ).rejects.toThrow(WorkspaceException);
   });

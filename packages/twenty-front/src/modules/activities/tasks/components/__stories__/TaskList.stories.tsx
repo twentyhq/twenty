@@ -1,6 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { TaskList } from '@/activities/tasks/components/TaskList';
+import { type Task } from '@/activities/types/Task';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -8,7 +10,11 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedTasks } from '~/testing/mock-data/tasks';
+import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
+
+const mockedTasks = mockedTaskRecords.map((record) =>
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 const meta: Meta<typeof TaskList> = {
   title: 'Modules/Activity/TaskList',

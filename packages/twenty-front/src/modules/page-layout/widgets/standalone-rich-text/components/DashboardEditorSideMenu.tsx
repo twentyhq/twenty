@@ -1,153 +1,107 @@
-import { useBlockNoteEditor, useUIPluginState } from '@blocknote/react';
-import { useTheme } from '@emotion/react';
+import { SuggestionMenu } from '@blocknote/core/extensions';
+import {
+  BlockColorsItem,
+  DragHandleButton,
+  DragHandleMenu,
+  RemoveBlockItem,
+  SideMenu,
+  SideMenuController,
+  useBlockNoteEditor,
+  useComponentsContext,
+} from '@blocknote/react';
 import styled from '@emotion/styled';
-import { autoUpdate, useFloating } from '@floating-ui/react';
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { IconGripVertical } from 'twenty-ui/display';
-
-import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
-import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useLingui } from '@lingui/react/macro';
+import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
+
+import { CustomSideMenuOptions } from '@/blocknote-editor/components/CustomSideMenuOptions';
+import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 
 type DashboardEditorSideMenuProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
-  boundaryElement?: HTMLElement | null;
 };
-
-const StyledSideMenuContainer = styled.div`
-  display: flex;
-  z-index: ${RootStackingContextZIndices.DropdownPortalBelowModal};
-`;
-
-const StyledDragHandleContainerWrapper = styled.div`
-  width: 20px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const StyledDragHandleContainer = styled.div`
-  align-items: center;
-  cursor: grab;
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  width: 18px;
-
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.light};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.secondary};
-    backdrop-filter: ${({ theme }) => theme.blur.medium};
-    color: ${({ theme }) => theme.font.color.primary};
-    box-shadow: ${({ theme }) => theme.boxShadow.light},
-      ${({ theme }) => theme.boxShadow.strong};
-  }
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
 
 const StyledDivToCreateGap = styled.div`
   width: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const DashboardEditorSideMenu = ({
+const DashboardAddBlockItem = ({
   editor,
-  boundaryElement,
-}: DashboardEditorSideMenuProps) => {
+  children,
+}: {
+  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
+  children: React.ReactNode;
+}) => {
+  const Components = useComponentsContext();
   const blockNoteEditor = useBlockNoteEditor();
-  const theme = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [dragHandleElement, setDragHandleElement] =
-    useState<HTMLDivElement | null>(null);
 
-  const state = useUIPluginState(
-    blockNoteEditor.sideMenu.onUpdate.bind(blockNoteEditor.sideMenu),
-  );
-
-  const virtualReference = isDefined(state?.referencePos)
-    ? { getBoundingClientRect: () => state.referencePos }
-    : null;
-
-  const { refs, floatingStyles } = useFloating({
-    placement: 'left-start',
-    whileElementsMounted: autoUpdate,
-    elements: {
-      reference: virtualReference,
-    },
-  });
-
-  if (!state?.show || !isDefined(virtualReference)) {
+  if (!Components) {
     return null;
   }
 
   const handleClick = () => {
-    blockNoteEditor.sideMenu.freezeMenu();
-    setIsMenuOpen(true);
-  };
+    const currentBlock = blockNoteEditor.getTextCursorPosition().block;
 
-  const handleDragStart = (event: React.DragEvent) => {
-    blockNoteEditor.sideMenu.blockDragStart(
-      {
-        dataTransfer: event.dataTransfer,
-        clientY: event.clientY,
-      },
-      state.block,
+    const insertedBlocks = editor.insertBlocks(
+      [{ type: 'paragraph' }],
+      currentBlock,
+      'after',
     );
-  };
 
-  const handleDragEnd = () => {
-    blockNoteEditor.sideMenu.blockDragEnd();
-  };
+    const insertedBlock = insertedBlocks[0];
+    if (isDefined(insertedBlock)) {
+      editor.setTextCursorPosition(insertedBlock);
+    }
 
-  const handleCloseMenu = () => {
-    setIsMenuOpen(false);
-    blockNoteEditor.sideMenu.unfreezeMenu();
+    blockNoteEditor.getExtension(SuggestionMenu)?.openSuggestionMenu('/');
   };
 
   return (
-    <>
-      {createPortal(
-        <StyledSideMenuContainer
-          ref={refs.setFloating}
-          style={floatingStyles}
-          className="bn-ui-container"
-        >
-          <StyledDragHandleContainerWrapper>
-            <StyledDragHandleContainer
-              ref={setDragHandleElement}
-              draggable
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onClick={handleClick}
-            >
-              <IconGripVertical
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-                color={theme.font.color.light}
-              />
-            </StyledDragHandleContainer>
-          </StyledDragHandleContainerWrapper>
-          <StyledDivToCreateGap />
-        </StyledSideMenuContainer>,
-        document.body,
-      )}
+    <Components.Generic.Menu.Item onClick={handleClick}>
+      {children}
+    </Components.Generic.Menu.Item>
+  );
+};
 
-      {isMenuOpen && (
-        <DashboardBlockDragHandleMenu
-          editor={editor}
-          block={state.block}
-          anchorElement={dragHandleElement}
-          boundaryElement={boundaryElement}
-          onClose={handleCloseMenu}
-        />
+export const DashboardEditorSideMenu = ({
+  editor,
+}: DashboardEditorSideMenuProps) => {
+  const { t } = useLingui();
+
+  return (
+    <SideMenuController
+      sideMenu={() => (
+        <SideMenu>
+          <DragHandleButton
+            dragHandleMenu={() => (
+              <DragHandleMenu>
+                <DashboardAddBlockItem editor={editor}>
+                  <CustomSideMenuOptions
+                    LeftIcon={IconPlus}
+                    text={t`Add Block`}
+                    Variant="normal"
+                  />
+                </DashboardAddBlockItem>
+                <BlockColorsItem>
+                  <CustomSideMenuOptions
+                    LeftIcon={IconColorSwatch}
+                    text={t`Change Color`}
+                    Variant="normal"
+                  />
+                </BlockColorsItem>
+                <RemoveBlockItem>
+                  <CustomSideMenuOptions
+                    LeftIcon={IconTrash}
+                    text={t`Delete`}
+                    Variant="danger"
+                  />
+                </RemoveBlockItem>
+              </DragHandleMenu>
+            )}
+          />
+          <StyledDivToCreateGap />
+        </SideMenu>
       )}
-    </>
+    />
   );
 };

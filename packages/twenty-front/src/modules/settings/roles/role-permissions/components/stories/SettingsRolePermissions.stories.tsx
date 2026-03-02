@@ -4,7 +4,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { getRolesMock } from '~/testing/mock-data/roles';
+import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const SettingsRolePermissionsWrapper = (
   args: React.ComponentProps<typeof SettingsRolePermissions>,
@@ -14,7 +14,7 @@ const SettingsRolePermissionsWrapper = (
     args.roleId,
   );
 
-  const role = getRolesMock().find((role) => role.id === args.roleId);
+  const role = mockedRoles.find((role) => role.id === args.roleId);
 
   if (isDefined(role)) {
     setSettingsDraftRole(role);
@@ -39,14 +39,14 @@ type Story = StoryObj<typeof SettingsRolePermissionsWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: '1',
+    roleId: mockedRoles[0].id,
     isEditable: true,
   },
 };
 
 export const ReadOnly: Story = {
   args: {
-    roleId: '1',
+    roleId: mockedRoles[0].id,
     isEditable: false,
   },
 };

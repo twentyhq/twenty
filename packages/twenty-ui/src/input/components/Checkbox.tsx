@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
+import { themeCssVariables } from '@ui/theme';
 import * as React from 'react';
 
 export enum CheckboxVariant {
@@ -49,131 +50,138 @@ type InputProps = {
   disabled?: boolean;
 };
 
-const StyledInputContainer = styled.div<InputProps>`
-  --size: ${({ checkboxSize, hoverable }) => {
+const StyledCheckboxContainer = styled.div<InputProps>`
+  --checkbox-outer-size: ${({ checkboxSize, hoverable }) => {
     if (hoverable === true) {
       return checkboxSize === CheckboxSize.Large ? '32px' : '24px';
     } else {
       return checkboxSize === CheckboxSize.Large ? '20px' : '14px';
     }
   }};
-  align-items: center;
-  border-radius: ${({ theme, shape }) =>
+  --checkbox-label-size: ${({ checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
+  --checkbox-icon-size: ${({ checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large ? '20px' : '14px'};
+  --checkbox-bg: ${({ indeterminate, isChecked, disabled, accent }) => {
+    if (!(indeterminate || isChecked)) return 'transparent';
+    return disabled === true
+      ? accent === CheckboxAccent.Blue
+        ? themeCssVariables.color.blue7
+        : themeCssVariables.color.orange7
+      : accent === CheckboxAccent.Blue
+        ? themeCssVariables.color.blue
+        : themeCssVariables.color.orange;
+  }};
+  --checkbox-border-color: ${({
+    indeterminate,
+    isChecked,
+    variant,
+    disabled,
+    accent,
+  }) => {
+    switch (true) {
+      case indeterminate || isChecked:
+        return disabled === true
+          ? accent === CheckboxAccent.Blue
+            ? themeCssVariables.color.blue7
+            : themeCssVariables.color.orange7
+          : accent === CheckboxAccent.Blue
+            ? themeCssVariables.color.blue
+            : themeCssVariables.color.orange;
+      case disabled === true:
+        return themeCssVariables.border.color.strong;
+      case variant === CheckboxVariant.Primary:
+        return themeCssVariables.border.color.inverted;
+      case variant === CheckboxVariant.Tertiary:
+        return themeCssVariables.border.color.medium;
+      default:
+        return themeCssVariables.border.color.secondaryInverted;
+    }
+  }};
+  --checkbox-border-radius: ${({ shape }) =>
     shape === CheckboxShape.Rounded
-      ? theme.border.radius.rounded
-      : theme.border.radius.md};
+      ? themeCssVariables.border.radius.rounded
+      : themeCssVariables.border.radius.sm};
+  --checkbox-border-width: ${({ variant, checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large || variant === CheckboxVariant.Tertiary
+      ? '1.43px'
+      : '1px'};
+  --checkbox-cursor: ${({ disabled }) =>
+    disabled === true ? 'not-allowed' : 'pointer'};
+  --checkbox-stroke: ${themeCssVariables.font.color.inverted};
 
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  align-items: center;
+  border-radius: ${({ shape }) =>
+    shape === CheckboxShape.Rounded
+      ? themeCssVariables.border.radius.rounded
+      : themeCssVariables.border.radius.md};
+  cursor: var(--checkbox-cursor);
   display: flex;
-  padding: ${({ theme, checkboxSize, hoverable }) => {
+  padding: ${({ checkboxSize, hoverable }) => {
     if (hoverable === true) {
-      return checkboxSize === CheckboxSize.Large
-        ? theme.spacing(1.5)
-        : theme.spacing(1.25);
+      return checkboxSize === CheckboxSize.Large ? '6px' : '5px';
     } else {
-      return 0;
+      return '0';
     }
   }};
   position: relative;
-  ${({ hoverable, isChecked, theme, indeterminate, disabled, accent }) => {
-    if (!hoverable || disabled === true) return '';
-    return `&:hover{
-      background-color: ${
-        indeterminate || isChecked
-          ? accent === CheckboxAccent.Blue
-            ? theme.background.transparent.blue
-            : theme.background.transparent.orange
-          : theme.background.transparent.light
-      };
-    }}
-  }`;
-  }}
+
+  &:hover {
+    background-color: ${({
+      hoverable,
+      isChecked,
+      indeterminate,
+      disabled,
+      accent,
+    }) => {
+      if (hoverable !== true || disabled === true) return 'transparent';
+      if (indeterminate === true || isChecked === true) {
+        return accent === CheckboxAccent.Blue
+          ? themeCssVariables.background.transparent.blue
+          : themeCssVariables.background.transparent.orange;
+      }
+      return themeCssVariables.background.transparent.light;
+    }};
+  }
+
+  input + label {
+    cursor: var(--checkbox-cursor);
+    height: calc(var(--checkbox-label-size) + 2px);
+    padding: 0;
+    position: relative;
+    width: calc(var(--checkbox-label-size) + 2px);
+  }
+
+  input + label:before {
+    background: var(--checkbox-bg);
+    border-color: var(--checkbox-border-color);
+    border-radius: var(--checkbox-border-radius);
+    border-style: solid;
+    border-width: var(--checkbox-border-width);
+    content: '';
+    cursor: var(--checkbox-cursor);
+    display: inline-block;
+    height: var(--checkbox-label-size);
+    width: var(--checkbox-label-size);
+  }
+
+  input + label > svg {
+    --padding: 0px;
+    height: var(--checkbox-icon-size);
+    left: var(--padding);
+    position: absolute;
+    stroke: var(--checkbox-stroke);
+    top: var(--padding);
+    width: var(--checkbox-icon-size);
+  }
 `;
 
-const StyledInput = styled.input<InputProps>`
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+const StyledCheckboxInput = styled.input`
+  cursor: ${({ disabled }) => (disabled === true ? 'not-allowed' : 'pointer')};
   margin: 0;
   opacity: 0;
   position: absolute;
   z-index: 10;
-  & + label {
-    --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-    height: calc(var(--size) + 2px);
-    padding: 0;
-    position: relative;
-    width: calc(var(--size) + 2px);
-  }
-
-  & + label:before {
-    --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    background: ${({ theme, indeterminate, isChecked, disabled, accent }) => {
-      if (!(indeterminate || isChecked)) return 'transparent';
-      return disabled
-        ? accent === CheckboxAccent.Blue
-          ? theme.color.blue7
-          : theme.color.orange7
-        : accent === CheckboxAccent.Blue
-          ? theme.color.blue
-          : theme.color.orange;
-    }};
-    border-color: ${({
-      theme,
-      indeterminate,
-      isChecked,
-      variant,
-      disabled,
-      accent,
-    }) => {
-      switch (true) {
-        case indeterminate || isChecked:
-          return disabled
-            ? accent === CheckboxAccent.Blue
-              ? theme.color.blue7
-              : theme.color.orange7
-            : accent === CheckboxAccent.Blue
-              ? theme.color.blue
-              : theme.color.orange;
-        case disabled:
-          return theme.border.color.strong;
-        case variant === CheckboxVariant.Primary:
-          return theme.border.color.inverted;
-        case variant === CheckboxVariant.Tertiary:
-          return theme.border.color.medium;
-        default:
-          return theme.border.color.secondaryInverted;
-      }
-    }};
-    border-radius: ${({ theme, shape }) =>
-      shape === CheckboxShape.Rounded
-        ? theme.border.radius.rounded
-        : theme.border.radius.sm};
-    border-style: solid;
-    border-width: ${({ variant, checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ||
-      variant === CheckboxVariant.Tertiary
-        ? '1.43px'
-        : '1px'};
-    content: '';
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-    display: inline-block;
-    height: var(--size);
-    width: var(--size);
-  }
-
-  & + label > svg {
-    --padding: 0px;
-    --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '20px' : '14px'};
-    height: var(--size);
-    left: var(--padding);
-    position: absolute;
-    stroke: ${({ theme }) => theme.font.color.inverted};
-    top: var(--padding);
-    width: var(--size);
-  }
 `;
 
 export const Checkbox = ({
@@ -205,7 +213,7 @@ export const Checkbox = ({
   const checkboxId = React.useId();
 
   return (
-    <StyledInputContainer
+    <StyledCheckboxContainer
       checkboxSize={size}
       variant={variant}
       shape={shape}
@@ -216,21 +224,15 @@ export const Checkbox = ({
       disabled={disabled}
       accent={accent}
     >
-      <StyledInput
+      <StyledCheckboxInput
         autoComplete="off"
         type="checkbox"
         id={checkboxId}
         name="styled-checkbox"
         data-testid="input-checkbox"
         checked={isInternalChecked}
-        indeterminate={indeterminate}
-        variant={variant}
-        checkboxSize={size}
-        shape={shape}
-        isChecked={isInternalChecked}
         onChange={handleChange}
         disabled={disabled}
-        accent={accent}
       />
       <label htmlFor={checkboxId}>
         {indeterminate ? (
@@ -241,6 +243,6 @@ export const Checkbox = ({
           <></>
         )}
       </label>
-    </StyledInputContainer>
+    </StyledCheckboxContainer>
   );
 };

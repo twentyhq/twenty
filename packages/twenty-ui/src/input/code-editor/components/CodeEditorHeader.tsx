@@ -1,23 +1,25 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+
+import { themeCssVariables } from '@ui/theme';
 
 const StyledEditorHeader = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  height: ${themeCssVariables.spacing[10]};
+  padding: 0 ${themeCssVariables.spacing[2]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
   justify-content: space-between;
 `;
 
 const StyledElementContainer = styled.div`
   align-content: flex-end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export type CoreEditorHeaderProps = {

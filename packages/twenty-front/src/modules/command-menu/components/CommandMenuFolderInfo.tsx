@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
@@ -6,24 +5,22 @@ import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateFolderInDraft } from '@/navigation-menu-item/hooks/useUpdateFolderInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
 `;
 
 export const CommandMenuFolderInfo = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
@@ -83,15 +80,10 @@ export const CommandMenuFolderInfo = () => {
           }
           clickableComponent={
             <StyledClickableIconWrapper>
-              <StyledNavigationMenuItemIconContainer
-                $backgroundColor={getNavigationMenuItemIconColors(theme).folder}
-              >
-                <FolderIconComponent
-                  size={theme.spacing(3.5)}
-                  color={theme.grayScale.gray1}
-                  stroke={theme.icon.stroke.md}
-                />
-              </StyledNavigationMenuItemIconContainer>
+              <NavigationMenuItemStyleIcon
+                Icon={FolderIconComponent}
+                color={selectedItem.color}
+              />
             </StyledClickableIconWrapper>
           }
         />
@@ -112,6 +104,7 @@ export const CommandMenuFolderInfo = () => {
           onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
+      label={t`Folder`}
     />
   );
 };

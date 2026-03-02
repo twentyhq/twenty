@@ -12,8 +12,8 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/nav
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
-import { useStore } from 'jotai';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
