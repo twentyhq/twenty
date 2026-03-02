@@ -65,6 +65,11 @@ export class LogicFunctionDTO {
   sourceHandlerPath: string;
 
   @IsString()
+  @IsOptional()
+  @Field({ nullable: true, deprecationReason: 'Use sourceHandlerPath instead' })
+  builtHandlerPath?: string;
+
+  @IsString()
   @Field()
   handlerName: string;
 
