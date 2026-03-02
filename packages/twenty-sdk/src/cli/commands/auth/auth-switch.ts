@@ -1,5 +1,5 @@
-import { authSwitch } from '@/cli/programmatic/auth-switch';
-import { AUTH_ERROR_CODES } from '@/cli/programmatic/types';
+import { authSwitch } from '@/cli/operations/auth-switch';
+import { AUTH_ERROR_CODES } from '@/cli/operations/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import inquirer from 'inquirer';

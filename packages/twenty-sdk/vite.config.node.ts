@@ -26,7 +26,7 @@ export default defineConfig(() => {
         entry: {
           index: 'src/sdk/index.ts',
           cli: 'src/cli/cli.ts',
-          programmatic: 'src/cli/programmatic/index.ts',
+          operations: 'src/cli/operations/index.ts',
         },
         name: 'twenty-sdk',
       },

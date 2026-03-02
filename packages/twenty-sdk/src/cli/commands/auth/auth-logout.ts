@@ -1,4 +1,4 @@
-import { authLogout } from '@/cli/programmatic/auth-logout';
+import { authLogout } from '@/cli/operations/auth-logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 
