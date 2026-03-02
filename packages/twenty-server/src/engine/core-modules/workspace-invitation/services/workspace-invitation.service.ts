@@ -257,7 +257,6 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
     roleId?: string,
-    usePersonalInvitation = true,
   ): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
@@ -276,49 +275,36 @@ export class WorkspaceInvitationService {
 
     await this.throttleInvitationSending(workspace.id, emails);
 
-    const invitationsPr = await Promise.allSettled(
+    const invitationResults = await Promise.allSettled(
       emails.map(async (email) => {
-        if (usePersonalInvitation) {
-          const appToken = await this.createWorkspaceInvitation(
-            email,
-            workspace,
-            roleId,
+        const appToken = await this.createWorkspaceInvitation(
+          email,
+          workspace,
+          roleId,
+        );
+
+        if (!appToken.context?.email) {
+          throw new WorkspaceInvitationException(
+            'Invalid email',
+            WorkspaceInvitationExceptionCode.EMAIL_MISSING,
           );
-
-          if (!appToken.context?.email) {
-            throw new WorkspaceInvitationException(
-              'Invalid email',
-              WorkspaceInvitationExceptionCode.EMAIL_MISSING,
-            );
-          }
-
-          return {
-            isPersonalInvitation: true as const,
-            appToken,
-            email: appToken.context.email,
-          };
         }
 
-        return {
-          isPersonalInvitation: false as const,
-          email,
-        };
+        return { appToken, email: appToken.context.email };
       }),
     );
 
-    for (const invitation of invitationsPr) {
+    for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
         const link = this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
           pathname: getAppPath(AppPath.Invite, {
             workspaceInviteHash: workspace?.inviteHash,
           }),
-          searchParams: invitation.value.isPersonalInvitation
-            ? {
-                inviteToken: invitation.value.appToken.value,
-                email: invitation.value.email,
-              }
-            : {},
+          searchParams: {
+            inviteToken: invitation.value.appToken.value,
+            email: invitation.value.email,
+          },
         });
 
         if (!isDefined(sender.userEmail)) {
@@ -380,15 +366,9 @@ export class WorkspaceInvitationService {
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 
-    const result = invitationsPr.reduce<{
+    const result = invitationResults.reduce<{
       errors: string[];
-      result: ReturnType<
-        typeof this.workspaceInvitationService.createWorkspaceInvitation
-      >['status'] extends 'rejected'
-        ? never
-        : ReturnType<
-            typeof this.workspaceInvitationService.appTokenToWorkspaceInvitation
-          >;
+      result: ReturnType<typeof castAppTokenToWorkspaceInvitationUtil>[];
     }>(
       (acc, invitation) => {
         if (invitation.status === 'rejected') {
@@ -400,11 +380,9 @@ export class WorkspaceInvitationService {
             acc.errors.push(reason?.message ?? 'Unknown error');
           }
         } else {
-          if (invitation.value.isPersonalInvitation) {
-            acc.result.push(
-              castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken),
-            );
-          }
+          acc.result.push(
+            castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken),
+          );
         }
 
         return acc;
