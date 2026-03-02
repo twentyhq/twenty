@@ -1,9 +1,12 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
+import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
-import { appBuild, type AppBuildResult } from './app-build';
+import { type Manifest } from 'twenty-shared/application';
+import { appBuild, type BuiltFileInfo } from './app-build';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppSyncOptions = {
@@ -18,27 +21,54 @@ export const appSync = async (
     ConfigService.setActiveWorkspace(options.workspace);
   }
 
-  const buildResult = await appBuild({ appPath: options.appPath });
+  const manifestResult = await buildManifest(options.appPath);
 
-  if (!buildResult.success) {
-    return buildResult;
+  if (manifestResult.errors.length > 0 || !manifestResult.manifest) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
+        message:
+          manifestResult.errors.join('\n') || 'Failed to build manifest.',
+      },
+    };
   }
+
+  const validation = manifestValidate(manifestResult.manifest);
+
+  if (!validation.isValid) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
+        message: validation.errors.join('\n'),
+      },
+    };
+  }
+
+  const buildResult = await appBuild({
+    appPath: options.appPath,
+    manifest: manifestResult.manifest,
+    filePaths: manifestResult.filePaths,
+  });
 
   return syncBuiltApp({
     appPath: options.appPath,
-    buildData: buildResult.data,
+    manifest: manifestResult.manifest,
+    builtFileInfos: buildResult.builtFileInfos,
   });
 };
 
 const syncBuiltApp = async ({
   appPath,
-  buildData,
+  manifest,
+  builtFileInfos,
 }: {
   appPath: string;
-  buildData: AppBuildResult;
+  manifest: Manifest;
+  builtFileInfos: Map<string, BuiltFileInfo>;
 }): Promise<CommandResult> => {
   const apiService = new ApiService();
-  const { manifest, builtFileInfos } = buildData;
   const universalIdentifier = manifest.application.universalIdentifier;
 
   const resolveResult =

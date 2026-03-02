@@ -1,7 +1,4 @@
-import {
-  appBuild,
-  type AppBuildResult,
-} from '@/cli/operations/app-build';
+import { appBuild, type AppBuildResult } from '@/cli/operations/app-build';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -183,66 +180,40 @@ export class DevModeOrchestrator {
       applicationId: this.state.steps.resolveApplication.output.applicationId,
     });
 
-    const isFirstSync =
-      !this.state.steps.startWatchers.output.watchersStarted;
+    const buildResult = await this.buildManifestStep.execute({
+      appPath: this.state.appPath,
+    });
 
-    let buildResult;
-    let initialBuildData: AppBuildResult | null = null;
+    if (!buildResult) {
+      return;
+    }
+
+    const isFirstSync = !this.state.steps.startWatchers.output.watchersStarted;
+
+    let appBuildResult: AppBuildResult | null = null;
 
     if (isFirstSync) {
-      const appBuildResult = await appBuild({
+      appBuildResult = await appBuild({
         appPath: this.state.appPath,
+        manifest: buildResult.manifest!,
+        filePaths: buildResult.filePaths,
         createWatchers: true,
       });
 
-      if (!appBuildResult.success) {
-        this.state.addEvent({
-          message: appBuildResult.error.message,
-          status: 'error',
-        });
-        this.state.updatePipeline({ status: 'error' });
-
-        return;
-      }
-
-      initialBuildData = appBuildResult.data;
-
-      for (const [builtPath, fileInfo] of initialBuildData.builtFileInfos) {
+      for (const [builtPath, fileInfo] of appBuildResult.builtFileInfos) {
         this.state.steps.uploadFiles.output.builtFileInfos.set(
           builtPath,
           fileInfo,
         );
       }
-
-      buildResult = {
-        manifest: initialBuildData.manifest,
-        filePaths: initialBuildData.filePaths,
-      };
-
-      this.state.updatePipeline({
-        appName: initialBuildData.manifest.application.displayName,
-      });
-      this.state.updateEntitiesFromManifest(initialBuildData.filePaths);
-    } else {
-      const manifestBuildResult = await this.buildManifestStep.execute({
-        appPath: this.state.appPath,
-      });
-
-      if (!manifestBuildResult) {
-        return;
-      }
-
-      buildResult = manifestBuildResult;
     }
 
     await this.startWatchersStep.handleWatcherRestarts(
       buildResult,
-      initialBuildData
+      appBuildResult
         ? {
-            logicFunctionsWatcher:
-              initialBuildData.logicFunctionsWatcher,
-            frontComponentsWatcher:
-              initialBuildData.frontComponentsWatcher,
+            logicFunctionsWatcher: appBuildResult.logicFunctionsWatcher,
+            frontComponentsWatcher: appBuildResult.frontComponentsWatcher,
           }
         : undefined,
     );

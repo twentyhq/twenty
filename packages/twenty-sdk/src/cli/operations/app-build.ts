@@ -3,17 +3,16 @@ import { buildLogicFunctions } from '@/cli/utilities/build/common/build-logic-fu
 import { type EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
-import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 import crypto from 'crypto';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppBuildOptions = {
   appPath: string;
+  manifest: Manifest;
+  filePaths: EntityFilePaths;
   createWatchers?: boolean;
 };
 
@@ -25,8 +24,6 @@ export type BuiltFileInfo = {
 };
 
 export type AppBuildResult = {
-  manifest: Manifest;
-  filePaths: EntityFilePaths;
   builtFileInfos: Map<string, BuiltFileInfo>;
   logicFunctionsWatcher: EsbuildWatcher | null;
   frontComponentsWatcher: EsbuildWatcher | null;
@@ -34,31 +31,7 @@ export type AppBuildResult = {
 
 export const appBuild = async (
   options: AppBuildOptions,
-): Promise<CommandResult<AppBuildResult>> => {
-  const buildResult = await buildManifest(options.appPath);
-
-  if (buildResult.errors.length > 0 || !buildResult.manifest) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
-        message: buildResult.errors.join('\n') || 'Failed to build manifest.',
-      },
-    };
-  }
-
-  const validation = manifestValidate(buildResult.manifest);
-
-  if (!validation.isValid) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
-        message: validation.errors.join('\n'),
-      },
-    };
-  }
-
+): Promise<AppBuildResult> => {
   const outputDir = join(options.appPath, OUTPUT_DIR);
 
   await fs.ensureDir(outputDir);
@@ -75,7 +48,7 @@ export const appBuild = async (
     });
   };
 
-  const { logicFunctions, frontComponents } = buildResult.filePaths;
+  const { logicFunctions, frontComponents } = options.filePaths;
 
   const logicFunctionsWatcher = await buildLogicFunctions({
     appPath: options.appPath,
@@ -94,7 +67,7 @@ export const appBuild = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.PublicAsset,
-    filePaths: buildResult.filePaths.publicAssets,
+    filePaths: options.filePaths.publicAssets,
     collectFileBuilt,
   });
 
@@ -108,14 +81,9 @@ export const appBuild = async (
   });
 
   return {
-    success: true,
-    data: {
-      manifest: buildResult.manifest,
-      filePaths: buildResult.filePaths,
-      builtFileInfos,
-      logicFunctionsWatcher,
-      frontComponentsWatcher,
-    },
+    builtFileInfos,
+    logicFunctionsWatcher,
+    frontComponentsWatcher,
   };
 };
 
