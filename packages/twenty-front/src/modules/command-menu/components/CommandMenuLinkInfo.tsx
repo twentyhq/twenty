@@ -1,32 +1,30 @@
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconLink } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandMenuLinkInfo = () => {
-  const theme = useTheme();
   const { t } = useLingui();
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();
@@ -63,15 +61,10 @@ export const CommandMenuLinkInfo = () => {
   return (
     <CommandMenuPageInfoLayout
       icon={
-        <StyledNavigationMenuItemIconContainer
-          $backgroundColor={getNavigationMenuItemIconColors(theme).link}
-        >
-          <IconLink
-            size={theme.spacing(3.5)}
-            color={theme.grayScale.gray1}
-            stroke={theme.icon.stroke.md}
-          />
-        </StyledNavigationMenuItemIconContainer>
+        <NavigationMenuItemStyleIcon
+          Icon={IconLink}
+          color={selectedItem.color}
+        />
       }
       title={
         <TitleInput
@@ -85,11 +78,11 @@ export const CommandMenuLinkInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={shouldFocusTitleInput}
-          onFocus={() => setShouldFocusTitleInput(false)}
+          shouldFocus={commandMenuShouldFocusTitleInput}
+          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
-      label={t`link`}
+      label={t`Link`}
     />
   );
 };

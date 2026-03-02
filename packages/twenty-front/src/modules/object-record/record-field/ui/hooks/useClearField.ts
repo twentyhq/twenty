@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useContext } from 'react';
+import { useStore } from 'jotai';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -10,6 +10,7 @@ import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/ge
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 export const useClearField = () => {
+  const store = useStore();
   const {
     recordId,
     fieldDefinition,
@@ -18,78 +19,75 @@ export const useClearField = () => {
 
   const [updateRecord] = useUpdateRecord();
 
-  const clearField = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+  const clearField = useCallback(() => {
+    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
-        const foundObjectMetadataItem = objectMetadataItems.find(
-          (item) =>
-            item.nameSingular ===
-            fieldDefinition.metadata.objectMetadataNameSingular,
-        );
+    const foundObjectMetadataItem = objectMetadataItems.find(
+      (item) =>
+        item.nameSingular ===
+        fieldDefinition.metadata.objectMetadataNameSingular,
+    );
 
-        const foundFieldMetadataItem = foundObjectMetadataItem?.fields.find(
-          (field) => field.name === fieldDefinition.metadata.fieldName,
-        );
+    const foundFieldMetadataItem = foundObjectMetadataItem?.fields.find(
+      (field) => field.name === fieldDefinition.metadata.fieldName,
+    );
 
-        if (!foundObjectMetadataItem || !foundFieldMetadataItem) {
-          throw new Error('Field metadata item cannot be found');
-        }
+    if (!foundObjectMetadataItem || !foundFieldMetadataItem) {
+      throw new Error('Field metadata item cannot be found');
+    }
 
-        const isRelation =
-          foundFieldMetadataItem.type === FieldMetadataType.RELATION ||
-          foundFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
+    const isRelation =
+      foundFieldMetadataItem.type === FieldMetadataType.RELATION ||
+      foundFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
 
-        const shouldSkipClearingBecauseInvolvesMultipleRecords =
-          isRelation &&
-          foundFieldMetadataItem.settings?.relationType ===
-            RelationType.ONE_TO_MANY;
+    const shouldSkipClearingBecauseInvolvesMultipleRecords =
+      isRelation &&
+      foundFieldMetadataItem.settings?.relationType ===
+        RelationType.ONE_TO_MANY;
 
-        if (shouldSkipClearingBecauseInvolvesMultipleRecords) {
-          return;
-        }
+    if (shouldSkipClearingBecauseInvolvesMultipleRecords) {
+      return;
+    }
 
-        const fieldName = fieldDefinition.metadata.fieldName;
+    const fieldName = fieldDefinition.metadata.fieldName;
 
-        const emptyFieldValue = generateEmptyFieldValue({
-          fieldMetadataItem: foundFieldMetadataItem,
-        });
+    const emptyFieldValue = generateEmptyFieldValue({
+      fieldMetadataItem: foundFieldMetadataItem,
+    });
 
-        set(
-          recordStoreFamilySelector({ recordId, fieldName }),
-          emptyFieldValue,
-        );
+    store.set(
+      recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+      emptyFieldValue,
+    );
 
-        const isManyToOneRelation =
-          isRelation &&
-          foundFieldMetadataItem.settings?.relationType ===
-            RelationType.MANY_TO_ONE;
+    const isManyToOneRelation =
+      isRelation &&
+      foundFieldMetadataItem.settings?.relationType ===
+        RelationType.MANY_TO_ONE;
 
-        const updateFieldName = isManyToOneRelation
-          ? getForeignKeyNameFromRelationFieldName(fieldName)
-          : fieldName;
+    const updateFieldName = isManyToOneRelation
+      ? getForeignKeyNameFromRelationFieldName(fieldName)
+      : fieldName;
 
-        if (isManyToOneRelation) {
-          set(
-            recordStoreFamilySelector({ recordId, fieldName: updateFieldName }),
-            emptyFieldValue,
-          );
-        }
+    if (isManyToOneRelation) {
+      store.set(
+        recordStoreFamilySelector.selectorFamily({
+          recordId,
+          fieldName: updateFieldName,
+        }),
+        emptyFieldValue,
+      );
+    }
 
-        updateRecord?.({
-          variables: {
-            where: { id: recordId },
-            updateOneRecordInput: {
-              [updateFieldName]: emptyFieldValue,
-            },
-          },
-        });
+    updateRecord?.({
+      variables: {
+        where: { id: recordId },
+        updateOneRecordInput: {
+          [updateFieldName]: emptyFieldValue,
+        },
       },
-    [recordId, fieldDefinition, updateRecord],
-  );
+    });
+  }, [recordId, fieldDefinition, store, updateRecord]);
 
   return clearField;
 };

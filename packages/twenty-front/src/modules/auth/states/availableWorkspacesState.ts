@@ -1,7 +1,7 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type AvailableWorkspaces } from '~/generated-metadata/graphql';
 
-export const availableWorkspacesState = createState<AvailableWorkspaces>({
+export const availableWorkspacesState = createAtomState<AvailableWorkspaces>({
   key: 'availableWorkspacesState',
   defaultValue: {
     availableWorkspacesForSignIn: [],

@@ -1,8 +1,8 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
 
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useState } from 'react';
 
 export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
@@ -10,12 +10,15 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
 
   const prefetchLoadingSetDelay = parameters.prefetchLoadingSetDelay ?? 0;
 
-  const setAreFavoritesFoldersPrefetched = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
+    prefetchIsLoadedFamilyState,
+    PrefetchKey.AllFavoritesFolders,
   );
 
-  const setAreFavoritesPrefetched = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setPrefetchIsLoadedFavorites = useSetAtomFamilyState(
+    prefetchIsLoadedFamilyState,
+    PrefetchKey.AllFavorites,
   );
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -28,14 +31,14 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
     setIsInitialized(true);
 
     setTimeout(() => {
-      setAreFavoritesPrefetched(false);
-      setAreFavoritesFoldersPrefetched(false);
+      setPrefetchIsLoadedFavorites(false);
+      setPrefetchIsLoaded(false);
     }, prefetchLoadingSetDelay);
   }, [
     isInitialized,
     prefetchLoadingSetDelay,
-    setAreFavoritesFoldersPrefetched,
-    setAreFavoritesPrefetched,
+    setPrefetchIsLoaded,
+    setPrefetchIsLoadedFavorites,
   ]);
 
   return <Story />;

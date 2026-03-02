@@ -1,7 +1,6 @@
 import {
   IconBrandAnthropic,
   IconBrandGoogle,
-  IconBrandGroq,
   IconBrandMistral,
   IconBrandOpenai,
   IconBrandXai,
@@ -9,15 +8,16 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 
-export const PROVIDER_CONFIG: Record<
+// Keyed by the server-side ModelFamily enum values (lowercase) since
+// the client config is fetched via REST, not GraphQL.
+export const MODEL_FAMILY_CONFIG: Record<
   string,
   { label: string; Icon: IconComponent }
 > = {
-  OPENAI: { label: 'OpenAI', Icon: IconBrandOpenai },
-  ANTHROPIC: { label: 'Anthropic', Icon: IconBrandAnthropic },
-  XAI: { label: 'xAI', Icon: IconBrandXai },
-  GOOGLE: { label: 'Google', Icon: IconBrandGoogle },
-  GROQ: { label: 'Groq', Icon: IconBrandGroq },
-  MISTRAL: { label: 'Mistral', Icon: IconBrandMistral },
-  NONE: { label: '', Icon: IconRobot },
+  openai: { label: 'OpenAI', Icon: IconBrandOpenai },
+  anthropic: { label: 'Anthropic', Icon: IconBrandAnthropic },
+  xai: { label: 'xAI', Icon: IconBrandXai },
+  google: { label: 'Google', Icon: IconBrandGoogle },
+  mistral: { label: 'Mistral', Icon: IconBrandMistral },
+  FALLBACK: { label: '', Icon: IconRobot },
 };

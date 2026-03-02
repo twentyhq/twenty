@@ -11,7 +11,7 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -36,7 +36,7 @@ export const RecordBoardCardDraggableContainer = ({
 
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
-  const isRecordBoardCardFocusActive = useRecoilComponentFamilyValue(
+  const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -61,7 +61,7 @@ export const RecordBoardCardDraggableContainer = ({
             data-select-disable
           >
             <DragAndDropLibraryLegacyReRenderBreaker memoizationId={recordId}>
-              {isRecordBoardCardFocusActive && <RecordBoardCardHotkeysEffect />}
+              {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
               <RecordBoardCard />
               <RecordBoardCardMultiDragPreview />
             </DragAndDropLibraryLegacyReRenderBreaker>

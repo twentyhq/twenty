@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client';
 import { DISMISS_RECONNECT_ACCOUNT_BANNER } from '@/information-banner/graphql/mutations/dismissReconnectAccountBanner';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type DismissReconnectAccountBannerMutationVariables = {
   connectedAccountId: string;
@@ -25,7 +25,7 @@ export const useDismissReconnectAccountBanner = (
     client: apolloCoreClient,
   });
 
-  const setInformationBannerIsOpenComponent = useSetRecoilComponentState(
+  const setInformationBannerIsOpen = useSetAtomComponentState(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );
@@ -36,7 +36,7 @@ export const useDismissReconnectAccountBanner = (
         connectedAccountId,
       },
     });
-    setInformationBannerIsOpenComponent(false);
+    setInformationBannerIsOpen(false);
   };
 
   return {

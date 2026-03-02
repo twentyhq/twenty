@@ -1,8 +1,8 @@
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const isPageLayoutTabDraggingComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'isPageLayoutTabDraggingComponentState',
     defaultValue: false,
     componentInstanceContext: TabListComponentInstanceContext,

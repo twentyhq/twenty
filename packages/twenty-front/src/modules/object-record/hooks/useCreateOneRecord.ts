@@ -29,7 +29,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useCreateOneRecordProps = {
@@ -68,7 +68,7 @@ export const useCreateOneRecord = <
     recordGqlFields: computedRecordGqlFields,
   });
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const createOneRecordInCache = useCreateOneRecordInCache<CreatedObjectRecord>(
     {

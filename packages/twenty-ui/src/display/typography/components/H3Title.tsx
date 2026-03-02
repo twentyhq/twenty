@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { themeCssVariables } from '@ui/theme';
 
 type H3TitleProps = {
   title: ReactNode;
@@ -14,18 +15,18 @@ const StyledContainer = styled.div`
 `;
 
 const StyledH3Title = styled.h3`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   margin: 0;
 `;
 
 const StyledDescription = styled.h4`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const H3Title = ({ title, description, className }: H3TitleProps) => {

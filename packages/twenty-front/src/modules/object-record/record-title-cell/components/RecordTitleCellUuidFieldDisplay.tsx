@@ -1,9 +1,9 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
@@ -27,9 +27,9 @@ export const RecordTitleCellUuidFieldDisplay = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const uuidValue = recordValue?.[fieldDefinition.metadata.fieldName] ?? '';
+  const uuidValue = recordStore?.[fieldDefinition.metadata.fieldName] ?? '';
 
   return (
     <StyledDiv>

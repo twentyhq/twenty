@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { type FieldRelationValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -11,7 +10,8 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -25,15 +25,16 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue<T>>(
-    recordStoreFamilySelector({ recordId, fieldName }),
-  );
+  const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
+    recordStoreFamilySelector,
+    { recordId, fieldName },
+  ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  const draftValue = useRecoilComponentValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
-  const initialSearchValue = draftValue;
+  const initialSearchValue = recordFieldInputDraftValue;
 
   return {
     fieldDefinition,

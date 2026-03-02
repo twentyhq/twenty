@@ -3,7 +3,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -63,14 +63,14 @@ const setupMockUseParams = (objectNamePlural?: string) => {
     .mockReturnValueOnce({ objectNamePlural: objectNamePlural ?? '' });
 };
 
-jest.mock('recoil');
-const setupMockRecoil = (
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
+const setupMockState = (
   objectNamePlural?: string,
   verifyEmailRedirectPath?: string,
   calendarBookingPageId?: string | null,
 ) => {
   jest
-    .mocked(useRecoilValue)
+    .mocked(useAtomStateValue)
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath);
@@ -340,7 +340,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLoggedIn);
       setupMockUseParams(objectNamePluralFromParams);
-      setupMockRecoil(objectNamePluralFromMetadata, verifyEmailRedirectPath);
+      setupMockState(objectNamePluralFromMetadata, verifyEmailRedirectPath);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },

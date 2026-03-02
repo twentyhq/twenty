@@ -14,7 +14,7 @@
 
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
-- Type‑safe client and workspace entity typings
+- Two auto‑generated typed GraphQL clients: `CoreApiClient` (workspace data) and `MetadataApiClient` (workspace configuration & file uploads)
 - Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
@@ -52,6 +52,7 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
+  app:typecheck        Run TypeScript type checking on the application
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
@@ -124,6 +125,8 @@ Application development commands.
 - `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
+- `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
+
 - `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
 
 ### Entity
@@ -152,7 +155,8 @@ Application development commands.
 
 - `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
   - Options:
-    - `--postInstall`: Execute the post-install logic function defined in the application config (required if `-n` and `-u` not provided).
+    - `--preInstall`: Execute the pre-install logic function defined in the application manifest (required if `--postInstall`, `-n`, and `-u` not provided).
+    - `--postInstall`: Execute the post-install logic function defined in the application manifest (required if `--preInstall`, `-n`, and `-u` not provided).
     - `-n, --functionName <name>`: Name of the function to execute (required if `--postInstall` and `-u` not provided).
     - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `--postInstall` and `-n` not provided).
     - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
@@ -165,6 +169,9 @@ twenty app:dev
 
 # Start dev mode with a custom workspace profile
 twenty app:dev --workspace my-custom-workspace
+
+# Type check the application
+twenty app:typecheck
 
 # Add a new entity interactively
 twenty entity:add
@@ -201,6 +208,9 @@ twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Execute a function by universal identifier
 twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
+
+# Execute the pre-install function
+twenty function:execute --preInstall
 
 # Execute the post-install function
 twenty function:execute --postInstall

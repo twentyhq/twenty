@@ -31,7 +31,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isSearchable: false,
     duplicateCriteria: null,
     shortcut: null,
-    isLabelSyncedWithName: true,
+    isLabelSyncedWithName: false,
     fieldUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],

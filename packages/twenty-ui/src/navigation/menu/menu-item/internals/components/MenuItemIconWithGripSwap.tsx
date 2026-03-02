@@ -1,7 +1,8 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent, IconGripVertical } from '@ui/display';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 const StyledIconSwapContainer = styled.div`
@@ -13,14 +14,16 @@ const StyledIconSwapContainer = styled.div`
 
 const StyledDefaultIcon = styled.div`
   display: flex;
-  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s)
+    ease;
 `;
 
 const StyledHoverIcon = styled.div`
   position: absolute;
   display: flex;
   opacity: 0;
-  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s)
+    ease;
 `;
 
 export type MenuItemIconWithGripSwapProps = {
@@ -34,7 +37,7 @@ export const MenuItemIconWithGripSwap = ({
   withIconContainer = false,
   gripIconColor,
 }: MenuItemIconWithGripSwapProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   if (!LeftIcon) {
     return null;

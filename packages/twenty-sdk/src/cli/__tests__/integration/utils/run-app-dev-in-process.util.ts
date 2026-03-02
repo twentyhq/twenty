@@ -5,6 +5,8 @@ import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export type RunAppDevResult = {
   success: boolean;
+  events?: { message: string; status: string }[];
+  stepStatuses?: Record<string, string>;
 };
 
 export const runAppDevInProcess = async (options: {
@@ -22,7 +24,6 @@ export const runAppDevInProcess = async (options: {
 
   while (Date.now() - startTime < timeout) {
     if (await fs.pathExists(manifestPath)) {
-      // Small delay to let any pending writes finish
       await new Promise((resolve) => setTimeout(resolve, 500));
       await command.close();
 
@@ -31,7 +32,20 @@ export const runAppDevInProcess = async (options: {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
+  const state = command.getOrchestrator()?.getState();
+
+  const events = state?.events.map((event) => ({
+    message: event.message,
+    status: event.status,
+  }));
+
+  const stepStatuses = state
+    ? Object.fromEntries(
+        Object.entries(state.steps).map(([key, step]) => [key, step.status]),
+      )
+    : undefined;
+
   await command.close();
 
-  return { success: false };
+  return { success: false, events, stepStatuses };
 };

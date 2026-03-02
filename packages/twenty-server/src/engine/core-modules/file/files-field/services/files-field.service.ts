@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import {
   FilesFieldException,
@@ -42,7 +42,7 @@ export class FilesFieldService {
     workspaceId: string;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
-  }): Promise<FileWithSignedUrlDto> {
+  }): Promise<FileWithSignedUrlDTO> {
     if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
       throw new FilesFieldException(
         'fieldMetadataId or fieldMetadataUniversalIdentifier must be provided',

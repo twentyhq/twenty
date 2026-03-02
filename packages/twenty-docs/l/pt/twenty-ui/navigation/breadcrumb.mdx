@@ -10,32 +10,38 @@ image: /images/user-guide/fields/field.png
 Renderiza uma barra de trilha de navegação.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { BrowserRouter } from "react-router-dom";
-    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      const breadcrumbLinks = [
-        { children: "Home", href: "/" },
-        { children: "Category", href: "/category" },
-        { children: "Subcategory", href: "/category/subcategory" },
-        { children: "Current Page" },
-      ];
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-      return (
-        <BrowserRouter>
-          <Breadcrumb className links={breadcrumbLinks} />
-        </BrowserRouter>
-        )
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo   | Descrição                                                                                                                                                                                                                         |
-    | ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className    | string | Nome de classe opcional para estilo adicional                                                                                                                                                                                     |
-    | links        | array  | Um array de objetos, cada um representando um link da trilha de navegação. Cada objeto tem uma propriedade `children` (o conteúdo textual do link) e uma propriedade opcional `href` (a URL para navegar quando se clica no link) |
-  </Tab>
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo   | Descrição                                                                                                                                                                                                                         |
+| ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className    | string | Nome de classe opcional para estilo adicional                                                                                                                                                                                     |
+| links        | array  | Um array de objetos, cada um representando um link da trilha de navegação. Cada objeto tem uma propriedade `children` (o conteúdo textual do link) e uma propriedade opcional `href` (a URL para navegar quando se clica no link) |
+
+
+
+</Tab>
 </Tabs>

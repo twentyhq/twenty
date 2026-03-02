@@ -19,7 +19,7 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/consta
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { frontComponentHostCommunicationApi } from '@/sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
-import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
+import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
@@ -45,13 +45,15 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
   installStyleBridge(root);
 
-  if (
-    isDefined(renderContext.applicationAccessToken) &&
-    isDefined(renderContext.apiUrl)
-  ) {
+  if (isDefined(renderContext.apiUrl)) {
+    setWorkerEnv({
+      TWENTY_API_URL: renderContext.apiUrl,
+    });
+  }
+
+  if (isDefined(renderContext.applicationAccessToken)) {
     setWorkerEnv({
       TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
-      TWENTY_API_URL: renderContext.apiUrl,
     });
   }
 
@@ -91,10 +93,15 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
 
     frontComponentHostCommunicationApi.navigate = hostApi.navigate;
+    frontComponentHostCommunicationApi.requestAccessTokenRefresh =
+      hostApi.requestAccessTokenRefresh;
     frontComponentHostCommunicationApi.openSidePanelPage =
       hostApi.openSidePanelPage;
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
+    frontComponentHostCommunicationApi.enqueueSnackbar =
+      hostApi.enqueueSnackbar;
+    frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (

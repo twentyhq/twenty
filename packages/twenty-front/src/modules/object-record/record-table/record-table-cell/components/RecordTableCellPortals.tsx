@@ -5,13 +5,13 @@ import { RecordTableCellFocusedPortal } from '@/object-record/record-table/recor
 import { RecordTableCellHoveredPortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortals = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableFocusActive = useRecoilComponentValue(
+  const isRecordTableCellFocusActive = useAtomComponentStateValue(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
@@ -22,7 +22,7 @@ export const RecordTableCellPortals = () => {
     <>
       <RecordTableCellHoveredPortal />
       <RecordTableCellFocusedPortal />
-      {isRecordTableFocusActive && (
+      {isRecordTableCellFocusActive && (
         <>
           <RecordTableCellEditModePortal />
           {isDefined(recordTableCellFocusId) && (

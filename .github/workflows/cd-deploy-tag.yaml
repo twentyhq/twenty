@@ -11,7 +11,7 @@ on:
 jobs:
   deploy-tag:
     timeout-minutes: 3
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2

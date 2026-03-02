@@ -5,8 +5,8 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
@@ -54,10 +54,9 @@ export const RecordTableColumnHead = ({
 }: RecordTableColumnHeadProps) => {
   const theme = useTheme();
 
-  const correspondingFieldMetadataItem = useRecoilValue(
-    fieldMetadataItemByIdSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
+    fieldMetadataItemByIdSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const { getIcon } = useIcons();
@@ -65,13 +64,12 @@ export const RecordTableColumnHead = ({
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
   );
 
-  const isLabelIdentifier = useRecoilValue(
-    isFieldMetadataItemLabelIdentifierSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const isLabelIdentifier = useAtomFamilySelectorValue(
+    isFieldMetadataItemLabelIdentifierSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 

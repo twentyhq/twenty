@@ -1,9 +1,13 @@
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 const TestWrapper = ({
   children,
@@ -13,24 +17,22 @@ const TestWrapper = ({
   children: ReactNode;
   initialEntry?: string;
   isDeveloperDefaultSignInPrefilled?: boolean;
-}) => (
-  <MemoryRouter initialEntries={[initialEntry]}>
-    <RecoilRoot
-      initializeState={(snapshot) => {
-        snapshot.set(
-          isDeveloperDefaultSignInPrefilledState,
-          isDeveloperDefaultSignInPrefilled,
-        );
-      }}
-    >
-      {children}
-    </RecoilRoot>
-  </MemoryRouter>
-);
+}) => {
+  jotaiStore.set(
+    isDeveloperDefaultSignInPrefilledState.atom,
+    isDeveloperDefaultSignInPrefilled,
+  );
+  return (
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+    </MemoryRouter>
+  );
+};
 
 describe('useSignInUpForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetJotaiStore();
   });
 
   it('should initialize the form with default values', async () => {

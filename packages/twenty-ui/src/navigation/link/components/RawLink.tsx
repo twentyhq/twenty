@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 type RawLinkProps = {
   className?: string;

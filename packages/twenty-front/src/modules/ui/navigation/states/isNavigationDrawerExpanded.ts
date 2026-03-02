@@ -1,9 +1,9 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 
-export const isNavigationDrawerExpandedState = createStateV2<boolean>({
+export const isNavigationDrawerExpandedState = createAtomState<boolean>({
   key: 'isNavigationDrawerExpanded',
   defaultValue: !isMobile,
   useLocalStorage: true,

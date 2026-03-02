@@ -32,9 +32,13 @@ export class JwtAuthGuard implements CanActivate {
           )
         : undefined;
 
-      if (!isDefined(data.apiKey) && !isDefined(data.userWorkspaceId)) {
+      if (
+        !isDefined(data.apiKey) &&
+        !isDefined(data.userWorkspaceId) &&
+        !isDefined(data.application)
+      ) {
         this.logger.warn(
-          `Auth failed: no apiKey or userWorkspaceId in context`,
+          `Auth failed: no apiKey, userWorkspaceId, or application in context`,
         );
 
         return false;

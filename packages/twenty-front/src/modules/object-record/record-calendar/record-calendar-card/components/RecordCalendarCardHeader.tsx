@@ -5,11 +5,11 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
@@ -38,19 +38,19 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const isDraggingRecord = useRecoilComponentValue(
+  const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
   );
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyState(
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
+    useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
     );
@@ -62,7 +62,7 @@ export const RecordCalendarCardHeader = ({
     openRecordFromIndexView({ recordId });
   };
 
-  if (!isDefined(record)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
 
@@ -72,7 +72,7 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
+            record={recordStore}
             variant={ChipVariant.Transparent}
             isIconHidden={true}
             onClick={handleChipClick}
@@ -84,9 +84,9 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordCalendarCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordCalendarCardSelected(value.target.checked);
             }}
             variant={CheckboxVariant.Secondary}
           />

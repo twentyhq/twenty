@@ -1,40 +1,41 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFieldsComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFieldEffect = () => {
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const currentView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: contextStoreCurrentViewId ?? '',
+    },
   );
 
   const [
     hasInitializedCurrentRecordFields,
     setHasInitializedCurrentRecordFields,
-  ] = useRecoilComponentFamilyState(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFieldsComponentFamilyState,
     {
-      viewId: currentViewId ?? undefined,
+      viewId: contextStoreCurrentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetAtomComponentState(
     currentRecordFieldsComponentState,
   );
 
@@ -53,7 +54,7 @@ export const ViewBarRecordFieldEffect = () => {
       setHasInitializedCurrentRecordFields(true);
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     setCurrentRecordFields,
     hasInitializedCurrentRecordFields,
     setHasInitializedCurrentRecordFields,

@@ -1,22 +1,22 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteActionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const filename = `${(recordStore?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const handleClick = async () => {
-    if (!isDefined(selectedRecord)) {
+    if (!isDefined(recordStore)) {
       return;
     }
 
-    const initialBody = selectedRecord.bodyV2?.blocknote;
+    const initialBody = recordStore.bodyV2?.blocknote;
 
     let parsedBody = [];
 

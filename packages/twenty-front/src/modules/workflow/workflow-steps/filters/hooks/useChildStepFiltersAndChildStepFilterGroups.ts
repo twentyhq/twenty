@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
@@ -9,13 +9,15 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
 }: {
   stepFilterGroupId: string;
 }) => {
-  const stepFilterGroups = useRecoilComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
 
-  const stepFilters = useRecoilComponentValue(currentStepFiltersComponentState);
+  const currentStepFilters = useAtomComponentStateValue(
+    currentStepFiltersComponentState,
+  );
 
-  const currentStepFilterGroup = stepFilterGroups?.find(
+  const currentStepFilterGroup = currentStepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,
   );
 
@@ -31,11 +33,11 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
     };
   }
 
-  const childStepFilters = stepFilters?.filter(
+  const childStepFilters = currentStepFilters?.filter(
     (filter) => filter.stepFilterGroupId === currentStepFilterGroup.id,
   );
 
-  const childStepFilterGroups = stepFilterGroups?.filter(
+  const childStepFilterGroups = currentStepFilterGroups?.filter(
     (filterGroup) =>
       filterGroup.parentStepFilterGroupId === currentStepFilterGroup.id,
   );

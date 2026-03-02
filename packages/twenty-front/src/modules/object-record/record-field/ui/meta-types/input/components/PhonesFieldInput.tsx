@@ -3,7 +3,7 @@ import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks
 import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
@@ -128,12 +128,12 @@ export const PhonesFieldInput = () => {
     index === 0 && phones.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentState(
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const handleError = (hasError: boolean, values: any[]) => {
-    setIsFieldInError(hasError && values.length === 0);
+    setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
   const handleClickOutside = (

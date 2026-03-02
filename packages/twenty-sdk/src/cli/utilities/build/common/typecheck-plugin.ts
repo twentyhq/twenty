@@ -72,10 +72,17 @@ const toEsbuildErrors = (errors: TypecheckError[]): esbuild.PartialMessage[] =>
     },
   }));
 
-export const createTypecheckPlugin = (appPath: string): esbuild.Plugin => ({
+export const createTypecheckPlugin = (
+  appPath: string,
+  shouldSkipTypecheck: () => boolean,
+): esbuild.Plugin => ({
   name: 'typecheck',
   setup: (build) => {
     build.onStart(async () => {
+      if (shouldSkipTypecheck()) {
+        return;
+      }
+
       const errors = await runTypecheck(appPath);
 
       return { errors: toEsbuildErrors(errors) };

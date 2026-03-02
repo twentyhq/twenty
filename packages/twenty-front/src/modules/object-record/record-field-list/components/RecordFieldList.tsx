@@ -24,7 +24,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 type RecordFieldListProps = {
@@ -66,7 +66,7 @@ export const RecordFieldList = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+  const setRecordFieldListHoverPosition = useSetAtomComponentState(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );

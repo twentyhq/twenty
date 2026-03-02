@@ -5,7 +5,7 @@ title: Nastavení
 # Správa konfigurace
 
 <Warning>
-  **Instalujete poprvé?** Postupujte podle [průvodce instalací Docker Compose](/l/cs/developers/self-host/capabilities/docker-compose) k rozchození Twenty, a poté se sem vraťte pro konfiguraci.
+**Instalujete poprvé?** Postupujte podle [průvodce instalací Docker Compose](/l/cs/developers/self-host/capabilities/docker-compose) k rozchození Twenty, a poté se sem vraťte pro konfiguraci.
 </Warning>
 
 Twenty nabízí **dvě konfigurační režimy** pro různé potřeby nasazení:
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
 4. Změny se projeví okamžitě (u nasazení s více kontejnery do 15 sekund)
 
 <Warning>
-  **Nasazení s více kontejnery:** Při použití databázové konfigurace (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) čtou oba serverové i pracovní kontejnery ze stejné databáze. Změny v administračním panelu se dotýkají obou automaticky, což eliminuje potřebu duplicitních proměnných prostředí mezi kontejnery (s výjimkou infrastrukturních proměnných).
+**Nasazení s více kontejnery:** Při použití databázové konfigurace (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) čtou oba serverové i pracovní kontejnery ze stejné databáze. Změny v administračním panelu se dotýkají obou automaticky, což eliminuje potřebu duplicitních proměnných prostředí mezi kontejnery (s výjimkou infrastrukturních proměnných).
 </Warning>
 
 **Co můžete konfigurovat přes administrační panel:**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
 ![Proměnné konfigurace Admin panelu](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  Každá proměnná je dokumentována s popisy ve vašem administračním panelu v sekci **Nastavení → Admin panel → Konfigurační proměnné**.
-  Některá nastavení infrastruktury, jako připojení k databázi (`PG_DATABASE_URL`), URL serveru (`SERVER_URL`) a tajemství aplikace (`APP_SECRET`), lze konfigurovat pouze prostřednictvím souboru `.env`.
+Každá proměnná je dokumentována s popisy ve vašem administračním panelu v sekci **Nastavení → Admin panel → Konfigurační proměnné**.
+Některá nastavení infrastruktury, jako připojení k databázi (`PG_DATABASE_URL`), URL serveru (`SERVER_URL`) a tajemství aplikace (`APP_SECRET`), lze konfigurovat pouze prostřednictvím souboru `.env`.
 
-  [Kompletní technická referenční příručka →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Kompletní technická referenční příručka →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. Konfigurace pouze přes prostředí
@@ -93,7 +93,7 @@ Povolte režim více pracovních prostorů pro nasazení typu SaaS, kde více ne
 * Nastavení specifická pro pracovní prostor, jako je subdoména a vlastní doména, se zpřístupní v nastavení pracovního prostoru
 
 <Warning>
-  **Nastavení pouze na úrovni prostředí:** `IS_MULTIWORKSPACE_ENABLED` lze konfigurovat pouze prostřednictvím souboru `.env` a vyžaduje restart. Nelze jej změnit prostřednictvím administračního panelu.
+**Nastavení pouze na úrovni prostředí:** `IS_MULTIWORKSPACE_ENABLED` lze konfigurovat pouze prostřednictvím souboru `.env` a vyžaduje restart. Nelze jej změnit prostřednictvím administračního panelu.
 </Warning>
 
 ### Konfigurace DNS pro více pracovních prostorů
@@ -149,7 +149,7 @@ Pokud je povoleno, pouze uživatelé s `canAccessFullAdminPanel` mohou vytváře
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
 **Požadované rozsahy** (automaticky konfigurované):
@@ -168,7 +168,7 @@ V části [Obrazovka souhlasu s OAuth](https://console.cloud.google.com/apis/cre
 ## Integrace Microsoft 365
 
 <Warning>
-  Uživatelé musí mít [Licence Microsoft 365](https://admin.microsoft.com/Adminportal/Home), aby mohli používat API Kalendáře a Zpráv. Bez něj nebudou moci synchronizovat svůj účet na Twenty.
+Uživatelé musí mít [Licence Microsoft 365](https://admin.microsoft.com/Adminportal/Home), aby mohli používat API Kalendáře a Zpráv. Bez něj nebudou moci synchronizovat svůj účet na Twenty.
 </Warning>
 
 ### Vytvořte projekt v Microsoft Azure
@@ -211,7 +211,7 @@ Musíte přidat následující URI přesměrování do vašeho projektu:
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
 ### Konfigurace rozsahů
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. Nakonfigurujte své nastavení SMTP:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    Budete potřebovat zřídit [Heslo aplikace](https://support.google.com/accounts/answer/185833).
 
+  <ArticleTab>
+
+  Budete potřebovat zřídit [Heslo aplikace](https://support.google.com/accounts/answer/185833).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
+  * Spusťte obraz smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * Přístup k uživatelskému rozhraní smtp4dev zde: [http://localhost:8090](http://localhost:8090)
+  * Nastavte následující proměnné:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
-
-    * Spusťte obraz smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * Přístup k uživatelskému rozhraní smtp4dev zde: [http://localhost:8090](http://localhost:8090)
-    * Nastavte následující proměnné:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
 ## Logické funkce
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty podporuje logické funkce pro pracovní postupy a vlastní logiku. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
 
 <Warning>
-  **Upozornění na zabezpečení:** Místní ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
+**Upozornění na zabezpečení:** Místní ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Dostupné ovladače
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění logické funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory logických funkcí.
+Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění logické funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory logických funkcí.
 </Note>

@@ -1,32 +1,34 @@
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useSetLastVisitedObjectMetadataId = () => {
-  const setLastVisitedObjectMetadataId = useRecoilCallback(
-    ({ set, snapshot }) =>
-      ({ objectMetadataItemId }: { objectMetadataItemId: string }) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+  const store = useStore();
+  const setLastVisitedObjectMetadataId = useCallback(
+    ({ objectMetadataItemId }: { objectMetadataItemId: string }) => {
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
-        const objectMetadataItem = objectMetadataItems.find(
-          (item) => item.id === objectMetadataItemId,
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.id === objectMetadataItemId,
+      );
+
+      const lastVisitedObjectMetadataItemId = store.get(
+        lastVisitedObjectMetadataItemIdState.atom,
+      );
+
+      if (
+        isDefined(objectMetadataItem) &&
+        lastVisitedObjectMetadataItemId !== objectMetadataItemId
+      ) {
+        store.set(
+          lastVisitedObjectMetadataItemIdState.atom,
+          objectMetadataItemId,
         );
-
-        const lastVisitedObjectMetadataItemId = snapshot
-          .getLoadable(lastVisitedObjectMetadataItemIdState)
-          .getValue();
-
-        if (
-          isDefined(objectMetadataItem) &&
-          lastVisitedObjectMetadataItemId !== objectMetadataItemId
-        ) {
-          set(lastVisitedObjectMetadataItemIdState, objectMetadataItemId);
-        }
-      },
-    [],
+      }
+    },
+    [store],
   );
 
   return {

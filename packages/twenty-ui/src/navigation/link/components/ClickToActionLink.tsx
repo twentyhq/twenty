@@ -1,18 +1,20 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
+
+import { themeCssVariables } from '@ui/theme';
 
 const StyledButtonLink = styled.a`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: 0 ${themeCssVariables.spacing[1]};
   text-decoration: none;
 
   :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
     cursor: pointer;
   }
 `;

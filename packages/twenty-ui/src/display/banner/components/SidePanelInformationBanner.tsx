@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from '@ui/theme';
 import {
   IconAlertTriangle,
   IconInfoCircle,
@@ -8,18 +9,18 @@ import { AppTooltip } from '../../tooltip/AppTooltip';
 
 const StyledBanner = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.accent.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.accent.secondary};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.color.blue};
+  color: ${themeCssVariables.color.blue};
   display: flex;
   flex-shrink: 0;
   height: 16px;
@@ -28,12 +29,12 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledMessage = styled.p`
-  color: ${({ theme }) => theme.color.blue};
+  color: ${themeCssVariables.color.blue};
   flex-grow: 1;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
   margin: 0;
   min-width: 0;

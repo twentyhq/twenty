@@ -4,7 +4,7 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
   const { reorderVisibleRecordFields } =
@@ -12,8 +12,8 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
-  const processOptionDropdownDragEnd: OnDragEndResponder = useRecoilCallback(
-    () => async (result) => {
+  const processOptionDropdownDragEnd: OnDragEndResponder = useCallback(
+    async (result) => {
       if (
         !result.destination ||
         result.destination.index === 1 ||

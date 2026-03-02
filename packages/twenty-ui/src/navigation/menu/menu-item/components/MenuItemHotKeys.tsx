@@ -1,32 +1,34 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
+
+import { themeCssVariables } from '@ui/theme';
 
 const StyledCommandTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
 `;
 
 const StyledCommandText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   vertical-align: middle;
   white-space: nowrap;
 `;
 
 const StyledCommandKey = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.underline};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-shadow: ${themeCssVariables.boxShadow.underline};
   display: flex;
   flex-direction: column;
   height: 18px;
   justify-content: center;
   text-align: center;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${themeCssVariables.spacing[4]};
 `;
 
 export type MenuItemHotKeysProps = {

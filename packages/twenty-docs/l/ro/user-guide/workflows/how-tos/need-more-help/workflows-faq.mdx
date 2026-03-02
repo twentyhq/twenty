@@ -4,6 +4,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="De ce nu pot activa un flux de lucru?">
     Este probabil o problemă de permisiuni. Aveți nevoie de acces la fluxuri de lucru pentru a le crea și activa.
 
@@ -27,7 +28,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
   <Accordion title="Care este diferența dintre declanșatoarele manuale Single, Global și Bulk?">
     | Tip | Înregistrări necesare | Rulările fluxului de lucru |
     | --- | --------------------- | -------------------------- |
-
     \| **Global** | Niciuna | O dată, fără input de înregistrare |
     \| **Single** | Una sau mai multe selectate | O dată pentru fiecare înregistrare selectată |
     \| **Bulk** | Una sau mai multe selectate | O dată, cu toate înregistrările ca un array |
@@ -61,7 +61,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Da**, ramurile rulează în paralel în mod implicit.
 
     Dacă doriți ca doar o singură ramură să se execute:
-
     * Adăugați o acțiune **Filter** la începutul fiecărei ramuri
     * Setați condiții opuse (de ex., Ramura A: status = "Open", Ramura B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Da**. După ce ramurile paralele se finalizează, puteți adăuga un pas la care se conectează ambele ramuri.
 
     În editorul de fluxuri de lucru:
-
     1. Finalizați acțiunile din ramuri
     2. Adăugați un pas nou după ramuri
     3. Trageți conexiuni de la finalul fiecărei ramuri către acest pas nou
@@ -84,7 +82,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Search Records returnează maximum 200 de înregistrări.**
 
     Dacă aveți nevoie să procesați mai multe:
-
     * Adăugați filtre mai specifice pentru a reduce rezultatele
     * Utilizați fluxuri de lucru programate pentru a procesa în loturi
     * Luați în considerare utilizarea API-ului pentru operațiuni în masă
@@ -102,12 +99,10 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Fiecare acțiune produce date de ieșire care pot fi utilizate în pașii următori.
 
     **Pentru a face referire la datele din pașii anteriori**:
-
     * Utilizați selectorul de variabile când configurați un câmp
     * Sau tastați direct `{{stepName.fieldName}}`
 
     **Exemple**:
-
     * Datele declanșatorului: `{{trigger.object.email}}`
     * Rezultatele căutării: `{{searchRecords[0].name}}`
     * Rezultatul codului: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     3. **Variabilă selectată greșit**: Asigurați-vă că selectați array-ul în sine, nu o singură înregistrare
 
     **Configurare corectă**:
-
     1. Search Records (returnează un array)
     2. Filter: length > 0
     3. Iterator: selectați `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Dacă codul depășește această limită, acțiunea va eșua cu o eroare de timeout.
 
     **Sfaturi pentru a evita timeout-urile**:
-
     * Împărțiți operațiunile mari în bucăți mai mici folosind Iterator
     * Evitați calculele grele; utilizați servicii externe prin HTTP Request pentru procesări intensive
     * Optimizați codul pentru a reduce timpul de execuție
@@ -149,12 +142,10 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Rulările fluxului de lucru afișează istoricul execuției și vă ajută să depanați problemele.
 
     **Accesarea rulărilor**:
-
     * În editorul de fluxuri de lucru → panoul **Runs** din dreapta
     * Sau accesați **Rulări ale fluxurilor de lucru** în bara laterală
 
     **Înțelegerea unei rulări**:
-
     * **Status**: Running, Completed, Failed, Waiting
     * **Pași**: Vedeți ce pași au fost executați și rezultatul lor
     * **Erori**: Faceți clic pe pașii eșuați pentru a vedea mesajele de eroare
@@ -171,13 +162,11 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Dacă depășiți această limită, fluxurile de lucru sunt marcate imediat ca eșuate și nu vor apărea în lista de rulări, așa cum v-ați aștepta.
 
     **Scenarii comune care ating această limită**:
-
     * Selectarea a mai mult de 5.000 de înregistrări cu un declanșator manual Single
     * Mai multe fluxuri de lucru care rulează simultan în spațiul dvs. de lucru
     * Declanșatoare automate cu frecvență ridicată (de ex., Record Updated pe un obiect aglomerat)
 
     **Soluții**:
-
     * Utilizați declanșatoare **Bulk** în loc de Single pentru a procesa multe înregistrări într-o singură rulare
     * Eșalonați în timp operațiunile mari efectuate în loturi
     * Folosiți filtre pentru a reduce frecvența declanșărilor
@@ -189,7 +178,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
 
     | Limită | Valoare | Comportament |
     | ------ | ------- | ------------ |
-
     \| **Limită soft** | 100 rulări/minut | Rulările se pun în coadă cu statusul "Not Started", procesate treptat |
     \| **Limită hard** | 5.000 rulări/oră | Rulările eșuează imediat |
 
@@ -198,7 +186,6 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Limită hard (5.000/oră)**: Se aplică întregului dvs. spațiu de lucru. Dacă toate fluxurile dvs. de lucru cumulate depășesc 5.000 de rulări într-o oră, rulările suplimentare vor eșua imediat.
 
     **Sfaturi pentru a rămâne în limite**:
-
     * Utilizați declanșatoare Bulk cu Iterator în locul declanșatoarelor Single pentru loturi mari
     * Combinați automatizările înrudite în mai puține fluxuri de lucru
     * Utilizați fluxuri de lucru programate pentru a distribui încărcarea în timp
@@ -208,13 +195,11 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Nu, momentan nu există o funcționalitate de reîncercare automată.**
 
     Dacă o rulare de flux de lucru eșuează, va trebui să:
-
     1. Examinați eroarea în **Setări → Workflows → [Workflow-ul dvs.] → Runs**
     2. Remediați problema (date, configurație sau serviciu extern)
     3. Declanșați manual din nou fluxul de lucru pe înregistrarea/înregistrările afectate
 
     **Sfaturi pentru a reduce eșecurile**:
-
     * Adăugați noduri **Filter** pentru a valida datele înaintea acțiunilor
     * Utilizați **Search Records** pentru a verifica dacă există înregistrări asociate
     * Testați temeinic cu câteva înregistrări înainte de operațiuni în masă
@@ -226,14 +211,12 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Da, dacă fluxurile dvs. de lucru sunt declanșate de crearea sau actualizarea înregistrărilor.**
 
     Când importați date prin CSV, fiecare înregistrare creată sau actualizată poate declanșa fluxuri de lucru. Un import mare (mii de înregistrări) ar putea:
-
     * Atinge limita de 5.000 de rulări/oră
     * Consumă un număr semnificativ de credite de flux de lucru
     * Trimite e-mailuri sau notificări neașteptate
     * Creează sarcini sau înregistrări duplicate
 
     **Înaintea unui import în masă**:
-
     1. Accesați **Setări → Fluxuri de lucru**
     2. Identificați fluxurile de lucru declanșate de obiectul pe care îl importați
     3. **Dezactivați**-le temporar
@@ -251,4 +234,5 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
 
     Acest lucru va rearanja automat toate nodurile într-un aspect curat și organizat.
   </Accordion>
+
 </AccordionGroup>

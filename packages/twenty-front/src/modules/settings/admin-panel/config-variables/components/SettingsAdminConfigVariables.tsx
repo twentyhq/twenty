@@ -17,7 +17,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledControlsContainer = styled.div`
   display: flex;
@@ -36,12 +36,13 @@ export const SettingsAdminConfigVariables = () => {
     });
 
   const [search, setSearch] = useState('');
-  const [showHiddenGroupVariables, setShowHiddenGroupVariables] =
-    useRecoilStateV2(showHiddenGroupVariablesState);
+  const [showHiddenGroupVariables, setShowHiddenGroupVariables] = useAtomState(
+    showHiddenGroupVariablesState,
+  );
   const [configVariableSourceFilter, setConfigVariableSourceFilter] =
-    useRecoilStateV2(configVariableSourceFilterState);
+    useAtomState(configVariableSourceFilterState);
   const [configVariableGroupFilter, setConfigVariableGroupFilter] =
-    useRecoilStateV2(configVariableGroupFilterState);
+    useAtomState(configVariableGroupFilterState);
 
   const allGroups = useMemo(
     () => configVariables?.getConfigVariablesGrouped.groups ?? [],

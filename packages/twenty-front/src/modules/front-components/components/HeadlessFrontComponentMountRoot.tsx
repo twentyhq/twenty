@@ -1,8 +1,7 @@
 import { Suspense, lazy } from 'react';
 
-import { useRecoilValue } from 'recoil';
-
 import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -11,7 +10,7 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const HeadlessFrontComponentMountRoot = () => {
-  const mountedHeadlessFrontComponentIds = useRecoilValue(
+  const mountedHeadlessFrontComponentIds = useAtomStateValue(
     mountedHeadlessFrontComponentIdsState,
   );
 

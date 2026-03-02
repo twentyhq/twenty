@@ -1,5 +1,6 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { IconBrandGithub } from '@ui/display';
+import { ThemeContext } from '@ui/theme';
 import { ClickToActionLink } from '@ui/navigation/link/components/ClickToActionLink';
 import { GITHUB_LINK } from '../constants/GithubLink';
 
@@ -8,7 +9,7 @@ interface GithubVersionLinkProps {
 }
 
 export const GithubVersionLink = ({ version }: GithubVersionLinkProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <ClickToActionLink href={GITHUB_LINK} target="_blank" rel="noreferrer">

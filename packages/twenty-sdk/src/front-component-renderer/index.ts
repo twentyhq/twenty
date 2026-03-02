@@ -24,7 +24,11 @@ export {
   HtmlH6,
   HtmlHeader,
   HtmlHr,
+  HtmlIframe,
+  HtmlAudio,
   HtmlImg,
+  HtmlSource,
+  HtmlVideo,
   HtmlInput,
   HtmlLabel,
   HtmlLi,
@@ -69,7 +73,11 @@ export {
   HtmlH6Element,
   HtmlHeaderElement,
   HtmlHrElement,
+  HtmlIframeElement,
+  HtmlAudioElement,
   HtmlImgElement,
+  HtmlSourceElement,
+  HtmlVideoElement,
   HtmlInputElement,
   HtmlLabelElement,
   HtmlLiElement,
@@ -102,7 +110,11 @@ export type {
   HtmlCommonEvents,
   HtmlCommonProperties,
   HtmlFormProperties,
+  HtmlIframeProperties,
+  HtmlAudioProperties,
   HtmlImgProperties,
+  HtmlSourceProperties,
+  HtmlVideoProperties,
   HtmlInputProperties,
   HtmlLabelProperties,
   HtmlOptionProperties,
@@ -112,7 +124,7 @@ export type {
   HtmlThProperties,
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
-export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentExecutionContext } from '../sdk/front-component-api';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';

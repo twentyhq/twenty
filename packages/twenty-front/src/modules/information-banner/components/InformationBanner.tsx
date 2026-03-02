@@ -1,6 +1,6 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
@@ -51,7 +51,7 @@ export const InformationBanner = ({
   onClose?: () => void;
   componentInstanceId: string;
 }) => {
-  const informationBannerIsOpenComponent = useRecoilComponentValue(
+  const informationBannerIsOpen = useAtomComponentStateValue(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );
@@ -62,7 +62,7 @@ export const InformationBanner = ({
         instanceId: componentInstanceId,
       }}
     >
-      {informationBannerIsOpenComponent && (
+      {informationBannerIsOpen && (
         <Banner variant={variant}>
           <StyledContent hasCloseButton={!!onClose}>
             <StyledText>{message}</StyledText>

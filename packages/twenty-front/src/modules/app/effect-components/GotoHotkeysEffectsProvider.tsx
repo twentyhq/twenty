@@ -1,7 +1,7 @@
 import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffect';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -19,7 +19,7 @@ export const GotoHotkeysEffectsProvider = () => {
     location: getSettingsPath(SettingsPath.ProfilePage),
     preNavigateFunction: useCallback(() => {
       store.set(isNavigationDrawerExpandedState.atom, true);
-      store.set(navigationDrawerExpandedMemorizedStateV2.atom, true);
+      store.set(navigationDrawerExpandedMemorizedState.atom, true);
     }, [store]),
   });
 

@@ -381,6 +381,16 @@ msgstr "Không tìm thấy vai trò khóa API."
 msgid "Application not found."
 msgstr "Không tìm thấy ứng dụng."
 
+#. js-lingui-id: DE/icK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration not found."
+msgstr ""
+
+#. js-lingui-id: eiOt+9
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "Application registration variable not found."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/applicationVariable/application-variable.exception.ts
 msgid "Application variable not found."
@@ -1140,6 +1150,11 @@ msgstr "Biến môi trường CLOUDFLARE_API_KEY phải được định nghĩa 
 msgid "Error"
 msgstr "Lỗi"
 
+#. js-lingui-id: b3ictS
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Exactly one of \"groups\" or \"fields\" must be provided"
+msgstr ""
+
 #. js-lingui-id: ksMwKk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Exactly one of workflow version or front component is required"
@@ -1424,6 +1439,16 @@ msgstr "FieldMetadataId là cần thiết để tạo một sắp xếp xem."
 #. js-lingui-id: VgGXR3
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
+#. js-lingui-id: 9HjeLQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget has no associated view"
+msgstr ""
+
+#. js-lingui-id: 8sAaBn
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget not found"
 msgstr ""
 
 #. js-lingui-id: ycn/wp
@@ -2924,6 +2949,16 @@ msgstr "Một hoặc nhiều đối tượng bạn đang cố gắng thiết l�
 msgid "One or more records were not found."
 msgstr ""
 
+#. js-lingui-id: kx632Q
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more redirect URIs are invalid."
+msgstr ""
+
+#. js-lingui-id: PUBUbK
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "One or more requested scopes are invalid."
+msgstr ""
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -3659,12 +3694,12 @@ msgid "Sunday"
 msgstr "Chủ Nhật"
 
 #. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} has invalid {property}"
 msgstr ""
 
 #. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} is missing"
 msgstr ""
 
@@ -4077,6 +4112,11 @@ msgstr "Tên miền phụ này đã được sử dụng."
 msgid "This type of record cannot be merged."
 msgstr ""
 
+#. js-lingui-id: nZbise
+#: src/engine/core-modules/application-registration/application-registration.exception.ts
+msgid "This universal identifier is already claimed by another registration."
+msgstr ""
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -4241,15 +4281,11 @@ msgstr "Người dùng đã được gán một vai trò."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Người dùng không có quyền truy cập vào không gian làm việc này"
-
-#. js-lingui-id: kZ0tmK
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-msgid "User does not have access to this workspace."
-msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -4287,6 +4323,7 @@ msgid "User not found. Please check the email or ID."
 msgstr "Không tìm thấy người dùng. Vui lòng kiểm tra email hoặc ID."
 
 #. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Người dùng chưa được tạo với email/mật khẩu"
@@ -4551,6 +4588,11 @@ msgstr "Không tìm thấy metadata của trường tổng hợp kanban"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View not found"
 msgstr "Không tìm thấy chế độ xem"
+
+#. js-lingui-id: BHDATQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "View not found after upsert"
+msgstr ""
 
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts

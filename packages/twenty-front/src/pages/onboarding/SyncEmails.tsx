@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -58,9 +59,7 @@ export const SyncEmails = () => {
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
-  const [lastAuthenticatedMethod] = useRecoilState(
-    lastAuthenticatedMethodState,
-  );
+  const [lastAuthenticatedMethod] = useAtomState(lastAuthenticatedMethodState);
   const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
@@ -86,16 +85,18 @@ export const SyncEmails = () => {
   const userAuthenticatedWithSSO =
     lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
-  const isGoogleMessagingEnabled = useRecoilValue(
+  const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
   );
-  const isMicrosoftMessagingEnabled = useRecoilValue(
+  const isMicrosoftMessagingEnabled = useAtomStateValue(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useRecoilValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useAtomStateValue(
+    isGoogleCalendarEnabledState,
+  );
 
-  const isMicrosoftCalendarEnabled = useRecoilValue(
+  const isMicrosoftCalendarEnabled = useAtomStateValue(
     isMicrosoftCalendarEnabledState,
   );
 

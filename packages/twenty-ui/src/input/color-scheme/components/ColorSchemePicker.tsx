@@ -1,14 +1,14 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { MOBILE_VIEWPORT } from '@ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeCssVariables.spacing[4]};
   }
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     overflow: scroll;
@@ -21,10 +21,10 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export type ColorSchemePickerProps = {
@@ -43,31 +43,33 @@ export const ColorSchemePicker = ({
   lightLabel,
   darkLabel,
   systemLabel,
-}: ColorSchemePickerProps) => (
-  <StyledContainer className={className}>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('Light')}
-        variant="Light"
-        selected={value === 'Light'}
-      />
-      <StyledLabel>{lightLabel}</StyledLabel>
-    </StyledCardContainer>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('Dark')}
-        variant="Dark"
-        selected={value === 'Dark'}
-      />
-      <StyledLabel>{darkLabel}</StyledLabel>
-    </StyledCardContainer>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('System')}
-        variant="System"
-        selected={value === 'System'}
-      />
-      <StyledLabel>{systemLabel}</StyledLabel>
-    </StyledCardContainer>
-  </StyledContainer>
-);
+}: ColorSchemePickerProps) => {
+  return (
+    <StyledContainer className={className}>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('Light')}
+          variant="Light"
+          selected={value === 'Light'}
+        />
+        <StyledLabel>{lightLabel}</StyledLabel>
+      </StyledCardContainer>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('Dark')}
+          variant="Dark"
+          selected={value === 'Dark'}
+        />
+        <StyledLabel>{darkLabel}</StyledLabel>
+      </StyledCardContainer>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('System')}
+          variant="System"
+          selected={value === 'System'}
+        />
+        <StyledLabel>{systemLabel}</StyledLabel>
+      </StyledCardContainer>
+    </StyledContainer>
+  );
+};

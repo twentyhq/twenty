@@ -1,14 +1,13 @@
-import { selectorFamily } from 'recoil';
-
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 type ObjectMetadataItemSelector = {
   objectName: string;
   objectNameType: 'singular' | 'plural';
 };
 
-export const objectMetadataItemFamilySelector = selectorFamily<
+export const objectMetadataItemFamilySelector = createAtomFamilySelector<
   ObjectMetadataItem | null,
   ObjectMetadataItemSelector
 >({

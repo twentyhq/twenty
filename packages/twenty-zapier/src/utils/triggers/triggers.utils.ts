@@ -1,10 +1,10 @@
 import { type Bundle, type ZObject } from 'zapier-platform-core';
 
-import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
   requestDbViaRestApi,
   requestSchema,
-} from '../../utils/requestDb';
+} from 'src/utils/requestDb';
+import handleQueryParams from 'src/utils/handleQueryParams';
 
 export enum DatabaseEventAction {
   CREATED = 'created',
@@ -20,14 +20,14 @@ export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
     ],
     secret: '',
   };
-  const result = await requestDb(
+  const result = await requestDb({
     z,
     bundle,
-    `mutation createWebhook {createWebhook(input:{${handleQueryParams(
+    query: `mutation createWebhook {createWebhook(input:{${handleQueryParams(
       data,
     )}}) {id}}`,
-    'metadata',
-  );
+    endpoint: 'metadata',
+  });
   return result.data.createWebhook;
 };
 
@@ -36,12 +36,12 @@ export const performUnsubscribe = async (
   bundle: Bundle,
 ): Promise<boolean> => {
   const data = { id: bundle.subscribeData?.id };
-  const result = await requestDb(
+  const result = await requestDb({
     z,
     bundle,
-    `mutation deleteWebhook {deleteWebhook(input: {${handleQueryParams(data)}})}`,
-    'metadata',
-  );
+    query: `mutation deleteWebhook {deleteWebhook(${handleQueryParams(data)}) {id}}`,
+    endpoint: 'metadata',
+  });
   return result.data.deleteWebhook;
 };
 

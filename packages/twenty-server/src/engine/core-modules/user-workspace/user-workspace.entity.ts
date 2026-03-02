@@ -21,7 +21,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
+import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
@@ -101,6 +101,6 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectsPermissions?: ObjectPermissionDTO[];
 
-  @Field(() => [TwoFactorAuthenticationMethodSummaryDto], { nullable: true })
-  twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto[];
+  @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
+  twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
 }

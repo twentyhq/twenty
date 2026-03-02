@@ -1,9 +1,9 @@
-import { FieldMetadataType } from '../types/FieldMetadataType';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type InputField,
   type Node,
   type NodeField,
-} from '../utils/data.types';
+} from 'src/utils/data.types';
 
 const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
   return fieldMetadataType === FieldMetadataType.ARRAY;

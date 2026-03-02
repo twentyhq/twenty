@@ -9,10 +9,7 @@ on:
     types: [opened, synchronize, reopened, closed]
 
 permissions:
-  actions: write
   checks: write
-  contents: write
-  issues: write
   pull-requests: write
   statuses: write
 
@@ -25,7 +22,7 @@ concurrency:
 jobs:
   danger-js:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +35,7 @@ jobs:
 
   congratulate:
     timeout-minutes: 3
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4

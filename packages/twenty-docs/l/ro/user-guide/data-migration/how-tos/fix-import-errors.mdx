@@ -71,12 +71,12 @@ A unique field (email, domain) either:
 3. Twenty will update the existing record instead of creating a duplicate
 
 <Note>
-  **You can update unique fields too.**
+**You can update unique fields too.**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+* If you keep the `id` but change the `email` → the email will be updated
+* If you keep the `email` but change the `id` → the id will be updated
 
-  As long as one unique identifier matches, Twenty updates the record.
+As long as one unique identifier matches, Twenty updates the record.
 </Note>
 
 ### How to Prevent This Error
@@ -88,9 +88,9 @@ Before importing:
 3. Check if records already exist in Twenty
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+**Soft-deleted records count toward uniqueness.**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
 </Warning>
 
 For more details: [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -296,9 +296,9 @@ You're trying to link to a record that doesn't exist in Twenty.
    * Check for typos and case sensitivity
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+**Import will fail if a reference is made to a non-existent record.**
 
-  Always import parent objects before child objects.
+Always import parent objects before child objects.
 </Warning>
 
 For more details: [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ You're trying to assign a record to a user (Owner, Assignee) but the relation is
 3. Use the same email they used to join Twenty
 
 <Warning>
-  **Users must accept invitations before importing.**
+**Users must accept invitations before importing.**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+If a user hasn't accepted their invitation, records referencing them will have empty user relations.
 </Warning>
 
 ---

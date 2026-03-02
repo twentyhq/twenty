@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentProfilingRunIndexState = atom<number>({
+export const currentProfilingRunIndexState = createAtomState<number>({
   key: 'currentProfilingRunIndexState',
-  default: 0,
+  defaultValue: 0,
 });
