@@ -43,12 +43,22 @@ export const useCurrentMetered = () => {
   );
 
   const meteredPrices = getCurrentMeteredPricesByInterval();
-  const currentMeteredBillingPrice = findOrThrow(
-    meteredPrices,
+  const foundMeteredBillingPrice = meteredPrices.find(
     (price) =>
       price.stripePriceId ===
       currentMeteredBillingSubscriptionItem.stripePriceId,
-  ) as MeteredBillingPrice;
+  );
+  if (!foundMeteredBillingPrice) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[Billing] Subscription item references Stripe price "${currentMeteredBillingSubscriptionItem.stripePriceId}" which is absent from the active plan catalog. The price may have been archived or rotated in Stripe. Falling back to the first active metered price.`,
+    );
+  }
+  const currentMeteredBillingPrice = (foundMeteredBillingPrice ??
+    meteredPrices[0]) as MeteredBillingPrice;
+  if (!currentMeteredBillingPrice) {
+    throw new Error('[Billing] No active metered prices found in the plan catalog.');
+  }
 
   return {
     currentMeteredBillingSubscriptionItem,

@@ -11,19 +11,19 @@ export const useCurrentPlan = () => {
 
   assertIsDefinedOrThrow(currentWorkspace);
 
-  const planKeyFromMetadata =
-    (currentWorkspace.currentBillingSubscription?.metadata?.['plan'] as
-      | BillingPlanKey
-      | undefined) ?? BillingPlanKey.PRO;
-
   const currentPlan = findOrThrow(
     listPlans(),
-    (plan) => plan.planKey === planKeyFromMetadata,
+    (plan) =>
+      plan.planKey ===
+      (currentWorkspace.currentBillingSubscription?.metadata?.['plan'] as
+        | BillingPlanKey
+        | undefined),
     new Error('Current plan not found'),
   );
 
   const oppositPlan =
-    planKeyFromMetadata === BillingPlanKey.ENTERPRISE
+    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
+    BillingPlanKey.ENTERPRISE
       ? BillingPlanKey.PRO
       : BillingPlanKey.ENTERPRISE;
 
