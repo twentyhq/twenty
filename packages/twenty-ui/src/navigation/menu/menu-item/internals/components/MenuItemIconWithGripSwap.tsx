@@ -2,7 +2,8 @@ import { useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import { type IconComponent, IconGripVertical } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 const StyledIconSwapContainer = styled.div`

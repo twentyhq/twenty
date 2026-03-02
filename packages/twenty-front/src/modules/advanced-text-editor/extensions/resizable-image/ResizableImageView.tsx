@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import React, { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const IMAGE_MIN_WIDTH = 32;
 const IMAGE_MAX_WIDTH = 600;

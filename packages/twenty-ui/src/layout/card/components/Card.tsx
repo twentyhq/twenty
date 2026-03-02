@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCard = styled.div<{

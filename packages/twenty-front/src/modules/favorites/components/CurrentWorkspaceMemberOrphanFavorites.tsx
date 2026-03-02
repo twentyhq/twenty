@@ -14,7 +14,7 @@ import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;

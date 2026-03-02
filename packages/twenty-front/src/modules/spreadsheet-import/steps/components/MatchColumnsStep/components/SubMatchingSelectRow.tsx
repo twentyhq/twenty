@@ -6,7 +6,7 @@ import {
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
   align-items: center;

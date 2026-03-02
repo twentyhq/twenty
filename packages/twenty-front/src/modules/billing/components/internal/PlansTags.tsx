@@ -3,7 +3,7 @@ import { Tag } from 'twenty-ui/components';
 import { t } from '@lingui/core/macro';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type PlansTagsProps = {
   plan: BillingPlanKey;

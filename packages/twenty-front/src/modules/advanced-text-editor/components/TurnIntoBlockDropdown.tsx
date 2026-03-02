@@ -10,7 +10,7 @@ import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
   align-items: center;

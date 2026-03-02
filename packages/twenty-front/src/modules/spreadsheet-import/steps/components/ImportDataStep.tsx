@@ -5,7 +5,7 @@ import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-impo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/feedback';
 

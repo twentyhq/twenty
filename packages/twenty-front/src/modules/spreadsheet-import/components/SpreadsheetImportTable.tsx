@@ -3,7 +3,7 @@ import { useContext } from 'react';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { type DataGridProps } from 'react-data-grid';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 export enum TooltipPosition {
   Top = 'top',

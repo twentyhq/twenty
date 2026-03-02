@@ -10,7 +10,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   overflow: hidden;

@@ -4,7 +4,7 @@ import { SuggestionMenuController } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent, useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';

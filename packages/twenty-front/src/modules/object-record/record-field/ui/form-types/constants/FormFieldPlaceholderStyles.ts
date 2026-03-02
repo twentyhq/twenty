@@ -1,4 +1,4 @@
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const FORM_FIELD_PLACEHOLDER_STYLES = `
   color: ${themeCssVariables.font.color.light};

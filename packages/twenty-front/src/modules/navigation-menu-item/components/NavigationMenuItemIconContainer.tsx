@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledNavigationMenuItemIconContainer = styled.div<{
   $backgroundColor?: string;

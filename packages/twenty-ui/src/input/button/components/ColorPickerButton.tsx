@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ColorSample, type ColorSampleProps } from '@ui/display';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import {
   LightIconButton,
   type LightIconButtonProps,

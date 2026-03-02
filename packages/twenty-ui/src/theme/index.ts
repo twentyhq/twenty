@@ -51,7 +51,6 @@ export { TAG_LIGHT } from './constants/TagLight';
 export { TEXT } from './constants/Text';
 export { TEXT_INPUT_STYLE } from './constants/TextInputStyle';
 export { THEME_COMMON } from './constants/ThemeCommon';
-export { themeCssVariables } from './constants/ThemeCssVariables';
 export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
 export { TRANSPARENT_COLORS_DARK } from './constants/TransparentColorsDark';

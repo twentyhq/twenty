@@ -112,7 +112,6 @@ export default defineConfig(({ command, mode }) => {
         ...wyw({
           include: [
             '**/twenty-ui/src/**/*.{ts,tsx}',
-            '**/theme-css-variables-static.ts',
             '**/AdvancedTextEditor.tsx',
             '**/BubbleMenuIconButton.tsx',
             '**/TextBubbleMenu.tsx',

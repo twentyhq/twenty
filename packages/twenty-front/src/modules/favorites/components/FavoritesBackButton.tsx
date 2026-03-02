@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBackButton = styled.button`
   display: flex;

@@ -7,7 +7,7 @@ import {
   IconMessageCirclePlus,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';

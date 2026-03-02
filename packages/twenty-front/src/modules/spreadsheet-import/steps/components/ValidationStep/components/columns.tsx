@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';

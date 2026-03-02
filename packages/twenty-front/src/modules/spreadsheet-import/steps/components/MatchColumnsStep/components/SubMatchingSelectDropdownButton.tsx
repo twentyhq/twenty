@@ -10,7 +10,7 @@ import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from '@/utils/theme-css-variables-static';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
