@@ -2,6 +2,7 @@ import { Node, SyntaxKind } from 'ts-morph';
 
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
+import { isDefined } from 'twenty-shared/utils';
 import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 
 export const resolveLocalArrayVariable = ({
@@ -30,7 +31,7 @@ export const resolveLocalArrayVariable = ({
 
   const initializer = matchingDeclaration?.getInitializer();
 
-  if (!initializer || !Node.isArrayLiteralExpression(initializer)) {
+  if (!isDefined(initializer) || !Node.isArrayLiteralExpression(initializer)) {
     return undefined;
   }
 

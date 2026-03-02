@@ -12,7 +12,8 @@ export const tryResolveKnownConstant = ({
   constantPath: string;
 }): string | number | undefined => {
   if (constantPath in ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED) {
-    const constantValue = ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED[constantPath];
+    const constantValue =
+      ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED[constantPath];
 
     return isResolvedPrimitive(constantValue) ? constantValue : undefined;
   }

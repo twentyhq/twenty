@@ -38,7 +38,7 @@ export const extractShouldBeRegisteredFromConfig = ({
 
       const initializer = shouldBeRegisteredProp.getInitializer();
 
-      if (!initializer || !Node.isArrowFunction(initializer)) {
+      if (!isDefined(initializer) || !Node.isArrowFunction(initializer)) {
         return extractedActions;
       }
 
