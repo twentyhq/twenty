@@ -21,15 +21,17 @@ concurrency:
 jobs:
   trigger-preview:
     if: |
+      (github.event.action == 'labeled' && github.event.label.name == 'preview-app') ||
       (
-        github.event.pull_request.author_association == 'MEMBER' ||
-        github.event.pull_request.author_association == 'OWNER' ||
-        github.event.pull_request.author_association == 'COLLABORATOR'
-      ) && (
-        github.event.action == 'opened' ||
-        github.event.action == 'synchronize' ||
-        github.event.action == 'reopened' ||
-        (github.event.action == 'labeled' && github.event.label.name == 'preview-app')
+        (
+          github.event.pull_request.author_association == 'MEMBER' ||
+          github.event.pull_request.author_association == 'OWNER' ||
+          github.event.pull_request.author_association == 'COLLABORATOR'
+        ) && (
+          github.event.action == 'opened' ||
+          github.event.action == 'synchronize' ||
+          github.event.action == 'reopened'
+        )
       )
     timeout-minutes: 5
     runs-on: depot-ubuntu-24.04
