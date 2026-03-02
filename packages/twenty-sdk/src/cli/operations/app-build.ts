@@ -1,11 +1,20 @@
-import { buildFrontComponents } from '@/cli/utilities/build/common/build-front-components';
-import { buildLogicFunctions } from '@/cli/utilities/build/common/build-logic-functions';
+import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
+import {
+  LOGIC_FUNCTION_EXTERNAL_MODULES,
+  createSdkGeneratedResolverPlugin,
+} from '@/cli/utilities/build/common/esbuild-watcher';
+import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
+import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import crypto from 'crypto';
 import * as fs from 'fs-extra';
 import { dirname, join } from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import {
+  NODE_ESM_CJS_BANNER,
+  OUTPUT_DIR,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export type AppBuildOptions = {
@@ -46,15 +55,49 @@ export const appBuild = async (
 
   const { logicFunctions, frontComponents } = options.filePaths;
 
-  await buildLogicFunctions({
+  await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
+    fileFolder: FileFolder.BuiltLogicFunction,
+    buildOptions: {
+      bundle: true,
+      splitting: false,
+      format: 'esm',
+      platform: 'node',
+      outdir: join(options.appPath, OUTPUT_DIR),
+      outExtension: { '.js': '.mjs' },
+      external: LOGIC_FUNCTION_EXTERNAL_MODULES,
+      tsconfig: join(options.appPath, 'tsconfig.json'),
+      sourcemap: true,
+      metafile: true,
+      logLevel: 'silent',
+      banner: NODE_ESM_CJS_BANNER,
+      plugins: [createSdkGeneratedResolverPlugin(options.appPath)],
+    },
     onFileBuilt: collectFileBuilt,
   });
 
-  await buildFrontComponents({
+  await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
+    fileFolder: FileFolder.BuiltFrontComponent,
+    buildOptions: {
+      bundle: true,
+      splitting: false,
+      format: 'esm',
+      outdir: join(options.appPath, OUTPUT_DIR),
+      outExtension: { '.js': '.mjs' },
+      external: FRONT_COMPONENT_EXTERNAL_MODULES,
+      tsconfig: join(options.appPath, 'tsconfig.json'),
+      jsx: 'automatic',
+      sourcemap: true,
+      metafile: true,
+      logLevel: 'silent',
+      plugins: [
+        createSdkGeneratedResolverPlugin(options.appPath),
+        ...getFrontComponentBuildPlugins(),
+      ],
+    },
     onFileBuilt: collectFileBuilt,
   });
 

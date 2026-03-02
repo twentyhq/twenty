@@ -1,4 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
+import { findOrCreateApplication } from '@/cli/utilities/application/find-or-create-application';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
 
@@ -35,15 +36,16 @@ export class ResolveApplicationOrchestratorStep {
     step.status = 'in_progress';
     this.notify();
 
-    const universalIdentifier = input.manifest.application.universalIdentifier;
+    const result = await findOrCreateApplication({
+      apiService: this.apiService,
+      manifest: input.manifest,
+      applicationRegistrationId: input.applicationRegistrationId,
+    });
 
-    const findResult =
-      await this.apiService.findOneApplication(universalIdentifier);
-
-    if (!findResult.success) {
+    if (!result.success) {
       this.state.applyStepEvents([
         {
-          message: `Failed to find application ${universalIdentifier}`,
+          message: result.error,
           status: 'error',
         },
       ]);
@@ -53,44 +55,17 @@ export class ResolveApplicationOrchestratorStep {
       return step.output;
     }
 
-    if (findResult.data) {
-      step.output = {
-        applicationId: findResult.data.id,
-        universalIdentifier: findResult.data.universalIdentifier,
-      };
-      step.status = 'done';
-      this.notify();
-
-      return step.output;
-    }
-
-    const createResult = await this.apiService.createApplication(
-      input.manifest,
-      { applicationRegistrationId: input.applicationRegistrationId },
-    );
-
-    if (!createResult.success) {
+    if (result.created) {
       this.state.applyStepEvents([
         { message: 'Creating application', status: 'info' },
-        {
-          message: `Application creation failed with error ${JSON.stringify(createResult.error, null, 2)}`,
-          status: 'error',
-        },
+        { message: 'Application created', status: 'success' },
       ]);
-      step.status = 'error';
-      this.state.updatePipeline({ status: 'error' });
-
-      return step.output;
     }
 
     step.output = {
-      applicationId: createResult.data!.id,
-      universalIdentifier: createResult.data!.universalIdentifier,
+      applicationId: result.applicationId,
+      universalIdentifier: result.universalIdentifier,
     };
-    this.state.applyStepEvents([
-      { message: 'Creating application', status: 'info' },
-      { message: 'Application created', status: 'success' },
-    ]);
     step.status = 'done';
     this.notify();
 

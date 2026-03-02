@@ -1,6 +1,7 @@
 import { appBuild } from '@/cli/operations/app-build';
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
-import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
+import { syncBuiltApp } from '@/cli/operations/app-sync';
+import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { ClientService } from '@/cli/utilities/client/client-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
@@ -16,9 +17,9 @@ export class AppBuildCommand {
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const manifestResult = await buildManifest(appPath);
+    const manifestResult = await buildAndValidateManifest(appPath);
 
-    if (manifestResult.errors.length > 0 || !manifestResult.manifest) {
+    if (!manifestResult.success) {
       console.error(chalk.red('Manifest build failed:'));
 
       for (const error of manifestResult.errors) {
@@ -28,30 +29,69 @@ export class AppBuildCommand {
       process.exit(1);
     }
 
-    const validation = manifestValidate(manifestResult.manifest);
-
-    if (!validation.isValid) {
-      console.error(chalk.red('Manifest validation failed:'));
-
-      for (const error of validation.errors) {
-        console.error(chalk.red(`  ${error}`));
-      }
-
-      process.exit(1);
-    }
+    const { manifest, filePaths } = manifestResult;
+    const clientService = new ClientService();
 
     try {
-      const result = await appBuild({
+      await clientService.ensureGeneratedClientStub({ appPath });
+
+      console.log(chalk.gray('Building application files...'));
+
+      const firstBuildResult = await appBuild({
         appPath,
-        manifest: manifestResult.manifest,
-        filePaths: manifestResult.filePaths,
+        manifest,
+        filePaths,
       });
 
-      const fileCount = result.builtFileInfos.size;
+      console.log(chalk.gray('Syncing application schema...'));
+
+      const firstSyncResult = await syncBuiltApp({
+        appPath,
+        manifest,
+        builtFileInfos: firstBuildResult.builtFileInfos,
+      });
+
+      if (!firstSyncResult.success) {
+        console.error(
+          chalk.red(`Schema sync failed: ${firstSyncResult.error.message}`),
+        );
+        process.exit(1);
+      }
+
+      console.log(chalk.gray('Generating API client...'));
+
+      await clientService.generate({ appPath });
+
+      console.log(
+        chalk.gray('Rebuilding with generated client...'),
+      );
+
+      const finalBuildResult = await appBuild({
+        appPath,
+        manifest,
+        filePaths,
+      });
+
+      console.log(chalk.gray('Syncing built files...'));
+
+      const finalSyncResult = await syncBuiltApp({
+        appPath,
+        manifest,
+        builtFileInfos: finalBuildResult.builtFileInfos,
+      });
+
+      if (!finalSyncResult.success) {
+        console.error(
+          chalk.red(`Final sync failed: ${finalSyncResult.error.message}`),
+        );
+        process.exit(1);
+      }
+
+      const fileCount = finalBuildResult.builtFileInfos.size;
 
       console.log(
         chalk.green(
-          `✓ Build succeeded (${fileCount} file${fileCount === 1 ? '' : 's'})`,
+          `✓ Build and sync succeeded (${fileCount} file${fileCount === 1 ? '' : 's'})`,
         ),
       );
     } catch (error) {

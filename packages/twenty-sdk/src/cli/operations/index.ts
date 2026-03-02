@@ -1,4 +1,5 @@
 // Auth
+export { authList } from './auth-list';
 export { authLogin } from './auth-login';
 export type { AuthLoginOptions } from './auth-login';
 export { authLogout } from './auth-logout';
@@ -7,19 +8,18 @@ export { authStatus } from './auth-status';
 export type { AuthStatusOptions } from './auth-status';
 export { authSwitch } from './auth-switch';
 export type { AuthSwitchOptions, AuthSwitchResult } from './auth-switch';
-export { authList } from './auth-list';
 
 // App
 export { appBuild } from './app-build';
 export type {
   AppBuildOptions,
   AppBuildResult,
-  BuiltFileInfo,
+  BuiltFileInfo
 } from './app-build';
+export { syncBuiltApp } from './app-sync';
+export type { AppSyncOptions } from './app-sync';
 export { appTypecheck } from './app-typecheck';
 export type { AppTypecheckOptions } from './app-typecheck';
-export { appSync } from './app-sync';
-export type { AppSyncOptions } from './app-sync';
 export { appUninstall } from './app-uninstall';
 export type { AppUninstallOptions } from './app-uninstall';
 
@@ -28,16 +28,11 @@ export { functionExecute } from './function-execute';
 export type { FunctionExecuteOptions } from './function-execute';
 
 // Shared types and error codes
-export type {
-  CommandError,
-  CommandResult,
-  AuthStatusResult,
-  AuthListWorkspace,
-  TypecheckResult,
-  FunctionExecutionResult,
-} from './types';
 export {
-  AUTH_ERROR_CODES,
-  APP_ERROR_CODES,
-  FUNCTION_ERROR_CODES,
+  APP_ERROR_CODES, AUTH_ERROR_CODES, FUNCTION_ERROR_CODES
 } from './types';
+export type {
+  AuthListWorkspace, AuthStatusResult, CommandError,
+  CommandResult, FunctionExecutionResult, TypecheckResult
+} from './types';
+
