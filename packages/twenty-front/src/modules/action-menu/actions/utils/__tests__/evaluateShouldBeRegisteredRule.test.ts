@@ -5,14 +5,14 @@ import { evaluateShouldBeRegisteredRule } from '@/action-menu/actions/utils/eval
 
 const baseParams: ShouldBeRegisteredFunctionParams = {
   objectPermissions: {
-    canRead: true,
-    canUpdate: true,
-    canSoftDelete: true,
-    canDestroy: true,
+    canReadObjectRecords: true,
     canUpdateObjectRecords: true,
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
-  } as ShouldBeRegisteredFunctionParams['objectPermissions'],
+    restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
+  },
   getTargetObjectReadPermission: () => true,
   getTargetObjectWritePermission: () => true,
   isFeatureFlagEnabled: () => false,
@@ -34,7 +34,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
   });
 
   describe('isDefined custom operator', () => {
-    const rule: RulesLogic = { isDefined: [{ var: 'selectedRecord' }] };
+    const rule = {
+      isDefined: [{ var: 'selectedRecord' }],
+    } as unknown as RulesLogic;
 
     it('returns true when value is defined', () => {
       const params = { ...baseParams, selectedRecord: { id: '1' } as any };
@@ -56,9 +58,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
   });
 
   describe('isNonEmptyString custom operator', () => {
-    const rule: RulesLogic = {
+    const rule = {
       isNonEmptyString: [{ var: 'selectedRecord.bodyV2.blocknote' }],
-    } as RulesLogic;
+    } as unknown as RulesLogic;
 
     it('returns true for non-empty string', () => {
       const params = {
@@ -89,9 +91,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
   });
 
   describe('hasReadPermission custom operator', () => {
-    const rule: RulesLogic = {
+    const rule = {
       hasReadPermission: ['workflow'],
-    } as RulesLogic;
+    } as unknown as RulesLogic;
 
     it('returns true when permission granted', () => {
       const params = {
@@ -125,9 +127,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
 
   describe('hasWritePermission custom operator', () => {
     it('delegates to getTargetObjectWritePermission', () => {
-      const rule: RulesLogic = {
+      const rule = {
         hasWritePermission: ['person'],
-      } as RulesLogic;
+      } as unknown as RulesLogic;
       const mockFn = jest.fn().mockReturnValue(false);
       const params = {
         ...baseParams,
@@ -140,9 +142,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
   });
 
   describe('isFeatureFlagEnabled custom operator', () => {
-    const rule: RulesLogic = {
+    const rule = {
       isFeatureFlagEnabled: ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED'],
-    } as RulesLogic;
+    } as unknown as RulesLogic;
 
     it('returns true when flag enabled', () => {
       const params = {
@@ -164,9 +166,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
   });
 
   describe('areWorkflowTriggerAndStepsDefined custom operator', () => {
-    const rule: RulesLogic = {
+    const rule = {
       areWorkflowTriggerAndStepsDefined: [],
-    } as RulesLogic;
+    } as unknown as RulesLogic;
 
     it('returns true when trigger and steps defined', () => {
       const params = {
