@@ -1,16 +1,19 @@
+import { authList } from '@/cli/programmatic/auth-list';
 import chalk from 'chalk';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class AuthListCommand {
-  private configService = new ConfigService();
-
   async execute(): Promise<void> {
     try {
-      const availableWorkspaces =
-        await this.configService.getAvailableWorkspaces();
-      const currentDefault = await this.configService.getDefaultWorkspace();
+      const result = await authList();
 
-      if (availableWorkspaces.length === 0) {
+      if (!result.success) {
+        console.error(chalk.red('List failed:'), result.error.message);
+        process.exit(1);
+      }
+
+      const workspaces = result.data;
+
+      if (workspaces.length === 0) {
         console.log(
           chalk.yellow(
             '⚠ No workspaces configured. Use `twenty auth:login` to create one.',
@@ -21,19 +24,18 @@ export class AuthListCommand {
 
       console.log(chalk.blue('Available workspaces:\n'));
 
-      for (const workspace of availableWorkspaces) {
-        const config =
-          await this.configService.getConfigForWorkspace(workspace);
-        const hasCredentials = !!config.apiKey;
-        const isDefault = workspace === currentDefault;
-
-        const defaultIndicator = isDefault ? chalk.green(' (default)') : '';
-        const credentialStatus = hasCredentials
+      for (const workspace of workspaces) {
+        const defaultIndicator = workspace.isDefault
+          ? chalk.green(' (default)')
+          : '';
+        const credentialStatus = workspace.hasCredentials
           ? chalk.green('●')
           : chalk.gray('○');
 
-        console.log(`  ${credentialStatus} ${workspace}${defaultIndicator}`);
-        console.log(chalk.gray(`      API URL: ${config.apiUrl}`));
+        console.log(
+          `  ${credentialStatus} ${workspace.name}${defaultIndicator}`,
+        );
+        console.log(chalk.gray(`      API URL: ${workspace.apiUrl}`));
       }
 
       console.log('');

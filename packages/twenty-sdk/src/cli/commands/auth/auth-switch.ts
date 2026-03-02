@@ -1,11 +1,11 @@
+import { authSwitch } from '@/cli/programmatic/auth-switch';
+import { AUTH_ERROR_CODES } from '@/cli/programmatic/types';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { ApiService } from '@/cli/utilities/api/api-service';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class AuthSwitchCommand {
   private configService = new ConfigService();
-  private apiService = new ApiService();
 
   async execute(options: { workspace?: string }): Promise<void> {
     try {
@@ -24,9 +24,7 @@ export class AuthSwitchCommand {
         return;
       }
 
-      // If workspace is not provided, show interactive selection
       if (!workspace) {
-        // Build choices with indicators for current default
         const choices = availableWorkspaces.map((ws) => ({
           name: ws === currentDefault ? `${ws} (current default)` : ws,
           value: ws,
@@ -45,41 +43,39 @@ export class AuthSwitchCommand {
         workspace = answer.workspace as string;
       }
 
-      // Validate that the workspace exists (workspace is guaranteed to be defined here)
-      if (!availableWorkspaces.includes(workspace!)) {
-        console.log(
-          chalk.red(
-            `✗ Workspace "${workspace}" not found. Available workspaces: ${availableWorkspaces.join(', ')}`,
-          ),
-        );
+      const result = await authSwitch({ workspace: workspace! });
+
+      if (!result.success) {
+        if (result.error.code === AUTH_ERROR_CODES.WORKSPACE_NOT_FOUND) {
+          const available = result.error.details
+            ?.availableWorkspaces as string[];
+          console.log(
+            chalk.red(
+              `✗ Workspace "${workspace}" not found. Available workspaces: ${available.join(', ')}`,
+            ),
+          );
+        } else {
+          console.log(chalk.red(`✗ ${result.error.message}`));
+        }
         process.exit(1);
       }
 
-      // If already the default, inform and exit
-      if (workspace === currentDefault) {
+      const { previousDefault, newDefault, hasCredentials, isValid } =
+        result.data;
+
+      if (previousDefault === newDefault) {
         console.log(
           chalk.blue(`ℹ "${workspace}" is already the default workspace.`),
         );
         return;
       }
 
-      // Set the new default workspace
-      await this.configService.setDefaultWorkspace(workspace!);
-
-      // Also set it as active for the current session to validate
-      ConfigService.setActiveWorkspace(workspace);
-
-      // Check authentication status for the new workspace
-      const config = await this.configService.getConfig();
-      const hasCredentials = !!config.apiKey;
-
       console.log(
         chalk.green(`✓ Switched default workspace to "${workspace}"`),
       );
 
       if (hasCredentials) {
-        const validateAuth = await this.apiService.validateAuth();
-        if (validateAuth.authValid) {
+        if (isValid) {
           console.log(chalk.green('✓ Authentication is valid'));
         } else {
           console.log(
