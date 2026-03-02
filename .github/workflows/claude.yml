@@ -87,7 +87,7 @@ jobs:
             exit 0
           fi
           ISSUE_NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
-          ENCODED_BRANCH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$BRANCH', safe=''))")
+          ENCODED_BRANCH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$BRANCH")
           PR_URL="https://github.com/${{ github.repository }}/compare/main...${ENCODED_BRANCH}?quick_pull=1"
           BODY="⚠️ Claude ran out of turns before creating a PR. Work has been pushed to [\`$BRANCH\`](https://github.com/${{ github.repository }}/tree/$ENCODED_BRANCH).\n\n[**Create PR →**]($PR_URL)"
           if [ -n "$ISSUE_NUMBER" ]; then
@@ -157,21 +157,11 @@ jobs:
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
-      - name: Post response to source issue
+      - name: Dispatch response to ci-privileged
         if: always()
-        uses: actions/github-script@v7
-        env:
-          TARGET_REPO: ${{ steps.prompt.outputs.repo }}
-          TARGET_ISSUE: ${{ steps.prompt.outputs.issue_number }}
+        uses: peter-evans/repository-dispatch@v2
         with:
-          github-token: ${{ secrets.TWENTY_DISPATCH_TOKEN }}
-          script: |
-            const [owner, repo] = process.env.TARGET_REPO.split('/');
-            const issueNumber = parseInt(process.env.TARGET_ISSUE, 10);
-
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: issueNumber,
-              body: `Claude finished processing this request. [See workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-            });
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: claude-cross-repo-response
+          client-payload: '{"repo": ${{ toJSON(steps.prompt.outputs.repo) }}, "issue_number": ${{ toJSON(steps.prompt.outputs.issue_number) }}, "run_id": ${{ toJSON(github.run_id) }}, "run_url": ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}}'
