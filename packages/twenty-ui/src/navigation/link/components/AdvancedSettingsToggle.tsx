@@ -1,28 +1,28 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { useId } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { useContext, useId } from 'react';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   position: relative;
-  height: ${({ theme }) => theme.spacing(5)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  height: ${themeCssVariables.spacing[5]};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledText = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-  left: ${({ theme }) => theme.spacing(-5)};
+  left: calc(-1 * ${themeCssVariables.spacing[5]});
   position: absolute;
 `;
 
@@ -50,7 +50,7 @@ export const AdvancedSettingsToggle = ({
   };
   const instanceId = useId();
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledContainer>

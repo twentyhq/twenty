@@ -32,6 +32,6 @@ export class AgentTurnEvaluationEntity {
   @Column({ type: 'text', nullable: true })
   comment: string | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

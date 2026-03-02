@@ -6,6 +6,7 @@ import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-
 import { CommandMenuSystemObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
@@ -40,8 +41,11 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
-  const { views, objectMetadataIdsWithIndexView } =
-    useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const {
+    views,
+    objectMetadataIdsWithIndexView,
+    objectMetadataIdsInWorkspace,
+  } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
@@ -61,12 +65,16 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
     objectMetadataItem: ObjectMetadataItem,
     defaultViewId: string,
   ) => {
+    if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
+      return;
+    }
     addObjectToDraft(
       objectMetadataItem.id,
       defaultViewId,
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId,
       addMenuItemInsertionContext?.targetIndex,
+      getStandardObjectIconColor(objectMetadataItem.nameSingular),
     );
     setAddMenuItemInsertionContext(null);
     closeCommandMenu();

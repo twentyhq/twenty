@@ -38,6 +38,11 @@ export class UpdateNavigationMenuItemInput {
   @IsString()
   @Field(() => String, { nullable: true })
   icon?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  color?: string | null;
 }
 
 @InputType()

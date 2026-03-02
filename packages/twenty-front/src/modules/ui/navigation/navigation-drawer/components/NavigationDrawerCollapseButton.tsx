@@ -1,4 +1,7 @@
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import styled from '@emotion/styled';
 import {
@@ -26,26 +29,28 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const setIsNavigationDrawerExpanded = useSetAtomState(
-    isNavigationDrawerExpandedState,
+  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
+    useAtomState(isNavigationDrawerExpandedState);
+  const setNavigationDrawerActiveTab = useSetAtomState(
+    navigationDrawerActiveTabState,
   );
 
+  const handleClick = () => {
+    if (isNavigationDrawerExpanded) {
+      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    }
+    setIsNavigationDrawerExpanded((previousIsExpanded) => !previousIsExpanded);
+  };
+
   return (
-    <StyledCollapseButton
-      className={className}
-      onClick={() =>
-        setIsNavigationDrawerExpanded(
-          (previousIsExpanded) => !previousIsExpanded,
-        )
-      }
-    >
+    <StyledCollapseButton className={className} onClick={handleClick}>
       <LightIconButton
         Icon={
           direction === 'left'
             ? IconLayoutSidebarLeftCollapse
             : IconLayoutSidebarRightCollapse
         }
-        accent="tertiary"
+        accent="secondary"
         size="small"
       />
     </StyledCollapseButton>

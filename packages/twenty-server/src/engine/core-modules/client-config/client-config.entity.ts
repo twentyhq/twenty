@@ -6,7 +6,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import {
   InferenceProvider,
   ModelFamily,
@@ -91,8 +91,8 @@ export class AdminAIModelConfig {
   isRecommended?: boolean;
 }
 
-@ObjectType()
-export class AdminAIModelsOutput {
+@ObjectType('AdminAIModels')
+export class AdminAIModelsDTO {
   @Field(() => Boolean)
   autoEnableNewModels: boolean;
 

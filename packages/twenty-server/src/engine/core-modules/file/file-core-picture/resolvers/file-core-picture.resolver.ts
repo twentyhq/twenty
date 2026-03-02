@@ -7,7 +7,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -31,7 +31,7 @@ export class FileCorePictureResolver {
     private readonly fileCorePictureService: FileCorePictureService,
   ) {}
 
-  @Mutation(() => FileWithSignedUrlDto)
+  @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
@@ -40,7 +40,7 @@ export class FileCorePictureResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
-  ): Promise<FileWithSignedUrlDto> {
+  ): Promise<FileWithSignedUrlDTO> {
     const buffer = await streamToBuffer(createReadStream());
 
     return await this.fileCorePictureService.uploadWorkspacePicture({
@@ -50,13 +50,13 @@ export class FileCorePictureResolver {
     });
   }
 
-  @Mutation(() => FileWithSignedUrlDto)
+  @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
-  ): Promise<FileWithSignedUrlDto> {
+  ): Promise<FileWithSignedUrlDTO> {
     const buffer = await streamToBuffer(createReadStream());
 
     return await this.fileCorePictureService.uploadWorkspaceMemberProfilePicture(

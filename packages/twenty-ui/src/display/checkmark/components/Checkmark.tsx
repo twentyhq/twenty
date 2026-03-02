@@ -1,12 +1,13 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import React from 'react';
+import React, { useContext } from 'react';
+
+import { styled } from '@linaria/react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.color.blue};
+  background-color: ${themeCssVariables.color.blue};
   border-radius: 50%;
   display: flex;
   height: 20px;
@@ -19,7 +20,7 @@ export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'> & {
 };
 
 export const Checkmark = ({ className }: CheckmarkProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledContainer className={className}>

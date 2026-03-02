@@ -26,7 +26,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { mockedCoreViewsData } from '~/testing/mock-data/views';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof RecordCalendarMonth> = {
@@ -46,7 +46,9 @@ const meta: Meta<typeof RecordCalendarMonth> = {
 
       const setCoreViews = useSetAtomState(coreViewsState);
 
-      const mockCoreView = mockedCoreViewsData[0];
+      const mockCoreView = mockedCoreViews.find(
+        (v) => v.name === 'All Companies',
+      )!;
 
       const setContextStoreCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,

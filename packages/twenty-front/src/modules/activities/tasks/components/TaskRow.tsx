@@ -24,7 +24,7 @@ const StyledTaskBody = styled.div`
   max-width: calc(80% - ${({ theme }) => theme.spacing(2)});
   text-overflow: ellipsis;
   overflow: hidden;
-  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
+  padding-bottom: 1px;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -33,7 +33,7 @@ const StyledTaskTitle = styled.div<{
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
+  padding-bottom: 1px;
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   white-space: nowrap;
   overflow: hidden;

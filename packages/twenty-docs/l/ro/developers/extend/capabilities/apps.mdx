@@ -52,26 +52,26 @@ npx create-twenty-app@latest my-app --interactive
 De aici puteți:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adaugă o entitate nouă în aplicația ta (ghidat)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Urmărește jurnalele funcțiilor aplicației tale
 yarn twenty function:logs
 
-# Execute a function by name
+# Execută o funcție după nume
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Execută funcția de pre-instalare
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Execută funcția post-instalare
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Dezinstalează aplicația din spațiul de lucru curent
 yarn twenty app:uninstall
 
-# Display commands' help
-yarn twenty help
+# Afișează ajutorul pentru comenzi
+yarn twenty help},{
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -83,7 +83,7 @@ Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
 * Copiază o aplicație de bază minimală în `my-twenty-app/`
 * Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
 * Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* Generează fișierele de bază (configurația aplicației, rolul implicit al funcțiilor, funcțiile de pre-instalare și post-instalare) plus fișiere de exemplu în funcție de modul de generare a scheletului.
 
 O aplicație proaspăt generată cu modul implicit `--exhaustive` arată astfel:
 
@@ -99,30 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obligatoriu - configurația principală a aplicației
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Rol implicit pentru funcțiile logice
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Exemplu de definiție a unui obiect personalizat
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Exemplu de definiție de câmp independent
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Exemplu de funcție logică
+  │   ├── pre-install.ts                # Funcție logică de pre-instalare
+  │   └── post-install.ts               # Funcție logică post-instalare
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Exemplu de componentă de interfață
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Exemplu de definiție a unei vizualizări salvate
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Exemplu de link de navigare în bara laterală
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Exemplu de definiție a unei abilități a agentului AI
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
+Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
 
 Pe scurt:
 
@@ -139,18 +139,18 @@ Pe scurt:
 
 SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
 
-| Funcție ajutătoare                 | Tipul entității                                       |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | Definiții de obiecte personalizate                    |
-| `defineLogicFunction()`            | Definiții de funcții de logică                        |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Definiții ale componentelor de interfață              |
-| `defineRole()`                     | Definiții de rol                                      |
-| `defineField()`                    | Extensii de câmp pentru obiectele existente           |
-| `defineView()`                     | Definiții pentru vizualizări salvate                  |
-| `defineNavigationMenuItem()`       | Definiții pentru elemente de meniu de navigare        |
-| `defineSkill()`                    | Definiții ale abilităților agentului AI               |
+| Funcție ajutătoare                 | Tipul entității                                                |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `defineObject()`                   | Definiții de obiecte personalizate                             |
+| `defineLogicFunction()`            | Definiții de funcții de logică                                 |
+| `definePreInstallLogicFunction()`  | Funcție logică de pre-instalare (rulează înainte de instalare) |
+| `definePostInstallLogicFunction()` | Funcție logică post-instalare (rulează după instalare)         |
+| `defineFrontComponent()`           | Definiții ale componentelor de interfață                       |
+| `defineRole()`                     | Definiții de rol                                               |
+| `defineField()`                    | Extensii de câmp pentru obiectele existente                    |
+| `defineView()`                     | Definiții pentru vizualizări salvate                           |
+| `defineNavigationMenuItem()`       | Definiții pentru elemente de meniu de navigare                 |
+| `defineSkill()`                    | Definiții ale abilităților agentului AI                        |
 
 <Note>
 **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
@@ -220,8 +220,8 @@ SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. D
 | `defineApplication()`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
 | `defineObject()`                   | Definiți obiecte personalizate cu câmpuri                              |
 | `defineLogicFunction()`            | Definiți funcții de logică cu handleri                                 |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                      |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                     |
+| `definePreInstallLogicFunction()`  | Definește o funcție logică de pre-instalare (una per aplicație)        |
+| `definePostInstallLogicFunction()` | Definește o funcție logică post-instalare (una per aplicație)          |
 | `defineFrontComponent()`           | Definiți componente Front pentru interfața de utilizator personalizată |
 | `defineRole()`                     | Configurați permisiunile rolurilor și accesul la obiecte               |
 | `defineField()`                    | Extindeți obiectele existente cu câmpuri suplimentare                  |
@@ -327,7 +327,7 @@ Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
 * **Cine este aplicația**: identificatori, nume de afișare și descriere.
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
 * **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(Opțional) funcție de pre-instalare**: o funcție logică care rulează înainte ca aplicația să fie instalată.
 * **(Opțional) funcție post-instalare**: o funcție logică care rulează după instalarea aplicației.
 
 Folosiți `defineApplication()` pentru a defini configurația aplicației:
@@ -359,7 +359,7 @@ Notițe:
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului. Vezi [Funcții de pre-instalare](#pre-install-functions) și [Funcții post-instalare](#post-install-functions).
 
 #### Roluri și permisiuni
 
@@ -498,11 +498,11 @@ Notițe:
 * Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
 * Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
 
-### Pre-install functions
+### Funcții de pre-instalare
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+O funcție de pre-instalare este o funcție logică ce rulează automat înainte ca aplicația ta să fie instalată într-un spațiu de lucru. Aceasta este utilă pentru sarcini de validare, verificări ale condițiilor prealabile sau pregătirea stării spațiului de lucru înainte ca instalarea principală să continue.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+Când creezi scheletul unei aplicații noi cu `create-twenty-app`, ți se generează o funcție de pre-instalare la `src/logic-functions/pre-install.ts`:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +521,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Poți, de asemenea, să execuți manual funcția de pre-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +529,12 @@ yarn twenty function:execute --preInstall
 
 Puncte cheie:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de pre-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `preInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de pregătire mai lungi.
+* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `function:execute --preInstall`.
 
 ### Funcții post-instalare
 
@@ -567,10 +567,10 @@ yarn twenty function:execute --postInstall
 
 Puncte cheie:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `postInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
 * Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `function:execute --postInstall`.
 

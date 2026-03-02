@@ -79,8 +79,8 @@ const StyledColorSample = styled(ColorSample)`
   margin-top: ${({ theme }) => theme.spacing(1)};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 
-  margin-right: ${({ theme }) => theme.spacing(3.5)};
-  margin-left: ${({ theme }) => theme.spacing(3.5)};
+  margin-right: 14px;
+  margin-left: 14px;
 `;
 
 const StyledOptionInput = styled(SettingsTextInput)`Chip
@@ -92,7 +92,7 @@ const StyledOptionInput = styled(SettingsTextInput)`Chip
 `;
 
 const StyledIconGripVertical = styled(IconGripVertical)`
-  margin-right: ${({ theme }) => theme.spacing(0.75)};
+  margin-right: 3px;
 `;
 
 const StyledLightIconButton = styled(LightIconButton)`

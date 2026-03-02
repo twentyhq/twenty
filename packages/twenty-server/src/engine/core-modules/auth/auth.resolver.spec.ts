@@ -24,7 +24,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
-// import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
@@ -139,10 +138,6 @@ describe('AuthResolver', () => {
             }),
           },
         },
-        // {
-        //   provide: OAuthService,
-        //   useValue: {},
-        // },
       ],
     })
       .overrideGuard(CaptchaGuard)

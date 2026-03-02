@@ -20,10 +20,9 @@ export const useUpdateNavigationMenuItemInDraft = () => {
     setNavigationMenuItemsDraft((draft) => {
       if (!draft) return draft;
 
-      return draft.map((item) => {
-        if (item.id !== navigationMenuItemId) return item;
-        return { ...item, ...updates };
-      });
+      return draft.map((item) =>
+        item.id === navigationMenuItemId ? { ...item, ...updates } : item,
+      );
     });
   };
 
