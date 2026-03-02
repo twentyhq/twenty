@@ -2,7 +2,7 @@
 import { createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
-import { fixtures } from './fixtures';
+import { objectEventFixtures, workspaceEventFixtures } from './fixtures';
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -15,11 +15,21 @@ const client = createClient({
 
 async function seedEvents() {
   try {
-    console.log(`⚡ Seeding ${fixtures.length} events...`);
+    console.log(
+      `⚡ Seeding ${workspaceEventFixtures.length} workspace events...`,
+    );
 
     await client.insert({
       table: 'workspaceEvent',
-      values: fixtures,
+      values: workspaceEventFixtures,
+      format: 'JSONEachRow',
+    });
+
+    console.log(`⚡ Seeding ${objectEventFixtures.length} object events...`);
+
+    await client.insert({
+      table: 'objectEvent',
+      values: objectEventFixtures,
       format: 'JSONEachRow',
     });
 

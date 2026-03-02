@@ -20,21 +20,21 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Input changed:", text);
+    console.log("Ввод изменён:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
+    console.log("Нажата клавиша:", event.key);
   };
 
   return (
     <TextInput
       className
-      label="Username"
+      label="Имя пользователя"
       onChange={handleChange}
       fullWidth={false}
       disableHotkeys={false}
-      error="Invalid username"
+      error="Недопустимое имя пользователя"
       onKeyDown={handleKeyDown}
       RightIcon={null}
     />
@@ -83,13 +83,13 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("onValidate function fired")}
+      onValidate={() => console.log("Функция onValidate вызвана")}
       minRows={1}
-      placeholder="Write a comment"
-      onFocus={() => console.log("onFocus function fired")}
+      placeholder="Напишите комментарий"
+      onFocus={() => console.log("Функция onFocus вызвана")}
       variant="icon"
       buttonTitle
-      value="Task: "
+      value="Задача: "
     />
   );
 };

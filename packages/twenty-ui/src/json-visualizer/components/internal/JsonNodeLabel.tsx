@@ -1,40 +1,41 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { useContext } from 'react';
 
 const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;
 }>`
-  background-color: ${({ theme, highlighting }) =>
+  background-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue3
+      ? themeCssVariables.color.blue3
       : highlighting === 'red'
-        ? theme.background.danger
-        : theme.background.transparent.lighter};
-  border-color: ${({ theme, highlighting }) =>
+        ? themeCssVariables.background.danger
+        : themeCssVariables.background.transparent.lighter};
+  border-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue5
+      ? themeCssVariables.color.blue5
       : highlighting === 'red'
-        ? theme.border.color.danger
-        : theme.border.color.medium};
-  color: ${({ theme, highlighting }) =>
+        ? themeCssVariables.border.color.danger
+        : themeCssVariables.border.color.medium};
+  color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue
+      ? themeCssVariables.color.blue
       : highlighting === 'red'
-        ? theme.font.color.danger
-        : theme.font.color.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+        ? themeCssVariables.font.color.danger
+        : themeCssVariables.font.color.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   border-style: solid;
   border-width: 1px;
-  column-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: ${themeCssVariables.spacing[2]};
   display: inline-flex;
   align-items: center;
   height: 24px;
   box-sizing: border-box;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   white-space: nowrap;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-inline: ${themeCssVariables.spacing[2]};
 
   > span {
     align-items: center;
@@ -52,7 +53,7 @@ export const JsonNodeLabel = ({
   Icon: IconComponent;
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledLabelContainer highlighting={highlighting}>

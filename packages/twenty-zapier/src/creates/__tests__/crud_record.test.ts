@@ -7,7 +7,7 @@ import {
 
 import { crudRecordKey } from 'src/creates/crud_record';
 import App from 'src/index';
-import { getBundle } from 'src/utils/getBundle';
+import { getBundleForTest } from 'src/utils/getBundleForTest';
 import requestDb from 'src/utils/requestDb';
 import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
@@ -15,7 +15,7 @@ tools.env.inject();
 
 describe('creates.create_company', () => {
   test('should run to create a Company Record', async () => {
-    const bundle = getBundle({
+    const bundle = getBundleForTest({
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
@@ -61,7 +61,7 @@ describe('creates.create_company', () => {
     ).toEqual(100000000000);
   });
   test('should run to create a Person Record', async () => {
-    const bundle = getBundle({
+    const bundle = getBundleForTest({
       nameSingular: 'Person',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: { firstName: 'John', lastName: 'Doe' },
@@ -98,7 +98,7 @@ describe('creates.create_company', () => {
 
 describe('creates.update_company', () => {
   test('should run to update a Company record', async () => {
-    const createBundle = getBundle({
+    const createBundle = getBundleForTest({
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
@@ -112,7 +112,7 @@ describe('creates.update_company', () => {
 
     const companyId = createResult.data?.createCompany?.id;
 
-    const updateBundle = getBundle({
+    const updateBundle = getBundleForTest({
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.UPDATED,
       id: companyId,
@@ -141,7 +141,7 @@ describe('creates.update_company', () => {
 
 describe('creates.delete_company', () => {
   test('should run to delete a Company record', async () => {
-    const createBundle = getBundle({
+    const createBundle = getBundleForTest({
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Delete Company Name',
@@ -155,7 +155,7 @@ describe('creates.delete_company', () => {
 
     const companyId = createResult.data?.createCompany?.id;
 
-    const deleteBundle = getBundle({
+    const deleteBundle = getBundleForTest({
       nameSingular: 'Company',
       crudZapierOperation: DatabaseEventAction.DELETED,
       id: companyId,

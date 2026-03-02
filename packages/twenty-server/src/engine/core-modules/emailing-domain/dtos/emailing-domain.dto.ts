@@ -18,7 +18,7 @@ registerEnumType(EmailingDomainStatus, {
 });
 
 @ObjectType('EmailingDomain')
-export class EmailingDomainDto {
+export class EmailingDomainDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 

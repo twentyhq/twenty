@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Chip, ChipVariant } from '@ui/components/chip/Chip';
+import { themeCssVariables } from '@ui/theme';
 
 const StyledIconsContainer = styled.div`
   align-items: center;
@@ -12,7 +13,7 @@ const StyledIconsContainer = styled.div`
 
 const StyledChipContainer = styled.div`
   display: inline-flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export type MultipleAvatarChipProps = {

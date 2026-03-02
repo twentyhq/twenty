@@ -253,7 +253,7 @@ export class LocalDriver implements LogicFunctionDriver {
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
             const out = await mod.${handlerName}(payload);
-            console.log(JSON.stringify({ ok: true, result: out }));
+            process.stdout.write(JSON.stringify({ ok: true, result: out }));
             process.exit(0);
           }
         } catch (err) {
@@ -261,7 +261,7 @@ export class LocalDriver implements LogicFunctionDriver {
           if (process.send) {
             process.send({ ok: false, error: msg, stack: err?.stack });
           } else {
-            console.error(msg);
+            process.stdout.write(msg);
           }
           process.exit(1);
         }

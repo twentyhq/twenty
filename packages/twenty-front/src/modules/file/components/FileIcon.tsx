@@ -18,8 +18,7 @@ const StyledIconContainer = styled.div<{
   flex-shrink: 0;
   height: ${({ size }) => (size === 'small' ? '14px' : 'auto')};
   justify-content: center;
-  padding: ${({ theme, size }) =>
-    size === 'small' ? '0' : theme.spacing(1.25)};
+  padding: ${({ size }) => (size === 'small' ? '0' : '5px')};
   width: ${({ size }) => (size === 'small' ? '14px' : 'auto')};
 `;
 

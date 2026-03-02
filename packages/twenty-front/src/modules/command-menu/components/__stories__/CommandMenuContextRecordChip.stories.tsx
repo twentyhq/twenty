@@ -13,7 +13,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const FIND_MANY_COMPANIES = gql`
@@ -102,9 +102,7 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 );
 
-const companiesMock = getCompaniesMock();
-
-const companyMock = companiesMock[0];
+const companyMock = mockedCompanyRecords[0];
 
 const chipGeneratorPerObjectPerField: Record<
   string,
@@ -144,7 +142,7 @@ const createContextStoreWrapper = ({
   companies,
   componentInstanceId,
 }: {
-  companies: typeof companiesMock;
+  companies: typeof mockedCompanyRecords;
   componentInstanceId: string;
 }) => {
   return getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -236,7 +234,7 @@ export const Default: Story = {};
 export const WithTwoCompanies: Story = {
   decorators: [
     (Story) => {
-      const twoCompaniesMock = companiesMock.slice(0, 2);
+      const twoCompaniesMock = mockedCompanyRecords.slice(0, 2);
       const TwoCompaniesWrapper = createContextStoreWrapper({
         companies: twoCompaniesMock,
         componentInstanceId: '2',
@@ -254,7 +252,7 @@ export const WithTwoCompanies: Story = {
 export const WithTenCompanies: Story = {
   decorators: [
     (Story) => {
-      const tenCompaniesMock = companiesMock.slice(0, 10);
+      const tenCompaniesMock = mockedCompanyRecords.slice(0, 10);
       const TenCompaniesWrapper = createContextStoreWrapper({
         companies: tenCompaniesMock,
         componentInstanceId: '3',

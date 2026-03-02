@@ -89,5 +89,11 @@ export class AppTokenEntity {
   }
 
   @Column({ nullable: true, type: 'jsonb' })
-  context: { email: string } | null;
+  context: {
+    email?: string;
+    redirectUri?: string;
+    clientId?: string;
+    codeChallenge?: string;
+    scope?: string;
+  } | null;
 }

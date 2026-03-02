@@ -1,4 +1,7 @@
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 
 describe('createDefaultStandaloneRichTextWidget', () => {
@@ -20,6 +23,14 @@ describe('createDefaultStandaloneRichTextWidget', () => {
         body: { blocknote: '[{"type":"paragraph","content":"Test"}]' },
       },
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 4,
+      },
     });
   });
 

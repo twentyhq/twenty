@@ -52,25 +52,25 @@ npx create-twenty-app@latest my-app --interactive
 من هنا يمكنك:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# أضف كيانًا جديدًا إلى تطبيقك (موجّه)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# راقب سجلات وظائف تطبيقك
 yarn twenty function:logs
 
-# Execute a function by name
+# نفّذ وظيفة بالاسم
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# نفّذ دالة ما قبل التثبيت
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# نفّذ دالة ما بعد التثبيت
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# أزل تثبيت التطبيق من مساحة العمل الحالية
 yarn twenty app:uninstall
 
-# Display commands' help
+# اعرض مساعدة الأوامر
 yarn twenty help
 ```
 
@@ -83,7 +83,7 @@ yarn twenty help
 * ينسخ تطبيقًا أساسيًا مصغّرًا إلى `my-twenty-app/`
 * يضيف اعتمادًا محليًا `twenty-sdk` وتهيئة Yarn 4
 * ينشئ ملفات ضبط ونصوصًا مرتبطة بـ `twenty` CLI
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* يُنشئ الملفات الأساسية (تهيئة التطبيق، دور الدالة الافتراضي، دالتا ما قبل التثبيت وما بعد التثبيت) بالإضافة إلى ملفات أمثلة استنادًا إلى وضع الإنشاء.
 
 يبدو التطبيق المُنشأ حديثًا باستخدام الوضع الافتراضي `--exhaustive` كما يلي:
 
@@ -99,30 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # مطلوب - إعدادات التطبيق الرئيسية
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # الدور الافتراضي للدوال المنطقية
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # تعريف كائن مخصص — مثال
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # تعريف حقل مستقل — مثال
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # دالة منطقية — مثال
+  │   ├── pre-install.ts                # دالة منطقية لما قبل التثبيت
+  │   └── post-install.ts               # دالة منطقية لما بعد التثبيت
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # مكوّن واجهة أمامية — مثال
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # تعريف عرض محفوظ — مثال
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # رابط تنقّل في الشريط الجانبي — مثال
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
+مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
 
 بشكل عام:
 
@@ -139,18 +139,18 @@ With `--minimal`, only the core files are created (`application-config.ts`, `rol
 
 يكتشف SDK الكيانات عبر تحليل ملفات TypeScript الخاصة بك بحثًا عن استدعاءات **`export default define<Entity>({...})`**. يحتوي كل نوع كيان على دالة مساعدة مقابلة يتم تصديرها من `twenty-sdk`:
 
-| دالة مساعدة                        | نوع الكيان                                            |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | تعريفات كائنات مخصصة                                  |
-| `defineLogicFunction()`            | تعريفات الوظائف المنطقية                              |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Front component definitions                           |
-| `defineRole()`                     | تعريفات الأدوار                                       |
-| `defineField()`                    | امتدادات الحقول للكائنات الموجودة                     |
-| `defineView()`                     | تعريفات العروض المحفوظة                               |
-| `defineNavigationMenuItem()`       | تعريفات عناصر قائمة التنقل                            |
-| `defineSkill()`                    | تعريفات مهارات وكيل الذكاء الاصطناعي                  |
+| دالة مساعدة                        | نوع الكيان                                     |
+| ---------------------------------- | ---------------------------------------------- |
+| `defineObject()`                   | تعريفات كائنات مخصصة                           |
+| `defineLogicFunction()`            | تعريفات الوظائف المنطقية                       |
+| `definePreInstallLogicFunction()`  | دالة منطقية لما قبل التثبيت (تعمل قبل التثبيت) |
+| `definePostInstallLogicFunction()` | دالة منطقية لما بعد التثبيت (تعمل بعد التثبيت) |
+| `defineFrontComponent()`           | Front component definitions                    |
+| `defineRole()`                     | تعريفات الأدوار                                |
+| `defineField()`                    | امتدادات الحقول للكائنات الموجودة              |
+| `defineView()`                     | تعريفات العروض المحفوظة                        |
+| `defineNavigationMenuItem()`       | تعريفات عناصر قائمة التنقل                     |
+| `defineSkill()`                    | تعريفات مهارات وكيل الذكاء الاصطناعي           |
 
 <Note>
 **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
@@ -220,8 +220,8 @@ yarn twenty auth:status
 | `defineApplication()`              | تهيئة بيانات التعريف للتطبيق (مطلوب، واحد لكل تطبيق) |
 | `defineObject()`                   | تعريف كائنات مخصصة مع حقول                           |
 | `defineLogicFunction()`            | تعريف وظائف منطقية مع معالجات                        |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)    |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)   |
+| `definePreInstallLogicFunction()`  | تعريف دالة منطقية لما قبل التثبيت (واحدة لكل تطبيق)  |
+| `definePostInstallLogicFunction()` | تعريف دالة منطقية لما بعد التثبيت (واحدة لكل تطبيق)  |
 | `defineFrontComponent()`           | عرِّف مكوّنات أمامية لواجهة مستخدم مخصّصة            |
 | `defineRole()`                     | تهيئة صلاحيات الدور والوصول إلى الكائنات             |
 | `defineField()`                    | وسّع الكائنات الموجودة بحقول إضافية                  |
@@ -327,7 +327,7 @@ export default defineObject({
 * **هوية التطبيق**: المعرفات، اسم العرض، والوصف.
 * **كيفية تشغيل وظائفه**: الدور الذي تستخدمه للأذونات.
 * **متغيرات (اختياري)**: أزواج مفتاح-قيمة تُعرض لوظائفك كمتغيرات بيئة.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(اختياري) دالة ما قبل التثبيت**: دالة منطقية تعمل قبل تثبيت التطبيق.
 * **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
@@ -359,7 +359,7 @@ export default defineApplication({
 * حقول `universalIdentifier` هي معرّفات حتمية تخصك؛ أنشئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
 * `applicationVariables` تصبح متغيرات بيئة لوظائفك (على سبيل المثال، `DEFAULT_RECIPIENT_NAME` متاح كـ `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` يجب أن يطابق ملف الدور (انظر أدناه).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* يتم اكتشاف دوال ما قبل التثبيت وما بعد التثبيت تلقائيًا أثناء إنشاء ملف البيان. راجع [دوال ما قبل التثبيت](#pre-install-functions) و[دوال ما بعد التثبيت](#post-install-functions).
 
 #### الأدوار والصلاحيات
 
@@ -498,11 +498,11 @@ export default defineLogicFunction({
 * المصفوفة `triggers` اختيارية. يمكن استخدام الوظائف بدون مشغلات كوظائف مساعدة تُستدعى بواسطة وظائف أخرى.
 * يمكنك مزج أنواع متعددة من المشغلات في وظيفة واحدة.
 
-### Pre-install functions
+### دوال ما قبل التثبيت
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+دالة ما قبل التثبيت هي دالة منطقية تعمل تلقائيًا قبل تثبيت تطبيقك على مساحة عمل. يفيد ذلك في مهام التحقق، وفحص المتطلبات المسبقة، أو تجهيز حالة مساحة العمل قبل متابعة التثبيت الرئيسي.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+عند إنشاء هيكل تطبيق جديد باستخدام `create-twenty-app`، يتم إنشاء دالة ما قبل التثبيت لك في `src/logic-functions/pre-install.ts`:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +521,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+يمكنك أيضًا تنفيذ دالة ما قبل التثبيت يدويًا في أي وقت باستخدام CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +529,12 @@ yarn twenty function:execute --preInstall
 
 النقاط الرئيسية:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* تستخدم دوال ما قبل التثبيت `definePreInstallLogicFunction()` — وهو إصدار متخصص يستبعد إعدادات المُشغِّل (`cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` و`isTool`).
+* يتلقى المُعالج `InstallLogicFunctionPayload` يحوي `{ previousVersion: string }` — إصدار التطبيق الذي كان مُثبّتًا سابقًا (أو سلسلة فارغة للتثبيتات الجديدة).
+* يُسمح بدالة ما قبل التثبيت واحدة فقط لكل تطبيق. سيُنتج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من واحدة.
+* يتم تعيين `universalIdentifier` للدالة تلقائيًا كـ `preInstallLogicFunctionUniversalIdentifier` في بيان التطبيق أثناء الإنشاء — لست بحاجة إلى الإشارة إليه في `defineApplication()`.
+* تم ضبط المهلة الافتراضية على 300 ثانية (5 دقائق) للسماح بمهام التحضير الأطول.
+* لا تحتاج دوال ما قبل التثبيت إلى مُشغِّلات — إذ يستدعيها النظام الأساسي قبل التثبيت أو يدويًا عبر `function:execute --preInstall`.
 
 ### Post-install functions
 
@@ -567,10 +567,10 @@ yarn twenty function:execute --postInstall
 
 النقاط الرئيسية:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* تستخدم دوال ما بعد التثبيت `definePostInstallLogicFunction()` — وهو إصدار متخصص يستبعد إعدادات المُشغِّل (`cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` و`isTool`).
+* يتلقى المُعالج `InstallLogicFunctionPayload` يحوي `{ previousVersion: string }` — إصدار التطبيق الذي كان مُثبّتًا سابقًا (أو سلسلة فارغة للتثبيتات الجديدة).
+* يُسمح بدالة ما بعد التثبيت واحدة فقط لكل تطبيق. سيُنتج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من واحدة.
+* يتم تعيين `universalIdentifier` للدالة تلقائيًا كـ `postInstallLogicFunctionUniversalIdentifier` في بيان التطبيق أثناء الإنشاء — لست بحاجة إلى الإشارة إليه في `defineApplication()`.
 * تم تعيين مهلة افتراضية إلى 300 ثانية (5 دقائق) للسماح بمهام الإعداد الأطول مثل تهيئة البيانات.
 * لا تحتاج دوال ما بعد التثبيت إلى مُشغِّلات — حيث يستدعيها النظام الأساسي أثناء التثبيت أو يدويًا عبر `function:execute --postInstall`.
 

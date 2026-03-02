@@ -11,7 +11,17 @@ describe('root-app app:dev', () => {
   beforeAll(async () => {
     const result = await runAppDevInProcess({ appPath: APP_PATH });
 
-    expect(result.success).toBe(true);
+    if (!result.success) {
+      const diagnostics = JSON.stringify(
+        { events: result.events, stepStatuses: result.stepStatuses },
+        null,
+        2,
+      );
+
+      throw new Error(
+        `app:dev did not produce manifest.json within timeout.\n${diagnostics}`,
+      );
+    }
   }, 60000);
 
   defineManifestTests(APP_PATH);
