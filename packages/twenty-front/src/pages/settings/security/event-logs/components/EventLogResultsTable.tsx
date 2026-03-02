@@ -92,12 +92,10 @@ const StyledTable = styled(Table)`
 
 const StyledHeaderRow = styled(TableRow)`
   display: grid;
-  grid-template-columns: var(--grid-template-columns);
 `;
 
 const StyledDataRow = styled(TableRow)`
   display: grid;
-  grid-template-columns: var(--grid-template-columns);
 `;
 
 const StyledResizableHeader = styled(TableHeader)<{ isResizing?: boolean }>`
@@ -262,13 +260,7 @@ export const EventLogResultsTable = ({
         componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
       >
         <StyledTable>
-          <StyledHeaderRow
-            style={
-              {
-                '--grid-template-columns': gridTemplateColumns,
-              } as React.CSSProperties
-            }
-          >
+          <StyledHeaderRow style={{ gridTemplateColumns }}>
             {baseColumns.map((column) => (
               <TableHeader key={column.id}>{t(column.label)}</TableHeader>
             ))}
@@ -302,13 +294,7 @@ export const EventLogResultsTable = ({
       componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
     >
       <StyledTable>
-        <StyledHeaderRow
-          style={
-            {
-              '--grid-template-columns': gridTemplateColumns,
-            } as React.CSSProperties
-          }
-        >
+        <StyledHeaderRow style={{ gridTemplateColumns }}>
           {baseColumns.map((column) => (
             <StyledResizableHeader
               key={column.id}
@@ -325,11 +311,7 @@ export const EventLogResultsTable = ({
         {records.map((record, index) => (
           <StyledDataRow
             key={`${record.timestamp}-${record.event}-${index}`}
-            style={
-              {
-                '--grid-template-columns': gridTemplateColumns,
-              } as React.CSSProperties
-            }
+            style={{ gridTemplateColumns }}
           >
             <StyledTableCell>{record.event}</StyledTableCell>
             <StyledTableCell>

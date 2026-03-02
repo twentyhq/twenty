@@ -53,7 +53,7 @@ const StyledLabelAndIconContainer = styled.div`
 const StyledLabelContainer = styled.div<{ width?: number }>`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  width: ${({ width }) => width ?? 'auto'};
+  width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 const StyledDiv = styled.div`
   max-width: 70%;

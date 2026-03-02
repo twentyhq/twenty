@@ -419,6 +419,7 @@ export default defineConfig(({ command, mode }) => {
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
         }),
         enforce: 'pre',

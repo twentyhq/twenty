@@ -27,9 +27,7 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChipContainer = styled.div`
-  font-weight: var(--chip-font-weight);
-`;
+const StyledRecordChipContainer = styled.div``;
 
 const StyledChip = styled.div`
   align-items: center;
@@ -65,14 +63,7 @@ export const ParticipantChip = ({
     <StyledContainer className={className}>
       {person ? (
         <StyledRecordChipContainer
-          style={
-            {
-              '--chip-font-weight':
-                variant === 'bold'
-                  ? themeCssVariables.font.weight.medium
-                  : themeCssVariables.font.weight.regular,
-            } as React.CSSProperties
-          }
+          style={{ fontWeight: variant === 'bold' ? 500 : 400 }}
         >
           <RecordChip
             objectNameSingular={CoreObjectNameSingular.Person}

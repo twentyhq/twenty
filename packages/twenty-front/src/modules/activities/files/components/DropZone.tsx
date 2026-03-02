@@ -12,12 +12,11 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border: 2px dashed ${themeCssVariables.border.color.strong};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
   text-align: center;
 `;
 

@@ -32,9 +32,7 @@ const StyledModalContent = styled(Modal.Content)`
   padding: 0;
 `;
 
-const StyledScrollWrapperContainer = styled.div`
-  height: var(--scroll-height, auto);
-`;
+const StyledScrollWrapperContainer = styled.div``;
 
 export const BookCall = () => {
   const { t } = useLingui();
@@ -57,11 +55,7 @@ export const BookCall = () => {
     <>
       <StyledModalContent isHorizontalCentered isVerticalCentered>
         <StyledScrollWrapperContainer
-          style={
-            {
-              '--scroll-height': isMobile ? 'unset' : 'auto',
-            } as React.CSSProperties
-          }
+          style={{ height: isMobile ? undefined : 'auto' }}
         >
           <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
             <Cal

@@ -44,10 +44,10 @@ export type SettingsSystemToolTableRowProps = {
 export const StyledSystemToolTableRow = styled(TableRow)`
   grid-template-columns: 1fr 100px 36px;
   opacity: 0.7;
-  cursor: var(--row-cursor, default);
+  cursor: pointer;
 
   &:hover {
-    opacity: var(--row-hover-opacity, 0.7);
+    opacity: 0.85;
   }
 `;
 
@@ -130,16 +130,7 @@ export const SettingsSystemToolTableRow = ({
 
   return (
     <>
-      <StyledSystemToolTableRow
-        key={tool.name}
-        onClick={handleRowClick}
-        style={
-          {
-            '--row-cursor': 'pointer',
-            '--row-hover-opacity': 0.85,
-          } as React.CSSProperties
-        }
-      >
+      <StyledSystemToolTableRow key={tool.name} onClick={handleRowClick}>
         <StyledNameTableCell>
           <StyledIconContainer>
             <Icon size={16} />

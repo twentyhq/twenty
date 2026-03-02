@@ -52,8 +52,7 @@ const StyledSection = styled(Section)`
   flex-shrink: 0;
 `;
 
-const StyledLink = styled(Link)<{ isDisabled: boolean }>`
-  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
@@ -249,7 +248,9 @@ export const SettingsSecurity = () => {
                 Button={
                   <StyledLink
                     to={getSettingsPath(SettingsPath.EventLogs)}
-                    isDisabled={!isEventLogsEnabled}
+                    style={{
+                      pointerEvents: isEventLogsEnabled ? 'auto' : 'none',
+                    }}
                   >
                     <Button
                       title={t`View Logs`}

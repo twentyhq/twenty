@@ -9,7 +9,6 @@ const StyledRowContent = styled(CardContent)`
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[12]};
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
-  cursor: var(--row-cursor, default);
 `;
 
 export const ActivityRow = ({
@@ -29,11 +28,7 @@ export const ActivityRow = ({
   return (
     <StyledRowContent
       onClick={handleClick}
-      style={
-        {
-          '--row-cursor': disabled !== true ? 'pointer' : 'default',
-        } as React.CSSProperties
-      }
+      style={{ cursor: disabled !== true ? 'pointer' : 'default' }}
     >
       {children}
     </StyledRowContent>
