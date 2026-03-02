@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';

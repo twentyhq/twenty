@@ -27,7 +27,13 @@ export class ApplicationRegistrationVariableService {
 
   async findVariables(
     applicationRegistrationId: string,
+    workspaceId: string,
   ): Promise<ApplicationRegistrationVariableEntity[]> {
+    await this.assertRegistrationOwnedByWorkspace(
+      applicationRegistrationId,
+      workspaceId,
+    );
+
     return this.variableRepository.find({
       where: { applicationRegistrationId },
       order: { key: 'ASC' },
@@ -36,8 +42,12 @@ export class ApplicationRegistrationVariableService {
 
   async createVariable(
     input: CreateApplicationRegistrationVariableInput,
+    workspaceId: string,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    await this.assertRegistrationExists(input.applicationRegistrationId);
+    await this.assertRegistrationOwnedByWorkspace(
+      input.applicationRegistrationId,
+      workspaceId,
+    );
 
     const encryptedValue = this.encryptionService.encrypt(input.value);
 
@@ -54,6 +64,7 @@ export class ApplicationRegistrationVariableService {
 
   async updateVariable(
     input: UpdateApplicationRegistrationVariableInput,
+    workspaceId: string,
   ): Promise<ApplicationRegistrationVariableEntity> {
     const { id, update } = input;
 
@@ -67,6 +78,11 @@ export class ApplicationRegistrationVariableService {
         ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
       );
     }
+
+    await this.assertRegistrationOwnedByWorkspace(
+      variable.applicationRegistrationId,
+      workspaceId,
+    );
 
     const updateData: Record<string, unknown> = {};
 
@@ -85,7 +101,7 @@ export class ApplicationRegistrationVariableService {
     return this.variableRepository.findOneOrFail({ where: { id } });
   }
 
-  async deleteVariable(id: string): Promise<boolean> {
+  async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
     const variable = await this.variableRepository.findOne({
       where: { id },
     });
@@ -96,6 +112,11 @@ export class ApplicationRegistrationVariableService {
         ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
       );
     }
+
+    await this.assertRegistrationOwnedByWorkspace(
+      variable.applicationRegistrationId,
+      workspaceId,
+    );
 
     await this.variableRepository.delete(id);
 
@@ -150,14 +171,17 @@ export class ApplicationRegistrationVariableService {
     }
   }
 
-  private async assertRegistrationExists(id: string): Promise<void> {
+  private async assertRegistrationOwnedByWorkspace(
+    registrationId: string,
+    workspaceId: string,
+  ): Promise<void> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
+      where: { id: registrationId, workspaceId },
     });
 
     if (!registration) {
       throw new ApplicationRegistrationException(
-        `Application registration with id ${id} not found`,
+        `Application registration with id ${registrationId} not found`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       );
     }

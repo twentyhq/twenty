@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import React, { type ReactNode } from 'react';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledButtonGroupContainer = styled.div`

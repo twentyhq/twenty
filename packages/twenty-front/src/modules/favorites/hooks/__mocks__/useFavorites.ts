@@ -109,23 +109,18 @@ export const sortedFavorites = [
 const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
-const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    computeReferences: false,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
+const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  computeReferences: false,
+  objectPermissionsByObjectMetadataId: {},
+});
 
-const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
-
+const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectPermissionsByObjectMetadataId: {},
+});
 
 export const mocks = [
   {

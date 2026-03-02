@@ -2485,6 +2485,8 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
+  scope?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -3804,6 +3806,15 @@ export type PostgresCredentials = {
   workspaceId: Scalars['UUID'];
 };
 
+export type PublicApplicationRegistration = {
+  __typename?: 'PublicApplicationRegistration';
+  id: Scalars['UUID'];
+  logoUrl?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  oAuthScopes: Array<Scalars['String']>;
+  websiteUrl?: Maybe<Scalars['String']>;
+};
+
 export type PublicDomain = {
   __typename?: 'PublicDomain';
   createdAt: Scalars['DateTime'];
@@ -3854,7 +3865,7 @@ export type Query = {
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
-  findApplicationRegistrationByClientId?: Maybe<ApplicationRegistration>;
+  findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
@@ -6461,7 +6472,7 @@ export type FindApplicationRegistrationByClientIdQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationByClientIdQuery = { __typename?: 'Query', findApplicationRegistrationByClientId?: { __typename?: 'ApplicationRegistration', id: string, name: string, oAuthScopes: Array<string>, websiteUrl?: string | null, logoUrl?: string | null } | null };
+export type FindApplicationRegistrationByClientIdQuery = { __typename?: 'Query', findApplicationRegistrationByClientId?: { __typename?: 'PublicApplicationRegistration', id: string, name: string, oAuthScopes: Array<string>, websiteUrl?: string | null, logoUrl?: string | null } | null };
 
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
   id: Scalars['String'];

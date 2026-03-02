@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledBanner = styled.div<{ variant?: BannerVariant }>`
   align-items: center;
