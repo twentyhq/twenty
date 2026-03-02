@@ -7,7 +7,6 @@ type WorkspaceDndKitDraggableItemProps = {
   sourceIndex: number;
   disabled?: boolean;
   itemComponent: ReactNode | ((props: { isDragging: boolean }) => ReactNode);
-  isInsideScrollableContainer?: boolean;
 };
 
 export const WorkspaceDndKitDraggableItem = ({
@@ -16,7 +15,6 @@ export const WorkspaceDndKitDraggableItem = ({
   sourceIndex,
   disabled = false,
   itemComponent,
-  isInsideScrollableContainer: _isInsideScrollableContainer,
 }: WorkspaceDndKitDraggableItemProps) => {
   const { ref, handleRef, isDragging } = useDraggable({
     id,
