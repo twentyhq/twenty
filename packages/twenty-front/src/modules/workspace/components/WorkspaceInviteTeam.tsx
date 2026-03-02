@@ -4,9 +4,11 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
@@ -16,13 +18,11 @@ import {
   IconLock,
   IconSend,
   IconUser,
-  type IconComponent,
   useIcons,
+  type IconComponent,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
-import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -46,8 +46,8 @@ const StyledLinkContainer = styled.div`
 `;
 
 const StyledRoleContainer = styled.div`
-  flex: 0 0 96px;
-  min-width: 96px;
+  flex: 0 0 130px;
+  min-width: 130px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     flex: 1 1 100%;

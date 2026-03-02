@@ -22,7 +22,6 @@ import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { type ApolloError } from '@apollo/client';
-import { formatDistanceToNow } from 'date-fns';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   generateILikeFiltersForCompositeFields,
@@ -83,6 +82,11 @@ const StyledTextContainerWithEllipsis = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledInvitationTableCell = styled(TableCell)`
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledSearchContainer = styled.div`
@@ -223,10 +227,15 @@ export const SettingsWorkspaceMembers = () => {
   });
 
   const getExpiresAtText = (expiresAt: string) => {
-    const expiresAtDate = new Date(expiresAt);
-    return expiresAtDate < new Date()
-      ? t`Expired`
-      : formatDistanceToNow(new Date(expiresAt));
+    const msLeft = new Date(expiresAt).getTime() - Date.now();
+
+    if (msLeft <= 0) return t`Expired`;
+
+    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+
+    if (daysLeft === 1) return t`1 day`;
+
+    return t`${daysLeft} days`;
   };
 
   const optimizedWorkspaceMembers = useMemo(() => {
@@ -288,8 +297,8 @@ export const SettingsWorkspaceMembers = () => {
             {isNonEmptyArray(workspaceInvitations) && (
               <StyledTable>
                 <TableRow
-                  gridAutoColumns="200px 1fr minmax(95px, 1fr) 96px"
-                  mobileGridAutoColumns="100px 1fr minmax(80px, 1fr) 88px"
+                  gridAutoColumns="2fr 1fr 1fr 80px"
+                  mobileGridAutoColumns="2fr 1fr 1fr 72px"
                 >
                   <TableHeader>
                     <Trans>Email</Trans>
@@ -307,27 +316,37 @@ export const SettingsWorkspaceMembers = () => {
                 <StyledTableRows>
                   {workspaceInvitations?.map((workspaceInvitation) => (
                     <TableRow
-                      gridAutoColumns="200px 1fr minmax(95px, 1fr) 96px"
-                      mobileGridAutoColumns="100px 1fr minmax(80px, 1fr) 88px"
+                      gridAutoColumns="2fr 1fr 1fr 80px"
+                      mobileGridAutoColumns="2fr 1fr 1fr 72px"
                       key={workspaceInvitation.id}
                     >
-                      <TableCell>
+                      <StyledInvitationTableCell>
                         <StyledIconWrapper>
                           <IconMail
                             size={theme.icon.size.md}
                             stroke={theme.icon.stroke.sm}
                           />
                         </StyledIconWrapper>
-                        <StyledTextContainerWithEllipsis>
+                        <StyledTextContainerWithEllipsis
+                          id={`invitation-email-${workspaceInvitation.id}`}
+                        >
                           {workspaceInvitation.email}
                         </StyledTextContainerWithEllipsis>
-                      </TableCell>
-                      <TableCell>
+                        <AppTooltip
+                          anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
+                          content={workspaceInvitation.email}
+                          noArrow
+                          place="top"
+                          positionStrategy="fixed"
+                          delay={TooltipDelay.shortDelay}
+                        />
+                      </StyledInvitationTableCell>
+                      <StyledInvitationTableCell>
                         <StyledTextContainerWithEllipsis>
                           {rolesById.get(workspaceInvitation.roleId ?? '')
                             ?.label ?? t`Default role`}
                         </StyledTextContainerWithEllipsis>
-                      </TableCell>
+                      </StyledInvitationTableCell>
                       <TableCell align="center">
                         <Status
                           color="gray"
