@@ -10,12 +10,6 @@ export { authSwitch } from './auth-switch';
 export type { AuthSwitchOptions, AuthSwitchResult } from './auth-switch';
 
 // App
-export { appBuild } from './app-build';
-export type {
-  AppBuildOptions,
-  AppBuildResult,
-  BuiltFileInfo,
-} from './app-build';
 export {
   appBuildAndSync,
   APP_BUILD_AND_SYNC_STEPS,
@@ -25,8 +19,6 @@ export type {
   AppBuildAndSyncResult,
   AppBuildAndSyncStep,
 } from './app-build-and-sync';
-export { syncBuiltApp } from './app-sync';
-export type { AppSyncOptions } from './app-sync';
 export { appTypecheck } from './app-typecheck';
 export type { AppTypecheckOptions } from './app-typecheck';
 export { appUninstall } from './app-uninstall';

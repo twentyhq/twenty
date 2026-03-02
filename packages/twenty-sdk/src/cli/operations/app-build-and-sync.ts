@@ -1,8 +1,8 @@
-import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { buildApplication } from '@/cli/utilities/build/common/build-application';
+import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchronize-built-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
+import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ClientService } from '@/cli/utilities/client/client-service';
-import { appBuild } from './app-build';
-import { syncBuiltApp } from './app-sync';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export const APP_BUILD_AND_SYNC_STEPS = {
@@ -53,7 +53,7 @@ export const appBuildAndSync = async (
 
   onStep?.(APP_BUILD_AND_SYNC_STEPS.BUILD);
 
-  const firstBuildResult = await appBuild({
+  const firstBuildResult = await buildApplication({
     appPath,
     manifest,
     filePaths,
@@ -61,7 +61,7 @@ export const appBuildAndSync = async (
 
   onStep?.(APP_BUILD_AND_SYNC_STEPS.SYNC_SCHEMA);
 
-  const firstSyncResult = await syncBuiltApp({
+  const firstSyncResult = await synchronizeBuiltApplication({
     appPath,
     manifest,
     builtFileInfos: firstBuildResult.builtFileInfos,
@@ -95,7 +95,7 @@ export const appBuildAndSync = async (
 
   onStep?.(APP_BUILD_AND_SYNC_STEPS.REBUILD);
 
-  const finalBuildResult = await appBuild({
+  const finalBuildResult = await buildApplication({
     appPath,
     manifest,
     filePaths,
@@ -103,7 +103,7 @@ export const appBuildAndSync = async (
 
   onStep?.(APP_BUILD_AND_SYNC_STEPS.SYNC_FINAL);
 
-  const finalSyncResult = await syncBuiltApp({
+  const finalSyncResult = await synchronizeBuiltApplication({
     appPath,
     manifest,
     builtFileInfos: finalBuildResult.builtFileInfos,

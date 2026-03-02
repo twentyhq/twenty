@@ -34,7 +34,7 @@ export type AppBuildResult = {
   builtFileInfos: Map<string, BuiltFileInfo>;
 };
 
-export const appBuild = async (
+export const buildApplication = async (
   options: AppBuildOptions,
 ): Promise<AppBuildResult> => {
   const outputDir = join(options.appPath, OUTPUT_DIR);
