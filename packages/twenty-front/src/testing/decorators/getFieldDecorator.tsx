@@ -1,19 +1,25 @@
 import { type Decorator } from '@storybook/react-vite';
 import { useCallback, useEffect } from 'react';
 
+import { type Task } from '@/activities/types/Task';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
-import { mockedTasks } from '~/testing/mock-data/tasks';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const mockedTasks = mockedTaskRecords.map((record) =>
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 const RecordMockSetterEffect = ({
   companies,
@@ -52,7 +58,7 @@ export const getFieldDecorator =
     fieldValue?: any,
   ): Decorator =>
   (Story) => {
-    const companiesMock = getCompaniesMock();
+    const companiesMock = [...mockedCompanyRecords];
 
     const companies =
       objectNameSingular === 'company' && isDefined(fieldValue)
@@ -62,7 +68,7 @@ export const getFieldDecorator =
           ]
         : companiesMock;
 
-    const peopleMock = getPeopleRecordConnectionMock();
+    const peopleMock = [...mockedPersonRecords];
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)

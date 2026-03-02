@@ -1,7 +1,7 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useMemo } from 'react';
 import {
-  type TwoFactorAuthenticationMethodDto,
+  type TwoFactorAuthenticationMethodSummary,
   useInitiateOtpProvisioningMutation,
 } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -12,7 +12,7 @@ export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
     useInitiateOtpProvisioningMutation();
 
   const currentUserWorkspaceTwoFactorAuthenticationMethods = useMemo(() => {
-    const methods: Record<string, TwoFactorAuthenticationMethodDto> = {};
+    const methods: Record<string, TwoFactorAuthenticationMethodSummary> = {};
 
     (currentUserWorkspace?.twoFactorAuthenticationMethodSummary ?? []).forEach(
       (method) => (methods[method.strategy] = method),

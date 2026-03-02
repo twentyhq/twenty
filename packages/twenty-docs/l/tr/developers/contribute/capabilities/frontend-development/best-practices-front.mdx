@@ -8,7 +8,7 @@ Bu belge, ön yüz üzerinde çalışırken takip etmeniz gereken en iyi uygulam
 
 React ve Jotai, kod tabanında durumu yönetir.
 
-### Durumu depolamak için `useAtomState` kullanın.
+### Durumu depolamak için Jotai atomlarını kullanın
 
 Durumunuzu depolamak için ihtiyaç duyduğunuz kadar atom oluşturmak iyi bir uygulamadır.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Durum saklamak için `useRef` kullanmaktan kaçının.
 
-Durum saklamak istiyorsanız, `useState` veya `useAtomState` kullanmalısınız.
+Durum saklamak istiyorsanız, `useState` veya `useAtomState` ile Jotai atomlarını kullanmalısınız.
 
 Bazı yeniden render edilmelerin olmasını önlemek için `useRef`'e ihtiyacınız varmış gibi hissediyorsanız, [yeniden render yönetimi](#managing-re-renders) konusuna bakın.
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Jotai aile durumlarını ve jotai aile seçimcilerini kullanın.
+### Atom aile durumlarını ve seçimcilerini kullanın
 
-Jotai aile durumları ve seçimcileri, yeniden render'ları önlemenin harika bir yoludur.
+Atom aile durumları ve seçimcileri, yeniden render'ları önlemenin harika bir yoludur.
 
 Bir öğe listesini saklamanız gerektiğinde kullanılabilirdir.
 

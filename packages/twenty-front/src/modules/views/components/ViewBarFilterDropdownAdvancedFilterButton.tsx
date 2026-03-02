@@ -16,18 +16,19 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledPill = styled(Pill)`
-  background: ${({ theme }) => theme.color.blue3};
-  color: ${({ theme }) => theme.color.blue};
+  background: ${themeCssVariables.color.blue3};
+  color: ${themeCssVariables.color.blue};
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {

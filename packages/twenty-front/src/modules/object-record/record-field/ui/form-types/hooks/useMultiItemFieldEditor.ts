@@ -149,6 +149,13 @@ export const useMultiItemFieldEditor = ({
     onUpdate: ({ editor }) => {
       onUpdate(editor);
     },
+    onBlur: ({ editor }) => {
+      const textBefore = getTextBeforeCursor(editor);
+
+      if (textBefore.trim().length > 0) {
+        convertTextToTag(editor, textBefore);
+      }
+    },
     enableInputRules: false,
     enablePasteRules: false,
     injectCSS: false,

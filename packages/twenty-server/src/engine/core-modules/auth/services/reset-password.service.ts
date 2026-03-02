@@ -25,10 +25,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
-import { type InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
+import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
+import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
-import { type ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
@@ -68,9 +68,8 @@ export class ResetPasswordService {
 
     if (!targetWorkspaceId) {
       try {
-        const firstWorkspace = await this.userWorkspaceService.findFirstWorkspaceByUserId(
-          user.id,
-        );
+        const firstWorkspace =
+          await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id);
 
         targetWorkspaceId = firstWorkspace.id;
       } catch (error) {
@@ -142,7 +141,7 @@ export class ResetPasswordService {
     resetToken: PasswordResetToken,
     email: string,
     locale: keyof typeof APP_LOCALES,
-  ): Promise<EmailPasswordResetLinkOutput> {
+  ): Promise<EmailPasswordResetLinkDTO> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
@@ -213,7 +212,7 @@ export class ResetPasswordService {
 
   async validatePasswordResetToken(
     resetToken: string,
-  ): Promise<ValidatePasswordResetTokenOutput> {
+  ): Promise<ValidatePasswordResetTokenDTO> {
     const hashedResetToken = crypto
       .createHash('sha256')
       .update(resetToken)
@@ -249,7 +248,7 @@ export class ResetPasswordService {
 
   async invalidatePasswordResetToken(
     userId: string,
-  ): Promise<InvalidatePasswordOutput> {
+  ): Promise<InvalidatePasswordDTO> {
     const user = await this.userService.findUserByIdOrThrow(
       userId,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),

@@ -39,6 +39,6 @@ export class AgentTurnEntity {
   @OneToMany(() => AgentTurnEvaluationEntity, (evaluation) => evaluation.turn)
   evaluations: Relation<AgentTurnEvaluationEntity[]>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

@@ -1,5 +1,11 @@
-import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { lazy, Suspense } from 'react';
+
+const SignInBackgroundMockPage = lazy(() =>
+  import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
+    (module) => ({ default: module.SignInBackgroundMockPage }),
+  ),
+);
 import { AppPath } from 'twenty-shared/types';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -61,7 +67,9 @@ export const NotFound = () => {
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>
-      <SignInBackgroundMockPage />
+      <Suspense fallback={null}>
+        <SignInBackgroundMockPage />
+      </Suspense>
     </>
   );
 };

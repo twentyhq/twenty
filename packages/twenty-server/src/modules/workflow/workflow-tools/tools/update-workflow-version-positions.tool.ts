@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions-input.dto';
+import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions.input';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,

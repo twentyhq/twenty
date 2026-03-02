@@ -10,7 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
-  type PublicWorkspaceDataOutput,
+  type PublicWorkspaceData,
   useEmailPasswordResetLinkMutation,
 } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -24,7 +24,7 @@ dynamicActivate(SOURCE_LOCALE);
 const renderHooks = () => {
   jotaiStore.set(workspacePublicDataState.atom, {
     id: 'workspace-id',
-  } as PublicWorkspaceDataOutput);
+  } as PublicWorkspaceData);
 
   const { result } = renderHook(() => useHandleResetPassword(), {
     wrapper: ({ children }: { children: ReactNode }) =>
