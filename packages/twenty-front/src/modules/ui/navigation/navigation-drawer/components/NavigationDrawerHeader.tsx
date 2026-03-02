@@ -39,6 +39,13 @@ const StyledNavigationDrawerCollapseButton = styled(
   width: ${({ theme }) => theme.spacing(6)};
 `;
 
+const StyledWorkspaceDropdownContainer = styled.div`
+  min-height: ${({ theme }) => theme.spacing(8)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 type NavigationDrawerHeaderProps = {
   showCollapseButton: boolean;
 };
@@ -54,7 +61,9 @@ export const NavigationDrawerHeader = ({
 
   return (
     <StyledContainer isExpanded={isNavigationDrawerExpanded}>
-      <MultiWorkspaceDropdownButton />
+      <StyledWorkspaceDropdownContainer>
+        <MultiWorkspaceDropdownButton />
+      </StyledWorkspaceDropdownContainer>
       {!isMobile && (
         <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
           <LightIconButton
