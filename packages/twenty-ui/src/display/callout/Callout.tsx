@@ -44,7 +44,6 @@ const StyledCalloutContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   max-width: 512px;
-  overflow: hidden;
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
     ${themeCssVariables.spacing[2]};
   width: 100%;
