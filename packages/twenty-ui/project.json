@@ -44,7 +44,9 @@
     },
     "generateThemeConstants": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true,
       "inputs": [
         "{projectRoot}/scripts/generateThemeConstants.ts"
