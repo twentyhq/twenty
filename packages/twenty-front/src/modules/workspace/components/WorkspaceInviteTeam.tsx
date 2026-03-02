@@ -56,44 +56,42 @@ const StyledRoleContainer = styled.div`
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
 
-const validationSchema = z
-  .object({
-    emails: z.string().superRefine((value, ctx) => {
-      if (!value.length) {
-        return;
+const validationSchema = z.object({
+  emails: z.string().superRefine((value, ctx) => {
+    if (!value.length) {
+      return;
+    }
+    const emails = sanitizeEmailList(value.split(','));
+    if (emails.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        message: i18n._(emailsEmptyErrorMessage),
+      });
+    }
+    const invalidEmails: string[] = [];
+    for (const email of emails) {
+      const result = z.email().safeParse(email);
+      if (!result.success) {
+        invalidEmails.push(email);
       }
-      const emails = sanitizeEmailList(value.split(','));
-      if (emails.length === 0) {
-        ctx.addIssue({
-          code: 'custom',
-          message: i18n._(emailsEmptyErrorMessage),
-        });
-      }
-      const invalidEmails: string[] = [];
-      for (const email of emails) {
-        const result = z.email().safeParse(email);
-        if (!result.success) {
-          invalidEmails.push(email);
-        }
-      }
-      if (invalidEmails.length > 0) {
-        const invalidEmailsList = invalidEmails.join(', ');
-        ctx.addIssue({
-          code: 'custom',
-          message:
-            invalidEmails.length > 1
-              ? `Invalid emails: ${invalidEmailsList}`
-              : `Invalid email: ${invalidEmailsList}`,
-        });
-      }
-    }),
-    roleId: z.string().min(1),
-  })
-  .required();
+    }
+    if (invalidEmails.length > 0) {
+      const invalidEmailsList = invalidEmails.join(', ');
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          invalidEmails.length > 1
+            ? `Invalid emails: ${invalidEmailsList}`
+            : `Invalid email: ${invalidEmailsList}`,
+      });
+    }
+  }),
+  roleId: z.string().optional(),
+});
 
 type FormInput = {
   emails: string;
-  roleId: string;
+  roleId?: string;
 };
 
 type WorkspaceInviteTeamProps = {
@@ -120,7 +118,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     }));
 
   const emptyRoleOption = {
-    label: t`Role`,
+    label: t`Default role`,
     value: '',
     Icon: IconLock,
   };
@@ -136,12 +134,13 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     },
   );
   const isEmailsEmpty = !watch('emails');
-  const selectedRoleId = watch('roleId');
-  const isRoleEmpty = !selectedRoleId;
 
   const submit = handleSubmit(async ({ emails, roleId }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
-    const { data } = await sendInvitation({ emails: emailsList, roleId });
+    const { data } = await sendInvitation({
+      emails: emailsList,
+      ...(roleId ? { roleId } : {}),
+    });
     if (!isDefined(data)) {
       return;
     }
@@ -224,13 +223,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           accent="blue"
           title={t`Invite`}
           type="submit"
-          disabled={
-            isEmailsEmpty ||
-            isRoleEmpty ||
-            roleOptions.length === 0 ||
-            !!errors.emails ||
-            !!errors.roleId
-          }
+          disabled={isEmailsEmpty || !!errors.emails}
         />
       </StyledContainer>
     </form>

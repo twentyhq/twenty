@@ -46,7 +46,7 @@ import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -59,7 +59,13 @@ const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  flex-shrink: 0;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledExpiresInHeader = styled.span`
+  white-space: nowrap;
 `;
 
 const StyledTable = styled(Table)<{ hasMoreRows?: boolean }>`
@@ -121,8 +127,7 @@ export const SettingsWorkspaceMembers = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
-  const roles = settingsAllRoles;
+  const roles = useSettingsAllRoles();
 
   const rolesById = new Map<string, (typeof roles)[number]>();
   roles.forEach((role) => {
@@ -283,8 +288,8 @@ export const SettingsWorkspaceMembers = () => {
             {isNonEmptyArray(workspaceInvitations) && (
               <StyledTable>
                 <TableRow
-                  gridAutoColumns="250px 1fr 1fr 120px"
-                  mobileGridAutoColumns="100px 1fr 1fr 80px"
+                  gridAutoColumns="200px 1fr minmax(95px, 1fr) 96px"
+                  mobileGridAutoColumns="100px 1fr minmax(80px, 1fr) 88px"
                 >
                   <TableHeader>
                     <Trans>Email</Trans>
@@ -293,15 +298,17 @@ export const SettingsWorkspaceMembers = () => {
                     <Trans>Role</Trans>
                   </TableHeader>
                   <TableHeader align="center">
-                    <Trans>Expires in</Trans>
+                    <StyledExpiresInHeader>
+                      <Trans>Expires in</Trans>
+                    </StyledExpiresInHeader>
                   </TableHeader>
                   <TableHeader></TableHeader>
                 </TableRow>
                 <StyledTableRows>
                   {workspaceInvitations?.map((workspaceInvitation) => (
                     <TableRow
-                      gridAutoColumns="250px 1fr 1fr 120px"
-                      mobileGridAutoColumns="100px 1fr 1fr 80px"
+                      gridAutoColumns="200px 1fr minmax(95px, 1fr) 96px"
+                      mobileGridAutoColumns="100px 1fr minmax(80px, 1fr) 88px"
                       key={workspaceInvitation.id}
                     >
                       <TableCell>
@@ -318,7 +325,7 @@ export const SettingsWorkspaceMembers = () => {
                       <TableCell>
                         <StyledTextContainerWithEllipsis>
                           {rolesById.get(workspaceInvitation.roleId ?? '')
-                            ?.label ?? t`Unknown role`}
+                            ?.label ?? t`Default role`}
                         </StyledTextContainerWithEllipsis>
                       </TableCell>
                       <TableCell align="center">

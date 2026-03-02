@@ -135,11 +135,7 @@ export const InviteTeam = () => {
         return;
       }
 
-      const roleId = currentWorkspace?.defaultRole?.id;
-      const result = await sendInvitation({
-        emails,
-        ...(isDefined(roleId) ? { roleId } : {}),
-      });
+      const result = await sendInvitation({ emails });
 
       if (isDefined(result.errors)) {
         throw result.errors;
@@ -155,13 +151,7 @@ export const InviteTeam = () => {
 
       setNextOnboardingStatus();
     },
-    [
-      currentWorkspace?.defaultRole?.id,
-      enqueueSuccessSnackBar,
-      sendInvitation,
-      setNextOnboardingStatus,
-      t,
-    ],
+    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
   );
 
   const handleSkip = async () => {
