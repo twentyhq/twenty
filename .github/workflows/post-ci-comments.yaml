@@ -21,7 +21,6 @@ jobs:
           script: |
             const runId = context.payload.workflow_run.id;
             const pullRequests = context.payload.workflow_run.pull_requests;
-            const branchState = context.payload.workflow_run.head_branch;
 
             if (!pullRequests || pullRequests.length === 0) {
               core.info('No pull requests associated with this workflow run');
