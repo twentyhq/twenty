@@ -4,14 +4,9 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { isDefined } from 'twenty-shared/utils';
 
 interface CreateRelatedRecordActionProps {
   targetFieldMetadataItemRelation: FieldMetadataItemRelation;
@@ -45,8 +40,6 @@ export const CreateRelatedRecordAction = ({
   const { createOneRecord: createOneNoteTarget } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.NoteTarget,
   });
-
-  const { openRecordTitleCell } = useRecordTitleCell();
 
   const targetObject =
     targetObjectMetadataItem.nameSingular === CoreObjectNameSingular.TaskTarget
@@ -99,21 +92,6 @@ export const CreateRelatedRecordAction = ({
       objectNameSingular: targetObject.nameSingular,
       isNewRecord: true,
     });
-
-    const labelIdentifierFieldMetadataItem =
-      getLabelIdentifierFieldMetadataItem(targetObject);
-
-    if (isDefined(labelIdentifierFieldMetadataItem)) {
-      openRecordTitleCell({
-        recordId: createdRecord.id,
-        fieldMetadataItemId: labelIdentifierFieldMetadataItem.id,
-        instanceId: getRecordFieldInputInstanceId({
-          recordId: createdRecord.id,
-          fieldName: labelIdentifierFieldMetadataItem.name,
-          prefix: RecordTitleCellContainerType.ShowPage,
-        }),
-      });
-    }
   };
 
   return (
