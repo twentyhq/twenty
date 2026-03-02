@@ -56,11 +56,16 @@ export const useProcessUIToolCallMessage = () => {
 
       switch (navigateAppOutput.action) {
         case 'navigateToObject': {
-          const objectNamePlural =
-            objectMetadataItems.find(
-              (item) =>
-                item.nameSingular === navigateAppOutput.objectNameSingular,
-            )?.namePlural ?? 'companies';
+          const objectNamePlural = objectMetadataItems.find(
+            (item) =>
+              item.nameSingular === navigateAppOutput.objectNameSingular,
+          )?.namePlural;
+
+          if (!isDefined(objectNamePlural)) {
+            throw new Error(
+              `Object with singular name ${navigateAppOutput.objectNameSingular} not found, cannot navigate to object page from chat.`,
+            );
+          }
 
           navigateApp(AppPath.RecordIndexPage, {
             objectNamePlural: objectNamePlural,
