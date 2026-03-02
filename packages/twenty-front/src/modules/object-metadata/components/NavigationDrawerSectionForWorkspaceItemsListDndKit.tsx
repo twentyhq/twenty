@@ -1,10 +1,16 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import { useLingui } from '@lingui/react/macro';
+import React, { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
+import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,20 +29,25 @@ export const WorkspaceSectionListDndKit = ({
   filteredItems,
   getEditModeProps,
   folderChildrenById,
-  folderCount,
-  workspaceDropDisabled,
-  isDragging,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  isAddMenuItemButtonVisible,
-  addToNavigationFallbackDestination,
   onAddMenuItem,
-  addMenuItemLabel,
 }: WorkspaceSectionListDndKitProps) => {
+  const { t } = useLingui();
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
+  const workspaceDropDisabled = useIsDropDisabledForSection(true);
+  const { isDragging } = useContext(NavigationMenuItemDragContext);
+  const { addToNavigationFallbackDestination } = useContext(
+    NavigationDropTargetContext,
+  );
+  const folderCount = filteredItems.filter(
+    (item) => item.itemType === NavigationMenuItemType.FOLDER,
+  ).length;
+  const isAddMenuItemButtonVisible =
+    isNavigationMenuInEditMode && isDefined(onAddMenuItem) && !isDragging;
   return (
     <StyledList
       data-dnd-group={
@@ -81,7 +92,7 @@ export const WorkspaceSectionListDndKit = ({
           {isAddMenuItemButtonVisible && (
             <NavigationDrawerItem
               Icon={IconPlus}
-              label={addMenuItemLabel}
+              label={t`Add menu item`}
               onClick={onAddMenuItem}
               triggerEvent="CLICK"
             />

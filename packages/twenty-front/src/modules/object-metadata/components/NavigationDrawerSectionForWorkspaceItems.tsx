@@ -1,12 +1,9 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { useLingui } from '@lingui/react/macro';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
-import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
@@ -50,11 +47,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
-  const { t } = useLingui();
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
   const coreViews = useAtomStateValue(coreViewsState);
@@ -62,7 +57,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
   );
@@ -82,10 +76,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
     }
     return acc;
   }, new Map());
-
-  const folderCount = flatItems.filter(
-    (item) => item.itemType === NavigationMenuItemType.FOLDER,
-  ).length;
 
   const filteredItems = flatItems.filter((item) => {
     const type = item.itemType;
@@ -139,14 +129,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
     };
   };
 
-  const isAddMenuItemButtonVisible =
-    isNavigationMenuInEditMode && isDefined(onAddMenuItem) && !isDragging;
-
   if (flatItems.length === 0 && !isAddToNavigationDropTargetVisible) {
     return null;
   }
-
-  const addMenuItemLabel = t`Add menu item`;
 
   return (
     <NavigationDrawerSection>
@@ -163,18 +148,10 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           filteredItems={filteredItems}
           getEditModeProps={getEditModeProps}
           folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          workspaceDropDisabled={workspaceDropDisabled}
-          isDragging={isDragging}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
-          addToNavigationFallbackDestination={
-            addToNavigationFallbackDestination
-          }
           onAddMenuItem={onAddMenuItem}
-          addMenuItemLabel={addMenuItemLabel}
         />
       )}
     </NavigationDrawerSection>

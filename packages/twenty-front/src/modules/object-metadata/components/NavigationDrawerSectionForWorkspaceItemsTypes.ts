@@ -28,20 +28,11 @@ export type WorkspaceSectionListDndKitProps = {
   filteredItems: FlatWorkspaceItem[];
   getEditModeProps: (item: FlatWorkspaceItem) => EditModeProps;
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
-  folderCount: number;
-  workspaceDropDisabled: boolean;
-  isDragging: boolean;
   selectedNavigationMenuItemId: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  isAddMenuItemButtonVisible: boolean;
-  addToNavigationFallbackDestination: {
-    droppableId: string;
-    index: number;
-  } | null;
   onAddMenuItem?: () => void;
-  addMenuItemLabel: string;
 };
