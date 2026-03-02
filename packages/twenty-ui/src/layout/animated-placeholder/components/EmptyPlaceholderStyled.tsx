@@ -1,18 +1,47 @@
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from '@ui/theme';
+import { type HTMLMotionProps, motion } from 'framer-motion';
+import { type ReactNode } from 'react';
 
-const StyledEmptyContainer = styled(motion.div)`
+const StyledEmptyContainerBase = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
   justify-content: center;
   text-align: center;
 `;
 
-export { StyledEmptyContainer as AnimatedPlaceholderEmptyContainer };
+const MotionEmptyContainer = motion.create(StyledEmptyContainerBase);
+
+type AnimatedPlaceholderEmptyContainerProps = Pick<
+  HTMLMotionProps<'div'>,
+  'initial' | 'animate' | 'transition'
+> & {
+  children?: ReactNode;
+  className?: string;
+};
+
+export const AnimatedPlaceholderEmptyContainer = ({
+  children,
+  className,
+  initial,
+  animate,
+  transition,
+}: AnimatedPlaceholderEmptyContainerProps) => {
+  return (
+    <MotionEmptyContainer
+      className={className}
+      initial={initial}
+      animate={animate}
+      transition={transition}
+    >
+      {children}
+    </MotionEmptyContainer>
+  );
+};
 
 export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   initial: { opacity: 0 },
@@ -22,34 +51,31 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-const StyledEmptyTextContainer = styled.div`
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   text-align: center;
   width: 100%;
 `;
 
-export { StyledEmptyTextContainer as AnimatedPlaceholderEmptyTextContainer };
-
-const StyledEmptyTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptyTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
-export { StyledEmptyTitle as AnimatedPlaceholderEmptyTitle };
-
-const StyledEmptySubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptySubTitle = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   max-height: 2.8em;
   overflow: hidden;
   width: 50%;
 `;
-
-export { StyledEmptySubTitle as AnimatedPlaceholderEmptySubTitle };

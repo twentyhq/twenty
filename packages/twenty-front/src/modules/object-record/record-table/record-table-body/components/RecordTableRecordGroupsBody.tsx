@@ -10,20 +10,21 @@ import { RecordTableBodyRecordGroupDroppable } from '@/object-record/record-tabl
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableRecordGroupsBody = () => {
-  const allRecordIds = useRecoilComponentValue(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Table,
   );

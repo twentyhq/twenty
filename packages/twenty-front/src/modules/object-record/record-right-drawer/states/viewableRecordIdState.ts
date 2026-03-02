@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const viewableRecordIdState = createState<string | null>({
+export const viewableRecordIdState = createAtomState<string | null>({
   key: 'activities/viewable-record-id',
   defaultValue: null,
 });

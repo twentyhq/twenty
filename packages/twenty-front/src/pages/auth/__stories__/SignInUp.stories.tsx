@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { fireEvent, within } from 'storybook/test';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
   PageDecorator,
@@ -17,7 +17,7 @@ import { AppPath } from 'twenty-shared/types';
 import { SignInUp } from '~/pages/auth/SignInUp';
 
 const CaptchaTokenSetterEffect = () => {
-  const setCaptchaToken = useSetRecoilStateV2(captchaTokenState);
+  const setCaptchaToken = useSetAtomState(captchaTokenState);
 
   useEffect(() => {
     setCaptchaToken('MOCKED_CAPTCHA_TOKEN');

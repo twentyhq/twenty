@@ -1,35 +1,36 @@
 import { singleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowInitialLoadingComponentState';
 import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useSingleRecordPickerOpen = () => {
-  const openSingleRecordPicker = useRecoilCallback(
-    ({ set }) =>
-      (recordPickerComponentInstanceId: string) => {
-        set(
-          singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
-            instanceId: recordPickerComponentInstanceId,
-          }),
-          true,
-        );
-        set(
-          singleRecordPickerShouldShowSkeletonComponentState.atomFamily({
-            instanceId: recordPickerComponentInstanceId,
-          }),
-          true,
-        );
-        setTimeout(() => {
-          set(
-            singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
-              {
-                instanceId: recordPickerComponentInstanceId,
-              },
-            ),
-            false,
-          );
-        }, 100);
-      },
-    [],
+  const store = useStore();
+  const setInitialLoading = useCallback(
+    (recordPickerComponentInstanceId: string, value: boolean) => {
+      store.set(
+        singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        value,
+      );
+    },
+    [store],
+  );
+
+  const openSingleRecordPicker = useCallback(
+    (recordPickerComponentInstanceId: string) => {
+      setInitialLoading(recordPickerComponentInstanceId, true);
+      store.set(
+        singleRecordPickerShouldShowSkeletonComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        true,
+      );
+      setTimeout(() => {
+        setInitialLoading(recordPickerComponentInstanceId, false);
+      }, 100);
+    },
+    [setInitialLoading, store],
   );
 
   return {

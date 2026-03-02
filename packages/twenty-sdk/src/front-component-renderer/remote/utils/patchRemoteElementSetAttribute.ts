@@ -9,6 +9,9 @@ const ATTRIBUTE_TO_PROPERTY_MAP: Record<string, string> = {
 
   tabIndex: 'tabIndex',
   tabindex: 'tabIndex',
+
+  srcDoc: 'srcDoc',
+  srcdoc: 'srcDoc',
 };
 
 export const patchRemoteElementSetAttribute = (): void => {

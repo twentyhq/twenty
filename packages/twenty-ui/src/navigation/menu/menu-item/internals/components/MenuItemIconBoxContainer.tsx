@@ -1,12 +1,29 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
-export const StyledIconContainer = styled.div`
+import { themeCssVariables } from '@ui/theme';
+
+const StyledIconContainerBase = styled.div`
   align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
+
+export const StyledIconContainer = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <StyledIconContainerBase className={className}>
+      {children}
+    </StyledIconContainerBase>
+  );
+};
 
 export { StyledIconContainer as MenuItemIconBoxContainer };

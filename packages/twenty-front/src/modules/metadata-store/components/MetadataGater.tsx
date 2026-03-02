@@ -4,7 +4,7 @@ import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataRe
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -12,8 +12,8 @@ import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader'
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const MetadataGater = ({ children }: React.PropsWithChildren) => {
-  const isAppMetadataReady = useRecoilValueV2(isAppMetadataReadyState);
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const isAppMetadataReady = useAtomStateValue(isAppMetadataReadyState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const isLoggedIn = useIsLogged();
   const location = useLocation();
 

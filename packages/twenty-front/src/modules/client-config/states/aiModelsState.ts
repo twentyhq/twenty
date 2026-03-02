@@ -1,7 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-export const aiModelsState = createStateV2<ClientAiModelConfig[]>({
+export const aiModelsState = createAtomState<ClientAiModelConfig[]>({
   key: 'aiModelsState',
   defaultValue: [],
 });

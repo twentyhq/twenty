@@ -8,8 +8,8 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
 
 type SignInBackgroundMockContainerEffectProps = {
@@ -26,12 +26,12 @@ export const SignInBackgroundMockContainerEffect = ({
   const [
     contextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentObjectMetadataItemId,
-  ] = useRecoilComponentState(
+  ] = useAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetAtomComponentState(
     currentRecordFieldsComponentState,
     recordTableId,
   );

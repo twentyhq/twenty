@@ -1,9 +1,9 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 
 import { Button } from '@ui/input/button/components/Button/Button';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 export type InfoAccent = 'blue' | 'danger';
@@ -18,7 +18,7 @@ export type InfoProps = {
 const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIconInfoCircle = styled(IconInfoCircle)`
@@ -27,27 +27,33 @@ const StyledIconInfoCircle = styled(IconInfoCircle)`
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   justify-content: space-between;
   max-width: 512px;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  ${({ theme, accent }) => {
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return css`
-          background: ${theme.color.blue5};
-          color: ${theme.color.blue10};
-        `;
+        return themeCssVariables.color.blue5;
       case 'danger':
-        return css`
-          background: ${theme.color.red3};
-          color: ${theme.color.red};
-        `;
+        return themeCssVariables.color.red3;
+      default:
+        return 'transparent';
     }
-  }}
+  }};
+  color: ${({ accent }) => {
+    switch (accent) {
+      case 'blue':
+        return themeCssVariables.color.blue10;
+      case 'danger':
+        return themeCssVariables.color.red;
+      default:
+        return 'inherit';
+    }
+  }};
 `;
 
 const StyledLink = styled(Link)`
@@ -61,7 +67,7 @@ export const Info = ({
   onClick,
   to,
 }: InfoProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>

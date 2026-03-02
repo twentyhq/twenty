@@ -16,7 +16,6 @@ import { DatabaseEventAction } from '~/generated-metadata/graphql';
 const PERSISTED_OUTPUT_SCHEMA_TYPES = [
   'CODE',
   'HTTP_REQUEST',
-  'AI_AGENT',
   'WEBHOOK',
   'ITERATOR',
 ];
@@ -189,6 +188,17 @@ export const computeStepOutputSchema = ({
       }
 
       return generateFormOutputSchema(formFields, objectMetadataItems);
+    }
+
+    case 'AI_AGENT': {
+      return {
+        response: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Response',
+          value: null,
+        },
+      };
     }
 
     case 'SEND_EMAIL':

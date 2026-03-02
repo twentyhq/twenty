@@ -3,7 +3,7 @@ import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/N
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 
@@ -13,7 +13,7 @@ export const SettingsNavigationDrawer = ({
   className?: string;
 }) => {
   const { t } = useLingui();
-  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilStateV2(
+  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
 

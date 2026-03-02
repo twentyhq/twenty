@@ -14,7 +14,6 @@ Permet aux utilisateurs de saisir et de modifier du texte.
 <Tabs>
   <Tab title="Utilisation">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { TextInput } from "@/ui/input/components/TextInput";
 
     export const MyComponent = () => {
@@ -27,7 +26,6 @@ Permet aux utilisateurs de saisir et de modifier du texte.
       };
 
       return (
-        <RecoilRoot>
           <TextInput
             className
             label="Username"
@@ -38,7 +36,6 @@ Permet aux utilisateurs de saisir et de modifier du texte.
             onKeyDown={handleKeyDown}
             RightIcon={null}
           />
-        </RecoilRoot>
       );
     };
 
@@ -68,12 +65,10 @@ Composant d'entrée de texte qui ajuste automatiquement sa hauteur en fonction d
 <Tabs>
   <Tab title="Utilisation">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
     export const MyComponent = () => {
       return (
-        <RecoilRoot>
           <AutosizeTextInput
             onValidate={() => console.log("onValidate function fired")}
             minRows={1}
@@ -83,7 +78,6 @@ Composant d'entrée de texte qui ajuste automatiquement sa hauteur en fonction d
             buttonTitle
             value="Task: "
           />
-        </RecoilRoot>
       );
     };
     ```

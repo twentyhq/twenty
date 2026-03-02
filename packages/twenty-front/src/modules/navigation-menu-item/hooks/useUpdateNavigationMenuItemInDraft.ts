@@ -1,5 +1,5 @@
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export type UpdateNavigationMenuItemInDraftUpdates = {
   color?: string;
@@ -9,8 +9,8 @@ export type UpdateNavigationMenuItemInDraftUpdates = {
 };
 
 export const useUpdateNavigationMenuItemInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
-    navigationMenuItemsDraftStateV2,
+  const setNavigationMenuItemsDraft = useSetAtomState(
+    navigationMenuItemsDraftState,
   );
 
   const updateNavigationMenuItemInDraft = (
@@ -20,10 +20,9 @@ export const useUpdateNavigationMenuItemInDraft = () => {
     setNavigationMenuItemsDraft((draft) => {
       if (!draft) return draft;
 
-      return draft.map((item) => {
-        if (item.id !== navigationMenuItemId) return item;
-        return { ...item, ...updates };
-      });
+      return draft.map((item) =>
+        item.id === navigationMenuItemId ? { ...item, ...updates } : item,
+      );
     });
   };
 

@@ -30,6 +30,7 @@ export class StartWatchersOrchestratorStep {
   private scheduleSync: () => void;
   private notify: () => void;
   private onFileBuilt: (event: FileBuiltEvent) => void;
+  private shouldSkipTypecheck: () => boolean;
 
   private manifestWatcher: ManifestWatcher | null = null;
   private logicFunctionsWatcher: EsbuildWatcher | null = null;
@@ -43,11 +44,13 @@ export class StartWatchersOrchestratorStep {
     scheduleSync: () => void;
     notify: () => void;
     onFileBuilt: (event: FileBuiltEvent) => void;
+    shouldSkipTypecheck: () => boolean;
   }) {
     this.state = options.state;
     this.scheduleSync = options.scheduleSync;
     this.notify = options.notify;
     this.onFileBuilt = options.onFileBuilt;
+    this.shouldSkipTypecheck = options.shouldSkipTypecheck;
   }
 
   async start(): Promise<void> {
@@ -166,6 +169,7 @@ export class StartWatchersOrchestratorStep {
     this.logicFunctionsWatcher = createLogicFunctionsWatcher({
       appPath: this.state.appPath,
       sourcePaths,
+      shouldSkipTypecheck: this.shouldSkipTypecheck,
       handleBuildError: this.handleFileBuildError.bind(this),
       handleFileBuilt: this.handleFileBuilt.bind(this),
     });
@@ -179,6 +183,7 @@ export class StartWatchersOrchestratorStep {
     this.frontComponentsWatcher = createFrontComponentsWatcher({
       appPath: this.state.appPath,
       sourcePaths,
+      shouldSkipTypecheck: this.shouldSkipTypecheck,
       handleBuildError: this.handleFileBuildError.bind(this),
       handleFileBuilt: this.handleFileBuilt.bind(this),
     });

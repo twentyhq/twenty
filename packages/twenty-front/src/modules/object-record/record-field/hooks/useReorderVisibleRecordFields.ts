@@ -3,63 +3,56 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
-  const visibleRecordFieldsCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const visibleRecordFields = useAtomComponentSelectorCallbackState(
     visibleRecordFieldsComponentSelector,
     recordTableId,
   );
 
-  const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordTableId,
   );
 
   const { updateRecordField } = useUpdateRecordField(recordTableId);
 
-  const reorderVisibleRecordFields = useRecoilCallback(
-    ({ snapshot }) =>
-      ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
-        const visibleRecordFields = snapshot
-          .getLoadable(visibleRecordFieldsCallbackState)
-          .getValue();
+  const reorderVisibleRecordFields = useCallback(
+    ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
+      const visibleRecordFieldsValue = store.get(visibleRecordFields);
+      const currentRecordFieldsValue = store.get(currentRecordFields);
 
-        const currentRecordFields = snapshot
-          .getLoadable(currentRecordFieldsCallbackState)
-          .getValue();
+      const idOfRecordToMove = visibleRecordFieldsValue[fromIndex].id;
+      const idOfTargetRecord = visibleRecordFieldsValue[toIndex].id;
 
-        const idOfRecordToMove = visibleRecordFields[fromIndex].id;
-        const idOfTargetRecord = visibleRecordFields[toIndex].id;
+      const recordToMove = visibleRecordFieldsValue[fromIndex];
 
-        const recordToMove = visibleRecordFields[fromIndex];
+      const isDroppedAfterList = toIndex >= visibleRecordFieldsValue.length;
 
-        const isDroppedAfterList = toIndex >= visibleRecordFields.length;
+      const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
+        arrayOfRecordsWithPosition: currentRecordFieldsValue,
+        idOfItemToMove: idOfRecordToMove,
+        idOfTargetItem: idOfTargetRecord,
+        isDroppedAfterList,
+      });
 
-        const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
-          arrayOfRecordsWithPosition: currentRecordFields,
-          idOfItemToMove: idOfRecordToMove,
-          idOfTargetItem: idOfTargetRecord,
-          isDroppedAfterList,
-        });
+      updateRecordField(recordToMove.fieldMetadataItemId, {
+        position: newPositionOfTargetRecord,
+      });
 
-        updateRecordField(recordToMove.fieldMetadataItemId, {
-          position: newPositionOfTargetRecord,
-        });
+      const updatedRecordField: RecordField = {
+        ...recordToMove,
+        position: newPositionOfTargetRecord,
+      };
 
-        const updatedRecordField: RecordField = {
-          ...recordToMove,
-          position: newPositionOfTargetRecord,
-        };
-
-        return updatedRecordField;
-      },
-    [
-      currentRecordFieldsCallbackState,
-      visibleRecordFieldsCallbackState,
-      updateRecordField,
-    ],
+      return updatedRecordField;
+    },
+    [currentRecordFields, visibleRecordFields, updateRecordField, store],
   );
 
   return { reorderVisibleRecordFields };

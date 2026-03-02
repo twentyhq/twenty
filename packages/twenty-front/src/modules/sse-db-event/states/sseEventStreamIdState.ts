@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const sseEventStreamIdState = createState<string | null>({
+export const sseEventStreamIdState = createAtomState<string | null>({
   key: 'sseEventStreamIdState',
   defaultValue: null,
 });

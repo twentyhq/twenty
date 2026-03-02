@@ -1,64 +1,61 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useUpdateRecordField = (
   recordFieldComponentInstanceId?: string,
 ) => {
-  const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const updateRecordField = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (
-        fieldMetadataItemId: string,
-        partialRecordField: Partial<
-          Pick<RecordField, 'isVisible' | 'size' | 'position'>
-        >,
-      ) => {
-        const currentRecordFields = getSnapshotValue(
-          snapshot,
-          currentRecordFieldsCallbackState,
-        );
+  const updateRecordField = useCallback(
+    (
+      fieldMetadataItemId: string,
+      partialRecordField: Partial<
+        Pick<RecordField, 'isVisible' | 'size' | 'position'>
+      >,
+    ) => {
+      const existingRecordFields = store.get(currentRecordFields);
 
-        const foundRecordFieldInCurrentRecordFields = currentRecordFields.find(
+      const foundRecordFieldInCurrentRecordFields = existingRecordFields.find(
+        (existingRecordField) =>
+          existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
+      );
+
+      if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
+        throw new Error(
+          `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+        );
+      }
+
+      store.set(currentRecordFields, (previousRecordFields) => {
+        const newCurrentRecordFields = [...previousRecordFields];
+
+        const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
           (existingRecordField) =>
             existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
         );
 
-        if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
-          throw new Error(
-            `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
-          );
-        } else {
-          set(currentRecordFieldsCallbackState, (currentRecordFields) => {
-            const newCurrentRecordFields = [...currentRecordFields];
+        newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
+          ...newCurrentRecordFields[indexOfRecordFieldToUpdate],
+          ...partialRecordField,
+        };
 
-            const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
-              (existingRecordField) =>
-                existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
-            );
+        return newCurrentRecordFields;
+      });
 
-            newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
-              ...newCurrentRecordFields[indexOfRecordFieldToUpdate],
-              ...partialRecordField,
-            };
-
-            return newCurrentRecordFields;
-          });
-
-          return {
-            ...foundRecordFieldInCurrentRecordFields,
-            ...partialRecordField,
-          } satisfies RecordField as RecordField;
-        }
-      },
-    [currentRecordFieldsCallbackState],
+      return {
+        ...foundRecordFieldInCurrentRecordFields,
+        ...partialRecordField,
+      } satisfies RecordField as RecordField;
+    },
+    [currentRecordFields, store],
   );
 
   return {

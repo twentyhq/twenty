@@ -11,8 +11,8 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,12 +30,13 @@ export const AdvancedFilterValueInput = ({
 }: AdvancedFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${recordFilterId}`;
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValue(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
+    dropdownId,
   );
 
   const recordFilter = currentRecordFilters.find(
@@ -44,16 +45,19 @@ export const AdvancedFilterValueInput = ({
 
   const isDisabled = !recordFilter?.fieldMetadataId || !recordFilter.operand;
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentState(
+  const setObjectFilterDropdownSearchInput = useSetAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
+    dropdownId,
   );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
+  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
+    dropdownId,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter = useSetRecoilComponentState(
+  const setObjectFilterDropdownCurrentRecordFilter = useSetAtomComponentState(
     objectFilterDropdownCurrentRecordFilterComponentState,
+    dropdownId,
   );
 
   const operandHasNoInput =

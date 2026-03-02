@@ -4,11 +4,11 @@ import {
 } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
 import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-table/virtualization/constants/TableVirtualizationDebugActivated';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { createPortal } from 'react-dom';
 
 export const RecordTableVirtualizedDebugHelper = () => {
-  const lowDetailsActivated = useRecoilComponentValue(
+  const lowDetailsActivated = useAtomComponentStateValue(
     lowDetailsActivatedComponentState,
   );
 

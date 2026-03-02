@@ -14,7 +14,6 @@ image: '"/images/user-guide/notes/notes_header.png"'
 <Tabs>
   <Tab title="&#x22;Uso&#x22;">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { TextInput } from "@/ui/input/components/TextInput";
 
     export const MyComponent = () => {
@@ -27,7 +26,6 @@ image: '"/images/user-guide/notes/notes_header.png"'
       };
 
       return (
-        <RecoilRoot>
           <TextInput
             className
             label="Nombre de usuario"
@@ -38,7 +36,6 @@ image: '"/images/user-guide/notes/notes_header.png"'
             onKeyDown={handleKeyDown}
             RightIcon={null}
           />
-        </RecoilRoot>
       );
     };
     },{
@@ -68,12 +65,10 @@ image: '"/images/user-guide/notes/notes_header.png"'
 <Tabs>
   <Tab title="&#x22;Uso&#x22;">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
     export const MyComponent = () => {
       return (
-        <RecoilRoot>
           <AutosizeTextInput
             onValidate={() => console.log("Función onValidate ejecutada")}
             minRows={1}
@@ -83,7 +78,6 @@ image: '"/images/user-guide/notes/notes_header.png"'
             buttonTitle
             value="Tarea: "
           />
-        </RecoilRoot>
       );
     };
     ```

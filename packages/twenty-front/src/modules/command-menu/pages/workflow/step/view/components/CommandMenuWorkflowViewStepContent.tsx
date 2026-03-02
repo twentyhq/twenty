@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
 
 export const CommandMenuWorkflowViewStepContent = () => {
   const flow = useFlowOrThrow();
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
 

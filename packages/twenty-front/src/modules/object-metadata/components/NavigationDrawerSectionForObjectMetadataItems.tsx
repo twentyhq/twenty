@@ -8,7 +8,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
@@ -48,7 +48,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 }: NavigationDrawerSectionForObjectMetadataItemsProps) => {
   const navigationSectionId = 'Objects' + (isRemote ? 'Remote' : 'Workspace');
   const { toggleNavigationSection } = useNavigationSection(navigationSectionId);
-  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     navigationSectionId,
   );

@@ -1,7 +1,7 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const graphWidgetLineCrosshairXComponentState = createComponentState<
+export const graphWidgetLineCrosshairXComponentState = createAtomComponentState<
   number | null
 >({
   key: 'graphWidgetLineCrosshairXComponentState',

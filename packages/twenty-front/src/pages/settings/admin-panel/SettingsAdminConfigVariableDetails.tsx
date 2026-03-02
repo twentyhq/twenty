@@ -13,7 +13,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath, type ConfigVariableValue } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
@@ -54,7 +54,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { t } = useLingui();
   const [isEditing, setIsEditing] = useState(false);
   const { openModal } = useModal();
-  const isConfigVariablesInDbEnabled = useRecoilValueV2(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
 

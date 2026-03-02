@@ -1,4 +1,4 @@
-import { atomFamily } from 'recoil';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 type FilesFieldUploadStateKey = {
   recordId: string;
@@ -7,10 +7,10 @@ type FilesFieldUploadStateKey = {
 
 type FilesFieldUploadState = 'UPLOAD_WINDOW_OPEN' | 'UPLOADING_FILE' | null;
 
-export const filesFieldUploadState = atomFamily<
+export const filesFieldUploadState = createAtomFamilyState<
   FilesFieldUploadState,
   FilesFieldUploadStateKey
 >({
   key: 'filesFieldUploadState',
-  default: null,
+  defaultValue: null,
 });

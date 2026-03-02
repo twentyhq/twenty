@@ -5,6 +5,7 @@ import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/com
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
+import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -32,12 +33,14 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMissingSystemFieldsToStandardObjectsCommand,
     BackfillMessageChannelMessageAssociationMessageFolderCommand,
     BackfillPageLayoutsCommand,
+    FixInvalidStandardUniversalIdentifiersCommand,
   ],
   exports: [
     BackfillSystemFieldsIsSystemCommand,
     AddMissingSystemFieldsToStandardObjectsCommand,
     BackfillMessageChannelMessageAssociationMessageFolderCommand,
     BackfillPageLayoutsCommand,
+    FixInvalidStandardUniversalIdentifiersCommand,
   ],
 })
 export class V1_19_UpgradeVersionCommandModule {}

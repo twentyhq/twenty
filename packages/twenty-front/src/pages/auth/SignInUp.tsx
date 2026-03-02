@@ -7,8 +7,8 @@ import {
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import styled from '@emotion/styled';
 
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -35,7 +35,7 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { type PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -53,7 +53,7 @@ const StandardContent = ({
   title,
   onClickOnLogo,
 }: {
-  workspacePublicData: PublicWorkspaceDataOutput | null;
+  workspacePublicData: PublicWorkspaceData | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
   title: string;
@@ -82,17 +82,17 @@ const StandardContent = ({
 
 export const SignInUp = () => {
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =

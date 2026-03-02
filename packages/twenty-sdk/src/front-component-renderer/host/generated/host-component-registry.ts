@@ -82,6 +82,16 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   ['html-td', createRemoteComponentRenderer(createHtmlHostWrapper('td'))],
   ['html-br', createRemoteComponentRenderer(createHtmlHostWrapper('br'))],
   ['html-hr', createRemoteComponentRenderer(createHtmlHostWrapper('hr'))],
+  [
+    'html-iframe',
+    createRemoteComponentRenderer(createHtmlHostWrapper('iframe')),
+  ],
+  ['html-video', createRemoteComponentRenderer(createHtmlHostWrapper('video'))],
+  ['html-audio', createRemoteComponentRenderer(createHtmlHostWrapper('audio'))],
+  [
+    'html-source',
+    createRemoteComponentRenderer(createHtmlHostWrapper('source')),
+  ],
   ['remote-style', createRemoteComponentRenderer(RemoteStyleRenderer)],
   ['remote-fragment', RemoteFragmentRenderer],
 ]);

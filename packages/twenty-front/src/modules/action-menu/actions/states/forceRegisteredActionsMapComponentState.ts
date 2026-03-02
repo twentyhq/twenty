@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const forceRegisteredActionsByKeyState = createState<
+export const forceRegisteredActionsByKeyState = createAtomState<
   Record<string, boolean | undefined>
 >({
   key: 'forceRegisteredActionsByKeyComponentState',

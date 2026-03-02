@@ -71,12 +71,12 @@ description: 解决 CSV 导入错误的完整故障排除指南。
 3. Twenty 将更新现有记录，而不是创建重复项
 
 <Note>
-  **你也可以更新唯一字段。**
+**你也可以更新唯一字段。**
 
-  * 如果保留 `id` 但更改 `email` → 将更新该电子邮件
-  * 如果保留 `email` 但更改 `id` → 将更新该 id
+* 如果保留 `id` 但更改 `email` → 将更新该电子邮件
+* 如果保留 `email` 但更改 `id` → 将更新该 id
 
-  只要至少有一个唯一标识符匹配，Twenty 就会更新该记录。
+只要至少有一个唯一标识符匹配，Twenty 就会更新该记录。
 </Note>
 
 ### 如何避免此错误
@@ -88,9 +88,9 @@ description: 解决 CSV 导入错误的完整故障排除指南。
 3. 检查 Twenty 中是否已存在这些记录
 
 <Warning>
-  **软删除的记录也会计入唯一性。**
+**软删除的记录也会计入唯一性。**
 
-  检查 Command Menu → 查看已删除的记录。 其中的记录仍会参与唯一性校验。 将其永久删除，或还原后再更新。
+检查 Command Menu → 查看已删除的记录。 其中的记录仍会参与唯一性校验。 将其永久删除，或还原后再更新。
 </Warning>
 
 了解更多详情：[唯一性约束](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -296,9 +296,9 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
    * 检查拼写错误和大小写是否一致
 
 <Warning>
-  **若引用了不存在的记录，导入将失败。**
+**若引用了不存在的记录，导入将失败。**
 
-  始终先导入父对象，再导入子对象。
+始终先导入父对象，再导入子对象。
 </Warning>
 
 了解更多详情：[导入关系](/l/zh/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Too many records. Up to 10000 allowed
 3. 使用他们用于加入 Twenty 的同一邮箱
 
 <Warning>
-  **在导入之前，用户必须先接受邀请。**
+**在导入之前，用户必须先接受邀请。**
 
-  如果某个用户尚未接受邀请，引用该用户的记录将出现空的用户关联。
+如果某个用户尚未接受邀请，引用该用户的记录将出现空的用户关联。
 </Warning>
 
 ---

@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -34,7 +34,7 @@ export const SignInAppNavigationDrawerMock = ({
 }: SignInAppNavigationDrawerMockProps) => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   return (
     <NavigationDrawer className={className} title={DEFAULT_WORKSPACE_NAME}>

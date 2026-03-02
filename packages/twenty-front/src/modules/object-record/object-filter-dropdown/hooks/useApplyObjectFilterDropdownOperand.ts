@@ -10,8 +10,9 @@ import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -23,11 +24,11 @@ import {
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const { userTimezone } = useUserTimezone();
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
-  const setSelectedOperandInDropdown = useSetRecoilComponentState(
+  const setSelectedOperandInDropdown = useSetAtomComponentState(
     selectedOperandInDropdownComponentState,
   );
 
@@ -35,7 +36,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
     objectFilterDropdownCurrentRecordFilter,
   );
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 

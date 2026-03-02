@@ -1,10 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
+import { useContext } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   > * + * {
@@ -16,11 +18,15 @@ const meta: Meta<typeof ColorSchemeCard> = {
   title: 'UI/Input/ColorScheme/ColorSchemeCard',
   component: ColorSchemeCard,
   decorators: [
-    (Story) => (
-      <StyledContainer>
-        <Story />
-      </StyledContainer>
-    ),
+    (Story) => {
+      const { theme } = useContext(ThemeContext);
+
+      return (
+        <StyledContainer theme={theme}>
+          <Story />
+        </StyledContainer>
+      );
+    },
     ComponentDecorator,
   ],
   argTypes: {

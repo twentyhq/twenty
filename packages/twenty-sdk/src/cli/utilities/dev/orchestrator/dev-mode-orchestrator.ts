@@ -6,6 +6,7 @@ import { BuildManifestOrchestratorStep } from '@/cli/utilities/dev/orchestrator/
 import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
 import { EnsureValidTokensOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
+import { RegisterAppOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/register-app-orchestrator-step';
 import { ResolveApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
 import {
   StartWatchersOrchestratorStep,
@@ -29,9 +30,12 @@ export class DevModeOrchestrator {
   private syncTimer: NodeJS.Timeout | null = null;
   private serverCheckInterval: NodeJS.Timeout | null = null;
 
+  private clientService: ClientService;
+  private skipTypecheck = true;
   private checkServerStep: CheckServerOrchestratorStep;
   private ensureValidTokensStep: EnsureValidTokensOrchestratorStep;
   private buildManifestStep: BuildManifestOrchestratorStep;
+  private registerAppStep: RegisterAppOrchestratorStep;
   private resolveApplicationStep: ResolveApplicationOrchestratorStep;
   private uploadFilesStep: UploadFilesOrchestratorStep;
   private generateApiClientStep: GenerateApiClientOrchestratorStep;
@@ -44,7 +48,7 @@ export class DevModeOrchestrator {
 
     const apiService = new ApiService({ disableInterceptors: true });
     const configService = new ConfigService();
-    const clientService = new ClientService();
+    this.clientService = new ClientService();
     const stepDeps = { state: this.state, notify: () => this.state.notify() };
 
     this.checkServerStep = new CheckServerOrchestratorStep({
@@ -57,6 +61,11 @@ export class DevModeOrchestrator {
       configService,
     });
     this.buildManifestStep = new BuildManifestOrchestratorStep(stepDeps);
+    this.registerAppStep = new RegisterAppOrchestratorStep({
+      ...stepDeps,
+      apiService,
+      configService,
+    });
     this.resolveApplicationStep = new ResolveApplicationOrchestratorStep({
       ...stepDeps,
       apiService,
@@ -64,7 +73,7 @@ export class DevModeOrchestrator {
     this.uploadFilesStep = new UploadFilesOrchestratorStep(stepDeps);
     this.generateApiClientStep = new GenerateApiClientOrchestratorStep({
       ...stepDeps,
-      clientService,
+      clientService: this.clientService,
       configService,
     });
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
@@ -75,6 +84,7 @@ export class DevModeOrchestrator {
       ...stepDeps,
       scheduleSync: this.scheduleSync.bind(this),
       onFileBuilt: this.handleFileBuilt.bind(this),
+      shouldSkipTypecheck: () => this.skipTypecheck,
     });
   }
 
@@ -83,6 +93,10 @@ export class DevModeOrchestrator {
 
     await fs.ensureDir(outputDir);
     await fs.emptyDir(outputDir);
+
+    await this.clientService.ensureGeneratedClientStub({
+      appPath: this.state.appPath,
+    });
 
     await this.startWatchersStep.start();
 
@@ -200,6 +214,8 @@ export class DevModeOrchestrator {
         appPath: this.state.appPath,
       });
 
+      this.skipTypecheck = false;
+
       await this.uploadFilesStep.copyAndUploadApiClientFiles(
         this.state.appPath,
       );
@@ -207,8 +223,12 @@ export class DevModeOrchestrator {
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {
+    const registerResult = await this.registerAppStep.execute({ manifest });
+
     const resolveResult = await this.resolveApplicationStep.execute({
       manifest,
+      applicationRegistrationId:
+        registerResult.applicationRegistrationId ?? undefined,
     });
 
     if (!resolveResult.applicationId) {

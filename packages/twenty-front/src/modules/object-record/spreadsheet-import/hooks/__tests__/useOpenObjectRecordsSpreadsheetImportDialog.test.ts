@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -79,34 +79,29 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
   it('should open dialog and configure onSubmit function correctly', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImportDialog = useRecoilValue(
-          spreadsheetImportDialogState,
-        );
         const { openObjectRecordsSpreadsheetImportDialog } =
           useOpenObjectRecordsSpreadsheetImportDialog(
             CoreObjectNameSingular.Company,
           );
         return {
           openObjectRecordsSpreadsheetImportDialog,
-          spreadsheetImportDialog,
         };
       },
       { wrapper: Wrapper },
     );
 
-    const {
-      spreadsheetImportDialog,
-      openObjectRecordsSpreadsheetImportDialog,
-    } = result.current;
+    const spreadsheetImportDialog = jotaiStore.get(
+      spreadsheetImportDialogState.atom,
+    );
 
     expect(spreadsheetImportDialog.isOpen).toBe(false);
     expect(spreadsheetImportDialog.options).toBeNull();
 
     await act(async () => {
-      openObjectRecordsSpreadsheetImportDialog();
+      result.current.openObjectRecordsSpreadsheetImportDialog();
     });
 
-    const { spreadsheetImportDialog: dialogAfterOpen } = result.current;
+    const dialogAfterOpen = jotaiStore.get(spreadsheetImportDialogState.atom);
 
     expect(dialogAfterOpen.isOpen).toBe(true);
     expect(dialogAfterOpen.options).toHaveProperty('onSubmit');
@@ -120,16 +115,12 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
   it('should call batchCreateManyRecords when onSubmit is executed', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImportDialog = useRecoilValue(
-          spreadsheetImportDialogState,
-        );
         const { openObjectRecordsSpreadsheetImportDialog } =
           useOpenObjectRecordsSpreadsheetImportDialog(
             CoreObjectNameSingular.Company,
           );
         return {
           openObjectRecordsSpreadsheetImportDialog,
-          spreadsheetImportDialog,
         };
       },
       { wrapper: Wrapper },
@@ -139,7 +130,9 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
       result.current.openObjectRecordsSpreadsheetImportDialog();
     });
 
-    const { spreadsheetImportDialog } = result.current;
+    const spreadsheetImportDialog = jotaiStore.get(
+      spreadsheetImportDialogState.atom,
+    );
 
     const submitData = {
       validStructuredRows: [

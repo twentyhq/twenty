@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 使用来自 [BlockNote](https://www.blocknotejs.org/) 的基于区块的富文本编辑器，允许用户编辑和查看内容块。
 
 <Tabs>
-  <Tab title="**用法**">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="**用法**">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="属性">
-    | 属性  | 类型                | 描述         |
-    | --- | ----------------- | ---------- |
-    | 编辑器 | `BlockNoteEditor` | 区块编辑器实例或配置 |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性  | 类型                | 描述         |
+| --- | ----------------- | ---------- |
+| 编辑器 | `BlockNoteEditor` | 区块编辑器实例或配置 |
+
+
+
+</Tab>
 </Tabs>

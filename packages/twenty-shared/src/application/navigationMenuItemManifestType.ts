@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 export type NavigationMenuItemManifest = SyncableEntityOptions & {
   name?: string;
   icon?: string;
+  color?: string;
   position: number;
   viewUniversalIdentifier?: string;
   link?: string;

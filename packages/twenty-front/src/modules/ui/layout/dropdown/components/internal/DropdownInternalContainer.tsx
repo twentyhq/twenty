@@ -11,9 +11,9 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
   FloatingPortal,
@@ -70,25 +70,25 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
   );
 
   const { closeDropdown } = useCloseDropdown();
 
-  const activeDropdownFocusId = useRecoilValueV2(activeDropdownFocusIdState);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
 
-  const dropdownMaxHeight = useRecoilComponentValueV2(
+  const dropdownMaxHeight = useAtomComponentStateValue(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const dropdownMaxWidth = useRecoilComponentValueV2(
+  const dropdownMaxWidth = useAtomComponentStateValue(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
 
-  const setDropdownPlacement = useSetRecoilComponentStateV2(
+  const setDropdownPlacement = useSetAtomComponentState(
     dropdownPlacementComponentState,
     dropdownId,
   );

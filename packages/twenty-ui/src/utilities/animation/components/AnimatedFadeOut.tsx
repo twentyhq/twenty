@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import { type AnimationDuration } from '@ui/theme';
+import { useContext } from 'react';
+import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type AnimatedFadeOutProps = {
@@ -17,7 +17,7 @@ export const AnimatedFadeOut = ({
   marginBottom,
   marginTop,
 }: AnimatedFadeOutProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <AnimatePresence>
       {isOpen && (

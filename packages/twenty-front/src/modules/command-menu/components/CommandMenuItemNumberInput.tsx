@@ -4,7 +4,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
@@ -45,7 +45,7 @@ export const CommandMenuItemNumberInput = ({
   const [draftValue, setDraftValue] = useState(value);
   const [hasError, setHasError] = useState(false);
 
-  const currentFocusId = useRecoilValueV2(currentFocusIdSelector);
+  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
   const isNumberInputCurrentlyFocused = currentFocusId === focusId;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

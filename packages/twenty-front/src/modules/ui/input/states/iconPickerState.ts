@@ -1,4 +1,4 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { IconApps, type IconComponent } from 'twenty-ui/display';
 
 type IconPickerState = {
@@ -6,7 +6,7 @@ type IconPickerState = {
   iconKey: string;
 };
 
-export const iconPickerState = createStateV2<IconPickerState>({
+export const iconPickerState = createAtomState<IconPickerState>({
   key: 'iconPickerState',
   defaultValue: { Icon: IconApps, iconKey: 'IconApps' },
 });

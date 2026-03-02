@@ -1,7 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
@@ -18,7 +18,7 @@ export const SettingsAvailableApplicationDetailContentTab = ({
 }: {
   application: MarketplaceApp;
 }) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { objects, fields, logicFunctions, frontComponents } = application;
 

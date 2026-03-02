@@ -1,8 +1,8 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 
 export const isRecordCalendarCardSelectedComponentFamilyState =
-  createComponentFamilyState<boolean, string>({
+  createAtomComponentFamilyState<boolean, string>({
     key: 'isRecordCalendarCardSelectedComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordCalendarComponentInstanceContext,

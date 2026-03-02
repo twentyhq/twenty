@@ -19,9 +19,6 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'instanceId',
   contextStoreCurrentObjectMetadataNameSingular: 'company',
-  onInitializeRecoilSnapshot: () => {
-    // Recoil state initialization removed - using Jotai instead
-  },
 });
 
 describe('useColumnDefinitionsFromObjectMetadata', () => {
@@ -93,6 +90,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(22);
+    expect(columnDefinitions.length).toBe(25);
   });
 });

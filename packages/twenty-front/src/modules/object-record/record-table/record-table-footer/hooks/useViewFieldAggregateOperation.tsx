@@ -3,11 +3,11 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useViewFieldAggregateOperation = () => {
@@ -52,14 +52,13 @@ export const useViewFieldAggregateOperation = () => {
     refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
-  const currentViewFieldAggregateOperation = useRecoilValue(
-    viewFieldAggregateOperationState({
-      viewFieldId: currentViewField?.id ?? '',
-    }),
+  const viewFieldAggregateOperation = useAtomFamilyStateValue(
+    viewFieldAggregateOperationState,
+    { viewFieldId: currentViewField?.id ?? '' },
   );
 
   return {
     updateViewFieldAggregateOperation,
-    currentViewFieldAggregateOperation,
+    currentViewFieldAggregateOperation: viewFieldAggregateOperation,
   };
 };

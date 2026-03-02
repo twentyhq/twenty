@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useLinkedObjectObjectMetadataItem = (id: string | null) => {
-  const objectMetadataItems: ObjectMetadataItem[] = useRecoilValueV2(
+  const objectMetadataItems: ObjectMetadataItem[] = useAtomStateValue(
     objectMetadataItemsState,
   );
 

@@ -57,9 +57,9 @@ export class AgentChatThreadEntity {
   @OneToMany(() => AgentMessageEntity, (message) => message.thread)
   messages: EntityRelation<AgentMessageEntity[]>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

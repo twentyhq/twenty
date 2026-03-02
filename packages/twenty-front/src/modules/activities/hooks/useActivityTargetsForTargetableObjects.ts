@@ -9,7 +9,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -32,7 +32,7 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
-  const objectMetadataItems = useRecoilValueV2<ObjectMetadataItem[]>(
+  const objectMetadataItems = useAtomStateValue<ObjectMetadataItem[]>(
     objectMetadataItemsState,
   );
   const isNoteTargetMigrated = useIsFeatureEnabled(

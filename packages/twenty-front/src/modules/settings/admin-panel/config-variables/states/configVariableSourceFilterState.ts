@@ -1,8 +1,8 @@
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const configVariableSourceFilterState =
-  createStateV2<ConfigVariableSourceFilter>({
+  createAtomState<ConfigVariableSourceFilter>({
     key: 'configVariableSourceFilterState',
     defaultValue: 'all',
   });

@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 @InputType()
 export class CreateApplicationInput {
@@ -28,4 +28,9 @@ export class CreateApplicationInput {
   @IsNotEmpty()
   @Field()
   sourcePath: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field({ nullable: true })
+  applicationRegistrationId?: string;
 }

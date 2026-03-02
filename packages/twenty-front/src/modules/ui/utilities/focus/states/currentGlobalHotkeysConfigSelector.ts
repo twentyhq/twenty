@@ -1,11 +1,11 @@
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { DEFAULT_GLOBAL_HOTKEYS_CONFIG } from '@/ui/utilities/hotkey/constants/DefaultGlobalHotkeysConfig';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const currentGlobalHotkeysConfigSelector =
-  createSelectorV2<GlobalHotkeysConfig>({
+  createAtomSelector<GlobalHotkeysConfig>({
     key: 'currentGlobalHotkeysConfigSelector',
     get: ({ get }) => {
       const focusStack = get(focusStackState);

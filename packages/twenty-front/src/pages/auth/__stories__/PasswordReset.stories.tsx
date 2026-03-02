@@ -27,7 +27,7 @@ const buildHandlers = (hasPassword: boolean) => [
       HttpResponse.json({
         data: {
           validatePasswordResetToken: {
-            __typename: 'ValidatePasswordResetTokenOutput',
+            __typename: 'ValidatePasswordResetToken',
             id: mockedOnboardingUsersData.id,
             email: mockedOnboardingUsersData.email,
             hasPassword,

@@ -1,5 +1,4 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { isString } from '@sniptt/guards';
 import {
@@ -8,7 +7,8 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -21,24 +21,29 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
 }>`
-  ${({ theme, disabled, focused }) => {
+  background: ${({ disabled, focused }) => {
     if (disabled === true) {
-      return css`
-        background: inherit;
-        &:hover {
-          background: inherit;
-        }
-
-        color: ${theme.font.color.tertiary};
-
-        cursor: default;
-      `;
-    } else if (focused === true) {
-      return css`
-        background: ${theme.background.transparent.light};
-      `;
+      return 'inherit';
     }
-  }}
+    if (focused === true) {
+      return themeCssVariables.background.transparent.light;
+    }
+    return '';
+  }};
+
+  &:hover {
+    background: ${({ disabled }) =>
+      disabled === true
+        ? 'inherit'
+        : themeCssVariables.background.transparent.light};
+  }
+
+  color: ${({ disabled }) =>
+    disabled === true
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.secondary};
+
+  cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;
 
 type MenuItemSelectProps = {
@@ -70,7 +75,7 @@ export const MenuItemSelect = ({
   contextualText,
   contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemSelect

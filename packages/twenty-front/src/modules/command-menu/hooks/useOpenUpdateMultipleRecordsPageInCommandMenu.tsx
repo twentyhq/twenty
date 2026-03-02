@@ -2,7 +2,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { IconBoxMultiple } from 'twenty-ui/display';
 
 type UseOpenUpdateMultipleRecordsPageInCommandMenuProps = {
@@ -14,15 +14,13 @@ export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
 }: UseOpenUpdateMultipleRecordsPageInCommandMenuProps) => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
-  const openUpdateMultipleRecordsPageInCommandMenu = useRecoilCallback(() => {
-    return async () => {
-      navigateCommandMenu({
-        page: CommandMenuPages.UpdateRecords,
-        pageTitle: t(msg`Update records`),
-        pageIcon: IconBoxMultiple,
-        pageId: contextStoreInstanceId,
-      });
-    };
+  const openUpdateMultipleRecordsPageInCommandMenu = useCallback(async () => {
+    navigateCommandMenu({
+      page: CommandMenuPages.UpdateRecords,
+      pageTitle: t(msg`Update records`),
+      pageIcon: IconBoxMultiple,
+      pageId: contextStoreInstanceId,
+    });
   }, [navigateCommandMenu, contextStoreInstanceId]);
 
   return {

@@ -73,10 +73,7 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({
-        jsxImportSource: '@emotion/react',
-        plugins: [['@swc/plugin-emotion', {}]],
-      }),
+      react(),
       tsconfigPaths({
         root: __dirname,
         projects: ['tsconfig.json'],
@@ -85,17 +82,6 @@ export default defineConfig(({ command }) => {
       dts(dtsConfig),
       checker(checkersConfig),
       wyw({
-        include: [
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Tag.tsx',
-          '**/Avatar.tsx',
-          '**/Chip.tsx',
-          '**/LinkChip.tsx',
-          '**/Avatar.tsx',
-          '**/AvatarChipLeftComponent.tsx',
-          '**/ContactLink.tsx',
-          '**/RoundedLink.tsx',
-        ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },

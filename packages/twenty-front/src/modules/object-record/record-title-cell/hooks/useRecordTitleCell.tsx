@@ -8,7 +8,8 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type OpenTitleCellFunctionParams = {
@@ -32,92 +33,94 @@ export const useRecordTitleCell = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const closeRecordTitleCell = useRecoilCallback(
-    ({ set }) =>
-      (instanceIdFromProps?: string) => {
-        const computedInstanceId = instanceIdFromProps ?? instanceId;
+  const store = useStore();
 
-        if (!isDefined(computedInstanceId)) {
-          throw new Error(
-            'Instance ID is not defined in closeRecordTitleCell this should not happen.',
-          );
-        }
-        set(
-          isTitleCellInEditModeComponentState.atomFamily({
-            instanceId: computedInstanceId,
-          }),
-          false,
+  const closeRecordTitleCell = useCallback(
+    (instanceIdFromProps?: string) => {
+      const computedInstanceId = instanceIdFromProps ?? instanceId;
+
+      if (!isDefined(computedInstanceId)) {
+        throw new Error(
+          'Instance ID is not defined in closeRecordTitleCell this should not happen.',
         );
+      }
+      store.set(
+        isTitleCellInEditModeComponentState.atomFamily({
+          instanceId: computedInstanceId,
+        }),
+        false,
+      );
 
-        removeFocusItemFromFocusStackById({
-          focusId: computedInstanceId,
-        });
+      removeFocusItemFromFocusStackById({
+        focusId: computedInstanceId,
+      });
 
-        goBackToPreviousDropdownFocusId();
-      },
+      goBackToPreviousDropdownFocusId();
+    },
     [
       goBackToPreviousDropdownFocusId,
       instanceId,
       removeFocusItemFromFocusStackById,
+      store,
     ],
   );
 
   const initFieldInputDraftValue = useInitDraftValue();
 
-  const openRecordTitleCell = useRecoilCallback(
-    ({ set }) =>
-      ({
-        recordId,
-        fieldMetadataItemId,
-        instanceId: instanceIdFromProps,
-      }: OpenTitleCellFunctionParams) => {
-        const computedInstanceId = instanceIdFromProps ?? instanceId;
+  const openRecordTitleCell = useCallback(
+    ({
+      recordId,
+      fieldMetadataItemId,
+      instanceId: instanceIdFromProps,
+    }: OpenTitleCellFunctionParams) => {
+      const computedInstanceId = instanceIdFromProps ?? instanceId;
 
-        if (!isDefined(computedInstanceId)) {
-          throw new Error(
-            'Instance ID is not defined in openRecordTitleCell this should not happen.',
-          );
-        }
-
-        pushFocusItemToFocusStack({
-          focusId: computedInstanceId,
-          component: {
-            type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId: computedInstanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-            enableGlobalHotkeysWithModifiers: false,
-          },
-        });
-
-        set(
-          isTitleCellInEditModeComponentState.atomFamily({
-            instanceId: computedInstanceId,
-          }),
-          true,
+      if (!isDefined(computedInstanceId)) {
+        throw new Error(
+          'Instance ID is not defined in openRecordTitleCell this should not happen.',
         );
+      }
 
-        const { fieldMetadataItem, objectMetadataItem } =
-          getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
+      pushFocusItemToFocusStack({
+        focusId: computedInstanceId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: computedInstanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+          enableGlobalHotkeysWithModifiers: false,
+        },
+      });
 
-        const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-          field: fieldMetadataItem,
-          objectMetadataItem,
-          position: 0,
-        });
+      store.set(
+        isTitleCellInEditModeComponentState.atomFamily({
+          instanceId: computedInstanceId,
+        }),
+        true,
+      );
 
-        initFieldInputDraftValue({
-          recordId,
-          fieldDefinition,
-          fieldComponentInstanceId: computedInstanceId,
-        });
-      },
+      const { fieldMetadataItem, objectMetadataItem } =
+        getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
+
+      const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+        field: fieldMetadataItem,
+        objectMetadataItem,
+        position: 0,
+      });
+
+      initFieldInputDraftValue({
+        recordId,
+        fieldDefinition,
+        fieldComponentInstanceId: computedInstanceId,
+      });
+    },
     [
       instanceId,
       pushFocusItemToFocusStack,
       initFieldInputDraftValue,
       getFieldMetadataItemByIdOrThrow,
+      store,
     ],
   );
 

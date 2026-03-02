@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 
 export type CreateOneRoleFactoryInput = CreateRoleInput;
 

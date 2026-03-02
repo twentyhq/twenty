@@ -1,6 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
@@ -13,9 +12,7 @@ import { type Captcha, CaptchaDriverType } from '~/generated-metadata/graphql';
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
 
 const createWrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>{children}</RecoilRoot>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useRequestFreshCaptchaToken', () => {

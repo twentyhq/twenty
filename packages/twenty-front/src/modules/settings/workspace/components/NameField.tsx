@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
@@ -31,8 +31,8 @@ export const NameField = ({
   onNameUpdate,
 }: NameFieldProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',
@@ -45,7 +45,7 @@ export const NameField = ({
   const debouncedUpdate = useCallback(
     useDebouncedCallback(async (name: string) => {
       if (isEmpty(name)) return;
-      // update local recoil state when workspace name is updated
+      // update local state when workspace name is updated
       setCurrentWorkspace((currentValue) => {
         if (currentValue === null) {
           return null;

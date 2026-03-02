@@ -12,8 +12,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
@@ -37,12 +37,12 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsAIModelsTab = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [searchQuery, setSearchQuery] = useState('');
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   const {
     allModelsWithAvailability,

@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -12,11 +10,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     TypeORMModule,
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([FeatureFlagEntity])],
-      services: [],
-      resolvers: [],
-    }),
+    TypeOrmModule.forFeature([FeatureFlagEntity]),
     WorkspaceFeatureFlagsMapCacheModule,
     WorkspaceCacheModule,
   ],

@@ -11,9 +11,9 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
@@ -53,40 +53,38 @@ export const ViewPickerContentCreateMode = () => {
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
-  const viewObjectMetadataId = useRecoilComponentValue(
+  const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
   );
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: viewObjectMetadataId ?? '',
   });
 
-  const [viewPickerInputName, setViewPickerInputName] = useRecoilComponentState(
+  const [viewPickerInputName, setViewPickerInputName] = useAtomComponentState(
     viewPickerInputNameComponentState,
   );
 
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
-    useRecoilComponentState(viewPickerSelectedIconComponentState);
+    useAtomComponentState(viewPickerSelectedIconComponentState);
 
-  const viewPickerIsPersisting = useRecoilComponentValue(
+  const viewPickerIsPersisting = useAtomComponentStateValue(
     viewPickerIsPersistingComponentState,
   );
-  const setViewPickerIsDirty = useSetRecoilComponentState(
+  const setViewPickerIsDirty = useSetAtomComponentState(
     viewPickerIsDirtyComponentState,
   );
 
   const [
     viewPickerMainGroupByFieldMetadataId,
     setViewPickerMainGroupByFieldMetadataId,
-  ] = useRecoilComponentState(
-    viewPickerMainGroupByFieldMetadataIdComponentState,
-  );
+  ] = useAtomComponentState(viewPickerMainGroupByFieldMetadataIdComponentState);
 
   const [
     viewPickerCalendarFieldMetadataId,
     setViewPickerCalendarFieldMetadataId,
-  ] = useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  ] = useAtomComponentState(viewPickerCalendarFieldMetadataIdComponentState);
 
-  const [viewPickerType, setViewPickerType] = useRecoilComponentState(
+  const [viewPickerType, setViewPickerType] = useAtomComponentState(
     viewPickerTypeComponentState,
   );
 
