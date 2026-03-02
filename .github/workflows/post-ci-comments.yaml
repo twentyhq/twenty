@@ -1,0 +1,45 @@
+name: Post CI Comments
+
+on:
+  workflow_run:
+    workflows: ['GraphQL and OpenAPI Breaking Changes Detection']
+    types: [completed]
+
+permissions:
+  actions: read
+
+jobs:
+  dispatch-breaking-changes:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get PR number from workflow run
+        id: pr-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = context.payload.workflow_run.id;
+            const pullRequests = context.payload.workflow_run.pull_requests;
+            const branchState = context.payload.workflow_run.head_branch;
+
+            if (!pullRequests || pullRequests.length === 0) {
+              core.info('No pull requests associated with this workflow run');
+              core.setOutput('has_pr', 'false');
+              return;
+            }
+
+            const prNumber = pullRequests[0].number;
+            core.setOutput('pr_number', prNumber);
+            core.setOutput('run_id', runId);
+            core.setOutput('has_pr', 'true');
+            core.info(`PR #${prNumber}, Run ID: ${runId}`);
+
+      - name: Dispatch to ci-privileged
+        if: steps.pr-info.outputs.has_pr == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: breaking-changes-report
+          client-payload: '{"pr_number": "${{ steps.pr-info.outputs.pr_number }}", "run_id": "${{ steps.pr-info.outputs.run_id }}", "repo": "${{ github.repository }}", "branch_state": "${{ github.event.workflow_run.head_branch }}"}'

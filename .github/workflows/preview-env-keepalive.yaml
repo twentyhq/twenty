@@ -99,15 +99,25 @@ jobs:
         working-directory: ./
 
       - name: Output tunnel URL
+        env:
+          TUNNEL_URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}
         run: |
           echo "✅ Preview Environment Ready!"
-          echo "🔗 Preview URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}"
+          echo "🔗 Preview URL: $TUNNEL_URL"
           echo "⏱️ This environment will be available for 5 hours"
           echo "## 🚀 Preview Environment Ready!" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Preview URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Preview URL: $TUNNEL_URL" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "This environment will automatically shut down after 5 hours." >> "$GITHUB_STEP_SUMMARY"
+          echo "$TUNNEL_URL" > tunnel-url.txt
+
+      - name: Upload tunnel URL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tunnel-url
+          path: tunnel-url.txt
+          retention-days: 1
 
       - name: Keep tunnel alive for 5 hours
         run: timeout 300m sleep 18000 # Stop on whichever we reach first (300m or 5hour sleep)

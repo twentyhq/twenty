@@ -157,21 +157,11 @@ jobs:
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
-      - name: Post response to source issue
+      - name: Dispatch response to ci-privileged
         if: always()
-        uses: actions/github-script@v7
-        env:
-          TARGET_REPO: ${{ steps.prompt.outputs.repo }}
-          TARGET_ISSUE: ${{ steps.prompt.outputs.issue_number }}
+        uses: peter-evans/repository-dispatch@v2
         with:
-          github-token: ${{ secrets.TWENTY_DISPATCH_TOKEN }}
-          script: |
-            const [owner, repo] = process.env.TARGET_REPO.split('/');
-            const issueNumber = parseInt(process.env.TARGET_ISSUE, 10);
-
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: issueNumber,
-              body: `Claude finished processing this request. [See workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-            });
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: claude-cross-repo-response
+          client-payload: '{"repo": "${{ steps.prompt.outputs.repo }}", "issue_number": "${{ steps.prompt.outputs.issue_number }}", "run_id": "${{ github.run_id }}", "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'

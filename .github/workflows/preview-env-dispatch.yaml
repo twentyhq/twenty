@@ -3,7 +3,6 @@ name: 'Preview Environment Dispatch'
 permissions:
   contents: read
   actions: write
-  pull-requests: write
 
 on:
   pull_request_target:
@@ -43,40 +42,10 @@ jobs:
           event-type: preview-environment
           client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
 
-      - name: Post workflow link on PR
-        uses: actions/github-script@v7
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+      - name: Dispatch to ci-privileged for PR comment
+        uses: peter-evans/repository-dispatch@v2
         with:
-          script: |
-            const COMMENT_MARKER = '<!-- PR_PREVIEW_ENV -->';
-            const prNumber = parseInt(process.env.PR_NUMBER, 10);
-
-            const commentBody = `${COMMENT_MARKER}
-            🚀 **Preview Environment Building...**
-
-            Follow the build progress and find the preview URL in the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`;
-
-            const {data: comments} = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-            });
-
-            const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: commentBody
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: commentBody
-              });
-            }
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: preview-env-url
+          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "keepalive_dispatch_time": "${{ github.event.pull_request.updated_at }}", "repo": "${{ github.repository }}"}'
