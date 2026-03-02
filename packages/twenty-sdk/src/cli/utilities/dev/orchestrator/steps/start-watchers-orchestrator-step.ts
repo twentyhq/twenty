@@ -1,9 +1,6 @@
-import {
-  createFrontComponentsWatcher,
-  createLogicFunctionsWatcher,
-  type EsbuildWatcher,
-} from '@/cli/utilities/build/common/esbuild-watcher';
+import { type EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
+import { type WatcherCallbacks } from '@/cli/utilities/build/common/start-watcher';
 import { TscWatcher } from '@/cli/utilities/build/common/tsc-watcher';
 import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
@@ -30,7 +27,6 @@ export class StartWatchersOrchestratorStep {
   private scheduleSync: () => void;
   private notify: () => void;
   private onFileBuilt: (event: FileBuiltEvent) => void;
-  private shouldSkipTypecheck: () => boolean;
 
   private manifestWatcher: ManifestWatcher | null = null;
   private logicFunctionsWatcher: EsbuildWatcher | null = null;
@@ -44,13 +40,11 @@ export class StartWatchersOrchestratorStep {
     scheduleSync: () => void;
     notify: () => void;
     onFileBuilt: (event: FileBuiltEvent) => void;
-    shouldSkipTypecheck: () => boolean;
   }) {
     this.state = options.state;
     this.scheduleSync = options.scheduleSync;
     this.notify = options.notify;
     this.onFileBuilt = options.onFileBuilt;
-    this.shouldSkipTypecheck = options.shouldSkipTypecheck;
   }
 
   async start(): Promise<void> {
@@ -65,26 +59,33 @@ export class StartWatchersOrchestratorStep {
     await this.manifestWatcher.start();
   }
 
-  async handleWatcherRestarts(
-    result: ManifestBuildResult,
-    preBuiltWatchers?: {
+  getWatcherCallbacks(): WatcherCallbacks {
+    return {
+      handleFileBuilt: this.handleFileBuilt.bind(this),
+      handleBuildError: this.handleFileBuildError.bind(this),
+    };
+  }
+
+  async handleFirstSync(watchers: {
       logicFunctionsWatcher: EsbuildWatcher | null;
       frontComponentsWatcher: EsbuildWatcher | null;
     },
   ): Promise<void> {
+    this.state.steps.startWatchers.output.watchersStarted = true;
+    this.state.steps.startWatchers.status = 'done';
+
+    this.logicFunctionsWatcher = watchers.logicFunctionsWatcher;
+    this.frontComponentsWatcher = watchers.frontComponentsWatcher;
+
+    await Promise.all([
+      this.startTscWatcher(),
+      this.startAssetWatcher(),
+      this.startDependencyWatcher(),
+    ]);
+  }
+
+  async handleWatcherRestarts(result: ManifestBuildResult): Promise<void> {
     const { logicFunctions, frontComponents } = result.filePaths;
-
-    if (!this.state.steps.startWatchers.output.watchersStarted) {
-      this.state.steps.startWatchers.output.watchersStarted = true;
-      this.state.steps.startWatchers.status = 'done';
-      await this.startFileWatchers(
-        logicFunctions,
-        frontComponents,
-        preBuiltWatchers,
-      );
-
-      return;
-    }
 
     if (this.logicFunctionsWatcher?.shouldRestart(logicFunctions)) {
       await this.logicFunctionsWatcher.restart(logicFunctions);
@@ -158,81 +159,6 @@ export class StartWatchersOrchestratorStep {
 
     this.notify();
     this.scheduleSync();
-  }
-
-  private async startFileWatchers(
-    logicFunctions: string[],
-    frontComponents: string[],
-    preBuiltWatchers?: {
-      logicFunctionsWatcher: EsbuildWatcher | null;
-      frontComponentsWatcher: EsbuildWatcher | null;
-    },
-  ): Promise<void> {
-    await Promise.all([
-      this.startTscWatcher(),
-      this.startLogicFunctionsWatcher(
-        logicFunctions,
-        preBuiltWatchers?.logicFunctionsWatcher,
-      ),
-      this.startFrontComponentsWatcher(
-        frontComponents,
-        preBuiltWatchers?.frontComponentsWatcher,
-      ),
-      this.startAssetWatcher(),
-      this.startDependencyWatcher(),
-    ]);
-  }
-
-  private async startLogicFunctionsWatcher(
-    sourcePaths: string[],
-    preBuiltWatcher?: EsbuildWatcher | null,
-  ): Promise<void> {
-    const watcherCallbacks = {
-      handleFileBuilt: this.handleFileBuilt.bind(this),
-      handleBuildError: this.handleFileBuildError.bind(this),
-    };
-
-    if (preBuiltWatcher) {
-      this.logicFunctionsWatcher = preBuiltWatcher;
-      await preBuiltWatcher.transitionToWatchMode(watcherCallbacks);
-
-      return;
-    }
-
-    this.logicFunctionsWatcher = createLogicFunctionsWatcher({
-      appPath: this.state.appPath,
-      sourcePaths,
-      shouldSkipTypecheck: this.shouldSkipTypecheck,
-      ...watcherCallbacks,
-    });
-
-    await this.logicFunctionsWatcher.start();
-  }
-
-  private async startFrontComponentsWatcher(
-    sourcePaths: string[],
-    preBuiltWatcher?: EsbuildWatcher | null,
-  ): Promise<void> {
-    const watcherCallbacks = {
-      handleFileBuilt: this.handleFileBuilt.bind(this),
-      handleBuildError: this.handleFileBuildError.bind(this),
-    };
-
-    if (preBuiltWatcher) {
-      this.frontComponentsWatcher = preBuiltWatcher;
-      await preBuiltWatcher.transitionToWatchMode(watcherCallbacks);
-
-      return;
-    }
-
-    this.frontComponentsWatcher = createFrontComponentsWatcher({
-      appPath: this.state.appPath,
-      sourcePaths,
-      shouldSkipTypecheck: this.shouldSkipTypecheck,
-      ...watcherCallbacks,
-    });
-
-    await this.frontComponentsWatcher.start();
   }
 
   private async startAssetWatcher(): Promise<void> {

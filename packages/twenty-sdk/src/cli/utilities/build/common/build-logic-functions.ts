@@ -17,13 +17,13 @@ export const buildLogicFunctions = async ({
   appPath,
   sourcePaths,
   onFileBuilt,
-  createWatcher,
+  watcherCallbacks,
 }: BuildEntityFilesOptions): Promise<EsbuildWatcher | null> => {
-  if (createWatcher) {
+  if (watcherCallbacks) {
     return startWatcher({
       appPath,
       sourcePaths,
-      onFileBuilt,
+      watcherCallbacks,
       watcherFactory: createLogicFunctionsWatcher,
     });
   }
