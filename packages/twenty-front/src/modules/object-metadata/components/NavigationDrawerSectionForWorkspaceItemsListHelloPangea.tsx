@@ -65,7 +65,6 @@ export const WorkspaceSectionListHelloPangea = ({
                   <WorkspaceSectionItemContent
                     item={item}
                     editModeProps={getEditModeProps(item)}
-                    useDndKit={false}
                     isEditMode={isEditMode}
                     isDragging={isDragging}
                     folderChildrenById={folderChildrenById}

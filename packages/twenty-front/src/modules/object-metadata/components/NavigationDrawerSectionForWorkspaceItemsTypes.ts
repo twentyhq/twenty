@@ -14,7 +14,6 @@ export type EditModeProps = {
 export type WorkspaceSectionItemContentProps = {
   item: FlatWorkspaceItem;
   editModeProps: EditModeProps;
-  useDndKit: boolean;
   isEditMode: boolean;
   isDragging: boolean;
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;

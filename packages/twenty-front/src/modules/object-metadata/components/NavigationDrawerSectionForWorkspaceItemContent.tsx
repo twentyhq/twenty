@@ -12,7 +12,6 @@ import type { WorkspaceSectionItemContentProps } from '@/object-metadata/compone
 export const WorkspaceSectionItemContent = ({
   item,
   editModeProps,
-  useDndKit,
   isEditMode,
   isDragging,
   folderChildrenById,
@@ -40,7 +39,6 @@ export const WorkspaceSectionItemContent = ({
         onNavigationMenuItemClick={onNavigationMenuItemClick}
         selectedNavigationMenuItemId={selectedNavigationMenuItemId}
         isDragging={isDragging}
-        useDndKit={useDndKit}
       />
     );
   }

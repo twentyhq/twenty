@@ -55,7 +55,6 @@ export const WorkspaceSectionListDndKit = ({
             <WorkspaceSectionItemContent
               item={item}
               editModeProps={getEditModeProps(item)}
-              useDndKit
               isEditMode={isEditMode}
               isDragging={isDragging}
               folderChildrenById={folderChildrenById}
