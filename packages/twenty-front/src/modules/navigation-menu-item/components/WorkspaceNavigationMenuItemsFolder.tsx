@@ -19,7 +19,6 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
-import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { WorkspaceNavigationMenuItemFolderDragClone } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderDragClone';
@@ -27,12 +26,12 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
-import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
+import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -46,7 +45,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
@@ -84,7 +82,6 @@ type WorkspaceNavigationMenuItemsFolderProps = {
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   selectedNavigationMenuItemId?: string | null;
   isDragging?: boolean;
-  useDndKit?: boolean;
 };
 
 export const WorkspaceNavigationMenuItemsFolder = ({
@@ -100,8 +97,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   onNavigationMenuItemClick,
   selectedNavigationMenuItemId = null,
   isDragging = false,
-  useDndKit = false,
 }: WorkspaceNavigationMenuItemsFolderProps) => {
+  const useDndKit = useContext(WorkspaceDndKitContext);
   const theme = useTheme();
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
@@ -180,6 +177,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const { isDragging: isContextDragging } = useContext(
     NavigationMenuItemDragContext,
   );
+  const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
   const folderContentDropDisabled = useIsDropDisabledForSection(true);
 
   const folderHeaderDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`;
@@ -218,7 +216,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   );
 
   if (useDndKit) {
-    const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
     return (
       <StyledFolderContainer $isSelectedInEditMode={isSelectedInEditMode}>
         <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
@@ -242,75 +239,32 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 $compact={isEditMode || navigationMenuItems.length === 0}
                 data-dnd-group={folderContentDroppableId}
               >
-                {navigationMenuItems.map((navigationMenuItem, index) => {
-                  const objectMetadataItem =
-                    navigationMenuItem.itemType ===
-                      NavigationMenuItemType.VIEW ||
-                    navigationMenuItem.itemType ===
-                      NavigationMenuItemType.RECORD
-                      ? getObjectMetadataForNavigationMenuItem(
-                          navigationMenuItem,
-                          objectMetadataItems,
-                          views,
-                        )
-                      : null;
-                  const handleEditModeClick =
-                    isEditMode &&
-                    isDefined(onNavigationMenuItemClick) &&
-                    (navigationMenuItem.itemType ===
-                      NavigationMenuItemType.LINK ||
-                      isDefined(objectMetadataItem))
-                      ? () =>
-                          onNavigationMenuItemClick({
-                            item: navigationMenuItem,
-                            objectMetadataItem: objectMetadataItem ?? undefined,
-                          })
-                      : undefined;
-                  return (
-                    <WorkspaceDndKitSortableItem
-                      key={navigationMenuItem.id}
-                      id={navigationMenuItem.id}
+                {navigationMenuItems.map((navigationMenuItem, index) => (
+                  <WorkspaceDndKitSortableItem
+                    key={navigationMenuItem.id}
+                    id={navigationMenuItem.id}
+                    index={index}
+                    group={folderContentDroppableId}
+                    disabled={!isEditMode || folderContentDropDisabled}
+                  >
+                    <WorkspaceNavigationMenuItemFolderSubItem
+                      navigationMenuItem={navigationMenuItem}
                       index={index}
-                      group={folderContentDroppableId}
-                      disabled={!isEditMode || folderContentDropDisabled}
-                    >
-                      <NavigationDrawerSubItem
-                        secondaryLabel={
-                          navigationMenuItem.viewKey === ViewKey.Index
-                            ? undefined
-                            : getNavigationMenuItemSecondaryLabel({
-                                objectMetadataItems,
-                                navigationMenuItemObjectNameSingular:
-                                  navigationMenuItem.objectNameSingular,
-                              })
-                        }
-                        label={navigationMenuItem.labelIdentifier}
-                        Icon={() => (
-                          <NavigationMenuItemIcon
-                            navigationMenuItem={navigationMenuItem}
-                          />
-                        )}
-                        to={
-                          isContextDragging || handleEditModeClick
-                            ? undefined
-                            : navigationMenuItem.link
-                        }
-                        onClick={handleEditModeClick}
-                        active={index === selectedNavigationMenuItemIndex}
-                        isSelectedInEditMode={
-                          selectedNavigationMenuItemId === navigationMenuItem.id
-                        }
-                        subItemState={getNavigationSubItemLeftAdornment({
-                          index,
-                          arrayLength: navigationMenuItemFolderContentLength,
-                          selectedIndex: selectedNavigationMenuItemIndex,
-                        })}
-                        isDragging={isContextDragging}
-                        triggerEvent="CLICK"
-                      />
-                    </WorkspaceDndKitSortableItem>
-                  );
-                })}
+                      arrayLength={navigationMenuItemFolderContentLength}
+                      selectedNavigationMenuItemIndex={
+                        selectedNavigationMenuItemIndex
+                      }
+                      objectMetadataItems={objectMetadataItems}
+                      views={views}
+                      isEditMode={isEditMode}
+                      onNavigationMenuItemClick={onNavigationMenuItemClick}
+                      selectedNavigationMenuItemId={
+                        selectedNavigationMenuItemId ?? null
+                      }
+                      isContextDragging={isContextDragging}
+                    />
+                  </WorkspaceDndKitSortableItem>
+                ))}
                 <WorkspaceDndKitDroppableSlot
                   droppableId={folderContentDroppableId}
                   index={navigationMenuItems.length}
@@ -342,7 +296,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             containAnimation
           >
             <Droppable
-              droppableId={`${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}${folderId}`}
+              droppableId={folderContentDroppableId}
               isDropDisabled={folderContentDropDisabled}
               ignoreContainerClipping
               renderClone={(provided, snapshot, rubric) => (
@@ -368,80 +322,34 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...provided.droppableProps}
                 >
-                  {navigationMenuItems.map((navigationMenuItem, index) => {
-                    const objectMetadataItem =
-                      navigationMenuItem.itemType ===
-                        NavigationMenuItemType.VIEW ||
-                      navigationMenuItem.itemType ===
-                        NavigationMenuItemType.RECORD
-                        ? getObjectMetadataForNavigationMenuItem(
-                            navigationMenuItem,
-                            objectMetadataItems,
-                            views,
-                          )
-                        : null;
-                    const handleEditModeClick =
-                      isEditMode &&
-                      isDefined(onNavigationMenuItemClick) &&
-                      (navigationMenuItem.itemType ===
-                        NavigationMenuItemType.LINK ||
-                        isDefined(objectMetadataItem))
-                        ? () =>
-                            onNavigationMenuItemClick({
-                              item: navigationMenuItem,
-                              objectMetadataItem:
-                                objectMetadataItem ?? undefined,
-                            })
-                        : undefined;
-
-                    return (
-                      <DraggableItem
-                        key={navigationMenuItem.id}
-                        draggableId={navigationMenuItem.id}
-                        index={index}
-                        isInsideScrollableContainer
-                        isDragDisabled={!isEditMode}
-                        disableInteractiveElementBlocking={isEditMode}
-                        itemComponent={
-                          <NavigationDrawerSubItem
-                            secondaryLabel={
-                              navigationMenuItem.viewKey === ViewKey.Index
-                                ? undefined
-                                : getNavigationMenuItemSecondaryLabel({
-                                    objectMetadataItems,
-                                    navigationMenuItemObjectNameSingular:
-                                      navigationMenuItem.objectNameSingular,
-                                  })
-                            }
-                            label={navigationMenuItem.labelIdentifier}
-                            Icon={() => (
-                              <NavigationMenuItemIcon
-                                navigationMenuItem={navigationMenuItem}
-                              />
-                            )}
-                            to={
-                              isContextDragging || handleEditModeClick
-                                ? undefined
-                                : navigationMenuItem.link
-                            }
-                            onClick={handleEditModeClick}
-                            active={index === selectedNavigationMenuItemIndex}
-                            isSelectedInEditMode={
-                              selectedNavigationMenuItemId ===
-                              navigationMenuItem.id
-                            }
-                            subItemState={getNavigationSubItemLeftAdornment({
-                              index,
-                              arrayLength: folderContentLengthForTree,
-                              selectedIndex: selectedNavigationMenuItemIndex,
-                            })}
-                            isDragging={isContextDragging}
-                            triggerEvent="CLICK"
-                          />
-                        }
-                      />
-                    );
-                  })}
+                  {navigationMenuItems.map((navigationMenuItem, index) => (
+                    <DraggableItem
+                      key={navigationMenuItem.id}
+                      draggableId={navigationMenuItem.id}
+                      index={index}
+                      isInsideScrollableContainer
+                      isDragDisabled={!isEditMode}
+                      disableInteractiveElementBlocking={isEditMode}
+                      itemComponent={
+                        <WorkspaceNavigationMenuItemFolderSubItem
+                          navigationMenuItem={navigationMenuItem}
+                          index={index}
+                          arrayLength={folderContentLengthForTree}
+                          selectedNavigationMenuItemIndex={
+                            selectedNavigationMenuItemIndex
+                          }
+                          objectMetadataItems={objectMetadataItems}
+                          views={views}
+                          isEditMode={isEditMode}
+                          onNavigationMenuItemClick={onNavigationMenuItemClick}
+                          selectedNavigationMenuItemId={
+                            selectedNavigationMenuItemId ?? null
+                          }
+                          isContextDragging={isContextDragging}
+                        />
+                      }
+                    />
+                  ))}
                   {provided.placeholder}
                 </StyledFolderDroppableContent>
               )}
