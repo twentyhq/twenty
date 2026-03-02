@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,17 +13,18 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledLinkContainer = styled.div`
   flex: 1;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;

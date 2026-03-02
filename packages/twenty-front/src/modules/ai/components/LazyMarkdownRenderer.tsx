@@ -4,11 +4,12 @@ import {
   RECORD_REFERENCE_REGEX,
   RecordLink,
 } from '@/ai/components/RecordLink';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { lazy, Suspense } from 'react';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -126,25 +127,25 @@ const MarkdownRenderer = lazy(async () => {
 });
 
 const StyledMarkdownContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   line-height: 150%;
-  margin: ${({ theme }) => `${theme.spacing(1.5)} 0`};
+  margin: ${themeCssVariables.spacing['1.5']} 0;
   position: relative;
-  scroll-margin-top: ${({ theme }) => theme.spacing(10)};
-  scroll-margin-bottom: ${({ theme }) => theme.spacing(10)};
+  scroll-margin-top: ${themeCssVariables.spacing[10]};
+  scroll-margin-bottom: ${themeCssVariables.spacing[10]};
 
   &:empty {
     display: none;
   }
 
   .markdown-link {
-    color: ${({ theme }) => theme.accent.accent11};
+    color: ${themeCssVariables.accent.accent11};
     text-decoration: none;
     -webkit-text-decoration: none;
   }
 
   .markdown-link:visited {
-    color: ${({ theme }) => theme.accent.accent11};
+    color: ${themeCssVariables.accent.accent11};
   }
 
   .markdown-link:hover {
@@ -153,13 +154,13 @@ const StyledMarkdownContainer = styled.div`
 
   strong,
   b {
-    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    font-weight: ${themeCssVariables.font.weight.semiBold};
   }
 
   h1,
   h2,
   h3 {
-    font-weight: ${({ theme }) => theme.font.weight.semiBold} !important;
+    font-weight: ${themeCssVariables.font.weight.semiBold} !important;
   }
 
   h1 {
@@ -205,59 +206,59 @@ const StyledMarkdownContainer = styled.div`
   }
 
   hr {
-    background-color: ${({ theme }) => theme.border.color.light} !important;
+    background-color: ${themeCssVariables.border.color.light} !important;
     border: none;
     height: 1px;
-    margin: ${({ theme }) => theme.spacing(4)} 0;
+    margin: ${themeCssVariables.spacing[4]} 0;
   }
 
   ol:first-of-type:not(.nested),
   ul:first-of-type:not(.nested) {
-    margin-top: ${({ theme }) => theme.spacing(1)} !important;
+    margin-top: ${themeCssVariables.spacing[1]} !important;
   }
 
   ol:last-of-type:not(.nested),
   ul:last-of-type:not(.nested) {
-    margin-bottom: ${({ theme }) => theme.spacing(1)} !important;
+    margin-bottom: ${themeCssVariables.spacing[1]} !important;
   }
 
   li {
     line-height: 150%;
-    margin-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
-    margin-top: ${({ theme }) => theme.spacing(0.5)} !important;
-    padding-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
-    padding-top: ${({ theme }) => theme.spacing(0.5)} !important;
+    margin-bottom: ${themeCssVariables.spacing['0.5']} !important;
+    margin-top: ${themeCssVariables.spacing['0.5']} !important;
+    padding-bottom: ${themeCssVariables.spacing['0.5']} !important;
+    padding-top: ${themeCssVariables.spacing['0.5']} !important;
   }
 
   :not(pre) > code {
-    background-color: ${({ theme }) => theme.background.tertiary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    color: ${({ theme }) => theme.font.color.primary};
-    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    background-color: ${themeCssVariables.background.tertiary};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    color: ${themeCssVariables.font.color.primary};
+    font-family: ${themeCssVariables.code.font.family}, monospace;
     font-size: 0.9em;
     padding: 1.5px 3px;
-    transition: all ${({ theme }) => theme.animation.duration.fast}s ease;
+    transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
   }
 
   :not(pre) > code[style*='cursor: pointer'] {
-    background-color: ${({ theme }) => theme.background.secondary};
-    border: ${({ theme }) => `1px solid ${theme.accent.accent10}`};
-    color: ${({ theme }) => theme.accent.accent10};
+    background-color: ${themeCssVariables.background.secondary};
+    border: 1px solid ${themeCssVariables.accent.accent10};
+    color: ${themeCssVariables.accent.accent10};
   }
 
   :not(pre) > code[style*='cursor: pointer']:hover {
-    background-color: ${({ theme }) => theme.background.transparent.blue};
+    background-color: ${themeCssVariables.background.transparent.blue};
   }
 
   .markdown-code-outer-container {
-    border-radius: ${({ theme }) => theme.border.radius.md} !important;
+    border-radius: ${themeCssVariables.border.radius.md} !important;
     overflow: hidden;
   }
 
   .markdown-block-code {
-    background-color: ${({ theme }) => theme.background.secondary};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
-    border-radius: ${({ theme }) => theme.border.radius.md} !important;
+    background-color: ${themeCssVariables.background.secondary};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.md} !important;
   }
 
   .markdown-block-code * {
@@ -273,7 +274,7 @@ const StyledMarkdownContainer = styled.div`
 // Using div instead of p to allow RecordLink (which contains div elements) as children
 const StyledParagraph = styled.div`
   line-height: inherit;
-  margin-block: ${({ theme }) => theme.spacing(2)};
+  margin-block: ${themeCssVariables.spacing[2]};
 
   &:first-child {
     margin-block-start: 0;
@@ -287,7 +288,7 @@ const StyledParagraph = styled.div`
 const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -296,23 +297,23 @@ const StyledTableScrollContainer = styled.div`
 
   table {
     border-collapse: collapse;
-    margin-block: ${({ theme }) => theme.spacing(2)};
+    margin-block: ${themeCssVariables.spacing[2]};
   }
 
   th,
   td {
-    border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-    padding: ${({ theme }) => theme.spacing(2)};
+    border: 1px solid ${themeCssVariables.border.color.light};
+    padding: ${themeCssVariables.spacing[2]};
   }
 
   th {
-    background-color: ${({ theme }) => theme.background.secondary};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    background-color: ${themeCssVariables.background.secondary};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 `;
 
 const LoadingSkeleton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SkeletonTheme

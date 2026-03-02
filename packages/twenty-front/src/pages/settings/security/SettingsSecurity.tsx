@@ -1,5 +1,4 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
@@ -33,6 +32,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -44,7 +44,7 @@ const StyledContainer = styled.div`
 const StyledMainContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(10)};
+  gap: ${themeCssVariables.spacing[10]};
   min-height: 200px;
 `;
 
@@ -52,9 +52,7 @@ const StyledSection = styled(Section)`
   flex-shrink: 0;
 `;
 
-const StyledLink = styled(Link, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
-})<{ isDisabled: boolean }>`
+const StyledLink = styled(Link)<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
   text-decoration: none;
 `;

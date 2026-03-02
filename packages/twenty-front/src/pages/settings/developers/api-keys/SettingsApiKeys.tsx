@@ -3,7 +3,7 @@ import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsA
 import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
 import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/playground/components/SettingsPlaygroundCoverImage';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -11,13 +11,14 @@ import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-top: ${({ theme }) => theme.spacing(5)};
+    padding-top: ${themeCssVariables.spacing[5]};
   }
 `;
 
@@ -25,7 +26,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: visible;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsApiKeys = () => {

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 
@@ -13,6 +13,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
@@ -26,14 +27,14 @@ const StyledEventCardCalendarEventContainer = styled.div<{
   cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledCalendarEventContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   overflow: hidden;
   width: 100%;
@@ -43,13 +44,13 @@ const StyledCalendarEventTop = styled.div`
   align-items: center;
   display: flex;
   width: 100%;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
 `;
 
 const StyledCalendarEventTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -57,37 +58,37 @@ const StyledCalendarEventTitle = styled.div`
 
 const StyledCalendarEventBody = styled.div`
   align-items: flex-start;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 
   justify-content: center;
 `;
 
 const StyledCalendarEventDateCard = styled.div`
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 
-  border-radius: ${({ theme }) => theme.spacing(1)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${themeCssVariables.spacing[1]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
 `;
 
 const StyledCalendarEventDateCardMonth = styled.div`
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.xxs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCalendarEventDateCardDay = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 export const EventCardCalendarEvent = ({

@@ -1,8 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useDebounce } from 'use-debounce';
@@ -43,6 +42,8 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -57,18 +58,18 @@ const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  margin-left: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTable = styled(Table)<{ hasMoreRows?: boolean }>`
-  border-bottom: ${({ hasMoreRows, theme }) =>
-    hasMoreRows ? 'none' : `1px solid ${theme.border.color.light}`};
+  border-bottom: ${({ hasMoreRows }) =>
+    hasMoreRows ? 'none' : `1px solid ${themeCssVariables.border.color.light}`};
 `;
 
 const StyledIconWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTextContainerWithEllipsis = styled.div`
@@ -78,19 +79,19 @@ const StyledTextContainerWithEllipsis = styled.div`
 `;
 
 const StyledSearchContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
   input {
-    background: ${({ theme }) => theme.background.transparent.lighter};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
   }
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledClickableTableRow = styled(TableRow)`
@@ -99,20 +100,20 @@ const StyledClickableTableRow = styled(TableRow)`
 
 const StyledChevronWrapper = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   justify-content: flex-end;
   width: 100%;
 `;
 
 const StyledNoMembers = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const navigateSettings = useNavigateSettings();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');

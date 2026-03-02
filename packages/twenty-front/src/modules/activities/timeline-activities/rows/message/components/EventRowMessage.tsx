@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
@@ -11,19 +11,20 @@ import {
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMessageProps = EventRowDynamicComponentProps;
 
 const StyledEventRowMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRowContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const EventRowMessage = ({

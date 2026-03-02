@@ -1,8 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -12,6 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 import { type MessageDescriptor } from '@lingui/core';
@@ -89,14 +90,14 @@ const StyledTable = styled(Table)`
   table-layout: fixed;
 `;
 
-const StyledHeaderRow = styled(TableRow)<{ gridTemplateColumns: string }>`
+const StyledHeaderRow = styled(TableRow)`
   display: grid;
-  grid-template-columns: ${({ gridTemplateColumns }) => gridTemplateColumns};
+  grid-template-columns: var(--grid-template-columns);
 `;
 
-const StyledDataRow = styled(TableRow)<{ gridTemplateColumns: string }>`
+const StyledDataRow = styled(TableRow)`
   display: grid;
-  grid-template-columns: ${({ gridTemplateColumns }) => gridTemplateColumns};
+  grid-template-columns: var(--grid-template-columns);
 `;
 
 const StyledResizableHeader = styled(TableHeader)<{ isResizing?: boolean }>`
@@ -105,8 +106,8 @@ const StyledResizableHeader = styled(TableHeader)<{ isResizing?: boolean }>`
 `;
 
 const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
-  background: ${({ isResizing, theme }) =>
-    isResizing ? theme.color.blue : 'transparent'};
+  background: ${({ isResizing }) =>
+    isResizing ? themeCssVariables.color.blue : 'transparent'};
   bottom: 0;
   cursor: col-resize;
   position: absolute;
@@ -115,7 +116,7 @@ const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   width: 4px;
 
   &:hover {
-    background: ${({ theme }) => theme.color.blue};
+    background: ${themeCssVariables.color.blue};
   }
 `;
 
@@ -132,19 +133,19 @@ const StyledTableCell = styled(TableCell)`
 `;
 
 const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(8)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
 const StyledLoadingMore = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;
 
 const StyledSkeletonContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIntersectionObserver = styled.div`
@@ -177,7 +178,7 @@ export const EventLogResultsTable = ({
   selectedTable,
 }: EventLogResultsTableProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
   const baseColumns = showObjectEventColumns
@@ -261,7 +262,13 @@ export const EventLogResultsTable = ({
         componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
       >
         <StyledTable>
-          <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
+          <StyledHeaderRow
+            style={
+              {
+                '--grid-template-columns': gridTemplateColumns,
+              } as React.CSSProperties
+            }
+          >
             {baseColumns.map((column) => (
               <TableHeader key={column.id}>{t(column.label)}</TableHeader>
             ))}
@@ -295,7 +302,13 @@ export const EventLogResultsTable = ({
       componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
     >
       <StyledTable>
-        <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
+        <StyledHeaderRow
+          style={
+            {
+              '--grid-template-columns': gridTemplateColumns,
+            } as React.CSSProperties
+          }
+        >
           {baseColumns.map((column) => (
             <StyledResizableHeader
               key={column.id}
@@ -312,7 +325,11 @@ export const EventLogResultsTable = ({
         {records.map((record, index) => (
           <StyledDataRow
             key={`${record.timestamp}-${record.event}-${index}`}
-            gridTemplateColumns={gridTemplateColumns}
+            style={
+              {
+                '--grid-template-columns': gridTemplateColumns,
+              } as React.CSSProperties
+            }
           >
             <StyledTableCell>{record.event}</StyledTableCell>
             <StyledTableCell>

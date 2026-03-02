@@ -42,6 +42,7 @@ type TableRowProps = {
   onClick?: () => void;
   to?: string;
   className?: string;
+  style?: React.CSSProperties;
   gridAutoColumns?: string;
   mobileGridAutoColumns?: string;
 };
@@ -51,6 +52,7 @@ export const TableRow = ({
   onClick,
   to,
   className,
+  style,
   children,
   gridAutoColumns,
   mobileGridAutoColumns,
@@ -60,6 +62,7 @@ export const TableRow = ({
     onClick={onClick}
     gridAutoColumns={gridAutoColumns}
     className={className}
+    style={style}
     mobileGridAutoColumns={mobileGridAutoColumns}
     to={to}
     as={to ? Link : 'div'}
