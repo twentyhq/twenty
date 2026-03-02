@@ -1,7 +1,6 @@
 import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
 import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useMemo } from 'react';
 
 type UseFieldsWidgetModeParams = {
   pageLayoutId: string;
@@ -19,10 +18,7 @@ export const useFieldsWidgetMode = ({
     pageLayoutId,
   );
 
-  const mode = useMemo<FieldsWidgetEditorMode>(
-    () => fieldsWidgetModeDraft[widgetId] ?? 'ungrouped',
-    [fieldsWidgetModeDraft, widgetId],
-  );
+  const mode = fieldsWidgetModeDraft[widgetId];
 
   return { mode };
 };
