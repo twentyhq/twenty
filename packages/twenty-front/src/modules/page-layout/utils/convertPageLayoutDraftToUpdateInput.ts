@@ -31,7 +31,8 @@ export const convertPageLayoutDraftToUpdateInput = (
             columnSpan: widget.gridPosition.columnSpan,
           },
           position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+            layoutMode:
+              widget.position?.layoutMode ?? PageLayoutTabLayoutMode.GRID,
             row: widget.gridPosition.row,
             column: widget.gridPosition.column,
             rowSpan: widget.gridPosition.rowSpan,
