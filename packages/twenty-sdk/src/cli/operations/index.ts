@@ -14,7 +14,7 @@ export { appBuild } from './app-build';
 export type {
   AppBuildOptions,
   AppBuildResult,
-  BuiltFileInfo
+  BuiltFileInfo,
 } from './app-build';
 export { syncBuiltApp } from './app-sync';
 export type { AppSyncOptions } from './app-sync';
@@ -29,10 +29,15 @@ export type { FunctionExecuteOptions } from './function-execute';
 
 // Shared types and error codes
 export {
-  APP_ERROR_CODES, AUTH_ERROR_CODES, FUNCTION_ERROR_CODES
+  APP_ERROR_CODES,
+  AUTH_ERROR_CODES,
+  FUNCTION_ERROR_CODES,
 } from './types';
 export type {
-  AuthListWorkspace, AuthStatusResult, CommandError,
-  CommandResult, FunctionExecutionResult, TypecheckResult
+  AuthListWorkspace,
+  AuthStatusResult,
+  CommandError,
+  CommandResult,
+  FunctionExecutionResult,
+  TypecheckResult,
 } from './types';
-

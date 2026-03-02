@@ -29,8 +29,7 @@ export const findOrCreateApplication = async ({
 }): Promise<EnsureApplicationResult> => {
   const universalIdentifier = manifest.application.universalIdentifier;
 
-  const findResult =
-    await apiService.findOneApplication(universalIdentifier);
+  const findResult = await apiService.findOneApplication(universalIdentifier);
 
   if (!findResult.success) {
     return {

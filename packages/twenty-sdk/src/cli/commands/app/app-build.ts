@@ -62,9 +62,7 @@ export class AppBuildCommand {
 
       await clientService.generate({ appPath });
 
-      console.log(
-        chalk.gray('Rebuilding with generated client...'),
-      );
+      console.log(chalk.gray('Rebuilding with generated client...'));
 
       const finalBuildResult = await appBuild({
         appPath,
