@@ -3,24 +3,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { type View } from '@/views/types/View';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 type WorkspaceNavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: ProcessedNavigationMenuItem;
   index: number;
   arrayLength: number;
   selectedNavigationMenuItemIndex: number;
-  objectMetadataItems: ObjectMetadataItem[];
-  views: View[];
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   selectedNavigationMenuItemId: string | null;
   isContextDragging: boolean;
@@ -31,8 +30,6 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   index,
   arrayLength,
   selectedNavigationMenuItemIndex,
-  objectMetadataItems,
-  views,
   onNavigationMenuItemClick,
   selectedNavigationMenuItemId,
   isContextDragging,
@@ -40,6 +37,9 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
+  const views = coreViews.map(convertCoreViewToView);
   const objectMetadataItem =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD

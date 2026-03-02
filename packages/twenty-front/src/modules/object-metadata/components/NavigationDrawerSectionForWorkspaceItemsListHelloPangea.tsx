@@ -29,8 +29,6 @@ export const WorkspaceSectionListHelloPangea = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  objectMetadataItems,
-  views,
   isAddMenuItemButtonVisible,
   addToNavigationFallbackDestination,
   onAddMenuItem,
@@ -77,8 +75,6 @@ export const WorkspaceSectionListHelloPangea = ({
                     onActiveObjectMetadataItemClick={
                       onActiveObjectMetadataItemClick
                     }
-                    objectMetadataItems={objectMetadataItems}
-                    views={views}
                   />
                 }
               />

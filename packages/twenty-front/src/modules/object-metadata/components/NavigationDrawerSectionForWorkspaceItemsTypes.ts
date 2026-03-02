@@ -4,7 +4,6 @@ import type {
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import type { View } from '@/views/types/View';
 
 export type EditModeProps = {
   isSelectedInEditMode: boolean;
@@ -23,8 +22,6 @@ export type WorkspaceSectionItemContentProps = {
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  objectMetadataItems: ObjectMetadataItem[];
-  views: View[];
 };
 
 export type WorkspaceSectionListCommonProps = {
@@ -40,8 +37,6 @@ export type WorkspaceSectionListCommonProps = {
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  objectMetadataItems: ObjectMetadataItem[];
-  views: View[];
   isAddMenuItemButtonVisible: boolean;
   addToNavigationFallbackDestination: {
     droppableId: string;

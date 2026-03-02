@@ -35,7 +35,6 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/sta
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { WorkspaceDndKitContext } from '@/navigation/contexts/WorkspaceDndKitContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -45,8 +44,6 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
   border: ${({ theme, $isSelectedInEditMode }) =>
@@ -104,9 +101,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const coreViews = useAtomStateValue(coreViewsState);
-  const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -261,8 +255,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                       selectedNavigationMenuItemIndex={
                         selectedNavigationMenuItemIndex
                       }
-                      objectMetadataItems={objectMetadataItems}
-                      views={views}
                       onNavigationMenuItemClick={onNavigationMenuItemClick}
                       selectedNavigationMenuItemId={
                         selectedNavigationMenuItemId ?? null
@@ -349,8 +341,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                           selectedNavigationMenuItemIndex={
                             selectedNavigationMenuItemIndex
                           }
-                          objectMetadataItems={objectMetadataItems}
-                          views={views}
                           onNavigationMenuItemClick={onNavigationMenuItemClick}
                           selectedNavigationMenuItemId={
                             selectedNavigationMenuItemId ?? null

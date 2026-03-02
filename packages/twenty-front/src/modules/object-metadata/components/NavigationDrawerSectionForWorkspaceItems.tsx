@@ -173,8 +173,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            objectMetadataItems={objectMetadataItems}
-            views={views}
             isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
             addToNavigationFallbackDestination={
               addToNavigationFallbackDestination
@@ -193,8 +191,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            objectMetadataItems={objectMetadataItems}
-            views={views}
             isAddMenuItemButtonVisible={isAddMenuItemButtonVisible}
             addToNavigationFallbackDestination={
               addToNavigationFallbackDestination

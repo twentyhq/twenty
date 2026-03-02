@@ -29,8 +29,6 @@ export const WorkspaceSectionListDndKit = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  objectMetadataItems,
-  views,
   isAddMenuItemButtonVisible,
   addToNavigationFallbackDestination,
   onAddMenuItem,
@@ -65,8 +63,6 @@ export const WorkspaceSectionListDndKit = ({
               selectedNavigationMenuItemId={selectedNavigationMenuItemId}
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              objectMetadataItems={objectMetadataItems}
-              views={views}
             />
           </WorkspaceDndKitSortableItem>
         </React.Fragment>

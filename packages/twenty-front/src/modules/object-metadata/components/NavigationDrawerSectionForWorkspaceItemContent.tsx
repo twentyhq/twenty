@@ -4,6 +4,9 @@ import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/compo
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -20,12 +23,13 @@ export const WorkspaceSectionItemContent = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  objectMetadataItems,
-  views,
 }: WorkspaceSectionItemContentProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
+  const views = coreViews.map(convertCoreViewToView);
   const type = item.itemType;
 
   if (type === 'folder') {
