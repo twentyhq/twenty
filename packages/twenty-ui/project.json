@@ -42,6 +42,21 @@
         "{projectRoot}/utilities/dist"
       ]
     },
+    "generateThemeConstants": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/generateThemeConstants.ts",
+        "{projectRoot}/dist/theme.cjs",
+        "{projectRoot}/dist/theme-constants.cjs"
+      ],
+      "outputs": [
+        "{projectRoot}/src/theme-constants/generated"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeConstants.ts"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,

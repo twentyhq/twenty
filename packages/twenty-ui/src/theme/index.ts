@@ -63,7 +63,5 @@ export {
 export { ThemeCssVariableInjectorEffect } from './provider/ThemeCssVariableInjectorEffect';
 export { ThemeProvider } from './provider/ThemeProvider';
 export type { ThemeType } from './types/ThemeType';
-export { buildThemeReferencingRootCssVariables } from './utils/buildThemeReferencingRootCssVariables';
 export { getNextThemeColor } from './utils/getNextThemeColor';
-export { prepareThemeForRootCssVariableInjection } from './utils/prepareThemeForRootCssVariableInjection';
 export { SPACING_VALUES } from './utils/spacingValues';

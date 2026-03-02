@@ -7,8 +7,9 @@
  *                              |___/
  */
 
+export { themeCssVariables } from './generated/themeCssVariables';
+export { THEME_DARK_CSS_VARIABLE_ENTRIES } from './generated/themeDarkCssVariableEntries';
 export {
   MOBILE_VIEWPORT,
-  GRAY_SCALE_LIGHT,
-  themeCssVariables,
-} from './ThemeCssVariablesStatic';
+  THEME_LIGHT_CSS_VARIABLE_ENTRIES,
+} from './generated/themeLightCssVariableEntries';
