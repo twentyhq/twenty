@@ -90,6 +90,15 @@ export class ApplicationRegistrationService {
     };
   }
 
+  async isOwnedByWorkspace(id: string, workspaceId: string): Promise<boolean> {
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: { id },
+      select: ['id', 'workspaceId'],
+    });
+
+    return registration?.workspaceId === workspaceId;
+  }
+
   // Global lookup — used by app sync to find existing registrations
   async findOneByUniversalIdentifier(
     universalIdentifier: string,
@@ -157,17 +166,11 @@ export class ApplicationRegistrationService {
 
   async update(
     input: UpdateApplicationRegistrationInput,
-    workspaceId?: string,
+    workspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    // When called from app sync, workspaceId may not be available
-    // for ownership verification (registration is global by universalIdentifier)
-    if (workspaceId) {
-      await this.findOneById(id, workspaceId);
-    } else {
-      await this.findOneByIdGlobal(id);
-    }
+    await this.findOneById(id, workspaceId);
 
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
@@ -195,11 +198,7 @@ export class ApplicationRegistrationService {
       await this.applicationRegistrationRepository.update(id, updateData);
     }
 
-    if (workspaceId) {
-      return this.findOneById(id, workspaceId);
-    }
-
-    return this.findOneByIdGlobal(id);
+    return this.findOneById(id, workspaceId);
   }
 
   async delete(id: string, workspaceId: string): Promise<boolean> {
@@ -265,23 +264,6 @@ export class ApplicationRegistrationService {
       mostInstalledVersion,
       versionDistribution,
     };
-  }
-
-  private async findOneByIdGlobal(
-    id: string,
-  ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
   }
 
   private async generateClientSecret(): Promise<{

@@ -139,10 +139,23 @@ export class ApplicationSyncService {
         workspaceId,
       );
 
-    await this.applicationRegistrationService.update({
-      id: applicationRegistrationId,
-      update: applicationRegistrationMetadata,
-    });
+    // Only update registration metadata if this workspace owns it.
+    // Other workspaces that install the same app attach to the existing
+    // registration but must not be able to modify its metadata.
+    if (
+      await this.applicationRegistrationService.isOwnedByWorkspace(
+        applicationRegistrationId,
+        workspaceId,
+      )
+    ) {
+      await this.applicationRegistrationService.update(
+        {
+          id: applicationRegistrationId,
+          update: applicationRegistrationMetadata,
+        },
+        workspaceId,
+      );
+    }
 
     if (manifest.application.serverVariables) {
       await this.applicationRegistrationVariableService.syncVariableSchemas(
