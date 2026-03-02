@@ -3,24 +3,12 @@ import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchr
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ClientService } from '@/cli/utilities/client/client-service';
+import chalk from 'chalk';
 import { APP_ERROR_CODES, type CommandResult } from './types';
-
-export const APP_BUILD_AND_SYNC_STEPS = {
-  MANIFEST: 'manifest',
-  BUILD: 'build',
-  SYNC_SCHEMA: 'sync_schema',
-  GENERATE_CLIENT: 'generate_client',
-  TYPECHECK: 'typecheck',
-  REBUILD: 'rebuild',
-  SYNC_FINAL: 'sync_final',
-} as const;
-
-export type AppBuildAndSyncStep =
-  (typeof APP_BUILD_AND_SYNC_STEPS)[keyof typeof APP_BUILD_AND_SYNC_STEPS];
 
 export type AppBuildAndSyncOptions = {
   appPath: string;
-  onStep?: (step: AppBuildAndSyncStep) => void;
+  verbose?: boolean;
 };
 
 export type AppBuildAndSyncResult = {
@@ -30,9 +18,12 @@ export type AppBuildAndSyncResult = {
 export const appBuildAndSync = async (
   options: AppBuildAndSyncOptions,
 ): Promise<CommandResult<AppBuildAndSyncResult>> => {
-  const { appPath, onStep } = options;
+  const { appPath, verbose } = options;
+  const log = verbose
+    ? (message: string) => console.log(chalk.gray(message))
+    : () => {};
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.MANIFEST);
+  log('Building manifest...');
 
   const manifestResult = await buildAndValidateManifest(appPath);
 
@@ -51,7 +42,7 @@ export const appBuildAndSync = async (
 
   await clientService.ensureGeneratedClientStub({ appPath });
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.BUILD);
+  log('Building application files...');
 
   const firstBuildResult = await buildApplication({
     appPath,
@@ -59,7 +50,7 @@ export const appBuildAndSync = async (
     filePaths,
   });
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.SYNC_SCHEMA);
+  log('Syncing application schema...');
 
   const firstSyncResult = await synchronizeBuiltApplication({
     appPath,
@@ -71,11 +62,11 @@ export const appBuildAndSync = async (
     return firstSyncResult;
   }
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.GENERATE_CLIENT);
+  log('Generating API client...');
 
   await clientService.generate({ appPath });
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.TYPECHECK);
+  log('Running typecheck...');
 
   const typecheckErrors = await runTypecheck(appPath);
 
@@ -93,7 +84,7 @@ export const appBuildAndSync = async (
     };
   }
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.REBUILD);
+  log('Rebuilding with generated client...');
 
   const finalBuildResult = await buildApplication({
     appPath,
@@ -101,7 +92,7 @@ export const appBuildAndSync = async (
     filePaths,
   });
 
-  onStep?.(APP_BUILD_AND_SYNC_STEPS.SYNC_FINAL);
+  log('Syncing built files...');
 
   const finalSyncResult = await synchronizeBuiltApplication({
     appPath,

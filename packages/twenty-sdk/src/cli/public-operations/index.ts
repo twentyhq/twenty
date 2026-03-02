@@ -5,14 +5,10 @@ export { authLogout } from './auth-logout';
 export type { AuthLogoutOptions } from './auth-logout';
 
 // App
-export {
-  appBuildAndSync,
-  APP_BUILD_AND_SYNC_STEPS,
-} from './app-build-and-sync';
+export { appBuildAndSync } from './app-build-and-sync';
 export type {
   AppBuildAndSyncOptions,
   AppBuildAndSyncResult,
-  AppBuildAndSyncStep,
 } from './app-build-and-sync';
 export { appUninstall } from './app-uninstall';
 export type { AppUninstallOptions } from './app-uninstall';
