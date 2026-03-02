@@ -1,4 +1,4 @@
-import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/actionMenuConfirmationModalId';
+import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalId';
 import { actionMenuConfirmationModalState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
 import { dispatchActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/utils/dispatchActionMenuConfirmationModalResultBrowserEvent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

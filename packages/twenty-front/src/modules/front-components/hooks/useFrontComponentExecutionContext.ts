@@ -5,8 +5,10 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalResultBrowserEventName';
 import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
+import { type ActionMenuConfirmationModalResultBrowserEventDetail } from '@/action-menu/confirmation-modal/types/ActionMenuConfirmationModalResultBrowserEventDetail';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -73,12 +75,36 @@ export const useFrontComponentExecutionContext = ({
 
   const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
-      return openConfirmationModal({
-        frontComponentId,
-        title,
-        subtitle,
-        confirmButtonText,
-        confirmButtonAccent,
+      return new Promise((resolve) => {
+        const handleResult = (event: Event) => {
+          const detail = (
+            event as CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>
+          ).detail;
+
+          if (detail.frontComponentId !== frontComponentId) {
+            return;
+          }
+
+          window.removeEventListener(
+            ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+            handleResult,
+          );
+
+          resolve(detail.result);
+        };
+
+        window.addEventListener(
+          ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+          handleResult,
+        );
+
+        openConfirmationModal({
+          frontComponentId,
+          title,
+          subtitle,
+          confirmButtonText,
+          confirmButtonAccent,
+        });
       });
     };
 

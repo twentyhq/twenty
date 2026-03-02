@@ -1,9 +1,10 @@
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode, useCallback, useContext, useState } from 'react';
 import { t } from '@lingui/core/macro';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
+import { useListenToActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/hooks/useListenToActionMenuConfirmationModalResultBrowserEvent';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { type ButtonAccent } from 'twenty-ui/input';
 
@@ -33,23 +34,41 @@ export const ActionConfirmation = ({
     closeSidePanelOnCommandMenuListActionExecution,
   });
 
+  const [pendingFrontComponentId, setPendingFrontComponentId] = useState<
+    string | null
+  >(null);
+
+  const handleResult = useCallback(
+    async ({ result }: { result: 'confirm' | 'cancel' }) => {
+      setPendingFrontComponentId(null);
+
+      if (result === 'confirm') {
+        await onConfirmClick();
+        closeActionMenu();
+      }
+    },
+    [onConfirmClick, closeActionMenu],
+  );
+
+  useListenToActionMenuConfirmationModalResultBrowserEvent({
+    onActionMenuConfirmationModalResultBrowserEvent: handleResult,
+    frontComponentId: pendingFrontComponentId,
+  });
+
   if (!actionConfig) {
     return null;
   }
 
-  const handleClick = async () => {
-    const result = await openConfirmationModal({
+  const handleClick = () => {
+    setPendingFrontComponentId(actionConfig.key);
+
+    openConfirmationModal({
       frontComponentId: actionConfig.key,
       title,
       subtitle,
       confirmButtonText,
       confirmButtonAccent,
     });
-
-    if (result === 'confirm') {
-      await onConfirmClick();
-      closeActionMenu();
-    }
   };
 
   return <ActionDisplay onClick={handleClick} />;
