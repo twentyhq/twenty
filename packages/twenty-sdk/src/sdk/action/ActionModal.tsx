@@ -50,14 +50,14 @@ export const ActionModal = ({
           await execute();
         }
       } catch (error) {
-        if (error instanceof Error) {
-          await enqueueSnackbar({
-            message: 'Action failed',
-            detailedMessage: error.message,
-            variant: 'error',
-            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
-          });
-        }
+        const message = error instanceof Error ? error.message : String(error);
+
+        await enqueueSnackbar({
+          message: 'Action failed',
+          detailedMessage: message,
+          variant: 'error',
+          dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
+        });
       } finally {
         await unmountFrontComponent();
       }
