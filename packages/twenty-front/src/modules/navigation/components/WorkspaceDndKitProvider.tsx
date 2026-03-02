@@ -160,43 +160,43 @@ export const WorkspaceDndKitProvider = ({
     const sourceIsSortable = source && isSortable(source as SortableNode);
     const targetIsSortable = target && isSortable(target as SortableNode);
 
-    if (
+    const bothSortable =
       isDefined(sourceIsSortable) &&
       isDefined(targetIsSortable) &&
       isDefined(source) &&
-      isDefined(target)
-    ) {
+      isDefined(target);
+    if (bothSortable) {
       const group = source.group ?? target.group;
       const index = source.group === target.group ? source.index : target.index;
-      if (isDefined(group) && isDefined(index)) {
-        if (isAddToNavDrag) {
-          setActiveDropTargetId(getDndKitDropTargetId(group, index));
-          setForbiddenDropTargetId(null);
-        } else {
-          setActiveDropTargetId(null);
-          setForbiddenDropTargetId(null);
-        }
+      if (isDefined(group) && isDefined(index) && isAddToNavDrag) {
+        setActiveDropTargetId(getDndKitDropTargetId(group, index));
+        setForbiddenDropTargetId(null);
+        return;
+      }
+      if (isDefined(group) && isDefined(index) && !isAddToNavDrag) {
+        setActiveDropTargetId(null);
+        setForbiddenDropTargetId(null);
         return;
       }
     }
 
-    if (
+    const targetIdIsString =
       isDefined(sourceIsSortable) &&
       isDefined(target) &&
-      typeof target.id === 'string'
-    ) {
+      typeof target.id === 'string';
+    if (targetIdIsString) {
       const parsedDestination = parseDropTargetIdToDestination(target.id);
-      if (
+      const validParsed =
         isDefined(parsedDestination) &&
-        isWorkspaceDroppableId(parsedDestination.droppableId)
-      ) {
-        if (isAddToNavDrag) {
-          setActiveDropTargetId(target.id);
-          setAddToNavigationFallbackDestination(parsedDestination);
-          setForbiddenDropTargetId(null);
-        } else {
-          setActiveDropTargetId(null);
-        }
+        isWorkspaceDroppableId(parsedDestination.droppableId);
+      if (validParsed && isAddToNavDrag) {
+        setActiveDropTargetId(target.id);
+        setAddToNavigationFallbackDestination(parsedDestination);
+        setForbiddenDropTargetId(null);
+        return;
+      }
+      if (validParsed && !isAddToNavDrag) {
+        setActiveDropTargetId(null);
         return;
       }
     }
@@ -286,27 +286,29 @@ export const WorkspaceDndKitProvider = ({
     const targetIsSortable =
       isDefined(target) && isSortable(target as SortableNode);
 
-    if (sourceIsSortable) {
+    const sortableToSortable =
+      sourceIsSortable &&
+      targetIsSortable &&
+      isDefined(source) &&
+      isDefined(target);
+    if (sortableToSortable) {
       const initialGroup = source.initialGroup ?? '';
       const initialIndex = source.initialIndex ?? 0;
-      const destGroup = target?.group ?? '';
-      const destIndex = target?.index ?? 0;
-      if (
-        targetIsSortable &&
+      const destGroup = target.group ?? '';
+      const destIndex = target.index ?? 0;
+      const bothWorkspace =
         isWorkspaceDroppableId(initialGroup) &&
-        isWorkspaceDroppableId(destGroup)
-      ) {
+        isWorkspaceDroppableId(destGroup);
+      if (bothWorkspace) {
         const isCrossGroup = initialGroup !== destGroup;
-        if (isCrossGroup) {
-          const sourceElement = source.sortable?.element;
-          const sourceContainer =
-            typeof document !== 'undefined'
-              ? document.querySelector(`[data-dnd-group="${initialGroup}"]`)
-              : null;
-          if (isDefined(sourceElement) && isDefined(sourceContainer)) {
-            const child = sourceContainer.children[initialIndex] ?? null;
-            sourceContainer.insertBefore(sourceElement, child);
-          }
+        const sourceElement = isCrossGroup ? source.sortable?.element : null;
+        const sourceContainer =
+          isCrossGroup && typeof document !== 'undefined'
+            ? document.querySelector(`[data-dnd-group="${initialGroup}"]`)
+            : null;
+        if (isDefined(sourceElement) && isDefined(sourceContainer)) {
+          const child = sourceContainer.children[initialIndex] ?? null;
+          sourceContainer.insertBefore(sourceElement, child);
         }
         const result = toDropResult(
           draggableId,
