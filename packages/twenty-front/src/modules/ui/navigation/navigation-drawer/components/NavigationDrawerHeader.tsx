@@ -12,7 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div<{ isExpanded: boolean }>`
-  align-items: center;
+  align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ theme, isExpanded }) => (isExpanded ? 0 : theme.spacing(4))};
@@ -24,6 +24,7 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   align-items: center;
+  align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ theme, isExpanded }) => (isExpanded ? 0 : theme.spacing(1))};
