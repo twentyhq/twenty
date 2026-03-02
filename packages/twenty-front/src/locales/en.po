@@ -207,6 +207,11 @@ msgstr "{currentRank} of {totalCount} in {objectLabelPlural}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} day} other {{days} days}}"
 
+#. js-lingui-id: Muj+po
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "{daysLeft} days"
+msgstr "{daysLeft} days"
+
 #. js-lingui-id: 0KwX9P
 #. placeholder {0}: (1000).toFixed(decimals)
 #. placeholder {1}: (1000).toFixed(decimals)
@@ -462,6 +467,11 @@ msgstr "0"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "0 */1 * * *"
 msgstr "0 */1 * * *"
+
+#. js-lingui-id: gphxoA
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "1 day"
+msgstr "1 day"
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1133,11 +1143,6 @@ msgstr "Address 1"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Address 2"
 msgstr "Address 2"
-
-#. js-lingui-id: Eis4ey
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-msgid "Adjust the role-related settings"
-msgstr "Adjust the role-related settings"
 
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
@@ -1956,6 +1961,11 @@ msgstr "Assigned {roleTargetDisplayName}"
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Assigned to"
+
+#. js-lingui-id: TzM/0+
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
+msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
+msgstr "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -4082,7 +4092,14 @@ msgstr "Default Country Code"
 msgid "Default palette"
 msgstr "Default palette"
 
+#. js-lingui-id: v41VX6
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx
+msgid "Default role"
+msgstr "Default role"
+
 #. js-lingui-id: CGhRMh
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Default Role"
 msgstr "Default Role"
@@ -9777,7 +9794,6 @@ msgstr "Optional secret used to compute the HMAC signature for webhook payloads"
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
@@ -11083,6 +11099,7 @@ msgid "role"
 msgstr "role"
 
 #. js-lingui-id: GDvlUT
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -11907,10 +11924,10 @@ msgstr "Service Provider Details"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "Set {placeholderForEmptyCell}"
 
-#. js-lingui-id: YZwx1e
+#. js-lingui-id: QEVmIH
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-msgid "Set a default role for this workspace"
-msgstr "Set a default role for this workspace"
+msgid "Set a default for this workspace"
+msgstr "Set a default for this workspace"
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
