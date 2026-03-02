@@ -1,18 +1,16 @@
 let preloadScheduled = false;
 
+const preload = () => {
+  void import('@/navigation/components/WorkspaceDndKitProvider');
+  void import(
+    '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
+  );
+};
+
 export const preloadWorkspaceDndKit = (): void => {
   if (preloadScheduled) {
     return;
   }
   preloadScheduled = true;
-
-  const preload = () => {
-    void import('@/navigation/components/WorkspaceDndKitProvider');
-  };
-
-  if (typeof requestIdleCallback !== 'undefined') {
-    requestIdleCallback(preload, { timeout: 4000 });
-  } else {
-    setTimeout(preload, 2000);
-  }
+  preload();
 };

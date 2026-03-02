@@ -1,16 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { IconLink } from 'twenty-ui/display';
 
-import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
+import { WorkspaceFolderReadOnly } from '@/object-metadata/components/WorkspaceFolderReadOnly';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+
+const LazyWorkspaceNavigationMenuItemsFolder = lazy(() =>
+  import(
+    '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder'
+  ).then((m) => ({ default: m.WorkspaceNavigationMenuItemsFolder })),
+);
 
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
 
@@ -23,6 +30,7 @@ export const WorkspaceSectionItemContent = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
+  readOnly = false,
 }: WorkspaceSectionItemContentProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
@@ -33,20 +41,52 @@ export const WorkspaceSectionItemContent = ({
   const type = item.itemType;
 
   if (type === 'folder') {
+    const folderId = item.id;
+    const folderName = item.name ?? 'Folder';
+    const folderIconKey = item.Icon;
+    const folderColor = 'color' in item ? item.color : undefined;
+    const navigationMenuItems = folderChildrenById.get(item.id) ?? [];
+    const isGroup = folderCount > 1;
+
+    if (readOnly) {
+      return (
+        <WorkspaceFolderReadOnly
+          folderId={folderId}
+          folderName={folderName}
+          folderIconKey={folderIconKey}
+          folderColor={folderColor}
+          navigationMenuItems={navigationMenuItems}
+          isGroup={isGroup}
+        />
+      );
+    }
     return (
-      <WorkspaceNavigationMenuItemsFolder
-        folderId={item.id}
-        folderName={item.name ?? 'Folder'}
-        folderIconKey={item.Icon}
-        folderColor={'color' in item ? (item.color ?? undefined) : undefined}
-        navigationMenuItems={folderChildrenById.get(item.id) ?? []}
-        isGroup={folderCount > 1}
-        isSelectedInEditMode={editModeProps.isSelectedInEditMode}
-        onEditModeClick={editModeProps.onEditModeClick}
-        onNavigationMenuItemClick={onNavigationMenuItemClick}
-        selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-        isDragging={isDragging}
-      />
+      <Suspense
+        fallback={
+          <WorkspaceFolderReadOnly
+            folderId={folderId}
+            folderName={folderName}
+            folderIconKey={folderIconKey}
+            folderColor={folderColor}
+            navigationMenuItems={navigationMenuItems}
+            isGroup={isGroup}
+          />
+        }
+      >
+        <LazyWorkspaceNavigationMenuItemsFolder
+          folderId={folderId}
+          folderName={folderName}
+          folderIconKey={folderIconKey}
+          folderColor={folderColor}
+          navigationMenuItems={navigationMenuItems}
+          isGroup={isGroup}
+          isSelectedInEditMode={editModeProps.isSelectedInEditMode}
+          onEditModeClick={editModeProps.onEditModeClick}
+          onNavigationMenuItemClick={onNavigationMenuItemClick}
+          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+          isDragging={isDragging}
+        />
+      </Suspense>
     );
   }
 

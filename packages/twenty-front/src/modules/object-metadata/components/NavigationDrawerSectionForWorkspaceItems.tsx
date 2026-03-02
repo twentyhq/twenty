@@ -1,5 +1,5 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import React, { useContext } from 'react';
+import React, { lazy, Suspense, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
@@ -11,8 +11,8 @@ import {
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { WorkspaceSectionListDndKit } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
+import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -24,6 +24,12 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+
+const LazyWorkspaceSectionListDndKit = lazy(() =>
+  import(
+    '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
+  ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
+);
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
@@ -141,16 +147,35 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           alwaysShowRightIcon={isNavigationMenuInEditMode}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) && (
-        <WorkspaceSectionListDndKit
-          filteredItems={filteredItems}
-          getEditModeProps={getEditModeProps}
-          folderChildrenById={folderChildrenById}
-          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-          onNavigationMenuItemClick={onNavigationMenuItemClick}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-        />
-      )}
+      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) &&
+        (isNavigationMenuInEditMode ? (
+          <Suspense
+            fallback={
+              <NavigationDrawerSectionForWorkspaceItemsListReadOnly
+                filteredItems={filteredItems}
+                folderChildrenById={folderChildrenById}
+                onActiveObjectMetadataItemClick={
+                  onActiveObjectMetadataItemClick
+                }
+              />
+            }
+          >
+            <LazyWorkspaceSectionListDndKit
+              filteredItems={filteredItems}
+              getEditModeProps={getEditModeProps}
+              folderChildrenById={folderChildrenById}
+              selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+              onNavigationMenuItemClick={onNavigationMenuItemClick}
+              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            />
+          </Suspense>
+        ) : (
+          <NavigationDrawerSectionForWorkspaceItemsListReadOnly
+            filteredItems={filteredItems}
+            folderChildrenById={folderChildrenById}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+          />
+        ))}
     </NavigationDrawerSection>
   );
 };

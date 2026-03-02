@@ -19,4 +19,5 @@ export type WorkspaceSectionItemContentProps = {
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
+  readOnly?: boolean;
 };

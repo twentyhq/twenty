@@ -1,6 +1,6 @@
-import { lazy, Suspense, type ReactNode } from 'react';
+import { lazy, Suspense, useState, type ReactNode } from 'react';
 
-import { WorkspaceDndKitPreloadEffect } from '@/navigation/components/WorkspaceDndKitPreloadEffect';
+import { PageDragDropProviderMountEffect } from '@/navigation/components/PageDragDropProviderMountEffect';
 
 const LazyWorkspaceDndKitProvider = lazy(() =>
   import('@/navigation/components/WorkspaceDndKitProvider').then((m) => ({
@@ -15,12 +15,22 @@ type PageDragDropProviderProps = {
 export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
+  const [hasProviderMounted, setHasProviderMounted] = useState(false);
+
+  if (!hasProviderMounted) {
+    return (
+      <>
+        <PageDragDropProviderMountEffect
+          onEnterEditMode={() => setHasProviderMounted(true)}
+        />
+        {children}
+      </>
+    );
+  }
+
   return (
-    <>
-      <WorkspaceDndKitPreloadEffect />
-      <Suspense fallback={null}>
-        <LazyWorkspaceDndKitProvider>{children}</LazyWorkspaceDndKitProvider>
-      </Suspense>
-    </>
+    <Suspense fallback={<>{children}</>}>
+      <LazyWorkspaceDndKitProvider>{children}</LazyWorkspaceDndKitProvider>
+    </Suspense>
   );
 };

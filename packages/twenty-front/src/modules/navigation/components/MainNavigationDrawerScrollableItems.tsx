@@ -1,4 +1,5 @@
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 
 import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
@@ -31,10 +32,8 @@ export const MainNavigationDrawerScrollableItems = () => {
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
-      <Suspense fallback={null}>
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
-      </Suspense>
-      <Suspense fallback={null}>
         <WorkspaceNavigationMenuItemsDispatcher />
       </Suspense>
       <RemoteNavigationDrawerSection />
