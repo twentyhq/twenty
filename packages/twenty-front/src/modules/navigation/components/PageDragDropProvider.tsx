@@ -1,15 +1,14 @@
-import { lazy, Suspense, useEffect, type ReactNode } from 'react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { lazy, Suspense, type ReactNode } from 'react';
 
-import { FavoritesDragDropProviderContent } from '@/navigation/components/FavoritesDragDropProviderContent';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const LazyWorkspaceDndKitProvider = lazy(() =>
   import('@/navigation/components/WorkspaceDndKitProvider').then((m) => ({
     default: m.WorkspaceDndKitProvider,
   })),
 );
+
+preloadWorkspaceDndKit();
 
 type PageDragDropProviderProps = {
   children: ReactNode;
@@ -18,25 +17,9 @@ type PageDragDropProviderProps = {
 export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
-
-  useEffect(() => {
-    preloadWorkspaceDndKit();
-  }, []);
-
-  const content = isNavigationMenuItemEditingEnabled ? (
-    children
-  ) : (
-    <FavoritesDragDropProviderContent>
-      {children}
-    </FavoritesDragDropProviderContent>
-  );
-
   return (
     <Suspense fallback={null}>
-      <LazyWorkspaceDndKitProvider>{content}</LazyWorkspaceDndKitProvider>
+      <LazyWorkspaceDndKitProvider>{children}</LazyWorkspaceDndKitProvider>
     </Suspense>
   );
 };
