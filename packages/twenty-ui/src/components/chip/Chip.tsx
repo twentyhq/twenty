@@ -33,6 +33,7 @@ export type ChipProps = {
   accent?: ChipAccent;
   leftComponent?: ReactNode | null;
   rightComponent?: (() => ReactNode) | ReactNode | null;
+  rightComponentDivider?: boolean;
   className?: string;
   forceEmptyText?: boolean;
   emptyLabel?: string;
@@ -131,16 +132,32 @@ const StyledContainer = styled.div<
       : 'var(--chip-horizontal-padding)'};
 `;
 
+const StyledRightComponentDivider = styled.div`
+  border-left: 1px solid ${themeCssVariables.border.color.light};
+  align-self: stretch;
+`;
+
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
+  rightComponentDivider?: boolean,
 ) => {
   if (!rightComponent) {
     return null;
   }
 
-  return typeof rightComponent === 'function'
-    ? rightComponent()
-    : rightComponent;
+  const rendered =
+    typeof rightComponent === 'function' ? rightComponent() : rightComponent;
+
+  if (rightComponentDivider) {
+    return (
+      <>
+        <StyledRightComponentDivider />
+        {rendered}
+      </>
+    );
+  }
+
+  return rendered;
 };
 
 export const Chip = ({
@@ -152,6 +169,7 @@ export const Chip = ({
   variant = ChipVariant.Regular,
   leftComponent = null,
   rightComponent = null,
+  rightComponentDivider = false,
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
@@ -177,7 +195,7 @@ export const Chip = ({
       ) : (
         ''
       )}
-      {renderRightComponent(rightComponent)}
+      {renderRightComponent(rightComponent, rightComponentDivider)}
     </StyledContainer>
   );
 };
