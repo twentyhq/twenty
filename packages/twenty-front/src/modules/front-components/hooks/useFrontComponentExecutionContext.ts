@@ -73,33 +73,12 @@ export const useFrontComponentExecutionContext = ({
 
   const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
-      return new Promise((resolve) => {
-        let hasResolvedActionConfirmationModal = false;
-
-        const resolveActionConfirmationModal = (
-          actionConfirmationModalResult: 'confirm' | 'cancel',
-        ) => {
-          if (hasResolvedActionConfirmationModal) {
-            return;
-          }
-
-          hasResolvedActionConfirmationModal = true;
-          resolve(actionConfirmationModalResult);
-        };
-
-        openConfirmationModal({
-          frontComponentId,
-          title,
-          subtitle,
-          confirmButtonText,
-          confirmButtonAccent,
-          onConfirmClick: () => {
-            resolveActionConfirmationModal('confirm');
-          },
-          onClose: () => {
-            resolveActionConfirmationModal('cancel');
-          },
-        });
+      return openConfirmationModal({
+        frontComponentId,
+        title,
+        subtitle,
+        confirmButtonText,
+        confirmButtonAccent,
       });
     };
 

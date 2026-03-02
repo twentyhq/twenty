@@ -37,18 +37,19 @@ export const ActionConfirmation = ({
     return null;
   }
 
-  const handleClick = () => {
-    openConfirmationModal({
+  const handleClick = async () => {
+    const result = await openConfirmationModal({
       frontComponentId: actionConfig.key,
       title,
       subtitle,
-      onConfirmClick: async () => {
-        await onConfirmClick();
-        closeActionMenu();
-      },
       confirmButtonText,
       confirmButtonAccent,
     });
+
+    if (result === 'confirm') {
+      await onConfirmClick();
+      closeActionMenu();
+    }
   };
 
   return <ActionDisplay onClick={handleClick} />;

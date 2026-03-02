@@ -1,6 +1,6 @@
 import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/actionMenuConfirmationModalId';
 import { actionMenuConfirmationModalState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
-import { consumeActionMenuConfirmationModalCallbacks } from '@/action-menu/confirmation-modal/stores/actionMenuConfirmationModalCallbacksStore';
+import { dispatchActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/utils/dispatchActionMenuConfirmationModalResultBrowserEvent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -23,26 +23,30 @@ export const ActionMenuConfirmationModalManager = () => {
     setActionMenuConfirmationModal(null);
   };
 
-  const handleConfirmClick = async () => {
-    const actionMenuConfirmationModalCallbacks =
-      consumeActionMenuConfirmationModalCallbacks();
-
-    try {
-      await actionMenuConfirmationModalCallbacks?.onConfirmClick();
-    } finally {
-      clearActionMenuConfirmationModal();
+  const handleConfirmClick = () => {
+    if (!actionMenuConfirmationModal) {
+      return;
     }
+
+    dispatchActionMenuConfirmationModalResultBrowserEvent({
+      frontComponentId: actionMenuConfirmationModal.frontComponentId,
+      result: 'confirm',
+    });
+
+    clearActionMenuConfirmationModal();
   };
 
-  const handleClose = async () => {
-    const actionMenuConfirmationModalCallbacks =
-      consumeActionMenuConfirmationModalCallbacks();
-
-    try {
-      await actionMenuConfirmationModalCallbacks?.onClose?.();
-    } finally {
-      clearActionMenuConfirmationModal();
+  const handleClose = () => {
+    if (!actionMenuConfirmationModal) {
+      return;
     }
+
+    dispatchActionMenuConfirmationModalResultBrowserEvent({
+      frontComponentId: actionMenuConfirmationModal.frontComponentId,
+      result: 'cancel',
+    });
+
+    clearActionMenuConfirmationModal();
   };
 
   if (!actionMenuConfirmationModal || !isModalOpened) {
@@ -55,9 +59,7 @@ export const ActionMenuConfirmationModalManager = () => {
       title={actionMenuConfirmationModal.title}
       subtitle={actionMenuConfirmationModal.subtitle}
       onConfirmClick={handleConfirmClick}
-      onClose={() => {
-        void handleClose();
-      }}
+      onClose={handleClose}
       confirmButtonText={actionMenuConfirmationModal.confirmButtonText}
       confirmButtonAccent={actionMenuConfirmationModal.confirmButtonAccent}
     />
