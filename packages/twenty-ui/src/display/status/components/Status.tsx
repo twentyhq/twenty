@@ -1,9 +1,6 @@
 import { styled } from '@linaria/react';
-import {
-  MAIN_COLOR_NAMES,
-  themeCssVariables,
-  type ThemeColor,
-} from '@ui/theme';
+import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';
 

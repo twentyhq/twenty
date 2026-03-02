@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
   right: 0;

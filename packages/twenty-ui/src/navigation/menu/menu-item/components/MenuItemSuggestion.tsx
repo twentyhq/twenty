@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/display';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 

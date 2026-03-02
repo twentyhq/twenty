@@ -1,4 +1,5 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { useFileIconColors } from '@/file/hooks/useFileIconColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

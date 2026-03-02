@@ -8,7 +8,8 @@ import {
   type IconComponent,
 } from '@ui/display';
 import { type ReactNode, useContext } from 'react';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,

@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 type SectionProps = {
   children: ReactNode;

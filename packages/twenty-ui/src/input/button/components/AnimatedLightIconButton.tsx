@@ -4,7 +4,8 @@ import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { motion, type MotionProps } from 'framer-motion';
 import { type ComponentProps, type MouseEvent, useContext } from 'react';
 

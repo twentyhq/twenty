@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 // eslint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderErrorContainer = styled.div`

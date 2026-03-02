@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
@@ -56,7 +57,7 @@ export const ObjectIconWithViewOverlay = ({
   ViewIcon,
   objectColor,
 }: ObjectIconWithViewOverlayProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const objectStyle = getNavigationMenuItemIconStyleFromColor(
     theme,
     objectColor,
