@@ -35,13 +35,15 @@ type DraggableData = {
   sourceIndex?: number;
 };
 
+type DropDestination = { droppableId: string; index: number };
+
 const toDropResult = (
   draggableId: string,
   data: DraggableData | undefined,
-  destination: { droppableId: string; index: number } | null,
+  destination: DropDestination | null,
 ): {
-  source: { droppableId: string; index: number };
-  destination: { droppableId: string; index: number } | null;
+  source: DropDestination;
+  destination: DropDestination | null;
   draggableId: string;
 } => {
   const sourceDroppableId = data?.sourceDroppableId ?? '';
@@ -52,6 +54,22 @@ const toDropResult = (
     draggableId,
   };
 };
+
+const DROP_RESULT_OPTIONS = {
+  reason: 'DROP' as const,
+  combine: null,
+  mode: 'FLUID' as const,
+  type: 'DEFAULT' as const,
+};
+
+const WORKSPACE_DND_SENSORS = [
+  PointerSensor.configure({
+    activationConstraints: [
+      new PointerActivationConstraints.Distance({ value: 8 }),
+    ],
+  }),
+  KeyboardSensor,
+];
 
 export const WorkspaceDndKitProvider = ({
   children,
@@ -81,23 +99,13 @@ export const WorkspaceDndKitProvider = ({
     (item: { folderId?: string | null }) => !isDefined(item.folderId),
   ).length;
 
-  const sensors = [
-    PointerSensor.configure({
-      activationConstraints: [
-        new PointerActivationConstraints.Distance({ value: 8 }),
-      ],
-    }),
-    KeyboardSensor,
-  ];
-
   const handleDragStart = (event: unknown) => {
     const e = event as {
       operation?: { source?: { id: string; data?: DraggableData } };
     };
     setIsDragging(true);
     const source = e.operation?.source;
-    const sourceId =
-      (source?.data as DraggableData | undefined)?.sourceDroppableId ?? null;
+    const sourceId = source?.data?.sourceDroppableId ?? null;
     setSourceDroppableId(sourceId);
 
     if (sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
@@ -210,7 +218,15 @@ export const WorkspaceDndKitProvider = ({
     }
 
     const overId = target?.id;
-    if (typeof overId !== 'string') {
+    const parsedDestination =
+      typeof overId === 'string'
+        ? parseDropTargetIdToDestination(overId)
+        : null;
+    if (
+      typeof overId !== 'string' ||
+      !parsedDestination ||
+      !isWorkspaceDroppableId(parsedDestination.droppableId)
+    ) {
       const fallback = addToNavigationFallbackDestination;
       setActiveDropTargetId(
         fallback
@@ -220,25 +236,15 @@ export const WorkspaceDndKitProvider = ({
       setForbiddenDropTargetId(null);
       return;
     }
-    const dest = parseDropTargetIdToDestination(overId);
-    if (!dest || !isWorkspaceDroppableId(dest.droppableId)) {
-      const fallback = addToNavigationFallbackDestination;
-      setActiveDropTargetId(
-        fallback
-          ? getDndKitDropTargetId(fallback.droppableId, fallback.index)
-          : null,
-      );
-      setForbiddenDropTargetId(null);
-      return;
-    }
-    setAddToNavigationFallbackDestination(dest);
+    setAddToNavigationFallbackDestination(parsedDestination);
     setActiveDropTargetId(overId);
-
     const payload =
       store
         .get(addToNavPayloadRegistryState.atom)
         .get(String(e.operation?.source?.id)) ?? null;
-    const folderId = validateAndExtractWorkspaceFolderId(dest.droppableId);
+    const folderId = validateAndExtractWorkspaceFolderId(
+      parsedDestination.droppableId,
+    );
     const isFolderOverFolder = payload?.type === 'folder' && folderId !== null;
     setForbiddenDropTargetId(isFolderOverFolder ? overId : null);
   };
@@ -310,13 +316,7 @@ export const WorkspaceDndKitProvider = ({
         );
         const provided = {} as Parameters<typeof handleAddToNavigationDrop>[1];
         handleWorkspaceNavigationMenuItemDragAndDrop(
-          {
-            ...result,
-            reason: 'DROP' as const,
-            combine: null,
-            mode: 'FLUID' as const,
-            type: 'DEFAULT' as const,
-          },
+          { ...result, ...DROP_RESULT_OPTIONS },
           provided,
         );
         return;
@@ -345,13 +345,7 @@ export const WorkspaceDndKitProvider = ({
 
     const result = toDropResult(draggableId, data, destination);
     const provided = {} as Parameters<typeof handleAddToNavigationDrop>[1];
-    const dropResult = {
-      ...result,
-      reason: 'DROP' as const,
-      combine: null,
-      mode: 'FLUID' as const,
-      type: 'DEFAULT' as const,
-    };
+    const dropResult = { ...result, ...DROP_RESULT_OPTIONS };
 
     if (sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
       handleAddToNavigationDrop(dropResult, provided);
@@ -383,7 +377,7 @@ export const WorkspaceDndKitProvider = ({
               }}
             >
               <DragDropProvider
-                sensors={sensors}
+                sensors={WORKSPACE_DND_SENSORS}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
