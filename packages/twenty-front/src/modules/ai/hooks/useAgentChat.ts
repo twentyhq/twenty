@@ -20,7 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -175,7 +175,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const isStreaming = status === 'streaming';
 
-  setAgentChatIsStreaming(isStreaming);
+  useEffect(() => {
+    setAgentChatIsStreaming(isStreaming);
+  }, [setAgentChatIsStreaming, isStreaming]);
 
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
