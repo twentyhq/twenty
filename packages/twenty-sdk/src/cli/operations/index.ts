@@ -16,6 +16,12 @@ export type {
   AppBuildResult,
   BuiltFileInfo,
 } from './app-build';
+export { appBuildAndSync, APP_BUILD_AND_SYNC_STEPS } from './app-build-and-sync';
+export type {
+  AppBuildAndSyncOptions,
+  AppBuildAndSyncResult,
+  AppBuildAndSyncStep,
+} from './app-build-and-sync';
 export { syncBuiltApp } from './app-sync';
 export type { AppSyncOptions } from './app-sync';
 export { appTypecheck } from './app-typecheck';

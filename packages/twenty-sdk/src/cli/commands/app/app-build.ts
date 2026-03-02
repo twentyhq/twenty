@@ -1,10 +1,20 @@
-import { appBuild } from '@/cli/operations/app-build';
-import { syncBuiltApp } from '@/cli/operations/app-sync';
-import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
-import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
-import { ClientService } from '@/cli/utilities/client/client-service';
+import {
+  APP_BUILD_AND_SYNC_STEPS,
+  appBuildAndSync,
+  type AppBuildAndSyncStep,
+} from '@/cli/operations/app-build-and-sync';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
+
+const STEP_LABELS: Record<AppBuildAndSyncStep, string> = {
+  [APP_BUILD_AND_SYNC_STEPS.MANIFEST]: 'Building manifest...',
+  [APP_BUILD_AND_SYNC_STEPS.BUILD]: 'Building application files...',
+  [APP_BUILD_AND_SYNC_STEPS.SYNC_SCHEMA]: 'Syncing application schema...',
+  [APP_BUILD_AND_SYNC_STEPS.GENERATE_CLIENT]: 'Generating API client...',
+  [APP_BUILD_AND_SYNC_STEPS.TYPECHECK]: 'Running typecheck...',
+  [APP_BUILD_AND_SYNC_STEPS.REBUILD]: 'Rebuilding with generated client...',
+  [APP_BUILD_AND_SYNC_STEPS.SYNC_FINAL]: 'Syncing built files...',
+};
 
 export type AppBuildCommandOptions = {
   appPath?: string;
@@ -14,109 +24,24 @@ export class AppBuildCommand {
   async execute(options: AppBuildCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('Building application...'));
+    console.log(chalk.blue('Building and syncing application...'));
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const manifestResult = await buildAndValidateManifest(appPath);
+    const result = await appBuildAndSync({
+      appPath,
+      onStep: (step) => console.log(chalk.gray(STEP_LABELS[step])),
+    });
 
-    if (!manifestResult.success) {
-      console.error(chalk.red('Manifest build failed:'));
-
-      for (const error of manifestResult.errors) {
-        console.error(chalk.red(`  ${error}`));
-      }
-
+    if (!result.success) {
+      console.error(chalk.red(result.error.message));
       process.exit(1);
     }
 
-    const { manifest, filePaths } = manifestResult;
-    const clientService = new ClientService();
-
-    try {
-      await clientService.ensureGeneratedClientStub({ appPath });
-
-      console.log(chalk.gray('Building application files...'));
-
-      const firstBuildResult = await appBuild({
-        appPath,
-        manifest,
-        filePaths,
-      });
-
-      console.log(chalk.gray('Syncing application schema...'));
-
-      const firstSyncResult = await syncBuiltApp({
-        appPath,
-        manifest,
-        builtFileInfos: firstBuildResult.builtFileInfos,
-      });
-
-      if (!firstSyncResult.success) {
-        console.error(
-          chalk.red(`Schema sync failed: ${firstSyncResult.error.message}`),
-        );
-        process.exit(1);
-      }
-
-      console.log(chalk.gray('Generating API client...'));
-
-      await clientService.generate({ appPath });
-
-      console.log(chalk.gray('Running typecheck...'));
-
-      const typecheckErrors = await runTypecheck(appPath);
-
-      if (typecheckErrors.length > 0) {
-        console.error(chalk.red('Typecheck failed:'));
-
-        for (const error of typecheckErrors) {
-          console.error(
-            chalk.red(
-              `  ${error.file}(${error.line},${error.column}): ${error.text}`,
-            ),
-          );
-        }
-
-        process.exit(1);
-      }
-
-      console.log(chalk.gray('Rebuilding with generated client...'));
-
-      const finalBuildResult = await appBuild({
-        appPath,
-        manifest,
-        filePaths,
-      });
-
-      console.log(chalk.gray('Syncing built files...'));
-
-      const finalSyncResult = await syncBuiltApp({
-        appPath,
-        manifest,
-        builtFileInfos: finalBuildResult.builtFileInfos,
-      });
-
-      if (!finalSyncResult.success) {
-        console.error(
-          chalk.red(`Final sync failed: ${finalSyncResult.error.message}`),
-        );
-        process.exit(1);
-      }
-
-      const fileCount = finalBuildResult.builtFileInfos.size;
-
-      console.log(
-        chalk.green(
-          `✓ Build and sync succeeded (${fileCount} file${fileCount === 1 ? '' : 's'})`,
-        ),
-      );
-    } catch (error) {
-      console.error(
-        chalk.red('Build failed:'),
-        error instanceof Error ? error.message : error,
-      );
-      process.exit(1);
-    }
+    console.log(
+      chalk.green(
+        `✓ Build and sync succeeded (${result.data.fileCount} file${result.data.fileCount === 1 ? '' : 's'})`,
+      ),
+    );
   }
 }
