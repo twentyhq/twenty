@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import React, { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconColumnInsertRight, IconPlus } from 'twenty-ui/display';
+import { CommandMenuPages } from 'twenty-shared/types';
 
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
@@ -32,9 +33,9 @@ export const WorkspaceSectionListDndKit = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  onAddMenuItem,
 }: WorkspaceSectionListDndKitProps) => {
   const { t } = useLingui();
+  const { navigateCommandMenu } = useNavigateCommandMenu();
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -46,8 +47,16 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible =
-    isNavigationMenuInEditMode && isDefined(onAddMenuItem) && !isDragging;
+  const isAddMenuItemButtonVisible = isNavigationMenuInEditMode && !isDragging;
+  const handleAddMenuItem = (event?: React.MouseEvent) => {
+    event?.stopPropagation();
+    navigateCommandMenu({
+      page: CommandMenuPages.NavigationMenuAddItem,
+      pageTitle: t`New sidebar item`,
+      pageIcon: IconColumnInsertRight,
+      resetNavigationStack: true,
+    });
+  };
   return (
     <StyledList
       data-dnd-group={
@@ -93,7 +102,7 @@ export const WorkspaceSectionListDndKit = ({
             <NavigationDrawerItem
               Icon={IconPlus}
               label={t`Add menu item`}
-              onClick={onAddMenuItem}
+              onClick={handleAddMenuItem}
               triggerEvent="CLICK"
             />
           )}

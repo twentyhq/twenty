@@ -29,7 +29,6 @@ type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
   items: FlatWorkspaceItem[];
   rightIcon?: React.ReactNode;
-  onAddMenuItem?: () => void;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
@@ -42,7 +41,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   sectionTitle,
   items,
   rightIcon,
-  onAddMenuItem,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
@@ -151,7 +149,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          onAddMenuItem={onAddMenuItem}
         />
       )}
     </NavigationDrawerSection>

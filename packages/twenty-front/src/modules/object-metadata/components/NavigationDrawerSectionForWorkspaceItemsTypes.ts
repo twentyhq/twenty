@@ -34,5 +34,4 @@ export type WorkspaceSectionListDndKitProps = {
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  onAddMenuItem?: () => void;
 };

@@ -165,11 +165,6 @@ export const WorkspaceNavigationMenuItems = () => {
           </StyledRightIconsContainer>
         ) : undefined
       }
-      onAddMenuItem={
-        isNavigationMenuItemEditingEnabled && isNavigationMenuInEditMode
-          ? handleAddMenuItem
-          : undefined
-      }
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
         isNavigationMenuInEditMode ? handleNavigationMenuItemClick : undefined
