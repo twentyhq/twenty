@@ -24,4 +24,4 @@ export type {
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
-export type { NavigateAppToolOutput } from './types/NavigateAppToolOuput';
+export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
