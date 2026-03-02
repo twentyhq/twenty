@@ -309,7 +309,7 @@ export default defineConfig(({ command, mode }) => {
             '**/FullScreenDecorator.tsx',
             '**/InviteTeam.tsx',
             '**/LastUsedPill.tsx',
-            '**/LazyMarkdownRenderer.tsx',
+            '**/lazy-markdown-renderer.styles.ts',
             '**/LeftPanelSkeletonLoader.tsx',
             '**/LocalePicker.tsx',
             '**/Logo.tsx',
