@@ -1,12 +1,13 @@
-import jsonLogic, { type RulesLogic } from 'json-logic-js';
+import jsonLogic from 'json-logic-js';
 
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { type ShouldBeRegisteredRulesLogic } from '@/action-menu/actions/types/ShouldBeRegisteredRulesLogic';
 import { registerShouldBeRegisteredOperators } from '@/action-menu/actions/utils/registerShouldBeRegisteredOperators';
 
 registerShouldBeRegisteredOperators();
 
 export const evaluateShouldBeRegisteredRule = (
-  rule: RulesLogic | boolean | null | undefined,
+  rule: ShouldBeRegisteredRulesLogic | null | undefined,
   params: ShouldBeRegisteredFunctionParams,
 ): boolean => {
   if (rule === null || rule === undefined) {
