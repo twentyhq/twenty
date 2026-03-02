@@ -1,4 +1,4 @@
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
@@ -25,7 +25,13 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+} from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -88,7 +94,6 @@ export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
@@ -202,7 +207,7 @@ export const CalendarEventDetails = ({
           size={ChipSize.Large}
           variant={ChipVariant.Highlighted}
           clickable={false}
-          leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
+          leftComponent={<AvatarOrIcon Icon={IconCalendarEvent} />}
           label={t`Event`}
         />
         <StyledHeader>

@@ -32,12 +32,23 @@ export const convertPageLayoutToTabLayouts = (
         }
       }
 
+      const gridPos =
+        isDefined(widget.position) &&
+        widget.position.__typename === 'PageLayoutWidgetGridPosition'
+          ? {
+              row: widget.position.row,
+              column: widget.position.column,
+              rowSpan: widget.position.rowSpan,
+              columnSpan: widget.position.columnSpan,
+            }
+          : widget.gridPosition;
+
       return {
         i: widget.id,
-        x: widget.gridPosition.column,
-        y: widget.gridPosition.row,
-        w: widget.gridPosition.columnSpan,
-        h: widget.gridPosition.rowSpan,
+        x: gridPos.column,
+        y: gridPos.row,
+        w: gridPos.columnSpan,
+        h: gridPos.rowSpan,
         minW,
         minH,
       };

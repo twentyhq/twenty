@@ -1025,6 +1025,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Unique identifier for this server instance, generated as UUID v4 during database seeding',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  SERVER_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for public domains',
     type: ConfigVariableType.STRING,
   })

@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
@@ -38,11 +39,11 @@ const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   border-radius: 4px;
   bottom: -7px;
   display: flex;
-  height: ${({ theme }) => theme.spacing(3.5)};
+  height: 14px;
   justify-content: center;
   position: absolute;
   right: -7px;
-  width: ${({ theme }) => theme.spacing(3.5)};
+  width: 14px;
 `;
 
 export type ObjectIconWithViewOverlayProps = {
@@ -56,7 +57,7 @@ export const ObjectIconWithViewOverlay = ({
   ViewIcon,
   objectColor,
 }: ObjectIconWithViewOverlayProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const objectStyle = getNavigationMenuItemIconStyleFromColor(
     theme,
     objectColor,
@@ -69,14 +70,14 @@ export const ObjectIconWithViewOverlay = ({
         $borderColor={objectStyle.borderColor}
       >
         <ObjectIcon
-          size={theme.spacing(3.5)}
+          size="14px"
           stroke={theme.icon.stroke.md}
           color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
       <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
         <ViewIcon
-          size={theme.spacing(2.5)}
+          size="10px"
           stroke={theme.icon.stroke.lg}
           color={theme.grayScale.gray10}
         />
