@@ -27,13 +27,6 @@ const baseParams: ShouldBeRegisteredFunctionParams = {
   forceRegisteredActionsByKey: {},
 };
 
-// Params are passed as plain data to jsonLogic.apply, so partial nested
-// objects are fine at runtime. One cast here avoids dozens in tests.
-const withParams = (
-  overrides: Record<string, unknown>,
-): ShouldBeRegisteredFunctionParams =>
-  ({ ...baseParams, ...overrides }) as ShouldBeRegisteredFunctionParams;
-
 describe('evaluateShouldBeRegisteredRule', () => {
   it('returns true for null rule', () => {
     expect(evaluateShouldBeRegisteredRule(null, baseParams)).toBe(true);
@@ -54,19 +47,28 @@ describe('evaluateShouldBeRegisteredRule', () => {
     };
 
     it('returns true when value is defined', () => {
-      const params = withParams({ selectedRecord: mockRecord() });
+      const params = {
+        ...baseParams,
+        selectedRecord: mockRecord(),
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
     });
 
     it('returns false when value is undefined', () => {
-      const params = withParams({ selectedRecord: undefined });
+      const params = {
+        ...baseParams,
+        selectedRecord: undefined,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
 
     it('returns false when value is null', () => {
-      const params = withParams({ selectedRecord: null });
+      const params = {
+        ...baseParams,
+        selectedRecord: null,
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
@@ -78,25 +80,28 @@ describe('evaluateShouldBeRegisteredRule', () => {
     };
 
     it('returns true for non-empty string', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         selectedRecord: mockRecord({ bodyV2: { blocknote: 'content' } }),
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
     });
 
     it('returns false for empty string', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         selectedRecord: mockRecord({ bodyV2: { blocknote: '' } }),
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
 
     it('returns false for null', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         selectedRecord: mockRecord({ bodyV2: { blocknote: null } }),
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
@@ -108,24 +113,29 @@ describe('evaluateShouldBeRegisteredRule', () => {
     };
 
     it('returns true when permission granted', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         getTargetObjectReadPermission: () => true,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
     });
 
     it('returns false when permission denied', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         getTargetObjectReadPermission: () => false,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
 
     it('passes the object name to the callback', () => {
       const mockFn = jest.fn().mockReturnValue(true);
-      const params = withParams({ getTargetObjectReadPermission: mockFn });
+      const params = {
+        ...baseParams,
+        getTargetObjectReadPermission: mockFn,
+      };
 
       evaluateShouldBeRegisteredRule(rule, params);
       expect(mockFn).toHaveBeenCalledWith('workflow');
@@ -138,7 +148,10 @@ describe('evaluateShouldBeRegisteredRule', () => {
         hasWritePermission: ['person'],
       };
       const mockFn = jest.fn().mockReturnValue(false);
-      const params = withParams({ getTargetObjectWritePermission: mockFn });
+      const params = {
+        ...baseParams,
+        getTargetObjectWritePermission: mockFn,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
       expect(mockFn).toHaveBeenCalledWith('person');
@@ -151,13 +164,19 @@ describe('evaluateShouldBeRegisteredRule', () => {
     };
 
     it('returns true when flag enabled', () => {
-      const params = withParams({ isFeatureFlagEnabled: () => true });
+      const params = {
+        ...baseParams,
+        isFeatureFlagEnabled: () => true,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
     });
 
     it('returns false when flag disabled', () => {
-      const params = withParams({ isFeatureFlagEnabled: () => false });
+      const params = {
+        ...baseParams,
+        isFeatureFlagEnabled: () => false,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
@@ -169,46 +188,52 @@ describe('evaluateShouldBeRegisteredRule', () => {
     };
 
     it('returns true when trigger and steps defined', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         workflowWithCurrentVersion: {
           currentVersion: {
             trigger: { type: 'MANUAL' },
             steps: [{ id: 'step1' }],
           },
         },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(true);
     });
 
     it('returns false when no trigger', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         workflowWithCurrentVersion: {
           currentVersion: {
             trigger: null,
             steps: [{ id: 'step1' }],
           },
         },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
 
     it('returns false when no steps', () => {
-      const params = withParams({
+      const params = {
+        ...baseParams,
         workflowWithCurrentVersion: {
           currentVersion: {
             trigger: { type: 'MANUAL' },
             steps: [],
           },
         },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
 
     it('returns false when workflow undefined', () => {
-      const params = withParams({ workflowWithCurrentVersion: undefined });
+      const params = {
+        ...baseParams,
+        workflowWithCurrentVersion: undefined,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, params)).toBe(false);
     });
@@ -226,34 +251,38 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ],
       };
 
-      const shouldShow = withParams({
+      const shouldShow = {
+        ...baseParams,
         selectedRecord: mockRecord({ isRemote: false }),
         hasAnySoftDeleteFilterOnView: false,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, shouldShow)).toBe(true);
 
-      const deletedRecord = withParams({
+      const deletedRecord = {
+        ...baseParams,
         selectedRecord: mockRecord({
           isRemote: false,
           deletedAt: '2024-01-01',
         }),
         hasAnySoftDeleteFilterOnView: false,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, deletedRecord)).toBe(false);
 
-      const remoteRecord = withParams({
+      const remoteRecord = {
+        ...baseParams,
         selectedRecord: mockRecord({ isRemote: true }),
         hasAnySoftDeleteFilterOnView: false,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, remoteRecord)).toBe(false);
 
-      const noRecord = withParams({
+      const noRecord = {
+        ...baseParams,
         selectedRecord: undefined,
         hasAnySoftDeleteFilterOnView: false,
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, noRecord)).toBe(false);
     });
@@ -273,41 +302,45 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ],
       };
 
-      const onDifferentObject = withParams({
+      const onDifferentObject = {
+        ...baseParams,
         objectMetadataItem: { nameSingular: 'person' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
         getTargetObjectReadPermission: () => true,
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onDifferentObject)).toBe(
         true,
       );
 
-      const onSameObjectShowPage = withParams({
+      const onSameObjectShowPage = {
+        ...baseParams,
         objectMetadataItem: { nameSingular: 'workflow' },
         viewType: ActionViewType.SHOW_PAGE,
         getTargetObjectReadPermission: () => true,
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onSameObjectShowPage)).toBe(
         true,
       );
 
-      const onSameObjectIndexPage = withParams({
+      const onSameObjectIndexPage = {
+        ...baseParams,
         objectMetadataItem: { nameSingular: 'workflow' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
         getTargetObjectReadPermission: () => true,
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, onSameObjectIndexPage)).toBe(
         false,
       );
 
-      const noPermission = withParams({
+      const noPermission = {
+        ...baseParams,
         objectMetadataItem: { nameSingular: 'person' },
         viewType: ActionViewType.INDEX_PAGE_NO_SELECTION,
         getTargetObjectReadPermission: () => false,
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, noPermission)).toBe(false);
     });
@@ -326,21 +359,26 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ],
       };
 
-      const selectAll = withParams({ isSelectAll: true });
+      const selectAll = {
+        ...baseParams,
+        isSelectAll: true,
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, selectAll)).toBe(true);
 
-      const runningRecord = withParams({
+      const runningRecord = {
+        ...baseParams,
         isSelectAll: false,
         selectedRecord: mockRecord({ status: 'RUNNING' }),
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, runningRecord)).toBe(true);
 
-      const completedRecord = withParams({
+      const completedRecord = {
+        ...baseParams,
         isSelectAll: false,
         selectedRecord: mockRecord({ status: 'COMPLETED' }),
-      });
+      };
 
       expect(evaluateShouldBeRegisteredRule(rule, completedRecord)).toBe(false);
     });
@@ -359,27 +397,30 @@ describe('evaluateShouldBeRegisteredRule', () => {
         ],
       };
 
-      const allConditionsMet = withParams({
+      const allConditionsMet = {
+        ...baseParams,
         isFeatureFlagEnabled: () => true,
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'person' },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, allConditionsMet)).toBe(true);
 
-      const flagDisabled = withParams({
+      const flagDisabled = {
+        ...baseParams,
         isFeatureFlagEnabled: () => false,
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'person' },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, flagDisabled)).toBe(false);
 
-      const isDashboard = withParams({
+      const isDashboard = {
+        ...baseParams,
         isFeatureFlagEnabled: () => true,
         selectedRecord: mockRecord({ isRemote: false }),
         objectMetadataItem: { nameSingular: 'dashboard' },
-      });
+      } as unknown as ShouldBeRegisteredFunctionParams;
 
       expect(evaluateShouldBeRegisteredRule(rule, isDashboard)).toBe(false);
     });
