@@ -4,7 +4,7 @@ import { IconMapping } from '@/file/utils/fileIconMappings';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
-import { AvatarChip } from 'twenty-ui/components';
+import { AvatarOrIcon } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -70,7 +70,7 @@ export const WorkflowAttachmentChip = ({
 
   return (
     <StyledChip data-chip deletable={!readonly}>
-      <AvatarChip
+      <AvatarOrIcon
         Icon={IconMapping[getFileType(file.name)]}
         IconBackgroundColor={iconColors[getFileType(file.name)]}
       />

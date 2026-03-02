@@ -4,12 +4,12 @@ import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type FileCategory } from 'twenty-shared/types';
+import { AvatarOrIcon } from 'twenty-ui/components';
 
 type FileIconSize = 'small' | 'medium';
 
 const StyledIconContainer = styled.div<{
   background: string;
-  size: FileIconSize;
 }>`
   align-items: center;
   background: ${({ background }) => background};
@@ -17,22 +17,14 @@ const StyledIconContainer = styled.div<{
   color: ${({ theme }) => theme.grayScale.gray1};
   display: flex;
   flex-shrink: 0;
-  height: ${({ size }) => (size === 'small' ? '14px' : 'auto')};
   justify-content: center;
-  padding: ${({ size }) => (size === 'small' ? '0' : '5px')};
-  width: ${({ size }) => (size === 'small' ? '14px' : 'auto')};
+  padding: 5px;
 `;
 
-export const FileIcon = ({
-  fileCategory,
-  size = 'medium',
-}: {
-  fileCategory: AttachmentFileCategory | FileCategory;
-  size?: FileIconSize;
-}) => {
+const useFileIconColors = () => {
   const theme = useTheme();
 
-  const iconColors = {
+  return {
     ARCHIVE: theme.color.gray,
     AUDIO: theme.color.pink,
     IMAGE: theme.color.amber,
@@ -42,13 +34,31 @@ export const FileIcon = ({
     VIDEO: theme.color.purple,
     OTHER: theme.color.gray,
   };
+};
 
+export const FileIcon = ({
+  fileCategory,
+  size = 'medium',
+}: {
+  fileCategory: AttachmentFileCategory | FileCategory;
+  size?: FileIconSize;
+}) => {
+  const theme = useTheme();
+  const iconColors = useFileIconColors();
   const Icon = IconMapping[fileCategory];
+
+  if (size === 'small') {
+    return (
+      <AvatarOrIcon
+        Icon={Icon}
+        IconBackgroundColor={iconColors[fileCategory] ?? theme.color.gray}
+      />
+    );
+  }
 
   return (
     <StyledIconContainer
       background={iconColors[fileCategory] ?? theme.color.gray}
-      size={size}
     >
       {Icon && <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />}
     </StyledIconContainer>
