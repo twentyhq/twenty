@@ -53,8 +53,8 @@ const StyledCardWrapper = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
 `;
@@ -77,6 +77,14 @@ const StyledScopeItem = styled.li`
   }
 `;
 
+const StyledErrorText = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing(2)} 0;
+  width: 100%;
+`;
+
 export const Authorize = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
@@ -92,17 +100,20 @@ export const Authorize = () => {
   const codeChallenge = searchParam.get('codeChallenge');
   const redirectUrl = searchParam.get('redirectUrl');
 
-  const { data, loading } = useQuery(
-    FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID,
-    {
-      variables: { clientId: clientId ?? '' },
-      skip: !isDefined(clientId),
-    },
-  );
+  const {
+    data,
+    loading,
+    error: queryError,
+  } = useQuery(FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID, {
+    variables: { clientId: clientId ?? '' },
+    skip: !isDefined(clientId),
+  });
 
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
   const [hasLogoError, setHasLogoError] = useState(false);
+  const [authorizeError, setAuthorizeError] = useState<string | null>(null);
+  const [isAuthorizing, setIsAuthorizing] = useState(false);
 
   const shouldRedirectToNotFound =
     !isDefined(clientId) || (!loading && !isDefined(applicationRegistration));
@@ -115,6 +126,9 @@ export const Authorize = () => {
 
   const handleAuthorize = async () => {
     if (isDefined(clientId) && isDefined(redirectUrl)) {
+      setIsAuthorizing(true);
+      setAuthorizeError(null);
+
       await authorizeApp({
         variables: {
           clientId,
@@ -124,9 +138,30 @@ export const Authorize = () => {
         onCompleted: (responseData) => {
           redirect(responseData.authorizeApp.redirectUrl);
         },
+        onError: (error) => {
+          setIsAuthorizing(false);
+          setAuthorizeError(
+            error.message || t`Authorization failed. Please try again.`,
+          );
+        },
       });
     }
   };
+
+  if (isDefined(queryError)) {
+    return (
+      <StyledContainer>
+        <StyledCardWrapper>
+          <StyledText>
+            <Trans>Something went wrong</Trans>
+          </StyledText>
+          <StyledErrorText>
+            {t`Unable to load application details. Please try again later.`}
+          </StyledErrorText>
+        </StyledCardWrapper>
+      </StyledContainer>
+    );
+  }
 
   if (loading || !applicationRegistration) {
     return null;
@@ -184,13 +219,20 @@ export const Authorize = () => {
             ))}
           </StyledScopeList>
         )}
+        {authorizeError && <StyledErrorText>{authorizeError}</StyledErrorText>}
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
-            <MainButton title={t`Cancel`} variant="secondary" fullWidth />
+            <MainButton
+              title={t`Cancel`}
+              variant="secondary"
+              fullWidth
+              disabled={isAuthorizing}
+            />
           </UndecoratedLink>
           <MainButton
-            title={t`Authorize`}
+            title={isAuthorizing ? t`Authorizing...` : t`Authorize`}
             onClick={handleAuthorize}
+            disabled={isAuthorizing}
             fullWidth
           />
         </StyledButtonContainer>

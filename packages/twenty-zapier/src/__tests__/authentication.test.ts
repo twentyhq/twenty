@@ -1,20 +1,20 @@
 import { createAppTester, tools } from 'zapier-platform-core';
 
 import App from 'src/index';
-import { getBundle } from 'src/utils/getBundle';
+import { getBundleForTest } from 'src/utils/getBundleForTest';
 const appTester = createAppTester(App);
 tools.env.inject();
 
 describe('custom auth', () => {
   it('passes authentication and returns json', async () => {
-    const bundle = getBundle();
+    const bundle = getBundleForTest();
     const response = await appTester(App.authentication.test, bundle);
     expect(response.data).toHaveProperty('currentWorkspace');
     expect(response.data.currentWorkspace).toHaveProperty('displayName');
   });
 
   it('passes authentication with api url and returns json', async () => {
-    const bundle = getBundle();
+    const bundle = getBundleForTest();
     const bundleWithApiUrl = {
       ...bundle,
       authData: { ...bundle.authData, apiUrl: 'http://localhost:3000' },
@@ -25,7 +25,7 @@ describe('custom auth', () => {
   });
 
   it('fail authentication with bad api url', async () => {
-    const bundle = getBundle();
+    const bundle = getBundleForTest();
     const bundleWithApiUrl = {
       ...bundle,
       authData: { ...bundle.authData, apiUrl: 'http://invalid' },
@@ -43,7 +43,7 @@ describe('custom auth', () => {
   });
 
   it('fails on bad auth token format', async () => {
-    const bundle = getBundle();
+    const bundle = getBundleForTest();
     bundle.authData.apiKey = 'bad';
 
     try {

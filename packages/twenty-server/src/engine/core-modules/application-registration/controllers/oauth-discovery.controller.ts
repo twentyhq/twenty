@@ -18,6 +18,8 @@ export class OAuthDiscoveryController {
       issuer: serverUrl,
       authorization_endpoint: `${serverUrl}/authorize`,
       token_endpoint: `${serverUrl}/oauth/token`,
+      revocation_endpoint: `${serverUrl}/oauth/revoke`,
+      introspection_endpoint: `${serverUrl}/oauth/introspect`,
       scopes_supported: ALL_OAUTH_SCOPES,
       response_types_supported: ['code'],
       grant_types_supported: [
@@ -27,6 +29,8 @@ export class OAuthDiscoveryController {
       ],
       code_challenge_methods_supported: ['S256'],
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
+      revocation_endpoint_auth_methods_supported: ['client_secret_post'],
+      introspection_endpoint_auth_methods_supported: ['client_secret_post'],
     };
   }
 }
