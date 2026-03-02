@@ -4,7 +4,7 @@ import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMe
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
-export const resolvePageLayoutTabTitle = ({
+export const resolvePageLayoutWidgetTitle = ({
   title,
   applicationId,
   pageLayoutType,

@@ -29,6 +29,7 @@ import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layou
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
+import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -40,6 +41,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 export class PageLayoutTabResolver {
   constructor(
     private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly pageLayoutService: PageLayoutService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -47,12 +49,19 @@ export class PageLayoutTabResolver {
   async title(
     @Parent() tab: PageLayoutTabDTO,
     @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const pageLayout = await this.pageLayoutService.findByIdOrThrow({
+      id: tab.pageLayoutId,
+      workspaceId: workspace.id,
+    });
 
     return resolvePageLayoutTabTitle({
       title: tab.title,
       applicationId: tab.applicationId,
+      pageLayoutType: pageLayout.type,
       i18nInstance: i18n,
     });
   }

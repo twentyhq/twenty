@@ -11,6 +11,7 @@ import { PageLayoutTabController } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutTabResolver } from 'src/engine/metadata-modules/page-layout-tab/resolvers/page-layout-tab.resolver';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
+import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -31,6 +32,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     FlatPageLayoutWidgetModule,
     ApplicationModule,
     DashboardSyncModule,
+    PageLayoutModule,
   ],
   controllers: [PageLayoutTabController],
   providers: [

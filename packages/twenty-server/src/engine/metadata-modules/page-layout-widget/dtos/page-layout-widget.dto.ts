@@ -3,8 +3,8 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
-  PageLayoutWidgetConditionalDisplay,
-  PageLayoutWidgetPosition,
+    PageLayoutWidgetConditionalDisplay,
+    PageLayoutWidgetPosition,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -34,6 +34,9 @@ export class GridPositionDTO {
 export class PageLayoutWidgetDTO {
   @IDField(() => UUIDScalarType)
   id: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
+  applicationId: string;
 
   @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutTabId: string;

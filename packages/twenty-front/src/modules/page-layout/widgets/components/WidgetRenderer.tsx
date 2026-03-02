@@ -1,7 +1,9 @@
+import { STANDARD_PAGE_LAYOUT_WIDGET_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutWidgetTitleTranslations';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
+import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -26,6 +28,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
@@ -47,8 +50,10 @@ type WidgetRendererProps = {
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
+  const { isCustom } = useIsCurrentObjectCustom();
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
@@ -88,6 +93,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const isDeletingWidgetEnabled =
     currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+
+  const isRecordPageLayout =
+    currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
@@ -132,6 +140,15 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const actions = useWidgetActions({ widget });
 
+  const shouldTranslateWidgetTitles = isRecordPageLayout && !isCustom;
+
+  // TODO: drop once the configuration of all record page layouts has been migrated to the backend.
+  const translatedWidgetTitle =
+    shouldTranslateWidgetTitles &&
+    STANDARD_PAGE_LAYOUT_WIDGET_TITLE_TRANSLATIONS[widget.title]
+      ? t(STANDARD_PAGE_LAYOUT_WIDGET_TITLE_TRANSLATIONS[widget.title])
+      : widget.title;
+
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
       <WidgetCard
@@ -157,7 +174,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
             isResizing={isResizing}
             isReorderEnabled={isReorderEnabled}
             isDeletingWidgetEnabled={isDeletingWidgetEnabled}
-            title={widget.title}
+            title={translatedWidgetTitle}
             onRemove={handleRemove}
             actions={actions}
             forbiddenDisplay={
