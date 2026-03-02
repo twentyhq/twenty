@@ -54,14 +54,15 @@ jobs:
           port: 3000
 
       - name: Start services with correct SERVER_URL
+        env:
+          TUNNEL_URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}
         run: |
           cd packages/twenty-docker/
 
-          # Update the SERVER_URL with the tunnel URL
-          echo "Setting SERVER_URL to ${{ steps.expose-tunnel.outputs.tunnel-url }}"
+          echo "Setting SERVER_URL to $TUNNEL_URL"
           sed -i '/SERVER_URL=/d' .env
           echo "" >> .env
-          echo "SERVER_URL=${{ steps.expose-tunnel.outputs.tunnel-url }}" >> .env
+          echo "SERVER_URL=$TUNNEL_URL" >> .env
 
           # Start the services
           echo "Docker compose up..."
