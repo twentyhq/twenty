@@ -136,6 +136,7 @@ export const WorkspaceDndKitProvider = ({
     };
     const source = e.operation?.source;
     const target = e.operation?.target;
+    const isAddToNavDrag = sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
 
     const sourceIsSortable =
       source && isSortable(source as Parameters<typeof isSortable>[0]);
@@ -148,7 +149,7 @@ export const WorkspaceDndKitProvider = ({
       const group = s.group ?? t.group;
       const index = s.group === t.group ? s.index : t.index;
       if (group != null && index != null) {
-        if (sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+        if (isAddToNavDrag) {
           setActiveDropTargetId(getDndKitDropTargetId(group, index));
           setForbiddenDropTargetId(null);
         } else {
@@ -166,7 +167,7 @@ export const WorkspaceDndKitProvider = ({
     ) {
       const dest = parseDropTargetIdToDestination(target.id);
       if (isDefined(dest) && isWorkspaceDroppableId(dest.droppableId)) {
-        if (sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+        if (isAddToNavDrag) {
           setActiveDropTargetId(target.id);
           setAddToNavigationFallbackDestination(dest);
           setForbiddenDropTargetId(null);
@@ -177,7 +178,9 @@ export const WorkspaceDndKitProvider = ({
       }
     }
 
-    if (sourceDroppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) return;
+    if (!isAddToNavDrag) {
+      return;
+    }
 
     if (
       isDefined(target) &&
