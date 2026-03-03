@@ -332,7 +332,12 @@ describe('UserWorkspaceService', () => {
         pictureUrl: 'https://lh3.googleusercontent.com/a/invalid',
       });
 
-      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalled();
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledTimes(1);
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledWith({
+        imageUrl: 'https://lh3.googleusercontent.com/a/invalid',
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
         workspaceId,
