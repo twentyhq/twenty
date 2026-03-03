@@ -254,7 +254,7 @@ export class DataArgProcessor {
 
         if (isDefined(joinColumnName) && !isRelationNestedOperation(value)) {
           throw new CommonQueryRunnerException(
-            `Cannot write to relation name "${key}". Use the relation's foreign key ID field instead.`,
+            `Relation "${key}" requires connect or disconnect operation`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
