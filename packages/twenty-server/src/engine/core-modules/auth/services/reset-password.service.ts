@@ -27,8 +27,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
-import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -88,7 +88,7 @@ export class ResetPasswordService {
       },
     });
 
-    if (existingToken && targetWorkspaceId) {
+    if (existingToken) {
       const timeToWait = ms(
         differenceInMilliseconds(existingToken.expiresAt, new Date()),
         { long: true },
@@ -109,7 +109,6 @@ export class ResetPasswordService {
       .update(plainResetToken)
       .digest('hex');
 
-    if (targetWorkspaceId) {
       await this.appTokenRepository.save({
         userId: user.id,
         workspaceId: targetWorkspaceId,
@@ -117,7 +116,7 @@ export class ResetPasswordService {
         expiresAt,
         type: AppTokenType.PasswordResetToken,
       });
-    }
+
 
     return {
       workspaceId: targetWorkspaceId,
