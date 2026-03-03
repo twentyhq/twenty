@@ -1,9 +1,42 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
 import {
   PageLayoutTabLayoutMode,
   type UpdatePageLayoutWithTabsInput,
 } from '~/generated-metadata/graphql';
+
+const buildWidgetPosition = (widget: PageLayoutWidget, widgetIndex: number) => {
+  const layoutMode =
+    widget.position?.layoutMode ?? PageLayoutTabLayoutMode.GRID;
+
+  switch (layoutMode) {
+    case PageLayoutTabLayoutMode.VERTICAL_LIST: {
+      const index =
+        widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
+          ? widget.position.index
+          : widgetIndex;
+
+      return {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index,
+      };
+    }
+    case PageLayoutTabLayoutMode.CANVAS:
+      return {
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      };
+    case PageLayoutTabLayoutMode.GRID:
+    default:
+      return {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: widget.gridPosition.row,
+        column: widget.gridPosition.column,
+        rowSpan: widget.gridPosition.rowSpan,
+        columnSpan: widget.gridPosition.columnSpan,
+      };
+  }
+};
 
 export const convertPageLayoutDraftToUpdateInput = (
   pageLayoutDraft: DraftPageLayout,
@@ -18,7 +51,7 @@ export const convertPageLayoutDraftToUpdateInput = (
       position: tab.position,
       widgets: tab.widgets
         .filter((widget) => !isDynamicRelationWidget(widget))
-        .map((widget) => ({
+        .map((widget, widgetIndex) => ({
           id: widget.id,
           pageLayoutTabId: widget.pageLayoutTabId,
           title: widget.title,
@@ -30,14 +63,7 @@ export const convertPageLayoutDraftToUpdateInput = (
             rowSpan: widget.gridPosition.rowSpan,
             columnSpan: widget.gridPosition.columnSpan,
           },
-          position: {
-            layoutMode:
-              widget.position?.layoutMode ?? PageLayoutTabLayoutMode.GRID,
-            row: widget.gridPosition.row,
-            column: widget.gridPosition.column,
-            rowSpan: widget.gridPosition.rowSpan,
-            columnSpan: widget.gridPosition.columnSpan,
-          },
+          position: buildWidgetPosition(widget, widgetIndex),
           configuration: widget.configuration ?? null,
         })),
     })),

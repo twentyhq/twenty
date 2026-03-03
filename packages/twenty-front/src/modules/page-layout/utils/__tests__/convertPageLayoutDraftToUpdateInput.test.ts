@@ -2,7 +2,11 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
-import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const makeWidget = (
   overrides: Partial<PageLayoutWidget> & { id: string },
@@ -133,5 +137,80 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     expect(result.tabs[0].widgets).toHaveLength(2);
     expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
+  });
+
+  it('should produce VERTICAL_LIST position with index from widget.position', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 3,
+      },
+    });
+    const draft = makeDraft([makeTab('tab-1', [widget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 3,
+    });
+  });
+
+  it('should fall back to array index for VERTICAL_LIST when position typename is missing', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      } as PageLayoutWidget['position'],
+    });
+    const draft = makeDraft([
+      makeTab('tab-1', [makeWidget({ id: 'w0' }), widget]),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    // w0 is at filtered index 0, w1 is at filtered index 1
+    expect(result.tabs[0].widgets[1].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 1,
+    });
+  });
+
+  it('should produce CANVAS position without grid fields', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetCanvasPosition',
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      },
+    });
+    const draft = makeDraft([makeTab('tab-1', [widget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    });
+  });
+
+  it('should produce GRID position from gridPosition when position is null', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: null,
+      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
+    });
+    const draft = makeDraft([makeTab('tab-1', [widget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 1,
+      column: 2,
+      rowSpan: 3,
+      columnSpan: 4,
+    });
   });
 });
