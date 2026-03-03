@@ -40,23 +40,23 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
 `;
 
 const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
-  position: relative;
-  top: -2px;
-
-  border-bottom-left-radius: 4px;
-
   border: 1px solid
     ${({ darker }) =>
       darker
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.border.color.strong};
+  border-bottom-left-radius: 4px;
 
-  ${({ darker }) => (darker ? 'z-index: 1;' : '')}
+  border-right: none;
 
   border-top: none;
-  border-right: none;
+
   height: 14px;
+
+  position: relative;
+  top: -2px;
   width: 8px;
+  z-index: ${({ darker }) => (darker ? '1' : 'auto')};
 `;
 
 export const NavigationDrawerItemBreadcrumb = ({

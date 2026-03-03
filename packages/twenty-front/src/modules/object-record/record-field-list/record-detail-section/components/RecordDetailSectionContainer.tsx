@@ -21,7 +21,7 @@ const StyledHeader = styled.header<{
   height: 24px;
   justify-content: space-between;
   margin-bottom: ${({ areRecordsAvailable }) =>
-    areRecordsAvailable ? themeCssVariables.spacing[2] : ''};
+    areRecordsAvailable ? themeCssVariables.spacing[2] : '0'};
   padding-left: ${themeCssVariables.spacing[3]};
   padding-right: ${themeCssVariables.spacing[2]};
 `;

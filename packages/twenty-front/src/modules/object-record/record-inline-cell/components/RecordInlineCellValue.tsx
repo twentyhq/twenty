@@ -16,19 +16,9 @@ const StyledClickableContainer = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 
-  ${({ isCentered }) =>
-    isCentered === true
-      ? `
-      justify-content: center;
-    `
-      : ''};
-
-  ${({ readonly }) =>
-    !readonly
-      ? `
-      cursor: pointer;
-    `
-      : ''};
+  justify-content: ${({ isCentered }) =>
+    isCentered === true ? 'center' : 'normal'};
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 `;
 
 export const RecordInlineCellValue = () => {

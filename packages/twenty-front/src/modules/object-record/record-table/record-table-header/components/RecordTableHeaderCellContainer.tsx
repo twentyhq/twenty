@@ -25,20 +25,16 @@ const StyledHeaderCell = styled.div<{
       : 'none'};
 
   user-select: none;
-  ${({ isResizing }) => {
-    if (isResizing) {
-      return '';
-    }
 
-    return `
-    &:hover {
-      background: ${themeCssVariables.background.secondary};
-    };
-    &:active {
-      background: ${themeCssVariables.background.tertiary};
-    };
-    `;
-  }};
+  &:hover {
+    background: ${({ isResizing }) =>
+      isResizing ? 'inherit' : themeCssVariables.background.secondary};
+  }
+
+  &:active {
+    background: ${({ isResizing }) =>
+      isResizing ? 'inherit' : themeCssVariables.background.tertiary};
+  }
 
   cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
 

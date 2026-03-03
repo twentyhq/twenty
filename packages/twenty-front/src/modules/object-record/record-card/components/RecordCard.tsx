@@ -13,12 +13,7 @@ const StyledBoardCard = styled.div<{
   cursor: pointer;
   width: 100%;
 
-  ${({ isSecondaryDragged }) =>
-    isSecondaryDragged
-      ? `
-    opacity: 0.3;
-  `
-      : ''}
+  opacity: ${({ isSecondaryDragged }) => (isSecondaryDragged ? '0.3' : '1')};
 
   &[data-selected='true'] {
     background-color: ${themeCssVariables.accent.quaternary};

@@ -11,12 +11,8 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 
-  ${({ isCentered }) =>
-    isCentered === true
-      ? `
-      justify-content: center;
-    `
-      : ''};
+  justify-content: ${({ isCentered }) =>
+    isCentered === true ? 'center' : 'normal'};
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`

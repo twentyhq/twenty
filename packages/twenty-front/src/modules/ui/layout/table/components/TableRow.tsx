@@ -15,10 +15,8 @@ const StyledTableRow = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   display: grid;
   grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
-  ${({ gridTemplateColumns }) =>
-    gridTemplateColumns
-      ? `grid-template-columns: ${gridTemplateColumns};`
-      : ''};
+  grid-template-columns: ${({ gridTemplateColumns }) =>
+    gridTemplateColumns ?? 'none'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-auto-columns: ${({ mobileGridAutoColumns, gridAutoColumns }) =>

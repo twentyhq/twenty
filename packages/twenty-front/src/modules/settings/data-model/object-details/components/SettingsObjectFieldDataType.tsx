@@ -24,33 +24,32 @@ const StyledDataType = styled.div<{
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${({ to }) =>
+    to ? themeCssVariables.font.color.secondary : 'inherit'};
+  cursor: ${({ to }) => (to ? 'pointer' : 'default')};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
   height: 20px;
   overflow: hidden;
-  text-decoration: none;
-
+  text-decoration: ${({ to }) => (to ? 'underline' : 'none')};
   user-select: none;
 
-  ${({ to }) =>
-    to
-      ? `
-          cursor: pointer;
-          color: ${themeCssVariables.font.color.secondary};
-          text-decoration: underline;
-
-          &:hover {
-            color: ${themeCssVariables.font.color.primary};
-          }
-        `
-      : ''}
+  &:hover {
+    color: ${({ to }) =>
+      to ? themeCssVariables.font.color.primary : 'inherit'};
+  }
 `;
 
 const StyledLabelContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledIconWrapper = styled.div`
+  display: flex;
+  flex: 1 0 auto;
 `;
 
 const StyledSpan = styled.span`
@@ -71,10 +70,6 @@ export const SettingsObjectFieldDataType = ({
     IconFromProps ?? fieldTypeConfig?.Icon ?? IconTwentyStar;
   const label = labelFromProps ?? fieldTypeConfig?.label;
 
-  const StyledIcon = styled(Icon)`
-    flex: 1 0 auto;
-  `;
-
   return (
     <StyledDataType
       as={to ? Link : 'div'}
@@ -82,7 +77,9 @@ export const SettingsObjectFieldDataType = ({
       value={value}
       onClick={onClick}
     >
-      <StyledIcon size={theme.icon.size.sm} />
+      <StyledIconWrapper>
+        <Icon size={theme.icon.size.sm} />
+      </StyledIconWrapper>
       <StyledLabelContainer>
         {label} <StyledSpan>{labelDetail && `· ${labelDetail}`}</StyledSpan>
       </StyledLabelContainer>

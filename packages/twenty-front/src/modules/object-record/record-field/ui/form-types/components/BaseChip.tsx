@@ -23,14 +23,9 @@ const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   user-select: none;
   white-space: nowrap;
 
-  ${({ deletable }) =>
-    !deletable
-      ? `
-          padding-right: ${themeCssVariables.spacing[1]};
-        `
-      : `
-          cursor: pointer;
-        `}
+  cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};
+  padding-right: ${({ deletable }) =>
+    deletable ? '0' : themeCssVariables.spacing[1]};
 `;
 
 const StyledLabel = styled.span<{ danger: boolean }>`

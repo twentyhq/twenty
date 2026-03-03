@@ -22,16 +22,9 @@ const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
   height: 100%;
   left: calc(-1 * ${themeCssVariables.spacing[5]});
 
-  ${({ dotPosition }) => {
-    if (dotPosition === 'top') {
-      return `
-        top: 0;
-      `;
-    }
-    return `
-      align-items: center;
-    `;
-  }}
+  top: ${({ dotPosition }) => (dotPosition === 'top' ? '0' : 'auto')};
+  align-items: ${({ dotPosition }) =>
+    dotPosition === 'top' ? 'stretch' : 'center'};
 `;
 
 const StyledIconPoint = styled(IconPoint)`

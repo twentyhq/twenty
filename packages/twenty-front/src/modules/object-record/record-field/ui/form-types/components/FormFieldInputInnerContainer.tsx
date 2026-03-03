@@ -21,19 +21,16 @@ const StyledFormFieldInputInnerContainer = styled.div<
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
-  ${({ multiline, hasRightElement }) =>
+  border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement
-      ? `
-          border-right: auto;
-          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-          border-top-right-radius: ${themeCssVariables.border.radius.sm};
-        `
-      : `
-          border-right: none;
-          border-bottom-right-radius: 0;
-          border-top-right-radius: 0;
-        `}
-
+      ? themeCssVariables.border.radius.sm
+      : '0'};
+  border-right: ${({ multiline, hasRightElement }) =>
+    multiline || !hasRightElement ? 'auto' : 'none'};
+  border-top-right-radius: ${({ multiline, hasRightElement }) =>
+    multiline || !hasRightElement
+      ? themeCssVariables.border.radius.sm
+      : '0'};
   box-sizing: border-box;
   display: flex;
   overflow-x: auto;

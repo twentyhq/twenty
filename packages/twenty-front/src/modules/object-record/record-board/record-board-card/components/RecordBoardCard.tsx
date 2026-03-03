@@ -38,13 +38,9 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
-  ${({ isPrimaryMultiDrag }) =>
-    isPrimaryMultiDrag
-      ? `
-    transform: scale(1.02);
-    z-index: 10;
-  `
-      : ''}
+  transform: ${({ isPrimaryMultiDrag }) =>
+    isPrimaryMultiDrag ? 'scale(1.02)' : 'none'};
+  z-index: ${({ isPrimaryMultiDrag }) => (isPrimaryMultiDrag ? '10' : 'auto')};
 `;
 
 const StyledBoardCardWrapper = styled.div`
