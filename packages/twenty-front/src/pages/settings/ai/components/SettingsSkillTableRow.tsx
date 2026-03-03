@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
 
@@ -14,14 +15,13 @@ export type SettingsSkillTableRowProps = {
   link?: string;
 };
 
-export const StyledSkillTableRow = styled(TableRow)<{ isActive?: boolean }>`
+export const StyledSkillTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 36px;
-  opacity: ${({ isActive = true }) => (isActive ? 1 : 0.5)};
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -34,7 +34,7 @@ const StyledIconContainer = styled.div`
 
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsSkillTableRow = ({
@@ -46,7 +46,11 @@ export const SettingsSkillTableRow = ({
   const Icon = getIcon(skill.icon ?? 'IconSparkles');
 
   return (
-    <StyledSkillTableRow key={skill.id} to={link} isActive={skill.isActive}>
+    <StyledSkillTableRow
+      key={skill.id}
+      to={link}
+      style={{ opacity: skill.isActive ? 1 : 0.5 }}
+    >
       <StyledNameTableCell>
         <StyledIconContainer>
           <Icon size={16} />

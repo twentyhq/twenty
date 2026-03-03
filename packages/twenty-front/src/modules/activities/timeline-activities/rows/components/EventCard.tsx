@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Card } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventCardProps = {
   children: React.ReactNode;
@@ -12,10 +13,10 @@ const StyledCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 400px;
-  padding: ${({ theme }) => theme.spacing(2)} 0px
-    ${({ theme }) => theme.spacing(1)} 0px;
+  padding: ${themeCssVariables.spacing[2]} 0px ${themeCssVariables.spacing[1]}
+    0px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 300px;
@@ -23,15 +24,15 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledCard = styled(Card)`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   flex-direction: column;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   align-self: stretch;
 `;

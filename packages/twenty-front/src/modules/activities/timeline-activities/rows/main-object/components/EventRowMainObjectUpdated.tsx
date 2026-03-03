@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -10,6 +10,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: ObjectMetadataItem;
@@ -22,7 +23,7 @@ type EventRowMainObjectUpdatedProps = {
 const StyledRowContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
 `;
 
@@ -30,21 +31,21 @@ const StyledItemTitleDate = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: none;
   }
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
 `;
 
 const StyledEventRowMainObjectUpdatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
