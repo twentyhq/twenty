@@ -1,0 +1,58 @@
+diff --git a/esm/cache.js b/esm/cache.js
+index 07cf6d7dd99effb9c3464b620ba67a7f445224f5..248bb527923499a6be8065ee7a3613b55819c58c 100644
+--- a/esm/cache.js
++++ b/esm/cache.js
+@@ -69,17 +69,20 @@ export class TransformCacheCollection {
+       this.invalidate(cacheName, filename);
+     });
+   }
+-  invalidateIfChanged(filename, content) {
++  invalidateIfChanged(filename, content, _visited) {
++    const visited = _visited || new Set();
++    if (visited.has(filename)) {
++      return false;
++    }
++    visited.add(filename);
+     const fileEntrypoint = this.get('entrypoints', filename);
+ 
+-    // We need to check all dependencies of the file
+-    // because they might have changed as well.
+     if (fileEntrypoint) {
+       for (const [, dependency] of fileEntrypoint.dependencies) {
+         const dependencyFilename = dependency.resolved;
+         if (dependencyFilename) {
+           const dependencyContent = fs.readFileSync(dependencyFilename, 'utf8');
+-          this.invalidateIfChanged(dependencyFilename, dependencyContent);
++          this.invalidateIfChanged(dependencyFilename, dependencyContent, visited);
+         }
+       }
+     }
+diff --git a/lib/cache.js b/lib/cache.js
+index 0762ed7d3c39b31000f7aa7d8156da15403c8e64..6955410cd3c9ec53cf7a01c8346abc4c47fff791 100644
+--- a/lib/cache.js
++++ b/lib/cache.js
+@@ -77,17 +77,20 @@ class TransformCacheCollection {
+       this.invalidate(cacheName, filename);
+     });
+   }
+-  invalidateIfChanged(filename, content) {
++  invalidateIfChanged(filename, content, _visited) {
++    const visited = _visited || new Set();
++    if (visited.has(filename)) {
++      return false;
++    }
++    visited.add(filename);
+     const fileEntrypoint = this.get('entrypoints', filename);
+ 
+-    // We need to check all dependencies of the file
+-    // because they might have changed as well.
+     if (fileEntrypoint) {
+       for (const [, dependency] of fileEntrypoint.dependencies) {
+         const dependencyFilename = dependency.resolved;
+         if (dependencyFilename) {
+           const dependencyContent = _nodeFs.default.readFileSync(dependencyFilename, 'utf8');
+-          this.invalidateIfChanged(dependencyFilename, dependencyContent);
++          this.invalidateIfChanged(dependencyFilename, dependencyContent, visited);
+         }
+       }
+     }

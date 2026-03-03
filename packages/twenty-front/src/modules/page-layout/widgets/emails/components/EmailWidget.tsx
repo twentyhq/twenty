@@ -2,7 +2,7 @@ import { EmailsCard } from '@/activities/emails/components/EmailsCard';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

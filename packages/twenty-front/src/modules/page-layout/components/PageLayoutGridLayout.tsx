@@ -26,8 +26,7 @@ import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceh
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import {
   Responsive,
@@ -37,20 +36,36 @@ import {
   type ResponsiveProps,
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
 
-const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
+const disabledTransitionsClass = css`
+  .react-grid-layout {
+    transition: none !important;
+  }
+
+  .react-grid-item {
+    transition: none !important;
+  }
+
+  .react-grid-item.cssTransforms {
+    transition-property: none !important;
+  }
+`;
+
+const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
   position: relative;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
   user-select: none;
 
   .react-grid-placeholder {
-    background: ${({ theme }) => theme.color.blue7} !important;
+    background: ${themeCssVariables.color.blue7} !important;
 
-    border-radius: ${({ theme }) => theme.border.radius.md};
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 
   .react-grid-item:not(.react-draggable-dragging) {
@@ -68,22 +83,6 @@ const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
   .react-grid-item:hover .widget-card-resize-handle {
     display: block !important;
   }
-
-  ${({ $disableTransitions }) =>
-    $disableTransitions &&
-    css`
-      .react-grid-layout {
-        transition: none !important;
-      }
-
-      .react-grid-item {
-        transition: none !important;
-      }
-
-      .react-grid-item.cssTransforms {
-        transition-property: none !important;
-      }
-    `}
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -172,7 +171,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   return (
     <StyledGridContainer
       ref={gridContainerRef}
-      $disableTransitions={shouldDisableTransitions}
+      className={
+        shouldDisableTransitions ? disabledTransitionsClass : undefined
+      }
     >
       {isPageLayoutInEditMode && (
         <>

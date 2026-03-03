@@ -7,7 +7,7 @@ import { BarChartTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 const StyledNoDataOverlay = styled.svg`
