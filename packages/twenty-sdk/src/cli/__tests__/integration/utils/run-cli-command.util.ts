@@ -36,13 +36,6 @@ export const runCliCommand = (
         env: {
           ...process.env,
           FORCE_COLOR: '0',
-          ...(process.env.TWENTY_CONFIG_PATH
-            ? {
-                TWENTY_CONFIG_PATH: path.resolve(
-                  process.env.TWENTY_CONFIG_PATH,
-                ),
-              }
-            : {}),
         },
       },
     );
