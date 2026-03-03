@@ -4,7 +4,12 @@ import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTi
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useCreateChatThreadMutation } from '~/generated-metadata/graphql';
+import {
+  GetChatThreadsDocument,
+  useCreateChatThreadMutation,
+} from '~/generated-metadata/graphql';
+
+const CHAT_THREADS_PAGE_SIZE = 20;
 
 export const useCreateNewAIChatThread = () => {
   const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadState);
@@ -21,6 +26,12 @@ export const useCreateNewAIChatThread = () => {
       setAgentChatUsage(null);
       openAskAIPage({ resetNavigationStack: false });
     },
+    refetchQueries: [
+      {
+        query: GetChatThreadsDocument,
+        variables: { input: { first: CHAT_THREADS_PAGE_SIZE } },
+      },
+    ],
   });
 
   return { createChatThread };

@@ -13,6 +13,7 @@ import { type SetStateAction } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type AgentChatThread,
+  GetChatThreadsDocument,
   useCreateChatThreadMutation,
   useGetChatMessagesQuery,
   useGetChatThreadsQuery,
@@ -66,6 +67,12 @@ export const useAgentChatData = () => {
     onError: () => {
       setIsCreatingChatThread(false);
     },
+    refetchQueries: [
+      {
+        query: GetChatThreadsDocument,
+        variables: { input: { first: 20 } },
+      },
+    ],
   });
 
   const { loading: threadsLoading } = useGetChatThreadsQuery({
