@@ -124,11 +124,15 @@ export class ResetPasswordService {
     };
   }
 
-  async sendEmailPasswordResetLink(
-    resetToken: PasswordResetToken,
-    email: string,
-    locale: keyof typeof APP_LOCALES,
-  ): Promise<EmailPasswordResetLinkDTO> {
+  async sendEmailPasswordResetLink({
+    resetToken,
+    email,
+    locale,
+  }: {
+    resetToken: PasswordResetToken;
+    email: string;
+    locale: keyof typeof APP_LOCALES;
+  }): Promise<EmailPasswordResetLinkDTO> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),

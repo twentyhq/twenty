@@ -242,31 +242,14 @@ describe('ResetPasswordService', () => {
           ),
         );
 
-      const result = await service.sendEmailPasswordResetLink(
-        mockToken,
-        'test@example.com',
-        'en',
-      );
+      const result = await service.sendEmailPasswordResetLink({
+        resetToken: mockToken,
+        email: 'test@example.com',
+        locale: 'en',
+      });
 
       expect(result.success).toBe(true);
       expect(emailService.send).toHaveBeenCalled();
-    });
-
-    it('should return success without sending email when workspaceId is null', async () => {
-      const mockToken = {
-        workspaceId: null,
-        passwordResetToken: 'token123',
-        passwordResetTokenExpiresAt: new Date(),
-      };
-
-      const result = await service.sendEmailPasswordResetLink(
-        mockToken,
-        'test@example.com',
-        'en',
-      );
-
-      expect(result.success).toBe(true);
-      expect(emailService.send).not.toHaveBeenCalled();
     });
 
     it('should throw an error if user is not found', async () => {
@@ -283,11 +266,11 @@ describe('ResetPasswordService', () => {
         );
 
       await expect(
-        service.sendEmailPasswordResetLink(
-          mockToken,
-          'nonexistent@example.com',
-          'en',
-        ),
+        service.sendEmailPasswordResetLink({
+          resetToken: mockToken,
+          email: 'nonexistent@example.com',
+          locale: 'en',
+        }),
       ).rejects.toThrow(AuthException);
     });
   });

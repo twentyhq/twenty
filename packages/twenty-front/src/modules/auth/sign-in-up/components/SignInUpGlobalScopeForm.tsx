@@ -4,7 +4,6 @@ import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUr
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { motion } from 'framer-motion';
 import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
@@ -33,7 +32,7 @@ import {
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
-const StyledContentContainer = styled(motion.div)`
+const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
   min-width: 200px;
