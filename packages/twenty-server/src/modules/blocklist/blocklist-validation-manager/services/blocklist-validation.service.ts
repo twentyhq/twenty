@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import {
@@ -105,7 +106,7 @@ export class BlocklistValidationService {
     if (
       payload.data.some(
         (item) =>
-          item.workspaceMemberId &&
+          isDefined(item.workspaceMemberId) &&
           item.workspaceMemberId !== currentWorkspaceMember.id,
       )
     ) {
