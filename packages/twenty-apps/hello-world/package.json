@@ -13,12 +13,15 @@
     "dev": "twenty app dev",
     "sync": "twenty app sync",
     "uninstall": "twenty app uninstall",
-    "auth": "twenty auth login"
+    "auth": "twenty auth login",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "twenty-sdk": "0.6.3"
+    "twenty-sdk": "portal:../../twenty-sdk"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2"
+    "@types/node": "^24.7.2",
+    "vitest": "^3.1.1"
   }
 }
