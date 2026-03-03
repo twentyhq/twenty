@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CustomResolverFetchMoreLoaderProps = {
   loading: boolean;
@@ -14,11 +15,11 @@ const StyledContainer = styled.div`
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${({ theme }) => theme.grayScale.gray9};
+  color: ${themeCssVariables.grayScale.gray9};
   display: flex;
   height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(8)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${themeCssVariables.spacing[8]};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const CustomResolverFetchMoreLoader = ({

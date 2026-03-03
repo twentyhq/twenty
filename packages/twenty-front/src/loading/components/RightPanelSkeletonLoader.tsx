@@ -1,11 +1,12 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { BORDER_COMMON, MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { BORDER_COMMON, MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMainContainer = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
   flex: 1 1 auto;
@@ -22,8 +23,8 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${BORDER_COMMON.radius.md};
   height: 100%;
   overflow: auto;
@@ -49,7 +50,7 @@ const StyledRightPanelFlexContainer = styled.div`
 `;
 
 const StyledSkeletonHeaderLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledHeaderContainer>
@@ -68,7 +69,7 @@ const StyledSkeletonHeaderLoader = () => {
 };
 
 const StyledSkeletonAddLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SkeletonTheme

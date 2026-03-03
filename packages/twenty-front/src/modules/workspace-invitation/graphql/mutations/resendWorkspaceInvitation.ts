@@ -9,6 +9,7 @@ export const RESEND_WORKSPACE_INVITATION = gql`
         ... on WorkspaceInvitation {
           id
           email
+          roleId
           expiresAt
         }
       }

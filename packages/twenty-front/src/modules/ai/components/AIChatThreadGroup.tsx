@@ -1,52 +1,54 @@
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSparkles } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDateGroup = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledDateHeader = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledThreadItem = styled.div<{ isSelected?: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  border-radius: ${themeCssVariables.border.radius.sm};
   transition: all 0.2s ease;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${themeCssVariables.spacing[1]};
   border-left: 3px solid transparent;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1)} 1px;
+  padding: ${themeCssVariables.spacing[1]} 1px;
   right: 3px;
   position: relative;
   width: calc(100% + 1px);
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledSparkleIcon = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.blue};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.blue};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   justify-content: center;
 `;
 
@@ -56,8 +58,8 @@ const StyledThreadContent = styled.div`
 `;
 
 const StyledThreadTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -72,7 +74,7 @@ export const AIChatThreadGroup = ({
   title: string;
 }) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { handleThreadClick } = useAIChatThreadClick();
 
   if (threads.length === 0) {

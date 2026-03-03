@@ -1,29 +1,30 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmailBodyNotSharedContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.spacing[1]};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 
   height: 80px;
   justify-content: center;
 
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
   width: 100%;
 `;
 
 const StyledEmailBodyNotSharedIconContainer = styled.div`
   display: flex;
-  width: ${({ theme }) => theme.icon.size.sm}px;
-  height: ${({ theme }) => theme.icon.size.sm}px;
+  width: calc(${themeCssVariables.icon.size.sm} * 1px);
+  height: calc(${themeCssVariables.icon.size.sm} * 1px);
   justify-content: center;
   align-items: center;
 `;
@@ -31,7 +32,7 @@ const StyledEmailBodyNotSharedIconContainer = styled.div`
 const StyledEmailBodyNotShared = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const EventCardMessageBodyNotShared = ({

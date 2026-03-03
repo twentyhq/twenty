@@ -11,6 +11,7 @@ const StyledTableRow = styled('div', {
   onClick?: () => void;
   to?: string;
   gridAutoColumns?: string;
+  gridTemplateColumns?: string;
   mobileGridAutoColumns?: string;
 }>`
   background-color: ${({ isSelected, theme }) =>
@@ -18,6 +19,10 @@ const StyledTableRow = styled('div', {
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: grid;
   grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
+  ${({ gridTemplateColumns }) =>
+    gridTemplateColumns
+      ? `grid-template-columns: ${gridTemplateColumns};`
+      : ''};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-auto-columns: ${({ mobileGridAutoColumns, gridAutoColumns }) =>
@@ -35,31 +40,44 @@ const StyledTableRow = styled('div', {
       onClick || to ? theme.background.transparent.light : 'transparent'};
     cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
   }
+
+  &[data-clickable='true'] {
+    cursor: pointer;
+  }
 `;
 
 type TableRowProps = {
   isSelected?: boolean;
+  isClickable?: boolean;
   onClick?: () => void;
   to?: string;
   className?: string;
+  style?: React.CSSProperties;
   gridAutoColumns?: string;
+  gridTemplateColumns?: string;
   mobileGridAutoColumns?: string;
 };
 
 export const TableRow = ({
   isSelected,
+  isClickable,
   onClick,
   to,
   className,
+  style,
   children,
   gridAutoColumns,
+  gridTemplateColumns,
   mobileGridAutoColumns,
 }: React.PropsWithChildren<TableRowProps>) => (
   <StyledTableRow
     isSelected={isSelected}
     onClick={onClick}
     gridAutoColumns={gridAutoColumns}
+    gridTemplateColumns={gridTemplateColumns}
     className={className}
+    style={style}
+    data-clickable={isClickable}
     mobileGridAutoColumns={mobileGridAutoColumns}
     to={to}
     as={to ? Link : 'div'}
