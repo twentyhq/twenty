@@ -1,8 +1,8 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
+import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
-import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -70,15 +70,16 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       componentInstanceId,
     );
 
-  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
     componentInstanceId,
   );
 
-  const fieldsWidgetModePersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetModePersistedComponentState,
-    componentInstanceId,
-  );
+  const fieldsWidgetEditorModePersistedState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetEditorModePersistedComponentState,
+      componentInstanceId,
+    );
 
   const resetDraftPageLayoutToPersistedPageLayout = useCallback(() => {
     const pageLayoutPersisted = store.get(pageLayoutPersistedState);
@@ -118,10 +119,13 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
         fieldsWidgetUngroupedFieldsPersisted,
       );
 
-      const fieldsWidgetModePersisted = store.get(
-        fieldsWidgetModePersistedState,
+      const fieldsWidgetEditorModePersisted = store.get(
+        fieldsWidgetEditorModePersistedState,
       );
-      store.set(fieldsWidgetModeDraftState, fieldsWidgetModePersisted);
+      store.set(
+        fieldsWidgetEditorModeDraftState,
+        fieldsWidgetEditorModePersisted,
+      );
     }
   }, [
     pageLayoutDraftState,
@@ -131,8 +135,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     fieldsWidgetGroupsPersistedState,
     fieldsWidgetUngroupedFieldsDraftState,
     fieldsWidgetUngroupedFieldsPersistedState,
-    fieldsWidgetModeDraftState,
-    fieldsWidgetModePersistedState,
+    fieldsWidgetEditorModeDraftState,
+    fieldsWidgetEditorModePersistedState,
     activeTabId,
     store,
   ]);

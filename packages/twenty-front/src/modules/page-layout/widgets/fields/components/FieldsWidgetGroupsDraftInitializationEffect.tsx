@@ -18,7 +18,7 @@ export const FieldsWidgetGroupsDraftInitializationEffect = ({
   const {
     groups: persistedGroups,
     ungroupedFields,
-    mode,
+    editorMode,
   } = useFieldsWidgetEditorGroupsData({
     viewId,
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -29,7 +29,7 @@ export const FieldsWidgetGroupsDraftInitializationEffect = ({
     widgetId,
     persistedGroups,
     persistedUngroupedFields: ungroupedFields,
-    persistedMode: mode,
+    persistedEditorMode: editorMode,
   });
 
   return null;

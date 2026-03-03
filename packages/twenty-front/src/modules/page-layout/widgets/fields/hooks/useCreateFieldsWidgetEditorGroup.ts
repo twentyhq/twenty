@@ -1,5 +1,5 @@
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -26,8 +26,8 @@ export const useCreateFieldsWidgetEditorGroup = ({
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
     pageLayoutId,
   );
 
@@ -35,13 +35,13 @@ export const useCreateFieldsWidgetEditorGroup = ({
 
   const createGroup = useCallback(
     ({ name, afterGroupId }: { name: string; afterGroupId?: string }) => {
-      const allModes = store.get(fieldsWidgetModeDraftState);
+      const allEditorModes = store.get(fieldsWidgetEditorModeDraftState);
 
-      const currentMode = allModes[widgetId] ?? 'ungrouped';
+      const currentEditorMode = allEditorModes[widgetId] ?? 'ungrouped';
 
       const newId = v4();
 
-      if (currentMode === 'ungrouped') {
+      if (currentEditorMode === 'ungrouped') {
         const allUngroupedFields = store.get(
           fieldsWidgetUngroupedFieldsDraftState,
         );
@@ -70,7 +70,7 @@ export const useCreateFieldsWidgetEditorGroup = ({
           [widgetId]: [],
         }));
 
-        store.set(fieldsWidgetModeDraftState, (prev) => ({
+        store.set(fieldsWidgetEditorModeDraftState, (prev) => ({
           ...prev,
           [widgetId]: 'grouped' as const,
         }));
@@ -117,7 +117,7 @@ export const useCreateFieldsWidgetEditorGroup = ({
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
-      fieldsWidgetModeDraftState,
+      fieldsWidgetEditorModeDraftState,
       widgetId,
       store,
     ],

@@ -13,7 +13,7 @@ import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/com
 import { FieldsConfigurationUngroupedEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
 import { useDeleteFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useDeleteFieldsWidgetEditorGroup';
-import { useFieldsWidgetMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetMode';
+import { useFieldsWidgetEditorMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorMode';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveUngroupedFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
@@ -44,7 +44,7 @@ export const FieldsConfigurationEditor = ({
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { mode } = useFieldsWidgetMode({
+  const { editorMode } = useFieldsWidgetEditorMode({
     pageLayoutId,
     widgetId,
   });
@@ -195,7 +195,7 @@ export const FieldsConfigurationEditor = ({
     });
   };
 
-  if (mode === 'ungrouped') {
+  if (editorMode === 'ungrouped') {
     return (
       <FieldsConfigurationUngroupedEditor
         ungroupedFields={ungroupedFields}

@@ -1,5 +1,5 @@
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -25,8 +25,8 @@ export const useDeleteFieldsWidgetEditorGroup = ({
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
     pageLayoutId,
   );
 
@@ -64,7 +64,7 @@ export const useDeleteFieldsWidgetEditorGroup = ({
           })),
         }));
 
-        store.set(fieldsWidgetModeDraftState, (prev) => ({
+        store.set(fieldsWidgetEditorModeDraftState, (prev) => ({
           ...prev,
           [widgetId]: 'ungrouped' as const,
         }));
@@ -116,7 +116,7 @@ export const useDeleteFieldsWidgetEditorGroup = ({
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
-      fieldsWidgetModeDraftState,
+      fieldsWidgetEditorModeDraftState,
       widgetId,
       store,
     ],

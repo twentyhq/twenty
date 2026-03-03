@@ -1,7 +1,7 @@
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
+import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
-import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
@@ -19,7 +19,7 @@ type UseInitializeFieldsWidgetGroupsDraftParams = {
   widgetId: string;
   persistedGroups: FieldsWidgetGroup[];
   persistedUngroupedFields: FieldsWidgetGroupField[];
-  persistedMode: FieldsWidgetEditorMode;
+  persistedEditorMode: FieldsWidgetEditorMode;
 };
 
 export const useInitializeFieldsWidgetGroupsDraft = ({
@@ -27,7 +27,7 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
   widgetId,
   persistedGroups,
   persistedUngroupedFields,
-  persistedMode,
+  persistedEditorMode,
 }: UseInitializeFieldsWidgetGroupsDraftParams) => {
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
@@ -51,15 +51,16 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetModePersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetModePersistedComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetEditorModePersistedState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetEditorModePersistedComponentState,
+      pageLayoutId,
+    );
 
   const hasInitializedFieldsWidgetGroupsDraftState =
     useAtomComponentStateCallbackState(
@@ -104,17 +105,17 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
       }));
     }
 
-    const currentModes = store.get(fieldsWidgetModeDraftState);
+    const currentEditorModes = store.get(fieldsWidgetEditorModeDraftState);
 
-    if (!(widgetId in currentModes)) {
-      store.set(fieldsWidgetModeDraftState, (prev) => ({
+    if (!(widgetId in currentEditorModes)) {
+      store.set(fieldsWidgetEditorModeDraftState, (prev) => ({
         ...prev,
-        [widgetId]: persistedMode,
+        [widgetId]: persistedEditorMode,
       }));
 
-      store.set(fieldsWidgetModePersistedState, (prev) => ({
+      store.set(fieldsWidgetEditorModePersistedState, (prev) => ({
         ...prev,
-        [widgetId]: persistedMode,
+        [widgetId]: persistedEditorMode,
       }));
     }
 
@@ -128,12 +129,12 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
     fieldsWidgetGroupsPersistedState,
     fieldsWidgetUngroupedFieldsDraftState,
     fieldsWidgetUngroupedFieldsPersistedState,
-    fieldsWidgetModeDraftState,
-    fieldsWidgetModePersistedState,
+    fieldsWidgetEditorModeDraftState,
+    fieldsWidgetEditorModePersistedState,
     widgetId,
     persistedGroups,
     persistedUngroupedFields,
-    persistedMode,
+    persistedEditorMode,
     store,
   ]);
 

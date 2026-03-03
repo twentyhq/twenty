@@ -1,5 +1,5 @@
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
@@ -36,8 +36,8 @@ export const useFieldsWidgetGroupsForDisplay = ({
     fieldsWidgetUngroupedFieldsDraftComponentState,
   );
 
-  const fieldsWidgetModeDraft = useAtomComponentStateValue(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraft = useAtomComponentStateValue(
+    fieldsWidgetEditorModeDraftComponentState,
   );
 
   const viewGroups = useFieldsWidgetGroups({
@@ -46,7 +46,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
   });
 
   const draftGroupsForWidget = fieldsWidgetGroupsDraft[widgetId];
-  const draftMode = fieldsWidgetModeDraft[widgetId];
+  const draftEditorMode = fieldsWidgetEditorModeDraft[widgetId];
   const ungroupedFieldsForWidget = fieldsWidgetUngroupedFieldsDraft[widgetId];
 
   const hasDraftGroups =
@@ -58,7 +58,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
   const groups = useMemo<FieldsWidgetGroup[]>(() => {
     if (
       isPageLayoutInEditMode &&
-      draftMode === 'ungrouped' &&
+      draftEditorMode === 'ungrouped' &&
       hasDraftUngroupedFields
     ) {
       const visibleFields = ungroupedFieldsForWidget
@@ -91,7 +91,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
     return viewGroups.groups;
   }, [
     isPageLayoutInEditMode,
-    draftMode,
+    draftEditorMode,
     hasDraftGroups,
     hasDraftUngroupedFields,
     draftGroupsForWidget,
@@ -103,7 +103,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
 
   const displayMode: FieldsWidgetDisplayMode = (() => {
     if (isPageLayoutInEditMode) {
-      if (draftMode === 'ungrouped' && hasDraftUngroupedFields) {
+      if (draftEditorMode === 'ungrouped' && hasDraftUngroupedFields) {
         return 'inline';
       }
       if (hasDraftGroups) {

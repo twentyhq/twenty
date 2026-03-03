@@ -16,7 +16,7 @@ type UseFieldsWidgetEditorGroupsDataParams = {
 type UseFieldsWidgetEditorGroupsDataResult = {
   groups: FieldsWidgetGroup[];
   ungroupedFields: FieldsWidgetGroupField[];
-  mode: FieldsWidgetEditorMode;
+  editorMode: FieldsWidgetEditorMode;
   isFromView: boolean;
 };
 
@@ -32,11 +32,11 @@ export const useFieldsWidgetEditorGroupsData = ({
   const result = useMemo<
     Pick<
       UseFieldsWidgetEditorGroupsDataResult,
-      'groups' | 'ungroupedFields' | 'mode'
+      'groups' | 'ungroupedFields' | 'editorMode'
     >
   >(() => {
     if (!isDefined(objectMetadataItem)) {
-      return { groups: [], ungroupedFields: [], mode: 'ungrouped' };
+      return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
     }
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
@@ -82,7 +82,7 @@ export const useFieldsWidgetEditorGroupsData = ({
         };
       });
 
-      return { groups, ungroupedFields: [], mode: 'grouped' };
+      return { groups, ungroupedFields: [], editorMode: 'grouped' };
     }
 
     if (isDefined(view) && view.viewFields.length > 0) {
@@ -110,11 +110,11 @@ export const useFieldsWidgetEditorGroupsData = ({
         .filter(isDefined);
 
       if (fields.length > 0) {
-        return { groups: [], ungroupedFields: fields, mode: 'ungrouped' };
+        return { groups: [], ungroupedFields: fields, editorMode: 'ungrouped' };
       }
     }
 
-    return { groups: [], ungroupedFields: [], mode: 'ungrouped' };
+    return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
   }, [objectMetadataItem, view]);
 
   return {

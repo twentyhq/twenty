@@ -1,8 +1,8 @@
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
+import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
-import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -66,15 +66,16 @@ export const useSaveFieldsWidgetGroups = ({
       pageLayoutId,
     );
 
-  const fieldsWidgetModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetModeDraftComponentState,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetModePersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetModePersistedComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetEditorModePersistedState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetEditorModePersistedComponentState,
+      pageLayoutId,
+    );
 
   const [upsertFieldsWidgetMutation] = useMutation<
     UpsertFieldsWidgetResult,
@@ -91,7 +92,7 @@ export const useSaveFieldsWidgetGroups = ({
     const allUngroupedFieldsDraft = store.get(
       fieldsWidgetUngroupedFieldsDraftState,
     );
-    const allModes = store.get(fieldsWidgetModeDraftState);
+    const allEditorModes = store.get(fieldsWidgetEditorModeDraftState);
 
     const widgetIds = new Set([
       ...Object.keys(allDraftGroups),
@@ -100,9 +101,9 @@ export const useSaveFieldsWidgetGroups = ({
     ]);
 
     for (const widgetId of widgetIds) {
-      const mode = allModes[widgetId] ?? 'ungrouped';
+      const editorMode = allEditorModes[widgetId] ?? 'ungrouped';
 
-      if (mode === 'grouped') {
+      if (editorMode === 'grouped') {
         const draftGroups = allDraftGroups[widgetId] ?? [];
 
         await upsertFieldsWidgetMutation({
@@ -162,7 +163,7 @@ export const useSaveFieldsWidgetGroups = ({
       fieldsWidgetUngroupedFieldsPersistedState,
       allUngroupedFieldsDraft,
     );
-    store.set(fieldsWidgetModePersistedState, allModes);
+    store.set(fieldsWidgetEditorModePersistedState, allEditorModes);
 
     await refreshAllCoreViews();
 
@@ -172,8 +173,8 @@ export const useSaveFieldsWidgetGroups = ({
     fieldsWidgetGroupsPersistedState,
     fieldsWidgetUngroupedFieldsDraftState,
     fieldsWidgetUngroupedFieldsPersistedState,
-    fieldsWidgetModeDraftState,
-    fieldsWidgetModePersistedState,
+    fieldsWidgetEditorModeDraftState,
+    fieldsWidgetEditorModePersistedState,
     upsertFieldsWidgetMutation,
     refreshAllCoreViews,
     store,

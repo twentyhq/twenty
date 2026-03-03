@@ -3,10 +3,9 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const fieldsWidgetModePersistedComponentState = createAtomComponentState<
-  Record<string, FieldsWidgetEditorMode>
->({
-  key: 'fieldsWidgetModePersistedComponentState',
-  defaultValue: {},
-  componentInstanceContext: PageLayoutComponentInstanceContext,
-});
+export const fieldsWidgetEditorModeDraftComponentState =
+  createAtomComponentState<Record<string, FieldsWidgetEditorMode>>({
+    key: 'fieldsWidgetEditorModeDraftComponentState',
+    defaultValue: {},
+    componentInstanceContext: PageLayoutComponentInstanceContext,
+  });
