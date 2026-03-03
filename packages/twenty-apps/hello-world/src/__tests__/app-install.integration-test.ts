@@ -19,17 +19,19 @@ const readApiKeyFromConfig = (): string | undefined => {
 };
 
 const assertServerIsReachable = async () => {
-  try {
-    const response = await fetch(`${TWENTY_API_URL}/healthz`);
+  let response: Response;
 
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
+  try {
+    response = await fetch(`${TWENTY_API_URL}/healthz`);
   } catch {
     throw new Error(
       `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
         'Make sure the server is running before executing integration tests.',
     );
+  }
+
+  if (!response.ok) {
+    throw new Error(`Server at ${TWENTY_API_URL} returned ${response.status}`);
   }
 };
 
@@ -69,6 +71,13 @@ describe('App installation', () => {
 
   it('should find the installed app in the applications list', async () => {
     const apiKey = readApiKeyFromConfig();
+
+    if (!apiKey) {
+      throw new Error(
+        'No API key found. Ensure TWENTY_CONFIG_PATH points to a valid config file containing an apiKey.',
+      );
+    }
+
     const metadataClient = new MetadataApiClient({
       url: `${TWENTY_API_URL}/metadata`,
       headers: {
