@@ -5,18 +5,18 @@ import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-a
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
-export type AppBuildAndSyncOptions = {
+export type AppBuildOptions = {
   appPath: string;
   onProgress?: (message: string) => void;
 };
 
-export type AppBuildAndSyncResult = {
+export type AppBuildResult = {
   fileCount: number;
 };
 
-export const appBuildAndSync = async (
-  options: AppBuildAndSyncOptions,
-): Promise<CommandResult<AppBuildAndSyncResult>> => {
+export const appBuild = async (
+  options: AppBuildOptions,
+): Promise<CommandResult<AppBuildResult>> => {
   const { appPath, onProgress } = options;
 
   onProgress?.('Building manifest...');

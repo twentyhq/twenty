@@ -1,4 +1,4 @@
-import { appBuildAndSync } from '@/cli/public-operations/app-build-and-sync';
+import { appBuild } from '@/cli/public-operations/app-build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
@@ -14,7 +14,7 @@ export class AppBuildCommand {
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const result = await appBuildAndSync({
+    const result = await appBuild({
       appPath,
       onProgress: (message) => console.log(chalk.gray(message)),
     });

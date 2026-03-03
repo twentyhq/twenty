@@ -1,5 +1,8 @@
 import { functionExecute } from '@/cli/public-operations/function-execute';
-import { APP_ERROR_CODES, FUNCTION_ERROR_CODES } from '@/cli/public-operations/types';
+import {
+  APP_ERROR_CODES,
+  FUNCTION_ERROR_CODES,
+} from '@/cli/public-operations/types';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
