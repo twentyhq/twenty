@@ -186,9 +186,7 @@ export class AppRegistrationUploadController {
     return this.findManifestPath(extractDir);
   }
 
-  private async readPackageVersion(
-    extractDir: string,
-  ): Promise<string | null> {
+  private async readPackageVersion(extractDir: string): Promise<string | null> {
     const candidates = [
       join(extractDir, 'package.json'),
       join(extractDir, 'package', 'package.json'),

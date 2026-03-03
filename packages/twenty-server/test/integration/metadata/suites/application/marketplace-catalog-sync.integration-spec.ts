@@ -100,9 +100,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
       const apps = res.body.data.findManyMarketplaceApps;
 
-      const testApp = apps.find(
-        (app: { id: string }) => app.id === uid,
-      );
+      const testApp = apps.find((app: { id: string }) => app.id === uid);
 
       expect(testApp).toBeDefined();
       expect(testApp.name).toBe('Test Catalog App');
@@ -137,9 +135,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
       const apps = res.body.data.findManyMarketplaceApps;
 
-      const tarballApp = apps.find(
-        (app: { id: string }) => app.id === uid,
-      );
+      const tarballApp = apps.find((app: { id: string }) => app.id === uid);
 
       expect(tarballApp).toBeUndefined();
     });

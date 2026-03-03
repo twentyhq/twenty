@@ -139,9 +139,7 @@ describe('App Distribution (integration)', () => {
     });
 
     it('should reject tarball that exceeds size limit', async () => {
-      const largeFakeBase64 = Buffer.alloc(51 * 1024 * 1024).toString(
-        'base64',
-      );
+      const largeFakeBase64 = Buffer.alloc(51 * 1024 * 1024).toString('base64');
 
       const res = await postUploadTarball({
         tarball: largeFakeBase64,

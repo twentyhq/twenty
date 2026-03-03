@@ -117,15 +117,6 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('app:build [appPath]')
-    .description(
-      'Build the application for npm publishing (outputs to .twenty/output/)',
-    )
-    .action(async (appPath) => {
-      await buildCommand.execute({ appPath: formatPath(appPath) });
-    });
-
-  program
     .command('app:pack [appPath]')
     .description('Build and pack the application into a .tgz tarball')
     .action(async (appPath) => {
