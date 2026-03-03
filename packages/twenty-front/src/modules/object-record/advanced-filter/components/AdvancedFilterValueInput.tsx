@@ -14,7 +14,7 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`

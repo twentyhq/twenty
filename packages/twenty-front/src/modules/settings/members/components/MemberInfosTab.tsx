@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { MemberEmailField } from '@/settings/members/components/MemberEmailField';
@@ -9,6 +9,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type MemberInfosTabProps = {
   member: WorkspaceMember;
@@ -19,13 +20,13 @@ type MemberInfosTabProps = {
 
 const StyledNameRow = styled.div`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 `;
 
 const StyledActionRow = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const MemberInfosTab = ({

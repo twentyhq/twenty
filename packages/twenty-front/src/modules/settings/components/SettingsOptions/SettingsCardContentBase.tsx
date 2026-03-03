@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledCardContentProps = {
   disabled?: boolean;
@@ -9,27 +10,27 @@ type StyledCardContentProps = {
 export const StyledSettingsCardContent = styled.div<StyledCardContentProps>`
   align-items: ${({ alignItems }) => alignItems ?? 'center'};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  background-color: ${({ theme }) => theme.background.secondary};
+  gap: ${themeCssVariables.spacing[3]};
+  background-color: ${themeCssVariables.background.secondary};
   height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 export const StyledSettingsCardIcon = styled.div`
   align-items: center;
-  border: 2px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  background-color: ${({ theme }) => theme.background.primary};
+  border: 2px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  background-color: ${themeCssVariables.background.primary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${themeCssVariables.spacing[7]};
   justify-content: center;
-  width: ${({ theme }) => theme.spacing(7)};
-  min-width: ${({ theme }) => theme.icon.size.md};
+  width: ${themeCssVariables.spacing[7]};
+  min-width: ${themeCssVariables.icon.size.md};
 `;
 
 export const StyledSettingsCardTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledSettingsCardTextContainer = styled.div`
@@ -38,8 +39,8 @@ export const StyledSettingsCardTextContainer = styled.div`
 `;
 
 export const StyledSettingsCardDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
   overflow: hidden;
   line-height: 1.5;
 
@@ -51,7 +52,7 @@ export const StyledSettingsCardDescription = styled.div`
 `;
 
 export const StyledSettingsCardThirdLine = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;

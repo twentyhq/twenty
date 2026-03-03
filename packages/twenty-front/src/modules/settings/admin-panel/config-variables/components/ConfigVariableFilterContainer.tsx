@@ -1,6 +1,6 @@
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledChipContainer = styled.div`
   display: flex;
