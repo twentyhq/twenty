@@ -34,7 +34,6 @@ import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
 
@@ -241,7 +240,7 @@ export const WorkflowEditActionEmailBase = ({
               handleConnectedAccountChange(connectedAccountId);
             }}
             disabled={actionOptions.readonly}
-            dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+            dropdownOffset={{ y: 4 }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           {isDefined(missingScopes) && (

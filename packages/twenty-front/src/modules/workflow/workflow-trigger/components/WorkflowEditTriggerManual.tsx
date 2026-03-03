@@ -105,7 +105,7 @@ export const WorkflowEditTriggerManual = ({
               }),
             });
           }}
-          dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
@@ -137,7 +137,7 @@ export const WorkflowEditTriggerManual = ({
                 },
               });
             }}
-            dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+            dropdownOffset={{ y: 4 }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
         ) : null}
@@ -145,7 +145,7 @@ export const WorkflowEditTriggerManual = ({
         <IconPicker
           dropdownId="workflow-edit-manual-trigger-icon"
           selectedIconKey={trigger.settings.icon}
-          dropdownOffset={{ y: -parseInt(themeCssVariables.spacing[3], 10) }}
+          dropdownOffset={{ y: -12 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           maxIconsVisible={9 * 8} // 9 columns * 8 lines
           disabled={triggerOptions.readonly}
@@ -207,7 +207,7 @@ export const WorkflowEditTriggerManual = ({
               },
             });
           }}
-          dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>

@@ -201,7 +201,7 @@ export const WorkflowEditActionFindRecords = ({
                 />
               )
             }
-            dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+            dropdownOffset={{ y: 4 }}
           />
         </StyledRecordTypeSelectContainer>
 

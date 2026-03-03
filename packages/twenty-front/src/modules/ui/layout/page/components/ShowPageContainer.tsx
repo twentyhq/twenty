@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -7,14 +7,14 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   display: flex;
-  gap: ${() => (useIsMobile() ? themeCssVariables.spacing[3] : '0')};
+  gap: var(--show-page-gap, 0);
   height: 100%;
   width: 100%;
 `;
 
 const StyledInnerContainer = styled.div`
   display: flex;
-  flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
+  flex-direction: var(--show-page-direction, row);
   width: 100%;
   height: 100%;
 `;
@@ -30,10 +30,20 @@ export type ShowPageContainerProps = {
 
 export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
   const isMobile = useIsMobile();
+
+  const mobileStyle = isMobile
+    ? ({
+        '--show-page-gap': themeCssVariables.spacing[3],
+        '--show-page-direction': 'column',
+      } as CSSProperties)
+    : undefined;
+
   return isMobile ? (
-    <StyledOuterContainer>
+    <StyledOuterContainer style={mobileStyle}>
       <StyledScrollWrapper componentInstanceId="scroll-wrapper-show-page-container">
-        <StyledInnerContainer>{children}</StyledInnerContainer>
+        <StyledInnerContainer style={mobileStyle}>
+          {children}
+        </StyledInnerContainer>
       </StyledScrollWrapper>
     </StyledOuterContainer>
   ) : (

@@ -21,7 +21,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -167,7 +166,7 @@ export const WorkflowEditActionUpdateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

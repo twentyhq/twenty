@@ -249,7 +249,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                   ))}
               </>
             }
-            dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+            dropdownOffset={{ y: 4 }}
           />
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (

@@ -15,7 +15,6 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -134,7 +133,7 @@ export const WorkflowEditActionDeleteRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

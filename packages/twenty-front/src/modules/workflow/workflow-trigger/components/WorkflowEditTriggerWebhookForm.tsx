@@ -24,7 +24,6 @@ import { IconCopy } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowEditTriggerWebhookFormProps = {
@@ -111,7 +110,7 @@ export const WorkflowEditTriggerWebhookForm = ({
               { computeOutputSchema: false },
             );
           }}
-          dropdownOffset={{ y: parseInt(themeCssVariables.spacing[1], 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.httpMethod === 'POST' && (

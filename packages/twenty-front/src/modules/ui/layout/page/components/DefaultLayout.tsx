@@ -12,7 +12,7 @@ import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvid
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
-import { Suspense, lazy, useContext, useEffect } from 'react';
+import { Suspense, lazy, useContext } from 'react';
 
 const SignInBackgroundMockPage = lazy(() =>
   import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
@@ -74,13 +74,6 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-
-  useEffect(() => {
-    document.body.style.background = theme.background.tertiary;
-    return () => {
-      document.body.style.background = '';
-    };
-  }, [theme.background.tertiary]);
 
   return (
     <>

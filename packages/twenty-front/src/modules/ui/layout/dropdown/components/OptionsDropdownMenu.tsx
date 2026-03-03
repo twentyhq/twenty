@@ -10,7 +10,6 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type OptionsDropdownMenuProps = {
   dropdownId?: string;
@@ -74,7 +73,7 @@ export const OptionsDropdownMenu = ({
         />
       }
       dropdownPlacement="top-end"
-      dropdownOffset={{ y: parseInt(themeCssVariables.spacing[2], 10) }}
+      dropdownOffset={{ y: 8 }}
       globalHotkeysConfig={{
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

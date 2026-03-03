@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowStepFilterFieldSelectProps = {
   stepFilter: StepFilter;
@@ -152,8 +151,8 @@ export const WorkflowStepFilterFieldSelect = ({
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{
-        x: parseInt(themeCssVariables.spacing[0.5], 10),
-        y: parseInt(themeCssVariables.spacing[1], 10),
+        x: 2,
+        y: 4,
       }}
     />
   );
