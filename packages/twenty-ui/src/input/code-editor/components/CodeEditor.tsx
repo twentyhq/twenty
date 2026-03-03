@@ -6,6 +6,7 @@ import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBas
 import { ThemeContext } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
+import { useResizableEditor } from '@ui/input/code-editor/hooks/useResizableEditor';
 import { type KeyboardEvent, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +21,8 @@ type CodeEditorProps = Pick<
   variant?: CodeEditorVariant;
   isLoading?: boolean;
   transparentBackground?: boolean;
+  resizable?: boolean;
+  onHeightChange?: (height: number) => void;
 };
 
 const StyledEditorLoader = styled.div<{
@@ -106,6 +109,30 @@ const StyledEditorWrapper = styled.div<{
   }
 `;
 
+const StyledResizeHandleArea = styled.div`
+  align-items: center;
+  cursor: ns-resize;
+  display: flex;
+  height: 8px;
+  justify-content: center;
+  user-select: none;
+
+  &:hover > div {
+    background-color: ${themeCssVariables.font.color.tertiary};
+  }
+`;
+
+const StyledResizeHandleBar = styled.div<{ isResizing: boolean }>`
+  background-color: ${({ isResizing }) =>
+    isResizing
+      ? themeCssVariables.color.blue
+      : themeCssVariables.background.quaternary};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  height: 3px;
+  transition: background-color ${themeCssVariables.animation.duration.fast}s;
+  width: 32px;
+`;
+
 export const CodeEditor = ({
   value,
   language,
@@ -118,6 +145,8 @@ export const CodeEditor = ({
   transparentBackground,
   isLoading = false,
   options,
+  resizable = false,
+  onHeightChange,
 }: CodeEditorProps) => {
   const { theme } = useContext(ThemeContext);
   const [monaco, setMonaco] = useState<Monaco | undefined>(undefined);
@@ -125,6 +154,14 @@ export const CodeEditor = ({
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
+
+  const numericHeight = typeof height === 'number' ? height : 450;
+  const { currentHeight, isResizing, handleResizeStart } = useResizableEditor({
+    initialHeight: numericHeight,
+    onHeightChange,
+  });
+
+  const effectiveHeight = resizable ? currentHeight : height;
 
   const setModelMarkers = (
     editor: editor.IStandaloneCodeEditor | undefined,
@@ -147,7 +184,7 @@ export const CodeEditor = ({
   };
 
   return isLoading ? (
-    <StyledEditorLoader height={height} variant={variant}>
+    <StyledEditorLoader height={effectiveHeight} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
@@ -163,7 +200,7 @@ export const CodeEditor = ({
         transparentBackground={transparentBackground}
       >
         <Editor
-          height={height}
+          height={effectiveHeight}
           value={value}
           language={language}
           loading=""
@@ -213,6 +250,11 @@ export const CodeEditor = ({
           }}
         />
       </StyledEditorWrapper>
+      {resizable && (
+        <StyledResizeHandleArea onMouseDown={handleResizeStart}>
+          <StyledResizeHandleBar isResizing={isResizing} />
+        </StyledResizeHandleArea>
+      )}
     </StyledCodeEditorContainer>
   );
 };

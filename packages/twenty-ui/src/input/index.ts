@@ -80,6 +80,7 @@ export { CodeEditor } from './code-editor/components/CodeEditor';
 export type { CoreEditorHeaderProps } from './code-editor/components/CodeEditorHeader';
 export { CoreEditorHeader } from './code-editor/components/CodeEditorHeader';
 export { BASE_CODE_EDITOR_THEME_ID } from './code-editor/constants/BaseCodeEditorThemeId';
+export { useResizableEditor } from './code-editor/hooks/useResizableEditor';
 export { getBaseCodeEditorTheme } from './code-editor/theme/utils/getBaseCodeEditorTheme';
 export type {
   ColorSchemeSegmentProps,

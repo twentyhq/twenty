@@ -1,4 +1,6 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
@@ -7,8 +9,6 @@ import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -39,6 +39,13 @@ export const SettingsLogicFunctionTestTab = ({
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );
+
+  const onHeightChange = (height: number) => {
+    setLogicFunctionTestData((prev) => ({
+      ...prev,
+      height,
+    }));
+  };
 
   const onChange = (newInput: string) => {
     setLogicFunctionTestData((prev) => ({
@@ -74,9 +81,11 @@ export const SettingsLogicFunctionTestTab = ({
           <CodeEditor
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}
             language="json"
-            height={100}
+            height={logicFunctionTestData.height}
             onChange={onChange}
+            onHeightChange={onHeightChange}
             variant="with-header"
+            resizable
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
