@@ -25,16 +25,16 @@ import {
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
-import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
+import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -136,7 +136,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 
   const [skipInitialExpandAnimation] = useState(() => isOpen);
 
-  const navigationMenuItemFolderContentLength = navigationMenuItems.length;
   const { isDragging: isContextDragging } = useContext(
     NavigationMenuItemDragContext,
   );
@@ -239,7 +238,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     <WorkspaceNavigationMenuItemFolderSubItem
                       navigationMenuItem={navigationMenuItem}
                       index={index}
-                      arrayLength={navigationMenuItemFolderContentLength}
+                      arrayLength={folderContentLengthForTree}
                       selectedNavigationMenuItemIndex={
                         selectedNavigationMenuItemIndex
                       }
@@ -267,20 +266,20 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     navigationMenuItems.length,
                   )}
                 />
+                {isNavigationMenuInEditMode && isSelectedInEditMode && (
+                  <NavigationDrawerSubItem
+                    label={t`Add menu item`}
+                    Icon={IconPlus}
+                    onClick={handleAddMenuItemToFolder}
+                    triggerEvent="CLICK"
+                    subItemState={getNavigationSubItemLeftAdornment({
+                      index: navigationMenuItems.length,
+                      arrayLength: folderContentLengthForTree,
+                      selectedIndex: selectedNavigationMenuItemIndex,
+                    })}
+                  />
+                )}
               </WorkspaceDndKitDroppableSlot>
-              {isNavigationMenuInEditMode && isSelectedInEditMode && (
-                <NavigationDrawerSubItem
-                  label={t`Add menu item`}
-                  Icon={IconPlus}
-                  onClick={handleAddMenuItemToFolder}
-                  triggerEvent="CLICK"
-                  subItemState={getNavigationSubItemLeftAdornment({
-                    index: navigationMenuItems.length,
-                    arrayLength: folderContentLengthForTree,
-                    selectedIndex: selectedNavigationMenuItemIndex,
-                  })}
-                />
-              )}
             </StyledFolderDroppableContent>
           </AnimatedExpandableContainer>
         </StyledFolderExpandableWrapper>
