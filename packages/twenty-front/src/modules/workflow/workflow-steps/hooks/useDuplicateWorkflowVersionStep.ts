@@ -1,4 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -18,6 +20,11 @@ export const useDuplicateWorkflowVersionStep = () => {
 
   const setFlow = useSetAtomComponentState(flowComponentState);
 
+  const { findOneRecordQuery: findOneWorkflowVersionQuery } =
+    useFindOneRecordQuery({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
+
   const [mutate] = useMutation<
     DuplicateWorkflowVersionStepMutation,
     DuplicateWorkflowVersionStepMutationVariables
@@ -30,6 +37,12 @@ export const useDuplicateWorkflowVersionStep = () => {
   ) => {
     const result = await mutate({
       variables: { input },
+      refetchQueries: [
+        {
+          query: findOneWorkflowVersionQuery,
+          variables: { objectRecordId: input.workflowVersionId },
+        },
+      ],
     });
 
     const workflowVersionStepChanges =
