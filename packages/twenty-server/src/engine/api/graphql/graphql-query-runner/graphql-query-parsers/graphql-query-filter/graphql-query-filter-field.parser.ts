@@ -72,7 +72,7 @@ export class GraphqlQueryFilterFieldParser {
       key === fieldMetadata.name
     ) {
       throw new GraphqlQueryRunnerException(
-        `Use "${fieldMetadata.settings.joinColumnName}" instead of "${key}" to filter on this relation.`,
+        `Cannot filter by relation name "${key}". Use the relation's foreign key ID field instead.`,
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );

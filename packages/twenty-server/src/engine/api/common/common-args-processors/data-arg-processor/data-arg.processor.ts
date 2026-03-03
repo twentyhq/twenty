@@ -268,7 +268,7 @@ export class DataArgProcessor {
           !isRelationNestedOperation(value)
         ) {
           throw new CommonQueryRunnerException(
-            `Use "${fieldMetadataMorphRelationSettings.joinColumnName}" instead of "${key}" to set this relation.`,
+            `Cannot write to relation name "${key}". Use the relation's foreign key ID field instead.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
