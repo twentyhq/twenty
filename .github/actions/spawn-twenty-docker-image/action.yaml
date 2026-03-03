@@ -3,14 +3,13 @@ description: >
   Starts a full Twenty instance (server, worker, database, redis) using Docker
   Compose. The server is available at http://localhost:3000 for subsequent steps
   in the caller's job.
-  Pulls the specified image tag from Docker Hub (defaults to 'latest').
+  Pulls the specified semver image tag from Docker Hub.
   Designed to be consumed from external repositories (e.g., twenty-app).
 
 inputs:
   twenty-version:
-    description: 'Twenty Docker Hub image tag (e.g., latest, v0.40.0).'
-    required: false
-    default: 'latest'
+    description: 'Twenty Docker Hub image tag as semver (e.g., v0.40.0, v1.0.0).'
+    required: true
   twenty-repository:
     description: 'Twenty repository to checkout docker compose files from.'
     required: false
@@ -31,11 +30,20 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Validate version
+      shell: bash
+      run: |
+        VERSION="${{ inputs.twenty-version }}"
+        if ! echo "$VERSION" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "::error::twenty-version must be a semver tag (e.g., v0.40.0). Got: '$VERSION'"
+          exit 1
+        fi
+
     - name: Checkout docker compose files
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.twenty-repository }}
-        ref: main
+        ref: ${{ inputs.twenty-version }}
         token: ${{ inputs.github-token }}
         sparse-checkout: |
           packages/twenty-docker
