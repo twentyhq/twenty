@@ -14,15 +14,18 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(motion.div)<{ divider?: boolean }>`
+const StyledCardContent = styled(motion.div)`
   align-items: flex-start;
   background-color: ${themeCssVariables.background.secondary};
-  border-bottom: ${({ divider }) =>
-    divider ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+  border-bottom: none;
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+  &[data-divider='true'] {
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  }
 `;
 
 const StyledDayContainer = styled.div`
@@ -71,7 +74,7 @@ export const CalendarDayCardContent = ({
 
   return (
     <StyledCardContent
-      divider={divider}
+      data-divider={divider || undefined}
       initial="upcoming"
       animate="ended"
       variants={upcomingDayCardContentVariants}

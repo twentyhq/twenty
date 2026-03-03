@@ -120,28 +120,28 @@ export const CatalogDecorator: Decorator = (Story, context) => {
 
   return (
     <StyledContainer>
-      {dimension4.values.map((value4: any) => (
-        <StyledColumnContainer key={value4} theme={theme}>
+      {dimension4.values.map((value4: any, index4: number) => (
+        <StyledColumnContainer key={`d4-${index4}`} theme={theme}>
           <StyledColumnTitle theme={theme}>
             {dimension4.labels?.(value4) ??
               (isStringOrNumber(value4) ? value4 : '')}
           </StyledColumnTitle>
-          {dimension3.values.map((value3: any) => (
-            <StyledRowsContainer key={value3} theme={theme}>
+          {dimension3.values.map((value3: any, index3: number) => (
+            <StyledRowsContainer key={`d3-${index3}`} theme={theme}>
               <StyledRowsTitle theme={theme}>
                 {dimension3.labels?.(value3) ??
                   (isStringOrNumber(value3) ? value3 : '')}
               </StyledRowsTitle>
-              {dimension2.values.map((value2: any) => (
-                <StyledRowContainer key={value2} theme={theme}>
+              {dimension2.values.map((value2: any, index2: number) => (
+                <StyledRowContainer key={`d2-${index2}`} theme={theme}>
                   <StyledRowTitle theme={theme}>
                     {dimension2.labels?.(value2) ??
                       (isStringOrNumber(value2) ? value2 : '')}
                   </StyledRowTitle>
-                  {dimension1.values.map((value1: any) => {
+                  {dimension1.values.map((value1: any, index1: number) => {
                     return (
                       <StyledCellContainer
-                        key={value1}
+                        key={`d1-${index1}`}
                         id={value1}
                         theme={theme}
                       >
