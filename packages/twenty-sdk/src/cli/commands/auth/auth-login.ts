@@ -1,20 +1,17 @@
+import { authLogin } from '@/cli/public-operations/auth-login';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { ApiService } from '@/cli/utilities/api/api-service';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class AuthLoginCommand {
   private configService = new ConfigService();
-  private apiService = new ApiService();
 
   async execute(options: { apiKey?: string; apiUrl?: string }): Promise<void> {
     try {
       let { apiKey, apiUrl } = options;
 
-      // Get current config
       const config = await this.configService.getConfig();
 
-      // Prompt for missing values
       if (!apiUrl) {
         const urlAnswer = await inquirer.prompt([
           {
@@ -48,16 +45,9 @@ export class AuthLoginCommand {
         apiKey = keyAnswer.apiKey;
       }
 
-      // Update config
-      await this.configService.setConfig({
-        apiUrl,
-        apiKey,
-      });
+      const result = await authLogin({ apiKey: apiKey!, apiUrl: apiUrl! });
 
-      // Validate authentication
-      const validateAuth = await this.apiService.validateAuth();
-
-      if (validateAuth.authValid) {
+      if (result.success) {
         const activeWorkspace = ConfigService.getActiveWorkspace();
         console.log(
           chalk.green(
