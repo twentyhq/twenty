@@ -20,5 +20,6 @@ export const workflowIteratorActionSettingsSchema =
         ])
         .optional(),
       initialLoopStepIds: z.array(z.string()).optional(),
+      shouldContinueOnIterationFailure: z.boolean().optional(),
     }),
   });
