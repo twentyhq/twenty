@@ -50,7 +50,7 @@ const StyledAdvancedTextFieldInnerContainer = styled.div`
 const StyledEditorActionButtonContainer = styled.div`
   position: absolute;
   top: ${themeCssVariables.spacing[0]};
-  right: ${themeCssVariables.spacing['7.5']};
+  right: 30px;
   z-index: 1;
 `;
 

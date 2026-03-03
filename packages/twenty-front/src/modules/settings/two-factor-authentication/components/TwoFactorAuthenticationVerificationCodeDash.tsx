@@ -10,7 +10,7 @@ const StyledDashContainer = styled.div`
 
 const StyledDash = styled.div`
   background-color: ${themeCssVariables.font.color.light};
-  height: ${themeCssVariables.spacing['0.4']};
+  height: 1.6px;
   width: ${themeCssVariables.spacing['1.5']};
 `;
 

@@ -18,7 +18,7 @@ const StyledDiv = styled.div`
   height: 24px;
   justify-content: center;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing['1.25']};
+  padding: ${themeCssVariables.spacing[0]} 5px;
 `;
 
 export const RecordTitleCellUuidFieldDisplay = ({

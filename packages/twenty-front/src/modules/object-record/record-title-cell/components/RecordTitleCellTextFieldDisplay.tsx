@@ -18,7 +18,7 @@ const StyledDiv = styled.div`
   cursor: pointer;
   overflow: hidden;
   height: 24px;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing['1.25']};
+  padding: ${themeCssVariables.spacing[0]} 5px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
