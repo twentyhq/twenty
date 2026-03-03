@@ -21,6 +21,7 @@ export const CommandMenuItemWithAddToNavigationDragDndKit = ({
       sourceIndex: dragIndex,
     },
     disabled: false,
+    feedback: 'clone',
   });
   return <div ref={ref}>{menuItemContent}</div>;
 };

@@ -41,6 +41,7 @@ export const WorkspaceDndKitSortableItem = ({
     disabled,
     transition: null,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
+    feedback: 'clone',
   });
 
   return (
