@@ -85,6 +85,12 @@ export const getAllSelectableFields = ({
       isDefined(flatField.settings.joinColumnName)
     ) {
       result[flatField.settings.joinColumnName] = true;
+    } else if (
+      isFlatFieldMetadataOfType(flatField, FieldMetadataType.MORPH_RELATION) &&
+      flatField.settings.relationType === RelationType.MANY_TO_ONE &&
+      isDefined(flatField.settings.joinColumnName)
+    ) {
+      result[flatField.settings.joinColumnName] = true;
     } else {
       result[flatField.name] = true;
     }

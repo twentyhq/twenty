@@ -3,7 +3,7 @@ import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
 } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -99,43 +99,55 @@ const getSchemaComponentsRelationProperties = (
   >['flatObjectMetadataMaps'],
 ): Properties => {
   return flatFieldMetadatas.reduce((node, field) => {
-    if (field.type !== FieldMetadataType.RELATION) {
+    if (!isDefined(field.relationTargetObjectMetadataId)) {
+      return node;
+    }
+
+    let relationType: RelationType | undefined;
+
+    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
+      relationType = field.settings?.relationType;
+    } else if (
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+    ) {
+      relationType = field.settings?.relationType;
+    }
+
+    if (!isDefined(relationType)) {
+      return node;
+    }
+
+    const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: field.relationTargetObjectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!targetObjectMetadata) {
       return node;
     }
 
     let itemProperty = {} as Property;
 
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
-      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: field.relationTargetObjectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-      if (!targetObjectMetadata) {
-        return node;
-      }
-
-      if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
-        itemProperty = {
-          type: 'object',
-          oneOf: [
-            {
-              $ref: `#/components/schemas/${capitalize(
-                targetObjectMetadata.nameSingular,
-              )}ForResponse`,
-            },
-          ],
-        };
-      } else if (field.settings?.relationType === RelationType.ONE_TO_MANY) {
-        itemProperty = {
-          type: 'array',
-          items: {
+    if (relationType === RelationType.MANY_TO_ONE) {
+      itemProperty = {
+        type: 'object',
+        oneOf: [
+          {
             $ref: `#/components/schemas/${capitalize(
               targetObjectMetadata.nameSingular,
             )}ForResponse`,
           },
-        };
-      }
+        ],
+      };
+    } else if (relationType === RelationType.ONE_TO_MANY) {
+      itemProperty = {
+        type: 'array',
+        items: {
+          $ref: `#/components/schemas/${capitalize(
+            targetObjectMetadata.nameSingular,
+          )}ForResponse`,
+        },
+      };
     }
 
     if (field.description) {
