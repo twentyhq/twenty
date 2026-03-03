@@ -5,8 +5,10 @@ import { convertPredicateToRecordFilter } from '@/settings/roles/role-permission
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -15,6 +17,7 @@ import { buildCompositeValueFromSubField } from '@/object-record/record-table/ut
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMemo } from 'react';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -49,6 +52,68 @@ export const useBuildRecordInputFromRLSPredicates = ({
     objectMetadataItem.id,
   );
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  // Detect indirect relation: when an RLS predicate's workspaceMemberFieldMetadataId
+  // refers to a field on an intermediate object (e.g., Agent.workspaceMember)
+  // rather than directly on WorkspaceMember
+  const intermediateObjectInfo = useMemo(() => {
+    const predicates = objectPermissions.rowLevelPermissionPredicates.filter(
+      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+    );
+
+    for (const predicate of predicates) {
+      const wmFieldId = predicate.workspaceMemberFieldMetadataId;
+
+      if (!wmFieldId) continue;
+
+      const isOnWorkspaceMember =
+        workspaceMemberObjectMetadataItem?.fields.some(
+          (field) => field.id === wmFieldId,
+        );
+
+      if (!isOnWorkspaceMember) {
+        for (const obj of objectMetadataItems) {
+          const field = obj.fields.find((f) => f.id === wmFieldId);
+
+          if (isDefined(field)) {
+            return {
+              objectNameSingular: obj.nameSingular,
+              relationFieldName: field.name,
+            };
+          }
+        }
+      }
+    }
+
+    return null;
+  }, [
+    objectPermissions,
+    objectMetadataItem,
+    workspaceMemberObjectMetadataItem,
+    objectMetadataItems,
+  ]);
+
+  // Pre-fetch intermediate object record for the current user
+  // (e.g., find the Agent record where workspaceMemberId = current user)
+  const { records: intermediateRecords } = useFindManyRecords({
+    objectNameSingular:
+      intermediateObjectInfo?.objectNameSingular ??
+      CoreObjectNameSingular.WorkspaceMember,
+    filter: intermediateObjectInfo
+      ? {
+          [`${intermediateObjectInfo.relationFieldName}Id`]: {
+            eq: currentWorkspaceMember?.id,
+          },
+        }
+      : undefined,
+    skip: !intermediateObjectInfo || !currentWorkspaceMember?.id,
+    limit: 1,
+  });
+
+  const intermediateRecordId =
+    intermediateRecords.length > 0 ? intermediateRecords[0].id : undefined;
+
   const getRecordInputFieldName = (fieldMetadataItem: {
     name: string;
     type: string;
@@ -72,9 +137,17 @@ export const useBuildRecordInputFromRLSPredicates = ({
       );
 
     if (!isDefined(workspaceMemberFieldMetadataItem)) {
-      throw new Error(
-        `Workspace member field metadata item not found for id: ${workspaceMemberFieldMetadataId}`,
-      );
+      // Indirect relation: field is on an intermediate object (e.g., Agent)
+      // that has a relation to WorkspaceMember. Return the pre-fetched
+      // intermediate record ID so it can be used as the pre-fill value.
+      if (isDefined(intermediateRecordId)) {
+        return intermediateRecordId;
+      }
+
+      // Field metadata not found — may be stale RLS predicate referencing
+      // a removed field. Skip gracefully; the server-side hook will set
+      // the correct value with bypassed permissions.
+      return undefined;
     }
 
     let workspaceMemberFieldValue =
@@ -132,6 +205,15 @@ export const useBuildRecordInputFromRLSPredicates = ({
       }
 
       if (isDefined(filter.rlsDynamicValue)) {
+        // Skip fields the user can't edit — the server-side post-query
+        // hook will set them with bypassed permissions instead.
+        const fieldRestriction =
+          objectPermissions.restrictedFields[fieldMetadataItem.id];
+
+        if (fieldRestriction?.canUpdate === false) {
+          return;
+        }
+
         const recordInputField = getRecordInputFieldName(fieldMetadataItem);
         const currentWorkspaceMemberFieldValue = getWorkspaceMemberFieldValue({
           workspaceMemberFieldMetadataId:
@@ -139,6 +221,11 @@ export const useBuildRecordInputFromRLSPredicates = ({
           workspaceMemberSubFieldName:
             filter.rlsDynamicValue?.workspaceMemberSubFieldName,
         });
+
+        // Skip if the value couldn't be resolved (e.g., no Agent profile)
+        if (isUndefined(currentWorkspaceMemberFieldValue)) {
+          return;
+        }
 
         if (isCompositeFieldType(fieldMetadataItem.type)) {
           if (!filter.subFieldName) {
