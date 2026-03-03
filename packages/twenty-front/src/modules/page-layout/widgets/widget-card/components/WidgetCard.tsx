@@ -80,10 +80,15 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     return '0';
   }};
 
-  border-bottom: ${({ variant, isEditable, isLastWidget }) =>
-    variant === 'side-column' && !isEditable && isLastWidget !== true
-      ? `1px solid ${themeCssVariables.border.color.light}`
-      : 'none'};
+  border-bottom: ${(props) => {
+    const { variant, isEditable, isLastWidget } = props;
+    if (variant === 'side-column' && !isEditable) {
+      return isLastWidget !== true
+        ? `1px solid ${themeCssVariables.border.color.light}`
+        : 'none';
+    }
+    return `1px solid ${computeBorderColor(props)}`;
+  }};
 
   cursor: ${({
     isEditable,
