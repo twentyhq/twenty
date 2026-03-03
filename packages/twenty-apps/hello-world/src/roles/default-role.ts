@@ -5,8 +5,8 @@ export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
 
 export default defineRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  label: 'prastoin default function role',
-  description: 'prastoin default function role',
+  label: 'Hello World default function role',
+  description: 'Hello World default function role',
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
