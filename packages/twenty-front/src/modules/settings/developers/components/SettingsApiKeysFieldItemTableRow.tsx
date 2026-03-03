@@ -8,7 +8,8 @@ import {
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`

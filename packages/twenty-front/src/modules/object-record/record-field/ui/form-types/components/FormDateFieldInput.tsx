@@ -29,7 +29,6 @@ import {
 } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Nullable } from 'twenty-ui/utilities';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
@@ -48,7 +47,21 @@ const StyledDateInputAbsoluteContainer = styled.div`
 `;
 
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
-  ${TEXT_INPUT_STYLE}
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
 
   &:disabled {
     color: ${themeCssVariables.font.color.tertiary};

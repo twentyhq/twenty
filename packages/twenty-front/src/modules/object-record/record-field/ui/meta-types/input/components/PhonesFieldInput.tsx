@@ -23,7 +23,6 @@ import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -49,8 +48,21 @@ const StyledCustomPhoneInputContainer = styled.div<{
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  ${TEXT_INPUT_STYLE}
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
   padding: 0;
+
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
   height: 100%;
 
   .PhoneInputInput {

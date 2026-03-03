@@ -7,7 +7,6 @@ import {
 } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
@@ -16,7 +15,21 @@ const StyledInput = styled.input<{
   hasError?: boolean;
   hasItem: boolean;
 }>`
-  ${TEXT_INPUT_STYLE}
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
 
   ${({ hasItem }) =>
     hasItem

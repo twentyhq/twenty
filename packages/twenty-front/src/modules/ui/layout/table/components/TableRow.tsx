@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableRow = styled.div<{
   isSelected?: boolean;
