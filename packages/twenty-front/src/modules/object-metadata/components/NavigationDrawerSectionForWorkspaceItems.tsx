@@ -1,8 +1,6 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { styled } from '@linaria/react';
 import React, { lazy, Suspense, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -33,11 +31,6 @@ const LazyWorkspaceSectionListDndKit = lazy(() =>
     '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
   ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
 );
-const StyledWorkspaceDroppableList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.betweenSiblingsGap};
-`;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
