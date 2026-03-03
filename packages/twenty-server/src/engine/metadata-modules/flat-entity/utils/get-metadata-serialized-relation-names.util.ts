@@ -1,11 +1,14 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_SERIALIZED_RELATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-serialized-relation.constant';
+import {
+  ALL_METADATA_SERIALIZED_RELATION,
+  type MetadataSerializedRelatedMetadataName,
+} from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-serialized-relation.constant';
 
-export const getMetadataSerializedRelationNames = (
-  metadataName: AllMetadataName,
-): AllMetadataName[] => {
+export const getMetadataSerializedRelationNames = <T extends AllMetadataName>(
+  metadataName: T,
+) => {
   return Object.keys(
     ALL_METADATA_SERIALIZED_RELATION[metadataName],
-  ) as AllMetadataName[];
+  ) as MetadataSerializedRelatedMetadataName<T>[];
 };

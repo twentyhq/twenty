@@ -4,7 +4,6 @@ import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/Com
 import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/CommandMenuTopBarRightCornerIcon';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
-import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
@@ -14,28 +13,30 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext, useRef } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
+  background-color: ${themeCssVariables.background.secondary};
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: 0;
   box-sizing: border-box;
 
   display: flex;
   justify-content: space-between;
-  font-size: ${({ theme }) => theme.font.size.lg};
+  font-size: ${themeCssVariables.font.size.lg};
   height: ${({ isMobile }) =>
     isMobile
       ? COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE
@@ -45,8 +46,8 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   position: relative;
   overflow: hidden;
 
-  padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
-  gap: ${({ theme }) => theme.spacing(4)};
+  padding: 0 ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[4]};
   flex-shrink: 0;
   justify-content: space-between;
 `;
@@ -55,8 +56,8 @@ const StyledInput = styled.input`
   border: none;
   border-radius: 0;
   background-color: transparent;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
   margin: 0;
   outline: none;
   height: 24px;
@@ -64,8 +65,8 @@ const StyledInput = styled.input`
   flex: 1;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    color: ${themeCssVariables.font.color.light};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 `;
 
@@ -73,13 +74,13 @@ const StyledContentContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
 `;
 
 export const CommandMenuTopBar = () => {
-  const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
+  const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
     commandMenuSearchState,
   );
   const inputRef = useRef<HTMLInputElement>(null);
@@ -94,13 +95,13 @@ export const CommandMenuTopBar = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { contextChips } = useCommandMenuContextChips();
 

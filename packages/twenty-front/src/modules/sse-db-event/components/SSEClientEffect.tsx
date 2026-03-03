@@ -3,33 +3,30 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
-import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
+  const store = useStore();
   const isLoggedIn = useIsLogged();
-  const [sseClient, setSseClient] = useRecoilState(sseClientState);
-  const [tokenPair] = useRecoilState(tokenPairState);
+  const [sseClient, setSseClient] = useAtomState(sseClientState);
+  const tokenPair = useAtomStateValue(tokenPairState);
 
-  const handleSSEClientConnected = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const currentActiveQueryListeners = getSnapshotValue(
-          snapshot,
-          activeQueryListenersState,
-        );
+  const handleSSEClientConnected = useCallback(() => {
+    const currentActiveQueryListeners = store.get(
+      activeQueryListenersState.atom,
+    );
 
-        if (isNonEmptyArray(currentActiveQueryListeners)) {
-          set(activeQueryListenersState, []);
-        }
-      },
-    [],
-  );
+    if (isNonEmptyArray(currentActiveQueryListeners)) {
+      store.set(activeQueryListenersState.atom, []);
+    }
+  }, [store]);
 
   const { handleSseClientConnectionRetry } =
     useHandleSseClientConnectionRetry();

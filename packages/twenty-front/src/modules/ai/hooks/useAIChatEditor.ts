@@ -3,14 +3,14 @@ import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
-import { Placeholder } from '@tiptap/extensions';
+import { Placeholder } from '@tiptap/extensions/placeholder';
 import { useEditor } from '@tiptap/react';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
@@ -25,7 +25,7 @@ type UseAIChatEditorProps = {
 };
 
 export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
-  const setAgentChatInput = useSetRecoilStateV2(agentChatInputStateV2);
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

@@ -1,4 +1,4 @@
-import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
+import { findObjectNamesSingularKey } from 'src/triggers/find_object_names_singular';
 import {
   performSubscribe,
   performUnsubscribe,

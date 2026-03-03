@@ -44,12 +44,12 @@ Qui, il Progetto è sul lato "uno". Più record di oggetti diversi possono colle
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Limitazione di import/export**: Le relazioni che puntano a più tipi di oggetto (come Note → Persone/Aziende/Opportunità) non sono ancora supportate nell'importazione o esportazione CSV.
+**Limitazione di import/export**: Le relazioni che puntano a più tipi di oggetto (come Note → Persone/Aziende/Opportunità) non sono ancora supportate nell'importazione o esportazione CSV.
 
-  * **Importazione**: Possono essere importate solo relazioni uno a molti che puntano a un singolo tipo di oggetto su ciascun lato
-  * **Esportazione**: Le colonne per le relazioni che puntano a più tipi di oggetto sono attualmente lasciate vuote
+* **Importazione**: Possono essere importate solo relazioni uno a molti che puntano a un singolo tipo di oggetto su ciascun lato
+* **Esportazione**: Le colonne per le relazioni che puntano a più tipi di oggetto sono attualmente lasciate vuote
 
-  È nella nostra roadmap.
+È nella nostra roadmap.
 </Warning>
 
 ### Cosa non è supportato oggi
@@ -137,12 +137,12 @@ Se non esiste:
 ## Regola dell'ordine di importazione
 
 <Warning>
-  **Importa sempre prima il lato "uno"!**
+**Importa sempre prima il lato "uno"!**
 
-  1. **Aziende** per prime (nessuna dipendenza)
-  2. **Persone** al secondo posto (collegate alle Aziende)
-  3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
-  4. **Oggetti personalizzati** seguendo le relative dipendenze
+1. **Aziende** per prime (nessuna dipendenza)
+2. **Persone** al secondo posto (collegate alle Aziende)
+3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
+4. **Oggetti personalizzati** seguendo le relative dipendenze
 
-  Il record padre deve esistere prima di potervi fare riferimento.
+Il record padre deve esistere prima di potervi fare riferimento.
 </Warning>

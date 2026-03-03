@@ -1,5 +1,6 @@
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldFocusStaticFocusedProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -10,8 +11,8 @@ import { RecordTableCellFieldInput } from '@/object-record/record-table/record-t
 
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { BORDER_COMMON } from 'twenty-ui/theme';
@@ -19,12 +20,14 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   showInteractiveStyle: boolean;
-  isRowActive: boolean;
+  isRecordTableRowActive: boolean;
 }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRowActive }) =>
-    isRowActive ? theme.accent.quaternary : theme.background.primary};
+  background-color: ${({ theme, isRecordTableRowActive }) =>
+    isRecordTableRowActive
+      ? theme.accent.quaternary
+      : theme.background.primary};
   border-radius: ${({ showInteractiveStyle }) =>
     showInteractiveStyle ? BORDER_COMMON.radius.sm : 'none'};
   box-sizing: border-box;
@@ -34,8 +37,8 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme, showInteractiveStyle, isRowActive }) =>
-    isRowActive
+  outline: ${({ theme, showInteractiveStyle, isRecordTableRowActive }) =>
+    isRecordTableRowActive
       ? 'none'
       : showInteractiveStyle
         ? `1px solid ${theme.font.color.extraLight}`
@@ -45,13 +48,13 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 `;
 
 export const RecordTableCellHoveredPortalContent = () => {
-  const hoverPosition = useRecoilComponentValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
   const isMobile = useIsMobile();
 
-  const isFirstColumn = hoverPosition?.column === 0;
+  const isFirstColumn = recordTableHoverPosition?.column === 0;
 
   const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
 
@@ -66,7 +69,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
-  const isRowActive = useRecoilComponentFamilyValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
@@ -74,17 +77,19 @@ export const RecordTableCellHoveredPortalContent = () => {
   return (
     <StyledRecordTableCellHoveredPortalContent
       showInteractiveStyle={showInteractiveStyle}
-      isRowActive={isRowActive}
+      isRecordTableRowActive={isRecordTableRowActive}
     >
-      {isFieldInputOnly ? (
-        <RecordTableCellEditMode>
-          <RecordTableCellFieldInput />
-        </RecordTableCellEditMode>
-      ) : (
-        <RecordTableCellDisplayMode>
-          <FieldDisplay />
-        </RecordTableCellDisplayMode>
-      )}
+      <FieldFocusStaticFocusedProvider>
+        {isFieldInputOnly ? (
+          <RecordTableCellEditMode>
+            <RecordTableCellFieldInput />
+          </RecordTableCellEditMode>
+        ) : (
+          <RecordTableCellDisplayMode>
+            <FieldDisplay />
+          </RecordTableCellDisplayMode>
+        )}
+      </FieldFocusStaticFocusedProvider>
       {showButton && <RecordTableCellEditButton />}
     </StyledRecordTableCellHoveredPortalContent>
   );

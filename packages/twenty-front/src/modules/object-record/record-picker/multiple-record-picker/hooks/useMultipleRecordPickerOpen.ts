@@ -1,37 +1,36 @@
 import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useMultipleRecordPickerOpen = () => {
-  const openMultipleRecordPicker = useRecoilCallback(
-    ({ set }) =>
-      (recordPickerComponentInstanceId: string) => {
-        set(
-          multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
-            {
-              instanceId: recordPickerComponentInstanceId,
-            },
-          ),
-          true,
-        );
-        set(
-          multipleRecordPickerShouldShowSkeletonComponentState.atomFamily({
-            instanceId: recordPickerComponentInstanceId,
-          }),
-          true,
-        );
-        setTimeout(() => {
-          set(
-            multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
-              {
-                instanceId: recordPickerComponentInstanceId,
-              },
-            ),
-            false,
-          );
-        }, 100);
-      },
-    [],
+  const store = useStore();
+  const setInitialLoading = useCallback(
+    (recordPickerComponentInstanceId: string, value: boolean) => {
+      store.set(
+        multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        value,
+      );
+    },
+    [store],
+  );
+
+  const openMultipleRecordPicker = useCallback(
+    (recordPickerComponentInstanceId: string) => {
+      setInitialLoading(recordPickerComponentInstanceId, true);
+      store.set(
+        multipleRecordPickerShouldShowSkeletonComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        true,
+      );
+      setTimeout(() => {
+        setInitialLoading(recordPickerComponentInstanceId, false);
+      }, 100);
+    },
+    [setInitialLoading, store],
   );
 
   return {

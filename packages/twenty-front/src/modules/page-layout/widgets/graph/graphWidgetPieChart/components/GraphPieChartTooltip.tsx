@@ -6,7 +6,7 @@ import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidg
 import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +25,7 @@ export const GraphPieChartTooltip = ({
   displayType,
   onSliceClick,
 }: GraphPieChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValue(
+  const graphWidgetPieTooltip = useAtomComponentStateValue(
     graphWidgetPieTooltipComponentState,
   );
 
@@ -34,10 +34,10 @@ export const GraphPieChartTooltip = ({
     return null;
   }
 
-  const tooltipData = !isDefined(tooltipState)
+  const tooltipData = !isDefined(graphWidgetPieTooltip)
     ? null
     : getPieChartTooltipData({
-        datum: tooltipState.datum,
+        datum: graphWidgetPieTooltip.datum,
         enrichedData,
         formatOptions,
         displayType,
@@ -45,18 +45,18 @@ export const GraphPieChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.datum.data);
+        if (isDefined(graphWidgetPieTooltip)) {
+          onSliceClick(graphWidgetPieTooltip.datum.data);
         }
       }
     : undefined;
 
-  const reference = !isDefined(tooltipState)
+  const reference = !isDefined(graphWidgetPieTooltip)
     ? null
     : createVirtualElementFromContainerOffset(
         containerElement,
-        tooltipState.offsetLeft,
-        tooltipState.offsetTop,
+        graphWidgetPieTooltip.offsetLeft,
+        graphWidgetPieTooltip.offsetTop,
       );
 
   return (

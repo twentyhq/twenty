@@ -7,7 +7,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { LineChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/line-chart-data.input';
-import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-output.dto';
+import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data.dto';
 import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 
@@ -18,11 +18,11 @@ import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/
 export class LineChartDataResolver {
   constructor(private readonly lineChartDataService: LineChartDataService) {}
 
-  @Query(() => LineChartDataOutputDTO)
+  @Query(() => LineChartDataDTO)
   @UseGuards(NoPermissionGuard)
   async lineChartData(
     @Args('input') input: LineChartDataInput,
-  ): Promise<LineChartDataOutputDTO> {
+  ): Promise<LineChartDataDTO> {
     const authContext = getWorkspaceAuthContext();
 
     return this.lineChartDataService.getLineChartData({

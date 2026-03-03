@@ -2,7 +2,6 @@
 
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -23,8 +22,10 @@ import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-per
 import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterInitialization';
 import { useRecordLevelPermissionSyncToDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionSyncToDraftRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -55,34 +56,35 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     roleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
-    const settingsDraftRole = useRecoilValue(
-      settingsDraftRoleFamilyState(roleId),
+    const settingsDraftRole = useAtomFamilyStateValue(
+      settingsDraftRoleFamilyState,
+      roleId,
     );
 
     const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
       objectMetadataItem.id,
     );
 
-    const setCurrentRecordFilters = useSetRecoilComponentState(
+    const setCurrentRecordFilters = useSetAtomComponentState(
       currentRecordFiltersComponentState,
     );
 
-    const setCurrentRecordFilterGroups = useSetRecoilComponentState(
+    const setCurrentRecordFilterGroups = useSetAtomComponentState(
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 
-    const currentRecordFilterGroups = useRecoilComponentValue(
+    const currentRecordFilterGroups = useAtomComponentStateValue(
       currentRecordFilterGroupsComponentState,
     );
 
     const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
       useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-    const rootRecordFilterGroup = useRecoilComponentValue(
+    const rootRecordFilterGroup = useAtomComponentSelectorValue(
       rootLevelRecordFilterGroupComponentSelector,
     );
 

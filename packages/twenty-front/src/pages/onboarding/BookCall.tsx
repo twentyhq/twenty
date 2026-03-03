@@ -1,5 +1,6 @@
 import Cal from '@calcom/embed-react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -7,12 +8,13 @@ import { calendarBookingPageIdState } from '@/client-config/states/calendarBooki
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   OnboardingStatus,
@@ -22,7 +24,7 @@ import {
 const StyledModalFooter = styled(Modal.Footer)`
   height: auto;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledModalContent = styled(Modal.Content)`
@@ -30,16 +32,12 @@ const StyledModalContent = styled(Modal.Content)`
   padding: 0;
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)<{ isMobile: boolean }>`
-  ${({ isMobile }) => !isMobile && 'height: auto;'}
-`;
-
 export const BookCall = () => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const { theme } = useContext(ThemeContext);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
 
   const isMobile = useIsMobile();
@@ -54,9 +52,9 @@ export const BookCall = () => {
   return (
     <>
       <StyledModalContent isHorizontalCentered isVerticalCentered>
-        <StyledScrollWrapper
+        <ScrollWrapper
           componentInstanceId="scroll-wrapper-modal-content"
-          isMobile={isMobile}
+          autoHeight={!isMobile}
         >
           <Cal
             calLink={calendarBookingPageId ?? ''}
@@ -67,7 +65,7 @@ export const BookCall = () => {
               name: `${currentUser?.firstName} ${currentUser?.lastName}`,
             }}
           />
-        </StyledScrollWrapper>
+        </ScrollWrapper>
       </StyledModalContent>
       <StyledModalFooter>
         {isPlanRequired ? (

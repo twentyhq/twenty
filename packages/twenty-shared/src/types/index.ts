@@ -53,6 +53,10 @@ export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameTyp
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
+export type {
+  SnackBarVariant,
+  EnqueueSnackbarParams,
+} from './EnqueueSnackbarParams';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';

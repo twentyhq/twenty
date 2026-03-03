@@ -23,6 +23,7 @@ type RecordInlineCellAnchoredPortalProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     | 'id'
+    | 'universalIdentifier'
     | 'name'
     | 'type'
     | 'createdAt'

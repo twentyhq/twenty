@@ -10,29 +10,38 @@ image: /images/user-guide/table-views/table.png
 Componente para categorizar visualmente ou rotular conteúdo.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { Tag } from "@/ui/display/tag/components/Tag";
 
-    export const MyComponent = () => {
-      return (
-        <Tag
-          className
-          color="red"
-          text="Urgent"
-          onClick={() => console.log("click")}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Uso">
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo   | Descrição                                                                                                                         |
-    | ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
-    | className    | string | Nome opcional para estilização adicional                                                                                          |
-    | cor          | string | Cor da etiqueta. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `rosa`, `vermelho`, `laranja`, `amarelo`, `cinza` |
-    | texto        | string | O conteúdo da tag                                                                                                                 |
-    | aoClicar     | função | Função opcional chamada quando um usuário clica na etiqueta                                                                       |
-  </Tab>
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo   | Descrição                                                                                                                         |
+| ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| className    | string | Nome opcional para estilização adicional                                                                                          |
+| cor          | string | Cor da etiqueta. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `rosa`, `vermelho`, `laranja`, `amarelo`, `cinza` |
+| texto        | string | O conteúdo da tag                                                                                                                 |
+| aoClicar     | função | Função opcional chamada quando um usuário clica na etiqueta                                                                       |
+
+
+
+</Tab>
+
 </Tabs>

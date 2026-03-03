@@ -1,13 +1,16 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewKey } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
@@ -45,7 +48,9 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const coreViews = useAtomStateValue(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -59,17 +64,19 @@ export const MainContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const indexViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem?.id ?? '',
-    }),
-  );
+  const indexViewId = coreViews.find(
+    (view) =>
+      view.objectMetadataId === objectMetadataItem?.id &&
+      view.key === ViewKey.INDEX,
+  )?.id;
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
   const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
+    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
+    !showAuthModal &&
+    metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
     return null;

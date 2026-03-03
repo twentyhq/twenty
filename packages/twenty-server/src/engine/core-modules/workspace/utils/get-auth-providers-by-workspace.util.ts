@@ -4,7 +4,7 @@ import {
   SSOIdentityProviderStatus,
   type WorkspaceSSOIdentityProviderEntity,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { type AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { type AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const getAuthProvidersByWorkspace = ({

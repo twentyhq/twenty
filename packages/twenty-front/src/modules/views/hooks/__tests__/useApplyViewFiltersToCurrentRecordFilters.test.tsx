@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -42,11 +42,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 
-        return { applyViewFiltersToCurrentRecordFilters, currentFilters };
+        return { applyViewFiltersToCurrentRecordFilters, currentRecordFilters };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -62,7 +62,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
       result.current.applyViewFiltersToCurrentRecordFilters([mockViewFilter]);
     });
 
-    expect(result.current.currentFilters).toEqual([
+    expect(result.current.currentRecordFilters).toEqual([
       {
         id: mockViewFilter.id,
         fieldMetadataId: mockViewFilter.fieldMetadataId,
@@ -83,11 +83,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 
-        return { applyViewFiltersToCurrentRecordFilters, currentFilters };
+        return { applyViewFiltersToCurrentRecordFilters, currentRecordFilters };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -103,6 +103,6 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
       result.current.applyViewFiltersToCurrentRecordFilters([]);
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 });

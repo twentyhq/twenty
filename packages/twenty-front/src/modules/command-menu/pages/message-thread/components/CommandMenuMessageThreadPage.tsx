@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useMemo } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -8,12 +8,13 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { CommandMenuMessageThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadIntermediaryMessages';
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -31,11 +32,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
   box-sizing: border-box;
 `;
@@ -47,7 +48,7 @@ const ALLOWED_REPLY_PROVIDERS = [
 ];
 
 export const CommandMenuMessageThreadPage = () => {
-  const setMessageThread = useSetRecoilComponentState(
+  const setMessageThread = useSetAtomComponentState(
     messageThreadComponentState,
   );
 

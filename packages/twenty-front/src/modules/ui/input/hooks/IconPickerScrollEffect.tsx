@@ -1,5 +1,5 @@
 import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useEffect } from 'react';
 
@@ -14,7 +14,7 @@ export const IconPickerScrollEffect = ({
 }: IconPickerScrollEffectProps) => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const setIconPickerVisibleCount = useSetFamilyRecoilStateV2(
+  const setIconPickerVisibleCount = useSetAtomFamilyState(
     iconPickerVisibleCountState,
     dropdownId,
   );

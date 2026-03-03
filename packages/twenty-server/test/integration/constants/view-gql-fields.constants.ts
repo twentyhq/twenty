@@ -23,6 +23,7 @@ export const VIEW_FIELD_GQL_FIELDS = `
     isVisible
     size
     viewId
+    viewFieldGroupId
     createdAt
     updatedAt
     deletedAt

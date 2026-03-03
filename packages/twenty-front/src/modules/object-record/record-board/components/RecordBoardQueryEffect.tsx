@@ -12,9 +12,9 @@ import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -23,17 +23,17 @@ export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
-    useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+    useAtomComponentState(lastRecordBoardQueryIdentifierComponentState);
 
-  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentState(
+  const [lastRecordGroupIds, setLastRecordGroupIds] = useAtomComponentState(
     lastRecordGroupIdsComponentState,
   );
 
-  const [recordIndexRecordGroupsAreInInitialLoading] = useRecoilComponentState(
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentState(
+  const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 
@@ -51,11 +51,11 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [shouldFetchMore] = useRecoilComponentState(
+  const [recordBoardShouldFetchMore] = useAtomComponentState(
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const recordBoardIsFetchingMore = useRecoilComponentValue(
+  const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -64,9 +64,11 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useRecoilComponentValue(recordGroupIdsComponentState);
+  const recordGroupIds = useAtomComponentStateValue(
+    recordGroupIdsComponentState,
+  );
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
-    [...recordGroupdIds].sort(),
+    [...recordGroupIds].sort(),
     [...lastRecordGroupIds].sort(),
   );
 
@@ -76,10 +78,10 @@ export const RecordBoardQueryEffect = () => {
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
       triggerRecordBoardInitialQuery();
-      setLastRecordGroupIds(recordGroupdIds);
+      setLastRecordGroupIds(recordGroupIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      shouldFetchMore &&
+      recordBoardShouldFetchMore &&
       !queryIdentifierHasChanged &&
       !recordBoardIsFetchingMore
     ) {
@@ -93,11 +95,11 @@ export const RecordBoardQueryEffect = () => {
     setRecordBoardCurrentGroupByQueryOffset,
     scrollWrapperHTMLElement,
     recordIndexRecordGroupsAreInInitialLoading,
-    shouldFetchMore,
+    recordBoardShouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
-    recordGroupdIds,
+    recordGroupIds,
     recordGroupIdsHaveChanged,
   ]);
 

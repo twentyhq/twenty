@@ -71,12 +71,12 @@ Ein eindeutiges Feld (E-Mail, Domain) entweder:
 3. Twenty aktualisiert den vorhandenen Datensatz, statt ein Duplikat zu erstellen
 
 <Note>
-  **Sie können eindeutige Felder ebenfalls aktualisieren.**
+**Sie können eindeutige Felder ebenfalls aktualisieren.**
 
-  * Wenn Sie die `id` beibehalten, aber die `email` ändern → die E-Mail wird aktualisiert
-  * Wenn Sie die `email` beibehalten, aber die `id` ändern → die ID wird aktualisiert
+* Wenn Sie die `id` beibehalten, aber die `email` ändern → die E-Mail wird aktualisiert
+* Wenn Sie die `email` beibehalten, aber die `id` ändern → die ID wird aktualisiert
 
-  Solange ein eindeutiger Bezeichner übereinstimmt, aktualisiert Twenty den Datensatz.
+Solange ein eindeutiger Bezeichner übereinstimmt, aktualisiert Twenty den Datensatz.
 </Note>
 
 ### So vermeiden Sie diesen Fehler
@@ -88,9 +88,9 @@ Vor dem Import:
 3. Prüfen Sie, ob Datensätze bereits in Twenty existieren
 
 <Warning>
-  **Soft-gelöschte Datensätze zählen für die Eindeutigkeit.**
+**Soft-gelöschte Datensätze zählen für die Eindeutigkeit.**
 
-  Überprüfen Sie das Befehlsmenü → Gelöschte Datensätze anzeigen. Die dortigen Datensätze erzwingen weiterhin die Eindeutigkeit. Löschen Sie sie dauerhaft oder stellen Sie sie wieder her und aktualisieren Sie sie.
+Überprüfen Sie das Befehlsmenü → Gelöschte Datensätze anzeigen. Die dortigen Datensätze erzwingen weiterhin die Eindeutigkeit. Löschen Sie sie dauerhaft oder stellen Sie sie wieder her und aktualisieren Sie sie.
 </Warning>
 
 Weitere Details: [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -296,9 +296,9 @@ Sie versuchen, auf einen Datensatz zu verweisen, der in Twenty nicht existiert.
    * Prüfen Sie auf Tippfehler und Groß-/Kleinschreibung
 
 <Warning>
-  **Der Import schlägt fehl, wenn auf einen nicht vorhandenen Datensatz verwiesen wird.**
+**Der Import schlägt fehl, wenn auf einen nicht vorhandenen Datensatz verwiesen wird.**
 
-  Importieren Sie übergeordnete Objekte immer vor untergeordneten Objekten.
+Importieren Sie übergeordnete Objekte immer vor untergeordneten Objekten.
 </Warning>
 
 Weitere Details: [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Sie versuchen, einen Datensatz einem Benutzer zuzuweisen (Owner, Assignee), aber
 3. Verwenden Sie dieselbe E-Mail, mit der sie Twenty beigetreten sind
 
 <Warning>
-  **Benutzer müssen Einladungen vor dem Import annehmen.**
+**Benutzer müssen Einladungen vor dem Import annehmen.**
 
-  Wenn ein Benutzer seine Einladung nicht angenommen hat, haben Datensätze, die auf ihn verweisen, leere Benutzerrelationen.
+Wenn ein Benutzer seine Einladung nicht angenommen hat, haben Datensätze, die auf ihn verweisen, leere Benutzerrelationen.
 </Warning>
 
 ---

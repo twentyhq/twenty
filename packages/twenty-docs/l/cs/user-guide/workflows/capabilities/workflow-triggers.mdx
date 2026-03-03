@@ -10,14 +10,13 @@ Pracovní postupy vždy začínají jedním spouštěčem, který určuje, kdy b
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Pokročilé objekty jsou podporovány!** Kromě standardních CRM objektů (Lidé, Společnosti, Příležitosti) můžete také spouštět pracovní postupy a provádět akce nad:
+**Pokročilé objekty jsou podporovány!** Kromě standardních CRM objektů (Lidé, Společnosti, Příležitosti) můžete také spouštět pracovní postupy a provádět akce nad:
+* Členové pracovního prostoru
+* Události v kalendáři
+* Zprávy (e-maily)
+* Úkoly, poznámky a mnoho dalších systémových objektů
 
-  * Členové pracovního prostoru
-  * Události v kalendáři
-  * Zprávy (e-maily)
-  * Úkoly, poznámky a mnoho dalších systémových objektů
-
-  To umožňuje výkonné automatizace, například upozorňovat členy týmu, když jsou v kalendáři vytvořeny události, nebo automaticky zpracovávat příchozí e-maily.
+To umožňuje výkonné automatizace, například upozorňovat členy týmu, když jsou v kalendáři vytvořeny události, nebo automaticky zpracovávat příchozí e-maily.
 </Tip>
 
 ## Záznam je vytvořen
@@ -27,9 +26,9 @@ Spouští pracovní postup, když je vytvořen nový záznam ve vybraném objekt
 **Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně nových záznamů.
 
 <Note>
-  * Tento spouštěč je skvělý pro záznamy vytvořené pomocí CSV, synchronizace poštovní schránky a kalendáře nebo API.
-  * **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Protože Twenty UI nabízí průběžné automatické ukládání (neexistuje režim úprav a následné potvrzení pro uložení záznamů), pracovní postup bude spuštěn dříve, než uživatel vyplní všechna pole.
-    Chcete-li tento pracovní postup spouštět u záznamů vytvořených ručně, doporučujeme místo toho použít spouštěč `Record is created or updated`.
+* Tento spouštěč je skvělý pro záznamy vytvořené pomocí CSV, synchronizace poštovní schránky a kalendáře nebo API.
+* **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Protože Twenty UI nabízí průběžné automatické ukládání (neexistuje režim úprav a následné potvrzení pro uložení záznamů), pracovní postup bude spuštěn dříve, než uživatel vyplní všechna pole.
+  Chcete-li tento pracovní postup spouštět u záznamů vytvořených ručně, doporučujeme místo toho použít spouštěč `Record is created or updated`.
 </Note>
 
 ## Záznam je aktualizován
@@ -82,7 +81,7 @@ Vyberte, jak má pracovní postup zpracovávat výběr záznamů:
 * **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. To znamená, že pracovní postup musí obsahovat [akci Iterator](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  Toto je pokročilejší a hodí se pro uživatele, kteří chtějí optimalizovat počet běhů pracovního postupu.
+Toto je pokročilejší a hodí se pro uživatele, kteří chtějí optimalizovat počet běhů pracovního postupu.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Spouští pracovní postup v opakovaných intervalech, které definujete.
 * Zadejte hodnotu nebo použijte vlastní cron výrazy pro rozšířené plánování
 
 <Note>
-  **Časové pásmo**: Plánované pracovní postupy běží v **UTC**. Při nastavování hodin pro denní plány převeďte svůj místní čas na UTC.
+**Časové pásmo**: Plánované pracovní postupy běží v **UTC**. Při nastavování hodin pro denní plány převeďte svůj místní čas na UTC.
 </Note>
 
 ## Externí spouštěč: Webhook

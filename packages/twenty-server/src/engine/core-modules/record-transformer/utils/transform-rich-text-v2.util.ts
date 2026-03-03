@@ -5,19 +5,28 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import type { ServerBlockNoteEditor } from '@blocknote/server-util';
+
 // Reuse a single ServerBlockNoteEditor across all calls to avoid
 // the cost of dynamic import resolution + instance creation (~90ms) on every transform.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let cachedServerBlockNoteEditor: any = null;
+let cachedServerBlockNoteEditor: ServerBlockNoteEditor | null = null;
 
-const getServerBlockNoteEditor = async () => {
-  if (!cachedServerBlockNoteEditor) {
-    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
+// SWC compiles import() to require() in CJS mode, which breaks ESM-only
+// transitive dependencies in @blocknote/core. Native import() resolves
+// the ESM bundle path where the full chain works.
+const nativeImport = new Function('specifier', 'return import(specifier)');
 
-    cachedServerBlockNoteEditor = ServerBlockNoteEditor.create();
+const getServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
+  if (cachedServerBlockNoteEditor) {
+    return cachedServerBlockNoteEditor;
   }
 
-  return cachedServerBlockNoteEditor;
+  const module = await nativeImport('@blocknote/server-util');
+  const editor: ServerBlockNoteEditor = module.ServerBlockNoteEditor.create();
+
+  cachedServerBlockNoteEditor = editor;
+
+  return editor;
 };
 
 export const transformRichTextV2Value = async (

@@ -5,11 +5,12 @@ import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuP
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
@@ -17,8 +18,8 @@ const StyledCommandMenuContent = styled.div`
 `;
 
 export const CommandMenuRouter = () => {
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
   const commandMenuPageComponent = isDefined(commandMenuPage) ? (
     COMMAND_MENU_PAGES_CONFIG.get(commandMenuPage)
@@ -26,7 +27,7 @@ export const CommandMenuRouter = () => {
     <></>
   );
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <CommandMenuContainer>

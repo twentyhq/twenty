@@ -18,7 +18,23 @@ describe('useCreateWorkspaceInvitation', () => {
     jest.clearAllMocks();
   });
 
-  it('Send invitations', async () => {
+  it('Send invitations with role', async () => {
+    const params = { emails: ['test@test.com'], roleId: 'role-id' };
+    renderHook(
+      () => {
+        const { sendInvitation } = useCreateWorkspaceInvitation();
+        sendInvitation(params);
+      },
+      { wrapper: Wrapper },
+    );
+
+    expect(mutationSendInvitationsCallSpy).toHaveBeenCalledWith({
+      onCompleted: expect.any(Function),
+      variables: params,
+    });
+  });
+
+  it('Send invitations without role uses default', async () => {
     const params = { emails: ['test@test.com'] };
     renderHook(
       () => {

@@ -5,11 +5,15 @@ import {
   MOCK_OBJECT_PERMISSION_3_NULL_ALL,
   MOCK_ROLE_ID_GRANTS_ALL,
   MOCK_ROLE_ID_REVOKES_ALL,
+  initializeRolesMockJotaiStore,
   rolesMockHookWrapper,
 } from '~/testing/mock-data/roles/roles-mock';
 import { useGetObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useGetObjectPermissionDerivedStates';
 
 describe('useGetObjectPermissionDerivedStates', () => {
+  beforeEach(() => {
+    initializeRolesMockJotaiStore();
+  });
   it('should return expected for object that revoke permissions', () => {
     const { result } = renderHook(
       () =>

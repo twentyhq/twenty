@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -38,6 +40,8 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -118,13 +122,55 @@ export class ApplicationSyncService {
       },
     );
 
+    const applicationRegistrationMetadata = {
+      name,
+      description: manifest.application.description,
+      logoUrl: manifest.application.logoUrl,
+      author: manifest.application.author,
+      websiteUrl: manifest.application.websiteUrl,
+      termsUrl: manifest.application.termsUrl,
+    };
+
+    const applicationRegistrationId =
+      await this.resolveApplicationRegistrationId(
+        application.applicationRegistrationId,
+        manifest.application.universalIdentifier,
+        applicationRegistrationMetadata,
+        workspaceId,
+      );
+
+    // Only update registration metadata if this workspace owns it.
+    // Other workspaces that install the same app attach to the existing
+    // registration but must not be able to modify its metadata.
+    if (
+      await this.applicationRegistrationService.isOwnedByWorkspace(
+        applicationRegistrationId,
+        workspaceId,
+      )
+    ) {
+      await this.applicationRegistrationService.update(
+        {
+          id: applicationRegistrationId,
+          update: applicationRegistrationMetadata,
+        },
+        workspaceId,
+      );
+    }
+
+    if (manifest.application.serverVariables) {
+      await this.applicationRegistrationVariableService.syncVariableSchemas(
+        applicationRegistrationId,
+        manifest.application.serverVariables,
+      );
+    }
+
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
-      //availablePackages: manifest.application.availablePackages, // TODO: compute available package in dev-mode-orchestrator
+      applicationRegistrationId,
     });
   }
 
@@ -203,5 +249,45 @@ export class ApplicationSyncService {
     );
 
     return validateAndBuildResult.workspaceMigration;
+  }
+
+  private async resolveApplicationRegistrationId(
+    existingId: string | null,
+    universalIdentifier: string,
+    metadata: {
+      name: string;
+      description?: string;
+      logoUrl?: string;
+      author?: string;
+      websiteUrl?: string;
+      termsUrl?: string;
+    },
+    workspaceId: string,
+  ): Promise<string> {
+    if (existingId) {
+      return existingId;
+    }
+
+    const existingRegistration =
+      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+        universalIdentifier,
+      );
+
+    if (existingRegistration) {
+      return existingRegistration.id;
+    }
+
+    const { applicationRegistration: newRegistration } =
+      await this.applicationRegistrationService.create(
+        { ...metadata, universalIdentifier },
+        workspaceId,
+        null,
+      );
+
+    this.logger.log(
+      `Created app registration for ${metadata.name} (${universalIdentifier})`,
+    );
+
+    return newRegistration.id;
   }
 }

@@ -1,13 +1,14 @@
-import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
-import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import styled from '@emotion/styled';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
@@ -15,15 +16,15 @@ const StyledPreviewsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const AgentChatContextPreview = () => {
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilStateV2(
-    agentChatSelectedFilesStateV2,
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useAtomState(
+    agentChatSelectedFilesState,
   );
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilStateV2(
-    agentChatUploadedFilesStateV2,
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
+    agentChatUploadedFilesState,
   );
 
   const handleRemoveUploadedFile = (fileIndex: number) => {

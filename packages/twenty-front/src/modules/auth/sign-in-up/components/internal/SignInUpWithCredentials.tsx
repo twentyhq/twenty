@@ -15,14 +15,15 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -39,13 +40,15 @@ export const SignInUpWithCredentials = ({
   const { t } = useLingui();
   const form = useFormContext<Form>();
 
-  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captcha = useRecoilValue(captchaState);
-  const isRequestingCaptchaToken = useRecoilValue(
+  const captcha = useAtomStateValue(captchaState);
+  const isRequestingCaptchaToken = useAtomStateValue(
     isRequestingCaptchaTokenState,
   );
-  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
+  const lastAuthenticatedMethod = useAtomStateValue(
+    lastAuthenticatedMethodState,
+  );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {

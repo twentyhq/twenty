@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { LightButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -23,13 +23,14 @@ import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${themeCssVariables.background.primary};
   height: ${({ isDraggingFile }) =>
     isDraggingFile ? `calc(100% - 24px)` : '100%'};
-  padding: ${({ isDraggingFile, theme }) =>
-    isDraggingFile ? theme.spacing(3) : '0'};
+  padding: ${({ isDraggingFile }) =>
+    isDraggingFile ? themeCssVariables.spacing[3] : '0'};
   display: flex;
   flex-direction: column;
 `;
@@ -38,27 +39,28 @@ const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
-  padding-block: ${({ theme, isMobile }) => (isMobile ? 0 : theme.spacing(3))};
-  background: ${({ theme }) => theme.background.primary};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-inline: ${themeCssVariables.spacing[3]};
+  padding-block: ${({ isMobile }) =>
+    isMobile ? '0' : themeCssVariables.spacing[3]};
+  background: ${themeCssVariables.background.primary};
 `;
 
 const StyledInputBox = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 140px;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
   box-sizing: border-box;
 
   &:focus-within {
-    border-color: ${({ theme }) => theme.color.blue};
-    box-shadow: 0px 0px 0px 3px ${({ theme }) => theme.color.transparent.blue2};
+    border-color: ${themeCssVariables.color.blue};
+    box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
   }
 `;
 
@@ -72,10 +74,10 @@ const StyledEditorWrapper = styled.div`
     background: transparent;
     border: none;
     box-shadow: none;
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
     font-family: inherit;
-    font-size: ${({ theme }) => theme.font.size.md};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
+    font-size: ${themeCssVariables.font.size.md};
+    font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     outline: none;
     padding: 0;
@@ -88,10 +90,10 @@ const StyledEditorWrapper = styled.div`
     }
 
     p.is-editor-empty:first-of-type::before {
-      color: ${({ theme }) => theme.font.color.light};
+      color: ${themeCssVariables.font.color.light};
       content: attr(data-placeholder);
       float: left;
-      font-weight: ${({ theme }) => theme.font.weight.regular};
+      font-weight: ${themeCssVariables.font.weight.regular};
       height: 0;
       pointer-events: none;
     }
@@ -102,9 +104,9 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
   width: calc(100% - 24px);
 `;
 
@@ -118,13 +120,13 @@ const StyledButtonsContainer = styled.div`
 const StyledLeftButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledRightButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledReadOnlyModelButton = styled(LightButton)`
@@ -144,7 +146,7 @@ export const AIChatTab = () => {
   const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
   const { editor, handleSendAndClear } = useAIChatEditor({

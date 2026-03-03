@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationFromManyFieldDisplay';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -19,17 +19,18 @@ import {
 } from './relationFromManyFieldDisplayMock';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetRecoilState(
-    recordStoreFamilyState(relationFromManyFieldDisplayMock.entityValue.id),
+  const setRecordStore = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    relationFromManyFieldDisplayMock.entityValue.id,
   );
 
   useEffect(() => {
-    setEntity({
+    setRecordStore({
       __typename: relationFromManyFieldDisplayMock.entityValue.__typename,
       id: relationFromManyFieldDisplayMock.entityValue.id,
       company: [relationFromManyFieldDisplayMock.entityValue],
     } satisfies ObjectRecord);
-  }, [setEntity]);
+  }, [setRecordStore]);
 
   return null;
 };

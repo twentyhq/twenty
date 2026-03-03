@@ -126,7 +126,7 @@
       "configurations": {
         "ci": {
           "ci": true,
-          "maxWorkers": 3
+          "maxWorkers": 1
         },
         "coverage": {
           "coverageReporters": ["lcov", "text"]

@@ -59,17 +59,17 @@ Creați un document de mapare între CRM-ul curent și Twenty:
 4. Configurați setările câmpurilor (unic, obligatoriu, opțiuni de selectare etc.)
 
 <Warning>
-  **Câmpurile trebuie să existe înainte de import.**
+**Câmpurile trebuie să existe înainte de import.**
 
-  Importul CSV creează înregistrări, nu câmpuri. Creați toate câmpurile personalizate în Setări → Model de date înainte de import.
+Importul CSV creează înregistrări, nu câmpuri. Creați toate câmpurile personalizate în Setări → Model de date înainte de import.
 </Warning>
 
 ### Invitați-vă echipa
 
 <Warning>
-  **Invitați utilizatorii ÎNAINTE de a importa datele.**
+**Invitați utilizatorii ÎNAINTE de a importa datele.**
 
-  Dacă datele dvs. includ referințe la utilizatori (Proprietar cont, Atribuit etc.), acei utilizatori trebuie să existe în Twenty înainte de import. În caz contrar, acele relații nu pot fi mapate.
+Dacă datele dvs. includ referințe la utilizatori (Proprietar cont, Atribuit etc.), acei utilizatori trebuie să existe în Twenty înainte de import. În caz contrar, acele relații nu pot fi mapate.
 </Warning>
 
 1. Mergi la **Setări → Membri**
@@ -116,9 +116,9 @@ Deschideți fiecare CSV exportat într-o aplicație de calcul tabelar și pregă
 | **Câmpuri de selectare** | Folosiți numele API, nu etichetele de afișare       |
 
 <Warning>
-  **Formatul domeniului este critic.**
+**Formatul domeniului este critic.**
 
-  Folosiți `https://domain.com` (nu `domain.com` sau `www.domain.com`). Acest lucru corespunde formatului Twenty și previne duplicatele când conectați sincronizarea e-mailului/calendarului.
+Folosiți `https://domain.com` (nu `domain.com` sau `www.domain.com`). Acest lucru corespunde formatului Twenty și previne duplicatele când conectați sincronizarea e-mailului/calendarului.
 </Warning>
 
 Consultați [Cum să vă pregătiți fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files) pentru cerințe complete de formatare pentru toate tipurile de câmpuri.
@@ -149,17 +149,16 @@ Consultați [Cum să vă pregătiți fișierele CSV](/l/ro/user-guide/data-migra
 ## Pasul 6: Importați în Twenty
 
 <Warning>
-  **Ordinea de import contează!**
+**Ordinea de import contează!**
 
-  Importați întotdeauna în această ordine:
+Importați întotdeauna în această ordine:
+1. **Companii** mai întâi (fără dependențe)
+2. **Persoane** în al doilea rând (legate de Companii)
+3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
+4. **Note și sarcini** (legate de înregistrări)
+5. **Obiecte personalizate** respectând dependențele lor
 
-  1. **Companii** mai întâi (fără dependențe)
-  2. **Persoane** în al doilea rând (legate de Companii)
-  3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
-  4. **Note și sarcini** (legate de înregistrări)
-  5. **Obiecte personalizate** respectând dependențele lor
-
-  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
+Înregistrarea părinte trebuie să existe înainte de a o putea referi.
 </Warning>
 
 ### Importați fiecare obiect

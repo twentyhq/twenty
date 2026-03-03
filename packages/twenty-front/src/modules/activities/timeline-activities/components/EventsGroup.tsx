@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventsGroupProps = {
   group: EventGroup;
@@ -14,22 +15,22 @@ type EventsGroupProps = {
 const StyledActivityGroup = styled.div`
   display: flex;
   flex-flow: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
 const StyledActivityGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[3]};
   position: relative;
 `;
 
 const StyledActivityGroupBar = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -42,14 +43,14 @@ const StyledActivityGroupBar = styled.div`
 const StyledMonthSeperator = styled.div`
   align-items: center;
   align-self: stretch;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  gap: ${themeCssVariables.spacing[4]};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 const StyledMonthSeperatorLine = styled.div`
-  background: ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.border.color.light};
   border-radius: 50px;
   flex: 1 0 0;
   height: 1px;

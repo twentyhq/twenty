@@ -25,9 +25,8 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { styled } from '@linaria/react';
 import {
   ResponsiveLine,
   type LineCustomSvgLayerProps,
@@ -35,9 +34,10 @@ import {
   type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
@@ -92,7 +92,7 @@ export const GraphWidgetLineChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetLineChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const colorRegistry = createGraphColorRegistry(theme);
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -131,18 +131,18 @@ export const GraphWidgetLineChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const setActiveLineTooltip = useSetRecoilComponentState(
+  const setGraphWidgetLineTooltip = useSetAtomComponentState(
     graphWidgetLineTooltipComponentState,
   );
 
-  const setCrosshairX = useSetRecoilComponentState(
+  const setGraphWidgetLineCrosshairX = useSetAtomComponentState(
     graphWidgetLineCrosshairXComponentState,
   );
 
   const hideTooltip = useCallback(() => {
-    setActiveLineTooltip(null);
-    setCrosshairX(null);
-  }, [setActiveLineTooltip, setCrosshairX]);
+    setGraphWidgetLineTooltip(null);
+    setGraphWidgetLineCrosshairX(null);
+  }, [setGraphWidgetLineTooltip, setGraphWidgetLineCrosshairX]);
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
@@ -189,8 +189,8 @@ export const GraphWidgetLineChart = ({
     const offsetTop = sliceData.mouseY + margins.top;
 
     debouncedHideTooltip.cancel();
-    setCrosshairX(sliceData.sliceX);
-    setActiveLineTooltip({
+    setGraphWidgetLineCrosshairX(sliceData.sliceX);
+    setGraphWidgetLineTooltip({
       slice,
       offsetLeft,
       offsetTop,

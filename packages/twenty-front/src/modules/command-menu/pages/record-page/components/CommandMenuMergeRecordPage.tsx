@@ -5,7 +5,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { MergeRecordsContainer } from '@/object-record/record-merge/components/MergeRecordsContainer';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRightDrawerRecord = styled.div`
   height: 100%;

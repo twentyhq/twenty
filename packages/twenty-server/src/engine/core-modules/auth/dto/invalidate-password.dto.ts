@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
-@ObjectType()
-export class InvalidatePasswordOutput {
+@ObjectType('InvalidatePassword')
+export class InvalidatePasswordDTO {
   @Field(() => Boolean, {
     description: 'Boolean that confirms query was dispatched',
   })

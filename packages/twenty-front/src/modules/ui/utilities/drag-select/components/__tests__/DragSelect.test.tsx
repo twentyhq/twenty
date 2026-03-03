@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -47,13 +46,11 @@ describe('DragSelect', () => {
 
   const renderDragSelect = (selectionBoundaryClass?: string) => {
     return render(
-      <RecoilRoot>
-        <DragSelect
-          selectableItemsContainerRef={mockContainerRef}
-          onDragSelectionChange={mockOnDragSelectionChange}
-          selectionBoundaryClass={selectionBoundaryClass}
-        />
-      </RecoilRoot>,
+      <DragSelect
+        selectableItemsContainerRef={mockContainerRef}
+        onDragSelectionChange={mockOnDragSelectionChange}
+        selectionBoundaryClass={selectionBoundaryClass}
+      />,
     );
   };
 
@@ -111,12 +108,10 @@ describe('DragSelect', () => {
 
     expect(() => {
       render(
-        <RecoilRoot>
-          <DragSelect
-            selectableItemsContainerRef={nullRef}
-            onDragSelectionChange={mockOnDragSelectionChange}
-          />
-        </RecoilRoot>,
+        <DragSelect
+          selectableItemsContainerRef={nullRef}
+          onDragSelectionChange={mockOnDragSelectionChange}
+        />,
       );
     }).not.toThrow();
   });
@@ -152,12 +147,10 @@ describe('DragSelect', () => {
   it('should work without scrollWrapperComponentInstanceId (universal compatibility)', () => {
     expect(() => {
       render(
-        <RecoilRoot>
-          <DragSelect
-            selectableItemsContainerRef={mockContainerRef}
-            onDragSelectionChange={mockOnDragSelectionChange}
-          />
-        </RecoilRoot>,
+        <DragSelect
+          selectableItemsContainerRef={mockContainerRef}
+          onDragSelectionChange={mockOnDragSelectionChange}
+        />,
       );
     }).not.toThrow();
 

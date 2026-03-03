@@ -2,18 +2,18 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
 export const fieldMetadataItemUsedInDropdownComponentSelector =
-  createComponentSelector<FieldMetadataItem | null | undefined>({
+  createAtomComponentSelector<FieldMetadataItem | null | undefined>({
     key: 'fieldMetadataItemUsedInDropdownComponentSelector',
+    componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      (componentStateKey) =>
       ({ get }) => {
         const fieldMetadataItemIdUsedInDropdown = get(
-          fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-            instanceId,
-          }),
+          fieldMetadataItemIdUsedInDropdownComponentState,
+          componentStateKey,
         );
 
         const objectMetadataItems = get(objectMetadataItemsState);
@@ -27,5 +27,4 @@ export const fieldMetadataItemUsedInDropdownComponentSelector =
 
         return correspondingFieldMetadataItem;
       },
-    componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
   });

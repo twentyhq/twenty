@@ -1,67 +1,55 @@
-import type {
-  FunctionConfig,
-  DatabaseEventPayload,
-  ObjectRecordCreateEvent,
-  CronPayload,
+import {
+  defineLogicFunction,
+  type CronPayload,
+  type DatabaseEventPayload,
+  type ObjectRecordCreateEvent,
 } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import { CoreApiClient as Twenty, type CoreSchema } from 'twenty-sdk/generated';
 
 type CreateNewPostCardParams =
   | { name?: string }
-  | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
+  | DatabaseEventPayload<ObjectRecordCreateEvent<CoreSchema.Person>>
   | CronPayload;
 
-export const main = async (params: CreateNewPostCardParams) => {
-  try {
-    const client = new Twenty();
+const handler = async (params: CreateNewPostCardParams) => {
+  const client = new Twenty();
 
-    const name =
-      'name' in params
-        ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
-        : 'Hello world';
+  const name =
+    'name' in params
+      ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+      : 'Hello world';
 
-    const createPostCard = await client.mutation({
-      createPostCard: {
-        __args: {
-          data: {
-            name,
-          },
+  const createPostCard = await client.mutation({
+    createPostCard: {
+      __args: {
+        data: {
+          name,
         },
-        name: true,
-        id: true,
       },
-    });
+      name: true,
+      id: true,
+    },
+  });
 
-    console.log('createPostCard result', createPostCard);
+  console.log('createPostCard result', createPostCard);
 
-    return createPostCard;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  return createPostCard;
 };
 
-export const config: FunctionConfig = {
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
-  triggers: [
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/post-card/create',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *', // Every year 1st of January
-    },
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.created',
-    },
-  ],
-};
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+  cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },
+  databaseEventTriggerSettings: {
+    eventName: 'person.created',
+  },
+});

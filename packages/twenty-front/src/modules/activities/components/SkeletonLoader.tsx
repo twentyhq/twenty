@@ -1,27 +1,29 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   align-items: center;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(8)};
+  padding: ${themeCssVariables.spacing[8]};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   flex-wrap: wrap;
   align-content: flex-start;
 `;
 
 const StyledSkeletonSubSection = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSkeletonSubSectionContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   justify-content: center;
 `;
 
@@ -41,7 +43,7 @@ export const SKELETON_LOADER_HEIGHT_SIZES = {
 };
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SkeletonTheme
@@ -59,7 +61,7 @@ export const SkeletonLoader = ({
 }: {
   withSubSections?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
     id: `skeleton-item-${index}`,
   }));

@@ -10,22 +10,19 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
-
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MetadataGater } from '@/metadata-store/components/MetadataGater';
+import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
+import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
-import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
-import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
@@ -78,42 +75,39 @@ await dynamicActivate(SOURCE_LOCALE);
 const Providers = () => {
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'snack-bar-manager' }}
-        >
-          <RecoilDebugObserverEffect />
-          <ApolloProvider client={mockedApolloClient}>
-            <I18nProvider i18n={i18n}>
-              <ApolloStorybookDevLogEffect />
-              <ClientConfigProviderEffect />
-              <ClientConfigProvider>
-                <MetadataProviderEffect />
-                <WorkspaceProviderEffect />
-                <UserProvider>
-                  <ApolloCoreClientMockedProvider>
-                    <ObjectMetadataItemsLoadEffect />
-                    <ObjectMetadataItemsProvider>
-                      <FullHeightStorybookLayout>
-                        <HelmetProvider>
-                          <IconsProvider>
-                            <PrefetchDataProvider>
-                              <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                                <Outlet />
-                              </RecordComponentInstanceContextsWrapper>
-                            </PrefetchDataProvider>
-                          </IconsProvider>
-                        </HelmetProvider>
-                      </FullHeightStorybookLayout>
-                    </ObjectMetadataItemsProvider>
-                    <MainContextStoreProvider />
-                  </ApolloCoreClientMockedProvider>
-                </UserProvider>
-              </ClientConfigProvider>
-            </I18nProvider>
-          </ApolloProvider>
-        </SnackBarComponentInstanceContext.Provider>
-      </RecoilRoot>
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'snack-bar-manager' }}
+      >
+        <ApolloProvider client={mockedApolloClient}>
+          <I18nProvider i18n={i18n}>
+            <ApolloStorybookDevLogEffect />
+            <ClientConfigProviderEffect />
+            <ClientConfigProvider>
+              <MetadataProviderInitialEffects />
+              <IsAppMetadataReadyEffect />
+              <WorkspaceProviderEffect />
+              <MetadataGater>
+                <ApolloCoreClientMockedProvider>
+                  <PreComputedChipGeneratorsProvider>
+                    <FullHeightStorybookLayout>
+                      <HelmetProvider>
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                              <Outlet />
+                            </RecordComponentInstanceContextsWrapper>
+                          </PrefetchDataProvider>
+                        </IconsProvider>
+                      </HelmetProvider>
+                    </FullHeightStorybookLayout>
+                  </PreComputedChipGeneratorsProvider>
+                  <MainContextStoreProvider />
+                </ApolloCoreClientMockedProvider>
+              </MetadataGater>
+            </ClientConfigProvider>
+          </I18nProvider>
+        </ApolloProvider>
+      </SnackBarComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };

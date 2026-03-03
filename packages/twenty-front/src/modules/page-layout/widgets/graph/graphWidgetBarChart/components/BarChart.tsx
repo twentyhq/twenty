@@ -14,12 +14,12 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type BarChartProps = {
   data: BarChartDatum[];
@@ -76,8 +76,8 @@ export const BarChart = ({
   allowDataTransitions,
   hasNoData = false,
 }: BarChartProps) => {
-  const theme = useTheme();
-  const highlightedLegendId = useRecoilComponentValue(
+  const { theme } = useContext(ThemeContext);
+  const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
@@ -225,7 +225,7 @@ export const BarChart = ({
         groupMode={groupMode}
         hasNegativeValues={hasNegativeValues}
         hasNoData={hasNoData}
-        highlightedLegendId={highlightedLegendId}
+        highlightedLegendId={graphWidgetHighlightedLegendId}
         hoveredSlice={hoveredSlice}
         innerHeight={innerHeight}
         innerWidth={innerWidth}

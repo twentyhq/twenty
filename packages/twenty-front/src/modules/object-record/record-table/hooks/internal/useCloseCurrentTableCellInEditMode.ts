@@ -1,17 +1,18 @@
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
-  const currentTableCellInEditModePositionState =
-    useRecoilComponentCallbackState(
-      recordTableCellEditModePositionComponentState,
-      recordTableId,
-    );
+  const store = useStore();
+  const currentTableCellInEditModePosition = useAtomComponentStateCallbackState(
+    recordTableCellEditModePositionComponentState,
+    recordTableId,
+  );
 
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
@@ -19,22 +20,18 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const { removeLastFocusItemFromFocusStackByComponentType } =
     useRemoveLastFocusItemFromFocusStackByComponentType();
 
-  return useRecoilCallback(
-    ({ set }) => {
-      return () => {
-        set(currentTableCellInEditModePositionState, null);
+  return useCallback(() => {
+    store.set(currentTableCellInEditModePosition, null);
 
-        goBackToPreviousDropdownFocusId();
+    goBackToPreviousDropdownFocusId();
 
-        removeLastFocusItemFromFocusStackByComponentType({
-          componentType: FocusComponentType.OPENED_FIELD_INPUT,
-        });
-      };
-    },
-    [
-      currentTableCellInEditModePositionState,
-      goBackToPreviousDropdownFocusId,
-      removeLastFocusItemFromFocusStackByComponentType,
-    ],
-  );
+    removeLastFocusItemFromFocusStackByComponentType({
+      componentType: FocusComponentType.OPENED_FIELD_INPUT,
+    });
+  }, [
+    store,
+    currentTableCellInEditModePosition,
+    goBackToPreviousDropdownFocusId,
+    removeLastFocusItemFromFocusStackByComponentType,
+  ]);
 };

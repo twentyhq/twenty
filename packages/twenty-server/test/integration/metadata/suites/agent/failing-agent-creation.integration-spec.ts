@@ -32,7 +32,7 @@ describe('Agent creation should fail', () => {
       input: {
         label: globalTestContext.existingAgentLabel,
         prompt: 'Existing agent for testing',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
       },
     });
 
@@ -55,7 +55,7 @@ describe('Agent creation should fail', () => {
       context: {
         input: {
           prompt: 'Test prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
         } as CreateAgentInput,
       },
     },
@@ -64,7 +64,7 @@ describe('Agent creation should fail', () => {
       context: {
         input: {
           label: 'Test Agent Missing Prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
         } as CreateAgentInput,
       },
     },
@@ -83,7 +83,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: '',
           prompt: 'Test prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
         },
       },
     },
@@ -93,7 +93,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'Empty Prompt Agent',
           prompt: '',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
         },
       },
     },
@@ -114,7 +114,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: globalTestContext.existingAgentLabel,
           prompt: 'Duplicate agent',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
         },
       },
     },
@@ -125,7 +125,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'Invalid Response Format Agent',
           prompt: 'Test prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
           responseFormat: {
             type: 'invalid',
           } as any,
@@ -138,7 +138,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'JSON Without Schema Agent',
           prompt: 'Test prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
           responseFormat: {
             type: 'json',
           } as any,
@@ -151,7 +151,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'Text With Schema Agent',
           prompt: 'Test prompt',
-          modelId: 'gpt-4o',
+          modelId: 'gpt-4.1',
           responseFormat: {
             type: 'text',
             schema: { type: 'object' },

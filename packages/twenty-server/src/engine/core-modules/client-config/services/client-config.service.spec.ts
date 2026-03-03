@@ -34,7 +34,7 @@ describe('ClientConfigService', () => {
         {
           provide: AiModelRegistryService,
           useValue: {
-            getAvailableModels: jest.fn().mockReturnValue([]),
+            getAdminFilteredModels: jest.fn().mockReturnValue([]),
           },
         },
       ],

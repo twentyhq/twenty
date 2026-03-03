@@ -3,9 +3,9 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Card } from 'twenty-ui/layout';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledCardGrid = styled.div`
   display: grid;
@@ -22,7 +22,7 @@ const StyledImage = styled.img`
 `;
 
 export const SettingsLabContent = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { labPublicFeatureFlags, handleLabPublicFeatureFlagUpdate } =
     useLabPublicFeatureFlags();
   const [hasImageLoadingError, setHasImageLoadingError] = useState<

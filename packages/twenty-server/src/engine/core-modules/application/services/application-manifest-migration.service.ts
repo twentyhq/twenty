@@ -65,6 +65,11 @@ export class ApplicationManifestMigrationService {
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
+
     const toAllUniversalFlatEntityMaps =
       computeApplicationManifestAllUniversalFlatEntityMaps({
         manifest,
@@ -72,19 +77,14 @@ export class ApplicationManifestMigrationService {
         now,
       });
 
-    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
-      applicationIds: [ownerFlatApplication.id],
+    const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds:
+        ownerFlatApplication.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+          ? [twentyStandardFlatApplication.id]
+          : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
-
-    const dependencyAllFlatEntityMaps =
-      ownerFlatApplication.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier
-        ? undefined
-        : getApplicationSubAllFlatEntityMaps({
-            applicationIds: [twentyStandardFlatApplication.id],
-            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-          });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
@@ -144,10 +144,12 @@ export class ApplicationManifestMigrationService {
       flatRoleMaps: refreshedFlatRoleMaps,
       flatObjectMetadataMaps: refreshedFlatObjectMetadataMaps,
       flatFieldMetadataMaps: refreshedFlatFieldMetadataMaps,
+      flatFrontComponentMaps: refreshedFlatFrontComponentMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRoleMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'flatFrontComponentMaps',
     ]);
 
     let defaultRoleId: string | null = null;
@@ -181,11 +183,32 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    if (isDefined(defaultRoleId)) {
-      await this.applicationService.update(ownerFlatApplication.id, {
-        defaultRoleId,
+    let settingsCustomTabFrontComponentId: string | null = null;
+
+    const settingsCustomTabUniversalIdentifier =
+      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
+
+    if (isDefined(settingsCustomTabUniversalIdentifier)) {
+      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: refreshedFlatFrontComponentMaps,
+        universalIdentifier: settingsCustomTabUniversalIdentifier,
       });
+
+      if (!isDefined(flatFrontComponent)) {
+        throw new ApplicationException(
+          `Failed to resolve front component for settingsCustomTabFrontComponentUniversalIdentifier ${settingsCustomTabUniversalIdentifier}`,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      settingsCustomTabFrontComponentId = flatFrontComponent.id;
     }
+
+    await this.applicationService.update(ownerFlatApplication.id, {
+      workspaceId,
+      settingsCustomTabFrontComponentId,
+      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+    });
   }
 
   private async syncApplicationRolePermissions({

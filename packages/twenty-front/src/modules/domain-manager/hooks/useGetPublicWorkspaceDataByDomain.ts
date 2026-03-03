@@ -4,28 +4,29 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { origin } = useOrigin();
-  const setWorkspaceAuthProviders = useSetRecoilState(
+  const setWorkspaceAuthProviders = useSetAtomState(
     workspaceAuthProvidersState,
   );
-  const setWorkspaceAuthBypassProviders = useSetRecoilState(
+  const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const setWorkspacePublicDataState = useSetRecoilState(
-    workspacePublicDataState,
-  );
-  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+  const setWorkspacePublicData = useSetAtomState(workspacePublicDataState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
     variables: {
@@ -42,7 +43,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       setWorkspaceAuthBypassProviders(
         data.getPublicWorkspaceDataByDomain.authBypassProviders ?? null,
       );
-      setWorkspacePublicDataState(data.getPublicWorkspaceDataByDomain);
+      setWorkspacePublicData(data.getPublicWorkspaceDataByDomain);
     },
     onError: (error) => {
       // Only redirect to default domain if it's a workspace not found error

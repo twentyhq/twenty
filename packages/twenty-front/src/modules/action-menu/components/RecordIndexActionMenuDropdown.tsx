@@ -15,9 +15,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import styled from '@emotion/styled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
@@ -50,7 +49,7 @@ export const RecordIndexActionMenuDropdown = () => {
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuDropdownPosition = useRecoilComponentValue(
+  const recordIndexActionMenuDropdownPosition = useAtomComponentStateValue(
     recordIndexActionMenuDropdownPositionComponentState,
     dropdownId,
   );
@@ -62,7 +61,7 @@ export const RecordIndexActionMenuDropdown = () => {
     'more-actions',
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -74,8 +73,8 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{
-        x: actionMenuDropdownPosition.x ?? 0,
-        y: actionMenuDropdownPosition.y ?? 0,
+        x: recordIndexActionMenuDropdownPosition.x ?? 0,
+        y: recordIndexActionMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
         <DropdownContent>

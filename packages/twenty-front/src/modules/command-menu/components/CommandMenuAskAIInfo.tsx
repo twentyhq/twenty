@@ -1,18 +1,19 @@
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPageTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 export const CommandMenuAskAIInfo = () => {
-  const currentAIChatThreadTitle = useRecoilValueV2(
-    currentAIChatThreadTitleStateV2,
+  const currentAIChatThreadTitle = useAtomStateValue(
+    currentAIChatThreadTitleState,
   );
 
   return (

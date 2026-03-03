@@ -6,37 +6,39 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledIconWrapper = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -46,17 +48,16 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useRecoilValue(
-    recordStoreIdentifiersFamilySelector({
+  const recordIdentifiers = useAtomFamilySelectorValue(
+    recordStoreIdentifiersFamilySelector,
+    {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
-    }),
+    },
   );
-  const records = useRecoilValue(
-    recordStoreRecordsSelector({
-      recordIds: allRecordIds,
-    }),
-  );
+  const records = useAtomFamilySelectorValue(recordStoreRecordsSelector, {
+    recordIds: allRecordIds,
+  });
 
   const contextChips = useMemo(() => {
     const filteredCommandMenuNavigationStack =

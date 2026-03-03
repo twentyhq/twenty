@@ -45,10 +45,15 @@ const parseCssString = (
     const property = declaration.slice(0, colonIndex).trim();
     const value = declaration.slice(colonIndex + 1).trim();
 
-    const camelProperty = property.replace(/-([a-z])/g, (_, letter: string) =>
-      letter.toUpperCase(),
-    );
-    style[camelProperty] = value;
+    const isCssCustomProperty = property.startsWith('--');
+
+    const key = isCssCustomProperty
+      ? property
+      : property.replace(/-([a-z])/g, (_, letter: string) =>
+          letter.toUpperCase(),
+        );
+
+    style[key] = value;
   }
 
   return style;
@@ -103,6 +108,27 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     if ('scrollLeft' in target && typeof target.scrollLeft === 'number') {
       serialized.scrollLeft = target.scrollLeft;
     }
+    if ('currentTime' in target && typeof target.currentTime === 'number') {
+      serialized.currentTime = target.currentTime;
+    }
+    if ('duration' in target && typeof target.duration === 'number') {
+      serialized.duration = target.duration;
+    }
+    if ('paused' in target && typeof target.paused === 'boolean') {
+      serialized.paused = target.paused;
+    }
+    if ('ended' in target && typeof target.ended === 'boolean') {
+      serialized.ended = target.ended;
+    }
+    if ('volume' in target && typeof target.volume === 'number') {
+      serialized.volume = target.volume;
+    }
+    if ('muted' in target && typeof target.muted === 'boolean') {
+      serialized.muted = target.muted;
+    }
+    if ('playbackRate' in target && typeof target.playbackRate === 'number') {
+      serialized.playbackRate = target.playbackRate;
+    }
   }
 
   return serialized;
@@ -140,13 +166,18 @@ const filterProps = <T extends object>(props: T): T => {
 
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
+const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
+  iframe: { sandbox: '' },
+};
+
 export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
+  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
 
   return ({ children, ...props }: WrapperProps) =>
     React.createElement(
       htmlTag,
-      filterProps(props),
+      { ...filterProps(props), ...forcedProps },
       isVoid ? undefined : children,
     );
 };

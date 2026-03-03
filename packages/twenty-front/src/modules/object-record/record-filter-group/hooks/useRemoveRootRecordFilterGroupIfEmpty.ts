@@ -1,69 +1,54 @@
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRootRecordFilterGroupIfEmpty = () => {
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
+    currentRecordFilterGroupsComponentState,
+  );
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 
+  const store = useStore();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
-  const removeRootRecordFilterGroupIfEmpty = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
+  const removeRootRecordFilterGroupIfEmpty = () => {
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
+
+    const existingRecordFilters = store.get(currentRecordFilters);
+
+    const rootRecordFilterGroup = existingRecordFilterGroups.find(
+      (existingRecordFilterGroup) =>
+        !isDefined(existingRecordFilterGroup.parentRecordFilterGroupId),
+    );
+
+    if (isDefined(rootRecordFilterGroup)) {
+      const recordFilterGroupsInRootRecordFilterGroup =
+        existingRecordFilterGroups.filter(
+          (recordFilterGroupToFilter) =>
+            recordFilterGroupToFilter.parentRecordFilterGroupId ===
+            rootRecordFilterGroup.id,
         );
 
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+      const recordFiltersInRootRecordFilterGroup = existingRecordFilters.filter(
+        (recordFilterToFilter) =>
+          recordFilterToFilter.recordFilterGroupId === rootRecordFilterGroup.id,
+      );
 
-        const rootRecordFilterGroup = currentRecordFilterGroups.find(
-          (existingRecordFilterGroup) =>
-            !isDefined(existingRecordFilterGroup.parentRecordFilterGroupId),
-        );
+      const rootRecordFilterGroupIsEmpty =
+        recordFilterGroupsInRootRecordFilterGroup.length === 0 &&
+        recordFiltersInRootRecordFilterGroup.length === 0;
 
-        if (isDefined(rootRecordFilterGroup)) {
-          const recordFilterGroupsInRootRecordFilterGroup =
-            currentRecordFilterGroups.filter(
-              (recordFilterGroupToFilter) =>
-                recordFilterGroupToFilter.parentRecordFilterGroupId ===
-                rootRecordFilterGroup.id,
-            );
-
-          const recordFiltersInRootRecordFilterGroup =
-            currentRecordFilters.filter(
-              (recordFilterToFilter) =>
-                recordFilterToFilter.recordFilterGroupId ===
-                rootRecordFilterGroup.id,
-            );
-
-          const rootRecordFilterGroupIsEmpty =
-            recordFilterGroupsInRootRecordFilterGroup.length === 0 &&
-            recordFiltersInRootRecordFilterGroup.length === 0;
-
-          if (rootRecordFilterGroupIsEmpty) {
-            removeRecordFilterGroup(rootRecordFilterGroup.id);
-          }
-        }
-      },
-    [
-      removeRecordFilterGroup,
-      currentRecordFilterGroupsCallbackState,
-      currentRecordFiltersCallbackState,
-    ],
-  );
+      if (rootRecordFilterGroupIsEmpty) {
+        removeRecordFilterGroup(rootRecordFilterGroup.id);
+      }
+    }
+  };
 
   return {
     removeRootRecordFilterGroupIfEmpty,

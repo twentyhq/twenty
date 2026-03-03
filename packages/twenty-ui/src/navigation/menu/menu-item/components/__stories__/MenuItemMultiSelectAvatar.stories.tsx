@@ -8,7 +8,7 @@ import {
   type CatalogOptions,
   type CatalogStory,
   ComponentDecorator,
-  RecoilRootDecorator,
+  JotaiRootDecorator,
 } from '@ui/testing';
 import { MenuItemMultiSelectAvatar } from '../MenuItemMultiSelectAvatar';
 
@@ -27,7 +27,7 @@ export const Default: Story = {
     contextualText: 'Contextual text',
     avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
   },
-  decorators: [ComponentDecorator, RecoilRootDecorator],
+  decorators: [ComponentDecorator, JotaiRootDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
@@ -81,5 +81,5 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
       } as CatalogOptions,
     },
   },
-  decorators: [CatalogDecorator, RecoilRootDecorator],
+  decorators: [CatalogDecorator, JotaiRootDecorator],
 };

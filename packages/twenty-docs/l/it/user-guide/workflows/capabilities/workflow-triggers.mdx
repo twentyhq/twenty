@@ -10,14 +10,13 @@ I flussi di lavoro iniziano sempre con un singolo attivatore che definisce quand
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Gli oggetti avanzati sono supportati!** Oltre agli oggetti CRM standard (Persone, Aziende, Opportunità), puoi anche avviare flussi di lavoro ed eseguire azioni su:
+**Gli oggetti avanzati sono supportati!** Oltre agli oggetti CRM standard (Persone, Aziende, Opportunità), puoi anche avviare flussi di lavoro ed eseguire azioni su:
+* Membri dello spazio di lavoro
+* Eventi del calendario
+* Messaggi (email)
+* Attività, note e molti altri oggetti di sistema
 
-  * Membri dello spazio di lavoro
-  * Eventi del calendario
-  * Messaggi (email)
-  * Attività, note e molti altri oggetti di sistema
-
-  Questo consente potenti automazioni, come notificare i membri del team quando vengono creati eventi del calendario oppure elaborare automaticamente le email in arrivo.
+Questo consente potenti automazioni, come notificare i membri del team quando vengono creati eventi del calendario oppure elaborare automaticamente le email in arrivo.
 </Tip>
 
 ## Record Creato
@@ -27,9 +26,9 @@ Avvia il flusso di lavoro quando viene creato un nuovo record in un oggetto sele
 **Configurazione**: Seleziona il tipo di oggetto da monitorare per i nuovi record.
 
 <Note>
-  * Questo attivatore è ottimo per i record creati tramite csv, sincronizzazione della casella di posta e del calendario, API.
-  * **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Poiché Twenty UI offre il salvataggio automatico al volo (non esiste una modalità di modifica e poi una validazione per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
-    Per attivare questo flusso di lavoro sui record creati manualmente, si consiglia invece di usare l'attivatore `Record is created or updated`.
+* Questo attivatore è ottimo per i record creati tramite csv, sincronizzazione della casella di posta e del calendario, API.
+* **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Poiché Twenty UI offre il salvataggio automatico al volo (non esiste una modalità di modifica e poi una validazione per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
+  Per attivare questo flusso di lavoro sui record creati manualmente, si consiglia invece di usare l'attivatore `Record is created or updated`.
 </Note>
 
 ## Record Aggiornato
@@ -82,7 +81,7 @@ Scegli come il flusso di lavoro dovrebbe gestire la selezione dei record:
 * **Bulk**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito una sola volta, fornendo l'intero elenco di record come input. Questo significa che il flusso di lavoro deve contenere un'[azione Iteratore](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  È più avanzato ed è ideale per chi vuole ottimizzare il numero di esecuzioni del flusso di lavoro.
+È più avanzato ed è ideale per chi vuole ottimizzare il numero di esecuzioni del flusso di lavoro.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Avvia il flusso di lavoro con una ricorrenza da te definita.
 * Inserisci un valore o usa espressioni cron personalizzate per pianificazioni avanzate
 
 <Note>
-  **Fuso orario**: I flussi di lavoro pianificati vengono eseguiti in **UTC**. Quando imposti gli orari per le pianificazioni giornaliere, converti la tua ora locale in UTC.
+**Fuso orario**: I flussi di lavoro pianificati vengono eseguiti in **UTC**. Quando imposti gli orari per le pianificazioni giornaliere, converti la tua ora locale in UTC.
 </Note>
 
 ## Attivatore esterno: Webhook

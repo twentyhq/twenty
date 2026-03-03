@@ -1,6 +1,5 @@
 import { fireEvent, renderHook } from '@testing-library/react';
 import React, { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,9 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 const containerRef = React.createRef<HTMLDivElement>();
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <div ref={containerRef}>{children}</div>
-  </RecoilRoot>
+  <div ref={containerRef}>{children}</div>
 );
 
 const listenerId = 'listenerId';

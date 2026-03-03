@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const updatedObjectNamePluralState = createState<string>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const updatedObjectNamePluralState = createAtomState<string>({
   key: 'updatedObjectNamePluralState',
   defaultValue: '',
 });

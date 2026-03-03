@@ -14,19 +14,19 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import styled from '@emotion/styled';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 export type ChartFiltersSettingsProps = {
@@ -50,49 +50,33 @@ export const ChartFiltersSettings = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
     instanceId,
   );
 
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(
-      currentRecordFilterGroupsComponentState,
-      instanceId,
-    );
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
+    currentRecordFilterGroupsComponentState,
+    instanceId,
+  );
 
+  const store = useStore();
   const chartWidgetConfiguration = widget.configuration;
 
-  const handleFiltersUpdate = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+  const handleFiltersUpdate = () => {
+    const existingRecordFilters = store.get(currentRecordFilters);
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
-
-        updateCurrentWidgetConfig({
-          objectMetadataId: objectMetadataItem.id,
-          configToUpdate: {
-            filter: {
-              recordFilters: currentRecordFilters,
-              recordFilterGroups: currentRecordFilterGroups,
-            },
-          } satisfies Partial<ChartWidgetConfiguration>,
-        });
-      },
-    [
-      currentRecordFiltersCallbackState,
-      currentRecordFilterGroupsCallbackState,
-      objectMetadataItem,
-      updateCurrentWidgetConfig,
-    ],
-  );
+    updateCurrentWidgetConfig({
+      objectMetadataId: objectMetadataItem.id,
+      configToUpdate: {
+        filter: {
+          recordFilters: existingRecordFilters,
+          recordFilterGroups: existingRecordFilterGroups,
+        },
+      } satisfies Partial<ChartWidgetConfiguration>,
+    });
+  };
 
   return (
     <>

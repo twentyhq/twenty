@@ -162,12 +162,15 @@ const generateElementDefinition = (
   sourceFile: SourceFile,
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
-  useSharedEvents: boolean,
-  useSharedPropertiesConfig: boolean,
+  commonEventNames: Set<string>,
+  shouldUseCommonHtmlPropertiesConfig: boolean,
 ): void => {
   const isHtml = isDefined(component.htmlTag);
-  const useShared = useSharedEvents && isHtml;
-  const hasEvents = component.events.length > 0;
+  const hasCommonHtmlEvents = commonEventNames.size > 0 && isHtml;
+  const customEvents = component.events.filter(
+    (event) => !hasCommonHtmlEvents || !commonEventNames.has(event),
+  );
+  const hasEvents = hasCommonHtmlEvents || customEvents.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
 
@@ -177,11 +180,19 @@ const generateElementDefinition = (
       ? TYPE_NAMES.COMMON_PROPERTIES
       : TYPE_NAMES.EMPTY_RECORD;
 
-  const eventsType = hasEvents
-    ? useShared
-      ? TYPE_NAMES.COMMON_EVENTS
-      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`).join('; ')} }`
-    : TYPE_NAMES.EMPTY_RECORD;
+  const customEventsInline = customEvents
+    .map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`)
+    .join('; ');
+
+  let eventsType: string = TYPE_NAMES.EMPTY_RECORD;
+
+  if (hasCommonHtmlEvents && customEvents.length > 0) {
+    eventsType = `${TYPE_NAMES.COMMON_EVENTS} & { ${customEventsInline} }`;
+  } else if (hasCommonHtmlEvents) {
+    eventsType = TYPE_NAMES.COMMON_EVENTS;
+  } else if (customEvents.length > 0) {
+    eventsType = `{ ${customEventsInline} }`;
+  }
 
   sourceFile.addVariableStatement({
     isExported: true,
@@ -220,7 +231,7 @@ const generateElementDefinition = (
                 });
                 writer.write(',');
                 writer.newLine();
-              } else if (useSharedPropertiesConfig && isHtml) {
+              } else if (shouldUseCommonHtmlPropertiesConfig && isHtml) {
                 writer.write(
                   `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
                 );
@@ -235,10 +246,16 @@ const generateElementDefinition = (
               }
             }
             if (hasEvents) {
+              const formattedCustomEvents = customEvents
+                .map((event) => `'${event}'`)
+                .join(', ');
+
               writer.write(
-                useShared
-                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
-                  : `events: [${component.events.map((event) => `'${event}'`).join(', ')}],`,
+                hasCommonHtmlEvents && customEvents.length > 0
+                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${formattedCustomEvents}],`
+                  : hasCommonHtmlEvents
+                    ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
+                    : `events: [${formattedCustomEvents}],`,
               );
               writer.newLine();
             }
@@ -304,8 +321,9 @@ export const generateRemoteElements = (
     overwrite: true,
   });
 
-  const useSharedEvents = commonEvents.length > 0;
-  const useSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
+  const commonEventNames = new Set(commonEvents);
+  const shouldUseCommonHtmlPropertiesConfig =
+    Object.keys(commonProperties).length > 0;
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@remote-dom/core/elements',
@@ -327,11 +345,11 @@ export const generateRemoteElements = (
 
   generateCommonPropertiesType(sourceFile, commonProperties);
 
-  if (useSharedEvents) {
+  if (commonEventNames.size > 0) {
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
-  if (useSharedPropertiesConfig) {
+  if (shouldUseCommonHtmlPropertiesConfig) {
     generateCommonPropertiesConfig(sourceFile, commonProperties);
   }
 
@@ -345,8 +363,8 @@ export const generateRemoteElements = (
       sourceFile,
       component,
       specificProperties,
-      useSharedEvents,
-      useSharedPropertiesConfig,
+      commonEventNames,
+      shouldUseCommonHtmlPropertiesConfig,
     );
   }
 

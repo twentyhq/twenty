@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 Kullanıcıların içerik bloklarını düzenleyip görüntüleyebilmeleri için [BlockNote](https://www.blocknotejs.org/) tarafından sağlanan blok tabanlı zengin metin düzenleyici kullanır.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="Kullanım">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="Özellikler">
-    | Özellikler  | Tür               | Açıklama                                    |
-    | ----------- | ----------------- | ------------------------------------------- |
-    | düzenleyici | `BlockNoteEditor` | Blok düzenleyici örneği veya yapılandırması |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Özellikler">
+
+
+| Özellikler  | Tür               | Açıklama                                    |
+| ----------- | ----------------- | ------------------------------------------- |
+| düzenleyici | `BlockNoteEditor` | Blok düzenleyici örneği veya yapılandırması |
+
+
+
+</Tab>
 </Tabs>

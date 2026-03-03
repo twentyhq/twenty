@@ -10,9 +10,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -43,13 +43,13 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     searchRecord.recordId,
     selectableListComponentInstanceId,
   );
 
-  const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValue(
+  const isRecordSelectedWithObjectItem = useAtomComponentFamilySelectorValue(
     multipleRecordPickerIsSelectedComponentFamilySelector,
     searchRecord.recordId,
     componentInstanceId,
@@ -68,12 +68,14 @@ export const MultipleRecordPickerMenuItemContent = ({
   const displayText =
     searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
-    multipleRecordPickerSearchableObjectMetadataItemsComponentState,
-    componentInstanceId,
-  );
+  const multipleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      multipleRecordPickerSearchableObjectMetadataItemsComponentState,
+      componentInstanceId,
+    );
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    multipleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem
@@ -83,7 +85,7 @@ export const MultipleRecordPickerMenuItemContent = ({
     >
       <MenuItemMultiSelectAvatar
         onSelectChange={(isSelected) => handleSelectChange(isSelected)}
-        isKeySelected={isSelectedByKeyboard}
+        isKeySelected={isSelectedItemId}
         selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar

@@ -6,11 +6,12 @@ import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-
 import { CommandMenuSystemObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -34,14 +35,17 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const addMenuItemInsertionContext = useRecoilValueV2(
-    addMenuItemInsertionContextStateV2,
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
-    addMenuItemInsertionContextStateV2,
+  const setAddMenuItemInsertionContext = useSetAtomState(
+    addMenuItemInsertionContextState,
   );
-  const { views, objectMetadataIdsWithIndexView } =
-    useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const {
+    views,
+    objectMetadataIdsWithIndexView,
+    objectMetadataIdsInWorkspace,
+  } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
@@ -61,12 +65,16 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
     objectMetadataItem: ObjectMetadataItem,
     defaultViewId: string,
   ) => {
+    if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
+      return;
+    }
     addObjectToDraft(
       objectMetadataItem.id,
       defaultViewId,
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId,
       addMenuItemInsertionContext?.targetIndex,
+      getStandardObjectIconColor(objectMetadataItem.nameSingular),
     );
     setAddMenuItemInsertionContext(null);
     closeCommandMenu();

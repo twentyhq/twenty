@@ -22,11 +22,10 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import {
@@ -34,6 +33,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -46,31 +46,31 @@ type WidgetRendererProps = {
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValue(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValue(
+  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const isEditing = currentlyEditingWidgetId === widget.id;
+  const isEditing = pageLayoutEditingWidgetId === widget.id;
 
-  const isDragging = draggingWidgetId === widget.id;
+  const isDragging = pageLayoutDraggingWidgetId === widget.id;
 
-  const isResizing = resizingWidgetId === widget.id;
+  const isResizing = pageLayoutResizingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -109,17 +109,17 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const setIsHovered = useSetRecoilComponentFamilyState(
+  const setWidgetCardHovered = useSetAtomComponentFamilyState(
     widgetCardHoveredComponentFamilyState,
     widget.id,
   );
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    setWidgetCardHovered(true);
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    setWidgetCardHovered(false);
   };
 
   const variant = getWidgetCardVariant({

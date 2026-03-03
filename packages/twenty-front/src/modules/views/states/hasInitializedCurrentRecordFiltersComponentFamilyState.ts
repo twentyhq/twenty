@@ -1,8 +1,8 @@
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 
 export const hasInitializedCurrentRecordFiltersComponentFamilyState =
-  createComponentFamilyState<boolean, { viewId?: string }>({
+  createAtomComponentFamilyState<boolean, { viewId?: string }>({
     key: 'hasInitializedCurrentRecordFiltersComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordFiltersComponentInstanceContext,

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -7,9 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   width: 300px;
 `;
 

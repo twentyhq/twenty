@@ -1,7 +1,7 @@
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const viewFieldAggregateOperationState = createFamilyState<
+export const viewFieldAggregateOperationState = createAtomFamilyState<
   ExtendedAggregateOperations | null | undefined,
   { viewFieldId: string }
 >({

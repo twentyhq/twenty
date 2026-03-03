@@ -12,29 +12,29 @@ Tento průvodce vás provede importem vašich kontaktů (People) do Twenty. **Ne
 ### Kontrolní seznam předpokladů
 
 <Check>
-  Váš soubor je ve formátu CSV, XLSX nebo XLS
+Váš soubor je ve formátu CSV, XLSX nebo XLS
 </Check>
 
 <Check>
-  Soubor obsahuje méně než 10 000 záznamů
+Soubor obsahuje méně než 10 000 záznamů
 </Check>
 
 <Check>
-  Žádné duplicitní e-mailové adresy ve vašem souboru
+Žádné duplicitní e-mailové adresy ve vašem souboru
 </Check>
 
 <Check>
-  **Společnosti importovány jako první** (pokud propojujete osoby se Společnostmi)
+**Společnosti importovány jako první** (pokud propojujete osoby se Společnostmi)
 </Check>
 
 <Check>
-  Všechna vlastní pole existují v **Settings → Data Model**
+Všechna vlastní pole existují v **Settings → Data Model**
 </Check>
 
 <Warning>
-  **Importujte Společnosti před osobami**
+**Importujte Společnosti před osobami**
 
-  Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti. Společnost musí existovat dříve, než na ni můžete odkazovat.
+Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti. Společnost musí existovat dříve, než na ni můžete odkazovat.
 </Warning>
 
 ## Krok 1: Připravte si data kontaktů
@@ -81,7 +81,7 @@ Přidejte sloupec s jedinečným identifikátorem Společnosti:
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá způsobu, jakým jsou Společnosti uloženy v Twenty.
+**Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá způsobu, jakým jsou Společnosti uloženy v Twenty.
 </Note>
 
 ### Ukázková struktura CSV
@@ -93,7 +93,7 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Tip pro profíky:** Během importu klikněte na **Download sample file** nebo vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců, které Twenty očekává.
+**Tip pro profíky:** Během importu klikněte na **Download sample file** nebo vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců, které Twenty očekává.
 </Note>
 
 ## Krok 2: Přejděte na funkci importu
@@ -145,9 +145,9 @@ Při mapování sloupce společnosti:
 3. Twenty propojí každou osobu s odpovídající Společností
 
 <Warning>
-  **Pro relace mapujte pouze JEDEN jedinečný identifikátor.**
+**Pro relace mapujte pouze JEDEN jedinečný identifikátor.**
 
-  Nemapujte současně `companyId` a `companyDomain`. Vyberte jednu možnost — ideálně doménu, protože je lidsky čitelná.
+Nemapujte současně `companyId` a `companyDomain`. Vyberte jednu možnost — ideálně doménu, protože je lidsky čitelná.
 </Warning>
 
 ## Krok 5: Mapujte hodnoty polí typu Select
@@ -159,7 +159,7 @@ Pokud máte pole typu Select nebo Multi-Select (např. Zdroj leadu):
 3. Nebo podle potřeby vytvořte nové možnosti
 
 <Note>
-  Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste viděli názvy API.
+Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste viděli názvy API.
 </Note>
 
 ## Krok 6: Zkontrolujte a opravte chyby

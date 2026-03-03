@@ -12,13 +12,12 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useRef, useState } from 'react';
+import { useStore } from 'jotai';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -56,42 +55,74 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedCallbackFamilyState =
-    useRecoilComponentFamilyCallbackState(isRowSelectedComponentFamilyState);
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
 
-  const handleDragSelectionChange = useRecoilCallback(
-    ({ set }) =>
-      (rowId: string, selected: boolean) => {
-        set(isRowSelectedCallbackFamilyState(rowId), selected);
-      },
-    [isRowSelectedCallbackFamilyState],
+  const store = useStore();
+
+  const handleDragSelectionChange = useCallback(
+    (rowId: string, selected: boolean) => {
+      store.set(isRowSelectedFamilyState(rowId), selected);
+    },
+    [isRowSelectedFamilyState, store],
   );
 
   const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const setRecordTableHoverPosition = useSetRecoilComponentState(
-    recordTableHoverPositionComponentState,
-  );
+  const recordTableHoverPositionCallbackState =
+    useAtomComponentStateCallbackState(
+      recordTableHoverPositionComponentState,
+      recordTableId,
+    );
 
-  const isSomeCellInEditModeCallbackState = useRecoilComponentCallbackState(
+  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
     isSomeCellInEditModeComponentSelector,
+    recordTableId,
   );
 
-  const handleMouseLeave = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isSomeCellInEditMode = getSnapshotValue(
-          snapshot,
-          isSomeCellInEditModeCallbackState,
-        );
+  const handleMouseLeave = useCallback(() => {
+    const cellInEditMode = store.get(isSomeCellInEditMode);
 
-        if (!isSomeCellInEditMode) {
-          setRecordTableHoverPosition(null);
-        }
-      },
-    [isSomeCellInEditModeCallbackState, setRecordTableHoverPosition],
+    if (!cellInEditMode) {
+      store.set(recordTableHoverPositionCallbackState, null);
+    }
+  }, [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState]);
+
+  const handleDelegatedMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      if (store.get(isSomeCellInEditMode)) {
+        return;
+      }
+
+      const target = event.target as HTMLElement;
+      const cellElement = target.closest<HTMLElement>(
+        '[data-record-table-col]',
+      );
+
+      if (!cellElement) {
+        return;
+      }
+
+      const column = Number(cellElement.dataset.recordTableCol);
+      const row = Number(cellElement.dataset.recordTableRow);
+
+      if (isNaN(column) || isNaN(row)) {
+        return;
+      }
+
+      const lastPosition = store.get(recordTableHoverPositionCallbackState);
+
+      if (lastPosition?.column === column && lastPosition?.row === row) {
+        return;
+      }
+
+      store.set(recordTableHoverPositionCallbackState, { column, row });
+    },
+    [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
   );
 
   return (
@@ -101,6 +132,7 @@ export const RecordTableContent = ({
         isDragging={isDragging}
         visibleRecordFields={visibleRecordFields}
         id={RECORD_TABLE_HTML_ID}
+        onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
         hasRecordGroups={hasRecordGroups}
       >
