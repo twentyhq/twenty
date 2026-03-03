@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -24,6 +24,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
@@ -35,16 +36,16 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

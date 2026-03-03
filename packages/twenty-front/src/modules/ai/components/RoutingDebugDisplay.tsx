@@ -1,10 +1,11 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
@@ -14,8 +15,8 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledToggleButton = styled.div`
@@ -24,23 +25,23 @@ const StyledToggleButton = styled.div`
   border: none;
   cursor: pointer;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
+  font-size: ${themeCssVariables.font.size.sm};
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledContentContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   min-width: 0;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledJsonTreeContainer = styled.div`
@@ -52,48 +53,52 @@ const StyledJsonTreeContainer = styled.div`
 `;
 
 const StyledTabContainer = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTab = styled.div<{ isActive: boolean }>`
-  color: ${({ theme, isActive }) =>
-    isActive ? theme.font.color.primary : theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme, isActive }) =>
-    isActive ? theme.font.weight.medium : theme.font.weight.regular};
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
+  padding-bottom: ${themeCssVariables.spacing[2]};
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledTimingSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTimingRow = styled.div`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)} 0;
+  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledTimingLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 const StyledTimingValue = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 type TabType = 'timing' | 'details' | 'context';
@@ -319,7 +324,7 @@ type RoutingDebugDisplayProps = {
 
 export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('timing');

@@ -1,42 +1,43 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconUpload } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `2px dashed ${theme.border.color.strong}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.secondary};
+  border: 2px dashed ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   text-align: center;
 `;
 
 const StyledUploadDragTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: ${themeCssVariables.text.lineHeight.md};
   margin-bottom: 8px;
 `;
 
 const StyledUploadDragSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.md};
 `;
 
 const StyledUploadIcon = styled(IconUpload)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  color: ${themeCssVariables.font.color.tertiary};
+  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 type DropZoneProps = {
@@ -49,7 +50,7 @@ export const DropZone = ({
   onUploadFiles,
 }: DropZoneProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { maxFileSize } = useSpreadsheetImportInternal();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -1,25 +1,26 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Linkify from 'linkify-react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledThreadMessageBody = styled(motion.div)`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
   white-space: pre-line;
   overflow-wrap: break-word;
 
   a {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
 
     text-decoration: underline;
-    text-decoration-color: ${({ theme }) => theme.font.color.primary};
+    text-decoration-color: ${themeCssVariables.font.color.primary};
 
     &:hover {
-      color: ${({ theme }) => theme.font.color.tertiary};
-      text-decoration-color: ${({ theme }) => theme.border.color.strong};
+      color: ${themeCssVariables.font.color.tertiary};
+      text-decoration-color: ${themeCssVariables.border.color.strong};
     }
   }
 `;

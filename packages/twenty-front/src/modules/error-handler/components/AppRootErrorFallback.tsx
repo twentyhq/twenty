@@ -1,9 +1,10 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { IconReload } from 'twenty-ui/display';
 import { THEME_DARK } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -17,8 +18,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.grayScale.gray1};
-  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
+  background: ${themeCssVariables.grayScale.gray1};
+  border: 1px solid ${themeCssVariables.grayScale.gray5};
   border-radius: 8px;
   height: 100%;
   overflow-x: auto;
@@ -66,13 +67,13 @@ const StyledEmptyTextContainer = styled.div`
 `;
 
 const StyledEmptyTitle = styled.div`
-  color: ${({ theme }) => theme.grayScale.gray12};
+  color: ${themeCssVariables.grayScale.gray12};
   font-size: 1.23rem;
   font-weight: 600;
 `;
 
 const StyledEmptySubTitle = styled.div`
-  color: ${({ theme }) => theme.grayScale.gray11};
+  color: ${themeCssVariables.grayScale.gray11};
   font-size: 0.92rem;
   font-weight: 400;
   line-height: 1.5;
@@ -83,9 +84,9 @@ const StyledEmptySubTitle = styled.div`
 
 const StyledButton = styled.button`
   align-items: center;
-  background: ${({ theme }) => theme.grayScale.gray1};
-  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
-  color: ${({ theme }) => theme.grayScale.gray12};
+  background: ${themeCssVariables.grayScale.gray1};
+  border: 1px solid ${themeCssVariables.grayScale.gray5};
+  color: ${themeCssVariables.grayScale.gray12};
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -94,7 +95,7 @@ const StyledButton = styled.button`
 `;
 
 const StyledIcon = styled(IconReload)`
-  color: ${({ theme }) => theme.grayScale.gray12};
+  color: ${themeCssVariables.grayScale.gray12};
   margin-right: 8px;
 `;
 
