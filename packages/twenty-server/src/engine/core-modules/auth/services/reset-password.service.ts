@@ -109,14 +109,13 @@ export class ResetPasswordService {
       .update(plainResetToken)
       .digest('hex');
 
-      await this.appTokenRepository.save({
-        userId: user.id,
-        workspaceId: targetWorkspaceId,
-        value: hashedResetToken,
-        expiresAt,
-        type: AppTokenType.PasswordResetToken,
-      });
-
+    await this.appTokenRepository.save({
+      userId: user.id,
+      workspaceId: targetWorkspaceId,
+      value: hashedResetToken,
+      expiresAt,
+      type: AppTokenType.PasswordResetToken,
+    });
 
     return {
       workspaceId: targetWorkspaceId,
