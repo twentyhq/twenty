@@ -20,6 +20,7 @@ import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
 import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -184,7 +185,8 @@ export const FieldsConfigurationEditor = ({
 
     setRenamingGroupValue(newGroupName);
     openDropdown({
-      dropdownComponentInstanceIdFromProps: `fields-configuration-group-rename-${newGroupId}`,
+      dropdownComponentInstanceIdFromProps:
+        getFieldsConfigurationGroupRenameDropdownId(newGroupId),
     });
   };
 

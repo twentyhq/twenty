@@ -9,6 +9,7 @@ import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/com
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -95,7 +96,9 @@ export const FieldsConfigurationGroupEditor = ({
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
-  const renameDropdownId = `fields-configuration-group-rename-${group.id}`;
+  const renameDropdownId = getFieldsConfigurationGroupRenameDropdownId(
+    group.id,
+  );
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
