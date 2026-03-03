@@ -50,23 +50,26 @@ export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
   scrollable = true,
+  className,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   scrollable?: boolean;
+  className?: string;
 }) => {
   return scrollable === true ? (
-    <StyledExternalContainer role="listbox">
-      <StyledScrollableContainer
-        maxHeight={
-          hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
-        }
-      >
+    <StyledScrollableContainer
+      className={className}
+      maxHeight={
+        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
+      }
+    >
+      <StyledExternalContainer role="listbox">
         <StyledInternalContainer>{children}</StyledInternalContainer>
-      </StyledScrollableContainer>
-    </StyledExternalContainer>
+      </StyledExternalContainer>
+    </StyledScrollableContainer>
   ) : (
-    <StyledExternalContainer role="listbox">
+    <StyledExternalContainer role="listbox" className={className}>
       <StyledInternalContainer>{children}</StyledInternalContainer>
     </StyledExternalContainer>
   );

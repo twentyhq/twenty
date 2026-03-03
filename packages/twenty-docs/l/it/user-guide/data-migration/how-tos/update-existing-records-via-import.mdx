@@ -25,11 +25,11 @@ Quando importi un file che contiene un **identificatore univoco** corrispondente
 | Manca nel tuo file                | **Crea** un nuovo record (con ID generato automaticamente) |
 
 <Warning>
-  **I campi Multi-Select vengono sovrascritti, non uniti.**
+**I campi Multi-Select vengono sovrascritti, non uniti.**
 
-  Se un record ha `Option A` e `Option B` selezionate e importi `["Option C"]`, il record avrà solo `Option C` dopo l'importazione. L'importazione sostituisce tutte le selezioni precedenti: non le aggiunge.
+Se un record ha `Option A` e `Option B` selezionate e importi `["Option C"]`, il record avrà solo `Option C` dopo l'importazione. L'importazione sostituisce tutte le selezioni precedenti: non le aggiunge.
 
-  Per mantenere i valori esistenti, includili tutti nella tua importazione: `["Option A","Option B","Option C"]`
+Per mantenere i valori esistenti, includili tutti nella tua importazione: `["Option A","Option B","Option C"]`
 </Warning>
 
 ## Passaggio 1: Esporta i tuoi dati correnti
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Non modificare i valori dell'identificatore univoco.**
+**Non modificare i valori dell'identificatore univoco.**
 
-  Se modifichi `john@acme.com` in `john.smith@acme.com`, Twenty creerà un nuovo record invece di aggiornare quello esistente.
+Se modifichi `john@acme.com` in `john.smith@acme.com`, Twenty creerà un nuovo record invece di aggiornare quello esistente.
 </Warning>
 
 ## Passaggio 3: Importa il file aggiornato

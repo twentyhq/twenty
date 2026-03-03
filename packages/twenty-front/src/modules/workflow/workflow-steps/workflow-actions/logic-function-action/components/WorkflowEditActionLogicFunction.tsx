@@ -6,13 +6,13 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
-import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`
@@ -118,7 +118,8 @@ export const WorkflowEditActionLogicFunction = ({
               fullWidth
             />
           ) : (
-            <WorkflowMessage
+            <Callout
+              variant={'neutral'}
               title={t`No input fields for this action`}
               description={t`You can see the function logic in your application settings.`}
             />

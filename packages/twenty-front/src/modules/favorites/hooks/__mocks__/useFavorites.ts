@@ -5,6 +5,7 @@ import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generat
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { AvatarType } from 'twenty-ui/display';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -65,30 +66,30 @@ export const initialFavorites: Favorite[] = [
 
 export const sortedFavorites = [
   {
-    id: '1',
-    recordId: '1',
-    position: 0,
-    avatarType: 'rounded',
-    avatarUrl: '',
-    labelIdentifier: ' ',
-    link: '/object/person/1',
-    objectNameSingular: 'person',
-    forWorkspaceMemberId: '1',
-    favoriteFolderId: '1',
     __typename: 'Favorite',
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    favoriteFolderId: '1',
+    forWorkspaceMemberId: '1',
+    id: '1',
+    labelIdentifier: 'ABC Corp',
+    link: '/object/company/2',
+    objectNameSingular: 'company',
+    position: 0,
+    recordId: '2',
   },
   {
-    id: '2',
-    recordId: '3',
-    position: 1,
-    avatarType: 'rounded',
-    avatarUrl: '',
-    labelIdentifier: ' ',
-    link: '/object/person/3',
-    objectNameSingular: 'person',
-    forWorkspaceMemberId: '1',
-    favoriteFolderId: '1',
     __typename: 'Favorite',
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    favoriteFolderId: '1',
+    forWorkspaceMemberId: '1',
+    id: '2',
+    labelIdentifier: 'Company Test',
+    link: '/object/company/4',
+    objectNameSingular: 'company',
+    position: 1,
+    recordId: '4',
   },
   {
     __typename: 'Favorite',
@@ -105,25 +106,21 @@ export const sortedFavorites = [
   },
 ];
 
-const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite')
+const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite');
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
-const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    computeReferences: false,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
+const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  computeReferences: false,
+  objectPermissionsByObjectMetadataId: {},
+});
 
-const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
-
+const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectPermissionsByObjectMetadataId: {},
+});
 
 export const mocks = [
   {
@@ -236,6 +233,41 @@ export const mocks = [
           id: favoriteId,
           position: 1,
           favoriteFolderId: null,
+        },
+      },
+    })),
+  },
+
+  {
+    request: {
+      query: CreateNavigationMenuItemDocument,
+      variables: {
+        input: {
+          targetRecordId: favoriteTargetObjectId,
+          targetObjectMetadataId: personObjectMetadataItem.id,
+          userWorkspaceId: '1',
+          folderId: undefined,
+          position: 1,
+        },
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        createNavigationMenuItem: {
+          __typename: 'NavigationMenuItem',
+          id: mockId,
+          userWorkspaceId: '1',
+          targetRecordId: favoriteTargetObjectId,
+          targetObjectMetadataId: personObjectMetadataItem.id,
+          viewId: null,
+          folderId: null,
+          name: null,
+          link: null,
+          icon: null,
+          position: 1,
+          applicationId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
       },
     })),

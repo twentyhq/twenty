@@ -50,10 +50,12 @@ To find the logicFunctionId, look at the code step's settings.input.logicFunctio
       const { logicFunctionId, code } = parameters;
       const { workspaceId } = context;
 
-      await deps.logicFunctionFromSourceService.updateOne({
-        id: logicFunctionId,
-        update: {
-          sourceHandlerCode: code,
+      await deps.logicFunctionFromSourceService.updateOneFromSource({
+        updateLogicFunctionFromSourceInput: {
+          id: logicFunctionId,
+          update: {
+            sourceHandlerCode: code,
+          },
         },
         workspaceId,
       });

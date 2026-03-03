@@ -1,5 +1,6 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -8,7 +9,6 @@ import {
   type TargetAndTransition,
 } from 'framer-motion';
 import { type ReactNode } from 'react';
-import { useRecoilValue } from 'recoil';
 
 const StyledAnimationGroupContainer = styled(motion.div)``;
 
@@ -23,7 +23,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
 }: NavigationDrawerItemsCollapsableContainerProps) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useRecoilValue(
+  const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
   const isExpanded = isNavigationDrawerExpanded || isSettingsPage;

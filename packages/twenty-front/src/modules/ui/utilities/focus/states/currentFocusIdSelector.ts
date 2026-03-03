@@ -1,7 +1,7 @@
-import { selector } from 'recoil';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { focusStackState } from './focusStackState';
 
-export const currentFocusIdSelector = selector<string | undefined>({
+export const currentFocusIdSelector = createAtomSelector<string | undefined>({
   key: 'currentFocusIdSelector',
   get: ({ get }) => {
     const focusStack = get(focusStackState);

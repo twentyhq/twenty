@@ -6,8 +6,8 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
+import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import {
@@ -44,9 +44,7 @@ export const CommandMenuItemNumberInput = ({
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
   const [hasError, setHasError] = useState(false);
-
-  const currentFocusId = useRecoilValue(currentFocusIdSelector);
-  const isNumberInputCurrentlyFocused = currentFocusId === focusId;
+  const store = useStore();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -87,20 +85,24 @@ export const CommandMenuItemNumberInput = ({
   };
 
   const handleBlur = () => {
+    const isInputStillFocused =
+      store.get(currentFocusIdSelector.atom) === focusId;
+
+    if (isInputStillFocused && draftValue !== value) {
+      handleCommit(draftValue);
+    }
+
     removeFocusItemFromFocusStackById({ focusId });
   };
 
   const handleEscape = () => {
+    removeFocusItemFromFocusStackById({ focusId });
     setDraftValue(value);
+    setHasError(false);
     inputRef.current?.blur();
   };
 
-  const handleClickOutside = () => {
-    handleCommit(draftValue);
-  };
-
   const handleEnter = () => {
-    handleCommit(draftValue);
     inputRef.current?.blur();
   };
 
@@ -110,9 +112,6 @@ export const CommandMenuItemNumberInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: isNumberInputCurrentlyFocused
-      ? handleClickOutside
-      : undefined,
   });
 
   const handleChange = (text: string) => {

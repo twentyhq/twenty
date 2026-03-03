@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterNavigationMenuItemsByRole } from '@/navigation-menu-item/utils/filterNavigationMenuItemsByRole';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -22,20 +22,22 @@ type PrefetchedNavigationMenuItemsData = {
 
 export const usePrefetchedNavigationMenuItemsData =
   (): PrefetchedNavigationMenuItemsData => {
-    const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useAtomStateValue(
+      currentWorkspaceMemberState,
+    );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-    const prefetchNavigationMenuItems = useRecoilValue(
+    const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+    const prefetchNavigationMenuItems = useAtomStateValue(
       prefetchNavigationMenuItemsState,
     );
-    const isNavigationMenuInEditMode = useRecoilValueV2(
-      isNavigationMenuInEditModeStateV2,
+    const isNavigationMenuInEditMode = useAtomStateValue(
+      isNavigationMenuInEditModeState,
     );
-    const navigationMenuItemsDraft = useRecoilValueV2(
-      navigationMenuItemsDraftStateV2,
+    const navigationMenuItemsDraft = useAtomStateValue(
+      navigationMenuItemsDraftState,
     );
 
-    const coreViews = useRecoilValue(coreViewsState);
+    const coreViews = useAtomStateValue(coreViewsState);
     const views = useMemo(
       () => coreViews.map(convertCoreViewToView),
       [coreViews],

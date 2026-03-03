@@ -24,11 +24,10 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
@@ -44,7 +43,8 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -115,7 +115,7 @@ export const PageLayoutTabList = ({
 
   const navigate = useNavigate();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );
@@ -134,12 +134,16 @@ export const PageLayoutTabList = ({
     hasAddButton: isDefined(onAddTab),
   });
 
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
-  const setIsTabDragging = useSetRecoilComponentState(
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     componentInstanceId,
   );
@@ -174,8 +178,9 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  const setPageLayoutTabListCurrentDragDroppableId = useSetRecoilComponentState(
+  const setPageLayoutTabListCurrentDragDroppableId = useSetAtomComponentState(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
+    pageLayoutId,
   );
 
   const handleDragUpdate: OnDragUpdateResponder = (update) => {
@@ -183,9 +188,9 @@ export const PageLayoutTabList = ({
   };
 
   const handleDragStart = useCallback<OnDragStartResponder>(() => {
-    setIsTabDragging(true);
+    setIsPageLayoutTabDragging(true);
     toggleClickOutside(false);
-  }, [setIsTabDragging, toggleClickOutside]);
+  }, [setIsPageLayoutTabDragging, toggleClickOutside]);
 
   const handleDragEnd = useCallback<OnDragEndResponder>(
     (result, provided) => {
@@ -194,7 +199,7 @@ export const PageLayoutTabList = ({
         PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
 
       if (!droppedInOverflow) {
-        setIsTabDragging(false);
+        setIsPageLayoutTabDragging(false);
       }
 
       toggleClickOutside(true);
@@ -211,20 +216,24 @@ export const PageLayoutTabList = ({
         });
       }
     },
-    [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
+    [
+      onReorder,
+      setIsPageLayoutTabDragging,
+      toggleClickOutside,
+      openDropdown,
+      dropdownId,
+    ],
   );
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
+    pageLayoutId,
   );
-  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
-    PageLayoutComponentInstanceContext,
-  );
-  const tabSettingsOpenTabId = useRecoilComponentValue(
+  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -232,16 +241,16 @@ export const PageLayoutTabList = ({
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      setTabSettingsOpenTabId(tabId);
+      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
 
-  const isTabSettingsOpen = isDefined(tabSettingsOpenTabId);
+  const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
   const handleSelectTab = useCallback(
     (tabId: string) => {

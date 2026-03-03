@@ -3,6 +3,7 @@ import {
   extractDefineEntity,
   ManifestEntityKey,
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
+  TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import {
@@ -11,6 +12,7 @@ import {
   type LogicFunctionConfig,
 } from '@/sdk';
 import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
@@ -25,12 +27,14 @@ import {
   type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
+  type PageLayoutManifest,
   type RoleManifest,
+  type SkillManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -62,21 +66,27 @@ export const buildManifest = async (
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
+  const skills: SkillManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
+  const pageLayouts: PageLayoutManifest[] = [];
+  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
+  const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
+  const skillsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
+  const pageLayoutsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -101,6 +111,7 @@ export const buildManifest = async (
           ...extract.config,
           yarnLockChecksum: null,
           packageJsonChecksum: null,
+          apiClientChecksum: null,
         };
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);
@@ -112,13 +123,14 @@ export const buildManifest = async (
           filePath,
         });
 
-        const objectFieldsWithDefaultFields = injectDefaultFieldsInObjectFields(
-          extract.config,
-        );
+        const {
+          objectFields: objectFieldsWithDefaults,
+          fields: reverseRelationFields,
+        } = getDefaultFieldsInObjectFields(extract.config);
 
         const labelIdentifierFieldMetadataUniversalIdentifier =
           extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
-          objectFieldsWithDefaultFields.find((field) => field.name === 'name')
+          objectFieldsWithDefaults.find((field) => field.name === 'name')
             ?.universalIdentifier;
 
         if (!labelIdentifierFieldMetadataUniversalIdentifier) {
@@ -130,11 +142,12 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaultFields,
+          fields: objectFieldsWithDefaults,
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
         objects.push(objectManifest);
+        fields.push(...reverseRelationFields);
 
         errors.push(...extract.errors);
         objectsFilePaths.push(relativePath);
@@ -158,6 +171,16 @@ export const buildManifest = async (
         roles.push(extract.config);
         errors.push(...extract.errors);
         rolesFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Skills: {
+        const extract = await extractManifestFromFile<SkillManifest>({
+          appPath,
+          filePath,
+        });
+        skills.push(extract.config);
+        errors.push(...extract.errors);
+        skillsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
@@ -187,6 +210,23 @@ export const buildManifest = async (
 
         logicFunctions.push(config);
         logicFunctionsFilePaths.push(relativePath);
+
+        if (
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+        ) {
+          preInstallLogicFunctionUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
+        if (
+          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
+        ) {
+          postInstallLogicFunctionUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -207,10 +247,12 @@ export const buildManifest = async (
           sourceComponentPath: relativeFilePath,
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
+          isHeadless: rest.isHeadless ?? false,
         };
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
         break;
       }
       case ManifestEntityKey.Views: {
@@ -237,6 +279,21 @@ export const buildManifest = async (
         navigationMenuItems.push(extract.config);
         errors.push(...extract.errors);
         navigationMenuItemsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.PageLayouts: {
+        const extract = await extractManifestFromFile<PageLayoutConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutManifest: PageLayoutManifest = {
+          ...extract.config,
+        };
+
+        pageLayouts.push(pageLayoutManifest);
+        errors.push(...extract.errors);
+        pageLayoutsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.PublicAssets: {
@@ -267,6 +324,34 @@ export const buildManifest = async (
     );
   }
 
+  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
+  if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one post install logic function is allowed per application',
+    );
+  }
+
+  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+    application = {
+      ...application,
+      preInstallLogicFunctionUniversalIdentifier:
+        preInstallLogicFunctionUniversalIdentifiers[0],
+    };
+  }
+
+  if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+    application = {
+      ...application,
+      postInstallLogicFunctionUniversalIdentifier:
+        postInstallLogicFunctionUniversalIdentifiers[0],
+    };
+  }
+
   const manifest = !application
     ? null
     : {
@@ -274,11 +359,13 @@ export const buildManifest = async (
         objects,
         fields,
         roles,
+        skills,
         logicFunctions,
         frontComponents,
         publicAssets,
         views,
         navigationMenuItems,
+        pageLayouts,
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -286,11 +373,13 @@ export const buildManifest = async (
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
     roles: rolesFilePaths,
+    skills: skillsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
+    pageLayouts: pageLayoutsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

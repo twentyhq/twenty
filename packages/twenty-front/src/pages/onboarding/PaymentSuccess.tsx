@@ -7,7 +7,7 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
@@ -32,7 +32,7 @@ export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
-  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentUser = useSetAtomState(currentUserState);
   const [isLoading, setIsLoading] = useState(false);
   const navigateWithSubscriptionCheck = async () => {
     if (isLoading) return;

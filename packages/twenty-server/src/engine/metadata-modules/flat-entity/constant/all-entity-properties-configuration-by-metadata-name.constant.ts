@@ -577,7 +577,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     builtHandlerPath: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -1025,6 +1025,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     link: { toCompare: true, toStringify: false, universalProperty: undefined },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    color: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -1222,6 +1227,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     componentName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isHeadless: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

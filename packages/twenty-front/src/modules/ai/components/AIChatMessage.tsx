@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
@@ -7,6 +6,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -49,7 +49,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.4;
-    padding: ${({ theme }) => `${theme.spacing(0.25)} ${theme.spacing(0.75)}`};
+    padding: 1px 3px;
     border-radius: ${({ theme }) => theme.border.radius.sm};
     background: ${({ theme }) => theme.background.tertiary};
   }
@@ -141,7 +141,7 @@ export const AIChatMessage = ({
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const isUser = message.role === AgentMessageRole.USER;
   const showError =

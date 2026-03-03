@@ -145,7 +145,7 @@ export const getDayOfWeekDescription = (
     }
     const lastDay = dayNames.pop();
     const remainingDays = dayNames.join(', ');
-    return t`only on ${remainingDays} and ${lastDay}`;
+    return t`only on ${remainingDays} and ${lastDay ?? ''}`;
   }
 
   // Single day value

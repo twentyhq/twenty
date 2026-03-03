@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
@@ -9,7 +8,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useMultiSelectField = () => {
@@ -23,11 +23,9 @@ export const useMultiSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValues, setFieldValue] = useRecoilState<FieldMultiSelectValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
+  const [fieldValues, setFieldValue] = useAtomFamilySelectorState(
+    recordStoreFamilySelector,
+    { recordId, fieldName },
   );
 
   const fieldMultiSelectValues = isFieldMultiSelectValue(fieldValues)
@@ -36,7 +34,7 @@ export const useMultiSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -44,7 +42,7 @@ export const useMultiSelectField = () => {
     recordId,
     fieldDefinition,
     fieldValues: fieldMultiSelectValues,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
     setFieldValue,
   };

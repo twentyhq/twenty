@@ -10,9 +10,10 @@ import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
@@ -29,8 +30,8 @@ export const SignInUpWithGoogle = ({
   isGlobalScope?: boolean;
 }) => {
   const { t } = useLingui();
-  const signInUpStep = useRecoilValue(signInUpStepState);
-  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
+  const signInUpStep = useAtomStateValue(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
     lastAuthenticatedMethodState,
   );
   const { signInWithGoogle } = useSignInWithGoogle();

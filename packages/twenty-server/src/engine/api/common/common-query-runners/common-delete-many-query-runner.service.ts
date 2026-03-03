@@ -6,6 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -59,9 +63,27 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       args.filter,
     );
 
-    const columnsToReturn = buildColumnsToReturn({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToReturn = buildColumnsToReturn({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -74,13 +96,13 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(filteredRelations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: deletedRecords,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -88,7 +110,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 

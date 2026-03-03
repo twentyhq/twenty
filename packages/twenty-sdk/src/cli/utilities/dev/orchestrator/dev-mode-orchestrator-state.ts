@@ -40,7 +40,8 @@ export type OrchestratorStateFileStatus =
   | 'pending'
   | 'building'
   | 'uploading'
-  | 'success';
+  | 'success'
+  | 'error';
 
 export type OrchestratorStateEntityInfo = {
   name: string;
@@ -69,6 +70,10 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   logicFunctions: SyncableEntity.LogicFunction,
   frontComponents: SyncableEntity.FrontComponent,
   roles: SyncableEntity.Role,
+  skills: SyncableEntity.Skill,
+  views: SyncableEntity.View,
+  navigationMenuItems: SyncableEntity.NavigationMenuItem,
+  pageLayouts: SyncableEntity.PageLayout,
 };
 
 const MAX_EVENT_COUNT = 200;
@@ -77,10 +82,11 @@ const FILE_STATUS_TRANSITION_MATRIX: Record<
   OrchestratorStateFileStatus,
   OrchestratorStateFileStatus[]
 > = {
-  pending: ['building', 'uploading', 'success'],
-  building: ['pending', 'uploading', 'success'],
-  uploading: ['pending', 'success'],
-  success: ['pending', 'building', 'uploading'],
+  pending: ['building', 'uploading', 'success', 'error'],
+  building: ['pending', 'uploading', 'success', 'error'],
+  uploading: ['pending', 'success', 'error'],
+  success: ['pending', 'building', 'uploading', 'error'],
+  error: ['pending', 'building', 'uploading', 'success'],
 };
 
 export class OrchestratorState {

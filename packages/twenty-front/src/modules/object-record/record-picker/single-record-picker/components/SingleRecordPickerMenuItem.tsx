@@ -7,11 +7,11 @@ import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,26 +39,29 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValue(
-    isSelectedItemIdComponentFamilySelector,
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useRecoilValue(
-    searchRecordStoreFamilyState(morphItem.recordId),
+  const searchRecordStore = useAtomFamilyStateValue(
+    searchRecordStoreFamilyState,
+    morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
-    singleRecordPickerSearchableObjectMetadataItemsComponentState,
-    recordPickerComponentInstanceId,
-  );
+  const singleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      singleRecordPickerSearchableObjectMetadataItemsComponentState,
+      recordPickerComponentInstanceId,
+    );
 
-  if (!isDefined(searchRecord)) {
+  if (!isDefined(searchRecordStore)) {
     return null;
   }
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem
@@ -71,21 +74,23 @@ export const SingleRecordPickerMenuItem = ({
       <MenuItemSelectAvatar
         testId="menu-item"
         onClick={() => onMorphItemSelected(morphItem)}
-        text={searchRecord.label}
+        text={searchRecordStore.label}
         selected={isRecordSelected}
-        focused={isSelectedByKeyboard}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={searchRecord.imageUrl}
+            avatarUrl={searchRecordStore.imageUrl}
             placeholderColorSeed={morphItem.recordId}
-            placeholder={searchRecord.label}
+            placeholder={searchRecordStore.label}
             size="md"
-            type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
+            type={
+              getAvatarType(searchRecordStore.objectNameSingular) ?? 'rounded'
+            }
           />
         }
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectLabelSingular)
+            ? capitalize(searchRecordStore.objectLabelSingular)
             : undefined
         }
       />

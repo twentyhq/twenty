@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const OBJECT_METADATA_FRAGMENT = gql`
   fragment ObjectMetadataFields on Object {
     id
+    universalIdentifier
     nameSingular
     namePlural
     labelSingular
@@ -42,6 +43,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     }
     fieldsList {
       id
+      universalIdentifier
       type
       name
       label
@@ -60,7 +62,6 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       settings
       isLabelSyncedWithName
       morphId
-      relationTargetObjectMetadataId
       applicationId
       relation {
         type

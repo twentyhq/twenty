@@ -1,10 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -23,17 +24,25 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const personMetadata = getMockObjectMetadataItemOrThrow('person');
+const companyMetadata = getMockObjectMetadataItemOrThrow('company');
+const companyFieldOnPerson = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personMetadata,
+  fieldName: 'company',
+});
+const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyMetadata,
+  fieldName: 'people',
+});
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
-  );
-
   useEffect(() => {
-    setCurrentWorkspace(mockCurrentWorkspace);
-    setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-  }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+  }, []);
 
   return <></>;
 };
@@ -43,24 +52,24 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
+      fieldMetadataId: peopleFieldOnCompany.id,
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
       metadata: {
         fieldName: 'people',
         relationType: RelationType.ONE_TO_MANY,
-        relationObjectMetadataNamePlural: 'companies',
-        relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
-        objectMetadataNameSingular: 'person',
-        relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
+        relationObjectMetadataNamePlural: 'people',
+        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
+        objectMetadataNameSingular: 'company',
+        relationFieldMetadataId: companyFieldOnPerson.id,
       },
     }),
     [],
   );
 
-  const setRecordStoreFieldValue = useSetRecoilState(
-    recordStoreFamilySelector({
+  const setRecordStoreFieldValue = useSetAtom(
+    recordStoreFamilySelector.selectorFamily({
       fieldName: 'people',
       recordId: 'recordId',
     }),

@@ -1,24 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { APPLICATION_MANIFEST_METADATA_NAMES } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-application-sub-all-flat-entity-maps.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
-import { getEmptyApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-empty-application-manifest-all-universal-flat-entity-maps.util';
-import { getSubApplicationFromToAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-sub-application-from-to-all-flat-entity-maps.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -37,6 +40,8 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -117,13 +122,55 @@ export class ApplicationSyncService {
       },
     );
 
+    const applicationRegistrationMetadata = {
+      name,
+      description: manifest.application.description,
+      logoUrl: manifest.application.logoUrl,
+      author: manifest.application.author,
+      websiteUrl: manifest.application.websiteUrl,
+      termsUrl: manifest.application.termsUrl,
+    };
+
+    const applicationRegistrationId =
+      await this.resolveApplicationRegistrationId(
+        application.applicationRegistrationId,
+        manifest.application.universalIdentifier,
+        applicationRegistrationMetadata,
+        workspaceId,
+      );
+
+    // Only update registration metadata if this workspace owns it.
+    // Other workspaces that install the same app attach to the existing
+    // registration but must not be able to modify its metadata.
+    if (
+      await this.applicationRegistrationService.isOwnedByWorkspace(
+        applicationRegistrationId,
+        workspaceId,
+      )
+    ) {
+      await this.applicationRegistrationService.update(
+        {
+          id: applicationRegistrationId,
+          update: applicationRegistrationMetadata,
+        },
+        workspaceId,
+      );
+    }
+
+    if (manifest.application.serverVariables) {
+      await this.applicationRegistrationVariableService.syncVariableSchemas(
+        applicationRegistrationId,
+        manifest.application.serverVariables,
+      );
+    }
+
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
-      //availablePackages: manifest.application.availablePackages, // TODO: compute available package in dev-mode-orchestrator
+      applicationRegistrationId,
     });
   }
 
@@ -152,7 +199,7 @@ export class ApplicationSyncService {
       );
     }
 
-    const flatEntityMapsCacheKeys = APPLICATION_MANIFEST_METADATA_NAMES.map(
+    const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,
     );
 
@@ -163,11 +210,16 @@ export class ApplicationSyncService {
 
     const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
 
-    const fromToAllFlatEntityMaps = getSubApplicationFromToAllFlatEntityMaps({
-      applicationId: application.id,
-      fromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps:
-        getEmptyApplicationManifestAllUniversalFlatEntityMaps(),
+    const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
+      {
+        applicationIds: [application.id],
+        fromAllFlatEntityMaps,
+      },
+    );
+
+    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
+      fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
     });
 
     const validateAndBuildResult =
@@ -176,11 +228,11 @@ export class ApplicationSyncService {
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: { featureFlagsMap },
-          applicationUniversalIdentifier,
         },
       );
 
@@ -197,5 +249,45 @@ export class ApplicationSyncService {
     );
 
     return validateAndBuildResult.workspaceMigration;
+  }
+
+  private async resolveApplicationRegistrationId(
+    existingId: string | null,
+    universalIdentifier: string,
+    metadata: {
+      name: string;
+      description?: string;
+      logoUrl?: string;
+      author?: string;
+      websiteUrl?: string;
+      termsUrl?: string;
+    },
+    workspaceId: string,
+  ): Promise<string> {
+    if (existingId) {
+      return existingId;
+    }
+
+    const existingRegistration =
+      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+        universalIdentifier,
+      );
+
+    if (existingRegistration) {
+      return existingRegistration.id;
+    }
+
+    const { applicationRegistration: newRegistration } =
+      await this.applicationRegistrationService.create(
+        { ...metadata, universalIdentifier },
+        workspaceId,
+        null,
+      );
+
+    this.logger.log(
+      `Created app registration for ${metadata.name} (${universalIdentifier})`,
+    );
+
+    return newRegistration.id;
   }
 }

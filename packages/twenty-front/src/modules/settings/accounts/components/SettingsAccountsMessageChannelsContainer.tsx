@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import {
@@ -7,17 +6,18 @@ import {
   MessageChannelSyncStage,
 } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,13 +26,13 @@ const StyledMessageContainer = styled.div`
 `;
 
 export const SettingsAccountsMessageChannelsContainer = () => {
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const setSelectedMessageChannel = useSetRecoilStateV2(
-    settingsAccountsSelectedMessageChannelStateV2,
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
@@ -68,7 +68,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     },
     recordGqlFields,
     onCompleted: (data) => {
-      setSelectedMessageChannel(data[0]);
+      setSettingsAccountsSelectedMessageChannel(data[0]);
     },
     skip: !accounts.length,
   });
@@ -84,10 +84,10 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         (channel) => channel.id === tabId,
       );
       if (isDefined(selectedMessageChannel)) {
-        setSelectedMessageChannel(selectedMessageChannel);
+        setSettingsAccountsSelectedMessageChannel(selectedMessageChannel);
       }
     },
-    [messageChannels, setSelectedMessageChannel],
+    [messageChannels, setSettingsAccountsSelectedMessageChannel],
   );
 
   if (!messageChannels.length) {

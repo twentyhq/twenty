@@ -1,9 +1,11 @@
+import { useCallback, useRef } from 'react';
+import { useStore } from 'jotai';
+
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -14,14 +16,11 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useEffect, useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 type MultipleRecordPickerProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -33,7 +32,6 @@ type MultipleRecordPickerProps = {
   focusId: string;
   objectMetadataItemIdForCreate?: string;
   dropdownWidth?: number;
-  additionalFilter?: ObjectRecordFilterInput;
 };
 
 export const MultipleRecordPicker = ({
@@ -46,7 +44,6 @@ export const MultipleRecordPicker = ({
   focusId,
   objectMetadataItemIdForCreate,
   dropdownWidth,
-  additionalFilter,
 }: MultipleRecordPickerProps) => {
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
@@ -55,50 +52,28 @@ export const MultipleRecordPicker = ({
     selectableListComponentInstanceId,
   );
 
-  const multipleRecordPickerSearchFilterState = useRecoilComponentCallbackState(
-    multipleRecordPickerSearchFilterComponentState,
-    componentInstanceId,
-  );
+  const multipleRecordPickerSearchFilterState =
+    useAtomComponentStateCallbackState(
+      multipleRecordPickerSearchFilterComponentState,
+      componentInstanceId,
+    );
 
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
 
-  const multipleRecordPickerAdditionalFilterState =
-    useRecoilComponentCallbackState(
-      multipleRecordPickerAdditionalFilterComponentState,
-      componentInstanceId,
-    );
+  const store = useStore();
 
-  const syncAdditionalFilter = useRecoilCallback(
-    ({ set }) => {
-      return (filter: ObjectRecordFilterInput | undefined) => {
-        set(multipleRecordPickerAdditionalFilterState, filter);
-      };
-    },
-    [multipleRecordPickerAdditionalFilterState],
-  );
-
-  useEffect(() => {
-    syncAdditionalFilter(additionalFilter);
-  }, [additionalFilter, syncAdditionalFilter]);
-
-  const resetState = useRecoilCallback(
-    ({ set }) => {
-      return () => {
-        set(multipleRecordPickerPickableMorphItemsState, []);
-        set(multipleRecordPickerSearchFilterState, '');
-        set(multipleRecordPickerAdditionalFilterState, undefined);
-      };
-    },
-    [
-      multipleRecordPickerPickableMorphItemsState,
-      multipleRecordPickerSearchFilterState,
-      multipleRecordPickerAdditionalFilterState,
-    ],
-  );
+  const resetState = useCallback(() => {
+    store.set(multipleRecordPickerPickableMorphItemsState, []);
+    store.set(multipleRecordPickerSearchFilterState, '');
+  }, [
+    multipleRecordPickerPickableMorphItemsState,
+    multipleRecordPickerSearchFilterState,
+    store,
+  ]);
 
   const handleSubmit = () => {
     onSubmit?.();
@@ -122,17 +97,12 @@ export const MultipleRecordPicker = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleCreateNewButtonClick = useRecoilCallback(
-    ({ snapshot }) => {
-      return () => {
-        const recordPickerSearchFilter = snapshot
-          .getLoadable(multipleRecordPickerSearchFilterState)
-          .getValue();
-        onCreate?.(recordPickerSearchFilter);
-      };
-    },
-    [multipleRecordPickerSearchFilterState, onCreate],
-  );
+  const handleCreateNewButtonClick = useCallback(() => {
+    const recordPickerSearchFilter = store.get(
+      multipleRecordPickerSearchFilterState,
+    );
+    onCreate?.(recordPickerSearchFilter);
+  }, [multipleRecordPickerSearchFilterState, onCreate, store]);
 
   const hasCreatePermissionOnObjectForCreate = useObjectPermissionsForObject(
     objectMetadataItemIdForCreate ?? '',

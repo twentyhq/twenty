@@ -1,19 +1,16 @@
-import { useRecoilCallback } from 'recoil';
-
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 
 export const useSetHasUserSelectedAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRowsState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  return useRecoilCallback(
-    ({ set }) =>
-      (selected: boolean) => {
-        set(hasUserSelectedAllRowsState, selected);
-      },
-    [hasUserSelectedAllRowsState],
-  );
+  const store = useStore();
+
+  return (selected: boolean) => {
+    store.set(hasUserSelectedAllRows, selected);
+  };
 };

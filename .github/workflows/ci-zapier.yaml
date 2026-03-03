@@ -1,0 +1,128 @@
+name: CI Zapier
+
+on:
+  pull_request:
+
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  SERVER_SETUP_CACHE_KEY: server-setup
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-zapier/**
+        packages/twenty-server/**
+        !packages/twenty-zapier/package.json
+        !packages/twenty-zapier/CHANGELOG.md
+  server-setup:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: depot-ubuntu-24.04-8
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Server / Write .env
+        run: npx nx reset:env:e2e-testing-server twenty-server
+
+      - name: Server / Build
+        run: npx nx build twenty-server
+
+      - name: Create and setup database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+          npx nx run twenty-server:database:reset
+
+      - name: Server / Start
+        run: |
+          npx nx start twenty-server &
+          echo "Waiting for server to be ready..."
+          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+
+      - name: Start worker
+        run: |
+          npx nx run twenty-server:worker &
+          echo "Worker started"
+
+      - name: Zapier / Build
+        run: npx nx build twenty-zapier
+
+      - name: Zapier / Run Tests
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:zapier
+          tasks: test
+
+  zapier-test:
+    needs: server-setup
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: depot-ubuntu-24.04
+    strategy:
+      matrix:
+        task: [lint, typecheck, validate]
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build
+        run: npx nx build twenty-zapier
+      - name: Run ${{ matrix.task }} task
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:zapier
+          tasks: ${{ matrix.task }}
+  ci-zapier-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: depot-ubuntu-24.04
+    needs: [changed-files-check, zapier-test]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

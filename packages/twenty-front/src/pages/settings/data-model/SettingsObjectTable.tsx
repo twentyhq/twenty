@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -15,11 +16,11 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
@@ -48,7 +49,7 @@ export const SettingsObjectTable = ({
 
   const theme = useTheme();
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -58,13 +59,10 @@ export const SettingsObjectTable = ({
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
-  const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
-    {
-      objectMetadataItems,
-    },
-  );
+  const { totalCountByObjectMetadataItemNamePlural } =
+    useCombinedGetTotalCount();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const allObjectSettingsArray = useMemo(
     () =>
@@ -79,7 +77,7 @@ export const SettingsObjectTable = ({
                 currentWorkspace?.workspaceCustomApplication?.id,
             }).labelText,
             fieldsCount: objectMetadataItem.fields.filter(
-              (field) => !field.isSystem,
+              (field) => !isHiddenSystemField(field),
             ).length,
             totalObjectCount:
               totalCountByObjectMetadataItemNamePlural[

@@ -8,13 +8,14 @@ import { usePersonAvatarUpload } from '@/object-record/record-show/hooks/usePers
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -37,13 +38,14 @@ export const SummaryCard = ({
     objectRecordId,
   });
 
-  const recordCreatedAt = useRecoilValue<string | null>(
-    recordStoreFamilySelector({
+  const recordCreatedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelector,
+    {
       recordId: objectRecordId,
       fieldName: 'createdAt',
-    }),
-  );
-  const allowRequestsToTwentyIcons = useRecoilValue(
+    },
+  ) as string | null;
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
   const isFilesFieldMigrated = useIsFeatureEnabled(
@@ -58,12 +60,13 @@ export const SummaryCard = ({
 
   const isMobile = useIsMobile() || isInRightDrawer;
 
-  const recordIdentifier = useRecoilValue(
-    recordStoreIdentifierFamilySelector({
+  const recordIdentifier = useAtomFamilySelectorValue(
+    recordStoreIdentifierFamilySelector,
+    {
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,
       isFilesFieldMigrated,
-    }),
+    },
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({

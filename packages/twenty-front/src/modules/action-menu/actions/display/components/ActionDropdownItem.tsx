@@ -2,9 +2,9 @@ import { type ActionDisplayProps } from '@/action-menu/actions/display/component
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -31,8 +31,8 @@ export const ActionDropdownItem = ({
     SelectableListComponentInstanceContext,
   );
 
-  const isSelected = useRecoilComponentFamilyValue(
-    isSelectedItemIdComponentFamilySelector,
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
     action.key,
     selectableListInstanceId,
   );
@@ -40,7 +40,7 @@ export const ActionDropdownItem = ({
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <MenuItem
-        focused={isSelected}
+        focused={isSelectedItemId}
         key={action.key}
         LeftIcon={action.Icon}
         onClick={handleClick}

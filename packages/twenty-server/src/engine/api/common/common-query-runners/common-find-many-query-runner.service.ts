@@ -39,6 +39,11 @@ import {
   countRelationFieldsInOrderBy,
   hasRelationFieldInOrderBy,
 } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import {
+  filterRestrictedFieldsFromAggregate,
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -146,17 +151,42 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
+    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredAggregate = filterRestrictedFieldsFromAggregate({
+      aggregate: args.selectedFieldsResult.aggregate,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: filteredAggregate,
       queryBuilder: aggregateQueryBuilder,
       objectMetadataNameSingular: flatObjectMetadata.nameSingular,
     });
 
-    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+    const filteredSelect = filterRestrictedFieldsFromSelect({
+      select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
+      relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -194,14 +224,14 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const parentObjectRecordsAggregatedValues =
       await aggregateQueryBuilder.getRawOne();
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(filteredRelations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
         parentObjectRecordsAggregatedValues,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -210,7 +240,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 

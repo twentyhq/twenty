@@ -10,14 +10,13 @@ Fluxurile de lucru întotdeauna încep cu un declanșator unic care definește c
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+**Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+* Membri ai spațiului de lucru
+* Calendar Events
+* Messages (Emails)
+* Tasks, Notes, and many other system objects
 
-  * Membri ai spațiului de lucru
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
-
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
 </Tip>
 
 ## Înregistrarea este creată
@@ -27,9 +26,9 @@ Pornește fluxul de lucru când este creată o nouă înregistrare într-un obie
 **Configurare**: Selectați tipul de obiect pentru a monitoriza noile înregistrări.
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+* This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+* **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+  To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
 </Note>
 
 ## Înregistrarea este actualizată
@@ -82,7 +81,7 @@ Alegeți cum ar trebui ca fluxul de lucru să gestioneze selecția înregistrăr
 * **Bulk**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula o singură dată, oferind întreaga listă de înregistrări ca intrare. This means the workflow needs to contain an [Iterator action](/l/ro/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+This is more advanced, and best for people who want to optimize the number of workflow runs.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Pornește fluxul de lucru în mod recurent, conform configurării pe care o defi
 * Introduceți o valoare sau folosiți expresii cron personalizate pentru programare avansată
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+**Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
 </Note>
 
 ## External Trigger: Webhook

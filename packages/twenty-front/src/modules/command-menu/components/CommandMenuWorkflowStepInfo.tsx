@@ -2,11 +2,10 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -20,8 +19,9 @@ import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
@@ -35,11 +35,11 @@ export const CommandMenuWorkflowStepInfo = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
   const workflowId = useCommandMenuWorkflowIdOrThrow();
 
-  const workflowStepId = useRecoilComponentValue(
+  const commandMenuWorkflowStepId = useAtomComponentStateValue(
     commandMenuWorkflowStepIdComponentState,
     commandMenuPageInstanceId,
   );
@@ -71,13 +71,13 @@ export const CommandMenuWorkflowStepInfo = ({
     id: undefined,
   };
 
-  const isTriggerStep = workflowStepId === TRIGGER_STEP_ID;
+  const isTriggerStep = commandMenuWorkflowStepId === TRIGGER_STEP_ID;
 
   const stepDefinition =
-    isDefined(workflowStepId) && isDefined(trigger)
+    isDefined(commandMenuWorkflowStepId) && isDefined(trigger)
       ? isTriggerStep || isDefined(steps)
         ? getStepDefinitionOrThrow({
-            stepId: workflowStepId,
+            stepId: commandMenuWorkflowStepId,
             trigger,
             steps,
           })
@@ -109,7 +109,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
   if (
     !isDefined(workflowId) ||
-    !isDefined(workflowStepId) ||
+    !isDefined(commandMenuWorkflowStepId) ||
     !isDefined(workflowWithCurrentVersion?.currentVersion) ||
     !isDefined(stepDefinition) ||
     !isDefined(stepDefinition.definition)

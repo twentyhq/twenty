@@ -1,77 +1,87 @@
-import { useRecoilCallback } from 'recoil';
-
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const closeCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+  const closeCommandMenu = useCallback(() => {
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
-        if (isCommandMenuOpened) {
-          jotaiStore.set(addToNavPayloadRegistryStateV2.atom, new Map());
-          set(isCommandMenuOpenedState, false);
-          jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
-          set(isCommandMenuClosingState, true);
-          closeAnyOpenDropdown();
-          removeFocusItemFromFocusStackById({
-            focusId: SIDE_PANEL_FOCUS_ID,
-          });
-        }
-      },
-    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById],
-  );
+    if (isCommandMenuOpened) {
+      store.set(addToNavPayloadRegistryState.atom, new Map());
+      store.set(isCommandMenuOpenedState.atom, false);
+      store.set(isCommandMenuClosingState.atom, true);
+      closeAnyOpenDropdown();
+      removeFocusItemFromFocusStackById({
+        focusId: SIDE_PANEL_FOCUS_ID,
+      });
+    }
+  }, [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store]);
 
   const openCommandMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
-    navigateCommandMenu({
-      page: CommandMenuPages.Root,
-      pageTitle: t`Command Menu`,
-      pageIcon: IconDotsVertical,
-      resetNavigationStack: true,
-    });
-  }, [closeAnyOpenDropdown, navigateCommandMenu]);
+    const isNavigationMenuInEditMode = store.get(
+      isNavigationMenuInEditModeState.atom,
+    );
+    const selectedNavigationItemId = store.get(
+      selectedNavigationMenuItemInEditModeState.atom,
+    );
+    if (isNavigationMenuInEditMode && isDefined(selectedNavigationItemId)) {
+      navigateCommandMenu({
+        page: CommandMenuPages.NavigationMenuItemEdit,
+        pageTitle: t`Edit`,
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    } else if (isNavigationMenuInEditMode) {
+      navigateCommandMenu({
+        page: CommandMenuPages.NavigationMenuAddItem,
+        pageTitle: t`New sidebar item`,
+        pageIcon: IconColumnInsertRight,
+        resetNavigationStack: true,
+      });
+    } else {
+      navigateCommandMenu({
+        page: CommandMenuPages.Root,
+        pageTitle: t`Command Menu`,
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    }
+  }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
 
-  const toggleCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+  const toggleCommandMenu = useCallback(() => {
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
-        set(commandMenuSearchState, '');
+    store.set(commandMenuSearchState.atom, '');
 
-        if (isCommandMenuOpened) {
-          closeCommandMenu();
-        } else {
-          openCommandMenu();
-        }
-      },
-    [closeCommandMenu, openCommandMenu],
-  );
+    if (isCommandMenuOpened) {
+      closeCommandMenu();
+    } else {
+      openCommandMenu();
+    }
+  }, [closeCommandMenu, openCommandMenu, store]);
 
   return {
     openCommandMenu,

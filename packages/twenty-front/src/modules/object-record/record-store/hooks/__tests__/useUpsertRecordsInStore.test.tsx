@@ -1,29 +1,34 @@
 import { act, renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useUpsertRecordsInStore', () => {
-  it('should insert a new record when no current record exists', () => {
+  it('should insert a new recordStore when no current recordStore exists', () => {
     const recordId = 'test-record-1';
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-        return { record, upsertRecordsInStore };
+        return { recordStore, upsertRecordsInStore };
       },
       { wrapper: Wrapper },
     );
 
-    expect(result.current.record).toBeNull();
+    expect(result.current.recordStore).toBeNull();
 
     act(() => {
       result.current.upsertRecordsInStore({
@@ -38,7 +43,7 @@ describe('useUpsertRecordsInStore', () => {
       });
     });
 
-    expect(result.current.record).toEqual({
+    expect(result.current.recordStore).toEqual({
       id: recordId,
       __typename: 'Person',
       name: 'John Doe',
@@ -46,15 +51,18 @@ describe('useUpsertRecordsInStore', () => {
     });
   });
 
-  it('should merge filtered partial record with existing record', () => {
+  it('should merge filtered partial recordStore with existing recordStore', () => {
     const recordId = 'test-record-2';
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-        return { record, upsertRecordsInStore };
+        return { recordStore, upsertRecordsInStore };
       },
       { wrapper: Wrapper },
     );
@@ -72,7 +80,7 @@ describe('useUpsertRecordsInStore', () => {
       });
     });
 
-    expect(result.current.record).toEqual({
+    expect(result.current.recordStore).toEqual({
       id: recordId,
       __typename: 'Person',
       name: 'John Doe',
@@ -96,7 +104,7 @@ describe('useUpsertRecordsInStore', () => {
       });
     });
 
-    expect(result.current.record).toEqual({
+    expect(result.current.recordStore).toEqual({
       id: recordId,
       __typename: 'Person',
       name: 'Jane Doe',
@@ -109,10 +117,13 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-        return { record, upsertRecordsInStore };
+        return { recordStore, upsertRecordsInStore };
       },
       { wrapper: Wrapper },
     );
@@ -130,7 +141,7 @@ describe('useUpsertRecordsInStore', () => {
       });
     });
 
-    const recordAfterFirstUpsert = result.current.record;
+    const recordAfterFirstUpsert = result.current.recordStore;
 
     act(() => {
       result.current.upsertRecordsInStore({
@@ -149,6 +160,6 @@ describe('useUpsertRecordsInStore', () => {
       });
     });
 
-    expect(result.current.record).toBe(recordAfterFirstUpsert);
+    expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
   });
 });

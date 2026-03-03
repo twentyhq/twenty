@@ -7,10 +7,11 @@ import { DateAggregateOperations } from '@/object-record/record-table/constants/
 import { enUS } from 'date-fns/locale';
 import { findByProperty } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
-  const mockCompanyObjectMetadataItem = getMockCompanyObjectMetadataItem();
+  const mockCompanyObjectMetadataItem =
+    getMockObjectMetadataItemOrThrow('company');
   const mockCompanyEmployeesFieldMetadataItem =
     mockCompanyObjectMetadataItem.fields.find(
       findByProperty('name', 'employees'),

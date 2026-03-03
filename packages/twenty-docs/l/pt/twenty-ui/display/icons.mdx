@@ -14,35 +14,44 @@ Uma lista de ícones usados em todo o nosso aplicativo.
 Usamos ícones Tabler para React em todo o aplicativo.
 
 <Tabs>
-  <Tab title="Instalação">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="Instalação">
+<br />
 
-  <Tab title="Propriedades">
-    Você pode importar cada ícone como um componente. Aqui está um exemplo:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="Propriedades">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+Você pode importar cada ícone como um componente. Aqui está um exemplo:
+<br />
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo   | Descrição                               | Padrão   |
-    | ------------ | ------ | --------------------------------------- | -------- |
-    | tamanho      | número | A altura e a largura do ícone em pixels | 24       |
-    | cor          | string | A cor dos ícones                        | corAtual |
-    | traço        | número | A largura do traço do ícone em pixels   | 2        |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo   | Descrição                               | Padrão   |
+| ------------ | ------ | --------------------------------------- | -------- |
+| tamanho      | número | A altura e a largura do ícone em pixels | 24       |
+| cor          | string | A cor dos ícones                        | corAtual |
+| traço        | número | A largura do traço do ícone em pixels   | 2        |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Ícones Personalizados
@@ -54,20 +63,29 @@ Além dos ícones Tabler, o aplicativo também usa alguns ícones personalizados
 Exibe um ícone de livro de endereços.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="Uso">
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo   | Descrição                               | Padrão |
-    | ------------ | ------ | --------------------------------------- | ------ |
-    | tamanho      | número | A altura e a largura do ícone em pixels | 24     |
-    | traço        | número | A largura do traço do ícone em pixels   | 2      |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo   | Descrição                               | Padrão |
+| ------------ | ------ | --------------------------------------- | ------ |
+| tamanho      | número | A altura e a largura do ícone em pixels | 24     |
+| traço        | número | A largura do traço do ícone em pixels   | 2      |
+
+
+
+</Tab>
+
 </Tabs>

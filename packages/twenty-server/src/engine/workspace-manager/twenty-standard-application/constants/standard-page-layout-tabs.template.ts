@@ -4,10 +4,10 @@ import {
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
+  type GridPosition,
 } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 
 export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
   and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],

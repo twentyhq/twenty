@@ -12,7 +12,7 @@ export const transformEmailsValue = (
 
   let additionalEmails: string | null = value?.additionalEmails;
   const primaryEmail = isNonEmptyString(value?.primaryEmail)
-    ? value.primaryEmail.toLowerCase()
+    ? value.primaryEmail.trim().toLowerCase()
     : null;
 
   if (additionalEmails) {
@@ -24,7 +24,7 @@ export const transformEmailsValue = (
       ) as string[];
 
       additionalEmails = isNonEmptyArray(emailArray)
-        ? JSON.stringify(emailArray.map((email) => email.toLowerCase()))
+        ? JSON.stringify(emailArray.map((email) => email.trim().toLowerCase()))
         : null;
     } catch {
       /* empty */

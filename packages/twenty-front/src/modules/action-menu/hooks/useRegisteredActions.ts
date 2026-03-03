@@ -10,7 +10,7 @@ import { contextStoreIsPageInEditModeComponentState } from '@/context-store/stat
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -24,15 +24,15 @@ export const useRegisteredActions = (
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isFullTabWidgetInEditMode = useRecoilComponentValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -62,7 +62,7 @@ export const useRegisteredActions = (
   const permissionMap = usePermissionFlagMap();
 
   const actionsToRegister = Object.values(actionsConfig).filter((action) => {
-    if (isFullTabWidgetInEditMode) {
+    if (contextStoreIsPageInEditMode) {
       return (
         isDefined(action.availableOn) &&
         action.availableOn.includes(ActionViewType.PAGE_EDIT_MODE)

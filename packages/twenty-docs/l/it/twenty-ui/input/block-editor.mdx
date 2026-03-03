@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 Utilizza un editor di testo avanzato basato su blocchi di [BlockNote](https://www.blocknotejs.org/) per permettere agli utenti di modificare e visualizzare blocchi di contenuti.
 
 <Tabs>
-  <Tab title="Utilizzo">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="Utilizzo">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="Props">
-    | Props  | Tipo              | Descrizione                                          |
-    | ------ | ----------------- | ---------------------------------------------------- |
-    | editor | `BlockNoteEditor` | L'istanza o la configurazione dell'editor di blocchi |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props  | Tipo              | Descrizione                                          |
+| ------ | ----------------- | ---------------------------------------------------- |
+| editor | `BlockNoteEditor` | L'istanza o la configurazione dell'editor di blocchi |
+
+
+
+</Tab>
 </Tabs>

@@ -800,7 +800,7 @@ describe('computeFieldDependencyGraph', () => {
     );
   });
 
-  it('should detect dependencies when fields use relationTargetObjectMetadataId with null relation', () => {
+  it('should detect dependencies when fields use settings.relationType fallback', () => {
     const carrierObject = createMockObject({
       id: 'carrier-obj',
       nameSingular: 'carrier',
@@ -814,8 +814,28 @@ describe('computeFieldDependencyGraph', () => {
         createMockField({
           id: 'product-carrier-field',
           name: 'carrier',
-          relationTargetObjectMetadataId: 'carrier-obj',
-          relation: null,
+          relation: {
+            type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: {
+              id: 'product-carrier-field',
+              name: 'carrier',
+            },
+            targetFieldMetadata: {
+              id: 'carrier-products-field',
+              name: 'products',
+              isCustom: false,
+            },
+            sourceObjectMetadata: {
+              id: 'product-obj',
+              nameSingular: 'product',
+              namePlural: 'products',
+            },
+            targetObjectMetadata: {
+              id: 'carrier-obj',
+              nameSingular: 'carrier',
+              namePlural: 'carriers',
+            },
+          },
           settings: { relationType: RelationType.MANY_TO_ONE },
         }),
       ],
@@ -828,15 +848,55 @@ describe('computeFieldDependencyGraph', () => {
         createMockField({
           id: 'policy-carrier-field',
           name: 'carrier',
-          relationTargetObjectMetadataId: 'carrier-obj',
-          relation: null,
+          relation: {
+            type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: {
+              id: 'policy-carrier-field',
+              name: 'carrier',
+            },
+            targetFieldMetadata: {
+              id: 'carrier-policies-field',
+              name: 'policies',
+              isCustom: false,
+            },
+            sourceObjectMetadata: {
+              id: 'policy-obj',
+              nameSingular: 'policy',
+              namePlural: 'policies',
+            },
+            targetObjectMetadata: {
+              id: 'carrier-obj',
+              nameSingular: 'carrier',
+              namePlural: 'carriers',
+            },
+          },
           settings: { relationType: RelationType.MANY_TO_ONE },
         }),
         createMockField({
           id: 'policy-product-field',
           name: 'product',
-          relationTargetObjectMetadataId: 'product-obj',
-          relation: null,
+          relation: {
+            type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: {
+              id: 'policy-product-field',
+              name: 'product',
+            },
+            targetFieldMetadata: {
+              id: 'product-policies-field',
+              name: 'policies',
+              isCustom: false,
+            },
+            sourceObjectMetadata: {
+              id: 'policy-obj',
+              nameSingular: 'policy',
+              namePlural: 'policies',
+            },
+            targetObjectMetadata: {
+              id: 'product-obj',
+              nameSingular: 'product',
+              namePlural: 'products',
+            },
+          },
           settings: { relationType: RelationType.MANY_TO_ONE },
         }),
       ],

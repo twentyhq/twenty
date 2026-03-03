@@ -5,7 +5,7 @@ title: Kurulum
 # Konfigürasyon Yönetimi
 
 <Warning>
-  **İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose) izleyin, ardından yapılandırma için buraya dönün.
+**İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose) izleyin, ardından yapılandırma için buraya dönün.
 </Warning>
 
 Twenty, farklı dağıtım ihtiyaçlarına uygun **iki yapılandırma modu** sunar:
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
 4. Değişiklikler hemen yürürlüğe girer (çok konteynerli dağıtımlarda 15 saniye içinde)
 
 <Warning>
-  **Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de worker konteynerleri aynı veritabanından okur. Yönetici panelindeki değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı değişkenleri hariç).
+**Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de worker konteynerleri aynı veritabanından okur. Yönetici panelindeki değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı değişkenleri hariç).
 </Warning>
 
 **Yönetici paneli aracılığıyla yapılandırabileceğiniz:**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
 ![Yönetici Paneli Konfigürasyon Değişkenleri](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** altında açıklamalarla belgelenir.
-  Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve uygulama gizli anahtarları (`APP_SECRET`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
+Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** altında açıklamalarla belgelenir.
+Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve uygulama gizli anahtarları (`APP_SECRET`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
 
-  [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. Yalnızca Ortam Değişkenleriyle Yapılandırma
@@ -93,7 +93,7 @@ Aynı Twenty örneği üzerinde birden fazla bağımsız ekibin kendi çalışma
 * Alt alan adı ve özel alan adı gibi çalışma alanına özgü ayarlar, çalışma alanı ayarlarında kullanılabilir hale gelir
 
 <Warning>
-  **Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env` dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici paneli üzerinden değiştirilemez.
+**Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env` dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici paneli üzerinden değiştirilemez.
 </Warning>
 
 ### Çoklu Çalışma Alanı için DNS Yapılandırması
@@ -149,7 +149,7 @@ Etkinleştirildiğinde, yalnızca `canAccessFullAdminPanel` yetkisine sahip kull
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 **Gerekli kapsamlar** (otomatik yapılandırılmış):
@@ -168,7 +168,7 @@ Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekec
 ## Microsoft 365 Entegrasyonu
 
 <Warning>
-  Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
+Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
 </Warning>
 
 ### Microsoft Azure'da bir proje oluştur
@@ -211,7 +211,7 @@ Projenize aşağıdaki yönlendirme URI'lerini eklemeniz gerekir:
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 ### Kapsamları yapılandır
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. SMTP ayarlarınızı yapılandırın:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
 
+  <ArticleTab>
+
+  [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_e-posta_adresi
+  * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_e-posta_adresi
+  * EMAIL_SMTP_PASSWORD='office365_parola'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
+  * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
+  * Aşağıdaki değişkenleri ayarlayın:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_e-posta_adresi
-    * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_e-posta_adresi
-    * EMAIL_SMTP_PASSWORD='office365_parola'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
-
-    * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
-    * Aşağıdaki değişkenleri ayarlayın:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 ## Mantıksal işlevler
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty, iş akışları ve özel mantık için mantıksal işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
 
 <Warning>
-  **Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+**Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
 </Warning>
 
 ### Kullanılabilir Sürücüler
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
+`SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>

@@ -26,7 +26,7 @@ export const buildDefaultIndexesForCustomObject = ({
         {
           createdAt: createdAt.toISOString(),
           fieldMetadataUniversalIdentifier:
-            defaultFlatFieldForCustomObjectMaps.fields.searchVectorField
+            defaultFlatFieldForCustomObjectMaps.fields.searchVector
               .universalIdentifier,
           indexMetadataUniversalIdentifier:
             tsFlatVectorIndexUniversalIdentifier,

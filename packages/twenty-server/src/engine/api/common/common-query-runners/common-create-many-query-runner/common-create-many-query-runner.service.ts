@@ -25,6 +25,10 @@ import {
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -71,6 +75,24 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       workspaceDataSource,
     } = queryRunnerContext;
 
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
+      relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
+      select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
     const objectRecords = await this.insertOrUpsertRecords({
       repository,
       flatObjectMetadata,
@@ -89,7 +111,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
 
     await this.processNestedRelationsIfNeeded({
-      args,
+      filteredRelations,
+      filteredSelect,
       records: upsertedRecords,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -103,7 +126,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async processNestedRelationsIfNeeded({
-    args,
+    filteredRelations,
+    filteredSelect,
     records,
     flatObjectMetadata,
     flatObjectMetadataMaps,
@@ -112,7 +136,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     workspaceDataSource,
     rolePermissionConfig,
   }: {
-    args: CommonExtendedInput<CreateManyQueryArgs>;
+    filteredRelations: Record<string, unknown> | undefined;
+    filteredSelect: Record<string, unknown>;
     records: ObjectRecord[];
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -121,7 +146,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<void> {
-    if (!args.selectedFieldsResult.relations) {
+    if (!filteredRelations) {
       return;
     }
 
@@ -130,7 +155,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: records,
-      relations: args.selectedFieldsResult.relations as Record<
+      relations: filteredRelations as Record<
         string,
         FindOptionsRelations<ObjectLiteral>
       >,
@@ -138,7 +163,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       authContext,
       workspaceDataSource,
       rolePermissionConfig,
-      selectedFields: args.selectedFieldsResult.select,
+      selectedFields: filteredSelect,
     });
   }
 
@@ -190,10 +215,28 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<InsertResult> {
     const { selectedFieldsResult } = args;
 
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
+      select: selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
+      relations: selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
-        select: selectedFieldsResult.select,
-        relations: selectedFieldsResult.relations,
+        select: filteredSelect,
+        relations: filteredRelations ?? {},
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -251,9 +294,27 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       raw: [],
     };
 
-    const columnsToReturn = buildColumnsToReturn({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToReturn = buildColumnsToReturn({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -411,9 +472,27 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata.nameSingular,
     );
 
-    const columnsToSelect = buildColumnsToSelect({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToSelect = buildColumnsToSelect({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

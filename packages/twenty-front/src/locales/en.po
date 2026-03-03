@@ -92,8 +92,8 @@ msgstr ""
 
 #. js-lingui-id: YRhNUx
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "[{\"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john@example.com\"}]"
-#~ msgstr "[{\"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john@example.com\"}]"
+msgid "[{\"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john@example.com\"}]"
+msgstr "[{\"first_name\": \"John\", \"last_name\": \"Doe\", \"email\": \"john@example.com\"}]"
 
 #. js-lingui-id: ZBGbuw
 #: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
@@ -145,8 +145,8 @@ msgstr ""
 
 #. js-lingui-id: X8FG1C
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "{0} valid, {1} invalid out of {2} records"
-#~ msgstr "{0} valid, {1} invalid out of {2} records"
+msgid "{0} valid, {1} invalid out of {2} records"
+msgstr "{0} valid, {1} invalid out of {2} records"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -202,6 +202,11 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #~ msgid "{days, plural, one {{days} day} other {{days} days}}"
 #~ msgstr "{days, plural, one {{days} day} other {{days} days}}"
+
+#. js-lingui-id: Muj+po
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#~ msgid "{daysLeft} days"
+#~ msgstr "{daysLeft} days"
 
 #. js-lingui-id: 0KwX9P
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -300,6 +305,11 @@ msgstr ""
 #~ msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 #~ msgstr "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 
+#. js-lingui-id: fTSz8d
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
+#~ msgid "{numberOfSelectedItems} workspace members"
+#~ msgstr "{numberOfSelectedItems} workspace members"
+
 #. js-lingui-id: 7kYa/u
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 #~ msgid "{objectLabelPlural} ({totalCount})"
@@ -319,6 +329,16 @@ msgstr ""
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 #~ msgid "{positionLabel} record holds priority"
 #~ msgstr "{positionLabel} record holds priority"
+
+#. js-lingui-id: YG/wl5
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "{providerLabel} — API key not configured"
+#~ msgstr "{providerLabel} — API key not configured"
+
+#. js-lingui-id: s80lrU
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "{providerLabel} — Deprecated"
+#~ msgstr "{providerLabel} — Deprecated"
 
 #. js-lingui-id: Sxx5Hr
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
@@ -414,8 +434,8 @@ msgstr ""
 
 #. js-lingui-id: 9eFdsu
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "*/5 * * * *"
-#~ msgstr "*/5 * * * *"
+msgid "*/5 * * * *"
+msgstr "*/5 * * * *"
 
 #. js-lingui-id: CwstSL
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -446,6 +466,11 @@ msgstr ""
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #~ msgid "0 */1 * * *"
 #~ msgstr "0 */1 * * *"
+
+#. js-lingui-id: gphxoA
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#~ msgid "1 day"
+#~ msgstr "1 day"
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -627,6 +652,11 @@ msgstr ""
 #~ msgid "About this workspace"
 #~ msgstr "About this workspace"
 
+#. js-lingui-id: o0Ci6l
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Access workspace data"
+#~ msgstr "Access workspace data"
+
 #. js-lingui-id: c2UA7k
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
 #~ msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
@@ -733,7 +763,6 @@ msgstr ""
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #~ msgid "Active"
@@ -745,12 +774,18 @@ msgstr ""
 #~ msgid "Active API keys created by you or your team."
 #~ msgstr "Active API keys created by you or your team."
 
+#. js-lingui-id: A7Ks+i
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Active installs"
+#~ msgstr "Active installs"
+
 #. js-lingui-id: QHjErc
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 #~ msgid "Active Sync"
 #~ msgstr "Active Sync"
 
 #. js-lingui-id: m16xKo
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #~ msgid "Add"
 #~ msgstr "Add"
@@ -764,6 +799,11 @@ msgstr ""
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 #~ msgid "Add a {objectLabelSingular}"
 #~ msgstr "Add a {objectLabelSingular}"
+
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+#~ msgid "Add a Group"
+#~ msgstr "Add a Group"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -780,11 +820,6 @@ msgstr ""
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 #~ msgid "Add a record"
 #~ msgstr "Add a record"
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor.tsx
-#~ msgid "Add a Section"
-#~ msgstr "Add a Section"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
@@ -817,7 +852,7 @@ msgstr ""
 #~ msgstr "Add BCC"
 
 #. js-lingui-id: We0vOO
-#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #~ msgid "Add Block"
 #~ msgstr "Add Block"
@@ -893,13 +928,19 @@ msgstr ""
 #~ msgid "Add Item"
 #~ msgstr "Add Item"
 
+#. js-lingui-id: cI2ZVO
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#~ msgid "Add item to folder"
+#~ msgstr "Add item to folder"
+
 #. js-lingui-id: HOUGk+
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Add Mapping"
-#~ msgstr "Add Mapping"
+msgid "Add Mapping"
+msgstr "Add Mapping"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/object-metadata/components/NavigationDrawerSectionForWorkspaceItems.tsx
+#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder.tsx
 #~ msgid "Add menu item"
 #~ msgstr "Add menu item"
 
@@ -1107,15 +1148,15 @@ msgstr ""
 #~ msgid "Address 2"
 #~ msgstr "Address 2"
 
-#. js-lingui-id: Eis4ey
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-#~ msgid "Adjust the role-related settings"
-#~ msgstr "Adjust the role-related settings"
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #~ msgid "Admin"
 #~ msgstr "Admin"
+
+#. js-lingui-id: K2OX5h
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Admin Model Controls"
+#~ msgstr "Admin Model Controls"
 
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -1144,11 +1185,6 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 #~ msgid "Advanced filter"
 #~ msgstr "Advanced filter"
-
-#. js-lingui-id: luNzWN
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Advanced model for complex planning"
-#~ msgstr "Advanced model for complex planning"
 
 #. js-lingui-id: miuPUc
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -1252,6 +1288,7 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 #~ msgid "AI"
 #~ msgstr "AI"
@@ -1262,11 +1299,6 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 #~ msgid "AI Model"
 #~ msgstr "AI Model"
-
-#. js-lingui-id: tGx4Zn
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "AI Models"
-#~ msgstr "AI Models"
 
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
@@ -1350,6 +1382,11 @@ msgstr ""
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #~ msgid "All Metadata"
 #~ msgstr "All Metadata"
+
+#. js-lingui-id: AJgjR+
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "All Models"
+#~ msgstr "All Models"
 
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
@@ -1464,11 +1501,21 @@ msgstr ""
 #~ msgid "Allow users to sign in with an email and password."
 #~ msgstr "Allow users to sign in with an email and password."
 
+#. js-lingui-id: vj+OHl
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Allowed redirect URIs for OAuth flows"
+#~ msgstr "Allowed redirect URIs for OAuth flows"
+
 #. js-lingui-id: Yn0ZH1
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #~ msgid "alphabetical"
 #~ msgstr "alphabetical"
+
+#. js-lingui-id: eO7HSp
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectMenuItem.tsx
+#~ msgid "Already in navbar"
+#~ msgstr "Already in navbar"
 
 #. js-lingui-id: uprOiC
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -1512,6 +1559,9 @@ msgstr ""
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
@@ -1608,6 +1658,11 @@ msgstr ""
 #~ msgid "API Key copied to clipboard"
 #~ msgstr "API Key copied to clipboard"
 
+#. js-lingui-id: jjaYji
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "API key not configured"
+#~ msgstr "API key not configured"
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #~ msgid "API key roles"
@@ -1686,6 +1741,11 @@ msgstr ""
 #~ msgid "App"
 #~ msgstr "App"
 
+#. js-lingui-id: 2zAy1h
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "App updated"
+#~ msgstr "App updated"
+
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #~ msgid "Appearance"
@@ -1729,9 +1789,9 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 #~ msgid "Applications"
 #~ msgstr "Applications"
@@ -1755,6 +1815,16 @@ msgstr ""
 #: src/pages/settings/domains/SettingsDomains.tsx
 #~ msgid "Approved Domains"
 #~ msgstr "Approved Domains"
+
+#. js-lingui-id: VDvaN2
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#~ msgid "Apps"
+#~ msgstr "Apps"
+
+#. js-lingui-id: n++nRq
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#~ msgid "Apps you've created and published"
+#~ msgstr "Apps you've created and published"
 
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1833,7 +1903,6 @@ msgstr ""
 
 #. js-lingui-id: xWEvuo
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
-#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/command-menu/components/CommandMenuAskAIInfo.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -1896,6 +1965,11 @@ msgstr ""
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #~ msgid "Assigned to"
 #~ msgstr "Assigned to"
+
+#. js-lingui-id: TzM/0+
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
+#~ msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
+#~ msgstr "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -1974,7 +2048,6 @@ msgstr ""
 
 #. js-lingui-id: EPEFrH
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 #~ msgid "Audit Logs"
 #~ msgstr "Audit Logs"
@@ -2024,6 +2097,11 @@ msgstr ""
 #~ msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 #~ msgstr "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 
+#. js-lingui-id: SIFUTh
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Authorization failed. Please try again."
+#~ msgstr "Authorization failed. Please try again."
+
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 #~ msgid "Authorize"
@@ -2038,6 +2116,11 @@ msgstr ""
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #~ msgid "Authorized URL copied to clipboard"
 #~ msgstr "Authorized URL copied to clipboard"
+
+#. js-lingui-id: 8RmQki
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Authorizing..."
+#~ msgstr "Authorizing..."
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -2064,13 +2147,23 @@ msgstr ""
 #~ msgid "Automatically create People records when receiving or sending emails"
 #~ msgstr "Automatically create People records when receiving or sending emails"
 
+#. js-lingui-id: erwsgX
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Automatically enable new models"
+#~ msgstr "Automatically enable new models"
+
+#. js-lingui-id: fx8TeY
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Automatically mark new models as available"
+#~ msgstr "Automatically mark new models as available"
+
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #~ msgid "Availability"
 #~ msgstr "Availability"
 
 #. js-lingui-id: csDS2L
-#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #~ msgid "Available"
 #~ msgstr "Available"
@@ -2251,10 +2344,10 @@ msgstr ""
 #~ msgid "Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages."
 #~ msgstr "Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages."
 
-#. js-lingui-id: 8SlslB
+#. js-lingui-id: alSW5d
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
-#~ msgid "Build many-to-many relations. <0>Learn more</0>"
-#~ msgstr "Build many-to-many relations. <0>Learn more</0>"
+#~ msgid "Build many-to-many relations"
+#~ msgstr "Build many-to-many relations"
 
 #. js-lingui-id: +7fBMP
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -2404,7 +2497,6 @@ msgstr ""
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 #~ msgid "Cancel"
@@ -2498,7 +2590,7 @@ msgstr ""
 #~ msgstr "CC"
 
 #. js-lingui-id: tHntRt
-#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #~ msgid "Change Color"
 #~ msgstr "Change Color"
@@ -2549,6 +2641,11 @@ msgstr ""
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 #~ msgid "Chart"
 #~ msgstr "Chart"
+
+#. js-lingui-id: AHZflp
+#: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#~ msgid "Chat"
+#~ msgstr "Chat"
 
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2616,7 +2713,7 @@ msgstr ""
 #~ msgstr "Choose the fields that will identify your records"
 
 #. js-lingui-id: hIJigY
-#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 #~ msgid "Choose the format used to display date value"
 #~ msgstr "Choose the format used to display date value"
 
@@ -2705,14 +2802,26 @@ msgstr ""
 #~ msgstr "ClickHouse Not Configured"
 
 #. js-lingui-id: b9Y4up
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #~ msgid "Client ID"
 #~ msgstr "Client ID"
 
+#. js-lingui-id: 77ropN
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Client ID copied"
+#~ msgstr "Client ID copied"
+
 #. js-lingui-id: Bdj4LI
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #~ msgid "Client Secret"
 #~ msgstr "Client Secret"
+
+#. js-lingui-id: 6uKe4W
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Client secret rotated. Copy it now — it won't be shown again."
+#~ msgstr "Client secret rotated. Copy it now — it won't be shown again."
 
 #. js-lingui-id: XUe4cu
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2777,6 +2886,11 @@ msgstr ""
 #~ msgid "Collapse folder"
 #~ msgstr "Collapse folder"
 
+#. js-lingui-id: jZlrte
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+#~ msgid "Color"
+#~ msgstr "Color"
+
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 #~ msgid "Color code"
@@ -2813,7 +2927,7 @@ msgstr ""
 #~ msgstr "command menu item"
 
 #. js-lingui-id: 4XlFx/
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #~ msgid "Commands copied to clipboard"
 #~ msgstr "Commands copied to clipboard"
 
@@ -2867,15 +2981,18 @@ msgstr ""
 #~ msgid "Conditions"
 #~ msgstr "Conditions"
 
+#. js-lingui-id: 14PdY0
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#~ msgid "Config"
+#~ msgstr "Config"
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #~ msgid "Config Variables"
 #~ msgstr "Config Variables"
 
 #. js-lingui-id: ywFj2D
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #~ msgid "Configuration"
@@ -2885,11 +3002,6 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAI.tsx
 #~ msgid "Configure"
 #~ msgstr "Configure"
-
-#. js-lingui-id: 9px+al
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Configure AI models for routing and planning"
-#~ msgstr "Configure AI models for routing and planning"
 
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2913,13 +3025,18 @@ msgstr ""
 
 #. js-lingui-id: TTsmz3
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#~ msgid "Configure data ingestion pipelines to sync external data into your CRM"
-#~ msgstr "Configure data ingestion pipelines to sync external data into your CRM"
+msgid "Configure data ingestion pipelines to sync external data into your CRM"
+msgstr "Configure data ingestion pipelines to sync external data into your CRM"
 
 #. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #~ msgid "Configure date, time, number, timezone, and calendar start day"
 #~ msgstr "Configure date, time, number, timezone, and calendar start day"
+
+#. js-lingui-id: +SQwHr
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Configure default AI models and availability"
+#~ msgstr "Configure default AI models and availability"
 
 #. js-lingui-id: utsXG8
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2965,6 +3082,11 @@ msgstr ""
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #~ msgid "Configure your emails and calendar settings."
 #~ msgstr "Configure your emails and calendar settings."
+
+#. js-lingui-id: M1co/O
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Configured"
+#~ msgstr "Configured"
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
@@ -3149,8 +3271,8 @@ msgstr ""
 
 #. js-lingui-id: yvuNTW
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Control whether this pipeline is active"
-#~ msgstr "Control whether this pipeline is active"
+msgid "Control whether this pipeline is active"
+msgstr "Control whether this pipeline is active"
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -3190,7 +3312,7 @@ msgstr ""
 #~ msgstr "Copy code"
 
 #. js-lingui-id: Es0ros
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #~ msgid "Copy commands"
 #~ msgstr "Copy commands"
 
@@ -3229,6 +3351,11 @@ msgstr ""
 #~ msgid "Copy this key as it will not be visible again"
 #~ msgstr "Copy this key as it will not be visible again"
 
+#. js-lingui-id: /P/oME
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Copy this secret as it will not be visible again"
+#~ msgstr "Copy this secret as it will not be visible again"
+
 #. js-lingui-id: /4gGIX
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 #~ msgid "Copy to clipboard"
@@ -3255,11 +3382,6 @@ msgstr ""
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #~ msgid "Core Objects"
 #~ msgstr "Core Objects"
-
-#. js-lingui-id: cfa2VJ
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-#~ msgid "Core Schema"
-#~ msgstr "Core Schema"
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -3389,13 +3511,8 @@ msgstr ""
 #~ msgid "Create a workspace"
 #~ msgstr "Create a workspace"
 
-#. js-lingui-id: f1uv2a
-#: src/pages/settings/applications/SettingsApplications.tsx
-#~ msgid "Create an app"
-#~ msgstr "Create an app"
-
 #. js-lingui-id: /WlFSf
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #~ msgid "Create an application"
 #~ msgstr "Create an application"
 
@@ -3442,8 +3559,8 @@ msgstr ""
 
 #. js-lingui-id: Poh+g6
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Create Pipeline"
-#~ msgstr "Create Pipeline"
+msgid "Create Pipeline"
+msgstr "Create Pipeline"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -3515,7 +3632,6 @@ msgstr ""
 #~ msgstr "Create, edit, and delete workspace views"
 
 #. js-lingui-id: d+F6q9
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 #~ msgid "Created"
@@ -3543,8 +3659,13 @@ msgstr ""
 
 #. js-lingui-id: HM56Bx
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Creating..."
-#~ msgstr "Creating..."
+msgid "Creating..."
+msgstr "Creating..."
+
+#. js-lingui-id: L3dKdL
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Credentials and scopes for OAuth authorization flows"
+#~ msgstr "Credentials and scopes for OAuth authorization flows"
 
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -3645,6 +3766,7 @@ msgstr ""
 #~ msgstr "Current workspace member not found."
 
 #. js-lingui-id: 8Tg/JR
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -3689,6 +3811,9 @@ msgstr ""
 
 #. js-lingui-id: srRMnJ
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditObjectViewBase.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditLinkItemView.tsx
 #~ msgid "Customize"
 #~ msgstr "Customize"
@@ -3736,6 +3861,7 @@ msgstr ""
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -3748,8 +3874,8 @@ msgstr ""
 
 #. js-lingui-id: ZQKLI1
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Danger Zone"
-#~ msgstr "Danger Zone"
+msgid "Danger Zone"
+msgstr "Danger Zone"
 
 #. js-lingui-id: Fo2vDn
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3976,8 +4102,8 @@ msgstr ""
 
 #. js-lingui-id: VBuRrB
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Dedup Field"
-#~ msgstr "Dedup Field"
+msgid "Dedup Field"
+msgstr "Dedup Field"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -4000,7 +4126,14 @@ msgstr ""
 #~ msgid "Default palette"
 #~ msgstr "Default palette"
 
+#. js-lingui-id: v41VX6
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx
+#~ msgid "Default role"
+#~ msgstr "Default role"
+
 #. js-lingui-id: CGhRMh
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #~ msgid "Default Role"
 #~ msgstr "Default Role"
@@ -4063,6 +4196,8 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
@@ -4085,7 +4220,8 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
-#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
@@ -4151,6 +4287,11 @@ msgstr ""
 #~ msgid "Delete API key"
 #~ msgstr "Delete API key"
 
+#. js-lingui-id: JXU6Ex
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Delete app"
+#~ msgstr "Delete app"
+
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 #~ msgid "Delete dashboard"
@@ -4189,8 +4330,8 @@ msgstr ""
 
 #. js-lingui-id: gaepzt
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Delete Pipeline"
-#~ msgstr "Delete Pipeline"
+msgid "Delete Pipeline"
+msgstr "Delete Pipeline"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4226,6 +4367,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #~ msgid "Delete this agent"
 #~ msgstr "Delete this agent"
+
+#. js-lingui-id: Lz86s9
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Delete this app"
+#~ msgstr "Delete this app"
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4305,6 +4451,16 @@ msgstr ""
 #~ msgid "Deleting this method will remove it permanently from your account."
 #~ msgstr "Deleting this method will remove it permanently from your account."
 
+#. js-lingui-id: Ssdrw4
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Deprecated"
+#~ msgstr "Deprecated"
+
+#. js-lingui-id: 8OJZ/p
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Deprecated models"
+#~ msgstr "Deprecated models"
+
 #. js-lingui-id: O3LJh6
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4327,6 +4483,7 @@ msgstr ""
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -4334,7 +4491,6 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #~ msgid "Description"
@@ -4382,6 +4538,11 @@ msgstr ""
 #~ msgid "Details"
 #~ msgstr "Details"
 
+#. js-lingui-id: 7aDnUb
+#: src/pages/settings/applications/SettingsApplications.tsx
+#~ msgid "Developer"
+#~ msgstr "Developer"
+
 #. js-lingui-id: irW7LP
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #~ msgid "Developers links"
@@ -4418,6 +4579,11 @@ msgstr ""
 #~ msgid "Display text on multiple lines"
 #~ msgstr "Display text on multiple lines"
 
+#. js-lingui-id: vU/Hht
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Distribution"
+#~ msgstr "Distribution"
+
 #. js-lingui-id: RDL+lZ
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 #~ msgid "DNS Records"
@@ -4432,8 +4598,8 @@ msgstr ""
 #. js-lingui-id: TvY/XA
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #~ msgid "Documentation"
 #~ msgstr "Documentation"
 
@@ -4582,8 +4748,8 @@ msgstr ""
 
 #. js-lingui-id: lkz6PL
 #: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "Duration"
-#~ msgstr "Duration"
+msgid "Duration"
+msgstr "Duration"
 
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4599,36 +4765,36 @@ msgstr ""
 
 #. js-lingui-id: 4OwKQT
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "e.g. Convoso Leads Sync"
-#~ msgstr "e.g. Convoso Leads Sync"
+msgid "e.g. Convoso Leads Sync"
+msgstr "e.g. Convoso Leads Sync"
 
 #. js-lingui-id: MRh3/x
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "e.g. data.firstName"
-#~ msgstr "e.g. data.firstName"
+msgid "e.g. data.firstName"
+msgstr "e.g. data.firstName"
 
 #. js-lingui-id: IpV/zK
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "e.g. firstName"
-#~ msgstr "e.g. firstName"
+msgid "e.g. firstName"
+msgstr "e.g. firstName"
 
 #. js-lingui-id: M/6sIv
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "e.g. name"
-#~ msgstr "e.g. name"
+msgid "e.g. name"
+msgstr "e.g. name"
 
 #. js-lingui-id: LhLlv/
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "e.g. person, call, company"
-#~ msgstr "e.g. person, call, company"
+msgid "e.g. person, call, company"
+msgstr "e.g. person, call, company"
 
 #. js-lingui-id: resH7U
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "e.g. phones.primaryPhoneNumber"
-#~ msgstr "e.g. phones.primaryPhoneNumber"
+msgid "e.g. phones.primaryPhoneNumber"
+msgstr "e.g. phones.primaryPhoneNumber"
 
 #. js-lingui-id: p5P8NB
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -4675,6 +4841,7 @@ msgstr ""
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 #~ msgid "Edit"
 #~ msgstr "Edit"
@@ -5118,10 +5285,10 @@ msgstr ""
 #~ msgid "Enter filter"
 #~ msgstr "Enter filter"
 
-#. js-lingui-id: 9/30HU
-#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
-#~ msgid "Enter in <0>Unicode</0> format"
-#~ msgstr "Enter in <0>Unicode</0> format"
+#. js-lingui-id: f09Lhk
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
+#~ msgid "Enter in Unicode format"
+#~ msgstr "Enter in Unicode format"
 
 #. js-lingui-id: 9CjMQ7
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
@@ -5175,6 +5342,11 @@ msgstr ""
 #~ msgid "Enter phone number"
 #~ msgstr "Enter phone number"
 
+#. js-lingui-id: xV28+W
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Enter secret value"
+#~ msgstr "Enter secret value"
+
 #. js-lingui-id: xCiJkz
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
 #~ msgid "Enter test value"
@@ -5218,6 +5390,7 @@ msgstr ""
 #~ msgstr "Enter user ID or email address"
 
 #. js-lingui-id: pubQie
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
@@ -5294,6 +5467,11 @@ msgstr ""
 #~ msgid "Error deleting api key."
 #~ msgstr "Error deleting api key."
 
+#. js-lingui-id: gmjkzq
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Error deleting app"
+#~ msgstr "Error deleting app"
+
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #~ msgid "Error deleting invitation"
@@ -5354,15 +5532,30 @@ msgstr ""
 #~ msgid "Error resending invitation"
 #~ msgstr "Error resending invitation"
 
+#. js-lingui-id: cpGsq/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Error rotating client secret"
+#~ msgstr "Error rotating client secret"
+
 #. js-lingui-id: 5Vy8D1
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #~ msgid "Error uninstalling application."
 #~ msgstr "Error uninstalling application."
 
+#. js-lingui-id: ZUyXma
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Error updating app"
+#~ msgstr "Error updating app"
+
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #~ msgid "Error updating role"
 #~ msgstr "Error updating role"
+
+#. js-lingui-id: s+iV3f
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Error updating variable"
+#~ msgstr "Error updating variable"
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -5403,11 +5596,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #~ msgid "Error while switching subscription."
 #~ msgstr "Error while switching subscription."
-
-#. js-lingui-id: UirGxE
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "Errors"
-#~ msgstr "Errors"
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -5556,11 +5744,6 @@ msgstr ""
 #~ msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 #~ msgstr "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 
-#. js-lingui-id: u73wth
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-#~ msgid "excluded"
-#~ msgstr "excluded"
-
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #~ msgid "Existing Field"
@@ -5691,11 +5874,6 @@ msgstr ""
 #~ msgid "Export ({percentageValue}%)"
 #~ msgstr "Export ({percentageValue}%)"
 
-#. js-lingui-id: 5P9szN
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-#~ msgid "Export ({totalSelected} extra fields)"
-#~ msgstr "Export ({totalSelected} extra fields)"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #~ msgid "Export CSV"
@@ -5757,11 +5935,6 @@ msgstr ""
 #~ msgid "Export view"
 #~ msgstr "Export view"
 
-#. js-lingui-id: i0hGgC
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-#~ msgid "Export with Related Fields"
-#~ msgstr "Export with Related Fields"
-
 #. js-lingui-id: +FMXdE
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -5781,8 +5954,8 @@ msgstr ""
 
 #. js-lingui-id: cmHChB
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "External systems POST data to a webhook URL"
-#~ msgstr "External systems POST data to a webhook URL"
+msgid "External systems POST data to a webhook URL"
+msgstr "External systems POST data to a webhook URL"
 
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -5791,7 +5964,6 @@ msgstr ""
 
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #~ msgid "Failed"
@@ -5913,15 +6085,36 @@ msgstr ""
 #~ msgid "Failed to save workspace instructions"
 #~ msgstr "Failed to save workspace instructions"
 
-#. js-lingui-id: YMSYb+
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Failed to update fast model"
-#~ msgstr "Failed to update fast model"
+#. js-lingui-id: YzURPo
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Failed to update auto-enable setting"
+#~ msgstr "Failed to update auto-enable setting"
 
 #. js-lingui-id: P1NmNz
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Failed to update feature flag. {errorMessage}"
 #~ msgstr "Failed to update feature flag. {errorMessage}"
+
+#. js-lingui-id: 1R13Ov
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Failed to update model"
+#~ msgstr "Failed to update model"
+
+#. js-lingui-id: W7Ff/4
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Failed to update model availability"
+#~ msgstr "Failed to update model availability"
+
+#. js-lingui-id: LgZlJ7
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Failed to update model availability settings"
+#~ msgstr "Failed to update model availability settings"
+
+#. js-lingui-id: rCUG3c
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Failed to update model selection mode"
+#~ msgstr "Failed to update model selection mode"
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -5937,11 +6130,6 @@ msgstr ""
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #~ msgid "Failed to update role"
 #~ msgstr "Failed to update role"
-
-#. js-lingui-id: h/0aT5
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Failed to update smart model"
-#~ msgstr "Failed to update smart model"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -5991,14 +6179,9 @@ msgstr ""
 #~ msgstr "False"
 
 #. js-lingui-id: XVIZ7v
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #~ msgid "Fast Model"
 #~ msgstr "Fast Model"
-
-#. js-lingui-id: UJHTjm
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Fast model updated successfully"
-#~ msgstr "Fast model updated successfully"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
@@ -6018,8 +6201,8 @@ msgstr ""
 
 #. js-lingui-id: 08HlXT
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Fetch data from an external API on a schedule"
-#~ msgstr "Fetch data from an external API on a schedule"
+msgid "Fetch data from an external API on a schedule"
+msgstr "Fetch data from an external API on a schedule"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6040,8 +6223,8 @@ msgstr ""
 
 #. js-lingui-id: /gaqFi
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Field Mappings"
-#~ msgstr "Field Mappings"
+msgid "Field Mappings"
+msgstr "Field Mappings"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -6168,6 +6351,7 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -6269,6 +6453,7 @@ msgstr ""
 
 #. js-lingui-id: kNqMMd
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 #~ msgid "Folder"
 #~ msgstr "Folder"
 
@@ -6395,9 +6580,12 @@ msgstr ""
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #~ msgid "General"
 #~ msgstr "General"
@@ -6579,6 +6767,11 @@ msgstr ""
 #~ msgid "Group by"
 #~ msgstr "Group by"
 
+#. js-lingui-id: WcF1uL
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+#~ msgid "Group name"
+#~ msgstr "Group name"
+
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 #~ msgid "Group sorting"
@@ -6598,16 +6791,6 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #~ msgid "h3"
 #~ msgstr "h3"
-
-#. js-lingui-id: HM69iY
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationSubFieldSelectMenu.tsx
-#~ msgid "Has any {0}"
-#~ msgstr "Has any {0}"
-
-#. js-lingui-id: jfD2qJ
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationSubFieldSelectMenu.tsx
-#~ msgid "Has no {0}"
-#~ msgstr "Has no {0}"
 
 #. js-lingui-id: HUk3sK
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -6649,11 +6832,15 @@ msgstr ""
 #~ msgid "Heading 3"
 #~ msgstr "Heading 3"
 
+#. js-lingui-id: UPqS9C
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#~ msgid "Health"
+#~ msgstr "Health"
+
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #~ msgid "Health Status"
 #~ msgstr "Health Status"
 
@@ -6740,6 +6927,7 @@ msgstr ""
 
 #. js-lingui-id: i0qMbr
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
+#: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 #~ msgid "Home"
 #~ msgstr "Home"
 
@@ -6761,8 +6949,8 @@ msgstr ""
 
 #. js-lingui-id: k3q0Rv
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "How data will enter the pipeline"
-#~ msgstr "How data will enter the pipeline"
+msgid "How data will enter the pipeline"
+msgstr "How data will enter the pipeline"
 
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
@@ -6801,13 +6989,18 @@ msgstr ""
 
 #. js-lingui-id: orSAmR
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "https://api.example.com/data"
-#~ msgstr "https://api.example.com/data"
+msgid "https://api.example.com/data"
+msgstr "https://api.example.com/data"
 
 #. js-lingui-id: +ZytMR
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #~ msgid "https://api.example.com/endpoint"
 #~ msgstr "https://api.example.com/endpoint"
+
+#. js-lingui-id: 1Un+Rf
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "https://example.com/callback"
+#~ msgstr "https://example.com/callback"
 
 #. js-lingui-id: yhVtER
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
@@ -6871,6 +7064,11 @@ msgstr ""
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #~ msgid "If this is unexpected, please verify your settings."
 #~ msgstr "If this is unexpected, please verify your settings."
+
+#. js-lingui-id: Yn4NZ1
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
+#~ msgstr "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7001,7 +7199,6 @@ msgstr ""
 #~ msgstr "In {dateDiff}"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -7027,11 +7224,6 @@ msgstr ""
 #: src/modules/activities/emails/components/EmailsCard.tsx
 #~ msgid "Inbox"
 #~ msgstr "Inbox"
-
-#. js-lingui-id: Tf3J00
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "Incoming Payload"
-#~ msgstr "Incoming Payload"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -7070,8 +7262,8 @@ msgstr ""
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineNew.tsx
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#~ msgid "Ingestion Pipelines"
-#~ msgstr "Ingestion Pipelines"
+msgid "Ingestion Pipelines"
+msgstr "Ingestion Pipelines"
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -7121,6 +7313,11 @@ msgstr ""
 #~ msgid "Install and manage applications"
 #~ msgstr "Install and manage applications"
 
+#. js-lingui-id: JXiMtM
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Install Stats"
+#~ msgstr "Install Stats"
+
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsApplications.tsx
 #~ msgid "Installed"
@@ -7155,11 +7352,6 @@ msgstr ""
 #: src/utils/title-utils.ts
 #~ msgid "Integrations - Settings"
 #~ msgstr "Integrations - Settings"
-
-#. js-lingui-id: ntgzzG
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-#~ msgid "Interact with your workspace data"
-#~ msgstr "Interact with your workspace data"
 
 #. js-lingui-id: jyjroS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7250,8 +7442,8 @@ msgstr ""
 
 #. js-lingui-id: qiNUlw
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "Invalid JSON. Please enter a valid JSON array or object."
-#~ msgstr "Invalid JSON. Please enter a valid JSON array or object."
+msgid "Invalid JSON. Please enter a valid JSON array or object."
+msgstr "Invalid JSON. Please enter a valid JSON array or object."
 
 #. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7789,20 +7981,15 @@ msgstr ""
 #~ msgid "Line Chart"
 #~ msgstr "Line Chart"
 
-#. js-lingui-id: LdyooL
-#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
-#~ msgid "link"
-#~ msgstr "link"
-
 #. js-lingui-id: yzF66j
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 #~ msgid "Link"
 #~ msgstr "Link"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -7936,9 +8123,6 @@ msgstr ""
 #~ msgstr "Loading thread"
 
 #. js-lingui-id: Z3FXyt
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
@@ -8116,8 +8300,13 @@ msgstr ""
 
 #. js-lingui-id: Sjsd1V
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Map source fields to CRM fields"
-#~ msgstr "Map source fields to CRM fields"
+msgid "Map source fields to CRM fields"
+msgstr "Map source fields to CRM fields"
+
+#. js-lingui-id: Zt5PUS
+#: src/pages/settings/applications/SettingsApplications.tsx
+#~ msgid "Marketplace"
+#~ msgstr "Marketplace"
 
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
@@ -8193,7 +8382,6 @@ msgstr ""
 #~ msgstr "Me"
 
 #. js-lingui-id: pfWzog
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #~ msgid "Me (User ID)"
 #~ msgstr "Me (User ID)"
@@ -8289,11 +8477,6 @@ msgstr ""
 #~ msgid "Metadata file generation failed"
 #~ msgstr "Metadata file generation failed"
 
-#. js-lingui-id: 0BF9eC
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-#~ msgid "Metadata Schema"
-#~ msgstr "Metadata Schema"
-
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #~ msgid "Metered tier switching has been cancelled."
@@ -8355,8 +8538,19 @@ msgstr ""
 #. js-lingui-id: zz/Wd/
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Mode"
-#~ msgstr "Mode"
+msgid "Mode"
+msgstr "Mode"
+
+#. js-lingui-id: //nm2/
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Models"
+#~ msgstr "Models"
+
+#. js-lingui-id: oHM560
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Models available in the chat model picker"
+#~ msgstr "Models available in the chat model picker"
 
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -8403,6 +8597,7 @@ msgstr ""
 #~ msgstr "months"
 
 #. js-lingui-id: 2FYpfJ
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 #~ msgid "More"
 #~ msgstr "More"
@@ -8424,6 +8619,11 @@ msgstr ""
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 #~ msgid "More options"
 #~ msgstr "More options"
+
+#. js-lingui-id: SOHptZ
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Most installed version"
+#~ msgstr "Most installed version"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
@@ -8479,6 +8679,11 @@ msgstr ""
 #~ msgid "must be an array of valid emails"
 #~ msgstr "must be an array of valid emails"
 
+#. js-lingui-id: bPl77g
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#~ msgid "My Apps"
+#~ msgstr "My Apps"
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #~ msgid "My unlisted views"
@@ -8494,11 +8699,11 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -8524,7 +8729,6 @@ msgstr ""
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
@@ -8538,6 +8742,11 @@ msgstr ""
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #~ msgid "Name and describe your function"
 #~ msgstr "Name and describe your function"
+
+#. js-lingui-id: /CI5+c
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Name and description are managed via your app manifest (CLI)"
+#~ msgstr "Name and description are managed via your app manifest (CLI)"
 
 #. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -8615,6 +8824,11 @@ msgstr ""
 #~ msgid "navigation menu item"
 #~ msgstr "navigation menu item"
 
+#. js-lingui-id: s2HXiD
+#: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#~ msgid "Navigation tabs"
+#~ msgstr "Navigation tabs"
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #~ msgid "Never"
@@ -8627,7 +8841,6 @@ msgstr ""
 #~ msgstr "Never expires"
 
 #. js-lingui-id: isRobC
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineNew.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
@@ -8666,6 +8879,9 @@ msgstr ""
 #~ msgstr "New Approved Access Domain"
 
 #. js-lingui-id: hIQkLb
+#: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/ai/components/NavigationDrawerAIChatThreadDateSection.tsx
 #: src/modules/ai/components/AIChatThreadsList.tsx
 #~ msgid "New chat"
 #~ msgstr "New chat"
@@ -8695,6 +8911,11 @@ msgstr ""
 #~ msgid "New folder"
 #~ msgstr "New folder"
 
+#. js-lingui-id: 93KA8w
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+#~ msgid "New Group"
+#~ msgstr "New Group"
+
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #~ msgid "New key"
@@ -8722,13 +8943,13 @@ msgstr ""
 
 #. js-lingui-id: 2llx5k
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#~ msgid "New pipeline"
-#~ msgstr "New pipeline"
+msgid "New pipeline"
+msgstr "New pipeline"
 
 #. js-lingui-id: 8YhL/W
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineNew.tsx
-#~ msgid "New Pipeline"
-#~ msgstr "New Pipeline"
+msgid "New Pipeline"
+msgstr "New Pipeline"
 
 #. js-lingui-id: BcCzLv
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8736,8 +8957,10 @@ msgstr ""
 #~ msgstr "New record"
 
 #. js-lingui-id: x6Ckh1
+#: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 #~ msgid "New sidebar item"
 #~ msgstr "New sidebar item"
 
@@ -9113,7 +9336,6 @@ msgstr ""
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 #~ msgid "No models available. Please configure AI models in your workspace settings."
 #~ msgstr "No models available. Please configure AI models in your workspace settings."
 
@@ -9153,11 +9375,6 @@ msgstr ""
 #~ msgid "No parameters"
 #~ msgstr "No parameters"
 
-#. js-lingui-id: VUK1wE
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "No payload data available"
-#~ msgstr "No payload data available"
-
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 #~ msgid "No payment method found. Please update your billing details."
@@ -9175,8 +9392,8 @@ msgstr ""
 
 #. js-lingui-id: 0CGa2B
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#~ msgid "No pipelines configured yet. Create one to start ingesting data."
-#~ msgstr "No pipelines configured yet. Create one to start ingesting data."
+msgid "No pipelines configured yet. Create one to start ingesting data."
+msgstr "No pipelines configured yet. Create one to start ingesting data."
 
 #. js-lingui-id: ePgApM
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -9243,8 +9460,8 @@ msgstr ""
 
 #. js-lingui-id: HWV3q9
 #: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "No runs yet."
-#~ msgstr "No runs yet."
+msgid "No runs yet."
+msgstr "No runs yet."
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -9348,6 +9565,11 @@ msgstr ""
 #~ msgid "Not Found"
 #~ msgstr "Not Found"
 
+#. js-lingui-id: MTqQMG
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Not set"
+#~ msgstr "Not set"
+
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -9377,6 +9599,7 @@ msgstr ""
 #~ msgstr "Notes"
 
 #. js-lingui-id: YwzE9K
+#: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
 #~ msgid "now"
 #~ msgstr "now"
@@ -9429,9 +9652,13 @@ msgstr ""
 #~ msgid "Numbered list"
 #~ msgstr "Numbered list"
 
+#. js-lingui-id: /PKKj/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "OAuth Credentials"
+#~ msgstr "OAuth Credentials"
+
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #~ msgid "object"
 #~ msgstr "object"
 
@@ -9445,6 +9672,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 #~ msgid "Object"
 #~ msgstr "Object"
@@ -9535,6 +9763,11 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #~ msgid "ol"
 #~ msgstr "ol"
+
+#. js-lingui-id: /fwE6J
+#: src/modules/ai/utils/getDateGroupTitle.ts
+#~ msgid "Older"
+#~ msgstr "Older"
 
 #. js-lingui-id: +rvV4v
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -9703,8 +9936,8 @@ msgstr ""
 
 #. js-lingui-id: pbzA+s
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Optional description"
-#~ msgstr "Optional description"
+msgid "Optional description"
+msgstr "Optional description"
 
 #. js-lingui-id: hY8F2i
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -9713,7 +9946,6 @@ msgstr ""
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
@@ -9771,7 +10003,8 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 #~ msgid "Other"
 #~ msgstr "Other"
@@ -9930,8 +10163,8 @@ msgstr ""
 
 #. js-lingui-id: L3Xlp+
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "Paste sample JSON data to preview how records will be transformed"
-#~ msgstr "Paste sample JSON data to preview how records will be transformed"
+msgid "Paste sample JSON data to preview how records will be transformed"
+msgstr "Paste sample JSON data to preview how records will be transformed"
 
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -10002,8 +10235,8 @@ msgstr ""
 
 #. js-lingui-id: LfQbnA
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Permanently delete this pipeline"
-#~ msgstr "Permanently delete this pipeline"
+msgid "Permanently delete this pipeline"
+msgstr "Permanently delete this pipeline"
 
 #. js-lingui-id: rDky0a
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -10115,23 +10348,23 @@ msgstr ""
 
 #. js-lingui-id: gh2JTy
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Pipeline Enabled"
-#~ msgstr "Pipeline Enabled"
+msgid "Pipeline Enabled"
+msgstr "Pipeline Enabled"
 
 #. js-lingui-id: BjIyzH
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Pipeline settings and source configuration"
-#~ msgstr "Pipeline settings and source configuration"
+msgid "Pipeline settings and source configuration"
+msgstr "Pipeline settings and source configuration"
 
 #. js-lingui-id: IzbIUh
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Pipeline Status"
-#~ msgstr "Pipeline Status"
+msgid "Pipeline Status"
+msgstr "Pipeline Status"
 
 #. js-lingui-id: KQ93w+
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#~ msgid "Pipelines"
-#~ msgstr "Pipelines"
+msgid "Pipelines"
+msgstr "Pipelines"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
@@ -10165,6 +10398,7 @@ msgstr ""
 #~ msgstr "Please check your email for a verification link."
 
 #. js-lingui-id: jEw0Mr
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 #~ msgid "Please enter a valid URL"
 #~ msgstr "Please enter a valid URL"
@@ -10199,6 +10433,11 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #~ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 #~ msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
+
+#. js-lingui-id: osUElx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
+#~ msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
 
 #. js-lingui-id: L0SEpC
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -10260,8 +10499,8 @@ msgstr ""
 
 #. js-lingui-id: 5nutBf
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "POST data to this URL to ingest records"
-#~ msgstr "POST data to this URL to ingest records"
+msgid "POST data to this URL to ingest records"
+msgstr "POST data to this URL to ingest records"
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -10494,11 +10733,6 @@ msgstr ""
 #~ msgid "Queue: {queueName}"
 #~ msgstr "Queue: {queueName}"
 
-#. js-lingui-id: GaAG2G
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Quick model for routing decisions"
-#~ msgstr "Quick model for routing decisions"
-
 #. js-lingui-id: opSifa
 #: src/modules/ai/utils/getToolDisplayMessage.ts
 #~ msgid "Ran {formattedName}"
@@ -10528,9 +10762,14 @@ msgstr ""
 #~ msgstr "Read changelog"
 
 #. js-lingui-id: ibPuCP
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #~ msgid "Read documentation"
 #~ msgstr "Read documentation"
+
+#. js-lingui-id: afMuDE
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Read your profile"
+#~ msgstr "Read your profile"
 
 #. js-lingui-id: tCXcL7
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -10559,8 +10798,8 @@ msgstr ""
 
 #. js-lingui-id: S3CuYM
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Recent pipeline execution logs"
-#~ msgstr "Recent pipeline execution logs"
+msgid "Recent pipeline execution logs"
+msgstr "Recent pipeline execution logs"
 
 #. js-lingui-id: gcoiFh
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -10571,7 +10810,6 @@ msgstr ""
 
 #. js-lingui-id: hVS0gK
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #~ msgid "record"
 #~ msgstr "record"
 
@@ -10590,8 +10828,8 @@ msgstr ""
 
 #. js-lingui-id: TJptrC
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "Record {3}"
-#~ msgstr "Record {3}"
+msgid "Record {3}"
+msgstr "Record {3}"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -10645,7 +10883,6 @@ msgstr ""
 
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #~ msgid "Records"
 #~ msgstr "Records"
 
@@ -10653,6 +10890,11 @@ msgstr ""
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #~ msgid "Red"
 #~ msgstr "Red"
+
+#. js-lingui-id: dAZObA
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Redirect URIs"
+#~ msgstr "Redirect URIs"
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -10835,6 +11077,7 @@ msgstr ""
 #~ msgstr "Remove variable"
 
 #. js-lingui-id: 2wxgft
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
@@ -10871,6 +11114,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 #~ msgid "Request Failed"
 #~ msgstr "Request Failed"
+
+#. js-lingui-id: TMLAx2
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Required"
+#~ msgstr "Required"
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -10986,6 +11234,11 @@ msgstr ""
 #~ msgid "Restore Records"
 #~ msgstr "Restore Records"
 
+#. js-lingui-id: hO3AfV
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Restrict available models to a curated list"
+#~ msgstr "Restrict available models to a curated list"
+
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #~ msgid "Result"
@@ -11043,6 +11296,7 @@ msgstr ""
 #~ msgstr "role"
 
 #. js-lingui-id: GDvlUT
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -11100,6 +11354,17 @@ msgstr ""
 #~ msgid "Romanian"
 #~ msgstr "Romanian"
 
+#. js-lingui-id: vQrTaX
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Rotate client secret"
+#~ msgstr "Rotate client secret"
+
+#. js-lingui-id: 2FBgnq
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Rotate secret"
+#~ msgstr "Rotate secret"
+
 #. js-lingui-id: Eb/I7b
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #~ msgid "Routing decision"
@@ -11142,18 +11407,18 @@ msgstr ""
 
 #. js-lingui-id: haZgbw
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Run History"
-#~ msgstr "Run History"
+msgid "Run History"
+msgstr "Run History"
 
 #. js-lingui-id: EW4Xds
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "Run Now"
-#~ msgstr "Run Now"
+msgid "Run Now"
+msgstr "Run Now"
 
 #. js-lingui-id: 5vgVMJ
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "Run Test"
-#~ msgstr "Run Test"
+msgid "Run Test"
+msgstr "Run Test"
 
 #. js-lingui-id: NnAHs0
 #: src/modules/ai/utils/getToolDisplayMessage.ts
@@ -11166,7 +11431,6 @@ msgstr ""
 #~ msgstr "Running function"
 
 #. js-lingui-id: LTC198
-#: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #~ msgid "Running..."
 #~ msgstr "Running..."
@@ -11201,8 +11465,8 @@ msgstr ""
 
 #. js-lingui-id: IUwGEM
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Save Changes"
-#~ msgstr "Save Changes"
+msgid "Save Changes"
+msgstr "Save Changes"
 
 #. js-lingui-id: 7GK4Vt
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -11211,8 +11475,8 @@ msgstr ""
 
 #. js-lingui-id: E9k0lV
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Save New Mappings"
-#~ msgstr "Save New Mappings"
+msgid "Save New Mappings"
+msgstr "Save New Mappings"
 
 #. js-lingui-id: BZVCCj
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -11222,8 +11486,8 @@ msgstr ""
 #. js-lingui-id: XvjC4F
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Saving..."
-#~ msgstr "Saving..."
+msgid "Saving..."
+msgstr "Saving..."
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -11232,8 +11496,8 @@ msgstr ""
 
 #. js-lingui-id: 5gifdB
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Schedule (Cron)"
-#~ msgstr "Schedule (Cron)"
+msgid "Schedule (Cron)"
+msgstr "Schedule (Cron)"
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -11245,6 +11509,11 @@ msgstr ""
 #~ msgid "Schema name"
 #~ msgstr "Schema name"
 
+#. js-lingui-id: N/rFzD
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Scopes"
+#~ msgstr "Scopes"
+
 #. js-lingui-id: Eq6YVV
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -11253,12 +11522,12 @@ msgstr ""
 #~ msgstr "Score"
 
 #. js-lingui-id: A1taO8
+#: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -11303,6 +11572,12 @@ msgstr ""
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
 #~ msgid "Search a folder..."
 #~ msgstr "Search a folder..."
+
+#. js-lingui-id: 8J0e5B
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Search a model..."
+#~ msgstr "Search a model..."
 
 #. js-lingui-id: WXvlVa
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -11391,6 +11666,11 @@ msgstr ""
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 #~ msgid "Search colors"
 #~ msgstr "Search colors"
+
+#. js-lingui-id: AR3FV/
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+#~ msgid "Search colors..."
+#~ msgstr "Search colors..."
 
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
@@ -11857,6 +12137,16 @@ msgstr ""
 #~ msgid "Serbian (Cyrillic)"
 #~ msgstr "Serbian (Cyrillic)"
 
+#. js-lingui-id: fHVf32
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Server Variables"
+#~ msgstr "Server Variables"
+
+#. js-lingui-id: 8ZSrlB
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Server-wide AI model availability settings"
+#~ msgstr "Server-wide AI model availability settings"
+
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #~ msgid "Service Provider Details"
@@ -11867,10 +12157,10 @@ msgstr ""
 #~ msgid "Set {placeholderForEmptyCell}"
 #~ msgstr "Set {placeholderForEmptyCell}"
 
-#. js-lingui-id: YZwx1e
+#. js-lingui-id: QEVmIH
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-#~ msgid "Set a default role for this workspace"
-#~ msgstr "Set a default role for this workspace"
+#~ msgid "Set a default for this workspace"
+#~ msgstr "Set a default for this workspace"
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -11935,20 +12225,17 @@ msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineNew.tsx
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
-#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
+#: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #~ msgid "Settings"
@@ -12025,11 +12312,6 @@ msgstr ""
 #~ msgid "Should changing the label also change the API name?"
 #~ msgstr "Should changing the label also change the API name?"
 
-#. js-lingui-id: ZKF9YH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-#~ msgid "Show All Objects in Sidebar"
-#~ msgstr "Show All Objects in Sidebar"
-
 #. js-lingui-id: lSEpDc
 #: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
 #~ msgid "Show group {groupValue}"
@@ -12039,16 +12321,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #~ msgid "Show hidden groups"
 #~ msgstr "Show hidden groups"
-
-#. js-lingui-id: 74/nsw
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-#~ msgid "show in sidebar"
-#~ msgstr "show in sidebar"
-
-#. js-lingui-id: OVFeC4
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-#~ msgid "Show in Sidebar"
-#~ msgstr "Show in Sidebar"
 
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -12176,14 +12448,9 @@ msgstr ""
 #~ msgstr "Small section heading"
 
 #. js-lingui-id: 5J8ZFl
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #~ msgid "Smart Model"
 #~ msgstr "Smart Model"
-
-#. js-lingui-id: qgvZ/2
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-#~ msgid "Smart model updated successfully"
-#~ msgstr "Smart model updated successfully"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -12231,6 +12498,11 @@ msgstr ""
 #~ msgid "Some folders"
 #~ msgstr "Some folders"
 
+#. js-lingui-id: nwtY4N
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Something went wrong"
+#~ msgstr "Something went wrong"
+
 #. js-lingui-id: yHwG3y
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -12276,13 +12548,13 @@ msgstr ""
 
 #. js-lingui-id: 25FO0v
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Source Field Path"
-#~ msgstr "Source Field Path"
+msgid "Source Field Path"
+msgstr "Source Field Path"
 
 #. js-lingui-id: +ztzfF
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Source URL"
-#~ msgstr "Source URL"
+msgid "Source URL"
+msgstr "Source URL"
 
 #. js-lingui-id: IEtmGM
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -12365,8 +12637,8 @@ msgstr ""
 
 #. js-lingui-id: JEGlfK
 #: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
-#~ msgid "Started"
-#~ msgstr "Started"
+msgid "Started"
+msgstr "Started"
 
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -12383,9 +12655,7 @@ msgstr ""
 #~ msgstr "State"
 
 #. js-lingui-id: uAQUqI
-#: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
@@ -12440,8 +12710,8 @@ msgstr ""
 
 #. js-lingui-id: 103a/d
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Sub-field"
-#~ msgstr "Sub-field"
+msgid "Sub-field"
+msgstr "Sub-field"
 
 #. js-lingui-id: WIUeUf
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
@@ -12778,14 +13048,14 @@ msgstr ""
 
 #. js-lingui-id: at/x7W
 #: src/modules/settings/ingestion-pipeline/components/IngestionFieldMappingEditor.component.tsx
-#~ msgid "Target CRM Field"
-#~ msgstr "Target CRM Field"
+msgid "Target CRM Field"
+msgstr "Target CRM Field"
 
 #. js-lingui-id: 3mhetv
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelines.tsx
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Target Object"
-#~ msgstr "Target Object"
+msgid "Target Object"
+msgstr "Target Object"
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -12837,8 +13107,8 @@ msgstr ""
 
 #. js-lingui-id: SdAh80
 #: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
-#~ msgid "Test Pipeline"
-#~ msgstr "Test Pipeline"
+msgid "Test Pipeline"
+msgstr "Test Pipeline"
 
 #. js-lingui-id: bU9B27
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -13137,6 +13407,11 @@ msgstr ""
 #~ msgid "This record has been deleted"
 #~ msgstr "This record has been deleted"
 
+#. js-lingui-id: eV9Tnj
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "This redirect URI is already added"
+#~ msgstr "This redirect URI is already added"
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 #~ msgid "This role can {humanReadableAction} all records"
@@ -13285,6 +13560,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+#: src/modules/ai/utils/getDateGroupTitle.ts
 #~ msgid "Today"
 #~ msgstr "Today"
 
@@ -13302,6 +13578,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #~ msgid "Toggle all settings permissions"
 #~ msgstr "Toggle all settings permissions"
+
+#. js-lingui-id: 93pMSK
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Toggle model availability across all workspaces"
+#~ msgstr "Toggle model availability across all workspaces"
 
 #. js-lingui-id: WOr+hW
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -13398,7 +13679,6 @@ msgstr ""
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
@@ -13596,15 +13876,20 @@ msgstr ""
 #~ msgid "Unable to delete member right now"
 #~ msgstr "Unable to delete member right now"
 
+#. js-lingui-id: HSLWzn
+#: src/pages/auth/Authorize.tsx
+#~ msgid "Unable to load application details. Please try again later."
+#~ msgstr "Unable to load application details. Please try again later."
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 #~ msgid "Unable to Reach Back-end"
 #~ msgstr "Unable to Reach Back-end"
 
-#. js-lingui-id: 0rIkys
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-#~ msgid "Uncheck any related fields you don't need in the export."
-#~ msgstr "Uncheck any related fields you don't need in the export."
+#. js-lingui-id: EbnX+O
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "Unconfigured models"
+#~ msgstr "Unconfigured models"
 
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -13642,6 +13927,11 @@ msgstr ""
 #~ msgid "Uninstall Application?"
 #~ msgstr "Uninstall Application?"
 
+#. js-lingui-id: 7S4EZE
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Uninstall this app from all workspaces before deleting it"
+#~ msgstr "Uninstall this app from all workspaces before deleting it"
+
 #. js-lingui-id: u+6vfA
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #~ msgid "Uninstall this application"
@@ -13665,6 +13955,16 @@ msgstr ""
 #~ msgid "unit"
 #~ msgstr "unit"
 
+#. js-lingui-id: fMyWEp
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Universal ID"
+#~ msgstr "Universal ID"
+
+#. js-lingui-id: dIosde
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Universal identifier copied"
+#~ msgstr "Universal identifier copied"
+
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
@@ -13681,7 +13981,6 @@ msgstr ""
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-#: src/modules/settings/ingestion-pipeline/components/IngestionTestSection.component.tsx
 #~ msgid "Unknown error"
 #~ msgstr "Unknown error"
 
@@ -13809,7 +14108,6 @@ msgstr ""
 #~ msgstr "updated"
 
 #. js-lingui-id: +b7T3G
-#: src/modules/settings/ingestion-pipeline/components/IngestionLogTable.component.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #~ msgid "Updated"
 #~ msgstr "Updated"
@@ -13907,6 +14205,11 @@ msgstr ""
 #~ msgid "URL to Embed"
 #~ msgstr "URL to Embed"
 
+#. js-lingui-id: 8Jr4QC
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Usage across all workspaces on this server"
+#~ msgstr "Usage across all workspaces on this server"
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -13918,10 +14221,25 @@ msgstr ""
 #~ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 #~ msgstr "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 
+#. js-lingui-id: hCZsJ0
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Use best models only"
+#~ msgstr "Use best models only"
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 #~ msgid "Use our API or add your first {objectLabel} manually"
 #~ msgstr "Use our API or add your first {objectLabel} manually"
+
+#. js-lingui-id: 664z2C
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Used for chats, agents, and complex reasoning"
+#~ msgstr "Used for chats, agents, and complex reasoning"
+
+#. js-lingui-id: C41qgx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "Used for lightweight tasks like title generation"
+#~ msgstr "Used for lightweight tasks like title generation"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -13931,6 +14249,8 @@ msgstr ""
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -13973,12 +14293,6 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 #~ msgid "User is not logged in"
 #~ msgstr "User is not logged in"
-
-#. js-lingui-id: X0w+FW
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#~ msgid "User Workspace"
-#~ msgstr "User Workspace"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14025,6 +14339,11 @@ msgstr ""
 #~ msgid "Values"
 #~ msgstr "Values"
 
+#. js-lingui-id: HBiN8v
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Variable {variableKey} updated"
+#~ msgstr "Variable {variableKey} updated"
+
 #. js-lingui-id: rawKOG
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 #~ msgid "Variable deleted successfully."
@@ -14039,6 +14358,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 #~ msgid "Variable updated successfully."
 #~ msgstr "Variable updated successfully."
+
+#. js-lingui-id: E6Zuwm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#~ msgid "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
+#~ msgstr "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
 
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -14084,7 +14408,6 @@ msgstr ""
 
 #. js-lingui-id: jUNY/d
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #~ msgid "view"
 #~ msgstr "view"
 
@@ -14092,6 +14415,7 @@ msgstr ""
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #~ msgid "View"
 #~ msgstr "View"
 
@@ -14361,13 +14685,13 @@ msgstr ""
 
 #. js-lingui-id: 6rpYs1
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Webhook Secret"
-#~ msgstr "Webhook Secret"
+msgid "Webhook Secret"
+msgstr "Webhook Secret"
 
 #. js-lingui-id: nuh/Wq
 #: src/modules/settings/ingestion-pipeline/components/IngestionPipelineForm.component.tsx
-#~ msgid "Webhook URL"
-#~ msgstr "Webhook URL"
+msgid "Webhook URL"
+msgstr "Webhook URL"
 
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -14441,10 +14765,20 @@ msgstr ""
 #~ msgid "When enabled, AI agents and workflow automations can discover and call this function"
 #~ msgstr "When enabled, AI agents and workflow automations can discover and call this function"
 
+#. js-lingui-id: i2V4DO
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#~ msgid "When enabled, new AI models will be available to users by default"
+#~ msgstr "When enabled, new AI models will be available to users by default"
+
+#. js-lingui-id: 01e9rV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#~ msgid "When enabled, newly added models are available to all workspaces by default"
+#~ msgstr "When enabled, newly added models are available to all workspaces by default"
+
 #. js-lingui-id: q/5LZp
 #: src/pages/settings/ingestion-pipelines/SettingsIngestionPipelineDetail.tsx
-#~ msgid "When enabled, this pipeline will accept incoming data and process records"
-#~ msgstr "When enabled, this pipeline will accept incoming data and process records"
+msgid "When enabled, this pipeline will accept incoming data and process records"
+msgstr "When enabled, this pipeline will accept incoming data and process records"
 
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -14537,6 +14871,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -14578,6 +14913,7 @@ msgstr ""
 #~ msgstr "Workspace Domain"
 
 #. js-lingui-id: J2q6WC
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 #~ msgid "Workspace Events"
 #~ msgstr "Workspace Events"
@@ -14618,10 +14954,10 @@ msgstr ""
 #~ msgid "Workspaces"
 #~ msgstr "Workspaces"
 
-#. js-lingui-id: F7iCiM
+#. js-lingui-id: QPsQMb
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
-#~ msgid "Would you like to remove {recordGroupSort} group sorting?"
-#~ msgstr "Would you like to remove {recordGroupSort} group sorting?"
+#~ msgid "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
+#~ msgstr "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
@@ -14693,6 +15029,7 @@ msgstr ""
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -14701,6 +15038,7 @@ msgstr ""
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+#: src/modules/ai/utils/getDateGroupTitle.ts
 #~ msgid "Yesterday"
 #~ msgstr "Yesterday"
 
@@ -14720,7 +15058,7 @@ msgstr ""
 #~ msgstr "You are not allowed to create records for this object"
 
 #. js-lingui-id: iibZbD
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #~ msgid "You can either create a private app or share it to others"
 #~ msgstr "You can either create a private app or share it to others"
 

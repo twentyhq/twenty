@@ -4,6 +4,7 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="Por que não consigo ativar um fluxo de trabalho?">
     Isso provavelmente é um problema de permissões. Você precisa de acesso a fluxos de trabalho para criá-los e ativá-los.
 
@@ -27,7 +28,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
   <Accordion title="Qual é a diferença entre gatilhos manuais Single, Global e Bulk?">
     | Tipo | Registros necessários | Execuções de Workflow |
     | ---- | --------------------- | --------------------- |
-
     \| **Global** | Nenhum | Uma vez, sem entrada de registro |
     \| **Single** | Um ou mais selecionados | Uma vez por registro selecionado |
     \| **Bulk** | Um ou mais selecionados | Uma vez, com todos os registros como array |
@@ -61,7 +61,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Sim**, as ramificações são executadas em paralelo por padrão.
 
     Se você quiser que apenas uma ramificação seja executada:
-
     * Adicione uma ação **Filter** no início de cada ramificação
     * Defina condições opostas (por exemplo, Ramificação A: status = "Open", Ramificação B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Sim**. Após a conclusão das ramificações em paralelo, você pode adicionar uma etapa à qual ambas as ramificações se conectam.
 
     No editor de fluxo de trabalho:
-
     1. Conclua suas ações ramificadas
     2. Adicione uma nova etapa após as ramificações
     3. Arraste conexões do final de cada ramificação para essa nova etapa
@@ -84,7 +82,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Search Records retorna no máximo 200 registros.**
 
     Se você precisar processar mais:
-
     * Adicione filtros mais específicos para reduzir os resultados
     * Use fluxos de trabalho agendados para processar em lotes
     * Considere usar a API para operações em massa
@@ -102,12 +99,10 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     Cada ação produz dados de saída que podem ser usados em etapas subsequentes.
 
     **Para referenciar dados de etapas anteriores**:
-
     * Use o seletor de variáveis ao configurar um campo
     * Ou digite `{{stepName.fieldName}}` diretamente
 
     **Exemplos**:
-
     * Dados do gatilho: `{{trigger.object.email}}`
     * Resultados da pesquisa: `{{searchRecords[0].name}}`
     * Saída do código: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     3. **Variável errada selecionada**: certifique-se de selecionar o próprio array, não um único registro
 
     **Configuração correta**:
-
     1. Search Records (retorna um array)
     2. Filter: length > 0
     3. Iterator: selecione `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     Se seu código exceder esse limite, a ação falhará com um erro de tempo limite.
 
     **Dicas para evitar estouros de tempo**:
-
     * Divida operações grandes em partes menores usando o Iterator
     * Evite computações pesadas; use serviços externos via HTTP Request para processamento intensivo
     * Otimize seu código para reduzir o tempo de execução
@@ -149,12 +142,10 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     As execuções de fluxo de trabalho mostram o histórico de execução e ajudam você a depurar problemas.
 
     **Acessar execuções**:
-
     * No editor de fluxo de trabalho → painel **Execuções** à direita
     * Ou vá para **Execuções de Fluxo de Trabalho** na barra lateral
 
     **Entendendo uma execução**:
-
     * **Status**: Em execução, Concluída, Falhou, Aguardando
     * **Etapas**: Veja quais etapas foram executadas e suas saídas
     * **Erros**: Clique nas etapas com falha para ver as mensagens de erro
@@ -171,13 +162,11 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções como esperado.
 
     **Cenários comuns que atingem esse limite**:
-
     * Selecionar mais de 5.000 registros com um gatilho manual Single
     * Vários fluxos de trabalho executando simultaneamente em todo o seu espaço de trabalho
     * Gatilhos automatizados de alta frequência (por exemplo, Record Updated em um objeto movimentado)
 
     **Soluções**:
-
     * Use gatilhos **Bulk** em vez de Single para processar muitos registros em uma única execução
     * Espace operações em lotes grandes
     * Use filtros para reduzir a frequência dos gatilhos
@@ -189,7 +178,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
 
     | Limite | Valor | Comportamento |
     | ------ | ----- | ------------- |
-
     \| **Limite flexível** | 100 execuções/minuto | Execuções entram na fila com status "Not Started", processadas gradualmente |
     \| **Limite rígido** | 5.000 execuções/hora | Execuções falham imediatamente |
 
@@ -198,7 +186,6 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Limite rígido (5.000/h)**: Isso se aplica a todo o seu espaço de trabalho. Se todos os seus fluxos de trabalho combinados excederem 5.000 execuções em uma hora, execuções adicionais falharão imediatamente.
 
     **Dicas para permanecer dentro dos limites**:
-
     * Use gatilhos Bulk com Iterator em vez de gatilhos Single para grandes lotes
     * Combine automações relacionadas em menos fluxos de trabalho
     * Use fluxos de trabalho agendados para distribuir a carga ao longo do tempo
@@ -208,13 +195,11 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Não, no momento não há funcionalidade de nova tentativa automática.**
 
     Se uma execução de fluxo de trabalho falhar, você precisará:
-
     1. Revise o erro em **Configurações → Fluxos de trabalho → [Seu Fluxo de Trabalho] → Execuções**
     2. Corrija o problema (dados, configuração ou serviço externo)
     3. Dispare manualmente o fluxo de trabalho novamente no(s) registro(s) afetado(s)
 
     **Dicas para reduzir falhas**:
-
     * Adicione nós **Filter** para validar dados antes das ações
     * Use **Search Records** para verificar se existem registros relacionados
     * Teste profundamente com alguns registros antes de operações em massa
@@ -226,14 +211,12 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
     **Sim, se seus fluxos de trabalho forem acionados por criação ou atualização de registros.**
 
     Quando você importa dados via CSV, cada registro criado ou atualizado pode acionar fluxos de trabalho. Uma importação grande (milhares de registros) pode:
-
     * Atingir o limite de 5.000 execuções/hora
     * Consumir uma quantidade significativa de créditos de fluxo de trabalho
     * Enviar e-mails ou notificações inesperadas
     * Criar tarefas ou registros duplicados
 
     **Antes de uma importação em massa**:
-
     1. Vá para **Configurações → Fluxos de trabalho**
     2. Identifique os fluxos de trabalho acionados pelo objeto que você está importando
     3. **Desative**-os temporariamente
@@ -251,4 +234,5 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
 
     Isso reorganizará automaticamente todos os nós em um layout limpo e organizado.
   </Accordion>
+
 </AccordionGroup>

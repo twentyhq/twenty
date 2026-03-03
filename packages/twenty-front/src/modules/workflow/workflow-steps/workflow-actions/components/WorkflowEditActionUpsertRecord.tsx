@@ -253,7 +253,7 @@ export const WorkflowEditActionUpsertRecord = ({
               }
               placeholder={t`Object unique fields`}
               readonly
-              hint={t`We match on these fields. If a ${objectLabelSingular} already exists, we update it. Otherwise, we create a new one.`}
+              hint={t`We match on these fields. If a ${objectLabelSingular ?? ''} already exists, we update it. Otherwise, we create a new one.`}
               actionType="UPSERT_RECORD"
             />
           )}

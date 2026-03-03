@@ -12,7 +12,6 @@ Un sélecteur d'icônes basé sur un menu déroulant qui permet aux utilisateurs
 <Tabs>
   <Tab title="Utilisation">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import React, { useState } from "react";
     import { IconPicker } from "@/ui/input/components/IconPicker";
 
@@ -25,14 +24,12 @@ Un sélecteur d'icônes basé sur un menu déroulant qui permet aux utilisateurs
        };
 
       return (
-        <RecoilRoot>
           <IconPicker
             disabled={false}
             onChange={handleIconChange}
             selectedIconKey={selectedIcon}
             variant="primary"
           />
-        </RecoilRoot>
       );
     };
     ```

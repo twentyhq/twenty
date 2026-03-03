@@ -12,11 +12,13 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconFilterOff,
@@ -34,12 +36,12 @@ export const AdvancedFilterRelationSubFieldSelectMenu = ({
 }: AdvancedFilterRelationSubFieldSelectMenuProps) => {
   const { getIcon } = useIcons();
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const [, setObjectFilterDropdownIsSelectingRelationSubField] =
-    useRecoilComponentState(
+    useAtomComponentState(
       objectFilterDropdownIsSelectingRelationSubFieldComponentState,
     );
 
@@ -93,27 +95,16 @@ export const AdvancedFilterRelationSubFieldSelectMenu = ({
       return;
     }
 
-    const targetField = simpleFilterableFields.find(
-      (field) => field.name === targetFieldName,
-    );
-
-    if (!isDefined(targetField)) {
-      return;
-    }
-
-    const subFieldFilterType = getFilterTypeFromFieldType(targetField.type);
-
     selectFieldUsedInAdvancedFilterDropdown({
       fieldMetadataItemId: fieldMetadataItemUsedInDropdown.id,
       recordFilterId,
-      subFieldName: targetFieldName,
-      relationSubFieldType: subFieldFilterType,
+      subFieldName: targetFieldName as CompositeFieldSubFieldName,
     });
 
     closeAdvancedFilterFieldSelectDropdown();
   };
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     advancedFilterFieldSelectDropdownId,
   );

@@ -1,5 +1,5 @@
-import { type ReactNode, useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { type ReactNode, useCallback, useMemo } from 'react';
+import { useStore } from 'jotai';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -7,6 +7,7 @@ import { FieldDependencyContext } from '@/object-record/record-field-dependency/
 import { useCascadeClearDependentFields } from '@/object-record/record-field-dependency/hooks/useCascadeClearDependentFields';
 import { computeFieldDependencyGraph } from '@/object-record/record-field-dependency/utils/computeFieldDependencyGraph';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
@@ -31,7 +32,9 @@ export const FieldDependencyProvider = ({
     [objectMetadataItem, objectMetadataItems],
   );
 
-  const recordData = useRecoilValue(recordStoreFamilyState(recordId));
+  const store = useStore();
+
+  const recordData = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   // Collect IDs of related records so we subscribe to their store state.
   // This ensures re-renders when related record data becomes available
@@ -64,10 +67,10 @@ export const FieldDependencyProvider = ({
 
   // Subscribe to related records' state to trigger re-renders when
   // related record data loads (needed for reverse dependency lookups).
-  useRecoilValue(recordStoreFamilyState(relatedRecordIds[0] ?? ''));
-  useRecoilValue(recordStoreFamilyState(relatedRecordIds[1] ?? ''));
-  useRecoilValue(recordStoreFamilyState(relatedRecordIds[2] ?? ''));
-  useRecoilValue(recordStoreFamilyState(relatedRecordIds[3] ?? ''));
+  useAtomFamilyStateValue(recordStoreFamilyState, relatedRecordIds[0] ?? '');
+  useAtomFamilyStateValue(recordStoreFamilyState, relatedRecordIds[1] ?? '');
+  useAtomFamilyStateValue(recordStoreFamilyState, relatedRecordIds[2] ?? '');
+  useAtomFamilyStateValue(recordStoreFamilyState, relatedRecordIds[3] ?? '');
 
   const { clearDependentFields } = useCascadeClearDependentFields({
     objectNameSingular,
@@ -75,70 +78,69 @@ export const FieldDependencyProvider = ({
     dependencyGraph,
   });
 
-  const getFilterForField = useRecoilCallback(
-    ({ snapshot }) =>
-      (fieldName: string): ObjectRecordFilterInput | undefined => {
-        const dependencies = dependencyGraph.dependenciesByField[fieldName];
+  const getFilterForField = useCallback(
+    (fieldName: string): ObjectRecordFilterInput | undefined => {
+      const dependencies = dependencyGraph.dependenciesByField[fieldName];
 
-        if (!isDefined(dependencies) || dependencies.length === 0) {
-          return undefined;
-        }
+      if (!isDefined(dependencies) || dependencies.length === 0) {
+        return undefined;
+      }
 
-        const filters: (ObjectRecordFilterInput | undefined)[] =
-          dependencies.map((dep) => {
-            const parentValue = recordData?.[dep.parentFieldName] as
-              | { id: string }
-              | null
-              | undefined;
+      const filters: (ObjectRecordFilterInput | undefined)[] =
+        dependencies.map((dep) => {
+          const parentValue = recordData?.[dep.parentFieldName] as
+            | { id: string }
+            | null
+            | undefined;
 
-            if (!isDefined(parentValue) || !isDefined(parentValue.id)) {
-              return undefined;
-            }
+          if (!isDefined(parentValue) || !isDefined(parentValue.id)) {
+            return undefined;
+          }
 
-            if (dep.direction === 'forward') {
-              return {
-                [dep.bridgeFieldForeignKeyName]: { eq: parentValue.id },
-              } as ObjectRecordFilterInput;
-            }
-
-            // Reverse: look up the parent record in the store to get bridge FK
-            const parentRecord = snapshot
-              .getLoadable(recordStoreFamilyState(parentValue.id))
-              .getValue();
-
-            if (!isDefined(parentRecord)) {
-              return undefined;
-            }
-
-            const fkValue = parentRecord[dep.bridgeFieldForeignKeyName] as
-              | string
-              | null
-              | undefined;
-
-            if (!isDefined(fkValue)) {
-              return undefined;
-            }
-
+          if (dep.direction === 'forward') {
             return {
-              id: { eq: fkValue },
+              [dep.bridgeFieldForeignKeyName]: { eq: parentValue.id },
             } as ObjectRecordFilterInput;
-          });
+          }
 
-        const definedFilters = filters.filter(
-          (f): f is ObjectRecordFilterInput => isDefined(f),
-        );
+          // Reverse: look up the parent record in the store to get bridge FK
+          const parentRecord = store.get(
+            recordStoreFamilyState.atomFamily(parentValue.id),
+          );
 
-        if (definedFilters.length === 0) {
-          return undefined;
-        }
+          if (!isDefined(parentRecord)) {
+            return undefined;
+          }
 
-        if (definedFilters.length === 1) {
-          return definedFilters[0];
-        }
+          const fkValue = parentRecord[dep.bridgeFieldForeignKeyName] as
+            | string
+            | null
+            | undefined;
 
-        return { and: definedFilters };
-      },
-    [dependencyGraph.dependenciesByField, recordData],
+          if (!isDefined(fkValue)) {
+            return undefined;
+          }
+
+          return {
+            id: { eq: fkValue },
+          } as ObjectRecordFilterInput;
+        });
+
+      const definedFilters = filters.filter(
+        (f): f is ObjectRecordFilterInput => isDefined(f),
+      );
+
+      if (definedFilters.length === 0) {
+        return undefined;
+      }
+
+      if (definedFilters.length === 1) {
+        return definedFilters[0];
+      }
+
+      return { and: definedFilters };
+    },
+    [dependencyGraph.dependenciesByField, recordData, store],
   );
 
   const contextValue = useMemo(

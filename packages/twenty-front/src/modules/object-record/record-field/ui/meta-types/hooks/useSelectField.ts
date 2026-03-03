@@ -1,12 +1,12 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -20,18 +20,16 @@ export const useSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldSelectValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
+  const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
+    recordStoreFamilySelector,
+    { recordId, fieldName },
   );
 
   const fieldSelectValue = isFieldSelectValue(fieldValue) ? fieldValue : null;
 
   const { setDraftValue } = useRecordFieldInput<FieldSelectValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -39,7 +37,7 @@ export const useSelectField = () => {
     recordId,
     fieldDefinition,
     fieldValue: fieldSelectValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
     setFieldValue,
   };

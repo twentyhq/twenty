@@ -1,11 +1,11 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { FormProvider } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -29,7 +29,8 @@ import {
 } from 'twenty-ui/display';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -125,17 +126,18 @@ const StyledActionLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
-  const authProviders = useRecoilValueV2(authProvidersState);
-  const signInUpStep = useRecoilValue(signInUpStepState);
+  const authProviders = useAtomStateValue(authProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
+  const returnToPath = useAtomStateValue(returnToPathState);
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -146,7 +148,10 @@ export const SignInUpGlobalScopeForm = () => {
     return buildWorkspaceUrl(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
-      searchParams,
+      {
+        ...searchParams,
+        ...(isNonEmptyString(returnToPath) ? { returnToPath } : {}),
+      },
     );
   };
 

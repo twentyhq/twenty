@@ -2,11 +2,13 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,6 +37,7 @@ type BuildActionFromItemParams = {
     pageTitle: string;
     pageIcon: IconComponent;
   }) => void;
+  mountHeadlessFrontComponent: (frontComponentId: string) => void;
 };
 
 const buildActionFromItem = ({
@@ -44,10 +47,25 @@ const buildActionFromItem = ({
   isPinned,
   getIcon,
   openFrontComponentInCommandMenu,
+  mountHeadlessFrontComponent,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+
+  const isHeadless = item.frontComponent?.isHeadless === true;
+
+  const handleClick = () => {
+    if (isHeadless) {
+      mountHeadlessFrontComponent(item.frontComponentId);
+    } else {
+      openFrontComponentInCommandMenu({
+        frontComponentId: item.frontComponentId,
+        pageTitle: displayLabel,
+        pageIcon: Icon,
+      });
+    }
+  };
 
   return {
     type: ActionType.FrontComponent,
@@ -59,17 +77,13 @@ const buildActionFromItem = ({
     isPinned,
     Icon,
     shouldBeRegistered: () => true,
-    component: (
-      <Action
-        onClick={() =>
-          openFrontComponentInCommandMenu({
-            frontComponentId: item.frontComponentId,
-            pageTitle: displayLabel,
-            pageIcon: Icon,
-          })
-        }
-        closeSidePanelOnCommandMenuListActionExecution={false}
+    component: isHeadless ? (
+      <HeadlessFrontComponentAction
+        frontComponentId={item.frontComponentId}
+        onClick={handleClick}
       />
+    ) : (
+      <Action onClick={handleClick} />
     ),
   };
 };
@@ -78,18 +92,19 @@ export const useCommandMenuItemFrontComponentActions = () => {
   const { getIcon } = useIcons();
   const { openFrontComponentInCommandMenu } =
     useOpenFrontComponentInCommandMenu();
+  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  const currentObjectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const targetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -111,13 +126,14 @@ export const useCommandMenuItemFrontComponentActions = () => {
     ) ?? [];
 
   const selectedRecordCount =
-    targetedRecordsRule.mode === 'selection'
-      ? targetedRecordsRule.selectedRecordIds.length
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
       : 0;
 
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
-    item.availabilityObjectMetadataId === currentObjectMetadataItemId;
+    item.availabilityObjectMetadataId ===
+      contextStoreCurrentObjectMetadataItemId;
 
   const globalItems = frontComponentItems.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
@@ -137,9 +153,10 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.Global,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
+      mountHeadlessFrontComponent,
     }),
   );
 
@@ -148,9 +165,10 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.RecordSelection,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
+      mountHeadlessFrontComponent,
     }),
   );
 

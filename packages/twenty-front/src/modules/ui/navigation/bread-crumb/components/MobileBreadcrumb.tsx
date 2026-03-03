@@ -73,7 +73,7 @@ export const MobileBreadcrumb = ({
         <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledLink title={text} to={previousLink.href}>
-            {t`Back to ${linkText}`}
+            {t`Back to ${String(linkText)}`}
           </StyledLink>
         </>
       ) : (

@@ -91,7 +91,7 @@ export const getHoursDescription = (
     }
     const lastTime = formattedTimes.pop();
     const remainingTimes = formattedTimes.join(', ');
-    return t`at ${remainingTimes} and ${lastTime}`;
+    return t`at ${remainingTimes} and ${lastTime ?? ''}`;
   }
 
   const hourNum = parseInt(hours, 10);

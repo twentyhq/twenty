@@ -55,7 +55,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
             case FieldMetadataType.EMAILS:
               return {
                 ...processedRecord,
-                [field.name]: record[field.name].primaryEmail ?? '',
+                [field.name]: record[field.name].primaryEmail?.trim() ?? '',
               };
             case FieldMetadataType.FULL_NAME: {
               const name = record[field.name];
@@ -64,20 +64,6 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                 [field.name]: [name?.firstName, name?.lastName]
                   .filter(Boolean)
                   .join(' '),
-              };
-            }
-            case FieldMetadataType.ADDRESS: {
-              const addr = record[field.name];
-              return {
-                ...processedRecord,
-                [field.name]: [
-                  addr?.addressStreet1,
-                  addr?.addressCity,
-                  addr?.addressState,
-                  addr?.addressPostcode,
-                ]
-                  .filter(Boolean)
-                  .join(', '),
               };
             }
             case FieldMetadataType.LINKS:

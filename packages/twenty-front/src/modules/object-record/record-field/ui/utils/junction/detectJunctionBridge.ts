@@ -25,17 +25,12 @@ const isRelationType = (
   (field.settings as Record<string, unknown> | null)?.relationType === type;
 
 // Resolves the target object metadata ID for a relation field.
-// Uses relationTargetObjectMetadataId (a scalar column on the field entity),
-// falling back to the relation resolver, then to inverse relation search.
+// Uses the relation resolver first, falling back to inverse relation search.
 const getTargetObjectId = (
   field: FieldMetadataItem,
   objectMetadataItems: ObjectMetadataItem[],
 ): string | undefined => {
-  if (isDefined(field.relationTargetObjectMetadataId)) {
-    return field.relationTargetObjectMetadataId;
-  }
-
-  if (isDefined(field.relation?.targetObjectMetadata.id)) {
+  if (isDefined(field.relation?.targetObjectMetadata?.id)) {
     return field.relation.targetObjectMetadata.id;
   }
 

@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const activityBodyFamilyState = createFamilyState<
+export const activityBodyFamilyState = createAtomFamilyState<
   string,
   { activityId: string }
 >({

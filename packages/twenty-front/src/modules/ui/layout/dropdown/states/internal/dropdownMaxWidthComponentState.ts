@@ -1,7 +1,7 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const dropdownMaxWidthComponentState = createComponentState<
+export const dropdownMaxWidthComponentState = createAtomComponentState<
   number | undefined
 >({
   key: 'dropdownMaxWidthComponentState',

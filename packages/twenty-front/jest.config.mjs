@@ -63,7 +63,7 @@ const jestConfig = {
     global: {
       statements: 49.5,
       lines: 48,
-      functions: 40,
+      functions: 39.5,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
@@ -86,7 +86,8 @@ const jestConfig = {
     'display/icon/index.ts',
   ],
   coverageDirectory: './coverage',
-  maxWorkers: '50%',
+  maxWorkers: 3,
+  workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
 };
 

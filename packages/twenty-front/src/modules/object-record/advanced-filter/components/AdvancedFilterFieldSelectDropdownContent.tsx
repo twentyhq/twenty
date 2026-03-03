@@ -1,9 +1,7 @@
 import { AdvancedFilterFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu';
-import { AdvancedFilterRelationSubFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterRelationSubFieldSelectMenu';
 import { AdvancedFilterSubFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownIsSelectingRelationSubFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationSubFieldComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 type AdvancedFilterFieldSelectDropdownContentProps = {
   recordFilterId: string;
@@ -12,27 +10,16 @@ type AdvancedFilterFieldSelectDropdownContentProps = {
 export const AdvancedFilterFieldSelectDropdownContent = ({
   recordFilterId,
 }: AdvancedFilterFieldSelectDropdownContentProps) => {
-  const [objectFilterDropdownIsSelectingCompositeField] =
-    useRecoilComponentState(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-    );
+  const [objectFilterDropdownIsSelectingCompositeField] = useAtomComponentState(
+    objectFilterDropdownIsSelectingCompositeFieldComponentState,
+  );
 
-  const [objectFilterDropdownIsSelectingRelationSubField] =
-    useRecoilComponentState(
-      objectFilterDropdownIsSelectingRelationSubFieldComponentState,
-    );
+  const shouldShowCompositeSelectionSubMenu =
+    objectFilterDropdownIsSelectingCompositeField;
 
-  if (objectFilterDropdownIsSelectingRelationSubField) {
-    return (
-      <AdvancedFilterRelationSubFieldSelectMenu
-        recordFilterId={recordFilterId}
-      />
-    );
-  }
-
-  if (objectFilterDropdownIsSelectingCompositeField) {
-    return <AdvancedFilterSubFieldSelectMenu recordFilterId={recordFilterId} />;
-  }
-
-  return <AdvancedFilterFieldSelectMenu recordFilterId={recordFilterId} />;
+  return shouldShowCompositeSelectionSubMenu ? (
+    <AdvancedFilterSubFieldSelectMenu recordFilterId={recordFilterId} />
+  ) : (
+    <AdvancedFilterFieldSelectMenu recordFilterId={recordFilterId} />
+  );
 };

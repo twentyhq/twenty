@@ -12,7 +12,6 @@ import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
@@ -24,14 +23,14 @@ import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/con
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
-import { hasRelationToWorkspaceMember } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/hasRelationToWorkspaceMember';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledSearchInput = styled.input`
   background: transparent;
@@ -78,13 +77,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       });
 
-    const { objectMetadataItems } = useObjectMetadataItems();
-
-    const selectedFieldMetadataItem = useRecoilComponentValue(
+    const selectedFieldMetadataItem = useAtomComponentSelectorValue(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 
@@ -166,17 +163,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
         CoreObjectNameSingular.WorkspaceMember;
 
-    const isRelationToObjectWithWorkspaceMemberRelation =
-      selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
-      selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular !==
-        undefined &&
-      selectedFieldMetadataItem.relation.targetObjectMetadata.nameSingular !==
-        CoreObjectNameSingular.WorkspaceMember &&
-      hasRelationToWorkspaceMember(
-        selectedFieldMetadataItem.relation.targetObjectMetadata.nameSingular,
-        objectMetadataItems,
-      );
-
     const menuItems: Array<{
       id: string;
       label: string;
@@ -197,36 +183,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         fieldMetadataId: idField.id,
         subFieldName: null,
       });
-    }
-
-    if (
-      isRelationToObjectWithWorkspaceMemberRelation &&
-      isDefined(selectedFieldMetadataItem?.relation)
-    ) {
-      const targetObjectNameSingular =
-        selectedFieldMetadataItem.relation.targetObjectMetadata.nameSingular;
-      const targetObjectMetadata = objectMetadataItems.find(
-        (item) => item.nameSingular === targetObjectNameSingular,
-      );
-
-      if (isDefined(targetObjectMetadata)) {
-        const wmRelationFields = targetObjectMetadata.fields.filter(
-          (field) =>
-            field.type === FieldMetadataType.RELATION &&
-            field.relation?.targetObjectMetadata.nameSingular ===
-              CoreObjectNameSingular.WorkspaceMember,
-        );
-
-        for (const wmField of wmRelationFields) {
-          menuItems.push({
-            id: `me-indirect-${wmField.id}`,
-            label: t`Me (User ID)`,
-            icon: null,
-            fieldMetadataId: wmField.id,
-            subFieldName: null,
-          });
-        }
-      }
     }
 
     for (const field of compatibleWorkspaceMemberFields) {

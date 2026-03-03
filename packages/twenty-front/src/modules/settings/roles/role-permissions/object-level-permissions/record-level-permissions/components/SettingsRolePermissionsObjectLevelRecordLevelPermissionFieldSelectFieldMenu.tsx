@@ -26,8 +26,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -47,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       advancedFilterFieldSelectDropdownId,
     } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const [objectFilterDropdownSearchInput] = useRecoilComponentState(
+    const [objectFilterDropdownSearchInput] = useAtomComponentState(
       objectFilterDropdownSearchInputComponentState,
     );
 
@@ -88,16 +88,16 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     const { selectFieldUsedInAdvancedFilterDropdown } =
       useSelectFieldUsedInAdvancedFilterDropdown();
 
-    const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentState(
+    const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
       objectFilterDropdownSubMenuFieldTypeComponentState,
     );
 
     const [, setObjectFilterDropdownIsSelectingCompositeField] =
-      useRecoilComponentState(
+      useAtomComponentState(
         objectFilterDropdownIsSelectingCompositeFieldComponentState,
       );
 
-    const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
+    const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
       fieldMetadataItemIdUsedInDropdownComponentState,
     );
 

@@ -11,8 +11,8 @@ import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inl
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
 export const RecordFieldListCellHoveredPortalContent = () => {
@@ -36,9 +36,9 @@ export const RecordFieldListCellHoveredPortalContent = () => {
     !isRecordFieldReadOnly && !editModeContentOnly;
 
   const [recordFieldListHoverPosition, setRecordFieldListHoverPosition] =
-    useRecoilComponentState(recordFieldListHoverPositionComponentState);
+    useAtomComponentState(recordFieldListHoverPositionComponentState);
 
-  const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
+  const setRecordFieldListCellEditModePosition = useSetAtomComponentState(
     recordFieldListCellEditModePositionComponentState,
   );
   const { openFieldInput } = useOpenFieldInputEditMode();

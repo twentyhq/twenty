@@ -1,4 +1,5 @@
 import {
+  type ChartFilter,
   type CompositeFieldSubFieldName,
   type FilterableAndTSVectorFieldType,
   type PartialFieldMetadataItem,
@@ -14,11 +15,10 @@ import {
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 
 type ConvertChartFilterToGqlOperationFilterParams = {
   filter: ChartFilter | undefined;
@@ -72,7 +72,7 @@ export const convertChartFilterToGqlOperationFilter = ({
     })
     .filter(isDefined);
 
-  const convertedRecordFilters: RecordFilter[] = recordFilters.map(
+  const convertedRecordFilters: Omit<RecordFilter, 'id'>[] = recordFilters.map(
     (recordFilter) => {
       const field = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: recordFilter.fieldMetadataId,
@@ -80,7 +80,6 @@ export const convertChartFilterToGqlOperationFilter = ({
       });
 
       return {
-        id: recordFilter.id,
         fieldMetadataId: recordFilter.fieldMetadataId,
         value: recordFilter.value ?? '',
         type: (field?.type ??

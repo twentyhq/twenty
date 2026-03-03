@@ -6,24 +6,29 @@ title: 最佳实践
 
 ## 状态管理
 
-React 和 Recoil 在代码库中处理状态管理。
+React 和 Jotai 在代码库中处理状态管理。
 
-### 使用 `useRecoilState` 来存储状态
+### 使用 Jotai 原子来存储状态
 
 根据需要创建足够多的原子来存储你的状态，是一种良好实践。
 
 <Warning>
-  与其为了通过 props 层层传递而过度精简，不如使用额外的原子。
+
+与其为了通过 props 层层传递而过度精简，不如使用额外的原子。
+
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -40,7 +45,7 @@ export const MyComponent = () => {
 
 避免使用 `useRef` 来存储状态。
 
-如果想存储状态，应该使用 `useState` 或 `useRecoilState`。
+如果想存储状态，应该使用 `useState` 或配合 `useAtomState` 的 Jotai 原子。
 
 如果您觉得需要通过使用 `useRef` 来防止一些再渲染，请了解[如何管理再渲染](#managing-re-renders)。
 
@@ -80,8 +85,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 // ❌ 不佳：即使数据未发生变化也会导致重新渲染，
 //    因为需要重新评估 useEffect
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -93,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -103,14 +106,14 @@ export const App = () => (
 // ✅ 良好：如果数据未发生变化，将不会导致重新渲染，
 //   因为 useEffect 会在另一个同级组件中重新评估
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -122,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### 使用 Recoil 状态族和 Recoil 选择器族
+### 使用原子族状态和选择器
 
-Recoil 状态族和选择器族是避免再渲染的好方法。
+原子族状态和选择器是避免重新渲染的好方法。
 
 当您需要存储项目列表时，它们很有用。
 

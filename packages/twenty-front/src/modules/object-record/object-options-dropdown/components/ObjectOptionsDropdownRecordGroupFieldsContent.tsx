@@ -15,11 +15,12 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
@@ -47,11 +48,11 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const hiddenRecordGroupIds = useRecoilComponentValue(
+  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -77,7 +78,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   );
 
   const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
   );
 
@@ -108,7 +109,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         StartComponent={
           <DropdownMenuHeaderLeftComponent
             onClick={() =>
-              isDefined(recordGroupFieldMetadata)
+              isDefined(recordIndexGroupFieldMetadataItem)
                 ? onContentChange('recordGroups')
                 : resetContent()
             }
@@ -129,14 +130,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         {viewType === ViewType.Table && (
           <MenuItemSelect
             text={t`None`}
-            selected={!isDefined(recordGroupFieldMetadata)}
+            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             onClick={handleResetRecordGroupField}
           />
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
-            selected={fieldMetadataItem.id === recordGroupFieldMetadata?.id}
+            selected={
+              fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
+            }
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}

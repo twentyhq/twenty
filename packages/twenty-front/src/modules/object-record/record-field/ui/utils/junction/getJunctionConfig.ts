@@ -28,17 +28,13 @@ type GetJunctionConfigArgs = {
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
-// Resolves the target object ID using the scalar column first,
-// then the relation resolver, then inverse relation search.
+// Resolves the target object ID using the relation resolver first,
+// falling back to inverse relation search.
 const getTargetObjectIdFromItems = (
   field: FieldMetadataItem,
   objectMetadataItems: JunctionObjectMetadataItem[],
 ): string | undefined => {
-  if (isDefined(field.relationTargetObjectMetadataId)) {
-    return field.relationTargetObjectMetadataId;
-  }
-
-  if (isDefined(field.relation?.targetObjectMetadata.id)) {
+  if (isDefined(field.relation?.targetObjectMetadata?.id)) {
     return field.relation.targetObjectMetadata.id;
   }
 
@@ -77,31 +73,19 @@ export const getJunctionConfig = ({
       return undefined;
     }
 
-    // Primary: match by relationTargetObjectMetadataId scalar
-    const scalarMatch = junctionObjectMetadata.fields.find(
-      (field) =>
-        field.type === FieldMetadataType.RELATION &&
-        field.id !== excludeFieldId &&
-        field.relationTargetObjectMetadataId === sourceObjectMetadataId,
-    );
-
-    if (isDefined(scalarMatch)) {
-      return scalarMatch;
-    }
-
-    // Fallback: match by relation.targetObjectMetadata.id
+    // Primary: match by relation.targetObjectMetadata.id
     const relationField = junctionObjectMetadata.fields.find(
       (field) =>
         field.type === FieldMetadataType.RELATION &&
-        field.relation?.targetObjectMetadata.id === sourceObjectMetadataId &&
-        field.id !== excludeFieldId,
+        field.id !== excludeFieldId &&
+        field.relation?.targetObjectMetadata?.id === sourceObjectMetadataId,
     );
 
     if (isDefined(relationField)) {
       return relationField;
     }
 
-    // Last resort: when relation is null and no scalar, resolve via inverse search
+    // Fallback: when relation is null, resolve via inverse search
     const fallbackField = junctionObjectMetadata.fields.find(
       (field) =>
         field.type === FieldMetadataType.RELATION &&

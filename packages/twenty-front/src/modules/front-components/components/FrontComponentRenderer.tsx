@@ -1,6 +1,10 @@
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
+import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -18,10 +22,14 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext();
 
-  const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
+  const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
+    frontComponentApplicationTokenPairComponentState,
+    frontComponentId,
+  );
+
+  const { executionContext, frontComponentHostCommunicationApi } =
+    useFrontComponentExecutionContext({ frontComponentId });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -41,27 +49,48 @@ export const FrontComponentRenderer = ({
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
     onError: handleError,
+    onCompleted: (completedData) => {
+      const tokenPair = completedData.frontComponent?.applicationTokenPair;
+
+      if (isDefined(tokenPair)) {
+        setFrontComponentApplicationTokenPair(tokenPair);
+      }
+    },
   });
+
+  useOnFrontComponentUpdated({
+    frontComponentId,
+  });
+
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data?.frontComponent?.builtComponentChecksum,
+  });
+
+  const applicationTokenPair =
+    data?.frontComponent?.applicationTokenPair ?? null;
 
   if (
     loading ||
     !isDefined(data?.frontComponent) ||
-    !isDefined(data.frontComponent.applicationTokenPair)
+    !isDefined(applicationTokenPair)
   ) {
     return null;
   }
 
   return (
-    <SharedFrontComponentRenderer
-      theme={theme}
-      componentUrl={componentUrl}
-      applicationAccessToken={
-        data.frontComponent.applicationTokenPair.applicationAccessToken.token
-      }
-      apiUrl={REACT_APP_SERVER_BASE_URL}
-      executionContext={executionContext}
-      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={handleError}
-    />
+    <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+      <SharedFrontComponentRenderer
+        theme={theme}
+        componentUrl={componentUrl}
+        applicationAccessToken={
+          applicationTokenPair.applicationAccessToken.token
+        }
+        apiUrl={REACT_APP_SERVER_BASE_URL}
+        executionContext={executionContext}
+        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        onError={handleError}
+      />
+    </FrontComponentRendererProvider>
   );
 };

@@ -1,8 +1,13 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import {
+  type FieldRelationToOneValue,
+  type FieldRelationValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -21,9 +26,11 @@ const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
 export const WorkflowStepFilterValueCompositeInput = ({
   stepFilter,
   onChange,
+  onClear,
 }: {
   stepFilter: StepFilter;
   onChange: (newValue: JsonValue) => void;
+  onClear: () => void;
 }) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { type: filterType, compositeFieldSubFieldName: subFieldName } =
@@ -90,12 +97,17 @@ export const WorkflowStepFilterValueCompositeInput = ({
             VariablePicker={WorkflowVariablePicker}
           />
         ) : subFieldName === 'workspaceMemberId' ? (
-          <FormSingleRecordPicker
-            objectNameSingulars={['workspaceMember']}
-            defaultValue={stepFilter.value}
+          <FormRelationToOneFieldInput
+            objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+            defaultValue={
+              stepFilter.value as
+                | FieldRelationValue<FieldRelationToOneValue>
+                | string
+            }
             onChange={onChange}
-            disabled={readonly}
+            onClear={onClear}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         ) : (
           <FormTextFieldInput

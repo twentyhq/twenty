@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
+  DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
@@ -27,8 +28,6 @@ import { cleanServerUrl } from 'src/utils/clean-server-url';
 import type { FlatApplicationVariable } from 'src/engine/core-modules/applicationVariable/types/flat-application-variable.type';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-
-const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
 export class LogicFunctionExecutionException extends Error {
   constructor(
@@ -80,7 +79,7 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariables,
-      flatLogicFunction,
+      _flatLogicFunction: flatLogicFunction,
     });
 
     const resultLogicFunction = await this.driver.execute({
@@ -170,28 +169,25 @@ export class LogicFunctionExecutorService {
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    flatLogicFunction,
+    _flatLogicFunction,
     flatApplicationVariables,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    flatLogicFunction: FlatLogicFunction;
+    _flatLogicFunction: FlatLogicFunction;
     flatApplicationVariables: FlatApplicationVariable[];
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
-        expiresInSeconds: Math.max(
-          flatLogicFunction.timeoutSeconds,
-          MIN_TOKEN_EXPIRATION_IN_SECONDS,
-        ),
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
+      [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
     };

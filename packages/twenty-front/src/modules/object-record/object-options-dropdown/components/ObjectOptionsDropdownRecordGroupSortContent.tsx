@@ -12,8 +12,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import {
   IconChevronLeft,
@@ -26,19 +27,18 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange } = useObjectOptionsDropdown();
 
-  const hiddenRecordGroupIds = useRecoilComponentValue(
+  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const [recordGroupSort, setRecordGroupSort] = useRecoilComponentState(
-    recordIndexRecordGroupSortComponentState,
-  );
+  const [recordIndexRecordGroupSort, setRecordIndexRecordGroupSort] =
+    useAtomComponentState(recordIndexRecordGroupSortComponentState);
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
-    setRecordGroupSort(sort);
+    setRecordIndexRecordGroupSort(sort);
   };
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
@@ -86,7 +86,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconHandMove}
               text={RecordGroupSort.Manual}
-              selected={recordGroupSort === RecordGroupSort.Manual}
+              selected={recordIndexRecordGroupSort === RecordGroupSort.Manual}
               focused={selectedItemId === RecordGroupSort.Manual}
             />
           </SelectableListItem>
@@ -102,7 +102,9 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconSortAZ}
               text={RecordGroupSort.Alphabetical}
-              selected={recordGroupSort === RecordGroupSort.Alphabetical}
+              selected={
+                recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
+              }
               focused={selectedItemId === RecordGroupSort.Alphabetical}
             />
           </SelectableListItem>
@@ -118,7 +120,10 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconSortZA}
               text={RecordGroupSort.ReverseAlphabetical}
-              selected={recordGroupSort === RecordGroupSort.ReverseAlphabetical}
+              selected={
+                recordIndexRecordGroupSort ===
+                RecordGroupSort.ReverseAlphabetical
+              }
               focused={selectedItemId === RecordGroupSort.ReverseAlphabetical}
             />
           </SelectableListItem>

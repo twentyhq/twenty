@@ -6,66 +6,66 @@ description: La guida per i collaboratori (o sviluppatori curiosi) che vogliono 
 ## Prerequisiti
 
 <Tabs>
-  <Tab title="Linux e MacOS">
-    Prima di poter installare e usare Twenty, assicurati di installare quanto segue sul tuo computer:
+<Tab title="Linux e MacOS">
 
-    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-    * [Node v24.5.0](https://nodejs.org/en/download)
-    * [yarn v4](https://yarnpkg.com/getting-started/install)
-    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+Prima di poter installare e usare Twenty, assicurati di installare quanto segue sul tuo computer:
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* [Node v24.5.0](https://nodejs.org/en/download)
+* [yarn v4](https://yarnpkg.com/getting-started/install)
+* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
-    <Warning>
-      `npm` non funzionerà, dovresti usare `yarn` invece. Yarn è ora incluso con Node.js, quindi non è necessario installarlo separatamente.
-      Devi solo eseguire `corepack enable` per abilitare Yarn se non l'hai ancora fatto.
-    </Warning>
-  </Tab>
+<Warning>
+`npm` non funzionerà, dovresti usare `yarn` invece. Yarn è ora incluso con Node.js, quindi non è necessario installarlo separatamente.
+Devi solo eseguire `corepack enable` per abilitare Yarn se non l'hai ancora fatto.
+</Warning>
 
-  <Tab title="Windows (WSL)">
-    1. Installa WSL
-       Apri PowerShell come amministratore ed esegui:
+</Tab>
 
-    ```powershell
-    wsl --install
-    ```
+<Tab title="Windows (WSL)">
 
-    Dovresti ora vedere un prompt per riavviare il computer. In caso contrario, riavvialo manualmente.
+1. Installa WSL
+   Apri PowerShell come amministratore ed esegui:
+```powershell
+wsl --install
+```
+Dovresti ora vedere un prompt per riavviare il computer. In caso contrario, riavvialo manualmente.
 
-    Al riavvio, si aprirà una finestra di PowerShell e installerà Ubuntu. Questo potrebbe richiedere un po' di tempo.
-    Vedrai un prompt per creare un nome utente e una password per la tua installazione di Ubuntu.
+Al riavvio, si aprirà una finestra di PowerShell e installerà Ubuntu. Questo potrebbe richiedere un po' di tempo.
+Vedrai un prompt per creare un nome utente e una password per la tua installazione di Ubuntu.
 
-    2. Installa e configura Git
+2. Installa e configura Git
 
-    ```bash
-    sudo apt-get install git
+```bash
+sudo apt-get install git
 
-    git config --global user.name "Your Name"
+git config --global user.name "Your Name"
 
-    git config --global user.email "youremail@domain.com"
-    ```
+git config --global user.email "youremail@domain.com"
+```
 
-    3. Installa nvm, node.js e yarn
+3. Installa nvm, node.js e yarn
 
-    <Warning>
-      Usa `nvm` per installare la versione corretta di `node`. Il file `.nvmrc` garantisce che tutti i collaboratori utilizzino la stessa versione.
-    </Warning>
+<Warning>
+Usa `nvm` per installare la versione corretta di `node`. Il file `.nvmrc` garantisce che tutti i collaboratori utilizzino la stessa versione.
+</Warning>
 
-    ```bash
-    sudo apt-get install curl
+```bash
+sudo apt-get install curl
 
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-    ```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+Chiudi e riapri il tuo terminale per usare nvm. Poi esegui i seguenti comandi.
 
-    Chiudi e riapri il tuo terminale per usare nvm. Poi esegui i seguenti comandi.
+```bash
 
-    ```bash
+nvm install # installa la versione di node raccomandata
 
-    nvm install # installa la versione di node raccomandata
+nvm use # usa la versione di node raccomandata
 
-    nvm use # usa la versione di node raccomandata
+corepack enable
+```
 
-    corepack enable
-    ```
-  </Tab>
+</Tab>
 </Tabs>
 
 ---
@@ -75,19 +75,19 @@ description: La guida per i collaboratori (o sviluppatori curiosi) che vogliono 
 Nel tuo terminale, esegui il seguente comando.
 
 <Tabs>
-  <Tab title="SSH (Consigliato)">
-    Se non hai già configurato le chiavi SSH, puoi imparare come farlo [qui](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+<Tab title="SSH (Consigliato)">
+Se non hai già configurato le chiavi SSH, puoi imparare come farlo [qui](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
 
-    ```bash
-    git clone git@github.com:twentyhq/twenty.git
-    ```
-  </Tab>
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
 
-  <Tab title="HTTPS">
-    ```bash
-    git clone https://github.com/twentyhq/twenty.git
-    ```
-  </Tab>
+</Tab>
 </Tabs>
 
 ## Passaggio 2: Posizionati alla radice
@@ -104,20 +104,16 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
   <Tab title="Linux">
     **Opzione 1 (preferita):** Per predisporre il database in locale:
     Usa il seguente link per installare PostgreSQL sulla tua macchina Linux: [Installazione di PostgreSQL](https://www.postgresql.org/download/linux/)
-
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
-
     Nota: Potrebbe essere necessario aggiungere `sudo -u postgres` al comando prima di `psql` per evitare errori di permessi.
 
     **Opzione 2:** Se hai Docker installato:
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
-
   <Tab title="Mac OS">
     **Opzione 1 (preferita):** Per predisporre il database in locale con `brew`:
 
@@ -129,7 +125,6 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     ```
 
     Puoi verificare se il server PostgreSQL è in esecuzione eseguendo:
-
     ```bash
       brew services list
     ```
@@ -138,7 +133,6 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     tramite Homebrew su MacOS. Invece, crea un ruolo di PostgreSQL che corrisponde al tuo nome utente macOS
     (es., "john").
     Per controllare e creare l'utente `postgres` se necessario, segui questi passaggi:
-
     ```bash
       # Connetti a PostgreSQL
       psql postgres
@@ -147,59 +141,48 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     ```
 
     Una volta nel prompt di psql (postgres=#), esegui:
-
-    ```bash
-     # Elenca i ruoli di PostgreSQL esistenti
-     \du
-    ```
-
+     ```bash
+      # Elenca i ruoli di PostgreSQL esistenti
+      \du
+     ```
     Vedrai un output simile a:
-
-    ```bash
-     Nome ruolo | Attributi  | Membro di
-     -----------+-------------+-----------
-     john      | Superuser   | {}
-    ```
+     ```bash
+      Nome ruolo | Attributi  | Membro di
+      -----------+-------------+-----------
+      john      | Superuser   | {}
+     ```
 
     Se non vedi un ruolo `postgres` elencato, procedi al passo successivo.
     Crea manualmente il ruolo `postgres`:
-
-    ```bash
-     CREATE ROLE postgres WITH SUPERUSER LOGIN;
-    ```
-
+     ```bash
+      CREATE ROLE postgres WITH SUPERUSER LOGIN;
+     ```
     Questo crea un ruolo superuser chiamato `postgres` con accesso di login.
-
-    ```bash
-    Nome ruolo | Attributi  | Membro di
-    -----------+-------------+-----------
-    postgres  | Superuser   | {}
-    john      | Superuser   | {}
-    ```
+      ```bash
+      Nome ruolo | Attributi  | Membro di
+      -----------+-------------+-----------
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
+      ```
 
     **Opzione 2:** Se hai Docker installato:
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     Tutti i passaggi seguenti devono essere eseguiti nel terminale WSL (all'interno della tua macchina virtuale)
 
     **Opzione 1:** Per predisporre PostgreSQL in locale:
     Usa il seguente link per installare PostgreSQL nella tua macchina virtuale Linux: [Installazione di PostgreSQL](https://www.postgresql.org/download/linux/)
-
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
-
     Nota: Potrebbe essere necessario aggiungere `sudo -u postgres` al comando prima di `psql` per evitare errori di permessi.
 
     **Opzione 2:** Se hai Docker installato:
     Eseguire Docker su WSL aggiunge un livello extra di complessità.
     Usa questa opzione solo se ti senti a tuo agio con i passaggi extra coinvolti, incluso l'attivazione di [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
@@ -218,35 +201,28 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
     Usa il seguente link per installare Redis sulla tua macchina Linux: [Installazione di Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
     **Opzione 2:** Se hai Docker installato:
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
-
   <Tab title="Mac OS">
     **Opzione 1 (preferita):** Per predisporre Redis in locale con `brew`:
-
     ```bash
     brew install redis
     ```
-
     Avvia il tuo server Redis:
     `brew services start redis`
 
     **Opzione 2:** Se hai Docker installato:
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     **Opzione 1:** Per predisporre Redis in locale:
     Usa il seguente link per installare Redis sulla tua macchina virtuale Linux: [Installazione di Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
     **Opzione 2:** Se hai Docker installato:
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
@@ -267,7 +243,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Modalità multi-workspace:** Per impostazione predefinita, Twenty viene eseguito in modalità a singolo workspace in cui può essere creato un solo workspace. Per abilitare il supporto multi-workspace (utile per testare le funzionalità basate sui sottodomini), imposta `IS_MULTIWORKSPACE_ENABLED=true` nel file `.env` del server. Vedi [Modalità multi-workspace](/l/it/developers/self-host/capabilities/setup#multi-workspace-mode) per i dettagli.
+**Modalità multi-workspace:** Per impostazione predefinita, Twenty viene eseguito in modalità a singolo workspace in cui può essere creato un solo workspace. Per abilitare il supporto multi-workspace (utile per testare le funzionalità basate sui sottodomini), imposta `IS_MULTIWORKSPACE_ENABLED=true` nel file `.env` del server. Vedi [Modalità multi-workspace](/l/it/developers/self-host/capabilities/setup#multi-workspace-mode) per i dettagli.
 </Info>
 
 ## Passaggio 6: Installazione delle dipendenze
@@ -287,15 +263,12 @@ Nota che `npm` o `pnpm` non funzioneranno
     A seconda della tua distribuzione Linux, il server Redis potrebbe essere avviato automaticamente.
     In caso contrario, controlla la [guida all'installazione di Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) per la tua distribuzione.
   </Tab>
-
   <Tab title="Mac OS">
-    Redis dovrebbe essere già in esecuzione. In caso contrario, esegui:
-
+  Redis dovrebbe essere già in esecuzione. In caso contrario, esegui:
     ```bash
     brew services start redis
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     A seconda della tua distribuzione Linux, il server Redis potrebbe essere avviato automaticamente.
     In caso contrario, controlla la [guida all'installazione di Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) per la tua distribuzione.

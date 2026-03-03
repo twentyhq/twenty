@@ -11,7 +11,7 @@ import { useRecordIndexExportRecords } from '@/object-record/record-index/export
 import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,7 +20,7 @@ const EXPORT_CONFIG_MODAL_ID = 'export-relation-field-config-modal';
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 

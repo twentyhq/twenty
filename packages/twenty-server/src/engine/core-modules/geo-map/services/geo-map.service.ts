@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,21 +16,35 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class GeoMapService {
+  private readonly logger = new Logger(GeoMapService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   private getApiKey(): string | undefined {
-    if (
-      !this.twentyConfigService.get(
-        'IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED',
-      )
-    ) {
+    const isEnabled = this.twentyConfigService.get(
+      'IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED',
+    );
+
+    if (!isEnabled) {
+      this.logger.debug('Maps autocomplete is disabled');
+
       return undefined;
     }
 
-    return this.twentyConfigService.get('GOOGLE_MAP_API_KEY');
+    const apiKey = this.twentyConfigService.get('GOOGLE_MAP_API_KEY');
+
+    if (!isNonEmptyString(apiKey)) {
+      this.logger.warn(
+        'Maps autocomplete is enabled but GOOGLE_MAP_API_KEY is not set',
+      );
+
+      return undefined;
+    }
+
+    return apiKey;
   }
 
   public async getAutoCompleteAddress(
@@ -53,12 +67,24 @@ export class GeoMapService {
     if (isDefined(isFieldCity) && isFieldCity === true) {
       url += `&types=(cities)`;
     }
-    const httpClient = this.secureHttpClientService.getHttpClient();
 
-    const result = await httpClient.get(url);
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+      const result = await httpClient.get(url);
 
-    if (result.data.status === 'OK') {
-      return sanitizeAutocompleteResults(result.data.predictions);
+      if (result.data.status === 'OK') {
+        return sanitizeAutocompleteResults(result.data.predictions);
+      }
+
+      this.logger.warn(
+        `Google Places autocomplete returned status: ${result.data.status}` +
+          (result.data.error_message ? ` — ${result.data.error_message}` : ''),
+      );
+    } catch (error) {
+      this.logger.error(
+        'Google Places autocomplete request failed',
+        error instanceof Error ? error.stack : error,
+      );
     }
 
     return [];
@@ -74,16 +100,28 @@ export class GeoMapService {
       return {};
     }
 
-    const httpClient = this.secureHttpClientService.getHttpClient();
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
 
-    const result = await httpClient.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${apiKey}`,
-    );
+      const result = await httpClient.get(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${apiKey}`,
+      );
 
-    if (result.data.status === 'OK') {
-      return sanitizePlaceDetailsResults(
-        result.data.result?.address_components,
-        result.data.result?.geometry?.location,
+      if (result.data.status === 'OK') {
+        return sanitizePlaceDetailsResults(
+          result.data.result?.address_components,
+          result.data.result?.geometry?.location,
+        );
+      }
+
+      this.logger.warn(
+        `Google Places details returned status: ${result.data.status}` +
+          (result.data.error_message ? ` — ${result.data.error_message}` : ''),
+      );
+    } catch (error) {
+      this.logger.error(
+        'Google Places details request failed',
+        error instanceof Error ? error.stack : error,
       );
     }
 

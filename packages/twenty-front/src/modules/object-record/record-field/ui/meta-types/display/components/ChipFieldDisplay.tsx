@@ -5,7 +5,7 @@ import { ChipSize } from 'twenty-ui/components';
 
 export const ChipFieldDisplay = () => {
   const {
-    recordValue,
+    recordStore: recordValue,
     objectNameSingular,
     labelIdentifierLink,
     disableChipClick,

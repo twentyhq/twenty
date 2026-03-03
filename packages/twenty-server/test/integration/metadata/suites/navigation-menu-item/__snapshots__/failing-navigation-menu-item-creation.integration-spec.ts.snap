@@ -10,7 +10,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -25,7 +25,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -40,7 +40,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid fold
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -55,7 +55,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -70,7 +70,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -85,7 +85,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid user
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -131,18 +131,6 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
 `;
 
 exports[`NavigationMenuItem creation should fail when creating with missing targetRecordId 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Could not find objectMetadata for given targetObjectMetadataId",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`NavigationMenuItem creation should fail when creating with negative position 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",

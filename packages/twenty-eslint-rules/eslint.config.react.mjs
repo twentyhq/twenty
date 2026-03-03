@@ -125,12 +125,7 @@ export default [
 
       // React hooks rules
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': [
-        'warn',
-        {
-          additionalHooks: 'useRecoilCallback',
-        },
-      ],
+      'react-hooks/exhaustive-deps': 'warn',
       // Lingui - detect untranslated strings
       'lingui/no-unlocalized-strings': [
         'error',
@@ -246,7 +241,7 @@ export default [
             'componentInstanceId',
             'hotkeyScope',
             'dropdownId',
-            'recoilScopeId',
+
             'modalId',
             'dialogId',
             'itemId',
@@ -411,15 +406,6 @@ export default [
             // Navigation
             'useNavigationSection',
 
-            // Recoil
-            'atom',
-            'atomFamily',
-            'selector',
-            'selectorFamily',
-            'useSetRecoilState',
-            'useRecoilState',
-            'useRecoilValue',
-
             // GraphQL operations
             'gql',
             'useQuery',
@@ -578,8 +564,7 @@ export default [
       'twenty/no-state-useref': 'error',
       'twenty/component-props-naming': 'error',
       'twenty/explicit-boolean-predicates-in-if': 'error',
-      'twenty/use-getLoadable-and-getValue-to-get-atoms': 'error',
-      'twenty/useRecoilCallback-has-dependency-array': 'error',
+
       'twenty/no-navigate-prefer-link': 'error',
     },
   },

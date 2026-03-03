@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { useRecoilValue } from 'recoil';
 import {
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,
@@ -8,7 +7,6 @@ import {
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -25,8 +23,8 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
-import { hasRelationToWorkspaceMember } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/hasRelationToWorkspaceMember';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type UseRecordLevelPermissionFilterActionsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -35,7 +33,6 @@ type UseRecordLevelPermissionFilterActionsProps = {
 export const useRecordLevelPermissionFilterActions = ({
   objectMetadataItem,
 }: UseRecordLevelPermissionFilterActionsProps) => {
-  const { objectMetadataItems } = useObjectMetadataItems();
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
   const { createEmptyRecordFilterFromFieldMetadataItem } =
@@ -45,13 +42,14 @@ export const useRecordLevelPermissionFilterActions = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
+  const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
@@ -67,14 +65,8 @@ export const useRecordLevelPermissionFilterActions = ({
             fieldMetadataItem.type,
           ) ||
           (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-            (fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-              CoreObjectNameSingular.WorkspaceMember ||
-              (fieldMetadataItem.relation?.targetObjectMetadata.nameSingular !==
-                undefined &&
-                hasRelationToWorkspaceMember(
-                  fieldMetadataItem.relation.targetObjectMetadata.nameSingular,
-                  objectMetadataItems,
-                ))))
+            fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+              CoreObjectNameSingular.WorkspaceMember)
         );
       });
 
@@ -157,10 +149,7 @@ export const useRecordLevelPermissionFilterActions = ({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForRLS.id,
       type: filterType,
-      operand: getRecordFilterOperands({
-        filterType,
-        relationType: defaultFieldMetadataItemForRLS.relation?.type,
-      })[0],
+      operand: getRecordFilterOperands({ filterType })[0],
       value: '',
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,

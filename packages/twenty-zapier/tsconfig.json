@@ -1,16 +1,18 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["esnext"],
-    "outDir": "./lib",
-    "rootDir": "./src",
+    "outDir": "lib",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "paths": {
+      "src/*": ["./src/*"]
+    }
   },
-  "exclude": [
-    "jest.config.mjs"
-  ]
+  "exclude": ["node_modules", "lib"]
 }

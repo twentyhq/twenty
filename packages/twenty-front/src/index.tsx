@@ -2,6 +2,9 @@
 // can call i18n._() at module scope (e.g. Zod schemas in PasswordReset)
 import '~/utils/i18n/initialI18nActivate';
 
+import { disableFragmentWarnings } from '@apollo/client';
+disableFragmentWarnings();
+
 import ReactDOM from 'react-dom/client';
 
 import '@emotion/react';

@@ -1,11 +1,10 @@
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const lastVisitedViewPerObjectMetadataItemState = createState<Record<
+export const lastVisitedViewPerObjectMetadataItemState = createAtomState<Record<
   string,
   string
 > | null>({
   key: 'lastVisitedViewPerObjectMetadataItemState',
   defaultValue: null,
-  effects: [localStorageEffect()],
+  useLocalStorage: true,
 });

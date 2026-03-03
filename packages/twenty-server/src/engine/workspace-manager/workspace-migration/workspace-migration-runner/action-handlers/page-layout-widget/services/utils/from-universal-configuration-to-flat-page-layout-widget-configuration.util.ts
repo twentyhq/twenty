@@ -1,3 +1,7 @@
+import {
+  type ChartFilter,
+  type UniversalChartFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -38,20 +42,50 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
+const convertUniversalFilterToChartFilter = ({
+  filter,
+  flatFieldMetadataMaps,
+}: {
+  filter: UniversalChartFilter | undefined;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): ChartFilter | undefined => {
+  if (!isDefined(filter)) {
+    return undefined;
+  }
+
+  return {
+    ...filter,
+    recordFilters: filter.recordFilters?.map(
+      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+          fieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+      }),
+    ),
+  };
+};
+
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
+  flatFrontComponentMaps,
   flatViewMaps,
+  flatViewFieldGroupMaps,
 }: {
   universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatFrontComponentMaps: MetadataFlatEntityMaps<'frontComponent'>;
   flatViewMaps: MetadataFlatEntityMaps<'view'>;
+  flatViewFieldGroupMaps: MetadataFlatEntityMaps<'viewFieldGroup'>;
 }): FlatPageLayoutWidget['configuration'] => {
   switch (universalConfiguration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {
       const {
         aggregateFieldMetadataUniversalIdentifier,
         ratioAggregateConfig: universalRatioAggregateConfig,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -76,11 +110,15 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         ...rest,
         aggregateFieldMetadataId,
         ratioAggregateConfig,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
     case WidgetConfigurationType.GAUGE_CHART: {
-      const { aggregateFieldMetadataUniversalIdentifier, ...rest } =
+      const { aggregateFieldMetadataUniversalIdentifier, filter, ...rest } =
         universalConfiguration;
 
       const aggregateFieldMetadataId = resolveFieldMetadataIdOrThrow({
@@ -92,6 +130,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return {
         ...rest,
         aggregateFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -99,6 +141,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         aggregateFieldMetadataUniversalIdentifier,
         groupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -118,6 +161,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         ...rest,
         aggregateFieldMetadataId,
         groupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -126,6 +173,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -156,6 +204,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -164,6 +216,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -194,30 +247,98 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const { viewId: viewUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      const {
+        viewId: viewUniversalIdentifier,
+        newFieldDefaultConfiguration: universalNewFieldDefaultConfiguration,
+        ...rest
+      } = universalConfiguration;
 
-      if (!isDefined(viewUniversalIdentifier)) {
-        return { ...rest, viewId: null };
+      let viewId: string | null = null;
+
+      if (isDefined(viewUniversalIdentifier)) {
+        const flatView = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatViewMaps,
+          universalIdentifier: viewUniversalIdentifier,
+        });
+
+        if (!isDefined(flatView)) {
+          throw new FlatEntityMapsException(
+            `View not found for universal identifier: ${viewUniversalIdentifier}`,
+            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
+
+        viewId = flatView.id;
       }
 
-      const flatView = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: flatViewMaps,
-        universalIdentifier: viewUniversalIdentifier,
-      });
+      let newFieldDefaultConfiguration:
+        | { isVisible: boolean; viewFieldGroupId: string | null }
+        | null
+        | undefined = universalNewFieldDefaultConfiguration;
 
-      if (!isDefined(flatView)) {
+      if (
+        isDefined(universalNewFieldDefaultConfiguration) &&
+        isDefined(universalNewFieldDefaultConfiguration.viewFieldGroupId)
+      ) {
+        const viewFieldGroupUniversalIdentifier =
+          universalNewFieldDefaultConfiguration.viewFieldGroupId;
+
+        const flatViewFieldGroup = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatViewFieldGroupMaps,
+          universalIdentifier: viewFieldGroupUniversalIdentifier,
+        });
+
+        if (!isDefined(flatViewFieldGroup)) {
+          throw new FlatEntityMapsException(
+            `View field group not found for universal identifier: ${viewFieldGroupUniversalIdentifier}`,
+            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
+
+        newFieldDefaultConfiguration = {
+          isVisible: universalNewFieldDefaultConfiguration.isVisible,
+          viewFieldGroupId: flatViewFieldGroup.id,
+        };
+      }
+
+      return { ...rest, viewId, newFieldDefaultConfiguration };
+    }
+
+    case WidgetConfigurationType.FRONT_COMPONENT: {
+      const { frontComponentUniversalIdentifier, configurationType } =
+        universalConfiguration;
+
+      if (!isDefined(frontComponentUniversalIdentifier)) {
         throw new FlatEntityMapsException(
-          `View not found for universal identifier: ${viewUniversalIdentifier}`,
+          `Front component universal identifier is required for FRONT_COMPONENT configuration`,
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
-      return { ...rest, viewId: flatView.id };
+      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatFrontComponentMaps,
+        universalIdentifier: frontComponentUniversalIdentifier,
+      });
+
+      if (!isDefined(flatFrontComponent)) {
+        throw new FlatEntityMapsException(
+          `Front component not found for universal identifier: ${frontComponentUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      return {
+        configurationType,
+        frontComponentId: flatFrontComponent.id,
+      };
     }
 
     case WidgetConfigurationType.VIEW:
@@ -232,7 +353,6 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.WORKFLOW:
     case WidgetConfigurationType.WORKFLOW_VERSION:
     case WidgetConfigurationType.WORKFLOW_RUN:
-    case WidgetConfigurationType.FRONT_COMPONENT:
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
       return universalConfiguration;

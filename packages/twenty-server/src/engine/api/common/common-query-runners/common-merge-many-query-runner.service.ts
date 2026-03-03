@@ -15,6 +15,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -60,9 +64,30 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadata,
     } = queryRunnerContext;
 
+    const restrictedFields =
+      queryRunnerContext.repository.objectRecordsPermissions?.[
+        flatObjectMetadata.id
+      ]?.restrictedFields;
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
+      relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
+      select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
     const recordsToMerge = await this.fetchRecordsToMerge(
       queryRunnerContext,
       args,
+      filteredSelect,
+      filteredRelations,
     );
 
     const priorityRecord = this.validateAndGetPriorityRecord(
@@ -96,8 +121,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -114,10 +139,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       queryRunnerContext,
       priorityRecord.id,
       mergedData,
+      filteredSelect,
+      filteredRelations,
     );
 
     await this.processNestedRelations({
-      args,
+      filteredRelations,
+      filteredSelect,
       queryRunnerContext,
       updatedRecords: [updatedRecord],
     });
@@ -128,10 +156,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   private async fetchRecordsToMerge(
     context: CommonExtendedQueryRunnerContext,
     args: CommonExtendedInput<MergeManyQueryArgs>,
+    filteredSelect: Record<string, unknown>,
+    filteredRelations: Record<string, unknown> | undefined,
   ): Promise<ObjectRecord[]> {
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata: context.flatObjectMetadata,
       flatObjectMetadataMaps: context.flatObjectMetadataMaps,
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
@@ -158,13 +188,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const recordsToMerge = fetchedRecords;
 
-    if (args.dryRun && args.selectedFieldsResult.relations) {
+    if (args.dryRun && filteredRelations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps: context.flatObjectMetadataMaps,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
         parentObjectMetadataItem: context.flatObjectMetadata,
         parentObjectRecords: recordsToMerge,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -172,7 +202,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         authContext: context.authContext,
         workspaceDataSource: context.workspaceDataSource,
         rolePermissionConfig: context.rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 
@@ -312,6 +342,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     queryRunnerContext: CommonExtendedQueryRunnerContext,
     priorityRecordId: string,
     mergedData: Partial<ObjectRecord>,
+    filteredSelect: Record<string, unknown>,
+    filteredRelations: Record<string, unknown> | undefined,
   ): Promise<ObjectRecord> {
     const {
       flatObjectMetadata,
@@ -325,8 +357,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -441,11 +473,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   private async processNestedRelations({
-    args,
+    filteredRelations,
+    filteredSelect,
     queryRunnerContext,
     updatedRecords,
   }: {
-    args: CommonExtendedInput<MergeManyQueryArgs>;
+    filteredRelations: Record<string, unknown> | undefined;
+    filteredSelect: Record<string, unknown>;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     updatedRecords: ObjectRecord[];
   }): Promise<void> {
@@ -458,13 +492,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       rolePermissionConfig,
     } = queryRunnerContext;
 
-    if (args.selectedFieldsResult.relations) {
+    if (filteredRelations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: updatedRecords,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -472,7 +506,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
   }

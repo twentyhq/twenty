@@ -5,6 +5,10 @@ import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -59,9 +63,27 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       args.filter,
     );
 
-    const columnsToReturn = buildColumnsToReturn({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToReturn = buildColumnsToReturn({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -75,13 +97,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const updatedRecords = updatedObjectRecords.generatedMaps as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(filteredRelations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: updatedRecords,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -89,7 +111,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 

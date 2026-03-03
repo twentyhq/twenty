@@ -8,8 +8,7 @@ import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/ge
 import { RelationType } from '~/generated-metadata/graphql';
 
 const getTargetObjectId = (field: FieldMetadataItem): string | undefined =>
-  field.relationTargetObjectMetadataId ??
-  field.relation?.targetObjectMetadata.id;
+  field.relation?.targetObjectMetadata?.id;
 
 const isManyToOneRelationField = (field: FieldMetadataItem): boolean => {
   return (

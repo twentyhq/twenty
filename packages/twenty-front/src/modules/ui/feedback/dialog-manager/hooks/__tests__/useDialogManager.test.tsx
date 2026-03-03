@@ -1,12 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 import { v4 as uuidv4 } from 'uuid';
 
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockedUuid = 'mocked-uuid';
 jest.mock('uuid');
@@ -14,13 +18,13 @@ jest.mock('uuid');
 (uuidv4 as jest.Mock).mockReturnValue(mockedUuid);
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
     <DialogComponentInstanceContext.Provider
       value={{ instanceId: 'dialog-manager' }}
     >
       {children}
     </DialogComponentInstanceContext.Provider>
-  </RecoilRoot>
+  </JotaiProvider>
 );
 
 const renderHookConfig = {
@@ -77,7 +81,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => ({
       dialogManager: useDialogManager(),
-      dialogInternal: useRecoilComponentValue(dialogInternalComponentState),
+      dialogInternal: useAtomComponentStateValue(dialogInternalComponentState),
     }),
     renderHookConfig,
   );
@@ -95,6 +99,10 @@ const expectedReturnFromEnqueue = (
 };
 
 describe('useDialogManager', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   describe('tests for useDialogManager - enqueueDialog', () => {
     it('Should enqueueDialog', () => {
       const result = renderHooks();

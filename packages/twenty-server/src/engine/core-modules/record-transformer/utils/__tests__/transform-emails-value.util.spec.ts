@@ -159,6 +159,30 @@ describe('transformEmailsValue', () => {
     });
   });
 
+  it('should trim whitespace from primaryEmail', () => {
+    const value = {
+      primaryEmail: '  test@example.com  ',
+      additionalEmails: null,
+    };
+
+    const result = transformEmailsValue(value);
+
+    expect(result.primaryEmail).toBe('test@example.com');
+  });
+
+  it('should trim whitespace from additionalEmails', () => {
+    const value = {
+      primaryEmail: 'test@example.com',
+      additionalEmails: ['  user1@example.com  ', ' user2@example.com'],
+    };
+
+    const result = transformEmailsValue(value);
+
+    expect(result.additionalEmails).toBe(
+      '["user1@example.com","user2@example.com"]',
+    );
+  });
+
   it('should handle empty value object', () => {
     const value = {};
 

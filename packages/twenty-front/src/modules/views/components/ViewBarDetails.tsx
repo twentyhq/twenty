@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AdvancedFilterDropdownButton } from '@/views/advanced-filter-chip/components/AdvancedFilterDropdownButton';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
 import { EditableSortChip } from '@/views/editable-chip/components/EditableSortChip';
@@ -36,6 +36,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -46,15 +47,13 @@ export type ViewBarDetailsProps = {
 
 const StyledBar = styled.div`
   align-items: center;
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   min-height: 32px;
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${themeCssVariables.spacing[1]};
+  padding-bottom: ${themeCssVariables.spacing[1]};
   z-index: 4;
 `;
 
@@ -62,20 +61,20 @@ const StyledChipContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   z-index: 1;
 `;
 
 const StyledActionButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFilterContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 
   overflow-x: hidden;
 `;
@@ -84,15 +83,15 @@ const StyledSeparatorContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   display: flex;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSeparator = styled.div`
   align-self: stretch;
-  background: ${({ theme }) => theme.background.quaternary};
+  background: ${themeCssVariables.background.quaternary};
   width: 1px;
 `;
 
@@ -106,26 +105,30 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const isViewBarExpanded = useRecoilComponentValue(
+  const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
+    viewBarId,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
+    viewBarId,
   );
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
+    viewBarId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
+    viewBarId,
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -185,7 +188,7 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const isAnyFieldSearchDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
@@ -198,7 +201,7 @@ export const ViewBarDetails = ({
     !hasFiltersQueryParams;
 
   const shouldShowAnyFieldSearchChip =
-    isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
+    isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||

@@ -10,7 +10,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
@@ -70,7 +70,7 @@ export const SettingsAgentEvalsTab = ({
   const navigate = useNavigate();
 
   const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
-  const setActiveTabId = useSetRecoilComponentState(
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentId,
   );

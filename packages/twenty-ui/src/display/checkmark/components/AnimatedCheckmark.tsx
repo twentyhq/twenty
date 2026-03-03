@@ -1,5 +1,6 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { motion } from 'framer-motion';
+import { ThemeContext } from '@ui/theme';
 
 export type AnimatedCheckmarkProps = React.ComponentProps<
   typeof motion.path
@@ -16,7 +17,7 @@ export const AnimatedCheckmark = ({
   duration = 0.5,
   size = 28,
 }: AnimatedCheckmarkProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

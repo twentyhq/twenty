@@ -12,7 +12,7 @@ export const computeEmptyGqlOperationFilterForLinks = ({
   recordFilter,
   correspondingFieldMetadataItem,
 }: {
-  recordFilter: RecordFilter;
+  recordFilter: Omit<RecordFilter, 'id'>;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name'>;
 }): RecordGqlOperationFilter => {
   const subFieldName = recordFilter.subFieldName;

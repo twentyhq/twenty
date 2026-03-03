@@ -2,16 +2,27 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { renderHook } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+
+const createTestWrapper = () => {
+  const store = createStore();
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <JotaiProvider store={store}>{children}</JotaiProvider>
+  );
+
+  return Wrapper;
+};
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-      const focusStack = useRecoilValue(focusStackState);
-      const currentFocusId = useRecoilValue(currentFocusIdSelector);
+      const focusStack = useAtomStateValue(focusStackState);
+      const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,
@@ -20,7 +31,7 @@ const renderHooks = () => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: createTestWrapper(),
     },
   );
 

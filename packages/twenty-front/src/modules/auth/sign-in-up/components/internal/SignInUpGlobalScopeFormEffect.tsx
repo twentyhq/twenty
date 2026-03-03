@@ -6,11 +6,11 @@ import {
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SignInUpGlobalScopeFormEffect = () => {
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
   const [searchParams, setSearchParams] = useSearchParams();
   const { setAuthTokens } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();

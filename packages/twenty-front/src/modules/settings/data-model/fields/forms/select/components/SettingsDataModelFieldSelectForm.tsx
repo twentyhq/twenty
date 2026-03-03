@@ -28,11 +28,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainer = styled(CardContent)`
-  padding-bottom: ${({ theme }) => theme.spacing(3.5)};
+  padding-bottom: 14px;
 `;
 
 const StyledOptionsLabel = styled.div<{
@@ -166,7 +166,7 @@ export const SettingsDataModelFieldSelectForm = ({
   );
   const isNullable = fieldMetadataItem?.isNullable;
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const [searchParams] = useSearchParams();
 

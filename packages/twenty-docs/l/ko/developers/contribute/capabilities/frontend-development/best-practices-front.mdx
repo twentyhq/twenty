@@ -6,9 +6,9 @@ title: 모범 사례
 
 ## 상태 관리
 
-React와 Recoil은 코드베이스에서 상태 관리를 처리합니다.
+React와 Jotai는 코드베이스에서 상태 관리를 처리합니다.
 
-### `useRecoilState`로 상태 저장하기
+### `useAtomState`로 상태 저장하기
 
 상태를 저장하는 데 필요한 만큼의 atom을 만드는 것이 좋은 습관입니다.
 
@@ -17,13 +17,16 @@ React와 Recoil은 코드베이스에서 상태 관리를 처리합니다.
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -40,7 +43,7 @@ export const MyComponent = () => {
 
 상태 저장에 `useRef`를 사용하지 않도록 주의하십시오.
 
-If you want to store state, you should use `useState` or `useRecoilState`.
+If you want to store state, you should use `useState` or `useAtomState`.
 
 일부 리렌더링을 방지하기 위해 `useRef`가 필요하다고 느낄 경우 [리렌더링 관리 방법](#managing-re-renders)을 참조하십시오.
 
@@ -80,8 +83,8 @@ Apollo 훅을 사용하여 데이터 페칭 로직에 동일한 규칙을 적용
 // ❌ Bad, will cause re-renders even if data is not changing,
 //    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -93,9 +96,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -103,14 +104,14 @@ export const App = () => (
 // ✅ Good, will not cause re-renders if data is not changing,
 //   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -122,16 +123,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Recoil 가족 상태 및 Recoil 가족 선택자 사용하기
+### Jotai 가족 상태 및 Jotai 가족 선택자 사용하기
 
-Recoil 가족 상태와 선택자는 리렌더링을 피하기 위한 훌륭한 방법입니다.
+Jotai 가족 상태와 선택자는 리렌더링을 피하기 위한 훌륭한 방법입니다.
 
 항목 목록을 저장해야 할 때 유용합니다.
 

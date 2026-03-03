@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 
 export const FIND_MANY_CORE_VIEWS = gql`
   ${VIEW_FRAGMENT}
-  query FindManyCoreViews($objectMetadataId: String) {
-    getCoreViews(objectMetadataId: $objectMetadataId) {
+  query FindManyCoreViews($objectMetadataId: String, $viewTypes: [ViewType!]) {
+    getCoreViews(objectMetadataId: $objectMetadataId, viewTypes: $viewTypes) {
       ...ViewFragment
     }
   }

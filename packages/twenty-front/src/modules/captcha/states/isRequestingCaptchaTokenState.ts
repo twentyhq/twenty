@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const isRequestingCaptchaTokenState = createState<boolean>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const isRequestingCaptchaTokenState = createAtomState<boolean>({
   key: 'isRequestingCaptchaTokenState',
   defaultValue: false,
 });

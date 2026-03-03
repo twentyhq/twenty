@@ -14,7 +14,7 @@ export const computeGqlOperationFilterForEmails = ({
   correspondingFieldMetadataItem,
   subFieldName,
 }: {
-  recordFilter: RecordFilter;
+  recordFilter: Omit<RecordFilter, 'id'>;
   correspondingFieldMetadataItem: Pick<
     PartialFieldMetadataItem,
     'name' | 'type'

@@ -2,7 +2,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { useRecoilState } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
   IconArrowDown,
   IconArrowUp,
@@ -24,8 +25,15 @@ export const SortableTableHeader = ({
   initialSort?: TableSortValue;
   Icon?: IconComponent;
 }) => {
-  const [sortedFieldByTable, setSortedFieldByTable] = useRecoilState(
-    sortedFieldByTableFamilyState({ tableId }),
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    {
+      tableId,
+    },
+  );
+  const setSortedFieldByTable = useSetAtomFamilyState(
+    sortedFieldByTableFamilyState,
+    { tableId },
   );
 
   const sortValue = sortedFieldByTable ?? initialSort;

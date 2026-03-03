@@ -23,6 +23,10 @@ import {
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -65,9 +69,27 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       args.filter ?? ({} as ObjectRecordFilter),
     );
 
-    const columnsToSelect = buildColumnsToSelect({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToSelect = buildColumnsToSelect({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -91,13 +113,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(filteredRelations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -105,7 +127,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 

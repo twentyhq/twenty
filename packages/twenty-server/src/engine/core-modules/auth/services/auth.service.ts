@@ -11,10 +11,9 @@ import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -30,12 +29,13 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
-import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
+import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
+import { type AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
+import { type UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
-import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';
-import { type WorkspaceInviteHashValidOutput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
+import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
+import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
@@ -94,6 +94,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly auditService: AuditService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -123,6 +124,7 @@ export class AuthService {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         workspace,
+        invitation.context?.roleId,
       );
 
       return;
@@ -227,6 +229,15 @@ export class AuthService {
     }
 
     if (userData.type === 'existingUser') {
+      if (!userData.existingUser.passwordHash) {
+        throw new AuthException(
+          'Incorrect login method',
+          AuthExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`User was not created with email/password`,
+          },
+        );
+      }
       await this.signInUpService.validatePassword({
         password: authParams.password,
         passwordHash: userData.existingUser.passwordHash,
@@ -410,7 +421,7 @@ export class AuthService {
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userWorkspaceId: impersonatorUserWorkspaceId,
+      userId: _impersonatorUserId,
     });
 
     analytics.insertWorkspaceEvent('Monitoring', {
@@ -458,7 +469,7 @@ export class AuthService {
     ).flat(2).length;
   }
 
-  async checkUserExists(email: string): Promise<CheckUserExistOutput> {
+  async checkUserExists(email: string): Promise<CheckUserExistDTO> {
     const user = await this.userService.findUserByEmail(email);
 
     const isUserExist = isDefined(user);
@@ -473,7 +484,7 @@ export class AuthService {
 
   async checkWorkspaceInviteHashIsValid(
     inviteHash: string,
-  ): Promise<WorkspaceInviteHashValidOutput> {
+  ): Promise<WorkspaceInviteHashValidDTO> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -485,93 +496,111 @@ export class AuthService {
     authorizeAppInput: AuthorizeAppInput,
     user: UserEntity,
     workspace: WorkspaceEntity,
-  ): Promise<AuthorizeAppOutput> {
-    // TODO: replace with db call to - third party app table
-    const apps = [
-      {
-        id: 'chrome',
-        name: 'Chrome Extension',
-        redirectUrl:
-          this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.DEVELOPMENT
-            ? authorizeAppInput.redirectUrl
-            : `https://${this.twentyConfigService.get(
-                'CHROME_EXTENSION_ID',
-              )}.chromiumapp.org/`,
-      },
-    ];
-
+  ): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const client = apps.find((app) => app.id === clientId);
+    const applicationRegistration =
+      await this.applicationRegistrationService.findOneByClientId(clientId);
 
-    if (!client) {
+    if (!applicationRegistration) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
 
-    if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
+    if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
-        `redirectUrl not found for '${clientId}'`,
+        `redirectUrl not provided for '${clientId}'`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    if (client.redirectUrl !== authorizeAppInput.redirectUrl) {
+    if (
+      !applicationRegistration.oAuthRedirectUris.includes(
+        authorizeAppInput.redirectUrl,
+      )
+    ) {
       throw new AuthException(
         `redirectUrl mismatch for '${clientId}'`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
+    // Validate requested scopes are a subset of the registration's allowed scopes
+    const parsedScopes = authorizeAppInput.scope
+      ? authorizeAppInput.scope.split(' ').filter(Boolean)
+      : [];
+
+    const requestedScopes =
+      parsedScopes.length > 0
+        ? parsedScopes
+        : applicationRegistration.oAuthScopes;
+
+    const invalidScopes = requestedScopes.filter(
+      (scope) => !applicationRegistration.oAuthScopes.includes(scope),
+    );
+
+    if (invalidScopes.length > 0) {
+      throw new AuthException(
+        `Invalid scopes: ${invalidScopes.join(', ')}`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const redirectUriValidation = validateRedirectUri(
+      authorizeAppInput.redirectUrl,
+    );
+
+    if (!redirectUriValidation.valid) {
+      throw new AuthException(
+        redirectUriValidation.reason,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const authorizationCode = crypto.randomBytes(42).toString('hex');
+    const hashedAuthorizationCode = crypto
+      .createHash('sha256')
+      .update(authorizationCode)
+      .digest('hex');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
 
-    if (codeChallenge) {
-      const tokens = this.appTokenRepository.create([
-        {
-          value: codeChallenge,
-          type: AppTokenType.CodeChallenge,
-          userId: user.id,
-          workspaceId: workspace.id,
-          expiresAt,
-        },
-        {
-          value: authorizationCode,
-          type: AppTokenType.AuthorizationCode,
-          userId: user.id,
-          workspaceId: workspace.id,
-          expiresAt,
-        },
-      ]);
+    const authCodeContext = {
+      redirectUri: authorizeAppInput.redirectUrl,
+      clientId: applicationRegistration.oAuthClientId,
+      scope: requestedScopes.join(' '),
+      ...(codeChallenge ? { codeChallenge } : {}),
+    };
 
-      await this.appTokenRepository.save(tokens);
-    } else {
-      const token = this.appTokenRepository.create({
-        value: authorizationCode,
-        type: AppTokenType.AuthorizationCode,
-        userId: user.id,
-        workspaceId: workspace.id,
-        expiresAt,
-      });
+    const token = this.appTokenRepository.create({
+      value: hashedAuthorizationCode,
+      type: AppTokenType.AuthorizationCode,
+      userId: user.id,
+      workspaceId: workspace.id,
+      expiresAt,
+      context: authCodeContext,
+    });
 
-      await this.appTokenRepository.save(token);
+    await this.appTokenRepository.save(token);
+
+    redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+
+    if (authorizeAppInput.state) {
+      redirectUriValidation.parsed.searchParams.set(
+        'state',
+        authorizeAppInput.state,
+      );
     }
 
-    const redirectUrl = `${
-      client.redirectUrl ? client.redirectUrl : authorizeAppInput.redirectUrl
-    }?authorizationCode=${authorizationCode}`;
-
-    return { redirectUrl };
+    return { redirectUrl: redirectUriValidation.parsed.toString() };
   }
 
   async updatePassword(
     userId: string,
     newPassword: string,
-  ): Promise<UpdatePasswordOutput> {
+  ): Promise<UpdatePasswordDTO> {
     if (!userId) {
       throw new AuthException(
         'User ID is required',
@@ -617,6 +646,18 @@ export class AuthService {
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+
+    // Invalidate all existing refresh tokens for this user across all workspaces
+    await this.appTokenRepository.update(
+      {
+        userId,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      {
+        revokedAt: new Date(),
+      },
+    );
 
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,

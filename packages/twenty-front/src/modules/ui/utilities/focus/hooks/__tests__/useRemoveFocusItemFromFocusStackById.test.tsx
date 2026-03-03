@@ -3,9 +3,18 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
 
 const renderHooks = () => {
   const { result } = renderHook(
@@ -13,8 +22,8 @@ const renderHooks = () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
       const { removeFocusItemFromFocusStackById } =
         useRemoveFocusItemFromFocusStackById();
-      const focusStack = useRecoilValue(focusStackState);
-      const currentFocusId = useRecoilValue(currentFocusIdSelector);
+      const focusStack = useAtomStateValue(focusStackState);
+      const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,
@@ -24,7 +33,7 @@ const renderHooks = () => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
 
@@ -56,6 +65,10 @@ const secondFocusItem = {
 };
 
 describe('useRemoveFocusItemFromFocusStackById', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   it('should remove focus item from the stack', async () => {
     const { result } = renderHooks();
 

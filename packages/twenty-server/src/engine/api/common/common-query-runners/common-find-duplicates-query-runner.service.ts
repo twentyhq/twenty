@@ -26,6 +26,10 @@ import {
   FindDuplicatesQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
+import {
+  filterRestrictedFieldsFromRelations,
+  filterRestrictedFieldsFromSelect,
+} from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -61,9 +65,27 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
-    const columnsToSelect = buildColumnsToSelect({
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredSelect = filterRestrictedFieldsFromSelect({
       select: args.selectedFieldsResult.select,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const filteredRelations = filterRestrictedFieldsFromRelations({
       relations: args.selectedFieldsResult.relations,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const columnsToSelect = buildColumnsToSelect({
+      select: filteredSelect,
+      relations: filteredRelations ?? {},
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -148,7 +170,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         }),
       );
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(filteredRelations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -157,7 +179,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           (item) => item.records,
         ),
         parentObjectRecordsAggregatedValues: {},
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: filteredRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -165,7 +187,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: filteredSelect,
       });
     }
 

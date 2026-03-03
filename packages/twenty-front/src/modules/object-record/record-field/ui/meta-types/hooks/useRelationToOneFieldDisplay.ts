@@ -12,7 +12,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { getJoinColumnNameOrThrow } from '@/object-record/record-field/ui/utils/junction/getJoinColumnNameOrThrow';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationToOneFieldDisplay = () => {
@@ -36,7 +36,7 @@ export const useRelationToOneFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValueV2<ObjectRecord | undefined>(
+  const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
@@ -46,7 +46,7 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition.metadata.settings,
   );
 
-  const foreignKeyFieldValue = useRecordFieldValueV2<string | null | undefined>(
+  const foreignKeyFieldValue = useRecordFieldValue<string | null | undefined>(
     recordId,
     joinColumnName,
     { type: FieldMetadataType.UUID, metadata: { fieldName: joinColumnName } },

@@ -1,6 +1,5 @@
-import { useRecoilValue } from 'recoil';
-
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,7 +11,7 @@ type useObjectPermissionsReturnType = {
 };
 
 export const useObjectPermissions = (): useObjectPermissionsReturnType => {
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const objectsPermissions = currentUserWorkspace?.objectsPermissions;
 
   if (!isDefined(objectsPermissions)) {

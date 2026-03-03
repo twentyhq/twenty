@@ -10,6 +10,7 @@ export const defineEntitiesTests = (appPath: string): void => {
       const sortedFiles = files.map((f) => f.toString()).sort();
 
       expect(sortedFiles).toEqual([
+        'api-client',
         'manifest.json',
         'package.json',
         'public',
@@ -25,6 +26,10 @@ export const defineEntitiesTests = (appPath: string): void => {
         'src/logic-functions',
         'src/logic-functions/greeting.function.mjs',
         'src/logic-functions/greeting.function.mjs.map',
+        'src/logic-functions/lookup-recipient.function.mjs',
+        'src/logic-functions/lookup-recipient.function.mjs.map',
+        'src/logic-functions/on-post-card-created.function.mjs',
+        'src/logic-functions/on-post-card-created.function.mjs.map',
         'src/logic-functions/test-function-2.function.mjs',
         'src/logic-functions/test-function-2.function.mjs.map',
         'src/logic-functions/test-function.function.mjs',

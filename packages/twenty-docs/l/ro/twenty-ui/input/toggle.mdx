@@ -8,29 +8,35 @@ image: /images/user-guide/table-views/table.png
 </Frame>
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { Toggle } from "twenty-ui/input";
+<Tab title="Utilizare">
 
-    export const MyComponent = () => {
-      return (
-        <Toggle
-        value = {true}
-        onChange = {()=>console.log('On Change event')}
-        color="green"
-        toggleSize = "medium"
-        />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { Toggle } from "twenty-ui/input";
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip     | Descriere                                                                                               | Implicit         |
-    | ----------- | ------- | ------------------------------------------------------------------------------------------------------- | ---------------- |
-    | valoare     | boolean | Starea actuală a comutatorului                                                                          | `fals`           |
-    | onChange    | funcție | Funcție de callback declanșată când se schimbă starea comutatorului                                     |                  |
-    | culoare     | șir     | Culoarea comutatorului când este \                                                                      | culoare albastră |
-    | toggleSize  | șir     | Dimensiunea comutatorului, afectând atât înălțimea cât și greutatea. Are două opțiuni: `mic` și `mediu` | mediu            |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip     | Descriere                                                                                               | Implicit         |
+| ----------- | ------- | ------------------------------------------------------------------------------------------------------- | ---------------- |
+| valoare     | boolean | Starea actuală a comutatorului                                                                          | `fals`           |
+| onChange    | funcție | Funcție de callback declanșată când se schimbă starea comutatorului                                     |                  |
+| culoare     | șir     | Culoarea comutatorului când este \                                                                      | culoare albastră |
+| toggleSize  | șir     | Dimensiunea comutatorului, afectând atât înălțimea cât și greutatea. Are două opțiuni: `mic` și `mediu` | mediu            |
+
+
+
+</Tab>
 </Tabs>

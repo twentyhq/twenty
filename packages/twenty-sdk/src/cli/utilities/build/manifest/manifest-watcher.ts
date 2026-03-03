@@ -1,7 +1,7 @@
 import path, { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { type EventName } from 'chokidar/handler.js';
-import { ASSETS_DIR } from 'twenty-shared/application';
+import { ASSETS_DIR, GENERATED_DIR } from 'twenty-shared/application';
 
 export type ManifestWatcherOptions = {
   appPath: string;
@@ -10,7 +10,7 @@ export type ManifestWatcherOptions = {
 
 const IGNORED_DIRECTORY_NAMES = new Set([
   'node_modules',
-  'generated',
+  GENERATED_DIR,
   'dist',
   '.twenty',
 ]);
@@ -50,7 +50,7 @@ export class ManifestWatcher {
     });
 
     this.watcher.on('all', (event, filePath) => {
-      if (event === 'addDir') {
+      if (event === 'addDir' || event === 'unlinkDir') {
         return;
       }
 

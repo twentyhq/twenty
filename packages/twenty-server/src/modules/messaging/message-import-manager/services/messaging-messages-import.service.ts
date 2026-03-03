@@ -124,6 +124,25 @@ export class MessagingMessagesImportService {
           messageChannel,
         );
 
+        // Map external folder IDs to internal folder IDs
+        const messageFolders = messageChannel.messageFolders ?? [];
+        const foldersWithExternalId = messageFolders.filter(
+          (folder): folder is typeof folder & { externalId: string } =>
+            isDefined(folder.externalId),
+        );
+
+        const folderExternalToInternalMap = new Map<string, string>(
+          foldersWithExternalId.map((folder) => [folder.externalId, folder.id]),
+        );
+
+        for (const message of allMessages) {
+          const externalFolderIds = message.messageFolderExternalIds ?? [];
+
+          message.messageFolderIds = externalFolderIds
+            .map((externalId) => folderExternalToInternalMap.get(externalId))
+            .filter(isDefined);
+        }
+
         const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
           connectedAccountWithFreshTokens.accountOwnerId,
           workspaceId,

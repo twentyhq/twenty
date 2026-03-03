@@ -43,6 +43,7 @@ import { isGroupByRelationField } from 'src/engine/api/common/common-query-runne
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
+import { filterRestrictedFieldsFromAggregate } from 'src/engine/api/common/common-select-fields/utils/filter-restricted-fields-from-select.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -123,8 +124,19 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
 
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields;
+
+    const filteredAggregate = filterRestrictedFieldsFromAggregate({
+      aggregate: args.selectedFieldsResult.aggregate,
+      restrictedFields,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: filteredAggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });

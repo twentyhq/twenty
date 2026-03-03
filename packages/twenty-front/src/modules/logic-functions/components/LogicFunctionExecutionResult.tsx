@@ -31,8 +31,8 @@ export const LogicFunctionExecutionResult = ({
   const status: ExecutionStatus = {
     isSuccess,
     isError,
-    successMessage: isSuccess ? t`200 OK - ${duration}ms` : undefined,
-    errorMessage: isError ? t`500 Error - ${duration}ms` : undefined,
+    successMessage: isSuccess ? t`200 OK - ${duration ?? 0}ms` : undefined,
+    errorMessage: isError ? t`500 Error - ${duration ?? 0}ms` : undefined,
   };
 
   return (

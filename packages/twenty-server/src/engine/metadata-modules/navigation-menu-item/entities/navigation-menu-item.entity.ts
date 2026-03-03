@@ -87,6 +87,9 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'text' })
   icon: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  color: string | null;
+
   @ManyToOne(() => NavigationMenuItemEntity, {
     onDelete: 'CASCADE',
     nullable: true,
@@ -97,7 +100,7 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'uuid' })
   folderId: string | null;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'double precision' })
   position: number;
 
   @CreateDateColumn({ type: 'timestamptz' })

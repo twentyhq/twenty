@@ -8,7 +8,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 
 export const fromUpdateRoleInputToFlatRoleToUpdateOrThrow = ({
   flatRoleMaps,

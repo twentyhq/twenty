@@ -1,14 +1,12 @@
 import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type AdvancedFilterCommandMenuRecordFilterOperandSelectProps = {
@@ -19,8 +17,7 @@ export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterCommandMenuRecordFilterOperandSelectProps) => {
   const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
@@ -32,17 +29,10 @@ export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
 
   const filterType = filter?.type;
 
-  const fieldMetadataItem = isDefined(filter?.fieldMetadataId)
-    ? objectMetadataItems
-        .flatMap((item) => item.fields)
-        .find((field) => field.id === filter.fieldMetadataId)
-    : undefined;
-
   const operandsForFilterType = isDefined(filterType)
     ? getRecordFilterOperands({
         filterType,
         subFieldName: filter?.subFieldName,
-        relationType: fieldMetadataItem?.relation?.type,
       })
     : [];
 

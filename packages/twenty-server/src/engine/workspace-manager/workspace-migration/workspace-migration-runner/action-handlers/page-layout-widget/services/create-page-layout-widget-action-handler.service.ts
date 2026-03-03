@@ -42,7 +42,9 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
       fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
         universalConfiguration: action.flatEntity.universalConfiguration,
         flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatFrontComponentMaps: allFlatEntityMaps.flatFrontComponentMaps,
         flatViewMaps: allFlatEntityMaps.flatViewMaps,
+        flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
       });
 
     const emptyUniversalForeignKeyAggregators =

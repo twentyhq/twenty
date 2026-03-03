@@ -1,7 +1,8 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 
 export const useStartPageLayoutDragSelection = (
@@ -12,18 +13,16 @@ export const useStartPageLayoutDragSelection = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
+  const pageLayoutSelectedCellsState = useAtomComponentStateCallbackState(
     pageLayoutSelectedCellsComponentState,
     pageLayoutId,
   );
 
-  const startPageLayoutDragSelection = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(pageLayoutSelectedCellsState, new Set());
-      },
-    [pageLayoutSelectedCellsState],
-  );
+  const store = useStore();
+
+  const startPageLayoutDragSelection = useCallback(() => {
+    store.set(pageLayoutSelectedCellsState, new Set());
+  }, [pageLayoutSelectedCellsState, store]);
 
   return { startPageLayoutDragSelection };
 };

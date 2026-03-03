@@ -1,5 +1,10 @@
+import crypto from 'crypto';
 import { relative } from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import {
+  type Manifest,
+  OUTPUT_DIR,
+  API_CLIENT_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
@@ -88,5 +93,30 @@ export const manifestUpdateChecksums = ({
       }
     }
   }
+
+  const apiClientChecksums: string[] = [];
+
+  for (const [builtPath, { fileFolder }] of builtFileInfos.entries()) {
+    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
+
+    if (
+      fileFolder === FileFolder.Dependencies &&
+      rootBuiltPath.startsWith(`${API_CLIENT_DIR}/`)
+    ) {
+      const entry = builtFileInfos.get(builtPath);
+
+      if (entry) {
+        apiClientChecksums.push(entry.checksum);
+      }
+    }
+  }
+
+  if (apiClientChecksums.length > 0) {
+    result.application.apiClientChecksum = crypto
+      .createHash('md5')
+      .update(apiClientChecksums.sort().join(''))
+      .digest('hex');
+  }
+
   return result;
 };

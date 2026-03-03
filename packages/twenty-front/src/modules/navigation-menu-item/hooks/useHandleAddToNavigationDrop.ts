@@ -1,6 +1,6 @@
 import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
@@ -13,47 +13,50 @@ import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
+  const store = useStore();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useRecoilValueV2(
-    navigationMenuItemsDraftStateV2,
+  const navigationMenuItemsDraft = useAtomStateValue(
+    navigationMenuItemsDraftState,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
+    selectedNavigationMenuItemInEditModeState,
   );
-  const setIsNavigationMenuInEditMode = useSetRecoilStateV2(
-    isNavigationMenuInEditModeStateV2,
+  const setIsNavigationMenuInEditMode = useSetAtomState(
+    isNavigationMenuInEditModeState,
   );
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
-    openNavigationMenuItemFolderIdsStateV2,
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
+    openNavigationMenuItemFolderIdsState,
   );
 
-  const handleAddToNavigationDrop = useRecoilCallback(
-    () => (result: DropResult, _provided: ResponderProvided) => {
+  const handleAddToNavigationDrop = useCallback(
+    (result: DropResult, _provided: ResponderProvided) => {
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
@@ -64,8 +67,7 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        jotaiStore.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ??
-        null;
+        store.get(addToNavPayloadRegistryState.atom).get(draggableId) ?? null;
       if (!payload) {
         return;
       }
@@ -128,15 +130,27 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
+          const views = coreViews.map(convertCoreViewToView);
+          const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
+            currentDraft,
+            views,
+          );
+          if (objectMetadataIdsInWorkspace.has(payload.objectMetadataId)) {
+            return;
+          }
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) => item.id === payload.objectMetadataId,
+          );
           const newItemId = addObjectToDraft(
             payload.objectMetadataId,
             payload.defaultViewId,
             currentDraft,
             folderId,
             index,
-          );
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) => item.id === payload.objectMetadataId,
+            payload.iconColor ??
+              (objectMetadataItem
+                ? getStandardObjectIconColor(objectMetadataItem.nameSingular)
+                : undefined),
           );
           openEditForNewNavItem(newItemId, {
             pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
@@ -147,14 +161,22 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.VIEW: {
+          const views = coreViews.map(convertCoreViewToView);
+          const view = views.find((v) => v.id === payload.viewId);
+          const viewObjectMetadataItem = view
+            ? objectMetadataItems.find(
+                (item) => item.id === view.objectMetadataId,
+              )
+            : undefined;
           const newItemId = addViewToDraft(
             payload.viewId,
             currentDraft,
             folderId,
             index,
+            viewObjectMetadataItem
+              ? getStandardObjectIconColor(viewObjectMetadataItem.nameSingular)
+              : undefined,
           );
-          const views = coreViews.map(convertCoreViewToView);
-          const view = views.find((v) => v.id === payload.viewId);
           openEditForNewNavItem(newItemId, {
             pageTitle: view?.name ?? payload.label,
             pageIcon: view ? getIcon(view.icon) : IconFolder,
@@ -203,6 +225,7 @@ export const useHandleAddToNavigationDrop = () => {
       setIsNavigationMenuInEditMode,
       setSelectedNavigationMenuItemInEditMode,
       workspaceNavigationMenuItems,
+      store,
     ],
   );
 

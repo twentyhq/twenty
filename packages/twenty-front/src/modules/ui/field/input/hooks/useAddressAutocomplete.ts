@@ -47,22 +47,28 @@ export const useAddressAutocomplete = (
       country?: string,
       isFieldCity?: boolean,
     ) => {
-      const placeAutocompleteData = await getPlaceAutocompleteData(
-        address,
-        token,
-        country,
-        isFieldCity,
-      );
+      try {
+        const placeAutocompleteData = await getPlaceAutocompleteData(
+          address,
+          token,
+          country,
+          isFieldCity,
+        );
 
-      const newData = placeAutocompleteData?.map((data) => ({
-        text: data.text,
-        placeId: data.placeId,
-      }));
+        const newData = placeAutocompleteData?.map((data) => ({
+          text: data.text,
+          placeId: data.placeId,
+        }));
 
-      if (isDefined(newData) && newData?.length > 0) {
-        openDropdownOfAutocomplete();
-        setPlaceAutocompleteData(newData);
-      } else {
+        if (isDefined(newData) && newData?.length > 0) {
+          openDropdownOfAutocomplete();
+          setPlaceAutocompleteData(newData);
+        } else {
+          closeDropdownOfAutocomplete();
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Address autocomplete query failed:', error);
         closeDropdownOfAutocomplete();
       }
     },

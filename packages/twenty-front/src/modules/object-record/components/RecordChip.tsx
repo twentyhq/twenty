@@ -2,16 +2,16 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AvatarChip,
+  AvatarOrIcon,
   Chip,
   type ChipSize,
   ChipVariant,
@@ -55,8 +55,8 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(
-    recordIndexOpenRecordInStateV2,
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
   );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
@@ -91,7 +91,7 @@ export const RecordChip = ({
         variant={ChipVariant.Transparent}
         leftComponent={
           isIconHidden ? null : (
-            <AvatarChip
+            <AvatarOrIcon
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
               avatarType={recordChipData.avatarType}
@@ -112,7 +112,7 @@ export const RecordChip = ({
       isLabelHidden={isLabelHidden}
       leftComponent={
         isIconHidden ? null : (
-          <AvatarChip
+          <AvatarOrIcon
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
             avatarType={recordChipData.avatarType}

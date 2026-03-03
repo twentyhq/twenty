@@ -6,8 +6,9 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -15,43 +16,43 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const isPageLayoutInEditModeState = useRecoilComponentCallbackState(
+  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
 
   const contextStoreIsFullTabWidgetInEditModeState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       contextStoreIsPageInEditModeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
-  const setIsPageLayoutInEditMode = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (value: boolean) => {
-        set(isPageLayoutInEditModeState, value);
+  const store = useStore();
 
-        set(contextStoreIsFullTabWidgetInEditModeState, value);
+  const setIsPageLayoutInEditMode = useCallback(
+    (value: boolean) => {
+      store.set(isPageLayoutInEditModeState, value);
 
-        set(currentPageLayoutIdState, value ? pageLayoutId : null);
+      store.set(contextStoreIsFullTabWidgetInEditModeState, value);
 
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+      store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
 
-        if (isCommandMenuOpened) {
-          set(
-            contextStoreIsPageInEditModeComponentState.atomFamily({
-              instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-            }),
-            value,
-          );
-        }
-      },
+      const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
+
+      if (isCommandMenuOpened) {
+        store.set(
+          contextStoreIsPageInEditModeComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+          value,
+        );
+      }
+    },
     [
       isPageLayoutInEditModeState,
       contextStoreIsFullTabWidgetInEditModeState,
       pageLayoutId,
+      store,
     ],
   );
 

@@ -1,10 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 // The search API's ObjectRecordFilterInput only supports generic fields
@@ -114,21 +115,21 @@ describe('RecordDetailRelationSectionDropdownToMany - excludeAttachedFilter', ()
     });
   });
 
-  describe('Recoil state integration', () => {
+  describe('Jotai state integration', () => {
     it('should store the id-based filter in multipleRecordPickerAdditionalFilter state', () => {
       const expectedFilter = buildIdFilter(['policy-1', 'policy-2']);
 
       const Wrapper = ({ children }: { children: ReactNode }) => (
-        <RecoilRoot>{children}</RecoilRoot>
+        <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
       );
 
       const { result } = renderHook(
         () => {
-          const setAdditionalFilter = useSetRecoilComponentState(
+          const setAdditionalFilter = useSetAtomComponentState(
             multipleRecordPickerAdditionalFilterComponentState,
             DROPDOWN_ID,
           );
-          const additionalFilter = useRecoilComponentValue(
+          const additionalFilter = useAtomComponentStateValue(
             multipleRecordPickerAdditionalFilterComponentState,
             DROPDOWN_ID,
           );
@@ -153,16 +154,16 @@ describe('RecordDetailRelationSectionDropdownToMany - excludeAttachedFilter', ()
       const filter = buildIdFilter(['policy-1']);
 
       const Wrapper = ({ children }: { children: ReactNode }) => (
-        <RecoilRoot>{children}</RecoilRoot>
+        <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
       );
 
       const { result } = renderHook(
         () => {
-          const setAdditionalFilter = useSetRecoilComponentState(
+          const setAdditionalFilter = useSetAtomComponentState(
             multipleRecordPickerAdditionalFilterComponentState,
             DROPDOWN_ID,
           );
-          const additionalFilter = useRecoilComponentValue(
+          const additionalFilter = useAtomComponentStateValue(
             multipleRecordPickerAdditionalFilterComponentState,
             DROPDOWN_ID,
           );

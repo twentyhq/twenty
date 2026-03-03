@@ -3,20 +3,20 @@ import { CommandMenuRecordPageLayoutInfo } from '@/command-menu/components/Comma
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutInfo = () => {
-  const objectMetadataId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  if (!isDefined(objectMetadataId)) {
+  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
     throw new Error('Object metadata ID is not defined');
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
+    objectId: contextStoreCurrentObjectMetadataItemId,
   });
 
   const isDashboardContext =

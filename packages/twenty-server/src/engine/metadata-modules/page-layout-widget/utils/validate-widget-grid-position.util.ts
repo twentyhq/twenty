@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { type GridPosition } from 'twenty-shared/types';
 
 import { WIDGET_GRID_MAX_COLUMNS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-columns.constant';
 import { WIDGET_GRID_MAX_ROWS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-rows.constant';
@@ -8,13 +9,6 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-
-type GridPosition = {
-  row: number;
-  column: number;
-  rowSpan: number;
-  columnSpan: number;
-};
 
 // TODO: remove in favor of validatePageLayoutWidgetGridPosition once gridPosition is deprecated
 export const validateWidgetGridPosition = (

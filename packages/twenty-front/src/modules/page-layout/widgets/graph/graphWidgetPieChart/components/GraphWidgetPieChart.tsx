@@ -13,7 +13,7 @@ import { getPieChartFormattedValue } from '@/page-layout/widgets/graph/graphWidg
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -91,7 +91,7 @@ export const GraphWidgetPieChart = ({
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
   const containerRef = useRef<HTMLDivElement>(null);
-  const setActivePieTooltip = useSetRecoilComponentState(
+  const setGraphWidgetPieTooltip = useSetAtomComponentState(
     graphWidgetPieTooltipComponentState,
   );
 
@@ -117,18 +117,18 @@ export const GraphWidgetPieChart = ({
       if (!isDefined(containerRef.current)) return;
 
       const containerRect = containerRef.current.getBoundingClientRect();
-      setActivePieTooltip({
+      setGraphWidgetPieTooltip({
         datum,
         offsetLeft: event.clientX - containerRect.left,
         offsetTop: event.clientY - containerRect.top,
       });
     },
-    [setActivePieTooltip],
+    [setGraphWidgetPieTooltip],
   );
 
   const handleSliceLeave = useCallback(() => {
-    setActivePieTooltip(null);
-  }, [setActivePieTooltip]);
+    setGraphWidgetPieTooltip(null);
+  }, [setGraphWidgetPieTooltip]);
 
   const hasNoData = useMemo(
     () =>

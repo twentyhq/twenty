@@ -5,8 +5,7 @@ import {
   type OnDragUpdateResponder,
   type ResponderProvided,
 } from '@hello-pangea/dnd';
-import { type ReactNode, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { type ReactNode, useCallback, useState } from 'react';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
@@ -20,11 +19,11 @@ import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHa
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,8 +34,8 @@ type PageDragDropProviderProps = {
 export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const [isDragging, setIsDragging] = useState(false);
   const [sourceDroppableId, setSourceDroppableId] = useState<string | null>(
@@ -53,6 +52,7 @@ export const PageDragDropProvider = ({
     setAddToNavigationFallbackDestination,
   ] = useState<{ droppableId: string; index: number } | null>(null);
 
+  const store = useStore();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
   const { handleNavigationMenuItemDragAndDrop } =
@@ -79,40 +79,39 @@ export const PageDragDropProvider = ({
     }
   };
 
-  const handleDragUpdate = useRecoilCallback(
-    () =>
-      ((update: Parameters<OnDragUpdateResponder>[0]) => {
-        const { source, destination } = update;
-        if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
-          return;
-        }
-        if (
-          destination !== null &&
-          isWorkspaceDroppableId(destination.droppableId)
-        ) {
-          setAddToNavigationFallbackDestination(destination);
-          const dropTargetId = getDropTargetIdFromDestination(destination);
-          setActiveDropTargetId(dropTargetId);
+  const handleDragUpdate = useCallback(
+    ((update: Parameters<OnDragUpdateResponder>[0]) => {
+      const { source, destination } = update;
+      if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+        return;
+      }
+      if (
+        destination !== null &&
+        isWorkspaceDroppableId(destination.droppableId)
+      ) {
+        setAddToNavigationFallbackDestination(destination);
+        const dropTargetId = getDropTargetIdFromDestination(destination);
+        setActiveDropTargetId(dropTargetId);
 
-          const payload =
-            jotaiStore
-              .get(addToNavPayloadRegistryStateV2.atom)
-              .get(update.draggableId) ?? null;
-          const folderId = validateAndExtractWorkspaceFolderId(
-            destination.droppableId,
-          );
-          const isFolderOverFolder =
-            payload?.type === 'folder' && folderId !== null;
-          setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
-        } else {
-          setForbiddenDropTargetId(null);
-          const fallback = addToNavigationFallbackDestination;
-          setActiveDropTargetId(
-            fallback ? getDropTargetIdFromDestination(fallback) : null,
-          );
-        }
-      }) as OnDragUpdateResponder,
-    [addToNavigationFallbackDestination],
+        const payload =
+          store
+            .get(addToNavPayloadRegistryState.atom)
+            .get(update.draggableId) ?? null;
+        const folderId = validateAndExtractWorkspaceFolderId(
+          destination.droppableId,
+        );
+        const isFolderOverFolder =
+          payload?.type === 'folder' && folderId !== null;
+        setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
+      } else {
+        setForbiddenDropTargetId(null);
+        const fallback = addToNavigationFallbackDestination;
+        setActiveDropTargetId(
+          fallback ? getDropTargetIdFromDestination(fallback) : null,
+        );
+      }
+    }) as OnDragUpdateResponder,
+    [addToNavigationFallbackDestination, store],
   );
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -136,7 +135,7 @@ export const PageDragDropProvider = ({
       return;
     }
 
-    if (isNavigationMenuItemEnabled) {
+    if (isNavigationMenuItemEditingEnabled) {
       const isWorkspaceDrop =
         isWorkspaceDroppableId(result.source?.droppableId) &&
         isWorkspaceDroppableId(result.destination?.droppableId);

@@ -1,14 +1,15 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 import {
   currentUserWorkspaceState,
   type CurrentUserWorkspace,
 } from '@/auth/states/currentUserWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { responseData } from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
 const mockQuery = jest.fn().mockResolvedValue({ data: responseData });
@@ -28,164 +29,90 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 const mockUserWorkspace: CurrentUserWorkspace = {
   objectsPermissions: [],
   permissionFlags: [],
-  twoFactorAuthenticationMethodSummary: {
-    hasTotp: false,
-    hasBackupCodes: false,
-  },
+  twoFactorAuthenticationMethodSummary: [],
 };
 
 const getWrapper =
   ({
     withUserWorkspace = false,
-    isLoading = true,
   }: {
     withUserWorkspace?: boolean;
-    isLoading?: boolean;
   } = {}) =>
-  ({ children }: { children: ReactNode }) => (
-    <RecoilRoot
-      initializeState={({ set }) => {
-        set(shouldAppBeLoadingState, isLoading);
-        set(isAppEffectRedirectEnabledState, false);
-        if (withUserWorkspace) {
-          set(currentUserWorkspaceState, mockUserWorkspace);
-        }
-      }}
-    >
-      {children}
-    </RecoilRoot>
-  );
+  ({ children }: { children: ReactNode }) => {
+    // Initialize state in the store before rendering
+    if (withUserWorkspace) {
+      jotaiStore.set(currentUserWorkspaceState.atom, mockUserWorkspace);
+    } else {
+      jotaiStore.set(currentUserWorkspaceState.atom, null);
+    }
+    jotaiStore.set(isAppEffectRedirectEnabledState.atom, false);
+
+    return <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
+  };
 
 describe('useRefreshObjectMetadataItems', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockQuery.mockResolvedValue({ data: responseData });
+    // Reset jotai store state
+    jotaiStore.set(objectMetadataItemsState.atom, []);
+    jotaiStore.set(isAppEffectRedirectEnabledState.atom, true);
+    jotaiStore.set(currentUserWorkspaceState.atom, null);
   });
 
-  it('should fetch and store raw metadata items without permissions', async () => {
+  it('should not populate items when user workspace is not available', async () => {
     const { result } = renderHook(
       () => {
         const hook = useRefreshObjectMetadataItems();
-        const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-        const shouldAppBeLoading = useRecoilValue(shouldAppBeLoadingState);
-        return { ...hook, items, shouldLoad };
-      },
-      { wrapper: getWrapper({ withUserWorkspace: false }) },
-    );
-
-    expect(result.current.shouldLoad).toBe(true);
-
-    await act(async () => {
-      await result.current.fetchAndStoreRawObjectMetadataItems();
-    });
-
-    await waitFor(() => {
-      expect(result.current.items.length).toBeGreaterThan(0);
-    });
-
-    // Without permissions, all fields should be readable/updatable
-    const item = result.current.items[0];
-    expect(item.readableFields).toEqual(item.fields);
-    expect(item.updatableFields).toEqual(item.fields);
-    expect(result.current.shouldLoad).toBe(false);
-  });
-
-  it('should not enrich when user workspace is not available', async () => {
-    const { result } = renderHook(
-      () => {
-        const hook = useRefreshObjectMetadataItems();
-        const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-        return { ...hook, items };
+        const objectMetadataItems = useAtomStateValue(
+          objectMetadataItemsState,
+        );
+        return {
+          ...hook,
+          items: objectMetadataItems,
+        };
       },
       { wrapper: getWrapper({ withUserWorkspace: false }) },
     );
 
     await act(async () => {
-      await result.current.fetchAndStoreRawObjectMetadataItems();
+      await result.current.refreshObjectMetadataItems();
     });
 
-    await waitFor(() => {
-      expect(result.current.items.length).toBeGreaterThan(0);
-    });
-
-    const itemsBefore = [...result.current.items];
-
-    // enrichWithPermissions should be a no-op without user workspace
-    act(() => {
-      result.current.enrichWithPermissions();
-    });
-
-    expect(result.current.items).toEqual(itemsBefore);
+    // Without user workspace, replaceObjectMetadataItemIfDifferent returns early
+    expect(result.current.items).toEqual([]);
   });
 
-  it('should enrich items with permissions when user workspace is available', async () => {
+  it('should fetch and enrich items when user workspace is available', async () => {
     const { result } = renderHook(
       () => {
         const hook = useRefreshObjectMetadataItems();
-        const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-        return { ...hook, items };
+        const objectMetadataItems = useAtomStateValue(
+          objectMetadataItemsState,
+        );
+        return {
+          ...hook,
+          items: objectMetadataItems,
+        };
       },
       { wrapper: getWrapper({ withUserWorkspace: true }) },
     );
 
     await act(async () => {
-      await result.current.fetchAndStoreRawObjectMetadataItems();
+      await result.current.refreshObjectMetadataItems();
     });
 
     await waitFor(() => {
       expect(result.current.items.length).toBeGreaterThan(0);
     });
 
-    act(() => {
-      result.current.enrichWithPermissions();
-    });
-
-    // Items should still be present after enrichment
-    expect(result.current.items.length).toBeGreaterThan(0);
+    // Items should have readable/updatable fields after enrichment
     expect(result.current.items[0].readableFields).toBeDefined();
   });
 
-  it('should use refreshObjectMetadataItems when user workspace is available', async () => {
+  it('should use network-only fetch policy by default', async () => {
     const { result } = renderHook(
-      () => {
-        const hook = useRefreshObjectMetadataItems();
-        const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-        const shouldAppBeLoading = useRecoilValue(shouldAppBeLoadingState);
-        return { ...hook, items, shouldLoad };
-      },
-      { wrapper: getWrapper({ withUserWorkspace: true }) },
-    );
-
-    await act(async () => {
-      await result.current.refreshObjectMetadataItems();
-    });
-
-    await waitFor(() => {
-      expect(result.current.items.length).toBeGreaterThan(0);
-    });
-
-    expect(result.current.shouldLoad).toBe(false);
-  });
-
-  it('should use cache-first fetch policy by default', async () => {
-    const { result } = renderHook(() => useRefreshObjectMetadataItems(), {
-      wrapper: getWrapper({ withUserWorkspace: true }),
-    });
-
-    await act(async () => {
-      await result.current.refreshObjectMetadataItems();
-    });
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.objectContaining({
-        fetchPolicy: 'cache-first',
-      }),
-    );
-  });
-
-  it('should use specified fetch policy when provided', async () => {
-    const { result } = renderHook(
-      () => useRefreshObjectMetadataItems('network-only'),
+      () => useRefreshObjectMetadataItems(),
       { wrapper: getWrapper({ withUserWorkspace: true }) },
     );
 
@@ -196,6 +123,23 @@ describe('useRefreshObjectMetadataItems', () => {
     expect(mockQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         fetchPolicy: 'network-only',
+      }),
+    );
+  });
+
+  it('should use specified fetch policy when provided', async () => {
+    const { result } = renderHook(
+      () => useRefreshObjectMetadataItems('cache-first'),
+      { wrapper: getWrapper({ withUserWorkspace: true }) },
+    );
+
+    await act(async () => {
+      await result.current.refreshObjectMetadataItems();
+    });
+
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fetchPolicy: 'cache-first',
       }),
     );
   });

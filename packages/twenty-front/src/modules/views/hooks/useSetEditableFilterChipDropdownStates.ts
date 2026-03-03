@@ -4,62 +4,67 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSetEditableFilterChipDropdownStates = () => {
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
-  const setEditableFilterChipDropdownStates = useRecoilCallback(
-    ({ set }) =>
-      (recordFilter: RecordFilter) => {
-        const fieldMetadataItem = filterableFieldMetadataItems.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === recordFilter.fieldMetadataId,
-        );
+  const store = useStore();
 
-        if (isDefined(fieldMetadataItem)) {
-          set(
-            fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-              instanceId:
-                getEditableChipObjectFilterDropdownComponentInstanceId({
-                  recordFilterId: recordFilter.id,
-                }),
-            }),
-            fieldMetadataItem.id,
-          );
-        }
+  const setEditableFilterChipDropdownStates = useCallback(
+    (recordFilter: RecordFilter) => {
+      const fieldMetadataItem = filterableFieldMetadataItems.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id === recordFilter.fieldMetadataId,
+      );
 
-        set(
-          selectedOperandInDropdownComponentState.atomFamily({
+      if (isDefined(fieldMetadataItem)) {
+        store.set(
+          fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
             instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
               recordFilterId: recordFilter.id,
             }),
           }),
-          recordFilter.operand,
+          fieldMetadataItem.id,
         );
+      }
 
-        set(
-          objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
-            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-              recordFilterId: recordFilter.id,
-            }),
+      store.set(
+        selectedOperandInDropdownComponentState.atomFamily({
+          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+            recordFilterId: recordFilter.id,
           }),
-          recordFilter,
-        );
+        }),
+        recordFilter.operand,
+      );
 
-        set(
-          subFieldNameUsedInDropdownComponentState.atomFamily({
-            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-              recordFilterId: recordFilter.id,
-            }),
+      store.set(
+        objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
+          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+            recordFilterId: recordFilter.id,
           }),
-          recordFilter.subFieldName,
-        );
-      },
-    [filterableFieldMetadataItems],
+        }),
+        recordFilter,
+      );
+
+      store.set(
+        subFieldNameUsedInDropdownComponentState.atomFamily({
+          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+            recordFilterId: recordFilter.id,
+          }),
+        }),
+        recordFilter.subFieldName as
+          | CompositeFieldSubFieldName
+          | null
+          | undefined,
+      );
+    },
+    [store, filterableFieldMetadataItems],
   );
 
   return {

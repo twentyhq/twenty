@@ -1,9 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { CommandMenuPageComponentInstanceContext } from './contexts/CommandMenuPageComponentInstanceContext';
 
 export const commandMenuShouldFocusTitleInputComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'commandMenuShouldFocusTitleInputComponentState',
     defaultValue: false,
     componentInstanceContext: CommandMenuPageComponentInstanceContext,

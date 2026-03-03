@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
+import { DeleteOrphanFavoritesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-delete-orphan-favorites.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
@@ -15,6 +16,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -51,8 +53,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     FileModule,
     UserWorkspaceModule,
     WorkspaceMigrationModule,
+    SecureHttpClientModule,
   ],
   providers: [
+    DeleteOrphanFavoritesCommand,
     MigratePersonAvatarFilesCommand,
     MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateAttachmentFilesCommand,
@@ -64,6 +68,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     MigrateWorkflowSendEmailAttachmentsCommand,
   ],
   exports: [
+    DeleteOrphanFavoritesCommand,
     MigratePersonAvatarFilesCommand,
     MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateAttachmentFilesCommand,
@@ -71,8 +76,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BackfillMessageChannelThrottleRetryAfterCommand,
     BackfillStandardViewsAndFieldMetadataCommand,
     MigrateWorkspacePicturesCommand,
-    BackfillFileSizeAndMimeTypeCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
+    BackfillFileSizeAndMimeTypeCommand,
   ],
 })
 export class V1_18_UpgradeVersionCommandModule {}

@@ -14,7 +14,7 @@ import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/comp
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordBoardContainerProps = {
@@ -35,7 +35,7 @@ export const RecordBoardContainer = ({
     objectMetadataItem.id,
   );
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -55,7 +55,7 @@ export const RecordBoardContainer = ({
       ...args,
     });
 
-  const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
@@ -80,9 +80,7 @@ export const RecordBoardContainer = ({
         value={{ instanceId: recordBoardId }}
       >
         <RecordBoard />
-        {isRecordIndexRemoveSortingModalOpened && (
-          <RecordIndexRemoveSortingModal />
-        )}
+        {isModalOpened && <RecordIndexRemoveSortingModal />}
         <RecordBoardHotkeyEffect />
         <RecordBoardBodyEscapeHotkeyEffect />
       </RecordBoardComponentInstanceContext.Provider>

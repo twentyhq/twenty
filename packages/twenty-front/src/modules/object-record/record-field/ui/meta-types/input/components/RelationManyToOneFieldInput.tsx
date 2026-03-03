@@ -16,11 +16,11 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 import { type ObjectRecordFilterInput } from '~/generated/graphql';
@@ -47,7 +47,7 @@ export const RelationManyToOneFieldInput = () => {
     fieldDefinition.metadata.fieldName,
   );
 
-  const recordData = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordData = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const junctionBridgeFilter = useJunctionBridgeFilter({
     objectMetadataItem,
@@ -104,15 +104,16 @@ export const RelationManyToOneFieldInput = () => {
       recordId,
     });
 
-  const layoutDirection = useRecoilComponentValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useRecoilComponentValue(
+  const recordFieldInputLayoutDirectionLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
+    instanceId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     instanceId,
   );
@@ -125,7 +126,7 @@ export const RelationManyToOneFieldInput = () => {
     }
   };
 
-  if (isLoading) {
+  if (recordFieldInputLayoutDirectionLoading) {
     return <></>;
   }
   const fieldLabel = fieldDefinition.label;
@@ -148,7 +149,7 @@ export const RelationManyToOneFieldInput = () => {
       ]}
       recordPickerInstanceId={instanceId}
       layoutDirection={
-        layoutDirection === 'downward'
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

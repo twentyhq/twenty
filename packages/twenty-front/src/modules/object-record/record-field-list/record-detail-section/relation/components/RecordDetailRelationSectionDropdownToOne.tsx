@@ -1,12 +1,10 @@
-import { type ReactNode, useCallback, useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useJunctionBridgeFilter } from '@/object-record/record-field/ui/hooks/useJunctionBridgeFilter';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
@@ -15,24 +13,22 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { FieldDependencyContext } from '@/object-record/record-field-dependency/contexts/FieldDependencyContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 type RecordDetailRelationSectionDropdownToOneProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -84,9 +80,10 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   const relationRecords: ObjectRecord[] = fieldValue
     ? [fieldValue as ObjectRecord]
@@ -100,17 +97,17 @@ export const RecordDetailRelationSectionDropdownToOne = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValue(
+  const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -163,26 +160,6 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     relationObjectMetadataNameSingular !==
     CoreObjectNameSingular.WorkspaceMember;
 
-  const recordData = useRecoilValue(recordStoreFamilyState(recordId));
-
-  const fieldDependencyContext = useContext(FieldDependencyContext);
-  const dependencyFilter = fieldDependencyContext?.getFilterForField(fieldName);
-
-  const junctionBridgeFilter = useJunctionBridgeFilter({
-    objectMetadataItem,
-    fieldMetadataItem,
-    recordId,
-    objectMetadataItems,
-    recordData,
-  });
-
-  const additionalFilter = useMemo((): ObjectRecordFilterInput | undefined => {
-    if (isDefined(dependencyFilter) && isDefined(junctionBridgeFilter)) {
-      return { and: [dependencyFilter, junctionBridgeFilter] };
-    }
-    return dependencyFilter ?? junctionBridgeFilter;
-  }, [dependencyFilter, junctionBridgeFilter]);
-
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -213,7 +190,6 @@ export const RecordDetailRelationSectionDropdownToOne = ({
               ? 'search-bar-on-bottom'
               : 'search-bar-on-top'
           }
-          additionalFilter={additionalFilter}
         />
       }
     />

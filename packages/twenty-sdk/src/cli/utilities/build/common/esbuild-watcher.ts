@@ -8,9 +8,14 @@ import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as esbuild from 'esbuild';
 import path from 'path';
-import { OUTPUT_DIR, NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
+import {
+  OUTPUT_DIR,
+  NODE_ESM_CJS_BANNER,
+  GENERATED_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
@@ -32,10 +37,6 @@ export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'tls',
   'child_process',
   'worker_threads',
-  'twenty-sdk',
-  'twenty-sdk/*',
-  'twenty-shared',
-  'twenty-shared/*',
 ];
 
 export type EsbuildWatcherConfig = {
@@ -198,15 +199,19 @@ const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
         appPath,
         'node_modules',
         'twenty-sdk',
-        'generated',
+        GENERATED_DIR,
         'index.ts',
       ),
     }));
   },
 });
 
+export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
+  shouldSkipTypecheck: () => boolean;
+};
+
 export const createLogicFunctionsWatcher = (
-  options: RestartableWatcherOptions,
+  options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -214,13 +219,16 @@ export const createLogicFunctionsWatcher = (
       externalModules: LOGIC_FUNCTION_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
-      extraPlugins: [createSdkGeneratedResolverPlugin(options.appPath)],
+      extraPlugins: [
+        createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
+        createSdkGeneratedResolverPlugin(options.appPath),
+      ],
       banner: NODE_ESM_CJS_BANNER,
     },
   });
 
 export const createFrontComponentsWatcher = (
-  options: RestartableWatcherOptions,
+  options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -229,6 +237,7 @@ export const createFrontComponentsWatcher = (
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
       extraPlugins: [
+        createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
         createSdkGeneratedResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
       ],

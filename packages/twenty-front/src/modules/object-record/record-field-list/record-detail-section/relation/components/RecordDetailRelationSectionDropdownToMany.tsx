@@ -1,10 +1,8 @@
-import { type ReactNode, useCallback, useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
@@ -13,7 +11,6 @@ import { type FieldRelationMetadata } from '@/object-record/record-field/ui/type
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
-import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -23,12 +20,12 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -74,9 +71,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
@@ -88,60 +86,26 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValue(
+  const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerPickableMorphItems = useSetRecoilComponentState(
+  const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
   );
 
   const setMultipleRecordPickerSearchableObjectMetadataItems =
-    useSetRecoilComponentState(
+    useSetAtomComponentState(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState,
       dropdownId,
     );
-
-  const setMultipleRecordPickerAdditionalFilter = useSetRecoilComponentState(
-    multipleRecordPickerAdditionalFilterComponentState,
-    dropdownId,
-  );
-
-  // Pre-fetch IDs of related records that are either unattached (inverse FK is
-  // null) or already linked to this record. The search API only accepts generic
-  // filters (id, createdAt, etc.), so we resolve eligible IDs here and pass an
-  // id-based filter instead.
-  const inverseFieldName = relationFieldMetadataItem.name;
-
-  const { records: eligibleRecords } = useFindManyRecords({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    filter: {
-      or: [
-        { [`${inverseFieldName}Id`]: { is: 'NULL' } },
-        { [`${inverseFieldName}Id`]: { eq: recordId } },
-      ],
-    },
-    limit: 1000,
-  });
-
-  const excludeAttachedFilter = useMemo((): ObjectRecordFilterInput => {
-    const eligibleIds = eligibleRecords.map((record) => record.id);
-
-    if (eligibleIds.length === 0) {
-      return {
-        id: { eq: '00000000-0000-0000-0000-000000000000' },
-      } as ObjectRecordFilterInput;
-    }
-
-    return { id: { in: eligibleIds } } as ObjectRecordFilterInput;
-  }, [eligibleRecords]);
 
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
@@ -169,7 +133,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       relationObjectMetadataItem,
     ]);
     setMultipleRecordPickerSearchFilter('');
-    setMultipleRecordPickerAdditionalFilter(excludeAttachedFilter);
     setMultipleRecordPickerPickableMorphItems(
       relationRecords.map((record) => ({
         recordId: record.id,
@@ -219,7 +182,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          additionalFilter={excludeAttachedFilter}
           onCreate={
             isDefined(createNewRecordAndOpenRightDrawer)
               ? handleCreateNew

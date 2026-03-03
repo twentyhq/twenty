@@ -9,15 +9,13 @@ import { singleRecordPickerSearchFilterComponentState } from '@/object-record/re
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
 export type SingleRecordPickerProps = {
   componentInstanceId: string;
   dropdownWidth?: number;
-  additionalFilter?: ObjectRecordFilterInput;
 } & SingleRecordPickerMenuItemsWithSearchProps;
 
 export const SingleRecordPicker = ({
@@ -32,17 +30,16 @@ export const SingleRecordPicker = ({
   layoutDirection,
   dropdownWidth,
   focusId,
-  additionalFilter,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
   const handleCancel = () => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onCancel?.();
   };
@@ -50,7 +47,7 @@ export const SingleRecordPicker = ({
   const handleMorphItemSelected = (
     selectedMorphItem?: RecordPickerPickableMorphItem | undefined,
   ) => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onMorphItemSelected?.(selectedMorphItem);
   };
@@ -89,7 +86,6 @@ export const SingleRecordPicker = ({
             onMorphItemSelected: handleMorphItemSelected,
             objectNameSingulars,
             layoutDirection,
-            additionalFilter,
           }}
         />
       </DropdownContent>

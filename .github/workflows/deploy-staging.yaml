@@ -97,6 +97,9 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
+      - name: Remove frontend sourcemaps from build
+        run: find ./packages/twenty-front/build -name '*.map' -delete
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

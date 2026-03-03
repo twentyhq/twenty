@@ -20,7 +20,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { CustomError } from 'twenty-shared/utils';
@@ -99,7 +99,7 @@ export const FieldWidgetRelationEditAction = ({
       instanceId: scopeInstanceId,
     });
 
-  const isRelationSelectionDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     relationSelectionDropdownId,
   );
@@ -108,7 +108,7 @@ export const FieldWidgetRelationEditAction = ({
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButton
-      isDropdownOpen={isRelationSelectionDropdownOpen}
+      isDropdownOpen={isDropdownOpen}
       isMobile={isMobile}
       Icon={IconPencil}
       accent="secondary"
