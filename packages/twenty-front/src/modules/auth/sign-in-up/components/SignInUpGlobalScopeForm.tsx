@@ -1,4 +1,5 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -21,6 +22,8 @@ import {
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   Avatar,
   HorizontalSeparator,
@@ -29,7 +32,6 @@ import {
 } from 'twenty-ui/display';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -141,6 +143,7 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
+  const returnToPath = useAtomStateValue(returnToPathState);
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -151,7 +154,10 @@ export const SignInUpGlobalScopeForm = () => {
     return buildWorkspaceUrl(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
-      searchParams,
+      {
+        ...searchParams,
+        ...(isNonEmptyString(returnToPath) ? { returnToPath } : {}),
+      },
     );
   };
 

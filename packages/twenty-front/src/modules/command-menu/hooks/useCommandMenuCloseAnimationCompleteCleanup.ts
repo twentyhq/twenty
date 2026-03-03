@@ -24,10 +24,10 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useStore } from 'jotai';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const store = useStore();
@@ -39,96 +39,101 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const commandMenuCloseAnimationCompleteCleanup = useCallback(() => {
-    closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
+  const commandMenuCloseAnimationCompleteCleanup = useCallback(
+    (options?: { emitSidePanelCloseEvent?: boolean }) => {
+      closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
-    // Snapshot values before any mutations (Jotai store.get is live and
-    // reflects the latest state, so we capture before mutating).
-    const currentPage = store.get(commandMenuPageState.atom);
-    const targetedRecordsRule = store.get(
-      contextStoreTargetedRecordsRuleComponentState.atomFamily({
-        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-      }),
-    );
-    const morphItemsByPage = store.get(
-      commandMenuNavigationMorphItemsByPageState.atom,
-    );
+      // Snapshot values before any mutations (Jotai store.get is live and
+      // reflects the latest state, so we capture before mutating).
+      const currentPage = store.get(commandMenuPageState.atom);
+      const targetedRecordsRule = store.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+        }),
+      );
+      const morphItemsByPage = store.get(
+        commandMenuNavigationMorphItemsByPageState.atom,
+      );
 
-    resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
-    resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
+      resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
+      resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
 
-    const isPageLayoutEditingPage =
-      currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
-      currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-      currentPage === CommandMenuPages.PageLayoutIframeSettings ||
-      currentPage === CommandMenuPages.PageLayoutTabSettings;
+      const isPageLayoutEditingPage =
+        currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
+        currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
+        currentPage === CommandMenuPages.PageLayoutIframeSettings ||
+        currentPage === CommandMenuPages.PageLayoutTabSettings;
 
-    if (isPageLayoutEditingPage) {
-      if (
-        targetedRecordsRule.mode === 'selection' &&
-        targetedRecordsRule.selectedRecordIds.length === 1
-      ) {
-        const recordId = targetedRecordsRule.selectedRecordIds[0];
-        const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+      if (isPageLayoutEditingPage) {
+        if (
+          targetedRecordsRule.mode === 'selection' &&
+          targetedRecordsRule.selectedRecordIds.length === 1
+        ) {
+          const recordId = targetedRecordsRule.selectedRecordIds[0];
+          const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
-        if (isDefined(record) && isDefined(record.pageLayoutId)) {
-          store.set(
-            pageLayoutEditingWidgetIdComponentState.atomFamily({
-              instanceId: record.pageLayoutId,
-            }),
-            null,
-          );
-          store.set(
-            pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
-              instanceId: record.pageLayoutId,
-            }),
-            null,
-          );
-          store.set(
-            pageLayoutDraggedAreaComponentState.atomFamily({
-              instanceId: record.pageLayoutId,
-            }),
-            null,
-          );
+          if (isDefined(record) && isDefined(record.pageLayoutId)) {
+            store.set(
+              pageLayoutEditingWidgetIdComponentState.atomFamily({
+                instanceId: record.pageLayoutId,
+              }),
+              null,
+            );
+            store.set(
+              pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+                instanceId: record.pageLayoutId,
+              }),
+              null,
+            );
+            store.set(
+              pageLayoutDraggedAreaComponentState.atomFamily({
+                instanceId: record.pageLayoutId,
+              }),
+              null,
+            );
+          }
         }
       }
-    }
 
-    store.set(viewableRecordIdState.atom, null);
-    store.set(commandMenuPageState.atom, CommandMenuPages.Root);
-    store.set(commandMenuPageInfoState.atom, {
-      title: undefined,
-      Icon: undefined,
-      instanceId: '',
-    });
-    store.set(isCommandMenuOpenedState.atom, false);
-    store.set(commandMenuSearchState.atom, '');
-    store.set(commandMenuNavigationMorphItemsByPageState.atom, new Map());
-    store.set(commandMenuNavigationStackState.atom, []);
-    resetSelectedItem();
-    store.set(hasUserSelectedCommandState.atom, false);
+      store.set(viewableRecordIdState.atom, null);
+      store.set(commandMenuPageState.atom, CommandMenuPages.Root);
+      store.set(commandMenuPageInfoState.atom, {
+        title: undefined,
+        Icon: undefined,
+        instanceId: '',
+      });
+      store.set(isCommandMenuOpenedState.atom, false);
+      store.set(commandMenuSearchState.atom, '');
+      store.set(commandMenuNavigationMorphItemsByPageState.atom, new Map());
+      store.set(commandMenuNavigationStackState.atom, []);
+      resetSelectedItem();
+      store.set(hasUserSelectedCommandState.atom, false);
 
-    emitSidePanelCloseEvent();
-    store.set(isCommandMenuClosingState.atom, false);
-    store.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
-      }),
-      WorkflowLogicFunctionTabId.CODE,
-    );
-
-    for (const [pageId, morphItems] of morphItemsByPage) {
+      if (options?.emitSidePanelCloseEvent !== false) {
+        emitSidePanelCloseEvent();
+      }
+      store.set(isCommandMenuClosingState.atom, false);
       store.set(
         activeTabIdComponentState.atomFamily({
-          instanceId: getShowPageTabListComponentId({
-            pageId,
-            targetObjectId: morphItems[0].recordId,
-          }),
+          instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
         }),
-        null,
+        WorkflowLogicFunctionTabId.CODE,
       );
-    }
-  }, [closeDropdown, resetContextStoreStates, resetSelectedItem, store]);
+
+      for (const [pageId, morphItems] of morphItemsByPage) {
+        store.set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: getShowPageTabListComponentId({
+              pageId,
+              targetObjectId: morphItems[0].recordId,
+            }),
+          }),
+          null,
+        );
+      }
+    },
+    [closeDropdown, resetContextStoreStates, resetSelectedItem, store],
+  );
 
   return {
     commandMenuCloseAnimationCompleteCleanup,
