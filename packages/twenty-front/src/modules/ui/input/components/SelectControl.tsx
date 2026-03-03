@@ -35,7 +35,9 @@ export const StyledControlContainer = styled.div<{
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
   border-right: ${({ hasRightElement }) =>
-    hasRightElement ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+    hasRightElement
+      ? 'none'
+      : `1px solid ${themeCssVariables.border.color.medium}`};
   border-bottom-right-radius: ${({ hasRightElement }) =>
     hasRightElement ? '0' : themeCssVariables.border.radius.sm};
   border-top-right-radius: ${({ hasRightElement }) =>
@@ -54,11 +56,11 @@ export const StyledControlContainer = styled.div<{
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
 }>`
-  display: flex;
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export type SelectControlProps = {

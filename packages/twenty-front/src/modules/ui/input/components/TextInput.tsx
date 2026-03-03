@@ -74,8 +74,10 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
           ? '28px'
           : '32px'};
 
-  border-right-style: ${({ position }) => (position === 'left' ? 'none' : 'solid')};
-  border-left-style: ${({ position }) => (position === 'right' ? 'none' : 'solid')};
+  border-right-style: ${({ position }) =>
+    position === 'left' ? 'none' : 'solid'};
+  border-left-style: ${({ position }) =>
+    position === 'right' ? 'none' : 'solid'};
 `;
 
 const StyledInput = styled.input<

@@ -13,17 +13,19 @@ type StyledEdgeProps = {
 };
 
 const StyledEdge = styled.div<StyledEdgeProps>`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: ${({ side }) => (side === 'left' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto')};
-  right: ${({ side }) => (side === 'right' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto')};
-  width: ${RESIZE_EDGE_WIDTH_PX}px;
-  cursor: col-resize;
-
-  display: flex;
   align-items: center;
+  bottom: 0;
+  cursor: col-resize;
+  display: flex;
   justify-content: center;
+  left: ${({ side }) =>
+    side === 'left' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
+  position: absolute;
+
+  right: ${({ side }) =>
+    side === 'right' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
+  top: 0;
+  width: ${RESIZE_EDGE_WIDTH_PX}px;
 `;
 
 const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`

@@ -60,16 +60,16 @@ const StyledTime = styled.div`
 `;
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
+  color: ${({ active }) =>
+    active ? themeCssVariables.font.color.primary : 'inherit'};
   flex: 1 0 auto;
+  font-weight: ${({ active }) =>
+    active ? themeCssVariables.font.weight.medium : 'inherit'};
   overflow: hidden;
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
   text-overflow: ellipsis;
   white-space: nowrap;
   width: ${themeCssVariables.spacing[10]};
-  color: ${({ active }) =>
-    active ? themeCssVariables.font.color.primary : 'inherit'};
-  font-weight: ${({ active }) =>
-    active ? themeCssVariables.font.weight.medium : 'inherit'};
-  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
 `;
 
 export const CalendarEventRow = ({

@@ -27,10 +27,7 @@ export const ActivityRow = ({
   };
 
   return (
-    <StyledRowContent
-      onClick={handleClick}
-      isClickable={disabled !== true}
-    >
+    <StyledRowContent onClick={handleClick} isClickable={disabled !== true}>
       {children}
     </StyledRowContent>
   );

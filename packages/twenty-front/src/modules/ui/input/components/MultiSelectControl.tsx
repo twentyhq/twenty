@@ -16,11 +16,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
 }>`
-  display: flex;
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 type MultiSelectOptionType = {

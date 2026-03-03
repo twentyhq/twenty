@@ -90,7 +90,8 @@ const StyledLegendLabel = styled.div<{
   isHidden?: boolean;
 }>`
   color: ${themeCssVariables.font.color.secondary};
-  width: ${({ fixedWidth }) => (fixedWidth ? `${LEGEND_LABEL_MAX_WIDTH}px` : 'auto')};
+  width: ${({ fixedWidth }) =>
+    fixedWidth ? `${LEGEND_LABEL_MAX_WIDTH}px` : 'auto'};
   overflow: hidden;
   text-decoration: ${({ isHidden }) => (isHidden ? 'line-through' : 'none')};
   opacity: ${({ isHidden }) =>
