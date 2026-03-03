@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -48,28 +47,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-
-const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
-  isDropdownOpen?: boolean;
-}>`
-  ${({ isDropdownOpen }) =>
-    !isDropdownOpen
-      ? `
-      .displayOnHover {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
-      }
-    `
-      : ''}
-
-  &:hover {
-    .displayOnHover {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-`;
 
 const StyledClickableZone = styled.div`
   align-items: center;
@@ -239,7 +216,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
-      <StyledListItem
+      <RecordDetailRecordsListItemContainer
         isDropdownOpen={isDropdownOpen}
         data-testid="record-detail-records-list-item"
       >
@@ -287,7 +264,7 @@ export const RecordDetailRelationRecordsListItem = ({
             }
           />
         )}
-      </StyledListItem>
+      </RecordDetailRecordsListItemContainer>
       <AnimatedEaseInOut isOpen={isExpanded}>
         <RecordFieldList
           instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}

@@ -39,7 +39,7 @@ const StyledInput = styled.input<{
       border: 1px solid ${themeCssVariables.border.color.medium};
     `
       : ''}
-  
+
   ${({ hasError, hasItem }) =>
     hasError && hasItem
       ? `

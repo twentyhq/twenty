@@ -95,7 +95,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const label = watch('label');
 

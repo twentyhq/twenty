@@ -18,12 +18,14 @@ export type SelectableListItemProps = {
   itemId: string;
   children: ReactNode;
   onEnter?: () => void;
+  className?: string;
 };
 
 export const SelectableListItem = ({
   itemId,
   children,
   onEnter,
+  className,
 }: SelectableListItemProps) => {
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -56,7 +58,7 @@ export const SelectableListItem = ({
       {isSelectedItemId && isDefined(onEnter) && (
         <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
-      <StyledListItemContainer ref={listItemRef}>
+      <StyledListItemContainer ref={listItemRef} className={className}>
         {children}
       </StyledListItemContainer>
     </>

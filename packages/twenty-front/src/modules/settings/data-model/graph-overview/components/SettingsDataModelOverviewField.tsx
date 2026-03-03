@@ -29,7 +29,7 @@ const StyledFieldName = styled.div`
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { getIcon } = useIcons();
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;
 

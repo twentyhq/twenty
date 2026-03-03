@@ -61,7 +61,7 @@ type SettingsRolesTableRowProps = {
 };
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');

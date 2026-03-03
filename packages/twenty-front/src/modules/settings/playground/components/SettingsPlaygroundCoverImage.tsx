@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
@@ -7,10 +7,8 @@ import { Card } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCard = styled(Card)<{ backgroundImageUrl: string }>`
+const StyledCard = styled(Card)`
   align-items: center;
-  background-image: ${({ backgroundImageUrl }) =>
-    `url('${backgroundImageUrl}')`};
   background-size: cover;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
@@ -22,18 +20,25 @@ const StyledCard = styled(Card)<{ backgroundImageUrl: string }>`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
+type StyledSettingsApiPlaygroundCoverImageProps = {
+  children?: ReactNode;
+  className?: string;
+};
+
 export const StyledSettingsApiPlaygroundCoverImage = ({
   children,
-  ...props
-}: StyledSettingsApiPlaygroundCoverImageProps<typeof Card>) => {
+  className,
+}: StyledSettingsApiPlaygroundCoverImageProps) => {
   const { theme } = useContext(ThemeContext);
   const coverImage =
     theme.name === 'light'
       ? LightCoverImage.toString()
       : DarkCoverImage.toString();
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <StyledCard {...props} backgroundImageUrl={coverImage}>
+    <StyledCard
+      className={className}
+      style={{ backgroundImage: `url('${coverImage}')` }}
+    >
       {children}
     </StyledCard>
   );

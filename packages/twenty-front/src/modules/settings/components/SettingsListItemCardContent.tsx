@@ -7,9 +7,8 @@ import { CardContent } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRow = styled(CardContent)<{ to?: boolean }>`
+const StyledRow = styled(CardContent)`
   align-items: center;
-  cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -17,13 +16,6 @@ const StyledRow = styled(CardContent)<{ to?: boolean }>`
   padding: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[3]};
   min-height: ${themeCssVariables.spacing[6]};
-
-  &:hover {
-    ${({ to }) =>
-      to
-        ? `background: ${themeCssVariables.background.transparent.light};`
-        : ''}
-  }
 `;
 
 const StyledRightContainer = styled.div`
@@ -81,7 +73,12 @@ export const SettingsListItemCardContent = ({
   const { theme } = useContext(ThemeContext);
 
   const content = (
-    <StyledRow onClick={onClick} divider={divider} to={!!to}>
+    <StyledRow
+      onClick={onClick}
+      divider={divider}
+      isClickable={!!onClick || !!to}
+      hasHoverHighlight={!!to}
+    >
       {!!LeftIcon && (
         <LeftIcon
           size={theme.icon.size.md}

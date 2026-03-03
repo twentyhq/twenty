@@ -30,7 +30,7 @@ const StyledButtonContainer = styled.div`
 `;
 export const SettingsObjectCoverImage = () => {
   const { t } = useLingui();
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledCoverImageContainer
       style={{

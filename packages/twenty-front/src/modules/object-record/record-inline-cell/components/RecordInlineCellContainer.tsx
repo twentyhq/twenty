@@ -52,7 +52,7 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
 const StyledLabelContainer = styled.div<{ width?: number }>`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  width: ${({ width }) => width}px;
+  width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`

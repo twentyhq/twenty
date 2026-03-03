@@ -54,7 +54,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     roleId,
     isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
-    const theme = useContext(ThemeContext);
+    const { theme } = useContext(ThemeContext);
     const { getIcon } = useIcons();
     const Icon = getIcon(fieldMetadataItem.icon);
 

@@ -65,7 +65,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');

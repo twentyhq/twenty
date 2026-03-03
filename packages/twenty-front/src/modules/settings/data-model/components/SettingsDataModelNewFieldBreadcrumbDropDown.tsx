@@ -42,21 +42,6 @@ const StyledMenuItemWrapper = styled.div<{ disabled?: boolean }>`
   width: 100%;
 `;
 
-const StyledMenuItem = styled(MenuItem)<{
-  selected?: boolean;
-  disabled?: boolean;
-}>`
-  background: ${({ selected }) =>
-    selected ? themeCssVariables.background.quaternary : 'transparent'};
-  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
-  &:hover {
-    background: ${({ disabled }) =>
-      disabled ? 'transparent' : themeCssVariables.background.tertiary};
-  }
-`;
-
 const StyledSpan = styled.span`
   margin-left: ${themeCssVariables.spacing[2]};
 `;
@@ -73,7 +58,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const location = useLocation();
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const fieldType = searchParams.get('fieldType') as SettingsFieldType;
   const isConfigureStep = location.pathname.includes('/configure');
@@ -115,14 +100,14 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
           <DropdownContent>
             <DropdownMenuItemsContainer>
               <StyledMenuItemWrapper>
-                <StyledMenuItem
+                <MenuItem
                   text={t`1. Type`}
                   onClick={() => handleClick('select')}
                   selected={!isConfigureStep}
                 />
               </StyledMenuItemWrapper>
               <StyledMenuItemWrapper disabled={!isDefined(fieldType)}>
-                <StyledMenuItem
+                <MenuItem
                   text={t`2. Configure`}
                   onClick={() => handleClick('configure')}
                   selected={isConfigureStep}

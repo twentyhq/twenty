@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
@@ -13,7 +13,6 @@ import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-tabl
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;

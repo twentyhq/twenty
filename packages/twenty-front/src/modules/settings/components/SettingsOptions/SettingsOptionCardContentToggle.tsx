@@ -27,11 +27,7 @@ const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   }
 `;
 
-const StyledSettingsCardToggleButton = styled(Toggle)<{
-  toggleCentered?: boolean;
-}>`
-  align-self: ${({ toggleCentered }) =>
-    toggleCentered ? 'center' : 'flex-start'};
+const StyledSettingsCardToggleButton = styled(Toggle)`
   flex-shrink: 0;
   margin-left: auto;
 `;
@@ -96,7 +92,7 @@ export const SettingsOptionCardContentToggle = ({
           disabled={disabled}
           toggleSize="small"
           color={advancedMode ? theme.color.yellow : theme.color.blue}
-          toggleCentered={toggleCentered}
+          centered={toggleCentered}
         />
       </StyledSettingsCardToggleContent>
       {divider && <Separator />}

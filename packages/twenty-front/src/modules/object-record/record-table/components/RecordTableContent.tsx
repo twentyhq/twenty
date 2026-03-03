@@ -1,6 +1,9 @@
 import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
 import { RecordTableScrollAndZIndexEffect } from '@/object-record/record-table/components/RecordTableScrollAndZIndexEffect';
-import { RecordTableStyleWrapper } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import {
+  getRecordTableColumnWidthInlineStyles,
+  RecordTableStyleWrapper,
+} from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -16,7 +19,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { styled } from '@linaria/react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useStore } from 'jotai';
 
 const StyledTableContainer = styled.div`
@@ -125,12 +128,17 @@ export const RecordTableContent = ({
     [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
   );
 
+  const columnWidthStyles = useMemo(
+    () => getRecordTableColumnWidthInlineStyles(visibleRecordFields),
+    [visibleRecordFields],
+  );
+
   return (
     <StyledTableContainer ref={containerRef}>
       <RecordTableStyleWrapper
         ref={tableBodyRef}
         isDragging={isDragging}
-        visibleRecordFields={visibleRecordFields}
+        style={columnWidthStyles}
         id={RECORD_TABLE_HTML_ID}
         onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}

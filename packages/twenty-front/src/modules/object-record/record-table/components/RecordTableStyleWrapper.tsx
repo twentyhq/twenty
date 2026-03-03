@@ -55,9 +55,31 @@ export const HorizontalScrollBoxShadowCSS = `
   }
 `;
 
+const MAX_COLUMNS = 100;
+
+const columnFieldWidthRules = Array.from(
+  { length: MAX_COLUMNS },
+  (_, i) =>
+    `div.${getRecordTableColumnFieldWidthClassName(i)} {
+    width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+    min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+    max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+  }`,
+).join('\n');
+
+export const getRecordTableColumnWidthInlineStyles = (
+  visibleRecordFields: RecordField[],
+): Record<string, string> => {
+  const style: Record<string, string> = {};
+  for (let i = 0; i < visibleRecordFields.length; i++) {
+    style[`--record-table-column-field-${i}`] =
+      `${visibleRecordFields[i].size}px`;
+  }
+  return style;
+};
+
 const StyledTable = styled.div<{
   isDragging?: boolean;
-  visibleRecordFields: RecordField[];
   hasRecordGroups: boolean;
 }>`
   & > * {
@@ -179,23 +201,7 @@ const StyledTable = styled.div<{
     max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
-  ${({ visibleRecordFields }) => {
-    let returnedCSS = '';
-
-    for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `--record-table-column-field-${i}: ${visibleRecordFields[i].size}px; \n`;
-    }
-
-    for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
-        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-      } \n`;
-    }
-
-    return returnedCSS;
-  }};
+  ${columnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});

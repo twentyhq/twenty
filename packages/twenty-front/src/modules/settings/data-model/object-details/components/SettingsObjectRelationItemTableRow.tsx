@@ -101,7 +101,7 @@ export const SettingsObjectRelationItemTableRow = ({
 }: SettingsObjectRelationItemTableRowProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(fieldMetadataItem.icon);

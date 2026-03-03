@@ -5,7 +5,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -21,12 +20,6 @@ const StyledEmptyPlaceholderOuterContainer = styled(
   AnimatedPlaceholderEmptyContainer,
 )`
   align-items: flex-start;
-`;
-
-const StyledEmptyPlaceholderInnerContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)<{ width?: number }>`
-  width: ${({ width }) => (isDefined(width) ? `${width}px` : '100%')};
 `;
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {
@@ -71,7 +64,7 @@ export const RecordTableEmptyStateDisplay = (
 
   return (
     <StyledEmptyPlaceholderOuterContainer>
-      <StyledEmptyPlaceholderInnerContainer width={scrollWrapperWidth}>
+      <AnimatedPlaceholderEmptyContainer width={scrollWrapperWidth}>
         <AnimatedPlaceholder type={props.animatedPlaceholderType} />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
@@ -93,7 +86,7 @@ export const RecordTableEmptyStateDisplay = (
               disabled={props.buttonIsDisabled}
             />
           )}
-      </StyledEmptyPlaceholderInnerContainer>
+      </AnimatedPlaceholderEmptyContainer>
     </StyledEmptyPlaceholderOuterContainer>
   );
 };

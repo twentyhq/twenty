@@ -32,7 +32,7 @@ const StyledCard = styled(Card)<{
   width: 100%;
 `;
 
-const StyledCardContent = styled(CardContent)<object>`
+const StyledCardContent = styled(CardContent)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

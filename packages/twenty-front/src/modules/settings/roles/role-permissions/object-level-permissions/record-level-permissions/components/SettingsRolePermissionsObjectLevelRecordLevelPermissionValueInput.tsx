@@ -99,7 +99,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
-    const theme = useContext(ThemeContext);
+    const { theme } = useContext(ThemeContext);
 
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 

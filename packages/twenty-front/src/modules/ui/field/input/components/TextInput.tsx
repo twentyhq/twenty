@@ -30,7 +30,7 @@ export const StyledTextInput = styled.input`
   }
 `;
 
-type TextInputProps = {
+export type TextInputProps = {
   instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
@@ -44,6 +44,7 @@ type TextInputProps = {
   copyButton?: boolean;
   shouldTrim?: boolean;
   disabled?: boolean;
+  className?: string;
 };
 
 const getValue = (value: string, shouldTrim: boolean) => {
@@ -68,6 +69,7 @@ export const TextInput = ({
   copyButton = true,
   shouldTrim = true,
   disabled,
+  className,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -105,6 +107,7 @@ export const TextInput = ({
         autoFocus={autoFocus}
         value={internalText}
         disabled={disabled}
+        className={className}
       />
       {copyButton && (
         <div ref={copyRef}>

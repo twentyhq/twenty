@@ -41,7 +41,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   >;
   to: string;
 }) => {
-  const theme = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledApisFieldTableRow to={to}>

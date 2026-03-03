@@ -69,21 +69,12 @@ const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   background: ${({ isToday }) =>
     isToday ? themeCssVariables.color.blue : 'transparent'};
   color: ${({ isToday }) =>
-    isToday
-      ? themeCssVariables.font.color.inverted
-      : 'inherit'};
+    isToday ? themeCssVariables.font.color.inverted : 'inherit'};
   font-weight: ${({ isToday }) =>
     isToday ? themeCssVariables.font.weight.medium : 'inherit'};
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
-  flex: 1;
-  min-height: 60px;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  transition: background-color 0.1s ease;
   background: ${({ isDraggedOver }) =>
     isDraggedOver
       ? themeCssVariables.background.transparent.lighter
@@ -92,6 +83,13 @@ const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
     isDraggedOver
       ? `1px dashed ${themeCssVariables.border.color.medium}`
       : 'none'};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
+  min-height: 60px;
+  transition: background-color 0.1s ease;
 `;
 
 type RecordCalendarMonthBodyDayProps = {

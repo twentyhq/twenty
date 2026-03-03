@@ -110,6 +110,10 @@ export default defineConfig(({ command, mode }) => {
       {
         ...wyw({
           include: ['**/*.{ts,tsx}'],
+          exclude: [
+            '**/generated-metadata/**',
+            '**/testing/mock-data/generated/**',
+          ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
             plugins: ['@babel/plugin-transform-export-namespace-from'],
