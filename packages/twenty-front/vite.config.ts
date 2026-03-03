@@ -96,7 +96,6 @@ export default defineConfig(({ command, mode }) => {
 
     plugins: [
       react({
-        jsxImportSource: 'react',
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
