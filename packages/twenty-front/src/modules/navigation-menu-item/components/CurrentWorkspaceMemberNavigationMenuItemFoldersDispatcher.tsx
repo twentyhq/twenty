@@ -11,7 +11,11 @@ export const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = () => {
   );
 
   if (isNavigationMenuItemEditingEnabled) {
-    return <CurrentWorkspaceMemberNavigationMenuItemFolders />;
+    return (
+      <FavoritesDragDropProviderContent>
+        <CurrentWorkspaceMemberNavigationMenuItemFolders />
+      </FavoritesDragDropProviderContent>
+    );
   }
 
   return (
