@@ -7,71 +7,49 @@ export class AddAppRegistrationSourceFields1772267875870
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD COLUMN "sourceType" text NOT NULL DEFAULT 'none'`,
+      `ALTER TABLE "core"."applicationRegistration" ADD "sourceType" text NOT NULL DEFAULT 'none'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD COLUMN "sourcePackage" text`,
+      `ALTER TABLE "core"."applicationRegistration" ADD "sourcePackage" text`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD COLUMN "tarballFileId" uuid`,
+      `ALTER TABLE "core"."applicationRegistration" ADD "tarballFileId" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD COLUMN "registryUrl" text`,
+      `ALTER TABLE "core"."applicationRegistration" ADD "registryUrl" text`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD COLUMN "latestAvailableVersion" text`,
+      `ALTER TABLE "core"."applicationRegistration" ADD "latestAvailableVersion" text`,
     );
-
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD CONSTRAINT "FK_APP_REG_TARBALL_FILE"
-        FOREIGN KEY ("tarballFileId") REFERENCES "core"."file"("id")
-        ON DELETE SET NULL`,
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "UQ_36715821de396df9536fd4afc81" UNIQUE ("tarballFileId")`,
     );
-
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        ADD CONSTRAINT "CHK_APP_REG_SOURCE_TYPE" CHECK (
-          ("sourceType" = 'npm' AND "sourcePackage" IS NOT NULL)
-          OR ("sourceType" = 'tarball')
-          OR ("sourceType" = 'none')
-        )`,
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_36715821de396df9536fd4afc81" FOREIGN KEY ("tarballFileId") REFERENCES "core"."file"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP CONSTRAINT IF EXISTS "CHK_APP_REG_SOURCE_TYPE"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT "FK_36715821de396df9536fd4afc81"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP CONSTRAINT IF EXISTS "FK_APP_REG_TARBALL_FILE"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT "UQ_36715821de396df9536fd4afc81"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP COLUMN IF EXISTS "latestAvailableVersion"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "latestAvailableVersion"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP COLUMN IF EXISTS "registryUrl"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "registryUrl"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP COLUMN IF EXISTS "tarballFileId"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "tarballFileId"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP COLUMN IF EXISTS "sourcePackage"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "sourcePackage"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration"
-        DROP COLUMN IF EXISTS "sourceType"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "sourceType"`,
     );
   }
 }
