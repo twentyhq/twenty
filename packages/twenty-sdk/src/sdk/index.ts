@@ -78,6 +78,9 @@ export type { ActionLinkProps } from './action';
 export { ActionOpenSidePanelPage } from './action';
 export type { ActionOpenSidePanelPageProps } from './action';
 
+// Conditional availability constants for command menu items
+export { ConditionalAvailabilityVariables } from './front-component-api';
+
 // Front Component API exports
 export {
   enqueueSnackbar,
@@ -107,13 +110,6 @@ export {
   HTML_TAG_TO_REMOTE_COMPONENT,
 } from './front-component-api';
 export type { AllowedHtmlElement } from './front-component-api';
-
-export {
-  convertArrowFunctionToJsonLogic,
-  convertShouldBeRegisteredToJsonLogic,
-  extractShouldBeRegisteredFromConfig,
-  ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED,
-} from './front-component-api/json-logic-converter';
 
 // Style bridge utilities for CSS-in-JS libraries in remote components
 export { installStyleBridge } from '../front-component-renderer/polyfills/installStyleBridge';

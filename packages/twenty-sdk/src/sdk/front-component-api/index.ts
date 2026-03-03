@@ -1,3 +1,4 @@
+export { ConditionalAvailabilityVariables } from './conditional-availability/conditional-availability-variables';
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';

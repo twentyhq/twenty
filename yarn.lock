@@ -36611,6 +36611,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expr-eval@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "expr-eval@npm:2.0.2"
+  checksum: 10c0/642f112ff28ea34574c595c3ad73ccd8e638498879a4dd28620c4dabebab2e11987a851266ba81883dae85a5800e0c93b3d06f81718b71a215f831534646e4f2
+  languageName: node
+  linkType: hard
+
 "express-session@npm:^1.18.2":
   version: 1.18.2
   resolution: "express-session@npm:1.18.2"
@@ -57806,6 +57813,7 @@ __metadata:
     eslint-plugin-storybook: "npm:^10.2.13"
     eslint-plugin-unicorn: "npm:^56.0.1"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    expr-eval: "npm:^2.0.2"
     file-saver: "npm:^2.0.5"
     graphiql: "npm:^3.1.1"
     graphql: "npm:16.8.1"
