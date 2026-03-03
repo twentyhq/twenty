@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -23,6 +23,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { CalendarStartDay } from 'src/engine/core-modules/user-workspace/types/calendar-start-day.enum';
+import { ColorScheme } from 'src/engine/core-modules/user-workspace/types/color-scheme.enum';
+import { DateFormat } from 'src/engine/core-modules/user-workspace/types/date-format.enum';
+import { NumberFormat } from 'src/engine/core-modules/user-workspace/types/number-format.enum';
+import { TimeFormat } from 'src/engine/core-modules/user-workspace/types/time-format.enum';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
@@ -103,4 +108,64 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  firstName?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  lastName?: string;
+
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
+  timeZone?: string;
+
+  @Field(() => ColorScheme, { nullable: false })
+  @Column({
+    nullable: false,
+    default: ColorScheme.SYSTEM,
+    type: 'enum',
+    enum: Object.values(ColorScheme),
+  })
+  colorScheme: ColorScheme;
+
+  @Field(() => Int, { nullable: false })
+  @Column({
+    nullable: false,
+    default: CalendarStartDay.SYSTEM,
+    type: 'enum',
+    enum: Object.values(CalendarStartDay),
+  })
+  calendarStartDay: CalendarStartDay;
+
+  @Field(() => DateFormat, { nullable: false })
+  @Column({
+    nullable: false,
+    default: DateFormat.SYSTEM,
+    type: 'enum',
+    enum: Object.values(DateFormat),
+  })
+  dateFormat: DateFormat;
+
+  @Field(() => TimeFormat, { nullable: false })
+  @Column({
+    nullable: false,
+    default: TimeFormat.SYSTEM,
+    type: 'enum',
+    enum: Object.values(TimeFormat),
+  })
+  timeFormat: TimeFormat;
+
+  @Field(() => NumberFormat, { nullable: false })
+  @Column({
+    nullable: false,
+    default: NumberFormat.SYSTEM,
+    type: 'enum',
+    enum: Object.values(NumberFormat),
+  })
+  numberFormat: NumberFormat;
 }
