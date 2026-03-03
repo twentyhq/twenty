@@ -1,9 +1,12 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
+import { executeRelationUpdatesViaMutation } from '@/object-record/spreadsheet-import/utils/executeRelationUpdatesViaMutation';
+import { extractRelationUpdatesFromImportedRows } from '@/object-record/spreadsheet-import/utils/extractRelationUpdatesFromImportedRows';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
@@ -11,6 +14,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
@@ -19,6 +23,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const apolloCoreClient = useApolloCoreClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -74,14 +79,37 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           return fieldMapping;
         });
 
+        const relationUpdates = extractRelationUpdatesFromImportedRows({
+          importedStructuredRows: data.validStructuredRows,
+          spreadsheetImportFields,
+          fieldMetadataItems: availableFieldMetadataItemsToImport,
+          objectMetadataItems: objectMetadataItems ?? [],
+        });
+
         try {
           await batchCreateManyRecords({
             recordsToCreate: createInputs,
             upsert: true,
           });
+
+          if (relationUpdates.length > 0) {
+            await executeRelationUpdatesViaMutation({
+              apolloClient: apolloCoreClient,
+              relationUpdates,
+              batchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
+            });
+          }
+
+          const evictFieldNames = new Set([objectMetadataItem.namePlural]);
+          for (const update of relationUpdates) {
+            evictFieldNames.add(update.targetObjectMetadataItem.namePlural);
+          }
+
           await apolloCoreClient.refetchQueries({
             updateCache: (cache) => {
-              cache.evict({ fieldName: objectMetadataItem.namePlural });
+              for (const fieldName of evictFieldNames) {
+                cache.evict({ fieldName });
+              }
             },
           });
         } catch (error: any) {

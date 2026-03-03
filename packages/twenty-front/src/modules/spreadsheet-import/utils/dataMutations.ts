@@ -128,7 +128,7 @@ export const addErrorsAndRunHooks = (
         }
         case 'function': {
           data.forEach((entry, index) => {
-            const value = entry[field.key]?.toString();
+            const value = entry[field.key]?.toString()?.trim();
 
             if (
               isNonEmptyString(value) &&

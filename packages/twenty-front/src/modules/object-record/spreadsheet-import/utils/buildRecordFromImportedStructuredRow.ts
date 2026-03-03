@@ -61,6 +61,7 @@ const buildRelationConnectFieldRecord = (
 
   const relationConnectFields = spreadsheetImportFields.filter(
     (field) =>
+      field.isRelationConnectField === true &&
       field.fieldMetadataItemId === fieldMetadataItem.id &&
       isDefined(importedStructuredRow[field.key]) &&
       isNonEmptyString(importedStructuredRow[field.key]),

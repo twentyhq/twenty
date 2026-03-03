@@ -7,7 +7,10 @@ import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spread
 import { getRelationConnectSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadSheetGetRelationConnectSubFieldKey';
 import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
 import { getRelationConnectSubFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetRelationConnectSubFieldLabel';
+import { getRelationUpdateSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldKey';
+import { getRelationUpdateSubFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
@@ -205,6 +208,54 @@ export const useBuildSpreadsheetImportFields = () => {
     return spreadsheetImportFields;
   };
 
+  const handleCompositeFieldFromRelationUpdateField = ({
+    fieldMetadataItem,
+    targetField,
+    targetFieldType,
+  }: {
+    fieldMetadataItem: FieldMetadataItem;
+    targetField: FieldMetadataItem;
+    targetFieldType: CompositeFieldType;
+  }) => {
+    const spreadsheetImportFields: SpreadsheetImportField[] = [];
+
+    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[targetFieldType].subFields.forEach(
+      ({ subFieldName, isImportable }) => {
+        if (!isImportable) return;
+
+        const label = getRelationUpdateSubFieldLabel(
+          fieldMetadataItem,
+          targetField,
+          subFieldName as string,
+        );
+
+        spreadsheetImportFields.push(
+          createBaseField(fieldMetadataItem, {
+            label,
+            key: getRelationUpdateSubFieldKey(
+              fieldMetadataItem,
+              targetField,
+              subFieldName as string,
+            ),
+            fieldValidationDefinitions:
+              getSpreadSheetFieldValidationDefinitions(
+                targetField.type,
+                label,
+                subFieldName as string,
+              ),
+            isNestedField: true,
+            isCompositeSubField: true,
+            compositeSubFieldKey: subFieldName as string,
+            isRelationUpdateField: true,
+            targetFieldMetadataItem: targetField,
+          }),
+        );
+      },
+    );
+
+    return spreadsheetImportFields;
+  };
+
   const handleSelectField = (
     fieldMetadataItem: FieldMetadataItem,
     isMulti = false,
@@ -245,8 +296,11 @@ export const useBuildSpreadsheetImportFields = () => {
         ObjectMetadataItem
       >(targetObjectMetadataItem);
 
+      const connectFieldIds = new Set<string>();
+
       //todo - update logic when composite unique indexes will be supported
       for (const uniqueConstraintField of uniqueConstraintFields.flat()) {
+        connectFieldIds.add(uniqueConstraintField.id);
         if (isCompositeFieldType(uniqueConstraintField.type)) {
           spreadsheetImportFields.push(
             ...handleCompositeFieldFromRelationConnectField({
@@ -273,6 +327,57 @@ export const useBuildSpreadsheetImportFields = () => {
                 fieldMetadataItem,
                 uniqueConstraintField,
               ),
+            }),
+          );
+        }
+      }
+
+      // Add update fields for all importable fields on the target object
+      const availableTargetFields =
+        spreadsheetImportFilterAvailableFieldMetadataItems(
+          targetObjectMetadataItem.updatableFields,
+        );
+
+      for (const targetField of availableTargetFields) {
+        if (connectFieldIds.has(targetField.id)) continue;
+        if (
+          targetField.type === FieldMetadataType.RELATION ||
+          targetField.type === FieldMetadataType.ACTOR
+        ) {
+          continue;
+        }
+
+        if (isCompositeFieldType(targetField.type)) {
+          spreadsheetImportFields.push(
+            ...handleCompositeFieldFromRelationUpdateField({
+              fieldMetadataItem,
+              targetField,
+              targetFieldType: targetField.type,
+            }),
+          );
+        } else {
+          spreadsheetImportFields.push(
+            createBaseField(fieldMetadataItem, {
+              Icon: getIcon(fieldMetadataItem.icon),
+              isNestedField: true,
+              isCompositeSubField: false,
+              isRelationUpdateField: true,
+              targetFieldMetadataItem: targetField,
+              fieldMetadataItemId: fieldMetadataItem.id,
+              fieldMetadataType: FieldMetadataType.RELATION,
+              fieldValidationDefinitions:
+                getSpreadSheetFieldValidationDefinitions(
+                  targetField.type,
+                  getRelationUpdateSubFieldLabel(
+                    fieldMetadataItem,
+                    targetField,
+                  ),
+                ),
+              label: getRelationUpdateSubFieldLabel(
+                fieldMetadataItem,
+                targetField,
+              ),
+              key: getRelationUpdateSubFieldKey(fieldMetadataItem, targetField),
             }),
           );
         }

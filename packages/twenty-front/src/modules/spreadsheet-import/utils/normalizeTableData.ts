@@ -49,7 +49,8 @@ export const normalizeTableData = (
           return acc;
         }
         case SpreadsheetColumnType.matched: {
-          acc[column.value] = curr === '' ? undefined : curr;
+          const trimmedValue = typeof curr === 'string' ? curr.trim() : curr;
+          acc[column.value] = trimmedValue === '' ? undefined : trimmedValue;
           return acc;
         }
         case SpreadsheetColumnType.matchedSelect:

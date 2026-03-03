@@ -23,52 +23,7 @@ import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
-const formatCompositeFieldForCSV = (
-  value: unknown,
-  fieldType?: FieldMetadataType,
-): string | number => {
-  if (!isDefined(value)) return '';
-  if (typeof value !== 'object') return String(value);
-
-  const record = value as Record<string, unknown>;
-
-  switch (fieldType) {
-    case FieldMetadataType.FULL_NAME:
-      return [record.firstName, record.lastName].filter(Boolean).join(' ');
-    case FieldMetadataType.PHONES: {
-      const number = (record.primaryPhoneNumber as string) ?? '';
-      if (!number) return '';
-      const cleaned = number.replace(/\D/g, '');
-      if (cleaned.length === 10) {
-        return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-      }
-      return number;
-    }
-    case FieldMetadataType.EMAILS:
-      return (record.primaryEmail as string) ?? '';
-    case FieldMetadataType.CURRENCY: {
-      const amount = record.amountMicros as number;
-      if (!isDefined(amount)) return '';
-      return convertCurrencyMicrosToCurrencyAmount(amount);
-    }
-    case FieldMetadataType.ADDRESS:
-      return [
-        record.addressStreet1,
-        record.addressCity,
-        record.addressState,
-        record.addressPostcode,
-      ]
-        .filter(Boolean)
-        .join(', ');
-    case FieldMetadataType.LINKS:
-      return (record.primaryLinkUrl as string) ?? '';
-    default:
-      return JSON.stringify(value);
-  }
-};
 
 type GenerateExportOptions = {
   columns: Pick<
@@ -403,16 +358,33 @@ export const useRecordIndexExportRecords = ({
           }
 
           const subFieldType = subFieldMetadata.type as FieldMetadataType;
-          const flatFieldName = `${fieldName}__${subFieldName}`;
-          expandedColumns.push({
-            label: `${relationConfig.relationFieldLabel} / ${subFieldMetadata.label}`,
-            type: isCompositeFieldType(subFieldType)
-              ? FieldMetadataType.TEXT
-              : subFieldType,
-            metadata: {
-              fieldName: flatFieldName,
-            },
-          });
+
+          if (isCompositeFieldType(subFieldType)) {
+            const subFieldLabels =
+              COMPOSITE_FIELD_SUB_FIELD_LABELS[subFieldType];
+
+            for (const [compositeKey, compositeLabel] of Object.entries(
+              subFieldLabels,
+            )) {
+              const flatFieldName = `${fieldName}__${subFieldName}__${compositeKey}`;
+              expandedColumns.push({
+                label: `${relationConfig.relationFieldLabel} / ${subFieldMetadata.label} / ${compositeLabel}`,
+                type: FieldMetadataType.TEXT,
+                metadata: {
+                  fieldName: flatFieldName,
+                },
+              });
+            }
+          } else {
+            const flatFieldName = `${fieldName}__${subFieldName}`;
+            expandedColumns.push({
+              label: `${relationConfig.relationFieldLabel} / ${subFieldMetadata.label}`,
+              type: subFieldType,
+              metadata: {
+                fieldName: flatFieldName,
+              },
+            });
+          }
         }
       }
 
@@ -461,7 +433,6 @@ export const useRecordIndexExportRecords = ({
           );
 
           for (const subFieldName of relationConfig.selectedSubFields) {
-            const flatFieldName = `${relationConfig.relationFieldName}__${subFieldName}`;
             const rawValue = relatedRecord?.[subFieldName];
             const fieldType = subFieldTypes?.get(subFieldName);
 
@@ -471,11 +442,17 @@ export const useRecordIndexExportRecords = ({
               isDefined(fieldType) &&
               isCompositeFieldType(fieldType)
             ) {
-              expandedRecord[flatFieldName] = formatCompositeFieldForCSV(
-                rawValue,
-                fieldType,
-              );
+              const compositeRecord = rawValue as Record<string, unknown>;
+              const subFieldLabels =
+                COMPOSITE_FIELD_SUB_FIELD_LABELS[fieldType];
+
+              for (const compositeKey of Object.keys(subFieldLabels)) {
+                const flatFieldName = `${relationConfig.relationFieldName}__${subFieldName}__${compositeKey}`;
+                expandedRecord[flatFieldName] =
+                  compositeRecord[compositeKey] ?? '';
+              }
             } else {
+              const flatFieldName = `${relationConfig.relationFieldName}__${subFieldName}`;
               expandedRecord[flatFieldName] = rawValue ?? '';
             }
           }

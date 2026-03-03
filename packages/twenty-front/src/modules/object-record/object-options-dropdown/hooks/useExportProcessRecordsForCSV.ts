@@ -7,19 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
-const formatPhoneNumber = (phoneData: Record<string, unknown>): string => {
-  const number = (phoneData.primaryPhoneNumber as string) ?? '';
-  if (!number) return '';
-
-  const cleaned = number.replace(/\D/g, '');
-
-  if (cleaned.length === 10) {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-  }
-
-  return number;
-};
-
 export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -39,38 +26,24 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
 
           switch (field.type) {
             case FieldMetadataType.CURRENCY: {
+              const data = record[field.name];
               const amount = convertCurrencyMicrosToCurrencyAmount(
-                record[field.name].amountMicros,
+                data?.amountMicros,
               );
               return {
                 ...processedRecord,
-                [field.name]: isDefined(amount) ? amount : '',
+                [field.name]: {
+                  amountMicros: isDefined(amount) ? amount : '',
+                  currencyCode: data?.currencyCode ?? '',
+                },
               };
             }
             case FieldMetadataType.PHONES:
-              return {
-                ...processedRecord,
-                [field.name]: formatPhoneNumber(record[field.name]),
-              };
             case FieldMetadataType.EMAILS:
-              return {
-                ...processedRecord,
-                [field.name]: record[field.name].primaryEmail?.trim() ?? '',
-              };
-            case FieldMetadataType.FULL_NAME: {
-              const name = record[field.name];
-              return {
-                ...processedRecord,
-                [field.name]: [name?.firstName, name?.lastName]
-                  .filter(Boolean)
-                  .join(' '),
-              };
-            }
+            case FieldMetadataType.FULL_NAME:
             case FieldMetadataType.LINKS:
-              return {
-                ...processedRecord,
-                [field.name]: record[field.name].primaryLinkUrl ?? '',
-              };
+            case FieldMetadataType.ADDRESS:
+              return processedRecord;
             case FieldMetadataType.RELATION: {
               // Skip relations that are being handled by expanded export
               if (skipRelationFieldNames?.has(field.name) === true) {

@@ -31,4 +31,8 @@ export type SpreadsheetImportField = {
   isRelationConnectField?: boolean;
   // defined only if isRelationConnectField is true
   uniqueFieldMetadataItem?: FieldMetadataItem;
+  // true for relation update fields (not matching, but updating related record data)
+  isRelationUpdateField?: boolean;
+  // the target object's field metadata item (for relation update fields)
+  targetFieldMetadataItem?: FieldMetadataItem;
 };

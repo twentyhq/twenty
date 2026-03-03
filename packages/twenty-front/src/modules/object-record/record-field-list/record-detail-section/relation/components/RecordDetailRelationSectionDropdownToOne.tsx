@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -17,8 +17,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -32,9 +32,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 type RecordDetailRelationSectionDropdownToOneProps = {
   dropdownTriggerClickableComponent?: ReactNode;
