@@ -4,6 +4,7 @@ import { ASSETS_DIR } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { scaffoldIntegrationTest } from '@/utils/test-template';
 import createTwentyAppPackageJson from 'package.json';
 
 const SRC_FOLDER = 'src';
@@ -103,13 +104,10 @@ export const copyBaseApplicationProject = async ({
   }
 
   if (exampleOptions.includeExampleIntegrationTest) {
-    await createIntegrationTest({
-      appDirectory: sourceFolderPath,
-      fileFolder: '__tests__',
-      fileName: 'app-install.integration-test.ts',
+    await scaffoldIntegrationTest({
+      appDirectory,
+      sourceFolderPath,
     });
-
-    await createTestConfig(appDirectory);
   }
 
   await createDefaultPreInstallFunction({
@@ -130,21 +128,6 @@ export const copyBaseApplicationProject = async ({
     appDirectory: sourceFolderPath,
     fileName: 'application-config.ts',
   });
-};
-
-const SEED_API_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik';
-
-const createTestConfig = async (appDirectory: string) => {
-  const testConfig = {
-    apiUrl: 'http://localhost:3000',
-    apiKey: SEED_API_KEY,
-  };
-
-  await fs.writeFile(
-    join(appDirectory, '.twenty-test.config.json'),
-    JSON.stringify(testConfig, null, 2),
-  );
 };
 
 const createPublicAssetDirectory = async (appDirectory: string) => {
@@ -519,125 +502,6 @@ export default defineSkill({
   description: 'A sample skill for your application',
   icon: 'IconBrain',
   content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
-});
-`;
-
-  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
-  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
-};
-
-const createIntegrationTest = async ({
-  appDirectory,
-  fileFolder,
-  fileName,
-}: {
-  appDirectory: string;
-  fileFolder?: string;
-  fileName: string;
-}) => {
-  const content = `import * as fs from 'fs';
-import { appBuild, appUninstall } from 'twenty-sdk/cli';
-import { MetadataApiClient } from 'twenty-sdk/generated';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import applicationConfig from 'src/application-config';
-
-const APP_PATH = process.cwd();
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
-const TWENTY_CONFIG_PATH = process.env.TWENTY_CONFIG_PATH;
-
-const readApiKeyFromConfig = (): string | undefined => {
-  if (!TWENTY_CONFIG_PATH || !fs.existsSync(TWENTY_CONFIG_PATH)) {
-    return undefined;
-  }
-
-  const config = JSON.parse(fs.readFileSync(TWENTY_CONFIG_PATH, 'utf-8'));
-
-  return config.apiKey;
-};
-
-const assertServerIsReachable = async () => {
-  let response: Response;
-
-  try {
-    response = await fetch(\`\${TWENTY_API_URL}/healthz\`);
-  } catch {
-    throw new Error(
-      \`Twenty server is not reachable at \${TWENTY_API_URL}. \` +
-        'Make sure the server is running before executing integration tests.',
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(\`Server at \${TWENTY_API_URL} returned \${response.status}\`);
-  }
-};
-
-describe('App installation', () => {
-  let appInstalled = false;
-
-  beforeAll(async () => {
-    await assertServerIsReachable();
-
-    const buildResult = await appBuild({
-      appPath: APP_PATH,
-      onProgress: (message: string) => console.log(\`[build] \${message}\`),
-    });
-
-    if (!buildResult.success) {
-      throw new Error(
-        \`App build failed: \${buildResult.error?.message ?? 'Unknown error'}\`,
-      );
-    }
-
-    appInstalled = true;
-  });
-
-  afterAll(async () => {
-    if (!appInstalled) {
-      return;
-    }
-
-    const uninstallResult = await appUninstall({ appPath: APP_PATH });
-
-    if (!uninstallResult.success) {
-      console.warn(
-        \`App uninstall failed: \${uninstallResult.error?.message ?? 'Unknown error'}\`,
-      );
-    }
-  });
-
-  it('should find the installed app in the applications list', async () => {
-    const apiKey = readApiKeyFromConfig();
-
-    if (!apiKey) {
-      throw new Error(
-        'No API key found. Ensure TWENTY_CONFIG_PATH points to a valid config file containing an apiKey.',
-      );
-    }
-
-    const metadataClient = new MetadataApiClient({
-      url: \`\${TWENTY_API_URL}/metadata\`,
-      headers: {
-        Authorization: \`Bearer \${apiKey}\`,
-      },
-    });
-
-    const result = await metadataClient.query({
-      findManyApplications: {
-        id: true,
-        name: true,
-        universalIdentifier: true,
-      },
-    });
-
-    const installedApp = result.findManyApplications.find(
-      (application: { universalIdentifier: string }) =>
-        application.universalIdentifier ===
-        applicationConfig.universalIdentifier,
-    );
-
-    expect(installedApp).toBeDefined();
-  });
 });
 `;
 
