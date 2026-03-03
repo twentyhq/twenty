@@ -15,7 +15,7 @@ const buildManifest = (
 ) => buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
 
 const OBJECT_GQL_FIELDS =
-  'id nameSingular namePlural labelSingular labelPlural description icon isCustom isActive';
+  'id nameSingular namePlural labelSingular labelPlural description icon isCustom isActive universalIdentifier';
 
 const findCustomObjects = async () => {
   const { objects } = await findManyObjectMetadata({
@@ -113,6 +113,7 @@ describe('Manifest update - objects', () => {
   }, 60000);
 
   it('should update object properties when changed in manifest on second sync', async () => {
+    const universalIdentifier = uuidv4();
     const ticketObject = buildDefaultObjectManifest({
       nameSingular: 'ticket',
       namePlural: 'tickets',
@@ -120,6 +121,7 @@ describe('Manifest update - objects', () => {
       labelPlural: 'Tickets',
       description: 'A support ticket',
       icon: 'IconTicket',
+      universalIdentifier,
     });
 
     await syncApplication({
@@ -129,10 +131,11 @@ describe('Manifest update - objects', () => {
 
     const objectsAfterFirstSync = await findCustomObjects();
     const ticketBefore = objectsAfterFirstSync.find(
-      (obj) => obj.nameSingular === 'ticket',
+      (obj) => obj.universalIdentifier === universalIdentifier,
     );
 
     expect(ticketBefore).toMatchObject({
+      nameSingular: 'ticket',
       labelSingular: 'Ticket',
       description: 'A support ticket',
       icon: 'IconTicket',
@@ -140,6 +143,8 @@ describe('Manifest update - objects', () => {
 
     const updatedTicketObject = {
       ...ticketObject,
+      nameSingular: 'ticket2',
+      namePlural: 'tickets2',
       labelSingular: 'Support Ticket',
       labelPlural: 'Support Tickets',
       description: 'A customer support ticket',
@@ -153,12 +158,13 @@ describe('Manifest update - objects', () => {
 
     const objectsAfterSecondSync = await findCustomObjects();
     const ticketAfter = objectsAfterSecondSync.find(
-      (obj) => obj.nameSingular === 'ticket',
+      (obj) => obj.universalIdentifier === universalIdentifier,
     );
 
     expect(ticketAfter).toBeDefined();
     expect(ticketAfter).toMatchObject({
-      nameSingular: 'ticket',
+      nameSingular: 'ticket2',
+      namePlural: 'tickets2',
       labelSingular: 'Support Ticket',
       labelPlural: 'Support Tickets',
       description: 'A customer support ticket',
