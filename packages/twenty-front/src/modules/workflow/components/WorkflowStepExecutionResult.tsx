@@ -16,14 +16,12 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 200px;
 `;
 
 const StyledCodeEditorWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-height: 200px;
 `;
 
 type OutputAccent = 'default' | 'success' | 'error';

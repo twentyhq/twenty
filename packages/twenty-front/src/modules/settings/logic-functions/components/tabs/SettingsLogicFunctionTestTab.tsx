@@ -1,6 +1,5 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
+import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
@@ -47,8 +46,6 @@ export const SettingsLogicFunctionTestTab = ({
     }));
   };
 
-  const testLogsTextAreaId = `${logicFunctionId}-test-logs`;
-
   return (
     <Section>
       <H2Title
@@ -88,12 +85,9 @@ export const SettingsLogicFunctionTestTab = ({
         />
         {logicFunctionTestData.output.logs.length > 0 && (
           <StyledCodeEditorContainer>
-            <InputLabel>{t`Logs`}</InputLabel>
-            <TextArea
-              textAreaId={testLogsTextAreaId}
+            <LogicFunctionLogs
+              componentInstanceId={`settings-logic-function-logs-${logicFunctionId}`}
               value={isTesting ? '' : logicFunctionTestData.output.logs}
-              maxRows={20}
-              disabled
             />
           </StyledCodeEditorContainer>
         )}

@@ -49,7 +49,7 @@ export const useResizableEditor = ({
       return;
     }
 
-    const handleMouseMove = (event: MouseEvent) => {
+    const handlePointerMove = (event: PointerEvent) => {
       const delta = event.clientY - resizeStartY;
       const newHeight = Math.min(
         CODE_EDITOR_RESIZE_MAX_HEIGHT,
@@ -58,20 +58,21 @@ export const useResizableEditor = ({
       setHeight(newHeight);
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       setIsResizing(false);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
     };
   }, [isResizing, resizeStartY, resizeStartHeight, setHeight]);
 
-  const handleResizeStart = (event: React.MouseEvent) => {
+  const handleResizeStart = (event: React.PointerEvent) => {
+    (event.target as HTMLElement).setPointerCapture(event.pointerId);
     setResizeStartY(event.clientY);
     setResizeStartHeight(height);
     setIsResizing(true);
@@ -79,7 +80,6 @@ export const useResizableEditor = ({
 
   return {
     height,
-    isResizing,
     handleResizeStart,
   };
 };

@@ -10,9 +10,9 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
+import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -50,15 +50,10 @@ import { useDebouncedCallback } from 'use-debounce';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const CODE_EDITOR_MIN_HEIGHT = 343;
-
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  flex: 1;
-  min-height: ${CODE_EDITOR_MIN_HEIGHT}px;
-  overflow: hidden;
 `;
 
 const StyledTabList = styled(TabList)`
@@ -304,8 +299,6 @@ export const WorkflowEditActionCode = ({
     dependencies: [isFullScreen],
   });
 
-  const testLogsTextAreaId = `${logicFunctionId}-test-logs`;
-
   const breadcrumbLinks: BreadcrumbProps['links'] = [
     {
       children: workflow?.name?.trim() || t`Untitled Workflow`,
@@ -431,12 +424,9 @@ export const WorkflowEditActionCode = ({
               </StyledCodeEditorContainer>
               {logicFunctionTestData.output.logs.length > 0 && (
                 <StyledCodeEditorContainer>
-                  <InputLabel>{t`Logs`}</InputLabel>
-                  <TextArea
-                    textAreaId={testLogsTextAreaId}
+                  <LogicFunctionLogs
+                    componentInstanceId={`workflow-edit-action-logs-${action.id}`}
                     value={isExecuting ? '' : logicFunctionTestData.output.logs}
-                    maxRows={20}
-                    disabled
                   />
                 </StyledCodeEditorContainer>
               )}

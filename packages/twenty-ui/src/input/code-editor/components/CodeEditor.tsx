@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
 import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
+import { ResizeHandle } from '@ui/input/code-editor/components/ResizeHandle';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
+import { useResizableEditor } from '@ui/input/code-editor/hooks/useResizableEditor';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { ThemeContext } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
-import { useResizableEditor } from '@ui/input/code-editor/hooks/useResizableEditor';
 import { type KeyboardEvent, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -109,30 +110,6 @@ const StyledEditorWrapper = styled.div<{
   }
 `;
 
-const StyledResizeHandleArea = styled.div`
-  align-items: center;
-  cursor: ns-resize;
-  display: flex;
-  height: 8px;
-  justify-content: center;
-  user-select: none;
-
-  &:hover > div {
-    background-color: ${themeCssVariables.font.color.tertiary};
-  }
-`;
-
-const StyledResizeHandleBar = styled.div<{ isResizing: boolean }>`
-  background-color: ${({ isResizing }) =>
-    isResizing
-      ? themeCssVariables.color.blue
-      : themeCssVariables.background.quaternary};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  height: 3px;
-  transition: background-color ${themeCssVariables.animation.duration.fast}s;
-  width: 32px;
-`;
-
 export const CodeEditor = ({
   value,
   language,
@@ -156,11 +133,7 @@ export const CodeEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const numericHeight = typeof height === 'number' ? height : 450;
-  const {
-    height: currentHeight,
-    isResizing,
-    handleResizeStart,
-  } = useResizableEditor({
+  const { height: currentHeight, handleResizeStart } = useResizableEditor({
     initialHeight: numericHeight,
     componentInstanceId,
   });
@@ -252,11 +225,7 @@ export const CodeEditor = ({
           }}
         />
       </StyledEditorWrapper>
-      {resizable && (
-        <StyledResizeHandleArea onMouseDown={handleResizeStart}>
-          <StyledResizeHandleBar isResizing={isResizing} />
-        </StyledResizeHandleArea>
-      )}
+      {resizable && <ResizeHandle onPointerDown={handleResizeStart} />}
     </StyledCodeEditorContainer>
   );
 };
