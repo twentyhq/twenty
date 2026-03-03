@@ -171,7 +171,6 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    // w0 is at filtered index 0, w1 is at filtered index 1
     expect(result.tabs[0].widgets[1].position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 1,

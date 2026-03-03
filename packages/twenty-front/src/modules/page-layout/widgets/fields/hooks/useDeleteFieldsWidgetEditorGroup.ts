@@ -50,7 +50,6 @@ export const useDeleteFieldsWidgetEditorGroup = ({
       );
 
       if (remainingGroups.length === 0) {
-        // No groups left: switch to ungrouped mode
         store.set(fieldsWidgetGroupsDraftState, (prev) => ({
           ...prev,
           [widgetId]: [],
@@ -73,19 +72,16 @@ export const useDeleteFieldsWidgetEditorGroup = ({
         return;
       }
 
-      // Find the next or previous group to absorb the deleted group's fields
       const sortedRemaining = [...remainingGroups].sort(
         (a, b) => a.position - b.position,
       );
 
       const deletedGroupPosition = deletedGroup.position;
 
-      // Find the next group (first remaining group with position > deleted group's position)
       const nextGroup = sortedRemaining.find(
         (group) => group.position > deletedGroupPosition,
       );
 
-      // Use next group if available, otherwise use the last group (previous)
       const targetGroup =
         nextGroup ?? sortedRemaining[sortedRemaining.length - 1];
 
@@ -96,7 +92,6 @@ export const useDeleteFieldsWidgetEditorGroup = ({
             return group;
           }
 
-          // Append deleted group's fields to the target group
           const existingFields = [...group.fields].sort(
             (a, b) => a.position - b.position,
           );

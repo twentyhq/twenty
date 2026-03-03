@@ -42,7 +42,6 @@ export const useCreateFieldsWidgetEditorGroup = ({
       const newId = v4();
 
       if (currentMode === 'ungrouped') {
-        // Absorb all ungrouped fields into the new group
         const allUngroupedFields = store.get(
           fieldsWidgetUngroupedFieldsDraftState,
         );
@@ -66,19 +65,16 @@ export const useCreateFieldsWidgetEditorGroup = ({
           ],
         }));
 
-        // Clear ungrouped fields
         store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
           ...prev,
           [widgetId]: [],
         }));
 
-        // Switch to grouped mode
         store.set(fieldsWidgetModeDraftState, (prev) => ({
           ...prev,
           [widgetId]: 'grouped' as const,
         }));
       } else {
-        // Grouped mode: insert a new empty group after afterGroupId, or append at end
         const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
 
         const currentGroups = allDraftGroups[widgetId] ?? [];

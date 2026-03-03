@@ -61,7 +61,6 @@ export const useFieldsWidgetGroupsForDisplay = ({
       draftMode === 'ungrouped' &&
       hasDraftUngroupedFields
     ) {
-      // In edit mode with ungrouped fields, create a synthetic inline group for display
       const visibleFields = ungroupedFieldsForWidget
         .filter((field) => field.isVisible)
         .sort((a, b) => a.position - b.position)

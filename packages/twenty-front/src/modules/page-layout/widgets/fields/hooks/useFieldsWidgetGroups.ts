@@ -34,7 +34,6 @@ export const useFieldsWidgetGroups = ({
       return [];
     }
 
-    // Views are seeded for object
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
       const sortedGroups = view.viewFieldGroups.toSorted(
         (a, b) => a.position - b.position,

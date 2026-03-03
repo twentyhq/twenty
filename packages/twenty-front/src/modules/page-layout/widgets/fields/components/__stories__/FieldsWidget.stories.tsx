@@ -111,7 +111,6 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
-// Sets a record in the Jotai store so field display hooks can read it
 const setRecordInStore = (recordId: string, record: ObjectRecord) => {
   jotaiStore.set(recordStoreFamilyState.atomFamily(recordId), record);
 };
@@ -373,14 +372,12 @@ export const WithViewFieldGroups: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify group headers are visible
     const contactInfoHeader = await canvas.findByText('Contact Info');
     expect(contactInfoHeader).toBeVisible();
 
     const businessHeader = await canvas.findByText('Business');
     expect(businessHeader).toBeVisible();
 
-    // Verify field values are rendered
     const companyName = await canvas.findByText('Acme Corporation');
     expect(companyName).toBeVisible();
   },
@@ -418,7 +415,6 @@ export const WithInlineViewFields: Story = {
           viewId: FIELDS_VIEW_ID,
         },
       ],
-      // No viewFieldGroups — triggers inline display mode
     });
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
@@ -486,11 +482,9 @@ export const WithInlineViewFields: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify field values are rendered without group headers
     const companyName = await canvas.findByText('Acme Corporation');
     expect(companyName).toBeVisible();
 
-    // Verify no group section headers exist (inline mode)
     const contactInfoHeader = canvas.queryByText('Contact Info');
     expect(contactInfoHeader).toBeNull();
 
@@ -501,7 +495,6 @@ export const WithInlineViewFields: Story = {
 
 export const Empty: Story = {
   render: () => {
-    // View with viewFieldGroups but no visible fields in any group
     const coreView = createCoreView({
       viewFieldGroups: [
         {
@@ -580,7 +573,6 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify the empty state is shown
     const emptyTitle = await canvas.findByText('No fields to display');
     expect(emptyTitle).toBeVisible();
 

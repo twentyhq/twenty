@@ -104,8 +104,6 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
       }));
     }
 
-    // Mode initialization is independent so it's always set,
-    // even if draft already existed from a previous code version.
     const currentModes = store.get(fieldsWidgetModeDraftState);
 
     if (!(widgetId in currentModes)) {
