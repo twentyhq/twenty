@@ -116,9 +116,27 @@ export const convertObjectMetadataToSchemaProperties = ({
     }
 
     if (
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION) &&
+      field.settings.relationType === RelationType.MANY_TO_ONE &&
+      isDefined(field.settings.joinColumnName)
+    ) {
+      return {
+        ...node,
+        [field.settings.joinColumnName]: {
+          type: 'string',
+          format: 'uuid',
+        },
+      };
+    }
+
+    if (
       isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       field.settings?.relationType === RelationType.ONE_TO_MANY
     ) {
+      return node;
+    }
+
+    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) {
       return node;
     }
 

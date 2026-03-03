@@ -222,8 +222,7 @@ export class DataArgProcessor {
 
         return transformRawJsonField(validatedValue);
       }
-      case FieldMetadataType.RELATION:
-      case FieldMetadataType.MORPH_RELATION: {
+      case FieldMetadataType.RELATION: {
         const fieldMetadataRelationSettings =
           fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
@@ -240,6 +239,35 @@ export class DataArgProcessor {
 
         if (key === fieldMetadataRelationSettings.joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);
+        }
+
+        return value;
+      }
+      case FieldMetadataType.MORPH_RELATION: {
+        const fieldMetadataMorphRelationSettings =
+          fieldMetadata.settings as FieldMetadataSettingsMapping['MORPH_RELATION'];
+
+        if (
+          fieldMetadataMorphRelationSettings.relationType ===
+          RelationType.ONE_TO_MANY
+        ) {
+          throw new CommonQueryRunnerException(
+            `One-to-many relation ${key} field does not support write operations.`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        if (key === fieldMetadataMorphRelationSettings.joinColumnName) {
+          return validateUUIDFieldOrThrow(value, key);
+        }
+
+        if (isDefined(fieldMetadataMorphRelationSettings.joinColumnName)) {
+          throw new CommonQueryRunnerException(
+            `Use "${fieldMetadataMorphRelationSettings.joinColumnName}" instead of "${key}" to set this relation.`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
         }
 
         return value;
