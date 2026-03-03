@@ -16,7 +16,6 @@ generated
 /dist/
 
 .twenty
-.twenty-test
 
 # production
 /build

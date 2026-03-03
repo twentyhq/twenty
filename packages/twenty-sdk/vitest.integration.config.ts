@@ -19,7 +19,7 @@ export default defineConfig({
     },
     fileParallelism: false,
     env: {
-      TWENTY_CONFIG_PATH: '.twenty-test/config.json',
+      TWENTY_CONFIG_PATH: '.twenty-test.config.json',
     },
     setupFiles: [
       'src/cli/__tests__/integration/utils/setup-app-dev-mocks.ts',

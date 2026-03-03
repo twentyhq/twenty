@@ -25,7 +25,7 @@ export default defineConfig({
       concurrent: false,
     },
     env: {
-      TWENTY_CONFIG_PATH: '.twenty-test/config.json',
+      TWENTY_CONFIG_PATH: '.twenty-test.config.json',
     },
     globalSetup: undefined,
     onConsoleLog: () => true,

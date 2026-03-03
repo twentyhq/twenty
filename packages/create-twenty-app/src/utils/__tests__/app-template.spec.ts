@@ -805,7 +805,7 @@ describe('copyBaseApplicationProject', () => {
       expect(packageJson.devDependencies.vitest).toBeDefined();
     });
 
-    it('should create .twenty-test/config.example.json when enabled', async () => {
+    it('should create .twenty-test.config.json when enabled', async () => {
       await copyBaseApplicationProject({
         appName: 'my-test-app',
         appDisplayName: 'My Test App',
@@ -814,21 +814,20 @@ describe('copyBaseApplicationProject', () => {
         exampleOptions: ALL_EXAMPLES,
       });
 
-      const exampleConfigPath = join(
+      const testConfigPath = join(
         testAppDirectory,
-        '.twenty-test',
-        'config.example.json',
+        '.twenty-test.config.json',
       );
 
-      expect(await fs.pathExists(exampleConfigPath)).toBe(true);
+      expect(await fs.pathExists(testConfigPath)).toBe(true);
 
-      const content = await fs.readJson(exampleConfigPath);
+      const content = await fs.readJson(testConfigPath);
 
       expect(content.apiUrl).toBe('http://localhost:3000');
-      expect(content.apiKey).toBe('your-api-key');
+      expect(content.apiKey).toBeDefined();
     });
 
-    it('should not create .twenty-test/config.example.json when disabled', async () => {
+    it('should not create .twenty-test.config.json when disabled', async () => {
       await copyBaseApplicationProject({
         appName: 'my-test-app',
         appDisplayName: 'My Test App',
@@ -837,13 +836,12 @@ describe('copyBaseApplicationProject', () => {
         exampleOptions: NO_EXAMPLES,
       });
 
-      const exampleConfigPath = join(
+      const testConfigPath = join(
         testAppDirectory,
-        '.twenty-test',
-        'config.example.json',
+        '.twenty-test.config.json',
       );
 
-      expect(await fs.pathExists(exampleConfigPath)).toBe(false);
+      expect(await fs.pathExists(testConfigPath)).toBe(false);
     });
 
     it('should not include vitest or test scripts when disabled', async () => {

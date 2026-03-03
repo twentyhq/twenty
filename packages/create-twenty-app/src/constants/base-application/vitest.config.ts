@@ -7,7 +7,7 @@ export default defineConfig({
     include: ['src/**/*.integration-test.ts'],
     env: {
       TWENTY_API_URL: 'http://localhost:3000',
-      TWENTY_CONFIG_PATH: '.twenty-test/config.json',
+      TWENTY_CONFIG_PATH: '.twenty-test.config.json',
     },
   },
 });
