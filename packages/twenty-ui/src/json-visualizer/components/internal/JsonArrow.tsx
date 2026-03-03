@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION, ThemeContext, themeCssVariables } from '@ui/theme';
+import { ANIMATION, ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 

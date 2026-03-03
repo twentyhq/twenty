@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -7,6 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
@@ -17,9 +18,9 @@ import { EventLogTableSelector } from './components/EventLogTableSelector';
 import { useEventLogs } from './hooks/useQueryEventLogs';
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -27,11 +28,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledHeader = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledHeaderRow = styled.div`
@@ -41,8 +42,8 @@ const StyledHeaderRow = styled.div`
 `;
 
 const StyledRecordCount = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledTableWrapper = styled.div`
@@ -55,26 +56,26 @@ const StyledErrorContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(8)};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
 const StyledErrorIcon = styled.div`
-  color: ${({ theme }) => theme.color.orange};
+  color: ${themeCssVariables.color.orange};
 `;
 
 const StyledErrorTitle = styled.h3`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   margin: 0;
 `;
 
 const StyledErrorMessage = styled.p`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
   margin: 0;
   max-width: 400px;
 `;

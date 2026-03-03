@@ -122,6 +122,7 @@ export class WorkspaceInvitationResolver {
       sendInviteLinkInput.emails,
       workspace,
       workspaceMember,
+      sendInviteLinkInput.roleId ?? undefined,
     );
   }
 }

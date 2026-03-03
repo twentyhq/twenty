@@ -2485,6 +2485,8 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
+  scope?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -3033,6 +3035,7 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -3804,6 +3807,15 @@ export type PostgresCredentials = {
   workspaceId: Scalars['UUID'];
 };
 
+export type PublicApplicationRegistration = {
+  __typename?: 'PublicApplicationRegistration';
+  id: Scalars['UUID'];
+  logoUrl?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  oAuthScopes: Array<Scalars['String']>;
+  websiteUrl?: Maybe<Scalars['String']>;
+};
+
 export type PublicDomain = {
   __typename?: 'PublicDomain';
   createdAt: Scalars['DateTime'];
@@ -3854,7 +3866,7 @@ export type Query = {
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
-  findApplicationRegistrationByClientId?: Maybe<ApplicationRegistration>;
+  findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
@@ -5440,6 +5452,7 @@ export type WorkspaceInvitation = {
   email: Scalars['String'];
   expiresAt: Scalars['DateTime'];
   id: Scalars['UUID'];
+  roleId?: Maybe<Scalars['UUID']>;
 };
 
 export type WorkspaceInviteHashValid = {
@@ -6461,7 +6474,7 @@ export type FindApplicationRegistrationByClientIdQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationByClientIdQuery = { __typename?: 'Query', findApplicationRegistrationByClientId?: { __typename?: 'ApplicationRegistration', id: string, name: string, oAuthScopes: Array<string>, websiteUrl?: string | null, logoUrl?: string | null } | null };
+export type FindApplicationRegistrationByClientIdQuery = { __typename?: 'Query', findApplicationRegistrationByClientId?: { __typename?: 'PublicApplicationRegistration', id: string, name: string, oAuthScopes: Array<string>, websiteUrl?: string | null, logoUrl?: string | null } | null };
 
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
   id: Scalars['String'];
@@ -7161,19 +7174,20 @@ export type ResendWorkspaceInvitationMutationVariables = Exact<{
 }>;
 
 
-export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
+export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, roleId?: string | null, expiresAt: string }> } };
 
 export type SendInvitationsMutationVariables = Exact<{
   emails: Array<Scalars['String']> | Scalars['String'];
+  roleId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
+export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, roleId?: string | null, expiresAt: string }> } };
 
 export type GetWorkspaceInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetWorkspaceInvitationsQuery = { __typename?: 'Query', findWorkspaceInvitations: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> };
+export type GetWorkspaceInvitationsQuery = { __typename?: 'Query', findWorkspaceInvitations: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, roleId?: string | null, expiresAt: string }> };
 
 export type DeletedWorkspaceMemberQueryFragmentFragment = { __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } };
 
@@ -16571,6 +16585,7 @@ export const ResendWorkspaceInvitationDocument = gql`
       ... on WorkspaceInvitation {
         id
         email
+        roleId
         expiresAt
       }
     }
@@ -16604,14 +16619,15 @@ export type ResendWorkspaceInvitationMutationHookResult = ReturnType<typeof useR
 export type ResendWorkspaceInvitationMutationResult = Apollo.MutationResult<ResendWorkspaceInvitationMutation>;
 export type ResendWorkspaceInvitationMutationOptions = Apollo.BaseMutationOptions<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>;
 export const SendInvitationsDocument = gql`
-    mutation SendInvitations($emails: [String!]!) {
-  sendInvitations(emails: $emails) {
+    mutation SendInvitations($emails: [String!]!, $roleId: UUID) {
+  sendInvitations(emails: $emails, roleId: $roleId) {
     success
     errors
     result {
       ... on WorkspaceInvitation {
         id
         email
+        roleId
         expiresAt
       }
     }
@@ -16634,6 +16650,7 @@ export type SendInvitationsMutationFn = Apollo.MutationFunction<SendInvitationsM
  * const [sendInvitationsMutation, { data, loading, error }] = useSendInvitationsMutation({
  *   variables: {
  *      emails: // value for 'emails'
+ *      roleId: // value for 'roleId'
  *   },
  * });
  */
@@ -16649,6 +16666,7 @@ export const GetWorkspaceInvitationsDocument = gql`
   findWorkspaceInvitations {
     id
     email
+    roleId
     expiresAt
   }
 }

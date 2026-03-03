@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
 import { type Nullable } from '@ui/utilities';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,24 +19,14 @@ const StyledIconWithBackgroundContainer = styled.div<{
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
-const StyledAvatarChipWrapper = styled.div<{
+const StyledAvatarOrIconWrapper = styled.div<{
   isClickable: boolean;
-  divider: AvatarChipProps['divider'];
 }>`
-  border-left: ${({ divider }) =>
-    divider === 'left'
-      ? `1px solid ${themeCssVariables.border.color.light}`
-      : 'none'};
-  border-right: ${({ divider }) =>
-    divider === 'right'
-      ? `1px solid ${themeCssVariables.border.color.light}`
-      : 'none'};
-
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
   display: flex;
 `;
 
-export type AvatarChipProps = {
+export type AvatarOrIconProps = {
   placeholder?: string;
   avatarUrl?: string;
   avatarType?: Nullable<AvatarType>;
@@ -45,11 +35,10 @@ export type AvatarChipProps = {
   IconBackgroundColor?: string;
   isIconInverted?: boolean;
   placeholderColorSeed?: string;
-  divider?: 'right' | 'left';
   onClick?: () => void;
 };
 
-export const AvatarChip = ({
+export const AvatarOrIcon = ({
   Icon,
   placeholderColorSeed,
   avatarType,
@@ -59,8 +48,7 @@ export const AvatarChip = ({
   IconColor,
   IconBackgroundColor,
   onClick,
-  divider,
-}: AvatarChipProps) => {
+}: AvatarOrIconProps) => {
   const { theme } = useContext(ThemeContext);
   if (!isDefined(Icon)) {
     return (
@@ -79,9 +67,8 @@ export const AvatarChip = ({
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
-      <StyledAvatarChipWrapper
+      <StyledAvatarOrIconWrapper
         isClickable={isClickable}
-        divider={divider}
         onClick={onClick}
       >
         <StyledIconWithBackgroundContainer
@@ -95,14 +82,13 @@ export const AvatarChip = ({
             stroke={theme.icon.stroke.sm}
           />
         </StyledIconWithBackgroundContainer>
-      </StyledAvatarChipWrapper>
+      </StyledAvatarOrIconWrapper>
     );
   }
 
   return (
-    <StyledAvatarChipWrapper
+    <StyledAvatarOrIconWrapper
       isClickable={isClickable}
-      divider={divider}
       onClick={onClick}
     >
       <Icon
@@ -110,6 +96,6 @@ export const AvatarChip = ({
         stroke={theme.icon.stroke.sm}
         color={IconColor || 'currentColor'}
       />
-    </StyledAvatarChipWrapper>
+    </StyledAvatarOrIconWrapper>
   );
 };

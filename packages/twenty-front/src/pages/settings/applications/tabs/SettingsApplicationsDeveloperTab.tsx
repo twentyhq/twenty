@@ -3,10 +3,10 @@ import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-regi
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -20,10 +20,12 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(2)} 0;
+  margin: ${themeCssVariables.spacing[2]} 0;
 `;
 
 type ApplicationRegistration = {
@@ -35,7 +37,7 @@ type ApplicationRegistration = {
 export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { copyToClipboard } = useCopyToClipboard();

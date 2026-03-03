@@ -7,7 +7,8 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ANIMATION, themeCssVariables } from '@ui/theme';
+import { ANIMATION } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';

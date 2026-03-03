@@ -1,6 +1,8 @@
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -10,17 +12,17 @@ const StyledEventCardMessageContainer = styled.div`
 const StyledEmailContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: center;
   width: 100%;
 `;
 
 const StyledEmailTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const EventCardMessageForbidden = ({

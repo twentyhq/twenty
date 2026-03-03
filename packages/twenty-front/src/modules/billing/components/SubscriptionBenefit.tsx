@@ -1,18 +1,19 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import React from 'react';
+import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
 import { IconCheck } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBenefitContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCheckContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${themeCssVariables.background.tertiary};
   border-radius: 50%;
   display: flex;
   height: 16px;
@@ -23,7 +24,7 @@ type SubscriptionBenefitProps = {
   children: React.ReactNode;
 };
 export const SubscriptionBenefit = ({ children }: SubscriptionBenefitProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledBenefitContainer>
       <StyledCheckContainer>

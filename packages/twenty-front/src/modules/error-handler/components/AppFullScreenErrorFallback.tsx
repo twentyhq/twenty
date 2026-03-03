@@ -1,19 +1,20 @@
 import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDisplay';
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppFullScreenErrorFallbackProps = AppErrorDisplayProps;
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
   height: 100vh;
   width: 100vw;
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-top: ${themeCssVariables.spacing[3]};
+  padding-left: ${themeCssVariables.spacing[3]};
 `;
 
 export const AppFullScreenErrorFallback = ({

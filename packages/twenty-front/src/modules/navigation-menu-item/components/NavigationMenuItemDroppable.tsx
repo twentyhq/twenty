@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 
@@ -20,15 +21,14 @@ const StyledDroppableWrapper = styled.div<{
   transition: all 150ms ease-in-out;
   width: 100%;
 
-  ${({ isDraggingOver, isDragIndicatorVisible, showDropLine, theme }) =>
-    isDraggingOver &&
-    isDragIndicatorVisible &&
-    `
-        background-color: ${theme.background.transparent.blue};
+  ${({ isDraggingOver, isDragIndicatorVisible, showDropLine }) =>
+    isDraggingOver && isDragIndicatorVisible
+      ? `
+        background-color: ${themeCssVariables.background.transparent.blue};
 
         ${
-          showDropLine &&
-          `
+          showDropLine
+            ? `
           &::before {
             content: '';
             position: absolute;
@@ -36,12 +36,14 @@ const StyledDroppableWrapper = styled.div<{
             left: 0;
             width: 100%;
             height: 2px;
-            background-color: ${theme.color.blue};
-            border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
+            background-color: ${themeCssVariables.color.blue};
+            border-radius: ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0 0;
           }
         `
+            : ''
         }
-      `}
+      `
+      : ''}
 `;
 
 export const NavigationMenuItemDroppable = ({

@@ -6,7 +6,8 @@ import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import {
   type ButtonAccent,
   type ButtonPosition,

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledButtonLink = styled.a`
   align-items: center;

@@ -1,13 +1,10 @@
-import { ApiService } from '@/cli/utilities/api/api-service';
+import { appUninstall } from '@/cli/public-operations/app-uninstall';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 
 export class AppUninstallCommand {
-  private apiService = new ApiService();
-
   async execute({
     appPath = CURRENT_EXECUTION_DIRECTORY,
     askForConfirmation,
@@ -25,23 +22,15 @@ export class AppUninstallCommand {
         process.exit(1);
       }
 
-      const manifest = await readManifestFromFile(appPath);
+      const result = await appUninstall({ appPath });
 
-      if (!manifest) {
-        return { success: false, error: 'Build failed' };
+      if (!result.success) {
+        console.error(chalk.red('❌ Uninstall failed:'), result.error.message);
+        return { success: false, error: result.error.message };
       }
 
-      const result = await this.apiService.uninstallApplication(
-        manifest.application.universalIdentifier,
-      );
-
-      if (result.success === false) {
-        console.error(chalk.red('❌ Uninstall failed:'), result.error);
-      } else {
-        console.log(chalk.green('✅ Application uninstalled successfully'));
-      }
-
-      return result;
+      console.log(chalk.green('✅ Application uninstalled successfully'));
+      return { success: true, data: undefined };
     } catch (error) {
       console.error(
         chalk.red('Uninstall failed:'),

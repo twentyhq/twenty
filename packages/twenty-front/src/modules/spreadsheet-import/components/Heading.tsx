@@ -1,9 +1,11 @@
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type HeadingProps = {
   title: string;
   description?: string;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -13,22 +15,22 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   text-align: center;
 `;
 
 const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  margin-top: ${themeCssVariables.spacing[3]};
   text-align: center;
 `;
 
-export const Heading = ({ title, description }: HeadingProps) => (
-  <StyledContainer>
+export const Heading = ({ title, description, className }: HeadingProps) => (
+  <StyledContainer className={className}>
     <StyledTitle>{title}</StyledTitle>
     {description && <StyledDescription>{description}</StyledDescription>}
   </StyledContainer>

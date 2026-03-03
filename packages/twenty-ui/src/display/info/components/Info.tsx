@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 import { Button } from '@ui/input/button/components/Button/Button';
 import React, { useContext } from 'react';
