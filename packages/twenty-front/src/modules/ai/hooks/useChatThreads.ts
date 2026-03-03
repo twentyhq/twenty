@@ -3,9 +3,10 @@ import { useInView } from 'react-intersection-observer';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
+
 import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
-const CHAT_THREADS_PAGE_SIZE = 20;
 const FETCH_MORE_ROOT_MARGIN = '200px';
 
 export const useChatThreads = () => {
@@ -19,8 +20,8 @@ export const useChatThreads = () => {
     },
   });
 
-  const threads = data?.chatThreads.threads ?? [];
-  const pageInfo = data?.chatThreads.pageInfo;
+  const threads = data?.chatThreads?.threads ?? [];
+  const pageInfo = data?.chatThreads?.pageInfo;
   const endCursor = pageInfo?.endCursor ?? undefined;
   const hasNextPage = pageInfo?.hasNextPage ?? false;
 

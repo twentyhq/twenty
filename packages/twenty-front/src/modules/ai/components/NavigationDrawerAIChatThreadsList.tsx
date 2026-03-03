@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
