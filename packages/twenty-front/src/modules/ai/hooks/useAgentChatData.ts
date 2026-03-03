@@ -77,10 +77,11 @@ export const useAgentChatData = () => {
   });
 
   const { loading: threadsLoading } = useGetChatThreadsQuery({
-    variables: { input: { first: CHAT_THREADS_PAGE_SIZE } },
+    variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
-      const threads = data?.chatThreads?.threads ?? [];
+      const edges = data?.chatThreads?.edges ?? [];
+      const threads = edges.map((edge) => edge.node);
       if (threads.length > 0) {
         const firstThread = threads[0];
 

@@ -13,14 +13,15 @@ export const useChatThreads = () => {
   const [shouldFetchMore, setShouldFetchMore] = useState(false);
   const { data, loading, fetchMore } = useGetChatThreadsQuery({
     variables: {
-      input: { first: CHAT_THREADS_PAGE_SIZE },
+      paging: { first: CHAT_THREADS_PAGE_SIZE },
     },
     onCompleted: () => {
       setShouldFetchMore(false);
     },
   });
 
-  const threads = data?.chatThreads?.threads ?? [];
+  const edges = data?.chatThreads?.edges ?? [];
+  const threads = edges.map((edge) => edge.node);
   const pageInfo = data?.chatThreads?.pageInfo;
   const endCursor = pageInfo?.endCursor ?? undefined;
   const hasNextPage = pageInfo?.hasNextPage ?? false;
@@ -36,23 +37,24 @@ export const useChatThreads = () => {
 
     return fetchMore({
       variables: {
-        input: {
+        paging: {
           first: CHAT_THREADS_PAGE_SIZE,
           after: endCursor,
         },
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult?.chatThreads?.threads?.length) {
+        const newEdges = fetchMoreResult?.chatThreads?.edges ?? [];
+        if (newEdges.length === 0) {
           return previousResult;
         }
 
         return {
           chatThreads: {
             ...fetchMoreResult.chatThreads,
-            threads: [
-              ...previousResult.chatThreads.threads,
-              ...fetchMoreResult.chatThreads.threads,
-            ],
+            edges: [...(previousResult.chatThreads?.edges ?? []), ...newEdges],
+            pageInfo:
+              fetchMoreResult.chatThreads?.pageInfo ??
+              previousResult.chatThreads?.pageInfo,
           },
         };
       },
