@@ -112,6 +112,15 @@ export default defineConfig(({ command, mode }) => {
         ...wyw({
           include: [
             '**/twenty-ui/src/**/*.{ts,tsx}',
+            '**/modules/command-menu/**/*.{ts,tsx}',
+            '**/modules/workflow/**/*.{ts,tsx}',
+            '**/modules/page-layout/**/*.{ts,tsx}',
+            '**/modules/ui/layout/**/*.{ts,tsx}',
+            '**/FileUploadProvider.tsx',
+            '**/KeyboardShortcutMenuStyles.tsx',
+            '**/FormNumberFieldInput.tsx',
+            '**/FormRawJsonFieldInput.tsx',
+            '**/FormUuidFieldInput.tsx',
             '**/AdvancedTextEditor.tsx',
             '**/BubbleMenuIconButton.tsx',
             '**/TextBubbleMenu.tsx',
