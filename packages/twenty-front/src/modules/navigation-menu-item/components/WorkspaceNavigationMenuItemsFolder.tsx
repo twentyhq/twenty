@@ -18,7 +18,10 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
-import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
+import {
+  FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
+  WorkspaceDndKitDroppableSlot,
+} from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -45,6 +48,10 @@ const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color 150ms ease-in-out;
+
+  &[data-drag-over-header='true'] {
+    background-color: ${themeCssVariables.background.transparent.blue};
+  }
 
   &[data-forbidden-drop-target='true'] {
     background-color: ${themeCssVariables.background.transparent.danger};
@@ -136,13 +143,18 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
   const folderContentDropDisabled = useIsDropDisabledForSection(true);
 
-  const { forbiddenDropTargetId } = useContext(NavigationDropTargetContext);
+  const { activeDropTargetId, forbiddenDropTargetId } = useContext(
+    NavigationDropTargetContext,
+  );
   const folderHeaderDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`;
   const folderContentDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}${folderId}`;
+  const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
   const isForbiddenDropTarget =
     isDefined(forbiddenDropTargetId) &&
     (forbiddenDropTargetId.startsWith(`${folderContentDroppableId}::`) ||
       forbiddenDropTargetId.startsWith(`${folderHeaderDroppableId}::`));
+  const isDragOverFolderHeader =
+    !isForbiddenDropTarget && activeDropTargetId === folderHeaderSlotId;
   const isCompact =
     isNavigationMenuInEditMode || navigationMenuItems.length === 0;
 
@@ -181,6 +193,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   return (
     <StyledFolderContainer
       $isSelectedInEditMode={isSelectedInEditMode}
+      data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
       data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
     >
       <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
@@ -189,6 +202,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             droppableId={folderHeaderDroppableId}
             index={0}
             disabled={folderContentDropDisabled}
+            collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
           >
             {headerItem}
           </WorkspaceDndKitDroppableSlot>

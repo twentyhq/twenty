@@ -15,11 +15,14 @@ const StyledSlotWrapper = styled.div<{ $empty: boolean }>`
 
 const SLOT_COLLISION_PRIORITY = 1;
 
+export const FOLDER_HEADER_SLOT_COLLISION_PRIORITY = 2;
+
 type WorkspaceDndKitDroppableSlotProps = {
   droppableId: string;
   index: number;
   children?: ReactNode;
   disabled?: boolean;
+  collisionPriority?: number;
 };
 
 export const WorkspaceDndKitDroppableSlot = ({
@@ -27,12 +30,13 @@ export const WorkspaceDndKitDroppableSlot = ({
   index,
   children,
   disabled = false,
+  collisionPriority = SLOT_COLLISION_PRIORITY,
 }: WorkspaceDndKitDroppableSlotProps) => {
   const id = getDndKitDropTargetId(droppableId, index);
   const { ref } = useDroppable({
     id,
     disabled,
-    collisionPriority: SLOT_COLLISION_PRIORITY,
+    collisionPriority,
   });
 
   const isEmpty =
