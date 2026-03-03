@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "@twentyhq/hello-world",
   "version": "0.2.2",
   "license": "MIT",
   "engines": {

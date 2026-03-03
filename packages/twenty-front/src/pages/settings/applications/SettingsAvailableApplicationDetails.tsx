@@ -248,7 +248,7 @@ export const SettingsAvailableApplicationDetails = () => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
   const { data: marketplaceApps } = useMarketplaceApps();
-  const { install } = useInstallMarketplaceApp();
+  const { install, isInstalling } = useInstallMarketplaceApp();
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
@@ -259,7 +259,9 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const handleInstall = async () => {
     if (isDefined(application)) {
-      await install();
+      await install({
+        universalIdentifier: application.id,
+      });
     }
   };
 
@@ -460,10 +462,11 @@ export const SettingsAvailableApplicationDetails = () => {
           {canInstallMarketplaceApps && (
             <Button
               Icon={IconDownload}
-              title={t`Install`}
+              title={isInstalling ? t`Installing...` : t`Install`}
               variant="primary"
               accent="blue"
               onClick={handleInstall}
+              disabled={isInstalling}
             />
           )}
         </StyledHeader>

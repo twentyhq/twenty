@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -10,6 +10,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -17,8 +18,19 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export enum AppRegistrationSourceType {
+  NPM = 'npm',
+  TARBALL = 'tarball',
+  NONE = 'none',
+}
+
+registerEnumType(AppRegistrationSourceType, {
+  name: 'AppRegistrationSourceType',
+});
 
 @Entity({ name: 'applicationRegistration', schema: 'core' })
 @ObjectType('ApplicationRegistration')
@@ -93,6 +105,32 @@ export class ApplicationRegistrationEntity {
   @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
+
+  @Field(() => AppRegistrationSourceType)
+  @Column({
+    type: 'text',
+    default: AppRegistrationSourceType.NONE,
+  })
+  sourceType: AppRegistrationSourceType;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  sourcePackage: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  tarballFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'tarballFileId' })
+  tarballFile: Relation<FileEntity> | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  registryUrl: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  latestAvailableVersion: string | null;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })

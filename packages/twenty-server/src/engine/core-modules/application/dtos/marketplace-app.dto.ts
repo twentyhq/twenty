@@ -276,4 +276,9 @@ export class MarketplaceAppDTO {
   @IsOptional()
   @Field(() => MarketplaceAppDefaultRoleDTO, { nullable: true })
   defaultRole?: MarketplaceAppDefaultRoleDTO;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  sourcePackage?: string;
 }

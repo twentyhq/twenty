@@ -8788,6 +8788,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@isaacs/fs-minipass@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "@isaacs/fs-minipass@npm:4.0.1"
+  dependencies:
+    minipass: "npm:^7.0.4"
+  checksum: 10c0/c25b6dc1598790d5b55c0947a9b7d111cfa92594db5296c3b907e2f533c033666f692a3939eadac17b1c7c40d362d0b0635dc874cbfe3e70db7c2b07cc97a5d2
+  languageName: node
+  linkType: hard
+
 "@isaacs/string-locale-compare@npm:^1.0.1":
   version: 1.1.0
   resolution: "@isaacs/string-locale-compare@npm:1.1.0"
@@ -24874,6 +24883,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/tar@npm:^7.0.87":
+  version: 7.0.87
+  resolution: "@types/tar@npm:7.0.87"
+  dependencies:
+    tar: "npm:*"
+  checksum: 10c0/23243d293a9ae2cae647f39d56587f24bca947409d75afe9d44987d07dabca9e64ef2f5cb6cb561e14b6c2e1990c420f9d67ba27c9f73d0becd33595ec6464a5
+  languageName: node
+  linkType: hard
+
 "@types/tedious@npm:^4.0.14":
   version: 4.0.14
   resolution: "@types/tedious@npm:4.0.14"
@@ -31043,6 +31061,13 @@ __metadata:
   version: 2.0.0
   resolution: "chownr@npm:2.0.0"
   checksum: 10c0/594754e1303672171cc04e50f6c398ae16128eb134a88f801bf5354fd96f205320f23536a045d9abd8b51024a149696e51231565891d4efdab8846021ecf88e6
+  languageName: node
+  linkType: hard
+
+"chownr@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "chownr@npm:3.0.0"
+  checksum: 10c0/43925b87700f7e3893296c8e9c56cc58f926411cce3a6e5898136daaf08f08b9a8eb76d37d3267e707d0dcc17aed2e2ebdf5848c0c3ce95cf910a919935c1b10
   languageName: node
   linkType: hard
 
@@ -46634,7 +46659,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minipass@npm:^7.1.3":
+"minipass@npm:^7.0.4, minipass@npm:^7.1.3":
   version: 7.1.3
   resolution: "minipass@npm:7.1.3"
   checksum: 10c0/539da88daca16533211ea5a9ee98dc62ff5742f531f54640dd34429e621955e91cc280a91a776026264b7f9f6735947629f920944e9c1558369e8bf22eb33fbb
@@ -46648,6 +46673,15 @@ __metadata:
     minipass: "npm:^3.0.0"
     yallist: "npm:^4.0.0"
   checksum: 10c0/64fae024e1a7d0346a1102bb670085b17b7f95bf6cfdf5b128772ec8faf9ea211464ea4add406a3a6384a7d87a0cd1a96263692134323477b4fb43659a6cab78
+  languageName: node
+  linkType: hard
+
+"minizlib@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "minizlib@npm:3.1.0"
+  dependencies:
+    minipass: "npm:^7.1.2"
+  checksum: 10c0/5aad75ab0090b8266069c9aabe582c021ae53eb33c6c691054a13a45db3b4f91a7fb1bd79151e6b4e9e9a86727b522527c0a06ec7d45206b745d54cd3097bcec
   languageName: node
   linkType: hard
 
@@ -56716,6 +56750,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tar@npm:*, tar@npm:^7.5.9":
+  version: 7.5.9
+  resolution: "tar@npm:7.5.9"
+  dependencies:
+    "@isaacs/fs-minipass": "npm:^4.0.0"
+    chownr: "npm:^3.0.0"
+    minipass: "npm:^7.1.2"
+    minizlib: "npm:^3.1.0"
+    yallist: "npm:^5.0.0"
+  checksum: 10c0/e870beb1b2477135ca2abe86b2d18f7b35d0a4e3a37bbc523d3b8f7adca268dfab543f26528a431d569897f8c53a7cac745cdfbc4411c2f89aeeacc652b81b0a
+  languageName: node
+  linkType: hard
+
 "tar@npm:^6.0.2, tar@npm:^6.1.0, tar@npm:^6.1.11, tar@npm:^6.1.15, tar@npm:^6.1.2, tar@npm:^6.2.1":
   version: 6.2.1
   resolution: "tar@npm:6.2.1"
@@ -57887,6 +57934,7 @@ __metadata:
     dotenv: "npm:^16.4.0"
     esbuild: "npm:^0.25.0"
     fast-glob: "npm:^3.3.0"
+    form-data: "npm:^4.0.5"
     fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
@@ -58020,6 +58068,7 @@ __metadata:
     "@types/pluralize": "npm:^0.0.33"
     "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^18.2.39"
+    "@types/tar": "npm:^7.0.87"
     "@types/unzipper": "npm:^0"
     "@yarnpkg/types": "npm:^4.0.0"
     addressparser: "npm:1.0.1"
@@ -58114,6 +58163,7 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
     stripe: "npm:19.3.1"
+    tar: "npm:^7.5.9"
     temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:2.3.5"
     tsconfig-paths: "npm:^4.2.0"
@@ -61467,6 +61517,13 @@ __metadata:
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
   checksum: 10c0/c66a5c46bc89af1625476f7f0f2ec3653c1a1791d2f9407cfb4c2ba812a1e1c9941416d71ba9719876530e3340a99925f697142989371b72d93b9ee628afd8c1
+  languageName: node
+  linkType: hard
+
+"yallist@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "yallist@npm:5.0.0"
+  checksum: 10c0/a499c81ce6d4a1d260d4ea0f6d49ab4da09681e32c3f0472dee16667ed69d01dae63a3b81745a24bd78476ec4fcf856114cb4896ace738e01da34b2c42235416
   languageName: node
   linkType: hard
 

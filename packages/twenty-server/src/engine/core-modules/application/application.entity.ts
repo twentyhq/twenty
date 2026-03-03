@@ -53,7 +53,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   version: string | null;
 
   @Column({ type: 'text', default: 'local' })
-  sourceType: 'local';
+  sourceType: 'local' | 'npm' | 'tarball';
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;

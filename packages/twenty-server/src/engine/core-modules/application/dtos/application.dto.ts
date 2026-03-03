@@ -29,12 +29,12 @@ export class ApplicationDTO {
 
   @IsOptional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   description?: string;
 
   @IsOptional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   version?: string;
 
   @IsString()
@@ -63,6 +63,11 @@ export class ApplicationDTO {
 
   @Field(() => GraphQLJSON)
   availablePackages: Record<string, string>;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationRegistrationId?: string;
 
   @Field(() => Boolean)
   @IsBoolean()

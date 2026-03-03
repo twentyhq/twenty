@@ -31,8 +31,10 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsApplicationsTable = ({
   applications,
+  registrationVersionMap,
 }: {
   applications: ApplicationWithoutRelation[];
+  registrationVersionMap?: Map<string, string>;
 }) => {
   const { t } = useLingui();
 
@@ -70,21 +72,33 @@ export const SettingsApplicationsTable = ({
           <TableHeader> {''}</TableHeader>
           <TableHeader />
         </StyledTableHeaderRow>
-        {filteredApplications.map((application) => (
-          <SettingsApplicationTableRow
-            key={application.id}
-            application={application}
-            action={
-              <IconChevronRight
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-            link={getSettingsPath(SettingsPath.ApplicationDetail, {
-              applicationId: application.id,
-            })}
-          />
-        ))}
+        {filteredApplications.map((application) => {
+          const latestVersion = application.applicationRegistrationId
+            ? registrationVersionMap?.get(application.applicationRegistrationId)
+            : undefined;
+
+          const hasUpdate =
+            latestVersion !== undefined &&
+            application.version !== undefined &&
+            latestVersion !== application.version;
+
+          return (
+            <SettingsApplicationTableRow
+              key={application.id}
+              application={application}
+              hasUpdate={hasUpdate}
+              action={
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              }
+              link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                applicationId: application.id,
+              })}
+            />
+          );
+        })}
       </StyledTable>
     </Section>
   );
