@@ -6,12 +6,12 @@ import {
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('AgentChatThread')
 @Authorize({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  authorize: (context: any) => ({
+  authorize: (context: { req?: AuthenticatedRequest }) => ({
     userWorkspaceId: { eq: context?.req?.userWorkspaceId },
   }),
 })
