@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Icon123, useIcons } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffLabelProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -10,8 +11,8 @@ type EventFieldDiffLabelProps = {
 const StyledUpdatedFieldContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledUpdatedFieldIconContainer = styled.div`

@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
+import { styled } from '@linaria/react';
 
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
@@ -8,6 +7,8 @@ import { PropertyBox } from '@/object-record/record-inline-cell/property-box/com
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -15,21 +16,21 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
   display: flex;
 
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 
   position: relative;
   user-select: none;
 `;
 
 const StyledPropertyBox = styled(PropertyBox)`
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
   padding: 0;
   width: 100%;
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   width: 16px;
 
@@ -44,15 +45,15 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  width: ${({ width }) => width}px;
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 const StyledDiv = styled.div`
   max-width: 70%;
@@ -65,7 +66,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus: 'Yes' | 'Maybe' | 'No';
   participants: CalendarEventParticipant[];
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,

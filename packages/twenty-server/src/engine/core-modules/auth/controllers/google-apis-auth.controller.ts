@@ -22,7 +22,7 @@ import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-module
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -63,7 +63,7 @@ export class GoogleAPIsAuthController {
     NoPermissionGuard,
   )
   async googleAuthGetAccessToken(
-    @Req() req: GoogleAPIsRequest,
+    @Req() req: APIsOAuthRequest,
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;

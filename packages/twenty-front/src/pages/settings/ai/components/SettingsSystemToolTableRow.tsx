@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
@@ -20,6 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type JsonValue } from 'type-fest';
 
@@ -40,21 +41,18 @@ export type SettingsSystemToolTableRowProps = {
   tool: SystemTool;
 };
 
-export const StyledSystemToolTableRow = styled(TableRow)<{
-  isExpandable?: boolean;
-}>`
+export const StyledSystemToolTableRow = styled(TableRow)`
   grid-template-columns: 1fr 100px 36px;
   opacity: 0.7;
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
 
-  &:hover {
-    opacity: ${({ isExpandable }) => (isExpandable ? 0.85 : 0.7)};
+  &[data-clickable='true']:hover {
+    opacity: 0.85;
   }
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -67,26 +65,26 @@ const StyledIconContainer = styled.div`
 
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledExpandableContent = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  padding: ${({ theme }) => theme.spacing(4)};
+  background-color: ${themeCssVariables.background.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSectionTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const getCategoryIcon = (category: string) => {
@@ -110,7 +108,6 @@ export const SettingsSystemToolTableRow = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { copyToClipboard } = useCopyToClipboard();
 
-  // Fetch inputSchema for this specific tool on first expand
   const [fetchSchema, { data: schemaData, loading: schemaLoading }] =
     useLazyQuery<GetToolInputSchemaQuery>(GET_TOOL_INPUT_SCHEMA, {
       variables: { toolName: tool.name },
@@ -135,7 +132,7 @@ export const SettingsSystemToolTableRow = ({
       <StyledSystemToolTableRow
         key={tool.name}
         onClick={handleRowClick}
-        isExpandable
+        isClickable
       >
         <StyledNameTableCell>
           <StyledIconContainer>

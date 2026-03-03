@@ -239,7 +239,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Timeline Activities',
           description: 'My notes tied to the MyNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           type: FieldType.RELATION,
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
@@ -255,7 +255,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Favorites',
           description: 'My notes tied to the MyNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           type: FieldType.RELATION,
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
@@ -271,7 +271,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Attachments',
           description: 'My notes tied to the MyNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           type: FieldType.RELATION,
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
@@ -287,7 +287,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Note Targets',
           description: 'My notes tied to the MyNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           type: FieldType.RELATION,
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
@@ -303,7 +303,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Task Targets',
           description: 'My notes tied to the MyNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           type: FieldType.RELATION,
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,

@@ -1,10 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarDayCardContentProps = {
@@ -14,26 +16,26 @@ type CalendarDayCardContentProps = {
 
 const StyledCardContent = styled(CardContent)`
   align-items: flex-start;
-  border-color: ${({ theme }) => theme.border.color.light};
+  border-color: ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledDayContainer = styled.div`
   text-align: center;
-  width: ${({ theme }) => theme.spacing(6)};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledWeekDay = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xxs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledMonthDay = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledEvents = styled.div`
@@ -41,7 +43,7 @@ const StyledEvents = styled.div`
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledEventRow = styled(CalendarEventRow)`
@@ -52,7 +54,7 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());

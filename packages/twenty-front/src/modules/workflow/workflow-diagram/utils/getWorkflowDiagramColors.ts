@@ -41,7 +41,8 @@ export const getWorkflowDiagramColors = ({
         },
       };
     }
-    case 'FAILED': {
+    case 'FAILED':
+    case 'FAILED_SAFELY': {
       return {
         selected: {
           background: theme.color.red2,

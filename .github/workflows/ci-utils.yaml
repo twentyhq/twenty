@@ -22,7 +22,7 @@ concurrency:
 jobs:
   danger-js:
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
 
   congratulate:
     timeout-minutes: 3
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4

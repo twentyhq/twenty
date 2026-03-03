@@ -1,5 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ContextUsageProgressRingProps = {
   percentage: number;
@@ -15,8 +17,8 @@ const StyledBackgroundCircle = styled.circle`
   fill: none;
   stroke: color-mix(
     in srgb,
-    ${({ theme }) => theme.border.color.strong} 50%,
-    ${({ theme }) => theme.background.quaternary} 50%
+    ${themeCssVariables.border.color.strong} 50%,
+    ${themeCssVariables.background.quaternary} 50%
   );
 `;
 
@@ -30,7 +32,7 @@ export const ContextUsageProgressRing = ({
   size = 16,
   strokeWidth = 2,
 }: ContextUsageProgressRingProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const normalizedPercentage = Math.min(Math.max(percentage, 0), 100);
   const radius = (size - strokeWidth) / 2;

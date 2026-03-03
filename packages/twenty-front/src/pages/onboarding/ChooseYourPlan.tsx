@@ -1,5 +1,5 @@
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';
 import { billingState } from '@/client-config/states/billingState';
