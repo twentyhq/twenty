@@ -169,7 +169,7 @@ describe('ApplicationVariableEntityService', () => {
         applicationVariables: {
           SECRET_KEY: {
             universalIdentifier: 'secret-key-123',
-            defaultValue: 'my-secret',
+            value: 'my-secret',
             description: 'A secret key',
             isSecret: true,
           },
