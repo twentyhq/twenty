@@ -7,13 +7,13 @@ import {
 } from '@hello-pangea/dnd';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
 import { FieldsConfigurationUngroupedEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
 import { useDeleteFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useDeleteFieldsWidgetEditorGroup';
-import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
 import { useFieldsWidgetMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetMode';
-import { useFieldsWidgetUngroupedFieldsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetUngroupedFieldsDraft';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveUngroupedFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
@@ -22,6 +22,7 @@ import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -48,15 +49,19 @@ export const FieldsConfigurationEditor = ({
     widgetId,
   });
 
-  const { draftGroups } = useFieldsWidgetGroupsDraft({
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
+    fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
-    widgetId,
-  });
+  );
 
-  const { ungroupedFields } = useFieldsWidgetUngroupedFieldsDraft({
+  const draftGroups = fieldsWidgetGroupsDraft[widgetId] ?? [];
+
+  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateValue(
+    fieldsWidgetUngroupedFieldsDraftComponentState,
     pageLayoutId,
-    widgetId,
-  });
+  );
+
+  const ungroupedFields = fieldsWidgetUngroupedFieldsDraft[widgetId] ?? [];
 
   const { createGroup } = useCreateFieldsWidgetEditorGroup({
     pageLayoutId,
