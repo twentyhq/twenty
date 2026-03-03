@@ -16,6 +16,9 @@ export const StyledNavigationMenuItemIconContainer = styled.div<{
 
   background-color: ${({ $backgroundColor }) =>
     $backgroundColor ?? 'transparent'};
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
+  border: none;
+
+  &[data-has-border='true'] {
+    border: 1px solid ${({ $borderColor }) => $borderColor ?? 'transparent'};
+  }
 `;

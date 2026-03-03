@@ -104,6 +104,7 @@ export const NavigationMenuItemIcon = ({
     <StyledNavigationMenuItemIconContainer
       $backgroundColor={iconStyle.backgroundColor}
       $borderColor={iconStyle.borderColor}
+      data-has-border={iconStyle.borderColor ? 'true' : undefined}
     >
       {avatar}
     </StyledNavigationMenuItemIconContainer>

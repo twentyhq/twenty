@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
@@ -18,24 +19,28 @@ const StyledCompositeContainer = styled.div`
 `;
 
 const StyledObjectIconWrapper = styled.div<{
-  $backgroundColor: string;
+  $backgroundColor?: string;
   $borderColor?: string;
 }>`
   position: absolute;
   inset: 0;
   border-radius: 4px;
   box-sizing: border-box;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
   display: flex;
   align-items: center;
   justify-content: center;
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
+  border: none;
+
+  &[data-has-border='true'] {
+    border: 1px solid ${({ $borderColor }) => $borderColor ?? 'transparent'};
+  }
 `;
 
-const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
+const StyledViewOverlay = styled.div`
   align-items: center;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  background-color: ${themeCssVariables.grayScale.gray4};
   border-radius: 4px;
   bottom: -7px;
   display: flex;
@@ -68,6 +73,7 @@ export const ObjectIconWithViewOverlay = ({
       <StyledObjectIconWrapper
         $backgroundColor={objectStyle.backgroundColor}
         $borderColor={objectStyle.borderColor}
+        data-has-border={objectStyle.borderColor ? 'true' : undefined}
       >
         <ObjectIcon
           size="14px"
@@ -75,7 +81,7 @@ export const ObjectIconWithViewOverlay = ({
           color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
-      <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
+      <StyledViewOverlay>
         <ViewIcon
           size="10px"
           stroke={theme.icon.stroke.lg}

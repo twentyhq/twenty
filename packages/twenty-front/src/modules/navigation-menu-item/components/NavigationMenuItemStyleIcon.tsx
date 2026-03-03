@@ -20,6 +20,7 @@ export const NavigationMenuItemStyleIcon = ({
     <StyledNavigationMenuItemIconContainer
       $backgroundColor={style.backgroundColor}
       $borderColor={style.borderColor}
+      data-has-border={style.borderColor ? 'true' : undefined}
     >
       <Icon
         size={theme.icon.size.md}
