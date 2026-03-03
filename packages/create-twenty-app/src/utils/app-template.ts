@@ -26,8 +26,7 @@ export const copyBaseApplicationProject = async ({
   await createPackageJson({
     appName,
     appDirectory,
-    includeExampleIntegrationTest:
-      exampleOptions.includeExampleIntegrationTest,
+    includeExampleIntegrationTest: exampleOptions.includeExampleIntegrationTest,
   });
 
   await createGitignore(appDirectory);

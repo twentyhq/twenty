@@ -788,9 +788,7 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
       expect(content).toContain('findManyApplications');
-      expect(content).toContain(
-        'applicationConfig.universalIdentifier',
-      );
+      expect(content).toContain('applicationConfig.universalIdentifier');
     });
 
     it('should include vitest and test scripts in package.json when enabled', async () => {
@@ -820,10 +818,7 @@ describe('copyBaseApplicationProject', () => {
         exampleOptions: ALL_EXAMPLES,
       });
 
-      const testConfigPath = join(
-        testAppDirectory,
-        '.twenty-test.config.json',
-      );
+      const testConfigPath = join(testAppDirectory, '.twenty-test.config.json');
 
       expect(await fs.pathExists(testConfigPath)).toBe(true);
 
@@ -842,10 +837,7 @@ describe('copyBaseApplicationProject', () => {
         exampleOptions: NO_EXAMPLES,
       });
 
-      const testConfigPath = join(
-        testAppDirectory,
-        '.twenty-test.config.json',
-      );
+      const testConfigPath = join(testAppDirectory, '.twenty-test.config.json');
 
       expect(await fs.pathExists(testConfigPath)).toBe(false);
     });

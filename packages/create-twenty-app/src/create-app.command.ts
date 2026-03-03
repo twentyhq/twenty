@@ -189,10 +189,7 @@ export class CreateAppCommand {
     const includeObject =
       selectedExamples.includes('object') || includeField || includeView;
 
-    if (
-      (includeField || includeView) &&
-      !selectedExamples.includes('object')
-    ) {
+    if ((includeField || includeView) && !selectedExamples.includes('object')) {
       console.log(
         chalk.yellow(
           'Note: Example object auto-included because example field/view depends on it.',
