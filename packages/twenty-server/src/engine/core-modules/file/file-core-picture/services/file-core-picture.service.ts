@@ -191,7 +191,7 @@ export class FileCorePictureService {
     try {
       const httpClient = this.secureHttpClientService.getHttpClient();
 
-      axiosRetry(httpClient, { retries: 2 });
+      axiosRetry(httpClient, { retries: 2, shouldResetTimeout: true });
 
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
@@ -204,8 +204,7 @@ export class FileCorePictureService {
       return { buffer, extension: type.ext };
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch image from URL: ${imageUrl}`,
-        error instanceof Error ? error.message : error,
+        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;

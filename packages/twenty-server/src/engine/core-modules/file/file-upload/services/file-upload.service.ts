@@ -121,7 +121,7 @@ export class FileUploadService {
     try {
       const httpClient = this.secureHttpClientService.getHttpClient();
 
-      axiosRetry(httpClient, { retries: 2 });
+      axiosRetry(httpClient, { retries: 2, shouldResetTimeout: true });
 
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
