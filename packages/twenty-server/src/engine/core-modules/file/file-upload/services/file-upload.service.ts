@@ -134,8 +134,7 @@ export class FileUploadService {
       return { buffer, extension: type.ext, mimeType: type.mime };
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch image from URL: ${imageUrl}`,
-        error instanceof Error ? error.message : error,
+        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;
