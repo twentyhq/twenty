@@ -724,22 +724,21 @@ export type ChannelSyncSuccess = {
   success: Scalars['Boolean'];
 };
 
-export type ChatMessagesPageInfo = {
-  __typename?: 'ChatMessagesPageInfo';
+export type ChatThreadsPageInfo = {
+  __typename?: 'ChatThreadsPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
 };
 
-export type ChatMessagesQueryInput = {
+export type ChatThreadsQueryInput = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
-  threadId: Scalars['UUID'];
 };
 
-export type ChatMessagesQueryResult = {
-  __typename?: 'ChatMessagesQueryResult';
-  messages: Array<AgentMessage>;
-  pageInfo: ChatMessagesPageInfo;
+export type ChatThreadsQueryResult = {
+  __typename?: 'ChatThreadsQueryResult';
+  pageInfo: ChatThreadsPageInfo;
+  threads: Array<AgentChatThread>;
 };
 
 export type CheckUserExist = {
@@ -3872,9 +3871,9 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
-  chatMessages: ChatMessagesQueryResult;
+  chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
-  chatThreads: Array<AgentChatThread>;
+  chatThreads: ChatThreadsQueryResult;
   checkUserExists: CheckUserExist;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
@@ -3984,12 +3983,17 @@ export type QueryBillingPortalSessionArgs = {
 
 
 export type QueryChatMessagesArgs = {
-  input: ChatMessagesQueryInput;
+  threadId: Scalars['UUID'];
 };
 
 
 export type QueryChatThreadArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryChatThreadsArgs = {
+  input?: InputMaybe<ChatThreadsQueryInput>;
 };
 
 
@@ -5686,16 +5690,18 @@ export type GetAgentTurnsQueryVariables = Exact<{
 export type GetAgentTurnsQuery = { __typename?: 'Query', agentTurns: Array<{ __typename?: 'AgentTurn', id: string, threadId: string, agentId?: string | null, createdAt: string, evaluations: Array<{ __typename?: 'AgentTurnEvaluation', id: string, score: number, comment?: string | null, createdAt: string }>, messages: Array<{ __typename?: 'AgentMessage', id: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, errorMessage?: string | null, state?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null }> }> }> };
 
 export type GetChatMessagesQueryVariables = Exact<{
-  input: ChatMessagesQueryInput;
+  threadId: Scalars['UUID'];
 }>;
 
 
-export type GetChatMessagesQuery = { __typename?: 'Query', chatMessages: { __typename?: 'ChatMessagesQueryResult', messages: Array<{ __typename?: 'AgentMessage', id: string, threadId: string, turnId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }>, pageInfo: { __typename?: 'ChatMessagesPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+export type GetChatMessagesQuery = { __typename?: 'Query', chatMessages: Array<{ __typename?: 'AgentMessage', id: string, threadId: string, turnId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
-export type GetChatThreadsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetChatThreadsQueryVariables = Exact<{
+  input?: InputMaybe<ChatThreadsQueryInput>;
+}>;
 
 
-export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, conversationSize: number, totalInputCredits: number, totalOutputCredits: number, createdAt: string, updatedAt: string }> };
+export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: { __typename?: 'ChatThreadsQueryResult', threads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, conversationSize: number, totalInputCredits: number, totalOutputCredits: number, createdAt: string, updatedAt: string }>, pageInfo: { __typename?: 'ChatThreadsPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
 
 export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -8978,45 +8984,39 @@ export type GetAgentTurnsQueryHookResult = ReturnType<typeof useGetAgentTurnsQue
 export type GetAgentTurnsLazyQueryHookResult = ReturnType<typeof useGetAgentTurnsLazyQuery>;
 export type GetAgentTurnsQueryResult = Apollo.QueryResult<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>;
 export const GetChatMessagesDocument = gql`
-    query GetChatMessages($input: ChatMessagesQueryInput!) {
-  chatMessages(input: $input) {
-    messages {
+    query GetChatMessages($threadId: UUID!) {
+  chatMessages(threadId: $threadId) {
+    id
+    threadId
+    turnId
+    role
+    createdAt
+    parts {
       id
-      threadId
-      turnId
-      role
+      messageId
+      orderIndex
+      type
+      textContent
+      reasoningContent
+      toolName
+      toolCallId
+      toolInput
+      toolOutput
+      state
+      errorMessage
+      errorDetails
+      sourceUrlSourceId
+      sourceUrlUrl
+      sourceUrlTitle
+      sourceDocumentSourceId
+      sourceDocumentMediaType
+      sourceDocumentTitle
+      sourceDocumentFilename
+      fileMediaType
+      fileFilename
+      fileUrl
+      providerMetadata
       createdAt
-      parts {
-        id
-        messageId
-        orderIndex
-        type
-        textContent
-        reasoningContent
-        toolName
-        toolCallId
-        toolInput
-        toolOutput
-        state
-        errorMessage
-        errorDetails
-        sourceUrlSourceId
-        sourceUrlUrl
-        sourceUrlTitle
-        sourceDocumentSourceId
-        sourceDocumentMediaType
-        sourceDocumentTitle
-        sourceDocumentFilename
-        fileMediaType
-        fileFilename
-        fileUrl
-        providerMetadata
-        createdAt
-      }
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
     }
   }
 }
@@ -9034,7 +9034,7 @@ export const GetChatMessagesDocument = gql`
  * @example
  * const { data, loading, error } = useGetChatMessagesQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      threadId: // value for 'threadId'
  *   },
  * });
  */
@@ -9050,18 +9050,24 @@ export type GetChatMessagesQueryHookResult = ReturnType<typeof useGetChatMessage
 export type GetChatMessagesLazyQueryHookResult = ReturnType<typeof useGetChatMessagesLazyQuery>;
 export type GetChatMessagesQueryResult = Apollo.QueryResult<GetChatMessagesQuery, GetChatMessagesQueryVariables>;
 export const GetChatThreadsDocument = gql`
-    query GetChatThreads {
-  chatThreads {
-    id
-    title
-    totalInputTokens
-    totalOutputTokens
-    contextWindowTokens
-    conversationSize
-    totalInputCredits
-    totalOutputCredits
-    createdAt
-    updatedAt
+    query GetChatThreads($input: ChatThreadsQueryInput) {
+  chatThreads(input: $input) {
+    threads {
+      id
+      title
+      totalInputTokens
+      totalOutputTokens
+      contextWindowTokens
+      conversationSize
+      totalInputCredits
+      totalOutputCredits
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
 }
     `;
@@ -9078,6 +9084,7 @@ export const GetChatThreadsDocument = gql`
  * @example
  * const { data, loading, error } = useGetChatThreadsQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
