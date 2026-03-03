@@ -1,14 +1,12 @@
-import styled from '@emotion/styled';
-import { type HTMLAttributes } from 'react';
-import { Label } from 'twenty-ui/display';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type InputLabelProps = HTMLAttributes<HTMLLabelElement> & {
-  htmlFor?: string;
-};
-
-const StyledInputLabel = styled(Label)<InputLabelProps>`
+const StyledLabel = styled.label`
+  color: ${themeCssVariables.font.color.light};
   display: block;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: 11px;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-export const InputLabel = StyledInputLabel;
+export const InputLabel = StyledLabel;

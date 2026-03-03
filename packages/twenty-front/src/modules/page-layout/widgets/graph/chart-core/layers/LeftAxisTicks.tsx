@@ -1,4 +1,5 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type LeftAxisTicksProps = {
   leftTickValues: (string | number)[];
@@ -15,7 +16,7 @@ export const LeftAxisTicks = ({
   tickPadding,
   tickFontSize,
 }: LeftAxisTicksProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <>

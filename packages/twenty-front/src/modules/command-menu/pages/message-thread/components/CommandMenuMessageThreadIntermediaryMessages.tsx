@@ -1,13 +1,14 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { Button } from 'twenty-ui/input';
 import { IconArrowsVertical } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   padding: 16px 24px;
 `;
 

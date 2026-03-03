@@ -14,24 +14,25 @@ import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColo
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   ResponsivePie,
   type ComputedDatum,
   type PieCustomLayerProps,
 } from '@nivo/pie';
 import {
+  type MouseEvent as ReactMouseEvent,
   useCallback,
+  useContext,
   useMemo,
   useRef,
-  type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type PieChartConfiguration,
   type PieChartDataItem,
 } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];
@@ -88,7 +89,7 @@ export const GraphWidgetPieChart = ({
   showDataLabels = false,
   showCenterMetric = true,
 }: GraphWidgetPieChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const colorRegistry = createGraphColorRegistry(theme);
   const containerRef = useRef<HTMLDivElement>(null);
   const setGraphWidgetPieTooltip = useSetAtomComponentState(
