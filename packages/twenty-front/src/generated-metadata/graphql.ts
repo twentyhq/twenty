@@ -251,12 +251,6 @@ export enum AnalyticsType {
   TRACK = 'TRACK'
 }
 
-export enum AppRegistrationSourceType {
-  Npm = 'npm',
-  Tarball = 'tarball',
-  None = 'none'
-}
-
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float'];
@@ -286,6 +280,12 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export enum AppRegistrationSourceType {
+  NONE = 'NONE',
+  NPM = 'NPM',
+  TARBALL = 'TARBALL'
+}
+
 export type AppToken = {
   __typename?: 'AppToken';
   createdAt: Scalars['DateTime'];
@@ -304,7 +304,7 @@ export type Application = {
   canBeUninstalled: Scalars['Boolean'];
   defaultLogicFunctionRole?: Maybe<Role>;
   defaultRoleId?: Maybe<Scalars['String']>;
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   logicFunctions: Array<LogicFunction>;
   name: Scalars['String'];
@@ -313,7 +313,7 @@ export type Application = {
   packageJsonFileId?: Maybe<Scalars['UUID']>;
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']>;
   universalIdentifier: Scalars['String'];
-  version: Scalars['String'];
+  version?: Maybe<Scalars['String']>;
   yarnLockChecksum?: Maybe<Scalars['String']>;
   yarnLockFileId?: Maybe<Scalars['UUID']>;
 };
@@ -330,6 +330,7 @@ export type ApplicationRegistration = {
   oAuthClientId: Scalars['String'];
   oAuthRedirectUris: Array<Scalars['String']>;
   oAuthScopes: Array<Scalars['String']>;
+  registryUrl?: Maybe<Scalars['String']>;
   sourcePackage?: Maybe<Scalars['String']>;
   sourceType: AppRegistrationSourceType;
   termsUrl?: Maybe<Scalars['String']>;
@@ -1717,6 +1718,7 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
+  AppTarball = 'AppTarball',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltLogicFunction = 'BuiltLogicFunction',
@@ -2382,7 +2384,6 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
-  upgradeApplication: Scalars['Boolean'];
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
@@ -2441,6 +2442,7 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
+  upgradeApplication: Scalars['Boolean'];
   uploadApplicationFile: File;
   /** @deprecated Use uploadFilesFieldFile instead */
   uploadFile: SignedFile;
@@ -2984,6 +2986,12 @@ export type MutationInstallApplicationArgs = {
 };
 
 
+export type MutationInstallMarketplaceAppArgs = {
+  universalIdentifier: Scalars['String'];
+  version?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
@@ -3287,6 +3295,12 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['UUID'];
   workspaceMemberId: Scalars['UUID'];
+};
+
+
+export type MutationUpgradeApplicationArgs = {
+  appRegistrationId: Scalars['String'];
+  targetVersion: Scalars['String'];
 };
 
 
@@ -5722,19 +5736,19 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description: string, version: string, applicationRegistrationId?: string | null }> };
+export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description?: string | null, version?: string | null, applicationRegistrationId?: string | null }> };
 
 export type FindOneApplicationQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -6103,21 +6117,21 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 
 export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, isHeadless: boolean, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
 
-export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type CreateOneLogicFunctionMutationVariables = Exact<{
   input: CreateLogicFunctionFromSourceInput;
 }>;
 
 
-export type CreateOneLogicFunctionMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateOneLogicFunctionMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneLogicFunctionMutationVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type ExecuteOneLogicFunctionMutationVariables = Exact<{
   input: ExecuteOneLogicFunctionInput;
@@ -6143,14 +6157,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type FindManyLogicFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneLogicFunctionQueryVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -6159,12 +6173,28 @@ export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
 
 export type GetLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFunctionSourceCode?: string | null };
 
-export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, sourcePackage?: string | null, websiteUrl?: string | null, termsUrl?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null };
+export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, sourcePackage?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null };
+
+export type InstallMarketplaceAppMutationVariables = Exact<{
+  universalIdentifier: Scalars['String'];
+  version?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type InstallMarketplaceAppMutation = { __typename?: 'Mutation', installMarketplaceApp: boolean };
+
+export type UpgradeApplicationMutationVariables = Exact<{
+  appRegistrationId: Scalars['String'];
+  targetVersion: Scalars['String'];
+}>;
+
+
+export type UpgradeApplicationMutation = { __typename?: 'Mutation', upgradeApplication: boolean };
 
 export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, sourcePackage?: string | null, websiteUrl?: string | null, termsUrl?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null }> };
+export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, sourcePackage?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null }> };
 
 export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -6472,7 +6502,7 @@ export type UpdateApplicationRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: AppRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
   input: UpdateApplicationRegistrationVariableInput;
@@ -6520,22 +6550,6 @@ export type UninstallApplicationMutationVariables = Exact<{
 
 
 export type UninstallApplicationMutation = { __typename?: 'Mutation', uninstallApplication: boolean };
-
-export type InstallMarketplaceAppMutationVariables = Exact<{
-  universalIdentifier: Scalars['String'];
-  version?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type InstallMarketplaceAppMutation = { __typename?: 'Mutation', installMarketplaceApp: boolean };
-
-export type UpgradeApplicationMutationVariables = Exact<{
-  appRegistrationId: Scalars['String'];
-  targetVersion: Scalars['String'];
-}>;
-
-
-export type UpgradeApplicationMutation = { __typename?: 'Mutation', upgradeApplication: boolean };
 
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
@@ -7425,6 +7439,9 @@ export const LogicFunctionFieldsFragmentDoc = gql`
   handlerName
   toolInputSchema
   isTool
+  cronTriggerSettings
+  databaseEventTriggerSettings
+  httpRouteTriggerSettings
   applicationId
   createdAt
   updatedAt
@@ -7769,7 +7786,6 @@ export const MarketplaceAppFieldsFragmentDoc = gql`
   screenshots
   aboutDescription
   providers
-  sourcePackage
   websiteUrl
   termsUrl
   objects {
@@ -7806,6 +7822,7 @@ export const MarketplaceAppFieldsFragmentDoc = gql`
     name
     description
   }
+  sourcePackage
   defaultRole {
     id
     label
@@ -11440,6 +11457,76 @@ export function useGetLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.Lazy
 export type GetLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeQuery>;
 export type GetLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeLazyQuery>;
 export type GetLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
+export const InstallMarketplaceAppDocument = gql`
+    mutation InstallMarketplaceApp($universalIdentifier: String!, $version: String) {
+  installMarketplaceApp(
+    universalIdentifier: $universalIdentifier
+    version: $version
+  )
+}
+    `;
+export type InstallMarketplaceAppMutationFn = Apollo.MutationFunction<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
+
+/**
+ * __useInstallMarketplaceAppMutation__
+ *
+ * To run a mutation, you first call `useInstallMarketplaceAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInstallMarketplaceAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [installMarketplaceAppMutation, { data, loading, error }] = useInstallMarketplaceAppMutation({
+ *   variables: {
+ *      universalIdentifier: // value for 'universalIdentifier'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useInstallMarketplaceAppMutation(baseOptions?: Apollo.MutationHookOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>(InstallMarketplaceAppDocument, options);
+      }
+export type InstallMarketplaceAppMutationHookResult = ReturnType<typeof useInstallMarketplaceAppMutation>;
+export type InstallMarketplaceAppMutationResult = Apollo.MutationResult<InstallMarketplaceAppMutation>;
+export type InstallMarketplaceAppMutationOptions = Apollo.BaseMutationOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
+export const UpgradeApplicationDocument = gql`
+    mutation UpgradeApplication($appRegistrationId: String!, $targetVersion: String!) {
+  upgradeApplication(
+    appRegistrationId: $appRegistrationId
+    targetVersion: $targetVersion
+  )
+}
+    `;
+export type UpgradeApplicationMutationFn = Apollo.MutationFunction<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>;
+
+/**
+ * __useUpgradeApplicationMutation__
+ *
+ * To run a mutation, you first call `useUpgradeApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpgradeApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upgradeApplicationMutation, { data, loading, error }] = useUpgradeApplicationMutation({
+ *   variables: {
+ *      appRegistrationId: // value for 'appRegistrationId'
+ *      targetVersion: // value for 'targetVersion'
+ *   },
+ * });
+ */
+export function useUpgradeApplicationMutation(baseOptions?: Apollo.MutationHookOptions<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>(UpgradeApplicationDocument, options);
+      }
+export type UpgradeApplicationMutationHookResult = ReturnType<typeof useUpgradeApplicationMutation>;
+export type UpgradeApplicationMutationResult = Apollo.MutationResult<UpgradeApplicationMutation>;
+export type UpgradeApplicationMutationOptions = Apollo.BaseMutationOptions<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>;
 export const FindManyMarketplaceAppsDocument = gql`
     query FindManyMarketplaceApps {
   findManyMarketplaceApps {
@@ -13495,32 +13582,6 @@ export function useUninstallApplicationMutation(baseOptions?: Apollo.MutationHoo
 export type UninstallApplicationMutationHookResult = ReturnType<typeof useUninstallApplicationMutation>;
 export type UninstallApplicationMutationResult = Apollo.MutationResult<UninstallApplicationMutation>;
 export type UninstallApplicationMutationOptions = Apollo.BaseMutationOptions<UninstallApplicationMutation, UninstallApplicationMutationVariables>;
-export const InstallMarketplaceAppDocument = gql`
-    mutation InstallMarketplaceApp($universalIdentifier: String!, $version: String) {
-  installMarketplaceApp(universalIdentifier: $universalIdentifier, version: $version)
-}
-    `;
-export type InstallMarketplaceAppMutationFn = Apollo.MutationFunction<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
-export function useInstallMarketplaceAppMutation(baseOptions?: Apollo.MutationHookOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>(InstallMarketplaceAppDocument, options);
-      }
-export type InstallMarketplaceAppMutationHookResult = ReturnType<typeof useInstallMarketplaceAppMutation>;
-export type InstallMarketplaceAppMutationResult = Apollo.MutationResult<InstallMarketplaceAppMutation>;
-export type InstallMarketplaceAppMutationOptions = Apollo.BaseMutationOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
-export const UpgradeApplicationDocument = gql`
-    mutation UpgradeApplication($appRegistrationId: String!, $targetVersion: String!) {
-  upgradeApplication(appRegistrationId: $appRegistrationId, targetVersion: $targetVersion)
-}
-    `;
-export type UpgradeApplicationMutationFn = Apollo.MutationFunction<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>;
-export function useUpgradeApplicationMutation(baseOptions?: Apollo.MutationHookOptions<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>(UpgradeApplicationDocument, options);
-      }
-export type UpgradeApplicationMutationHookResult = ReturnType<typeof useUpgradeApplicationMutation>;
-export type UpgradeApplicationMutationResult = Apollo.MutationResult<UpgradeApplicationMutation>;
-export type UpgradeApplicationMutationOptions = Apollo.BaseMutationOptions<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>;
 export const AssignRoleToApiKeyDocument = gql`
     mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {
   assignRoleToApiKey(apiKeyId: $apiKeyId, roleId: $roleId)
