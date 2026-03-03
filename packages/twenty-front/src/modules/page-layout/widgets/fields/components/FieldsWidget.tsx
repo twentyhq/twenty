@@ -10,7 +10,7 @@ import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/ho
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   AnimatedPlaceholder,
@@ -20,6 +20,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -31,12 +32,12 @@ const StyledContainer = styled.div`
 
 const StyledPropertyBox = styled.div`
   align-self: stretch;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[3]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInlineFieldsPropertyBox = styled(StyledPropertyBox)`

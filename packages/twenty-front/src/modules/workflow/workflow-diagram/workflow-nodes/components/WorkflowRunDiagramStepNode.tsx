@@ -23,8 +23,7 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-nodes/utils/getNodeIterationCount';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Position } from '@xyflow/react';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useContext } from 'react';
@@ -32,15 +31,17 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, type ThemeType } from 'twenty-ui/theme';
 
 const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
-  column-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledStatusIconsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
   box-sizing: border-box;
 `;
@@ -49,7 +50,7 @@ const StyledColorIcon = styled.div<{
   color: string;
 }>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   height: 14px;
@@ -59,22 +60,18 @@ const StyledColorIcon = styled.div<{
 `;
 
 const StyledIterationCounter = styled.div<{
+  theme: ThemeType;
   runStatus?: WorkflowRunStepStatus;
 }>`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-
-  ${({ theme, runStatus }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-    return css`
-      color: ${colors.unselected.color};
-    `;
-  }}
+  color: ${({ theme, runStatus }) =>
+    getWorkflowDiagramColors({ theme, runStatus }).unselected.color};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledRightPartContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const WorkflowRunDiagramStepNode = ({
@@ -85,7 +82,7 @@ export const WorkflowRunDiagramStepNode = ({
   data: WorkflowRunDiagramStepNodeData;
 }) => {
   const { getIcon } = useIcons();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -140,6 +137,7 @@ export const WorkflowRunDiagramStepNode = ({
     <>
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+        theme={theme}
         runStatus={data.runStatus}
         onClick={handleClick}
         selected={selected}
@@ -157,7 +155,10 @@ export const WorkflowRunDiagramStepNode = ({
 
             <StyledRightPartContainer>
               {iterationCount > 0 && (
-                <StyledIterationCounter runStatus={data.runStatus}>
+                <StyledIterationCounter
+                  theme={theme}
+                  runStatus={data.runStatus}
+                >
                   {iterationCount}
                 </StyledIterationCounter>
               )}
@@ -171,7 +172,8 @@ export const WorkflowRunDiagramStepNode = ({
                 </StyledStatusIconsContainer>
               )}
 
-              {data.runStatus === StepStatus.FAILED && (
+              {(data.runStatus === StepStatus.FAILED ||
+                data.runStatus === StepStatus.FAILED_SAFELY) && (
                 <StyledStatusIconsContainer>
                   <StyledColorIcon color={theme.tag.background.red}>
                     <IconX color={theme.tag.text.red} size={14} />
@@ -188,7 +190,11 @@ export const WorkflowRunDiagramStepNode = ({
             </StyledRightPartContainer>
           </StyledNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle runStatus={data.runStatus} selected={selected}>
+          <WorkflowNodeTitle
+            theme={theme}
+            runStatus={data.runStatus}
+            selected={selected}
+          >
             {data.name}
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>

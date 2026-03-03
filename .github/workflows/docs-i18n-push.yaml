@@ -21,7 +21,7 @@ concurrency:
 jobs:
   push_docs:
     name: Push documentation to Crowdin
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4

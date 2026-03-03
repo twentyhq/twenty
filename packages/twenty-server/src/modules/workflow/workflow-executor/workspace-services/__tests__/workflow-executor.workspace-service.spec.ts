@@ -486,6 +486,102 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
     });
 
+    it('should return nextStepIds for a fail-safe iterator instead of entering the loop', async () => {
+      const step = {
+        id: 'iterator-1',
+        type: WorkflowActionType.ITERATOR,
+        nextStepIds: ['after-loop'],
+        settings: {
+          input: {
+            initialLoopStepIds: ['loop-step-1'],
+          },
+        },
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldFailSafely: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['after-loop'],
+      });
+    });
+
+    it('should return nextStepIdsToFailSafely for all branches when if-else is fail-safe', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-if',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-b'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldFailSafely: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToFailSafely: ['step-a', 'step-b'],
+      });
+    });
+
+    it('should return nextStepIdsToSkip for all branches when if-else has no matching branch', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-if',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-b'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldSkipStepExecution: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToSkip: ['step-a', 'step-b'],
+      });
+    });
+
     it('should skip multiple non-matching branches for if-else with many branches', async () => {
       const step = {
         id: 'if-else-1',

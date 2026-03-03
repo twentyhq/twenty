@@ -24,9 +24,8 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import {
@@ -34,6 +33,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -46,7 +46,7 @@ type WidgetRendererProps = {
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 

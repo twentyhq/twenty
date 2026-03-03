@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
@@ -8,13 +7,14 @@ import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/cur
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { TEXT_INPUT_STYLE, ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
-  padding: ${({ theme }) => `${theme.spacing(0)} ${theme.spacing(1.5)}`};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1.5]};
 `;
 
 const StyledContainer = styled.div`
@@ -29,10 +29,10 @@ const StyledIcon = styled.div`
   display: flex;
 
   & > svg {
-    padding-left: ${({ theme }) => theme.spacing(1)};
-    color: ${({ theme }) => theme.font.color.tertiary};
-    height: ${({ theme }) => theme.icon.size.md}px;
-    width: ${({ theme }) => theme.icon.size.md}px;
+    padding-left: ${themeCssVariables.spacing[1]};
+    color: ${themeCssVariables.font.color.tertiary};
+    height: ${themeCssVariables.icon.size.md}px;
+    width: ${themeCssVariables.icon.size.md}px;
   }
 `;
 
@@ -67,7 +67,7 @@ export const CurrencyInput = ({
   onSelect,
   decimals,
 }: CurrencyInputProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const [internalText, setInternalText] = useState(value);
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -7,6 +7,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type TextAreaInputProps = {
   instanceId: string;
@@ -32,7 +33,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   justify-content: center;
   resize: none;
   max-height: 400px;
-  width: calc(100% - ${({ theme }) => theme.spacing(7)});
+  width: calc(100% - ${themeCssVariables.spacing[7]});
 
   line-height: 18px;
 `;
