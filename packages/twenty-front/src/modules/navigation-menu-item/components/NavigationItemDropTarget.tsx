@@ -5,19 +5,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 
-const StyledDropTarget = styled.div<{
-  $isDragOver: boolean;
-  $isDropForbidden: boolean;
-  $compact?: boolean;
-}>`
+const StyledDropTarget = styled.div<{ $compact?: boolean }>`
   min-height: ${({ $compact }) =>
     $compact ? 0 : themeCssVariables.spacing[2]};
   position: relative;
   transition: all 150ms ease-in-out;
 
-  ${({ $isDragOver }) =>
-    $isDragOver
-      ? `
+  &[data-drag-over='true'] {
     background-color: ${themeCssVariables.background.transparent.blue};
 
     &::before {
@@ -28,14 +22,12 @@ const StyledDropTarget = styled.div<{
       width: 100%;
       height: 2px;
       background-color: ${themeCssVariables.color.blue};
-      border-radius: ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0 0;
+      border-radius: ${themeCssVariables.border.radius.sm}
+        ${themeCssVariables.border.radius.sm} 0 0;
     }
-  `
-      : ''}
+  }
 
-  ${({ $isDropForbidden }) =>
-    $isDropForbidden
-      ? `
+  &[data-drop-forbidden='true'] {
     background-color: ${themeCssVariables.background.transparent.danger};
     cursor: not-allowed;
 
@@ -47,10 +39,10 @@ const StyledDropTarget = styled.div<{
       width: 100%;
       height: 2px;
       background-color: ${themeCssVariables.color.red};
-      border-radius: ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0 0;
+      border-radius: ${themeCssVariables.border.radius.sm}
+        ${themeCssVariables.border.radius.sm} 0 0;
     }
-  `
-      : ''}
+  }
 `;
 
 type NavigationItemDropTargetProps = {
@@ -80,9 +72,9 @@ export const NavigationItemDropTarget = ({
 
   return (
     <StyledDropTarget
-      $isDragOver={isDragOver}
-      $isDropForbidden={isDropForbidden}
       $compact={compact}
+      data-drag-over={isDragOver ? 'true' : undefined}
+      data-drop-forbidden={isDropForbidden ? 'true' : undefined}
     >
       {children}
     </StyledDropTarget>
