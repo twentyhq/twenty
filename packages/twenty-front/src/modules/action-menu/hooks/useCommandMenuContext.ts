@@ -1,5 +1,4 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { type CommandMenuContext } from '@/action-menu/types/CommandMenuContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -21,7 +20,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type CommandMenuContext,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -134,7 +136,7 @@ export const useCommandMenuContext = (): CommandMenuContext => {
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
-    selectedRecord,
+    selectedRecord: selectedRecord as CommandMenuContext['selectedRecord'],
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,

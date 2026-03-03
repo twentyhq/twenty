@@ -2,18 +2,20 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { evaluateConditionalAvailabilityExpression } from '@/action-menu/actions/utils/evaluateConditionalAvailabilityExpression';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
-import { type CommandMenuContext } from '@/action-menu/types/CommandMenuContext';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type CommandMenuContext } from 'twenty-shared/types';
+import {
+  evaluateConditionalAvailabilityExpression,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';

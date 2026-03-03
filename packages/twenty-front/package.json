@@ -81,7 +81,6 @@
     "buffer": "^6.0.3",
     "cron-parser": "5.1.1",
     "date-fns": "^2.30.0",
-    "expr-eval": "^2.0.2",
     "file-saver": "^2.0.5",
     "graphiql": "^3.1.1",
     "graphql": "16.8.1",

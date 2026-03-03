@@ -1,5 +1,5 @@
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from './ObjectPermissions';
+import { type ObjectRecord } from './ObjectRecord';
 
 export type CommandMenuContext = {
   isShowPage: boolean;

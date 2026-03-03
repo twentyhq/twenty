@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type EvaluationContext, Parser } from 'expr-eval';
-import { isDefined } from 'twenty-shared/utils';
+
+import { isDefined } from '../validation/isDefined';
 
 const parser = new Parser();
 
@@ -20,7 +21,6 @@ export const evaluateConditionalAvailabilityExpression = (
 
     return parsed.evaluate(context) === true;
   } catch {
-    // TODO: Add error handling here, for now, we just return false
     return false;
   }
 };
