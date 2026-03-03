@@ -64,7 +64,11 @@ describe('scaffoldIntegrationTest', () => {
         sourceFolderPath,
       });
 
-      const setupTestPath = join(sourceFolderPath, '__tests__', 'setup-test.ts');
+      const setupTestPath = join(
+        sourceFolderPath,
+        '__tests__',
+        'setup-test.ts',
+      );
 
       expect(await fs.pathExists(setupTestPath)).toBe(true);
 
