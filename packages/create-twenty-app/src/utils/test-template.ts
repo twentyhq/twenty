@@ -59,6 +59,7 @@ const createTsconfigSpec = async (appDirectory: string) => {
   const tsconfigSpec = {
     extends: './tsconfig.json',
     compilerOptions: {
+      composite: true,
       types: ['vitest/globals'],
     },
     include: ['src/**/*.ts', 'src/**/*.tsx'],
@@ -69,6 +70,13 @@ const createTsconfigSpec = async (appDirectory: string) => {
     join(appDirectory, 'tsconfig.spec.json'),
     JSON.stringify(tsconfigSpec, null, 2),
   );
+
+  const tsconfigPath = join(appDirectory, 'tsconfig.json');
+  const tsconfig = await fs.readJson(tsconfigPath);
+
+  tsconfig.references = [{ path: './tsconfig.spec.json' }];
+
+  await fs.writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 };
 
 const createSetupTest = async ({
@@ -119,10 +127,10 @@ const createIntegrationTest = async ({
   fileFolder?: string;
   fileName: string;
 }) => {
-  const content = `import { appBuild, appUninstall } from 'twenty-sdk/cli';
+  const content = `import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import applicationConfig from 'src/application-config';
 
 const APP_PATH = process.cwd();
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
@@ -205,7 +213,7 @@ describe('App installation', () => {
     const installedApp = result.findManyApplications.find(
       (application: { universalIdentifier: string }) =>
         application.universalIdentifier ===
-        applicationConfig.universalIdentifier,
+        APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
     expect(installedApp).toBeDefined();

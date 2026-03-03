@@ -522,11 +522,16 @@ const createApplicationConfig = async ({
   fileFolder?: string;
   fileName: string;
 }) => {
+  const universalIdentifier = v4();
+
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
 export default defineApplication({
-  universalIdentifier: '${v4()}',
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,

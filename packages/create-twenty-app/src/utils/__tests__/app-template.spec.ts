@@ -28,6 +28,15 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleIntegrationTest: true,
 };
 
+const SEED_TSCONFIG = {
+  compilerOptions: { paths: { 'src/*': ['./src/*'] } },
+  exclude: ['node_modules', 'dist', '**/*.integration-test.ts'],
+};
+
+const seedTsconfig = async (directory: string) => {
+  await fs.writeJson(join(directory, 'tsconfig.json'), SEED_TSCONFIG);
+};
+
 const NO_EXAMPLES: ExampleOptions = {
   includeExampleObject: false,
   includeExampleField: false,
@@ -48,6 +57,7 @@ describe('copyBaseApplicationProject', () => {
       `test-twenty-app-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     await fs.ensureDir(testAppDirectory);
+    await seedTsconfig(testAppDirectory);
     jest.clearAllMocks();
   });
 
@@ -151,11 +161,18 @@ describe('copyBaseApplicationProject', () => {
       "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role'",
     );
 
+    expect(appConfigContent).toContain(
+      'export const APPLICATION_UNIVERSAL_IDENTIFIER',
+    );
+    expect(appConfigContent).toContain(
+      'universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER',
+    );
+
     expect(appConfigContent).toContain("displayName: 'My Test App'");
     expect(appConfigContent).toContain("description: 'A test application'");
 
     expect(appConfigContent).toMatch(
-      /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      /APPLICATION_UNIVERSAL_IDENTIFIER =\s*'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
     );
 
     expect(appConfigContent).toContain(
@@ -237,6 +254,7 @@ describe('copyBaseApplicationProject', () => {
   it('should generate unique UUIDs for each application', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
+    await seedTsconfig(firstAppDir);
     await copyBaseApplicationProject({
       appName: 'app-one',
       appDisplayName: 'App One',
@@ -247,6 +265,7 @@ describe('copyBaseApplicationProject', () => {
 
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
+    await seedTsconfig(secondAppDir);
     await copyBaseApplicationProject({
       appName: 'app-two',
       appDisplayName: 'App Two',
@@ -265,7 +284,7 @@ describe('copyBaseApplicationProject', () => {
     );
 
     const uuidRegex =
-      /universalIdentifier: '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      /APPLICATION_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstAppConfig.match(uuidRegex)?.[1];
     const secondUuid = secondAppConfig.match(uuidRegex)?.[1];
 
@@ -277,6 +296,7 @@ describe('copyBaseApplicationProject', () => {
   it('should generate unique role UUIDs for each application', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
+    await seedTsconfig(firstAppDir);
     await copyBaseApplicationProject({
       appName: 'app-one',
       appDisplayName: 'App One',
@@ -287,6 +307,7 @@ describe('copyBaseApplicationProject', () => {
 
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
+    await seedTsconfig(secondAppDir);
     await copyBaseApplicationProject({
       appName: 'app-two',
       appDisplayName: 'App Two',
@@ -555,6 +576,7 @@ describe('copyBaseApplicationProject', () => {
     it('should generate unique UUIDs for example objects across apps', async () => {
       const firstAppDir = join(testAppDirectory, 'app1');
       await fs.ensureDir(firstAppDir);
+      await seedTsconfig(firstAppDir);
       await copyBaseApplicationProject({
         appName: 'app-one',
         appDisplayName: 'App One',
@@ -565,6 +587,7 @@ describe('copyBaseApplicationProject', () => {
 
       const secondAppDir = join(testAppDirectory, 'app2');
       await fs.ensureDir(secondAppDir);
+      await seedTsconfig(secondAppDir);
       await copyBaseApplicationProject({
         appName: 'app-two',
         appDisplayName: 'App Two',

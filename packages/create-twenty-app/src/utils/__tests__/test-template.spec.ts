@@ -14,6 +14,13 @@ describe('scaffoldIntegrationTest', () => {
     );
     sourceFolderPath = join(testAppDirectory, 'src');
     await fs.ensureDir(sourceFolderPath);
+
+    await fs.writeJson(join(testAppDirectory, 'tsconfig.json'), {
+      compilerOptions: {
+        paths: { 'src/*': ['./src/*'] },
+      },
+      exclude: ['node_modules', 'dist', '**/*.integration-test.ts'],
+    });
   });
 
   afterEach(async () => {
@@ -46,14 +53,14 @@ describe('scaffoldIntegrationTest', () => {
         "import { MetadataApiClient } from 'twenty-sdk/generated'",
       );
       expect(content).toContain(
-        "import applicationConfig from 'src/application-config'",
+        "import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config'",
       );
       expect(content).toContain('TWENTY_TEST_API_KEY');
       expect(content).toContain('assertServerIsReachable');
       expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
       expect(content).toContain('findManyApplications');
-      expect(content).toContain('applicationConfig.universalIdentifier');
+      expect(content).toContain('APPLICATION_UNIVERSAL_IDENTIFIER');
     });
   });
 
@@ -116,8 +123,24 @@ describe('scaffoldIntegrationTest', () => {
       const tsconfigSpec = await fs.readJson(tsconfigSpecPath);
 
       expect(tsconfigSpec.extends).toBe('./tsconfig.json');
+      expect(tsconfigSpec.compilerOptions.composite).toBe(true);
       expect(tsconfigSpec.include).toContain('src/**/*.ts');
       expect(tsconfigSpec.exclude).not.toContain('**/*.integration-test.ts');
+    });
+
+    it('should add a reference to tsconfig.spec.json in tsconfig.json', async () => {
+      await scaffoldIntegrationTest({
+        appDirectory: testAppDirectory,
+        sourceFolderPath,
+      });
+
+      const tsconfig = await fs.readJson(
+        join(testAppDirectory, 'tsconfig.json'),
+      );
+
+      expect(tsconfig.references).toEqual([
+        { path: './tsconfig.spec.json' },
+      ]);
     });
   });
 });
