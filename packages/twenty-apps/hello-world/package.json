@@ -18,9 +18,10 @@
     "entity:add": "twenty entity:add"
   },
   "dependencies": {
-    "twenty-sdk": "0.6.3"
+    "twenty-sdk": "portal:../../twenty-sdk"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2"
+    "@types/node": "^24.7.2",
+    "vitest": "^3.1.1"
   }
 }
