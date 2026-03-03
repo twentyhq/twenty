@@ -25,7 +25,7 @@ const StyledParticipantsContainer = styled.div`
   display: flex;
 `;
 
-const StyledAvatar = styled(Avatar)`
+const StyledAvatarWrapper = styled.div`
   margin-left: calc(-1 * ${themeCssVariables.spacing[1]});
 `;
 
@@ -123,24 +123,30 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
-            <StyledAvatar
-              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
-              placeholder={thread.lastTwoParticipants[0].displayName}
-              placeholderColorSeed={
-                thread.lastTwoParticipants[0].workspaceMemberId ||
-                thread.lastTwoParticipants[0].personId
-              }
-              type="rounded"
-            />
+            <StyledAvatarWrapper>
+              <Avatar
+                avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+                placeholder={thread.lastTwoParticipants[0].displayName}
+                placeholderColorSeed={
+                  thread.lastTwoParticipants[0].workspaceMemberId ||
+                  thread.lastTwoParticipants[0].personId
+                }
+                type="rounded"
+              />
+            </StyledAvatarWrapper>
           )}
           {finalDisplayedName && (
-            <StyledAvatar
-              avatarUrl={finalAvatarUrl}
-              placeholder={finalDisplayedName}
-              type="rounded"
-              color={isCountIcon ? theme.grayScale.gray11 : undefined}
-              backgroundColor={isCountIcon ? theme.grayScale.gray2 : undefined}
-            />
+            <StyledAvatarWrapper>
+              <Avatar
+                avatarUrl={finalAvatarUrl}
+                placeholder={finalDisplayedName}
+                type="rounded"
+                color={isCountIcon ? theme.grayScale.gray11 : undefined}
+                backgroundColor={
+                  isCountIcon ? theme.grayScale.gray2 : undefined
+                }
+              />
+            </StyledAvatarWrapper>
           )}
         </StyledParticipantsContainer>
 

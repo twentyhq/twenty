@@ -18,10 +18,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/display';
-import {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-} from 'twenty-ui/navigation';
+import { MenuItemLeftContent } from 'twenty-ui/navigation';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -275,15 +272,26 @@ const StyledSeparator = styled.div`
   width: 100%;
 `;
 
-const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
   height: 32px;
   margin: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
   width: auto;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
-const StyledButton = styled(MenuItemLeftContent)`
+const StyledButtonContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: start;
 `;
 
@@ -539,7 +547,9 @@ export const DateTimePicker = ({
         <>
           <StyledSeparator />
           <StyledButtonContainer onClick={handleClear}>
-            <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
+            <StyledButtonContent>
+              <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
+            </StyledButtonContent>
           </StyledButtonContainer>
         </>
       )}

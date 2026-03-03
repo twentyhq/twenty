@@ -114,6 +114,7 @@ export default defineConfig(({ command, mode }) => {
             '**/twenty-ui/src/**/*.{ts,tsx}',
             '**/AdvancedTextEditor.tsx',
             '**/FileUploadProvider.tsx',
+            '**/MultiSelectControl.tsx',
             '**/FormNumberFieldInput.tsx',
             '**/FormUuidFieldInput.tsx',
             '**/KeyboardShortcutMenuStyles.tsx',
@@ -701,13 +702,12 @@ export default defineConfig(({ command, mode }) => {
       minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Set chunk size warning limit (in bytes) - warns at 1MB
-          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
           // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {

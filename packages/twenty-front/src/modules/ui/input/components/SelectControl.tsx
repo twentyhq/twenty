@@ -34,7 +34,8 @@ export const StyledControlContainer = styled.div<{
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
-  border-right: ${({ hasRightElement }) => (hasRightElement ? 'none' : 'auto')};
+  border-right: ${({ hasRightElement }) =>
+    hasRightElement ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
   border-bottom-right-radius: ${({ hasRightElement }) =>
     hasRightElement ? '0' : themeCssVariables.border.radius.sm};
   border-top-right-radius: ${({ hasRightElement }) =>
@@ -50,9 +51,10 @@ export const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
-export const StyledSelectControlIconChevronDown = styled(IconChevronDown)<{
+const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
 }>`
+  display: flex;
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
@@ -93,10 +95,9 @@ export const SelectControl = ({
         />
       ) : null}
       <OverflowingTextWithTooltip text={selectedOption.label} />
-      <StyledSelectControlIconChevronDown
-        disabled={isDisabled}
-        size={theme.icon.size.md}
-      />
+      <StyledIconChevronDownWrapper disabled={isDisabled}>
+        <IconChevronDown size={theme.icon.size.md} />
+      </StyledIconChevronDownWrapper>
     </StyledControlContainer>
   );
 };

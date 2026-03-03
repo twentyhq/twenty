@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledDialog = styled.div`
+export const StyledDialog = styled.div<{ isMobile: boolean }>`
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
@@ -15,9 +14,9 @@ export const StyledDialog = styled.div`
   padding: ${themeCssVariables.spacing[1]};
   position: fixed;
   top: 30%;
-  transform: ${() =>
-    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
-  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
+  transform: ${({ isMobile }) =>
+    isMobile ? 'translateX(-49.5%)' : 'translateX(-50%)'};
+  width: ${({ isMobile }) => (isMobile ? 'calc(100% - 40px)' : '100%')};
   z-index: 1000;
 `;
 

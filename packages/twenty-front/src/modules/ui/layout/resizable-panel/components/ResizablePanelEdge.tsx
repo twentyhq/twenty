@@ -16,8 +16,8 @@ const StyledEdge = styled.div<StyledEdgeProps>`
   position: absolute;
   top: 0;
   bottom: 0;
-  ${({ side }) =>
-    side === 'right' ? 'right' : 'left'}: -${RESIZE_EDGE_WIDTH_PX / 2}px;
+  left: ${({ side }) => (side === 'left' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto')};
+  right: ${({ side }) => (side === 'right' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto')};
   width: ${RESIZE_EDGE_WIDTH_PX}px;
   cursor: col-resize;
 

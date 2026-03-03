@@ -29,8 +29,7 @@ const StyledObjectIconWrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ $borderColor }) =>
-    $borderColor ? `border: 1px solid ${$borderColor};` : ''}
+  border: ${({ $borderColor }) => ($borderColor ? `1px solid ${$borderColor}` : 'none')};
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`

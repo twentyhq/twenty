@@ -61,7 +61,7 @@ const StyledRowContainer = styled.div<{ theme: ThemeType }>`
 
 const StyledElementContainer = styled.div<{ width: number }>`
   display: flex;
-  ${({ width }) => width && `min-width: ${width}px;`}
+  min-width: ${({ width }) => (width ? `${width}px` : 'auto')};
 `;
 
 const StyledCellContainer = styled.div<{ theme: ThemeType }>`

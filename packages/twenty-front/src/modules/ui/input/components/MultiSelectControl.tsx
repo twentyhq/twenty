@@ -1,15 +1,27 @@
 import {
   type SelectControlProps,
   StyledControlContainer,
-  StyledSelectControlIconChevronDown,
 } from '@/ui/input/components/SelectControl';
+import { styled } from '@linaria/react';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconChevronDown,
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledIconChevronDownWrapper = styled.div<{
+  disabled?: boolean;
+}>`
+  display: flex;
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
+`;
 
 type MultiSelectOptionType = {
   label: string;
@@ -61,10 +73,9 @@ export const MultiSelectControl = ({
         <OverflowingTextWithTooltip text={firstSelectedOption?.label ?? ''} />
       )}
 
-      <StyledSelectControlIconChevronDown
-        disabled={isDisabled}
-        size={theme.icon.size.md}
-      />
+      <StyledIconChevronDownWrapper disabled={isDisabled}>
+        <IconChevronDown size={theme.icon.size.md} />
+      </StyledIconChevronDownWrapper>
     </StyledControlContainer>
   );
 };

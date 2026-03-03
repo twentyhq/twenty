@@ -25,10 +25,7 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
-import {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-} from 'twenty-ui/navigation';
+import { MenuItemLeftContent } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ThemeContext } from 'twenty-ui/theme';
 
@@ -276,15 +273,26 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
   }
 `;
 
-const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
   height: 32px;
   margin: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
   width: auto;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
-const StyledButton = styled(MenuItemLeftContent)`
+const StyledButtonContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: start;
 `;
 
@@ -514,7 +522,9 @@ export const DatePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
-          <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
+          <StyledButtonContent>
+            <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
+          </StyledButtonContent>
         </StyledButtonContainer>
       )}
     </StyledContainer>

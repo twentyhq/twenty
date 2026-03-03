@@ -67,7 +67,7 @@ const StyledTitle = styled.h2<{ canceled?: boolean }>`
   margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[0]}
     ${themeCssVariables.spacing[2]};
 
-  ${({ canceled }) => (canceled ? 'text-decoration: line-through' : '')}
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
 `;
 
 const StyledCreatedAt = styled.div`
