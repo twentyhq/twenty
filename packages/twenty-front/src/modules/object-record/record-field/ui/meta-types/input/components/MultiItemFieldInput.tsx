@@ -6,6 +6,8 @@ import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -18,6 +20,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -236,49 +239,36 @@ export const MultiItemFieldInput = <T,>({
     isValid: boolean;
     updatedItems: T[];
   } => {
-    const sanitizedInput = inputValue.trim();
+    const { sanitizedInput, isValid, errorMessage } = sanitizeAndValidateInput(
+      inputValue,
+      validateInput,
+    );
 
-    if (sanitizedInput === '' && isAddingNewItem) {
-      return { isValid: true, updatedItems: items };
+    if (!isValid) {
+      onError?.(true, items);
+      setErrorData({ isValid: false, errorMessage });
+      return { isValid: false, updatedItems: items };
     }
 
-    if (sanitizedInput === '' && shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-      return {
-        isValid: true,
-        updatedItems: [],
-      };
-    }
+    const editingIndex = isAddingNewItem ? null : itemToEditIndex;
 
-    if (sanitizedInput === '' && !isAddingNewItem) {
+    const updatedItems = computeUpdatedMultiItemFieldItems({
+      sanitizedInput,
+      items,
+      editingIndex,
+      singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
+      formatInput,
+    });
+
+    if (
+      !isNonEmptyString(sanitizedInput) &&
+      isDefined(editingIndex) &&
+      !shouldAutoEnterBecauseOnlyOneItemIsAllowed
+    ) {
       handleDeleteItem(itemToEditIndex);
-      return {
-        isValid: true,
-        updatedItems: toSpliced(items, itemToEditIndex, 1),
-      };
     }
 
-    if (validateInput !== undefined) {
-      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
-      if (!validationData.isValid) {
-        onError?.(true, items);
-        setErrorData(validationData);
-        return { isValid: false, updatedItems: items };
-      }
-    }
-
-    const newItem = formatInput
-      ? formatInput(
-          sanitizedInput,
-          isAddingNewItem ? undefined : itemToEditIndex,
-        )
-      : (sanitizedInput as unknown as T);
-
-    return {
-      isValid: true,
-      updatedItems: isAddingNewItem
-        ? [...items, newItem]
-        : toSpliced(items, itemToEditIndex, 1, newItem),
-    };
+    return { isValid: true, updatedItems };
   };
 
   const handleSetPrimaryItem = (index: number) => {
