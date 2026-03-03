@@ -10,12 +10,6 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
-    "auth": "twenty auth:login",
-    "dev": "twenty app:dev",
-    "build": "twenty app:build",
-    "typecheck": "twenty app:typecheck",
-    "uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
