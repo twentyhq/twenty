@@ -77,7 +77,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'is not defined by type',
       restFilterInput: `${[joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')]}[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"`,
-      restErrorMessage: `instead of`,
+      restErrorMessage: `Use "${joinColumnNameForManyToOneMorphRelationField1}" instead of "${joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')}" to filter on this relation.`,
     },
   ],
   [FieldMetadataType.UUID]: [
