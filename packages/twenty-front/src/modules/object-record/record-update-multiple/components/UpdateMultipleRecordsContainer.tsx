@@ -8,7 +8,7 @@ import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDraw
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;

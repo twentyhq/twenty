@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableHeaderText = styled.div`
   padding-bottom: ${themeCssVariables.spacing['0.5']};

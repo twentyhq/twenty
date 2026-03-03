@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { MessageFolderImportPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageFolderIconProps = {
   className?: string;

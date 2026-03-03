@@ -5,7 +5,7 @@ import { type RecordTitleCellContainerType } from '@/object-record/record-title-
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;

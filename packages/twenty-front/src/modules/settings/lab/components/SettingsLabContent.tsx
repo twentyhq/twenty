@@ -4,7 +4,7 @@ import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatu
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Card } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =

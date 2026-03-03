@@ -10,7 +10,8 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconX } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;

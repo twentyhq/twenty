@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const BREADCRUMB_WIDTH = 24;
 const ICON_CENTER_OFFSET = 8;

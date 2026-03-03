@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AuthProviders,
   useUpdateWorkspaceMutation,

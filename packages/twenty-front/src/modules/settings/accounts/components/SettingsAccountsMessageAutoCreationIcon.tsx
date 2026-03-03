@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageAutoCreationIconProps = {
   className?: string;

@@ -13,7 +13,8 @@ import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,

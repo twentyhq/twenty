@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 

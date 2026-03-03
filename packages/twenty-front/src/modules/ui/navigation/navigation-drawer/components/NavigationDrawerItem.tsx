@@ -25,11 +25,8 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,
@@ -130,7 +127,7 @@ const StyledItem = styled.button<StyledItemProps>`
       ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
       : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
-  ${({ isDragging }) => (isDragging ? `cursor: grabbing;` : '')}
+  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'inherit')};
 
   :hover {
     background: ${themeCssVariables.background.transparent.light};
@@ -247,21 +244,7 @@ const StyledRightOptionsContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
 `;
 
-const visibleStateStyles = `
-  clip-path: unset;
-  display: flex;
-  height: unset;
-  opacity: 1;
-  overflow: unset;
-  position: unset;
-  width: unset;
-`;
-
-const StyledRightOptionsVisbility = styled.div<{
-  isMobile: boolean;
-  isRightOptionsDropdownOpen?: boolean;
-  alwaysVisible?: boolean;
-}>`
+const StyledRightOptionsVisbility = styled.div`
   display: block;
   opacity: 0;
   transition: opacity 150ms;
@@ -273,13 +256,15 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile, isRightOptionsDropdownOpen, alwaysVisible }) =>
-    isMobile || isRightOptionsDropdownOpen || alwaysVisible
-      ? visibleStateStyles
-      : ''}
-
+  &[data-visible='true'],
   .navigation-drawer-item:hover & {
-    ${visibleStateStyles}
+    clip-path: unset;
+    display: flex;
+    height: unset;
+    opacity: 1;
+    overflow: unset;
+    position: unset;
+    width: unset;
   }
 `;
 
@@ -466,10 +451,12 @@ export const NavigationDrawerItem = ({
                 }}
               >
                 <StyledRightOptionsVisbility
-                  alwaysVisible={alwaysShowRightOptions}
-                  isMobile={isMobile}
-                  isRightOptionsDropdownOpen={
-                    isRightOptionsDropdownOpen || false
+                  data-visible={
+                    isMobile ||
+                    isRightOptionsDropdownOpen ||
+                    alwaysShowRightOptions
+                      ? 'true'
+                      : undefined
                   }
                 >
                   {rightOptions}

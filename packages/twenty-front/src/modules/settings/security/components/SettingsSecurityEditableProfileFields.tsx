@@ -19,7 +19,7 @@ import {
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`

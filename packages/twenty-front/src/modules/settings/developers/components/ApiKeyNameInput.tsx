@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateApiKeyMutation } from '~/generated-metadata/graphql';
 
 const StyledComboInputContainer = styled.div`

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTabMoreButtonWrapper = styled.div`
   height: ${themeCssVariables.spacing[10]};

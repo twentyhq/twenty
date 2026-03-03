@@ -4,7 +4,8 @@ import {
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useContext } from 'react';
 import { styled } from '@linaria/react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PermissionIconProps = {
   permission: SettingsRoleObjectPermissionKey;

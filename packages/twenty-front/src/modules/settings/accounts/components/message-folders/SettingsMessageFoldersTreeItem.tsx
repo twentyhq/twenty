@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsMessageFoldersTreeItemProps = {
   depth?: number;

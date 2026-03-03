@@ -10,7 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

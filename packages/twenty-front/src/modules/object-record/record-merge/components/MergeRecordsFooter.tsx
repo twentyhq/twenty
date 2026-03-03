@@ -6,7 +6,7 @@ import { Key } from 'ts-key-enum';
 import { t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;

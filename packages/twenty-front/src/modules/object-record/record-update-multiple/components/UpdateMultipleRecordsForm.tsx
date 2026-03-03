@@ -8,7 +8,7 @@ import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-m
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled(Section)`
   display: flex;

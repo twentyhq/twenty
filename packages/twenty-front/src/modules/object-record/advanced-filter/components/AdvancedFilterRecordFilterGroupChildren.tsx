@@ -4,7 +4,7 @@ import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/c
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   align-items: start;

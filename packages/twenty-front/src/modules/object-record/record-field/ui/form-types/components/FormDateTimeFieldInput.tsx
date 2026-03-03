@@ -23,7 +23,7 @@ import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Nullable } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled(FormFieldInputInnerContainer)`

@@ -4,7 +4,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFixedContainer = styled.div<{
   isSettings?: boolean;

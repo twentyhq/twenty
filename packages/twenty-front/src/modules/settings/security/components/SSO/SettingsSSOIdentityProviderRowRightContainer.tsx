@@ -5,7 +5,7 @@ import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityP
 import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
 import { styled } from '@linaria/react';
 import { Status } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { SettingsRadioCard } from '@/settings/components/SettingsRadioCard';
 import { type IconComponent } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRadioCardContainer = styled.div`
   display: flex;

@@ -14,7 +14,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;

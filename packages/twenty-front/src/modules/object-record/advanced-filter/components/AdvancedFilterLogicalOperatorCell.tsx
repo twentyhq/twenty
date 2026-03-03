@@ -4,7 +4,7 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   height: ${themeCssVariables.spacing[8]};

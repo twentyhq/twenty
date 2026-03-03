@@ -3,7 +3,7 @@ import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { styled } from '@linaria/react';
 import { SettingsRolePermissionsObjectLevelOverrideCell } from './SettingsRolePermissionsObjectLevelOverrideCell';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
   display: flex;

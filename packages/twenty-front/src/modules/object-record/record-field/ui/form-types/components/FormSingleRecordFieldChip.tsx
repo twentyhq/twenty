@@ -9,7 +9,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordChip = styled(RecordChip)`
   margin: ${themeCssVariables.spacing[2]};

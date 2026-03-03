@@ -15,7 +15,7 @@ import {
   isSamePlainDate,
 } from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
@@ -26,28 +26,19 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   min-height: 122px;
   padding: ${themeCssVariables.spacing[1]};
-  background: ${themeCssVariables.background.primary};
   min-width: 0;
-  color: ${themeCssVariables.font.color.primary};
+  background: ${({ isOtherMonth, isDayOfWeekend }) =>
+    isOtherMonth || isDayOfWeekend
+      ? themeCssVariables.background.secondary
+      : themeCssVariables.background.primary};
+  color: ${({ isOtherMonth }) =>
+    isOtherMonth
+      ? themeCssVariables.font.color.light
+      : themeCssVariables.font.color.primary};
 
   &:not(:last-child) {
     border-right: 1px solid ${themeCssVariables.border.color.light};
   }
-
-  ${({ isOtherMonth }) =>
-    isOtherMonth
-      ? `
-      background: ${themeCssVariables.background.secondary};
-      color: ${themeCssVariables.font.color.light};
-    `
-      : ''}
-
-  ${({ isDayOfWeekend }) =>
-    isDayOfWeekend
-      ? `
-      background: ${themeCssVariables.background.secondary};
-    `
-      : ''}
 `;
 
 const StyledDayHeader = styled.div`
@@ -74,16 +65,15 @@ const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   justify-content: center;
   line-height: 140%;
   width: 20px;
-
-  ${({ isToday }) =>
+  border-radius: ${({ isToday }) => (isToday ? '4px' : '0')};
+  background: ${({ isToday }) =>
+    isToday ? themeCssVariables.color.blue : 'transparent'};
+  color: ${({ isToday }) =>
     isToday
-      ? `
-      border-radius: 4px;
-      background: ${themeCssVariables.color.blue};
-      color: ${themeCssVariables.font.color.inverted};
-      font-weight: ${themeCssVariables.font.weight.medium};
-    `
-      : ''}
+      ? themeCssVariables.font.color.inverted
+      : 'inherit'};
+  font-weight: ${({ isToday }) =>
+    isToday ? themeCssVariables.font.weight.medium : 'inherit'};
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
@@ -94,14 +84,14 @@ const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
   min-height: 60px;
   border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color 0.1s ease;
-
-  ${({ isDraggedOver }) =>
+  background: ${({ isDraggedOver }) =>
     isDraggedOver
-      ? `
-      background: ${themeCssVariables.background.transparent.lighter};
-      border: 1px dashed ${themeCssVariables.border.color.medium};
-    `
-      : ''}
+      ? themeCssVariables.background.transparent.lighter
+      : 'transparent'};
+  border: ${({ isDraggedOver }) =>
+    isDraggedOver
+      ? `1px dashed ${themeCssVariables.border.color.medium}`
+      : 'none'};
 `;
 
 type RecordCalendarMonthBodyDayProps = {

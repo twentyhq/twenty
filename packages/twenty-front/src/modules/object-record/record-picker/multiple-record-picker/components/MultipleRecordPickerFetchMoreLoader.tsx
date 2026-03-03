@@ -18,7 +18,7 @@ import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useStore } from 'jotai';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;

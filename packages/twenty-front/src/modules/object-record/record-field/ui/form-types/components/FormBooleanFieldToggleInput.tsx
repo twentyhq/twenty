@@ -6,7 +6,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { Toggle } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormBooleanFieldToggleInputProps = {
   label?: string;

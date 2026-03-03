@@ -12,7 +12,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ObjectPermission, type Role } from '~/generated-metadata/graphql';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`

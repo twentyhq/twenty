@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

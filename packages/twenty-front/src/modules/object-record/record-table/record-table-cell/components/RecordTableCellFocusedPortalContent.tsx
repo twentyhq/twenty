@@ -11,7 +11,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { BORDER_COMMON, themeCssVariables } from 'twenty-ui/theme';
+import { BORDER_COMMON } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
   isRecordTableRowActive: boolean;

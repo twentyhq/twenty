@@ -15,7 +15,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { BORDER_COMMON, themeCssVariables } from 'twenty-ui/theme';
+import { BORDER_COMMON } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{

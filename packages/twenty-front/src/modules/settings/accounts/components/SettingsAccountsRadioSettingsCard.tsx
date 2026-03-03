@@ -4,7 +4,7 @@ import { Trans } from '@lingui/react';
 import { type ReactNode } from 'react';
 import { Radio } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
   {

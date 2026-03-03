@@ -1,7 +1,7 @@
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};

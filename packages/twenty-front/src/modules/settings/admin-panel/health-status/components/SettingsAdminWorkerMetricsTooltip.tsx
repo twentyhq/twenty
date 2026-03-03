@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import type { LineSeries, Point } from '@nivo/line';
 import { type ReactElement } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTooltipContainer = styled.div`
   backdrop-filter: ${themeCssVariables.blur.medium};

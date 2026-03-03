@@ -13,7 +13,7 @@ import {
   type ApiKeyForRole,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLoadingContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};

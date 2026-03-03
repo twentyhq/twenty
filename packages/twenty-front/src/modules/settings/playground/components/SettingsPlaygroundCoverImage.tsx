@@ -4,7 +4,8 @@ import { useContext } from 'react';
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
 import { Card } from 'twenty-ui/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled(Card)<{ backgroundImageUrl: string }>`
   align-items: center;
@@ -31,6 +32,7 @@ export const StyledSettingsApiPlaygroundCoverImage = ({
       ? LightCoverImage.toString()
       : DarkCoverImage.toString();
   return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
     <StyledCard {...props} backgroundImageUrl={coverImage}>
       {children}
     </StyledCard>

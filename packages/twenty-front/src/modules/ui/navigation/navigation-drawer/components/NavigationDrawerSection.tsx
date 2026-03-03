@@ -1,7 +1,7 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
   margin-bottom: ${({ isSettingsDrawer }) =>

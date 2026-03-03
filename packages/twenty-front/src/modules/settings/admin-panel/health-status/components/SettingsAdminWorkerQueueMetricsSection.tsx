@@ -9,7 +9,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconList } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,

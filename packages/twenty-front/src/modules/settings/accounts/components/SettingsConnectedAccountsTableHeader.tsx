@@ -3,7 +3,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableHeader = styled(TableHeader)`
   padding-right: ${themeCssVariables.spacing[14]};

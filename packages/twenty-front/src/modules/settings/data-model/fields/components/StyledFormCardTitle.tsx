@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledFormCardTitle = styled.h3`
   color: ${themeCssVariables.font.color.extraLight};

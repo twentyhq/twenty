@@ -1,6 +1,6 @@
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

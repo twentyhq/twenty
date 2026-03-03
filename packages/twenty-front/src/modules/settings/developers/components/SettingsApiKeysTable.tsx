@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
 
 const StyledTableBody = styled(TableBody)`

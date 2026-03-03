@@ -7,7 +7,8 @@ import {
 } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { TEXT_INPUT_STYLE, themeCssVariables } from 'twenty-ui/theme';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{

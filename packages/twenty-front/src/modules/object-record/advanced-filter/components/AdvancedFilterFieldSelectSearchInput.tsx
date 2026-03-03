@@ -2,7 +2,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledInput = styled.input`
   background: transparent;

@@ -3,7 +3,8 @@ import { useContext } from 'react';
 import { CardContent } from 'twenty-ui/layout';
 import { type IconComponent } from 'twenty-ui/display';
 import { Radio } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRadioCardContent = styled(CardContent)`
   display: flex;

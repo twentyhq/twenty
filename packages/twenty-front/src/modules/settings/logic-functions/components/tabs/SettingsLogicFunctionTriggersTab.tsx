@@ -12,7 +12,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { Tag } from 'twenty-ui/components';
 import { type LogicFunction } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledRouteTriggerTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 120px;

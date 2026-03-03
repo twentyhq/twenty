@@ -11,7 +11,8 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;

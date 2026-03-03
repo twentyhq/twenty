@@ -7,7 +7,8 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled(Card)`
   background-color: ${themeCssVariables.background.secondary};

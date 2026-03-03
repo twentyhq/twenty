@@ -35,7 +35,7 @@ const tabs = [
   { id: 'reports', title: 'Reports', Icon: IconCheckbox },
 ];
 
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInteractiveContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.strong};

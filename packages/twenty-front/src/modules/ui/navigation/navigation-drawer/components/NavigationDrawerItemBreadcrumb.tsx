@@ -1,6 +1,6 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;

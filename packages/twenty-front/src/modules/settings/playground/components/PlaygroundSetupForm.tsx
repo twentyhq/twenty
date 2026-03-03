@@ -13,7 +13,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

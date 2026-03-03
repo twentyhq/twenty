@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordDetailSectionContainer = styled(Section)`
   border-top: 1px solid ${themeCssVariables.border.color.light};

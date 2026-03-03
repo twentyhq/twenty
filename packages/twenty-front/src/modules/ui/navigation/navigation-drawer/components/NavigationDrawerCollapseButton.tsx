@@ -9,7 +9,7 @@ import {
   IconLayoutSidebarRightCollapse,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCollapseButton = styled.div`
   align-items: center;

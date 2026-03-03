@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type SlotProps } from 'input-otp';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
   position: relative;

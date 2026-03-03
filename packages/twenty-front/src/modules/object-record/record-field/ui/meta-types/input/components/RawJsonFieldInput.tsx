@@ -12,7 +12,7 @@ import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 

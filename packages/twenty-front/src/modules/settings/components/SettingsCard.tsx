@@ -5,7 +5,8 @@ import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;

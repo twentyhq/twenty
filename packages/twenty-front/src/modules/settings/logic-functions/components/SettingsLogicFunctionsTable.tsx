@@ -9,7 +9,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { type LogicFunction } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledTableRow = styled(TableRow)`
   grid-template-columns: 164px 1fr 96px 32px;

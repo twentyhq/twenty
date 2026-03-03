@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 

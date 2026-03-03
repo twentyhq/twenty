@@ -5,7 +5,7 @@ import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-ind
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderContainer = styled.div`
   display: flex;

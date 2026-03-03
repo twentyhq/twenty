@@ -18,7 +18,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordCardBodyContainer = styled(RecordCardBodyContainer)`
   padding: ${themeCssVariables.spacing[1]};

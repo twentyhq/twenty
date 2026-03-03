@@ -5,7 +5,7 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 

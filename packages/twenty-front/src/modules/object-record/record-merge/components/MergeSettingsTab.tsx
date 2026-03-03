@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/layout';
 import { getPositionNumberIcon } from '@/object-record/record-merge/utils/getPositionNumberIcon';
 import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPositionWordLabel';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled(Section)`
   margin: ${themeCssVariables.spacing[4]};

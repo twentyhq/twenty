@@ -17,7 +17,7 @@ import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   JobState,
   type QueueJob,

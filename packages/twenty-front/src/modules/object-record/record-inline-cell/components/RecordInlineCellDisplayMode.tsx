@@ -10,7 +10,7 @@ import {
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
