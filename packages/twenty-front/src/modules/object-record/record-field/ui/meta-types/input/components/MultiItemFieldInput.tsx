@@ -91,13 +91,15 @@ export const MultiItemFieldInput = <T,>({
       ) {
         return;
       }
-      const { isValid } = validateInputAndComputeUpdatedItems();
+      const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
       if (!isValid && isInputDisplayed) {
         return;
       }
 
-      handleSubmitChanges();
+      if (isValid) {
+        onChange(updatedItems);
+      }
       onClickOutside(items, event);
     },
     listenerId: instanceId,
@@ -217,7 +219,7 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
-    handleSubmitChanges();
+    onChange(updatedItems);
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
     }
@@ -226,13 +228,14 @@ export const MultiItemFieldInput = <T,>({
     setInputValue('');
   };
 
-  const handleSubmitChanges = () => {
-    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
-    if (!isValid) {
-      return;
+  const handleItemDeletionDisplayState = (remainingItems: T[]) => {
+    const shouldShowInput =
+      remainingItems.length === 0 && !isDefined(onAddClick);
+    setIsInputDisplayed(shouldShowInput);
+    setIsAddingNewItem(false);
+    if (shouldShowInput) {
+      setInputValue('');
     }
-
-    onChange(updatedItems);
   };
 
   const validateInputAndComputeUpdatedItems = (): {
@@ -260,12 +263,13 @@ export const MultiItemFieldInput = <T,>({
       formatInput,
     });
 
-    if (
+    const isItemDeletion =
       !isNonEmptyString(sanitizedInput) &&
       isDefined(editingIndex) &&
-      !shouldAutoEnterBecauseOnlyOneItemIsAllowed
-    ) {
-      handleDeleteItem(itemToEditIndex);
+      !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
+
+    if (isItemDeletion) {
+      handleItemDeletionDisplayState(updatedItems);
     }
 
     return { isValid: true, updatedItems };
@@ -279,14 +283,7 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-
-    const shouldShowInputAfterDeletion =
-      updatedItems.length === 0 && !isDefined(onAddClick);
-    setIsInputDisplayed(shouldShowInputAfterDeletion);
-    setIsAddingNewItem(false);
-    if (shouldShowInputAfterDeletion) {
-      setInputValue('');
-    }
+    handleItemDeletionDisplayState(updatedItems);
   };
 
   const handleEscape = () => {
