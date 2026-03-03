@@ -112,6 +112,10 @@ export class MarketplaceResolver {
       if (isDefined(registration)) {
         return registration;
       }
+
+      throw new Error(
+        `No application registration found for identifier "${params.universalIdentifier}"`,
+      );
     }
 
     const packageName = params.universalIdentifier;
