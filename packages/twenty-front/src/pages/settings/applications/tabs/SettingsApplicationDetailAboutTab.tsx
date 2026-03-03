@@ -92,7 +92,7 @@ export const SettingsApplicationDetailAboutTab = ({
         />
         <SettingsTextInput
           instanceId={`application-description-${id}`}
-          value={description}
+          value={description ?? undefined}
           disabled
           fullWidth
         />

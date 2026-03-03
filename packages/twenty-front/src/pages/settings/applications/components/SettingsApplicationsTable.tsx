@@ -46,7 +46,7 @@ export const SettingsApplicationsTable = ({
     return applications.filter(
       (application) =>
         application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        application.description
+        (application.description ?? '')
           .toLowerCase()
           .includes(searchTerm.toLowerCase()),
     );
