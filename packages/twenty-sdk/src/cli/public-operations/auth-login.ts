@@ -40,7 +40,5 @@ const innerAuthLogin = async (
   return { success: true, data: undefined };
 };
 
-export const authLogin = (
-  options: AuthLoginOptions,
-): Promise<CommandResult> =>
+export const authLogin = (options: AuthLoginOptions): Promise<CommandResult> =>
   runSafe(() => innerAuthLogin(options), AUTH_ERROR_CODES.AUTH_FAILED);

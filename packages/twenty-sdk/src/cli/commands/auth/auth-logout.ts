@@ -13,9 +13,7 @@ export class AuthLogoutCommand {
 
     const activeWorkspace = ConfigService.getActiveWorkspace();
     console.log(
-      chalk.green(
-        `✓ Successfully logged out (workspace: ${activeWorkspace})`,
-      ),
+      chalk.green(`✓ Successfully logged out (workspace: ${activeWorkspace})`),
     );
   }
 }
