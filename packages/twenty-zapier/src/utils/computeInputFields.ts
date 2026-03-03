@@ -92,6 +92,14 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
+      const address3: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'addressStreet3',
+        label: 'Address 3',
+        description: 'Address 3',
+        isNullable: true,
+        defaultValue: null,
+      };
       const city: NodeField = {
         type: FieldMetadataType.TEXT,
         name: 'addressCity',
@@ -124,7 +132,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      return [address1, address2, city, state, postalCode, country];
+      return [address1, address2, address3, city, state, postalCode, country];
     }
     case FieldMetadataType.PHONES: {
       const primaryPhoneNumber: NodeField = {

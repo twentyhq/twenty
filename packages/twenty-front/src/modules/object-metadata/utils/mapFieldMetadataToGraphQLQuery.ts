@@ -263,6 +263,7 @@ ${mapObjectMetadataToGraphQLQuery({
 {
   addressStreet1
   addressStreet2
+  addressStreet3
   addressCity
   addressState
   addressCountry

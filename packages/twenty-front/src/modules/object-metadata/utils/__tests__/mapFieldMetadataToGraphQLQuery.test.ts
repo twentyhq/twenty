@@ -81,6 +81,7 @@ address
 {
   addressStreet1
   addressStreet2
+  addressStreet3
   addressCity
   addressState
   addressCountry
@@ -169,6 +170,7 @@ address
 {
   addressStreet1
   addressStreet2
+  addressStreet3
   addressCity
   addressState
   addressCountry
