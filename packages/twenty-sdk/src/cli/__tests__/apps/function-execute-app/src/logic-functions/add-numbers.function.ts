@@ -1,5 +1,8 @@
 import { defineLogicFunction } from '@/sdk';
 
+export const ADD_NUMBERS_UNIVERSAL_IDENTIFIER =
+  'f9e5589c-e951-4d99-85db-0a305ab53502';
+
 const addNumbersHandler = (payload: { a: number; b: number }) => {
   const result = payload.a + payload.b;
 
@@ -9,7 +12,7 @@ const addNumbersHandler = (payload: { a: number; b: number }) => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'a1b2c3d4-e5f6-4000-8000-000000000010',
+  universalIdentifier: ADD_NUMBERS_UNIVERSAL_IDENTIFIER,
   name: 'add-numbers',
   timeoutSeconds: 5,
   handler: addNumbersHandler,

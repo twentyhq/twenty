@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import { appBuild } from '@/cli/public-operations/app-build';
 import { appUninstall } from '@/cli/public-operations/app-uninstall';
 import { functionExecute } from '@/cli/public-operations/function-execute';
+import { ADD_NUMBERS_UNIVERSAL_IDENTIFIER } from '../src/logic-functions/add-numbers.function';
 
 const APP_PATH = resolve(__dirname, '../');
 
@@ -54,7 +55,7 @@ describe('functionExecute E2E', () => {
   it('should execute a function by universalIdentifier', async () => {
     const result = await functionExecute({
       appPath: APP_PATH,
-      functionUniversalIdentifier: 'a1b2c3d4-e5f6-4000-8000-000000000010',
+      functionUniversalIdentifier: ADD_NUMBERS_UNIVERSAL_IDENTIFIER,
       payload: { a: 100, b: 200 },
     });
 
