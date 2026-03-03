@@ -12,32 +12,24 @@ export class AppUninstallCommand {
     appPath?: string;
     askForConfirmation: boolean;
   }): Promise<ApiResponse<any>> {
-    try {
-      console.log(chalk.blue('🚀 Uninstall Twenty Application'));
-      console.log(chalk.gray(`📁 App Path: ${appPath}`));
-      console.log('');
+    console.log(chalk.blue('🚀 Uninstall Twenty Application'));
+    console.log(chalk.gray(`📁 App Path: ${appPath}`));
+    console.log('');
 
-      if (askForConfirmation && !(await this.confirmationPrompt())) {
-        console.error(chalk.red('⛔️ Aborting uninstall'));
-        process.exit(1);
-      }
-
-      const result = await appUninstall({ appPath });
-
-      if (!result.success) {
-        console.error(chalk.red('❌ Uninstall failed:'), result.error.message);
-        return { success: false, error: result.error.message };
-      }
-
-      console.log(chalk.green('✅ Application uninstalled successfully'));
-      return { success: true, data: undefined };
-    } catch (error) {
-      console.error(
-        chalk.red('Uninstall failed:'),
-        error instanceof Error ? error.message : error,
-      );
-      throw error;
+    if (askForConfirmation && !(await this.confirmationPrompt())) {
+      console.error(chalk.red('⛔️ Aborting uninstall'));
+      process.exit(1);
     }
+
+    const result = await appUninstall({ appPath });
+
+    if (!result.success) {
+      console.error(chalk.red('❌ Uninstall failed:'), result.error.message);
+      return { success: false, error: result.error.message };
+    }
+
+    console.log(chalk.green('✅ Application uninstalled successfully'));
+    return { success: true, data: undefined };
   }
 
   private async confirmationPrompt(): Promise<boolean> {

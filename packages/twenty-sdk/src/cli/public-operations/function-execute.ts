@@ -7,6 +7,7 @@ import {
   FUNCTION_ERROR_CODES,
   type CommandResult,
   type FunctionExecutionResult,
+  runSafe,
 } from './types';
 
 export type FunctionExecuteOptions = {
@@ -45,7 +46,7 @@ const resolveIdentifier = (options: FunctionExecuteOptions): string => {
   return 'unknown';
 };
 
-export const functionExecute = async (
+const innerFunctionExecute = async (
   options: FunctionExecuteOptions,
 ): Promise<CommandResult<FunctionExecutionResult>> => {
   if (options.workspace) {
@@ -60,7 +61,8 @@ export const functionExecute = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message: 'Failed to build manifest.',
+        message:
+          'Manifest not found. Run `app:build` or `app:dev` to generate it first.',
       },
     };
   }
@@ -153,3 +155,11 @@ export const functionExecute = async (
     },
   };
 };
+
+export const functionExecute = (
+  options: FunctionExecuteOptions,
+): Promise<CommandResult<FunctionExecutionResult>> =>
+  runSafe(
+    () => innerFunctionExecute(options),
+    FUNCTION_ERROR_CODES.EXECUTION_FAILED,
+  );

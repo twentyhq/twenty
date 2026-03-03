@@ -1,6 +1,6 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { AUTH_ERROR_CODES, type CommandResult } from './types';
+import { AUTH_ERROR_CODES, type CommandResult, runSafe } from './types';
 
 export type AuthLoginOptions = {
   apiKey: string;
@@ -8,7 +8,7 @@ export type AuthLoginOptions = {
   workspace?: string;
 };
 
-export const authLogin = async (
+const innerAuthLogin = async (
   options: AuthLoginOptions,
 ): Promise<CommandResult> => {
   const { apiKey, apiUrl, workspace } = options;
@@ -38,3 +38,8 @@ export const authLogin = async (
 
   return { success: true, data: undefined };
 };
+
+export const authLogin = (
+  options: AuthLoginOptions,
+): Promise<CommandResult> =>
+  runSafe(() => innerAuthLogin(options), AUTH_ERROR_CODES.AUTH_FAILED);
