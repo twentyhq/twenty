@@ -129,10 +129,6 @@ export class ResetPasswordService {
     email: string,
     locale: keyof typeof APP_LOCALES,
   ): Promise<EmailPasswordResetLinkDTO> {
-    if (!resetToken.workspaceId) {
-      return { success: true };
-    }
-
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
