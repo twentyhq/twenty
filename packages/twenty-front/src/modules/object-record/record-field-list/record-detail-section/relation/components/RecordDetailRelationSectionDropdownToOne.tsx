@@ -23,10 +23,16 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { FieldDependencyContext } from '@/object-record/record-field-dependency/contexts/FieldDependencyContext';
+import { useJunctionBridgeFilter } from '@/object-record/record-field/ui/hooks/useJunctionBridgeFilter';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordFilterInput } from '~/generated/graphql';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -88,6 +94,26 @@ export const RecordDetailRelationSectionDropdownToOne = ({
   const relationRecords: ObjectRecord[] = fieldValue
     ? [fieldValue as ObjectRecord]
     : [];
+
+  const fieldDependencyContext = useContext(FieldDependencyContext);
+  const dependencyFilter = fieldDependencyContext?.getFilterForField(fieldName);
+
+  const recordData = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+
+  const junctionBridgeFilter = useJunctionBridgeFilter({
+    objectMetadataItem,
+    fieldMetadataItem,
+    recordId,
+    objectMetadataItems,
+    recordData,
+  });
+
+  const additionalFilter = useMemo((): ObjectRecordFilterInput | undefined => {
+    if (isDefined(dependencyFilter) && isDefined(junctionBridgeFilter)) {
+      return { and: [dependencyFilter, junctionBridgeFilter] };
+    }
+    return dependencyFilter ?? junctionBridgeFilter;
+  }, [dependencyFilter, junctionBridgeFilter]);
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -190,6 +216,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
               ? 'search-bar-on-bottom'
               : 'search-bar-on-top'
           }
+          additionalFilter={additionalFilter}
         />
       }
     />

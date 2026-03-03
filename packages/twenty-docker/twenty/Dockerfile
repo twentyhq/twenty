@@ -73,6 +73,10 @@ RUN npx lingui extract --config packages/twenty-front/lingui.config.ts && \
 
 RUN npx nx build twenty-front
 
+# Remove frontend sourcemaps and sourceMappingURL comments from build
+RUN find ./packages/twenty-front/build -name '*.map' -delete && \
+    find ./packages/twenty-front/build -name '*.js' -exec sed -i 's|//# sourceMappingURL=.*||g' {} + && \
+    find ./packages/twenty-front/build -name '*.css' -exec sed -i 's|/\*# sourceMappingURL=.* \*/||g' {} +
 
 # Final stage: Run the application
 FROM node:24-alpine AS twenty
