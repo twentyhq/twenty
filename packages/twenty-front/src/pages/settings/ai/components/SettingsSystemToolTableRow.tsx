@@ -44,9 +44,8 @@ export type SettingsSystemToolTableRowProps = {
 export const StyledSystemToolTableRow = styled(TableRow)`
   grid-template-columns: 1fr 100px 36px;
   opacity: 0.7;
-  cursor: pointer;
 
-  &:hover {
+  &[data-clickable='true']:hover {
     opacity: 0.85;
   }
 `;
@@ -130,7 +129,11 @@ export const SettingsSystemToolTableRow = ({
 
   return (
     <>
-      <StyledSystemToolTableRow key={tool.name} onClick={handleRowClick}>
+      <StyledSystemToolTableRow
+        key={tool.name}
+        onClick={handleRowClick}
+        isClickable
+      >
         <StyledNameTableCell>
           <StyledIconContainer>
             <Icon size={16} />

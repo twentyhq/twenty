@@ -9,7 +9,7 @@ import {
   StyledParagraph,
   StyledSkeletonContainer,
   StyledTableScrollContainer,
-} from '@/ai/components/lazy-markdown-renderer.styles';
+} from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';

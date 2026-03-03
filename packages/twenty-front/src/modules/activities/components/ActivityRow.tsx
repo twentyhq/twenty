@@ -26,10 +26,7 @@ export const ActivityRow = ({
   };
 
   return (
-    <StyledRowContent
-      onClick={handleClick}
-      style={{ cursor: disabled !== true ? 'pointer' : 'default' }}
-    >
+    <StyledRowContent onClick={handleClick} isClickable={disabled !== true}>
       {children}
     </StyledRowContent>
   );

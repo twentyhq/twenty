@@ -27,8 +27,6 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChipContainer = styled.div``;
-
 const StyledChip = styled.div`
   align-items: center;
   display: flex;
@@ -62,14 +60,11 @@ export const ParticipantChip = ({
   return (
     <StyledContainer className={className}>
       {person ? (
-        <StyledRecordChipContainer
-          style={{ fontWeight: variant === 'bold' ? 500 : 400 }}
-        >
-          <RecordChip
-            objectNameSingular={CoreObjectNameSingular.Person}
-            record={person}
-          />
-        </StyledRecordChipContainer>
+        <RecordChip
+          objectNameSingular={CoreObjectNameSingular.Person}
+          record={person}
+          isBold={variant === 'bold'}
+        />
       ) : (
         <StyledChip>
           <StyledAvatar

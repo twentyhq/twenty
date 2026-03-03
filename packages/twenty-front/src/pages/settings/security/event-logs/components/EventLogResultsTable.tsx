@@ -260,7 +260,7 @@ export const EventLogResultsTable = ({
         componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
       >
         <StyledTable>
-          <StyledHeaderRow style={{ gridTemplateColumns }}>
+          <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
             {baseColumns.map((column) => (
               <TableHeader key={column.id}>{t(column.label)}</TableHeader>
             ))}
@@ -294,7 +294,7 @@ export const EventLogResultsTable = ({
       componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
     >
       <StyledTable>
-        <StyledHeaderRow style={{ gridTemplateColumns }}>
+        <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
           {baseColumns.map((column) => (
             <StyledResizableHeader
               key={column.id}
@@ -311,7 +311,7 @@ export const EventLogResultsTable = ({
         {records.map((record, index) => (
           <StyledDataRow
             key={`${record.timestamp}-${record.event}-${index}`}
-            style={{ gridTemplateColumns }}
+            gridTemplateColumns={gridTemplateColumns}
           >
             <StyledTableCell>{record.event}</StyledTableCell>
             <StyledTableCell>

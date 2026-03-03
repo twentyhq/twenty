@@ -54,6 +54,10 @@ const StyledSection = styled(Section)`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+
+  &[data-disabled='true'] {
+    pointer-events: none;
+  }
 `;
 
 export const SettingsSecurity = () => {
@@ -248,9 +252,7 @@ export const SettingsSecurity = () => {
                 Button={
                   <StyledLink
                     to={getSettingsPath(SettingsPath.EventLogs)}
-                    style={{
-                      pointerEvents: isEventLogsEnabled ? 'auto' : 'none',
-                    }}
+                    data-disabled={!isEventLogsEnabled}
                   >
                     <Button
                       title={t`View Logs`}

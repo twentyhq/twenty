@@ -32,8 +32,6 @@ const StyledModalContent = styled(Modal.Content)`
   padding: 0;
 `;
 
-const StyledScrollWrapperContainer = styled.div``;
-
 export const BookCall = () => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -54,21 +52,20 @@ export const BookCall = () => {
   return (
     <>
       <StyledModalContent isHorizontalCentered isVerticalCentered>
-        <StyledScrollWrapperContainer
-          style={{ height: isMobile ? undefined : 'auto' }}
+        <ScrollWrapper
+          componentInstanceId="scroll-wrapper-modal-content"
+          autoHeight={!isMobile}
         >
-          <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-            <Cal
-              calLink={calendarBookingPageId ?? ''}
-              config={{
-                layout: 'month_view',
-                theme: theme.name === 'light' ? 'light' : 'dark',
-                email: currentUser?.email ?? '',
-                name: `${currentUser?.firstName} ${currentUser?.lastName}`,
-              }}
-            />
-          </ScrollWrapper>
-        </StyledScrollWrapperContainer>
+          <Cal
+            calLink={calendarBookingPageId ?? ''}
+            config={{
+              layout: 'month_view',
+              theme: theme.name === 'light' ? 'light' : 'dark',
+              email: currentUser?.email ?? '',
+              name: `${currentUser?.firstName} ${currentUser?.lastName}`,
+            }}
+          />
+        </ScrollWrapper>
       </StyledModalContent>
       <StyledModalFooter>
         {isPlanRequired ? (
