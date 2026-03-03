@@ -126,7 +126,9 @@ const StyledActionLinkContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledForgotPasswordLinkContainer = styled(StyledActionLinkContainer)`
+const StyledForgotPasswordLinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
   padding-top: ${({ theme }) => theme.spacing(4)};
 `;
 
