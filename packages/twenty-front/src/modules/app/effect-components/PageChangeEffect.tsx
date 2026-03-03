@@ -4,6 +4,9 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
+import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -44,6 +47,12 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+
+const AUTH_AND_ONBOARDING_PATHS = [
+  ...ONGOING_USER_CREATION_PATHS,
+  ...ONBOARDING_PATHS,
+  AppPath.ResetPassword,
+];
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -100,6 +109,13 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
+    useReturnToPath();
+
+  const isOnAuthOrOnboardingPage = AUTH_AND_ONBOARDING_PATHS.some((appPath) =>
+    isMatchingLocation(location, appPath),
+  );
+
   const closeCommandMenuUnlessNotRelevant = useCallback(() => {
     const currentPage = store.get(commandMenuPageState.atom);
 
@@ -142,13 +158,33 @@ export const PageChangeEffect = () => {
       isDefined(pageChangeEffectNavigateLocation) &&
       isAppEffectRedirectEnabled
     ) {
+      if (
+        pageChangeEffectNavigateLocation === AppPath.SignInUp &&
+        !isOnAuthOrOnboardingPage
+      ) {
+        saveReturnToPath(
+          `${window.location.pathname}${window.location.search}${window.location.hash}`,
+        );
+      }
+
+      const consumedReturnToPath =
+        getReturnToPath() === pageChangeEffectNavigateLocation;
+
       navigate(pageChangeEffectNavigateLocation);
+
+      if (consumedReturnToPath) {
+        clearReturnToPath();
+      }
     }
   }, [
     navigate,
     pageChangeEffectNavigateLocation,
     initializeQueryParamState,
     isAppEffectRedirectEnabled,
+    isOnAuthOrOnboardingPage,
+    saveReturnToPath,
+    getReturnToPath,
+    clearReturnToPath,
   ]);
 
   useEffect(() => {

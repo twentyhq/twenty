@@ -124,6 +124,7 @@ export class AuthService {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         workspace,
+        invitation.context?.roleId,
       );
 
       return;
