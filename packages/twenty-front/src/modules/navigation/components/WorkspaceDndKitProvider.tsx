@@ -421,10 +421,22 @@ export const WorkspaceDndKitProvider = ({
       isDefined(target.group) &&
       isDefined(target.index)
     ) {
-      destination = {
-        droppableId: String(target.group),
-        index: target.index,
-      };
+      const targetItem = getNavItemById(
+        target.id != null ? String(target.id) : undefined,
+      );
+      const isTargetFolder =
+        isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);
+      if (sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID && isTargetFolder) {
+        destination = {
+          droppableId: `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${target.id}`,
+          index: 0,
+        };
+      } else {
+        destination = {
+          droppableId: String(target.group),
+          index: target.index,
+        };
+      }
     } else if (typeof overId === 'string') {
       destination = parseDropTargetIdToDestination(overId);
     }
