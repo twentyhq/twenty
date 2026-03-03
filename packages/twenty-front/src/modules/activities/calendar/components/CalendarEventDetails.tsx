@@ -19,7 +19,6 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
