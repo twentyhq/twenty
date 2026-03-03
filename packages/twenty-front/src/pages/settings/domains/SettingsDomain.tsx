@@ -41,8 +41,8 @@ export const SettingsDomain = () => {
 
   const validationSchema = z
     .object({
-      subdomain: getSubdomainValidationSchema(t),
-      customDomain: getDomainValidationSchema(t),
+      subdomain: getSubdomainValidationSchema(),
+      customDomain: getDomainValidationSchema(),
     })
     .required();
 
@@ -173,6 +173,12 @@ export const SettingsDomain = () => {
   };
 
   const handleSave = async () => {
+    const isValid = await form.trigger();
+
+    if (!isValid) {
+      return;
+    }
+
     const values = form.getValues();
 
     if (
