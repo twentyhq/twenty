@@ -6,7 +6,6 @@ import {
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 
 describe('getAllStepIdsInLoop', () => {
-
   describe('simple loop scenarios', () => {
     it('should return all step IDs in a simple linear loop', () => {
       const steps = [
@@ -210,9 +209,7 @@ describe('getAllStepIdsInLoop', () => {
 
   describe('edge cases', () => {
     it('should handle empty initial loop step IDs', () => {
-      const steps = [
-        createMockIteratorStep('iterator1', ['step2'], []),
-      ];
+      const steps = [createMockIteratorStep('iterator1', ['step2'], [])];
 
       const result = getAllStepIdsInLoop({
         iteratorStepId: 'iterator1',

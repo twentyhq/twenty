@@ -1,16 +1,15 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type WorkflowIteratorAction } from '@/workflow/types/Workflow';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isArray, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Toggle } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionIteratorProps = {
@@ -24,18 +23,6 @@ type WorkflowEditActionIteratorProps = {
         onActionUpdate: (action: WorkflowIteratorAction) => void;
       };
 };
-
-const StyledToggleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const StyledToggleLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-`;
 
 const stringifyArrayItems = (array: FieldArrayValue) => {
   return array.map((item) => {
@@ -122,19 +109,15 @@ export const WorkflowEditActionIterator = ({
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
-        <StyledToggleContainer>
-          <StyledToggleLabel>
-            {t`Continue on iteration failure`}
-          </StyledToggleLabel>
-          <Toggle
-            value={formData.shouldContinueOnIterationFailure}
-            onChange={(value) =>
-              handleFieldChange('shouldContinueOnIterationFailure', value)
-            }
-            disabled={actionOptions.readonly}
-            toggleSize="small"
-          />
-        </StyledToggleContainer>
+        <FormBooleanFieldToggleInput
+          description={t`Continue on iteration failure`}
+          value={formData.shouldContinueOnIterationFailure}
+          onChange={(value) =>
+            handleFieldChange('shouldContinueOnIterationFailure', value)
+          }
+          disabled={actionOptions.readonly}
+          hint={t`Will continue to the next iteration even if the current one fails`}
+        />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

@@ -5,7 +5,6 @@ import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('shouldSkipStepExecution', () => {
-
   it('should return true when all parent steps are skipped', () => {
     const steps = [
       createMockCodeStep('step-1', ['step-3']),

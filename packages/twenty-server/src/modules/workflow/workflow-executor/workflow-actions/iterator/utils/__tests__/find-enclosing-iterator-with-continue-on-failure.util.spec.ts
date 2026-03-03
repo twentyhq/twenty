@@ -53,8 +53,18 @@ describe('findEnclosingIteratorWithContinueOnFailure', () => {
 
   it('should return the innermost iterator with the flag in nested iterators', () => {
     const steps = [
-      createMockIteratorStep('outerIterator', ['after'], ['innerIterator'], true),
-      createMockIteratorStep('innerIterator', ['outerIterator'], ['stepA'], true),
+      createMockIteratorStep(
+        'outerIterator',
+        ['after'],
+        ['innerIterator'],
+        true,
+      ),
+      createMockIteratorStep(
+        'innerIterator',
+        ['outerIterator'],
+        ['stepA'],
+        true,
+      ),
       createMockCodeStep('stepA', ['stepB']),
       createMockCodeStep('stepB', ['innerIterator']),
       createMockCodeStep('after', []),
@@ -70,8 +80,18 @@ describe('findEnclosingIteratorWithContinueOnFailure', () => {
 
   it('should skip inner iterator without flag and return outer with flag', () => {
     const steps = [
-      createMockIteratorStep('outerIterator', ['after'], ['innerIterator'], true),
-      createMockIteratorStep('innerIterator', ['outerIterator'], ['stepA'], false),
+      createMockIteratorStep(
+        'outerIterator',
+        ['after'],
+        ['innerIterator'],
+        true,
+      ),
+      createMockIteratorStep(
+        'innerIterator',
+        ['outerIterator'],
+        ['stepA'],
+        false,
+      ),
       createMockCodeStep('stepA', ['stepB']),
       createMockCodeStep('stepB', ['innerIterator']),
       createMockCodeStep('after', []),
