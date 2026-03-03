@@ -84,9 +84,10 @@ const StyledColorSample = styled(ColorSample)`
   margin-left: 14px;
 `;
 
-const StyledOptionInput = styled(SettingsTextInput)`Chip
+const StyledOptionInputContainer = styled.div`
   flex-grow: 1;
   width: 100%;
+
   & input {
     height: ${themeCssVariables.spacing[6]};
   }
@@ -135,18 +136,20 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         color={theme.font.color.extraLight}
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
-        <StyledOptionInput
-          instanceId={`select-option-value-${option.id}`}
-          value={option.value}
-          onChange={(input) =>
-            onChange({
-              ...option,
-              value: computeOptionValueFromLabel(input),
-            })
-          }
-          RightIcon={isDefault ? IconCheck : undefined}
-          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-        />
+        <StyledOptionInputContainer>
+          <SettingsTextInput
+            instanceId={`select-option-value-${option.id}`}
+            value={option.value}
+            onChange={(input) =>
+              onChange({
+                ...option,
+                value: computeOptionValueFromLabel(input),
+              })
+            }
+            RightIcon={isDefault ? IconCheck : undefined}
+            maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+          />
+        </StyledOptionInputContainer>
       </AdvancedSettingsWrapper>
       <Dropdown
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
@@ -171,27 +174,29 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           </DropdownContent>
         }
       />
-      <StyledOptionInput
-        instanceId={`select-option-label-${option.id}`}
-        value={option.label}
-        onChange={(label) => {
-          const optionNameHasBeenEdited = !(
-            option.value === computeOptionValueFromLabel(option.label)
-          );
-          onChange({
-            ...option,
-            label,
-            value: optionNameHasBeenEdited
-              ? option.value
-              : computeOptionValueFromLabel(label),
-          });
-        }}
-        RightIcon={isDefault ? IconCheck : undefined}
-        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-        onInputEnter={handleInputEnter}
-        autoFocusOnMount={isNewRow}
-        autoSelectOnMount={isNewRow}
-      />
+      <StyledOptionInputContainer>
+        <SettingsTextInput
+          instanceId={`select-option-label-${option.id}`}
+          value={option.label}
+          onChange={(label) => {
+            const optionNameHasBeenEdited = !(
+              option.value === computeOptionValueFromLabel(option.label)
+            );
+            onChange({
+              ...option,
+              label,
+              value: optionNameHasBeenEdited
+                ? option.value
+                : computeOptionValueFromLabel(label),
+            });
+          }}
+          RightIcon={isDefault ? IconCheck : undefined}
+          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+          onInputEnter={handleInputEnter}
+          autoFocusOnMount={isNewRow}
+          autoSelectOnMount={isNewRow}
+        />
+      </StyledOptionInputContainer>
       <Dropdown
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
