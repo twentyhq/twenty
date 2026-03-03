@@ -1,12 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
+  gap: ${() => (useIsMobile() ? themeCssVariables.spacing[3] : '0')};
   height: 100%;
   width: 100%;
 `;
@@ -19,8 +20,8 @@ const StyledInnerContainer = styled.div`
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border-radius: ${themeCssVariables.border.radius.md};
 `;
 
 export type ShowPageContainerProps = {

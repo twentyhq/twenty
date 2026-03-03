@@ -1,7 +1,7 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Position } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
+import { css } from '@linaria/core';
 
 const StyledWorkflowDiagramEdgeLabelContainer = styled.div<{
   sourceX: number;
@@ -33,6 +33,8 @@ const StyledWorkflowDiagramEdgeLabelContainer = styled.div<{
             translate(${sourceX}px, ${Math.floor(sourceY)}px) translateY(10px);
         `;
       }
+      default:
+        return '';
     }
   }}
 `;

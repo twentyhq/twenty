@@ -1,7 +1,8 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
 
 const StyledWidgetCard = styled.div<{
   variant: WidgetCardVariant;
@@ -21,7 +22,6 @@ const StyledWidgetCard = styled.div<{
   width: 100%;
 
   ${({
-    theme,
     variant,
     isEditable,
     isEditing,
@@ -33,66 +33,67 @@ const StyledWidgetCard = styled.div<{
   }) => {
     if (variant === 'dashboard' && !isEditable) {
       return css`
-        background: ${theme.background.secondary};
-        border: 1px solid ${theme.border.color.light};
-        border-radius: ${theme.border.radius.md};
-        padding: ${headerLess ? 0 : theme.spacing(2)};
+        background: ${themeCssVariables.background.secondary};
+        border: 1px solid ${themeCssVariables.border.color.light};
+        border-radius: ${themeCssVariables.border.radius.md};
+        padding: ${headerLess ? 0 : themeCssVariables.spacing[2]};
       `;
     }
 
     if (variant === 'dashboard' && isEditable) {
       return css`
-        background: ${theme.background.secondary};
-        border: 1px solid ${theme.border.color.light};
-        border-radius: ${theme.border.radius.md};
-        padding: ${headerLess ? 0 : theme.spacing(2)};
+        background: ${themeCssVariables.background.secondary};
+        border: 1px solid ${themeCssVariables.border.color.light};
+        border-radius: ${themeCssVariables.border.radius.md};
+        padding: ${headerLess ? 0 : themeCssVariables.spacing[2]};
 
-        ${!isDragging &&
-        !isEditing &&
-        !isResizing &&
-        css`
-          &:hover {
-            border: 1px solid ${theme.border.color.strong};
-            cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
-          }
-        `}
+        ${!isDragging && !isEditing && !isResizing
+          ? css`
+              &:hover {
+                border: 1px solid ${themeCssVariables.border.color.strong};
+                cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
+              }
+            `
+          : ''}
 
-        ${isEditing &&
-        !isDragging &&
-        css`
-          border: 1px solid ${theme.color.blue} !important;
-        `}
+        ${isEditing && !isDragging
+          ? css`
+              border: 1px solid ${themeCssVariables.color.blue} !important;
+            `
+          : ''}
 
-        ${isDragging &&
-        css`
-          background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
-          border: 1px solid ${theme.color.blue} !important;
-        `}
+        ${isDragging
+          ? css`
+              background: linear-gradient(
+                  0deg,
+                  ${themeCssVariables.background.transparent.lighter} 0%,
+                  ${themeCssVariables.background.transparent.lighter} 100%
+                ),
+                ${themeCssVariables.background.secondary};
+              border: 1px solid ${themeCssVariables.color.blue} !important;
+            `
+          : ''}
       `;
     }
 
     if (variant === 'side-column' && !isEditable) {
       return css`
-        padding: ${theme.spacing(3)};
+        padding: ${themeCssVariables.spacing[3]};
 
-        ${isLastWidget !== true &&
-        css`
-          border-bottom: 1px solid ${theme.border.color.light};
-        `}
+        ${isLastWidget !== true
+          ? css`
+              border-bottom: 1px solid ${themeCssVariables.border.color.light};
+            `
+          : ''}
       `;
     }
 
     if (variant === 'record-page' && !isEditable) {
       return css`
-        background: ${theme.background.primary};
+        background: ${themeCssVariables.background.primary};
         border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
+        border-radius: ${themeCssVariables.border.radius.md};
+        padding: ${themeCssVariables.spacing[2]};
       `;
     }
 
@@ -102,40 +103,42 @@ const StyledWidgetCard = styled.div<{
     ) {
       return css`
         background: ${variant === 'side-column'
-          ? theme.background.secondary
-          : theme.background.primary};
+          ? themeCssVariables.background.secondary
+          : themeCssVariables.background.primary};
         border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
+        border-radius: ${themeCssVariables.border.radius.md};
+        padding: ${themeCssVariables.spacing[2]};
 
-        ${!isDragging &&
-        !isEditing &&
-        !isResizing &&
-        css`
-          &:hover {
-            border: 1px solid ${theme.border.color.strong};
-            cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
-          }
-        `}
+        ${!isDragging && !isEditing && !isResizing
+          ? css`
+              &:hover {
+                border: 1px solid ${themeCssVariables.border.color.strong};
+                cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
+              }
+            `
+          : ''}
 
-        ${isEditing &&
-        !isDragging &&
-        css`
-          border: 1px solid ${theme.color.blue} !important;
-        `}
+        ${isEditing && !isDragging
+          ? css`
+              border: 1px solid ${themeCssVariables.color.blue} !important;
+            `
+          : ''}
 
-        ${isDragging &&
-        css`
-          background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
-          border: 1px solid ${theme.color.blue} !important;
-        `}
+        ${isDragging
+          ? css`
+              background: linear-gradient(
+                  0deg,
+                  ${themeCssVariables.background.transparent.lighter} 0%,
+                  ${themeCssVariables.background.transparent.lighter} 100%
+                ),
+                ${themeCssVariables.background.secondary};
+              border: 1px solid ${themeCssVariables.color.blue} !important;
+            `
+          : ''}
       `;
     }
+
+    return '';
   }}
 `;
 

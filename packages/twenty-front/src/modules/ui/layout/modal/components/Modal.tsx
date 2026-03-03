@@ -10,13 +10,15 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-const StyledModalDiv = styled(motion.div)<{
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
+import { ThemeContext } from 'twenty-ui/theme';
+const StyledModalDivBase = styled.div<{
   size?: ModalSize;
   padding?: ModalPadding;
   isMobile: boolean;
@@ -24,65 +26,70 @@ const StyledModalDiv = styled(motion.div)<{
 }>`
   display: flex;
   flex-direction: column;
-  box-shadow: ${({ theme, modalVariant }) =>
+  box-shadow: ${({ modalVariant }) =>
     modalVariant === 'primary'
-      ? theme.boxShadow.superHeavy
+      ? themeCssVariables.boxShadow.superHeavy
       : modalVariant === 'transparent'
         ? 'none'
-        : theme.boxShadow.strong};
-  background: ${({ theme, modalVariant }) =>
-    modalVariant === 'transparent' ? 'transparent' : theme.background.primary};
-  color: ${({ theme }) => theme.font.color.primary};
-  border-radius: ${({ theme, isMobile, modalVariant }) => {
+        : themeCssVariables.boxShadow.strong};
+  background: ${({ modalVariant }) =>
+    modalVariant === 'transparent'
+      ? 'transparent'
+      : themeCssVariables.background.primary};
+  color: ${themeCssVariables.font.color.primary};
+  border-radius: ${({ isMobile, modalVariant }) => {
     if (isMobile || modalVariant === 'transparent') return `0`;
-    return theme.border.radius.md;
+    return themeCssVariables.border.radius.md;
   }};
   overflow-x: hidden;
   overflow-y: auto;
   z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
-  width: ${({ isMobile, size, theme }) => {
-    if (isMobile) return theme.modal.size.fullscreen.width;
+  width: ${({ isMobile, size }) => {
+    if (isMobile)
+      return themeCssVariables.modal.size.fullscreen.width ?? 'auto';
     switch (size) {
       case 'small':
-        return theme.modal.size.sm.width;
+        return themeCssVariables.modal.size.sm.width ?? 'auto';
       case 'medium':
-        return theme.modal.size.md.width;
+        return themeCssVariables.modal.size.md.width ?? 'auto';
       case 'large':
-        return theme.modal.size.lg.width;
+        return themeCssVariables.modal.size.lg.width ?? 'auto';
       case 'extraLarge':
-        return theme.modal.size.xl.width;
+        return themeCssVariables.modal.size.xl.width ?? 'auto';
       default:
         return 'auto';
     }
   }};
 
-  padding: ${({ padding, theme }) => {
+  padding: ${({ padding }) => {
     switch (padding) {
       case 'none':
-        return theme.spacing(0);
+        return themeCssVariables.spacing[0];
       case 'small':
-        return theme.spacing(2);
+        return themeCssVariables.spacing[2];
       case 'medium':
-        return theme.spacing(4);
+        return themeCssVariables.spacing[4];
       case 'large':
-        return theme.spacing(6);
+        return themeCssVariables.spacing[6];
       default:
         return 'auto';
     }
   }};
-  height: ${({ isMobile, theme, size }) => {
-    if (isMobile) return theme.modal.size.fullscreen.height;
+  height: ${({ isMobile, size }) => {
+    if (isMobile)
+      return themeCssVariables.modal.size.fullscreen.height ?? 'auto';
 
     switch (size) {
       case 'extraLarge':
-        return theme.modal.size.xl.height;
+        return themeCssVariables.modal.size.xl.height ?? 'auto';
       default:
         return 'auto';
     }
   }};
   max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
 `;
+const StyledModalDiv = motion.create(StyledModalDivBase);
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -90,7 +97,7 @@ const StyledHeader = styled.div`
   flex-direction: row;
   height: 60px;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(5)};
+  padding: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledContent = styled.div<{
@@ -101,17 +108,19 @@ const StyledContent = styled.div<{
   flex: 1;
   flex: 1 1 0%;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(10)};
+  padding: ${themeCssVariables.spacing[10]};
   ${({ isVerticalCentered }) =>
-    isVerticalCentered &&
-    css`
-      align-items: center;
-    `}
+    isVerticalCentered
+      ? css`
+          align-items: center;
+        `
+      : ''}
   ${({ isHorizontalCentered }) =>
-    isHorizontalCentered &&
-    css`
-      justify-content: center;
-    `}
+    isHorizontalCentered
+      ? css`
+          justify-content: center;
+        `
+      : ''}
 `;
 
 const StyledFooter = styled.div`
@@ -120,22 +129,22 @@ const StyledFooter = styled.div`
   flex-direction: row;
   height: 60px;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(5)};
+  padding: ${themeCssVariables.spacing[5]};
 `;
 
-const StyledBackDrop = styled(motion.div)<{
+const StyledBackDropBase = styled.div<{
   modalVariant: ModalVariants;
   isInContainer?: boolean;
 }>`
   align-items: center;
-  background: ${({ theme, modalVariant, isInContainer }) =>
+  background: ${({ modalVariant, isInContainer }) =>
     isInContainer
-      ? theme.background.overlayTertiary
+      ? themeCssVariables.background.overlayTertiary
       : modalVariant === 'primary' || modalVariant === 'transparent'
-        ? theme.background.overlayPrimary
+        ? themeCssVariables.background.overlayPrimary
         : modalVariant === 'secondary'
-          ? theme.background.overlaySecondary
-          : theme.background.overlayTertiary};
+          ? themeCssVariables.background.overlaySecondary
+          : themeCssVariables.background.overlayTertiary};
   display: flex;
   height: 100%;
   justify-content: center;
@@ -147,6 +156,7 @@ const StyledBackDrop = styled(motion.div)<{
   z-index: ${RootStackingContextZIndices.RootModalBackDrop};
   user-select: none;
 `;
+const StyledBackDrop = motion.create(StyledBackDropBase);
 
 type ModalHeaderProps = React.PropsWithChildren & {
   className?: string;
@@ -237,7 +247,7 @@ export const Modal = ({
     : container;
   const isInContainer = isDefined(container) && !ignoreContainer;
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const stopEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();

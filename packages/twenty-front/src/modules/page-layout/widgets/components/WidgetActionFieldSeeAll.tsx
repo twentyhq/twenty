@@ -11,8 +11,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
@@ -25,17 +24,19 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
+import { css } from '@linaria/core';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLink = styled(Link)`
   display: flex;
   text-decoration: none;
 `;
 
-const StyledSeeAllButton = styled(LightIconButton)<{ isMobile: boolean }>`
-  ${({ theme, isMobile }) => css`
+const StyledSeeAllButtonWrapper = styled.div<{ isMobile: boolean }>`
+  ${({ isMobile }) => css`
     opacity: ${isMobile ? 1 : 0};
     pointer-events: none;
-    transition: opacity ${theme.animation.duration.instant}s ease;
+    transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
   `}
 
   .widget:hover & {
@@ -134,11 +135,9 @@ export const WidgetActionFieldSeeAll = () => {
     <>
       <div id={tooltipId}>
         <StyledLink to={filterLinkHref} data-testid="widget-see-all-link">
-          <StyledSeeAllButton
-            Icon={IconArrowUpRight}
-            accent="secondary"
-            isMobile={isMobile}
-          />
+          <StyledSeeAllButtonWrapper isMobile={isMobile}>
+            <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
+          </StyledSeeAllButtonWrapper>
         </StyledLink>
       </div>
       <AppTooltip

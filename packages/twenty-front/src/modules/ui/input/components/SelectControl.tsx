@@ -1,9 +1,12 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
@@ -19,23 +22,25 @@ export const StyledControlContainer = styled.div<{
   grid-template-columns: ${({ hasIcon }) =>
     hasIcon ? 'auto 1fr auto' : '1fr auto'};
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   box-sizing: border-box;
-  height: ${({ selectSizeVariant, theme }) =>
-    selectSizeVariant === 'small' ? theme.spacing(6) : theme.spacing(8)};
+  height: ${({ selectSizeVariant }) =>
+    selectSizeVariant === 'small'
+      ? themeCssVariables.spacing[6]
+      : themeCssVariables.spacing[8]};
   max-width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: 0 ${themeCssVariables.spacing[2]};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
-  ${({ hasRightElement, theme }) =>
+  ${({ hasRightElement }) =>
     !hasRightElement
       ? css`
           border-right: auto;
-          border-bottom-right-radius: ${theme.border.radius.sm};
-          border-top-right-radius: ${theme.border.radius.sm};
+          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+          border-top-right-radius: ${themeCssVariables.border.radius.sm};
         `
       : css`
           border-right: none;
@@ -43,12 +48,12 @@ export const StyledControlContainer = styled.div<{
           border-top-right-radius: none;
         `}
 
-  color: ${({ disabled, theme, textAccent }) =>
+  color: ${({ disabled, textAccent }) =>
     disabled
-      ? theme.font.color.tertiary
+      ? themeCssVariables.font.color.tertiary
       : textAccent === 'default'
-        ? theme.font.color.primary
-        : theme.font.color.tertiary};
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   text-align: left;
 `;
@@ -56,8 +61,10 @@ export const StyledControlContainer = styled.div<{
 export const StyledSelectControlIconChevronDown = styled(IconChevronDown)<{
   disabled?: boolean;
 }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
 `;
 
 export type SelectControlProps = {
@@ -75,7 +82,7 @@ export const SelectControl = ({
   textAccent = 'default',
   hasRightElement,
 }: SelectControlProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledControlContainer

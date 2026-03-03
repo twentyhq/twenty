@@ -32,8 +32,7 @@ import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Background,
   ReactFlow,
@@ -64,6 +63,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -92,7 +93,7 @@ const StyledStatusTagContainer = styled.div`
   left: 0;
   top: 0;
   position: absolute;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const defaultFitViewOptions = {
@@ -166,7 +167,7 @@ export const WorkflowDiagramCanvasBase = ({
   }) => void;
 }) => {
   const store = useStore();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const reactflow = useReactFlow();
 

@@ -1,6 +1,5 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   IconLoader,
@@ -9,6 +8,9 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { AnimatedCircleLoading } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,26 +30,26 @@ type OutputAccent = 'default' | 'success' | 'error';
 
 const StyledInfoContainer = styled.div`
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const StyledOutput = styled.div<{ accent?: OutputAccent }>`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme, accent }) =>
+  gap: ${themeCssVariables.spacing[1]};
+  color: ${({ accent }) =>
     accent === 'success'
-      ? theme.color.turquoise
+      ? themeCssVariables.color.turquoise
       : accent === 'error'
-        ? theme.color.red
-        : theme.font.color.secondary};
+        ? themeCssVariables.color.red
+        : themeCssVariables.font.color.secondary};
   display: flex;
 `;
 
 const StyledStatusInfo = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[2]};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export type ExecutionStatus = {
@@ -77,7 +79,7 @@ export const WorkflowStepExecutionResult = ({
   loadingMessage = t`Processing...`,
   idleMessage = t`Output`,
 }: WorkflowStepExecutionResultProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const SuccessLeftNode = (
     <StyledOutput accent="success">

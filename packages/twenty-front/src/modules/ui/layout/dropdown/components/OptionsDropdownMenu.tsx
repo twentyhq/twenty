@@ -6,11 +6,11 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type OptionsDropdownMenuProps = {
   dropdownId?: string;
@@ -30,7 +30,6 @@ export const OptionsDropdownMenu = ({
   const generatedDropdownId = useId();
   const dropdownId = dropdownIdFromProps ?? generatedDropdownId;
   const { t } = useLingui();
-  const theme = useTheme();
   const { toggleDropdown } = useToggleDropdown();
 
   const listId = selectableListId ?? dropdownId;
@@ -75,7 +74,7 @@ export const OptionsDropdownMenu = ({
         />
       }
       dropdownPlacement="top-end"
-      dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
+      dropdownOffset={{ y: parseInt(themeCssVariables.spacing[2], 10) }}
       globalHotkeysConfig={{
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

@@ -1,6 +1,7 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
 
 const StyledWidgetCardContent = styled.div<{
   variant: WidgetCardVariant;
@@ -13,14 +14,14 @@ const StyledWidgetCardContent = styled.div<{
   height: 100%;
   overflow: hidden;
 
-  ${({ theme, variant, isEditable, hasHeader }) => {
+  ${({ variant, isEditable, hasHeader }) => {
     if (!hasHeader) {
-      return;
+      return '';
     }
 
     if (variant === 'side-column' && !isEditable) {
       return css`
-        margin-top: ${theme.spacing(2)};
+        margin-top: ${themeCssVariables.spacing[2]};
 
         :empty {
           margin-top: 0;
@@ -29,14 +30,14 @@ const StyledWidgetCardContent = styled.div<{
     }
 
     return css`
-      margin-top: ${theme.spacing(2)};
+      margin-top: ${themeCssVariables.spacing[2]};
     `;
   }}
 
-  ${({ theme, variant, isEditable }) => {
+  ${({ variant, isEditable }) => {
     if (variant === 'dashboard') {
       return css`
-        padding: ${theme.spacing(2)};
+        padding: ${themeCssVariables.spacing[2]};
       `;
     }
 
@@ -45,11 +46,12 @@ const StyledWidgetCardContent = styled.div<{
       (variant === 'side-column' && isEditable)
     ) {
       return css`
-        border: 1px solid ${theme.border.color.medium};
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
+        border: 1px solid ${themeCssVariables.border.color.medium};
+        border-radius: ${themeCssVariables.border.radius.md};
+        padding: ${themeCssVariables.spacing[2]};
       `;
     }
+    return '';
   }}
 `;
 

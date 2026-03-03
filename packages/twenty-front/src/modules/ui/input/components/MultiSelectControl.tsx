@@ -3,13 +3,13 @@ import {
   StyledControlContainer,
   StyledSelectControlIconChevronDown,
 } from '@/ui/input/components/SelectControl';
-import { useTheme } from '@emotion/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type MultiSelectOptionType = {
   label: string;
@@ -31,7 +31,7 @@ export const MultiSelectControl = ({
   textAccent = 'default',
   hasRightElement,
 }: MultiSelectControlProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const firstSelectedOption = selectedOptions?.[0];
   return (

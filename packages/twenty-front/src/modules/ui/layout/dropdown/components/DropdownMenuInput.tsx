@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   forwardRef,
   useRef,
@@ -11,6 +10,8 @@ import 'react-phone-number-input/style.css';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -19,16 +20,17 @@ const StyledInput = styled.input<{
   ${TEXT_INPUT_STYLE}
 
   box-sizing: border-box;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 32px;
   position: relative;
   width: 100%;
 
   ${({ withRightComponent }) =>
-    withRightComponent &&
-    css`
-      padding-right: 32px;
-    `}
+    withRightComponent
+      ? css`
+          padding-right: 32px;
+        `
+      : ''}
 `;
 
 const StyledInputContainer = styled.div`
@@ -38,20 +40,20 @@ const StyledInputContainer = styled.div`
   width: 100%;
 
   &:not(:first-of-type) {
-    padding: ${({ theme }) => theme.spacing(1)};
+    padding: ${themeCssVariables.spacing[1]};
   }
 `;
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${themeCssVariables.spacing[2]};
   top: 50%;
   transform: translateY(-50%);
 `;
 
 const StyledErrorDiv = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.color.red};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;

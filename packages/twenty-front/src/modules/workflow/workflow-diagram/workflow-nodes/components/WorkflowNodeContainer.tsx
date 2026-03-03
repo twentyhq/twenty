@@ -1,20 +1,23 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import type { ThemeType } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css } from '@linaria/core';
 
 const StyledNodeContainer = styled.div<{
+  theme: ThemeType;
   runStatus?: WorkflowRunStepStatus;
   isConnectable?: boolean;
   selected: boolean;
 }>`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   max-width: 240px;
   min-width: 44px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${themeCssVariables.spacing[2]};
+  border-radius: ${themeCssVariables.border.radius.md};
   border-width: 1px;
   border-style: solid;
   box-sizing: border-box;
@@ -38,15 +41,16 @@ const StyledNodeContainer = styled.div<{
       &:hover {
         background: linear-gradient(
             0deg,
-            ${theme.background.transparent.lighter} 0%,
-            ${theme.background.transparent.lighter} 100%
+            ${themeCssVariables.background.transparent.lighter} 0%,
+            ${themeCssVariables.background.transparent.lighter} 100%
           ),
           ${background};
 
-        ${isConnectable &&
-        css`
-          border-color: ${theme.color.blue} !important;
-        `};
+        ${isConnectable
+          ? css`
+              border-color: ${themeCssVariables.color.blue} !important;
+            `
+          : ''};
       }
     `;
   }}
