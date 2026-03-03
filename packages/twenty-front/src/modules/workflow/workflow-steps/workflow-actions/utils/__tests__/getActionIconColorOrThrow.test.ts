@@ -1,9 +1,8 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
-import { type Theme } from '@emotion/react';
-import { COLOR_LIGHT, GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
+import { COLOR_LIGHT, GRAY_SCALE_LIGHT, type ThemeType } from 'twenty-ui/theme';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 
-const mockTheme: Theme = {
+const mockTheme: ThemeType = {
   color: {
     orange: COLOR_LIGHT.orange,
     pink: COLOR_LIGHT.pink,
@@ -14,7 +13,7 @@ const mockTheme: Theme = {
       tertiary: GRAY_SCALE_LIGHT.gray9,
     },
   },
-} as Theme;
+} as ThemeType;
 
 describe('getActionIconColorOrThrow', () => {
   describe('action types that return red color', () => {
@@ -91,7 +90,7 @@ describe('getActionIconColorOrThrow', () => {
 
   describe('theme object handling', () => {
     it('should use the provided theme colors correctly', () => {
-      const customTheme: Theme = {
+      const customTheme: ThemeType = {
         color: {
           red: COLOR_LIGHT.red,
           orange: COLOR_LIGHT.orange,
@@ -102,7 +101,7 @@ describe('getActionIconColorOrThrow', () => {
             tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
-      } as Theme;
+      } as ThemeType;
 
       expect(
         getActionIconColorOrThrow({
@@ -229,7 +228,7 @@ describe('getActionIconColorOrThrow', () => {
     });
 
     it('should use the provided theme colors correctly', () => {
-      const customTheme: Theme = {
+      const customTheme: ThemeType = {
         color: {
           red: COLOR_LIGHT.red,
           orange: COLOR_LIGHT.orange,
@@ -240,7 +239,7 @@ describe('getActionIconColorOrThrow', () => {
             tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
-      } as Theme;
+      } as ThemeType;
 
       expect(
         getActionIconColorOrThrow({ theme: customTheme, actionType: 'CODE' }),
@@ -266,7 +265,7 @@ describe('getActionIconColorOrThrow', () => {
     });
 
     it('should return undefined when red color is missing for SEND_EMAIL action', () => {
-      const themeWithoutBlue: Theme = {
+      const themeWithoutBlue: ThemeType = {
         color: {
           orange: COLOR_LIGHT.orange,
           pink: COLOR_LIGHT.pink,
@@ -276,7 +275,7 @@ describe('getActionIconColorOrThrow', () => {
             tertiary: GRAY_SCALE_LIGHT.gray9,
           },
         },
-      } as Theme;
+      } as ThemeType;
 
       expect(
         getActionIconColorOrThrow({
@@ -289,7 +288,7 @@ describe('getActionIconColorOrThrow', () => {
     it('should handle null theme gracefully', () => {
       expect(() => {
         getActionIconColorOrThrow({
-          theme: null as unknown as Theme,
+          theme: null as unknown as ThemeType,
           actionType: 'CODE',
         });
       }).toThrow();

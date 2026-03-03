@@ -1,9 +1,9 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledActionContainer = styled(motion.div)`
   display: flex;
@@ -13,7 +13,7 @@ const StyledActionContainer = styled(motion.div)`
 
 export const PageHeaderActionMenuButtons = () => {
   const { actions } = useContext(ActionMenuContext);
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();
 

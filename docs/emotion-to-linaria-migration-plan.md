@@ -372,6 +372,48 @@ Once all PRs are merged:
 
 ---
 
+## Known Issues & TODOs
+
+### `styled(Component)` from `twenty-ui` — style overrides silently dropped
+
+When `twenty-front` uses `styled(SomeComponent)` to extend a pre-built
+component from `twenty-ui` (e.g. `Card`, `CardContent`, `PropertyBox`,
+`Chip`, `Pill`, `Avatar`, `StyledHoverableMenuItemBase`, `MenuItemLeftContent`,
+`TabList`, `NavigationDrawerSection`), the style overrides are silently
+ignored at runtime. This happens because `wyw-in-js` in `twenty-front`
+cannot resolve the base class name of a component that was already compiled
+in another package.
+
+**Current workaround:** Replace `styled(Component)` with a plain
+`styled.div` (or wrapper div) that duplicates the needed base styles.
+This fixes the visual regression but loses the component's built-in
+behavior (e.g. `CardContent`'s framer-motion animation, `PropertyBox`'s
+layout-context padding logic, `Card`'s border/overflow).
+
+**Proper fix (TODO):** Add customization props directly to the base
+components so consumers can override styles without wrapping:
+
+- `Card` / `CardContent` — add `padding`, `backgroundColor`, `borderColor` props
+- `PropertyBox` — add `padding`, `height`, `noPadding` props
+- Other frequently extended components — audit and add props as needed
+
+**Affected files (using workaround today):**
+
+- `CalendarEventDetails.tsx` — `styled(PropertyBox)` → `styled.div`, `styled(Chip)` → wrapper
+- `CalendarEventParticipantsResponseStatusField.tsx` — `styled(PropertyBox)` → `styled.div`
+- `CalendarEventNotSharedContent.tsx` — `styled(Card)` / `styled(CardContent)` → `styled.div`
+- `CalendarDayCardContent.tsx` — `styled(CardContent)` → `styled(motion.div)`
+- `ActivityRow.tsx` — `styled(CardContent)` → `styled.div`
+- `EmailThreadPreview.tsx` — `styled(Avatar)` → wrapper div
+- `SignInAppNavigationDrawerMock.tsx` — `styled(NavigationDrawerSection)` → wrapper div
+- `DefaultLayout.tsx` — `styled(SignInAppNavigationDrawerMock)` → wrapper div
+- `LastUsedPill.tsx` — `styled(Pill)` → wrapper span
+- `Logo.tsx` — dynamic `background-image` via inline `style` instead of prop
+- `DatePicker.tsx` / `DateTimePicker.tsx` — `styled(StyledHoverableMenuItemBase)` / `styled(MenuItemLeftContent)` → `styled.div`
+- `SelectControl.tsx` / `MultiSelectControl.tsx` — `styled(IconChevronDown)` → wrapper div
+
+---
+
 ## Validation Checklist (per PR)
 
 - [ ] `npx nx lint:diff-with-main twenty-front` passes

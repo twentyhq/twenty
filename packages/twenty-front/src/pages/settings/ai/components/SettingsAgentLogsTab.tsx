@@ -3,7 +3,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -19,18 +19,19 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useEvaluateAgentTurnMutation,
   useGetAgentTurnsQuery,
 } from '~/generated-metadata/graphql';
 
 const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTableHeaderRow = styled(TableRow)`
   grid-template-columns: 140px 80px 1fr 40px;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -39,11 +40,11 @@ const StyledTableRow = styled(TableRow)`
 
 const StyledScoreCell = styled(TableCell)`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDateCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledInputCell = styled(TableCell)`
@@ -54,7 +55,7 @@ const StyledInputCell = styled(TableCell)`
 
 const StyledActionCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsAgentLogsTabProps = {

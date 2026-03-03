@@ -25,6 +25,7 @@ export type RecordChipProps = {
   className?: string;
   variant?: ChipVariant.Highlighted | ChipVariant.Transparent;
   forceDisableClick?: boolean;
+  isBold?: boolean;
   maxWidth?: number;
   to?: string | undefined;
   size?: ChipSize;
@@ -39,6 +40,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  isBold = false,
   maxWidth,
   to,
   size,
@@ -85,6 +87,7 @@ export const RecordChip = ({
       <Chip
         label={recordChipData.name}
         emptyLabel={t`Untitled`}
+        isBold={isBold}
         size={size}
         maxWidth={maxWidth}
         className={className}
@@ -109,6 +112,7 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       label={recordChipData.name}
       emptyLabel={t`Untitled`}
+      isBold={isBold}
       isLabelHidden={isLabelHidden}
       leftComponent={
         isIconHidden ? null : (

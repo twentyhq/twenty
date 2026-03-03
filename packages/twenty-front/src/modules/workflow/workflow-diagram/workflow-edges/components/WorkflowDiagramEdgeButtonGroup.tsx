@@ -1,19 +1,18 @@
-import styled from '@emotion/styled';
-import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { useContext, useMemo, type CSSProperties } from 'react';
+import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
+const iconButtonGroupStyle = css`
+  background-color: var(--edge-btn-bg, transparent);
+  border: var(--edge-btn-border, none);
   pointer-events: all;
+`;
 
-  ${({ selected, theme }) => {
-    if (!selected) return '';
-    const colors = getWorkflowDiagramColors({ theme });
-    return css`
-      background-color: ${colors.selected.background};
-      border: 1px solid ${colors.selected.borderColor};
-    `;
-  }}
+const StyledWrapper = styled.div`
+  display: contents;
 `;
 
 type WorkflowDiagramEdgeButtonGroupProps = IconButtonGroupProps & {
@@ -24,11 +23,24 @@ export const WorkflowDiagramEdgeButtonGroup = ({
   selected = false,
   iconButtons,
 }: WorkflowDiagramEdgeButtonGroupProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  const dynamicStyles = useMemo(() => {
+    if (!selected) return {};
+    const colors = getWorkflowDiagramColors({ theme });
+    return {
+      '--edge-btn-bg': colors.selected.background,
+      // eslint-disable-next-line lingui/no-unlocalized-strings
+      '--edge-btn-border': `1px solid ${colors.selected.borderColor}`,
+    } as CSSProperties;
+  }, [selected, theme]);
+
   return (
-    <StyledIconButtonGroup
-      className="nodrag nopan"
-      iconButtons={iconButtons}
-      selected={selected}
-    />
+    <StyledWrapper style={dynamicStyles}>
+      <IconButtonGroup
+        className={`nodrag nopan ${iconButtonGroupStyle}`}
+        iconButtons={iconButtons}
+      />
+    </StyledWrapper>
   );
 };

@@ -28,7 +28,7 @@ import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/work
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -48,6 +48,7 @@ import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -61,8 +62,8 @@ const StyledCodeEditorContainer = styled.div`
 `;
 
 const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFullScreenCodeEditorContainer = styled.div`
