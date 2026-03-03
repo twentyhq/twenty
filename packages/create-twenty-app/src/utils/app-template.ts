@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
+import { v4 } from 'uuid';
 
 import { type ExampleOptions } from '@/types/scaffolding-options';
 import createTwentyAppPackageJson from 'package.json';
@@ -23,7 +23,11 @@ export const copyBaseApplicationProject = async ({
 }) => {
   await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
-  await createPackageJson({ appName, appDirectory });
+  await createPackageJson({
+    appName,
+    appDirectory,
+    includeIntegrationTest: exampleOptions.includeIntegrationTest,
+  });
 
   await createGitignore(appDirectory);
 
@@ -95,6 +99,14 @@ export const copyBaseApplicationProject = async ({
       appDirectory: sourceFolderPath,
       fileFolder: 'skills',
       fileName: 'example-skill.ts',
+    });
+  }
+
+  if (exampleOptions.includeIntegrationTest) {
+    await createIntegrationTest({
+      appDirectory: sourceFolderPath,
+      fileFolder: '__tests__',
+      fileName: 'app-install.integration-test.ts',
     });
   }
 
@@ -496,6 +508,113 @@ export default defineSkill({
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
+const createIntegrationTest = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const content = `import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { appBuild, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-sdk/generated';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = path.resolve(__dirname, '../..');
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+
+const readApiKeyFromConfig = (): string | undefined => {
+  const configPath = path.join(os.homedir(), '.twenty', 'config.json');
+
+  if (!fs.existsSync(configPath)) {
+    return undefined;
+  }
+
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+  const defaultProfile = config.profiles?.default;
+
+  return defaultProfile?.apiKey ?? config.apiKey;
+};
+
+const assertServerIsReachable = async () => {
+  try {
+    const response = await fetch(\`\${TWENTY_API_URL}/healthz\`);
+
+    if (!response.ok) {
+      throw new Error(\`Server returned \${response.status}\`);
+    }
+  } catch {
+    throw new Error(
+      \`Twenty server is not reachable at \${TWENTY_API_URL}. \` +
+        'Make sure the server is running before executing integration tests.',
+    );
+  }
+};
+
+describe('App installation', () => {
+  let appInstalled = false;
+
+  beforeAll(async () => {
+    await assertServerIsReachable();
+
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      onProgress: (message: string) => console.log(\`[build] \${message}\`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(
+        \`App build failed: \${buildResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
+
+    appInstalled = true;
+  });
+
+  afterAll(async () => {
+    if (!appInstalled) {
+      return;
+    }
+
+    const uninstallResult = await appUninstall({ appPath: APP_PATH });
+
+    if (!uninstallResult.success) {
+      console.warn(
+        \`App uninstall failed: \${uninstallResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
+  });
+
+  it('should find the installed app in the applications list', async () => {
+    const apiKey = readApiKeyFromConfig();
+    const metadataClient = new MetadataApiClient({
+      url: \`\${TWENTY_API_URL}/metadata\`,
+      headers: {
+        Authorization: \`Bearer \${apiKey}\`,
+      },
+    });
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    expect(result.findManyApplications.length).toBeGreaterThan(0);
+  });
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
 const createApplicationConfig = async ({
   displayName,
   description,
@@ -527,10 +646,33 @@ export default defineApplication({
 const createPackageJson = async ({
   appName,
   appDirectory,
+  includeIntegrationTest,
 }: {
   appName: string;
   appDirectory: string;
+  includeIntegrationTest: boolean;
 }) => {
+  const scripts: Record<string, string> = {
+    twenty: 'twenty',
+    lint: 'eslint',
+    'lint:fix': 'eslint --fix',
+  };
+
+  const devDependencies: Record<string, string> = {
+    typescript: '^5.9.3',
+    '@types/node': '^24.7.2',
+    '@types/react': '^18.2.0',
+    react: '^18.2.0',
+    eslint: '^9.32.0',
+    'typescript-eslint': '^8.50.0',
+  };
+
+  if (includeIntegrationTest) {
+    scripts.test = 'vitest run';
+    scripts['test:watch'] = 'vitest';
+    devDependencies.vitest = '^3.1.1';
+  }
+
   const packageJson = {
     name: appName,
     version: '0.1.0',
