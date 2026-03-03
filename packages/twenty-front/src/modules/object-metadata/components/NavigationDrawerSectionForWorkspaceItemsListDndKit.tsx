@@ -47,7 +47,7 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible = isNavigationMenuInEditMode && !isDragging;
+  const isAddMenuItemButtonVisible = isNavigationMenuInEditMode;
   const handleAddMenuItem = (event?: React.MouseEvent) => {
     event?.stopPropagation();
     navigateCommandMenu({
