@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class MigrateWorkspaceMemberToUserWorkspace1772544577729
+export class MigrateWorkspaceMemberToUserWorkspace1772545262743
   implements MigrationInterface
 {
-  name = 'MigrateWorkspaceMemberToUserWorkspace1772544577729';
+  name = 'MigrateWorkspaceMemberToUserWorkspace1772545262743';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -16,6 +16,9 @@ export class MigrateWorkspaceMemberToUserWorkspace1772544577729
       `ALTER TABLE "core"."userWorkspace" ADD "avatarUrl" character varying`,
     );
     await queryRunner.query(
+      `ALTER TABLE "core"."userWorkspace" ADD "timeZone" character varying NOT NULL DEFAULT 'SYSTEM'`,
+    );
+    await queryRunner.query(
       `CREATE TYPE "core"."userWorkspace_colorscheme_enum" AS ENUM('DARK', 'LIGHT', 'SYSTEM')`,
     );
     await queryRunner.query(
@@ -26,9 +29,6 @@ export class MigrateWorkspaceMemberToUserWorkspace1772544577729
     );
     await queryRunner.query(
       `ALTER TABLE "core"."userWorkspace" ADD "calendarStartDay" "core"."userWorkspace_calendarstartday_enum" NOT NULL DEFAULT 'SYSTEM'`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspace" ADD "timeZone" character varying`,
     );
     await queryRunner.query(
       `CREATE TYPE "core"."userWorkspace_dateformat_enum" AS ENUM('SYSTEM', 'MONTH_FIRST', 'DAY_FIRST', 'YEAR_FIRST')`,
@@ -66,9 +66,6 @@ export class MigrateWorkspaceMemberToUserWorkspace1772544577729
     );
     await queryRunner.query(`DROP TYPE "core"."userWorkspace_dateformat_enum"`);
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspace" DROP COLUMN "timeZone"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."userWorkspace" DROP COLUMN "calendarStartDay"`,
     );
     await queryRunner.query(
@@ -79,6 +76,9 @@ export class MigrateWorkspaceMemberToUserWorkspace1772544577729
     );
     await queryRunner.query(
       `DROP TYPE "core"."userWorkspace_colorscheme_enum"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."userWorkspace" DROP COLUMN "timeZone"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."userWorkspace" DROP COLUMN "avatarUrl"`,

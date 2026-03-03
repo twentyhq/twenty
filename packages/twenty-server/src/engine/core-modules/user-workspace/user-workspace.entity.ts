@@ -120,9 +120,9 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true })
   avatarUrl?: string;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'varchar' })
-  timeZone?: string;
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, type: 'varchar', default: 'SYSTEM' })
+  timeZone: string;
 
   @Field(() => ColorScheme, { nullable: false })
   @Column({
