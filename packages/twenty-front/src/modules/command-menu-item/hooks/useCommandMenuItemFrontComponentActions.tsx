@@ -4,38 +4,22 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { evaluateConditionalAvailabilityExpression } from '@/action-menu/actions/utils/evaluateConditionalAvailabilityExpression';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { type CommandMenuContext } from '@/action-menu/types/CommandMenuContext';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useStore } from 'jotai';
 import { useContext } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
-  type CommandMenuItemFieldsFragment,
   CommandMenuItemAvailabilityType,
+  type CommandMenuItemFieldsFragment,
   FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
@@ -57,7 +41,7 @@ type BuildActionFromItemParams = {
     pageIcon: IconComponent;
   }) => void;
   mountHeadlessFrontComponent: (frontComponentId: string) => void;
-  evaluationContext: Record<string, unknown>;
+  commandMenuContext: CommandMenuContext;
 };
 
 // TODO: we should remove this backward compatibility logic in the future
@@ -70,7 +54,7 @@ const buildActionFromItem = ({
   getIcon,
   openFrontComponentInCommandMenu,
   mountHeadlessFrontComponent,
-  evaluationContext,
+  commandMenuContext,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
@@ -102,7 +86,7 @@ const buildActionFromItem = ({
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
-        evaluationContext,
+        commandMenuContext,
       ),
     component: isHeadless ? (
       <HeadlessFrontComponentAction
@@ -115,18 +99,19 @@ const buildActionFromItem = ({
   };
 };
 
-export const useCommandMenuItemFrontComponentActions = () => {
+export const useCommandMenuItemFrontComponentActions = (
+  commandMenuContext: CommandMenuContext,
+) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInCommandMenu } =
     useOpenFrontComponentInCommandMenu();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
-  const store = useStore();
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
+  const { actionMenuType } = useContext(ActionMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -139,92 +124,6 @@ export const useCommandMenuItemFrontComponentActions = () => {
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
   );
-
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const objectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
-  );
-
-  const { sortedFavorites: favorites } = useFavorites();
-  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-
-  const recordId =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined;
-
-  const isFavorite = (() => {
-    if (!isDefined(recordId)) return false;
-
-    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
-      return !!navigationMenuItems?.find(
-        (item) =>
-          item.targetRecordId === recordId &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
-      );
-    }
-
-    return !!favorites?.find((favorite) => favorite.recordId === recordId);
-  })();
-
-  const selectedRecord =
-    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
-    undefined;
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem?.id ?? '',
-  );
-
-  const isNoteOrTask =
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
-
-  const isRemote = objectMetadataItem?.isRemote ?? false;
-
-  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
-
-  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
-    hasAnySoftDeleteFilterOnViewComponentSelector,
-    recordIndexId,
-  );
-
-  const isShowPage =
-    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
-    ContextStoreViewType.ShowPage;
-
-  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
-
-  const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
-
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const featureFlags: Record<string, boolean> = {};
-
-  for (const flag of currentWorkspace?.featureFlags ?? []) {
-    featureFlags[flag.key] = flag.value === true;
-  }
-
-  const targetObjectReadPermissions: Record<string, boolean> = {};
-  const targetObjectWritePermissions: Record<string, boolean> = {};
-
-  for (const metadataItem of objectMetadataItems) {
-    const permissions = store.get(
-      objectPermissionsFamilySelector.selectorFamily({
-        objectNameSingular: metadataItem.nameSingular,
-      }),
-    );
-    targetObjectReadPermissions[metadataItem.nameSingular] =
-      permissions.canRead;
-    targetObjectWritePermissions[metadataItem.nameSingular] =
-      permissions.canUpdate;
-  }
 
   const { data } = useFindManyCommandMenuItemsQuery({
     skip:
@@ -262,22 +161,6 @@ export const useCommandMenuItemFrontComponentActions = () => {
     return false;
   });
 
-  const evaluationContext: Record<string, unknown> = {
-    isShowPage,
-    isInRightDrawer,
-    isFavorite,
-    isRemote,
-    isNoteOrTask,
-    isSelectAll,
-    hasAnySoftDeleteFilterOnView,
-    numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
-    objectPermissions,
-    selectedRecord,
-    featureFlags,
-    targetObjectReadPermissions,
-    targetObjectWritePermissions,
-  };
-
   const globalActions = globalItems.map((item, index) =>
     buildActionFromItem({
       item,
@@ -287,7 +170,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
-      evaluationContext,
+      commandMenuContext,
     }),
   );
 
@@ -300,7 +183,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
-      evaluationContext,
+      commandMenuContext,
     }),
   );
 

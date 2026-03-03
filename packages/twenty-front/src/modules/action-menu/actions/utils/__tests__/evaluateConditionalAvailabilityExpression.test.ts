@@ -1,4 +1,4 @@
-import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
+import { evaluateConditionalAvailabilityExpression } from '@/action-menu/actions/utils/evaluateConditionalAvailabilityExpression';
 
 describe('evaluateConditionalAvailabilityExpression', () => {
   describe('null/undefined/empty expressions', () => {
