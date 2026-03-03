@@ -113,6 +113,11 @@ export class ViewFieldService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          preloadedFlatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+            flatViewFieldGroupMaps,
+          },
         },
       );
 

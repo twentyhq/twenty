@@ -49,6 +49,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   };
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  preloadedFlatEntityMaps?: Partial<AllFlatEntityMaps>;
 };
 
 @Injectable()
@@ -190,6 +191,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allFlatEntityOperationByMetadataName,
     workspaceId,
     applicationUniversalIdentifier,
+    preloadedFlatEntityMaps,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs) {
     const allMetadataNameToCompare = Object.keys(
       allFlatEntityOperationByMetadataName,
@@ -205,12 +207,16 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const allFlatEntityMapsCacheKeysToCompute =
       allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey);
 
-    const { flatApplicationMaps, ...allRelatedFlatEntityMaps } =
+    const { flatApplicationMaps, ...cachedFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         ...allFlatEntityMapsCacheKeysToCompute,
         ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
         'flatApplicationMaps',
       ]);
+
+    const allRelatedFlatEntityMaps = isDefined(preloadedFlatEntityMaps)
+      ? { ...cachedFlatEntityMaps, ...preloadedFlatEntityMaps }
+      : cachedFlatEntityMaps;
 
     const initialAccumulator = allMetadataNameCacheToCompute.reduce<
       Partial<AllFlatEntityMaps>
@@ -273,6 +279,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allFlatEntityOperationByMetadataName,
     workspaceId,
     applicationUniversalIdentifier,
+    preloadedFlatEntityMaps,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
     fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
@@ -288,6 +295,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allFlatEntityOperationByMetadataName,
       workspaceId,
       applicationUniversalIdentifier,
+      preloadedFlatEntityMaps,
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
@@ -416,6 +424,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    preloadedFlatEntityMaps,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -430,6 +439,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allFlatEntityOperationByMetadataName: allFlatEntities,
       workspaceId,
       applicationUniversalIdentifier,
+      preloadedFlatEntityMaps,
     });
 
     return await this.validateBuildAndRunWorkspaceMigrationFromTo({
