@@ -7,63 +7,55 @@ export class AuthLoginCommand {
   private configService = new ConfigService();
 
   async execute(options: { apiKey?: string; apiUrl?: string }): Promise<void> {
-    try {
-      let { apiKey, apiUrl } = options;
+    let { apiKey, apiUrl } = options;
 
-      const config = await this.configService.getConfig();
+    const config = await this.configService.getConfig();
 
-      if (!apiUrl) {
-        const urlAnswer = await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'apiUrl',
-            message: 'Twenty API URL:',
-            default: config.apiUrl,
-            validate: (input) => {
-              try {
-                new URL(input);
-                return true;
-              } catch {
-                return 'Please enter a valid URL';
-              }
-            },
+    if (!apiUrl) {
+      const urlAnswer = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'apiUrl',
+          message: 'Twenty API URL:',
+          default: config.apiUrl,
+          validate: (input) => {
+            try {
+              new URL(input);
+              return true;
+            } catch {
+              return 'Please enter a valid URL';
+            }
           },
-        ]);
-        apiUrl = urlAnswer.apiUrl;
-      }
+        },
+      ]);
+      apiUrl = urlAnswer.apiUrl;
+    }
 
-      if (!apiKey) {
-        const keyAnswer = await inquirer.prompt([
-          {
-            type: 'password',
-            name: 'apiKey',
-            message: 'API Key:',
-            mask: '*',
-            validate: (input) => input.length > 0 || 'API key is required',
-          },
-        ]);
-        apiKey = keyAnswer.apiKey;
-      }
+    if (!apiKey) {
+      const keyAnswer = await inquirer.prompt([
+        {
+          type: 'password',
+          name: 'apiKey',
+          message: 'API Key:',
+          mask: '*',
+          validate: (input) => input.length > 0 || 'API key is required',
+        },
+      ]);
+      apiKey = keyAnswer.apiKey;
+    }
 
-      const result = await authLogin({ apiKey: apiKey!, apiUrl: apiUrl! });
+    const result = await authLogin({ apiKey: apiKey!, apiUrl: apiUrl! });
 
-      if (result.success) {
-        const activeWorkspace = ConfigService.getActiveWorkspace();
-        console.log(
-          chalk.green(
-            `✓ Successfully authenticated with Twenty (workspace: ${activeWorkspace})`,
-          ),
-        );
-      } else {
-        console.log(
-          chalk.red('✗ Authentication failed. Please check your credentials.'),
-        );
-        process.exit(1);
-      }
-    } catch (error) {
-      console.error(
-        chalk.red('Login failed:'),
-        error instanceof Error ? error.message : error,
+    if (result.success) {
+      const activeWorkspace = ConfigService.getActiveWorkspace();
+      console.log(
+        chalk.green(
+          `✓ Successfully authenticated with Twenty (workspace: ${activeWorkspace})`,
+        ),
+      );
+    } else {
+      console.log(
+        chalk.red('✗ Authentication failed. Please check your credentials.'),
       );
       process.exit(1);
     }
