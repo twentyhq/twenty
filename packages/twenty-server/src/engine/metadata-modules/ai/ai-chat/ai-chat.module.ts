@@ -62,7 +62,9 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
           DTOClass: AgentChatThreadDTO,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
-            defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
+            defaultSort: [
+              { field: 'updatedAt', direction: SortDirection.DESC },
+            ],
             one: { disabled: true },
             many: { name: 'chatThreads' },
           },

@@ -1,6 +1,10 @@
 import { Field, Float, HideField, Int, ObjectType } from '@nestjs/graphql';
 
-import { Authorize, IDField } from '@ptc-org/nestjs-query-graphql';
+import {
+  Authorize,
+  FilterableField,
+  IDField,
+} from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -41,6 +45,7 @@ export class AgentChatThreadDTO {
   @Field()
   createdAt: Date;
 
+  @FilterableField()
   @Field()
   updatedAt: Date;
 
