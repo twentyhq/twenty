@@ -15,6 +15,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
+import { isRelationNestedOperation } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-relation-nested-operation.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
 import { transformCurrencyField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-currency-field.util';
@@ -262,7 +263,10 @@ export class DataArgProcessor {
           return validateUUIDFieldOrThrow(value, key);
         }
 
-        if (isDefined(fieldMetadataMorphRelationSettings.joinColumnName)) {
+        if (
+          isDefined(fieldMetadataMorphRelationSettings.joinColumnName) &&
+          !isRelationNestedOperation(value)
+        ) {
           throw new CommonQueryRunnerException(
             `Use "${fieldMetadataMorphRelationSettings.joinColumnName}" instead of "${key}" to set this relation.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
