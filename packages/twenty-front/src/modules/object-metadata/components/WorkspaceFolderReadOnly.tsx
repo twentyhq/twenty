@@ -22,7 +22,6 @@ const StyledFolderContainer = styled.div`
 const StyledFolderContent = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFolderExpandableWrapper = styled.div`

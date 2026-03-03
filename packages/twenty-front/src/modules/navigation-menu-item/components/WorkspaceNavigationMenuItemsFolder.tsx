@@ -58,13 +58,9 @@ const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
   }
 `;
 
-const StyledFolderDroppableContent = styled.div<{
-  $compact: boolean;
-}>`
+const StyledFolderDroppableContent = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: ${({ $compact }) =>
-    $compact ? 0 : themeCssVariables.spacing[2]};
 `;
 
 const StyledFolderExpandableWrapper = styled.div`
@@ -214,7 +210,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             containAnimation
             initial={!skipInitialExpandAnimation}
           >
-            <StyledFolderDroppableContent $compact={isCompact}>
+            <StyledFolderDroppableContent>
               {navigationMenuItems.map((navigationMenuItem, index) => (
                 <React.Fragment key={navigationMenuItem.id}>
                   <NavigationItemDropTarget
@@ -260,7 +256,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                   folderId={folderId}
                   index={navigationMenuItems.length}
                   sectionId={NavigationSections.WORKSPACE}
-                  compact={isCompact}
+                  compact
                   dropTargetIdOverride={getDndKitDropTargetId(
                     folderContentDroppableId,
                     navigationMenuItems.length,
