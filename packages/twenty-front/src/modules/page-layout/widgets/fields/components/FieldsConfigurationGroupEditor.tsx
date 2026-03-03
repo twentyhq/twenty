@@ -22,6 +22,18 @@ const StyledFieldsDroppable = styled.div`
   flex-direction: column;
 `;
 
+const StyledEmptyGroupDropZone = styled.div`
+  align-items: center;
+  border: 1px dashed ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: center;
+  margin: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  min-height: ${({ theme }) => theme.spacing(10)};
+`;
+
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
   background: ${({ isDragging, theme }) =>
     isDragging ? theme.background.primary : 'transparent'};
@@ -170,6 +182,11 @@ export const FieldsConfigurationGroupEditor = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
           >
+            {sortedFields.length === 0 && (
+              <StyledEmptyGroupDropZone>
+                {t`Drop fields here`}
+              </StyledEmptyGroupDropZone>
+            )}
             {sortedFields.map((field, fieldIndex) => {
               return (
                 <DraggableItem
