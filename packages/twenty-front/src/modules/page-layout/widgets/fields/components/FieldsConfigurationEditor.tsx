@@ -20,6 +20,7 @@ import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
 import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -96,6 +97,8 @@ export const FieldsConfigurationEditor = ({
     pageLayoutId,
     widgetId,
   });
+
+  const { openDropdown } = useOpenDropdown();
 
   const [renamingGroupValue, setRenamingGroupValue] = useState('');
 
@@ -175,9 +178,14 @@ export const FieldsConfigurationEditor = ({
     );
   };
 
-  const handleAddGroup = () => {
+  const handleAddGroup = ({ afterGroupId }: { afterGroupId?: string }) => {
     const newGroupName = t`New Group`;
-    createGroup(newGroupName);
+    const newGroupId = createGroup({ name: newGroupName, afterGroupId });
+
+    setRenamingGroupValue(newGroupName);
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: `fields-configuration-group-rename-${newGroupId}`,
+    });
   };
 
   if (mode === 'ungrouped') {
@@ -186,7 +194,7 @@ export const FieldsConfigurationEditor = ({
         ungroupedFields={ungroupedFields}
         onMoveField={moveUngroupedField}
         onToggleFieldVisibility={toggleUngroupedFieldVisibility}
-        onAddGroup={handleAddGroup}
+        onAddGroup={() => handleAddGroup({})}
       />
     );
   }
@@ -219,7 +227,9 @@ export const FieldsConfigurationEditor = ({
                     objectMetadataItem={objectMetadataItem}
                     draggableProvided={draggableProvided}
                     isDragging={snapshot.isDragging}
-                    onAddGroup={handleAddGroup}
+                    onAddGroup={() =>
+                      handleAddGroup({ afterGroupId: group.id })
+                    }
                     onToggleFieldVisibility={(fieldMetadataId) =>
                       toggleFieldVisibility(group.id, fieldMetadataId)
                     }

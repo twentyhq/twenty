@@ -34,7 +34,7 @@ export const useCreateFieldsWidgetEditorGroup = ({
   const store = useStore();
 
   const createGroup = useCallback(
-    (name: string) => {
+    ({ name, afterGroupId }: { name: string; afterGroupId?: string }) => {
       const allModes = store.get(fieldsWidgetModeDraftState);
 
       const currentMode = allModes[widgetId] ?? 'ungrouped';
@@ -78,23 +78,37 @@ export const useCreateFieldsWidgetEditorGroup = ({
           [widgetId]: 'grouped' as const,
         }));
       } else {
-        // Grouped mode: append a new empty group
+        // Grouped mode: insert a new empty group after afterGroupId, or append at end
         const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
 
         const currentGroups = allDraftGroups[widgetId] ?? [];
-        const maxPosition = Math.max(
-          ...currentGroups.map((g) => g.position),
-          -1,
-        );
+
+        const afterGroup = afterGroupId
+          ? currentGroups.find((g) => g.id === afterGroupId)
+          : undefined;
+
+        const newPosition =
+          afterGroup !== undefined
+            ? afterGroup.position + 1
+            : Math.max(...currentGroups.map((g) => g.position), -1) + 1;
+
+        const shiftedGroups =
+          afterGroup !== undefined
+            ? currentGroups.map((g) =>
+                g.position >= newPosition
+                  ? { ...g, position: g.position + 1 }
+                  : g,
+              )
+            : currentGroups;
 
         store.set(fieldsWidgetGroupsDraftState, (prev) => ({
           ...prev,
           [widgetId]: [
-            ...(prev[widgetId] ?? []),
+            ...shiftedGroups,
             {
               id: newId,
               name,
-              position: maxPosition + 1,
+              position: newPosition,
               isVisible: true,
               fields: [],
             },

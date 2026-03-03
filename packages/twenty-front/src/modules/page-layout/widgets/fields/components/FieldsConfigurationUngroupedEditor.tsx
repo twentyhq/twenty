@@ -86,7 +86,7 @@ export const FieldsConfigurationUngroupedEditor = ({
       <MenuItem
         LeftIcon={IconNewSection}
         withIconContainer
-        text={t`Add a Group`}
+        text={t`Add a Section`}
         onClick={onAddGroup}
       />
     </DragDropContext>
