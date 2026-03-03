@@ -29,6 +29,7 @@ describe('ApplicationVariableEntityService', () => {
         {
           provide: getRepositoryToken(ApplicationVariableEntity),
           useValue: {
+            find: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
             save: jest.fn(),
@@ -160,7 +161,7 @@ describe('ApplicationVariableEntityService', () => {
 
   describe('upsertManyApplicationVariableEntities', () => {
     it('should encrypt secret values when creating new variables', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.find.mockResolvedValue([]);
       repository.save.mockResolvedValue({} as any);
       repository.delete.mockResolvedValue({ affected: 0 } as any);
 
@@ -178,17 +179,19 @@ describe('ApplicationVariableEntityService', () => {
       });
 
       expect(secretEncryptionService.encrypt).toHaveBeenCalledWith('my-secret');
-      expect(repository.save).toHaveBeenCalledWith({
-        key: 'SECRET_KEY',
-        value: 'encrypted_my-secret',
-        description: 'A secret key',
-        isSecret: true,
-        applicationId: mockApplicationId,
-      });
+      expect(repository.save).toHaveBeenCalledWith([
+        {
+          key: 'SECRET_KEY',
+          value: 'encrypted_my-secret',
+          description: 'A secret key',
+          isSecret: true,
+          applicationId: mockApplicationId,
+        },
+      ]);
     });
 
     it('should not encrypt non-secret values when creating new variables', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.find.mockResolvedValue([]);
       repository.save.mockResolvedValue({} as any);
       repository.delete.mockResolvedValue({ affected: 0 } as any);
 
@@ -206,17 +209,19 @@ describe('ApplicationVariableEntityService', () => {
       });
 
       expect(secretEncryptionService.encrypt).not.toHaveBeenCalled();
-      expect(repository.save).toHaveBeenCalledWith({
-        key: 'PUBLIC_URL',
-        value: 'https://example.com',
-        description: 'Public URL',
-        isSecret: false,
-        applicationId: mockApplicationId,
-      });
+      expect(repository.save).toHaveBeenCalledWith([
+        {
+          key: 'PUBLIC_URL',
+          value: 'https://example.com',
+          description: 'Public URL',
+          isSecret: false,
+          applicationId: mockApplicationId,
+        },
+      ]);
     });
 
     it('should handle undefined isSecret as false', async () => {
-      repository.findOne.mockResolvedValue(null);
+      repository.find.mockResolvedValue([]);
       repository.save.mockResolvedValue({} as any);
       repository.delete.mockResolvedValue({ affected: 0 } as any);
 
@@ -233,11 +238,11 @@ describe('ApplicationVariableEntityService', () => {
       });
 
       expect(secretEncryptionService.encrypt).not.toHaveBeenCalled();
-      expect(repository.save).toHaveBeenCalledWith(
+      expect(repository.save).toHaveBeenCalledWith([
         expect.objectContaining({
           isSecret: false,
         }),
-      );
+      ]);
     });
 
     it('should update existing variables without changing values', async () => {
@@ -249,8 +254,8 @@ describe('ApplicationVariableEntityService', () => {
         applicationId: mockApplicationId,
       } as ApplicationVariableEntity;
 
-      repository.findOne.mockResolvedValue(existingVariable);
-      repository.update.mockResolvedValue({ affected: 1 } as any);
+      repository.find.mockResolvedValue([existingVariable]);
+      repository.save.mockResolvedValue({} as any);
       repository.delete.mockResolvedValue({ affected: 0 } as any);
 
       await service.upsertManyApplicationVariableEntities({
@@ -266,14 +271,51 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(repository.update).toHaveBeenCalledWith(
-        { key: 'EXISTING_VAR', applicationId: mockApplicationId },
+      expect(repository.save).toHaveBeenCalledWith([
         {
+          id: '1',
           description: 'Updated description',
           isSecret: true,
         },
-      );
-      expect(repository.save).not.toHaveBeenCalled();
+      ]);
+      expect(repository.update).not.toHaveBeenCalled();
+    });
+
+    it('should update existing value if isSecret changes', async () => {
+      const existingVariable = {
+        id: '1',
+        key: 'EXISTING_VAR',
+        value: 'existing-encrypted-value',
+        isSecret: true,
+        applicationId: mockApplicationId,
+      } as ApplicationVariableEntity;
+
+      repository.find.mockResolvedValue([existingVariable]);
+      repository.save.mockResolvedValue({} as any);
+      repository.delete.mockResolvedValue({ affected: 0 } as any);
+
+      await service.upsertManyApplicationVariableEntities({
+        applicationVariables: {
+          EXISTING_VAR: {
+            universalIdentifier: 'existing-var-123',
+            value: 'new-value',
+            description: 'Updated description',
+            isSecret: false,
+          },
+        },
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(repository.save).toHaveBeenCalledWith([
+        {
+          id: '1',
+          description: 'Updated description',
+          value: 'new-value',
+          isSecret: false,
+        },
+      ]);
+      expect(repository.update).not.toHaveBeenCalled();
     });
 
     it('should handle undefined applicationVariables', async () => {
@@ -283,7 +325,7 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(repository.findOne).not.toHaveBeenCalled();
+      expect(repository.find).not.toHaveBeenCalled();
       expect(repository.save).not.toHaveBeenCalled();
       expect(repository.update).not.toHaveBeenCalled();
       expect(

@@ -93,38 +93,42 @@ export class ApplicationVariableEntityService {
       return;
     }
 
+    const keys = Object.keys(applicationVariables);
+
+    const existingVariables = await this.applicationVariableRepository.find({
+      where: {
+        applicationId,
+        key: In(keys),
+      },
+    });
+
+    const existingVariablesByKey = new Map(
+      existingVariables.map((variable) => [variable.key, variable]),
+    );
+
+    const entitiesToSave: Partial<ApplicationVariableEntity>[] = [];
+
     for (const [key, { value, description, isSecret }] of Object.entries(
       applicationVariables,
     )) {
+      const existingVariable = existingVariablesByKey.get(key);
       const isSecretValue = isSecret ?? false;
-
-      const existingVariable = await this.applicationVariableRepository.findOne(
-        {
-          where: {
-            key,
-            applicationId,
-          },
-        },
+      const encryptedValue = this.encryptSecretValue(
+        value ?? '',
+        isSecretValue,
       );
 
       if (isDefined(existingVariable)) {
-        await this.applicationVariableRepository.update(
-          {
-            key,
-            applicationId,
-          },
-          {
-            description: description ?? '',
-            isSecret: isSecretValue,
-          },
-        );
+        entitiesToSave.push({
+          id: existingVariable.id,
+          description: description ?? '',
+          isSecret: isSecretValue,
+          ...(existingVariable.isSecret !== isSecret
+            ? { value: encryptedValue }
+            : {}),
+        });
       } else {
-        const encryptedValue = this.encryptSecretValue(
-          value ?? '',
-          isSecretValue,
-        );
-
-        await this.applicationVariableRepository.save({
+        entitiesToSave.push({
           key,
           value: encryptedValue,
           description: description ?? '',
@@ -134,9 +138,13 @@ export class ApplicationVariableEntityService {
       }
     }
 
+    if (entitiesToSave.length > 0) {
+      await this.applicationVariableRepository.save(entitiesToSave);
+    }
+
     await this.applicationVariableRepository.delete({
       applicationId,
-      key: Not(In(Object.keys(applicationVariables))),
+      key: Not(In(keys)),
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
