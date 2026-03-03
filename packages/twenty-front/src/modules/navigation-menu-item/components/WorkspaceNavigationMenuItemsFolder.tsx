@@ -17,10 +17,12 @@ import { useWorkspaceFolderOpenState } from '@/navigation-menu-item/hooks/useWor
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
@@ -28,6 +30,7 @@ import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/So
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -186,35 +189,57 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           >
             <StyledFolderDroppableContent $compact={isCompact}>
               {navigationMenuItems.map((navigationMenuItem, index) => (
-                <WorkspaceDndKitSortableItem
-                  key={navigationMenuItem.id}
-                  id={navigationMenuItem.id}
-                  index={index}
-                  group={folderContentDroppableId}
-                  disabled={
-                    !isNavigationMenuInEditMode || folderContentDropDisabled
-                  }
-                >
-                  <WorkspaceNavigationMenuItemFolderSubItem
-                    navigationMenuItem={navigationMenuItem}
+                <React.Fragment key={navigationMenuItem.id}>
+                  <NavigationItemDropTarget
+                    folderId={folderId}
                     index={index}
-                    arrayLength={navigationMenuItemFolderContentLength}
-                    selectedNavigationMenuItemIndex={
-                      selectedNavigationMenuItemIndex
-                    }
-                    onNavigationMenuItemClick={onNavigationMenuItemClick}
-                    selectedNavigationMenuItemId={
-                      selectedNavigationMenuItemId ?? null
-                    }
-                    isContextDragging={isContextDragging}
+                    sectionId={NavigationSections.WORKSPACE}
+                    compact={isCompact}
+                    dropTargetIdOverride={getDndKitDropTargetId(
+                      folderContentDroppableId,
+                      index,
+                    )}
                   />
-                </WorkspaceDndKitSortableItem>
+                  <WorkspaceDndKitSortableItem
+                    id={navigationMenuItem.id}
+                    index={index}
+                    group={folderContentDroppableId}
+                    disabled={
+                      !isNavigationMenuInEditMode || folderContentDropDisabled
+                    }
+                  >
+                    <WorkspaceNavigationMenuItemFolderSubItem
+                      navigationMenuItem={navigationMenuItem}
+                      index={index}
+                      arrayLength={navigationMenuItemFolderContentLength}
+                      selectedNavigationMenuItemIndex={
+                        selectedNavigationMenuItemIndex
+                      }
+                      onNavigationMenuItemClick={onNavigationMenuItemClick}
+                      selectedNavigationMenuItemId={
+                        selectedNavigationMenuItemId ?? null
+                      }
+                      isContextDragging={isContextDragging}
+                    />
+                  </WorkspaceDndKitSortableItem>
+                </React.Fragment>
               ))}
               <WorkspaceDndKitDroppableSlot
                 droppableId={folderContentDroppableId}
                 index={navigationMenuItems.length}
                 disabled={folderContentDropDisabled}
-              />
+              >
+                <NavigationItemDropTarget
+                  folderId={folderId}
+                  index={navigationMenuItems.length}
+                  sectionId={NavigationSections.WORKSPACE}
+                  compact={isCompact}
+                  dropTargetIdOverride={getDndKitDropTargetId(
+                    folderContentDroppableId,
+                    navigationMenuItems.length,
+                  )}
+                />
+              </WorkspaceDndKitDroppableSlot>
               {isNavigationMenuInEditMode && isSelectedInEditMode && (
                 <NavigationDrawerSubItem
                   label={t`Add menu item`}
