@@ -4,7 +4,7 @@ import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { CardContent } from 'twenty-ui/layout';
+import { motion } from 'framer-motion';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
@@ -14,14 +14,18 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContentBase = styled.div<{ divider?: boolean }>`
   align-items: flex-start;
-  border-color: ${themeCssVariables.border.color.light};
+  background-color: ${themeCssVariables.background.secondary};
+  border-bottom: ${({ divider }) =>
+    divider ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
+
+const StyledCardContent = motion.create(StyledCardContentBase);
 
 const StyledDayContainer = styled.div`
   text-align: center;

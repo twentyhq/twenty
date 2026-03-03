@@ -1,16 +1,17 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Fragment } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   bottom: 0;
   box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

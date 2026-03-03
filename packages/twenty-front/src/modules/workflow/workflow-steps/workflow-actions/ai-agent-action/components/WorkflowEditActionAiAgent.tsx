@@ -16,7 +16,7 @@ import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actio
 import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
@@ -35,6 +35,7 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type WorkflowAiAgentTabId =
   (typeof WORKFLOW_AI_AGENT_TABS)[keyof typeof WORKFLOW_AI_AGENT_TABS];
@@ -50,8 +51,8 @@ type WorkflowEditActionAiAgentProps = {
 };
 
 const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPermissionsStepBody = styled(WorkflowStepBody)`
