@@ -30,9 +30,7 @@ export const getStepDefinitionOrThrow = ({
   }
 
   if (!isDefined(steps)) {
-    throw new Error(
-      'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
-    );
+    return undefined;
   }
 
   const selectedNodePosition = findStepPosition({
