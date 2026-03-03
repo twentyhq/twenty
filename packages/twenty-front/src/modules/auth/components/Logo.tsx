@@ -44,8 +44,7 @@ const StyledSecondaryLogoContainer = styled.div`
   width: ${themeCssVariables.spacing[7]};
 `;
 
-const StyledPrimaryLogo = styled.div<{ src: string }>`
-  background: url(${(props) => props.src});
+const StyledPrimaryLogo = styled.div`
   background-size: cover;
   height: 100%;
   width: 100%;
@@ -81,10 +80,14 @@ export const Logo = ({
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
         >
-          <StyledPrimaryLogo src={primaryLogoUrl} />
+          <StyledPrimaryLogo
+            style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+          />
         </UndecoratedLink>
       ) : (
-        <StyledPrimaryLogo src={primaryLogoUrl} />
+        <StyledPrimaryLogo
+          style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+        />
       )}
       {isDefined(secondaryLogoUrl) ? (
         <StyledSecondaryLogoContainer>
