@@ -223,35 +223,13 @@ export class DataArgProcessor {
 
         return transformRawJsonField(validatedValue);
       }
-      case FieldMetadataType.RELATION: {
-        const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
-
-        if (
-          fieldMetadataRelationSettings.relationType ===
-          RelationType.ONE_TO_MANY
-        ) {
-          throw new CommonQueryRunnerException(
-            `One-to-many relation ${key} field does not support write operations.`,
-            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-          );
-        }
-
-        if (key === fieldMetadataRelationSettings.joinColumnName) {
-          return validateUUIDFieldOrThrow(value, key);
-        }
-
-        return value;
-      }
+      case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
-        const fieldMetadataMorphRelationSettings =
-          fieldMetadata.settings as FieldMetadataSettingsMapping['MORPH_RELATION'];
+        const relationSettings = fieldMetadata.settings as
+          | FieldMetadataSettingsMapping['RELATION']
+          | FieldMetadataSettingsMapping['MORPH_RELATION'];
 
-        if (
-          fieldMetadataMorphRelationSettings.relationType ===
-          RelationType.ONE_TO_MANY
-        ) {
+        if (relationSettings.relationType === RelationType.ONE_TO_MANY) {
           throw new CommonQueryRunnerException(
             `One-to-many relation ${key} field does not support write operations.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
@@ -259,12 +237,12 @@ export class DataArgProcessor {
           );
         }
 
-        if (key === fieldMetadataMorphRelationSettings.joinColumnName) {
+        if (key === relationSettings.joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);
         }
 
         if (
-          isDefined(fieldMetadataMorphRelationSettings.joinColumnName) &&
+          isDefined(relationSettings.joinColumnName) &&
           !isRelationNestedOperation(value)
         ) {
           throw new CommonQueryRunnerException(

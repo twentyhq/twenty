@@ -99,22 +99,26 @@ const getSchemaComponentsRelationProperties = (
   >['flatObjectMetadataMaps'],
 ): Properties => {
   return flatFieldMetadatas.reduce((node, field) => {
-    if (!isDefined(field.relationTargetObjectMetadataId)) {
+    const isRelationField =
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
+
+    if (!isRelationField) {
       return node;
     }
 
-    let relationType: RelationType | undefined;
-
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
-      relationType = field.settings?.relationType;
-    } else if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
-    ) {
-      relationType = field.settings?.relationType;
+    if (!isDefined(field.relationTargetObjectMetadataId)) {
+      throw new Error(
+        `Relation field "${field.name}" has no relationTargetObjectMetadataId`,
+      );
     }
+
+    const relationType = field.settings?.relationType;
 
     if (!isDefined(relationType)) {
-      return node;
+      throw new Error(
+        `Relation field "${field.name}" has no relationType in settings`,
+      );
     }
 
     const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -123,7 +127,9 @@ const getSchemaComponentsRelationProperties = (
     });
 
     if (!targetObjectMetadata) {
-      return node;
+      throw new Error(
+        `Relation field "${field.name}" target object metadata not found for id ${field.relationTargetObjectMetadataId}`,
+      );
     }
 
     let itemProperty = {} as Property;

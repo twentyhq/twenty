@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -102,13 +103,22 @@ export const convertObjectMetadataToSchemaProperties = ({
       return node;
     }
 
-    if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings?.relationType === RelationType.MANY_TO_ONE
-    ) {
+    const isRelationManyToOne =
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE;
+
+    if (isRelationManyToOne) {
+      const key = isFieldMetadataEntityOfType(
+        field,
+        FieldMetadataType.MORPH_RELATION,
+      )
+        ? computeMorphOrRelationFieldJoinColumnName({ name: field.name })
+        : `${field.name}Id`;
+
       return {
         ...node,
-        [`${field.name}Id`]: {
+        [key]: {
           type: 'string',
           format: 'uuid',
         },
@@ -116,27 +126,10 @@ export const convertObjectMetadataToSchemaProperties = ({
     }
 
     if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION) &&
-      field.settings.relationType === RelationType.MANY_TO_ONE &&
-      isDefined(field.settings.joinColumnName)
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+        field.settings?.relationType === RelationType.ONE_TO_MANY) ||
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
     ) {
-      return {
-        ...node,
-        [field.settings.joinColumnName]: {
-          type: 'string',
-          format: 'uuid',
-        },
-      };
-    }
-
-    if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings?.relationType === RelationType.ONE_TO_MANY
-    ) {
-      return node;
-    }
-
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) {
       return node;
     }
 
