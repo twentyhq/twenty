@@ -25,7 +25,7 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
   includeExampleSkill: true,
-  includeIntegrationTest: true,
+  includeExampleIntegrationTest: true,
 };
 
 const NO_EXAMPLES: ExampleOptions = {
@@ -36,7 +36,7 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleFrontComponent: false,
   includeExampleView: false,
   includeExampleNavigationMenuItem: false,
-  includeIntegrationTest: false,
+  includeExampleIntegrationTest: false,
 };
 
 describe('copyBaseApplicationProject', () => {
@@ -91,7 +91,7 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.devDependencies['twenty-sdk']).toBe(
+    expect(packageJson.dependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
     expect(packageJson.scripts['twenty']).toBe('twenty');
@@ -459,7 +459,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: true,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
-            includeIntegrationTest: false,
+            includeExampleIntegrationTest: false,
           },
         });
 
@@ -497,7 +497,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: false,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
-            includeIntegrationTest: false,
+            includeExampleIntegrationTest: false,
           },
         });
 
@@ -780,11 +780,17 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain(
         "import { MetadataApiClient } from 'twenty-sdk/generated'",
       );
+      expect(content).toContain(
+        "import applicationConfig from 'src/application-config'",
+      );
       expect(content).toContain('TWENTY_CONFIG_PATH');
       expect(content).toContain('assertServerIsReachable');
       expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
       expect(content).toContain('findManyApplications');
+      expect(content).toContain(
+        'applicationConfig.universalIdentifier',
+      );
     });
 
     it('should include vitest and test scripts in package.json when enabled', async () => {

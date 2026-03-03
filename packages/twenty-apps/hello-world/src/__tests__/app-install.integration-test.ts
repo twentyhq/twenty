@@ -1,10 +1,10 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import applicationConfig from 'src/application-config';
 
-const APP_PATH = path.resolve(__dirname, '../..');
+const APP_PATH = process.cwd();
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
 const TWENTY_CONFIG_PATH = process.env.TWENTY_CONFIG_PATH;
 
@@ -84,6 +84,12 @@ describe('App installation', () => {
       },
     });
 
-    expect(result.findManyApplications.length).toBeGreaterThan(0);
+    const installedApp = result.findManyApplications.find(
+      (application: { universalIdentifier: string }) =>
+        application.universalIdentifier ===
+        applicationConfig.universalIdentifier,
+    );
+
+    expect(installedApp).toBeDefined();
   });
 });

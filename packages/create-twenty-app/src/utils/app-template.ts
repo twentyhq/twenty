@@ -26,7 +26,8 @@ export const copyBaseApplicationProject = async ({
   await createPackageJson({
     appName,
     appDirectory,
-    includeIntegrationTest: exampleOptions.includeIntegrationTest,
+    includeExampleIntegrationTest:
+      exampleOptions.includeExampleIntegrationTest,
   });
 
   await createGitignore(appDirectory);
@@ -102,7 +103,7 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
-  if (exampleOptions.includeIntegrationTest) {
+  if (exampleOptions.includeExampleIntegrationTest) {
     await createIntegrationTest({
       appDirectory: sourceFolderPath,
       fileFolder: '__tests__',
@@ -196,6 +197,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+*.d.ts
 `;
 
   await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
@@ -538,6 +540,7 @@ const createIntegrationTest = async ({
 import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import applicationConfig from 'src/application-config';
 
 const APP_PATH = process.cwd();
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
@@ -619,7 +622,13 @@ describe('App installation', () => {
       },
     });
 
-    expect(result.findManyApplications.length).toBeGreaterThan(0);
+    const installedApp = result.findManyApplications.find(
+      (application: { universalIdentifier: string }) =>
+        application.universalIdentifier ===
+        applicationConfig.universalIdentifier,
+    );
+
+    expect(installedApp).toBeDefined();
   });
 });
 `;
@@ -659,11 +668,11 @@ export default defineApplication({
 const createPackageJson = async ({
   appName,
   appDirectory,
-  includeIntegrationTest,
+  includeExampleIntegrationTest,
 }: {
   appName: string;
   appDirectory: string;
-  includeIntegrationTest: boolean;
+  includeExampleIntegrationTest: boolean;
 }) => {
   const scripts: Record<string, string> = {
     twenty: 'twenty',
@@ -672,7 +681,6 @@ const createPackageJson = async ({
   };
 
   const devDependencies: Record<string, string> = {
-    'twenty-sdk': createTwentyAppPackageJson.version,
     typescript: '^5.9.3',
     '@types/node': '^24.7.2',
     '@types/react': '^18.2.0',
@@ -681,7 +689,7 @@ const createPackageJson = async ({
     'typescript-eslint': '^8.50.0',
   };
 
-  if (includeIntegrationTest) {
+  if (includeExampleIntegrationTest) {
     scripts.test = 'vitest run';
     scripts['test:watch'] = 'vitest';
     devDependencies.vitest = '^3.1.1';
@@ -698,7 +706,9 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts,
-    dependencies: {},
+    dependencies: {
+      'twenty-sdk': createTwentyAppPackageJson.version,
+    },
     devDependencies,
   };
 

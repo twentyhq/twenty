@@ -115,7 +115,7 @@ export class CreateAppCommand {
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
-        includeIntegrationTest: false,
+        includeExampleIntegrationTest: false,
       };
     }
 
@@ -128,7 +128,7 @@ export class CreateAppCommand {
         includeExampleView: true,
         includeExampleNavigationMenuItem: true,
         includeExampleSkill: true,
-        includeIntegrationTest: true,
+        includeExampleIntegrationTest: true,
       };
     }
 
@@ -184,21 +184,18 @@ export class CreateAppCommand {
 
     const includeField = selectedExamples.includes('field');
     const includeView = selectedExamples.includes('view');
-    const includeIntegrationTest =
+    const includeExampleIntegrationTest =
       selectedExamples.includes('integrationTest');
     const includeObject =
-      selectedExamples.includes('object') ||
-      includeField ||
-      includeView ||
-      includeIntegrationTest;
+      selectedExamples.includes('object') || includeField || includeView;
 
     if (
-      (includeField || includeView || includeIntegrationTest) &&
+      (includeField || includeView) &&
       !selectedExamples.includes('object')
     ) {
       console.log(
         chalk.yellow(
-          'Note: Example object auto-included because example field/view/integration test depends on it.',
+          'Note: Example object auto-included because example field/view depends on it.',
         ),
       );
     }
@@ -212,7 +209,7 @@ export class CreateAppCommand {
       includeExampleNavigationMenuItem:
         selectedExamples.includes('navigationMenuItem'),
       includeExampleSkill: selectedExamples.includes('skill'),
-      includeIntegrationTest,
+      includeExampleIntegrationTest,
     };
   }
 
