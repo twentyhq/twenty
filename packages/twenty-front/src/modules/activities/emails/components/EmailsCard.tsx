@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -22,6 +22,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TimelineThread,
   type TimelineThreadsWithTotal,
@@ -30,19 +31,20 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(6, 6, 2)};
+  gap: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[2]};
   height: 100%;
   overflow: auto;
 `;
 
 const StyledH1Title = styled(H1Title)`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledEmailCount = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 export const EmailsCard = () => {

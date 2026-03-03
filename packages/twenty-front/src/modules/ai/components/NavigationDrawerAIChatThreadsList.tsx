@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
@@ -9,6 +9,7 @@ import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
 import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
 import { getDateGroupTitle } from '@/ai/utils/getDateGroupTitle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledScrollableList = styled.div`
@@ -17,8 +18,8 @@ const StyledScrollableList = styled.div`
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(2, 0)};
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(2)})`};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};
+  width: calc(100% - ${themeCssVariables.spacing[2]});
 `;
 
 export const NavigationDrawerAIChatThreadsList = () => {

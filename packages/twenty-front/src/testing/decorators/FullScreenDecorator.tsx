@@ -1,5 +1,5 @@
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Decorator } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 const StyledT = styled.div`

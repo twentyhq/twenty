@@ -1,11 +1,11 @@
-import { type Theme } from '@emotion/react';
+import { type ThemeType } from 'twenty-ui/theme';
 
 export const getIconColorForObjectType = ({
   objectType,
   theme,
 }: {
   objectType: string;
-  theme: Theme;
+  theme: ThemeType;
 }): string => {
   switch (objectType) {
     case 'note':

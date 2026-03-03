@@ -1,7 +1,7 @@
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
@@ -9,11 +9,12 @@ import {
   type AgentResponseSchema,
 } from 'twenty-shared/ai';
 import { v4 } from 'uuid';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsAgentResponseFormatProps = {
