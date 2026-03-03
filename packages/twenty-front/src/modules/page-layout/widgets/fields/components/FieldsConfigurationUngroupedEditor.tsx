@@ -79,16 +79,16 @@ export const FieldsConfigurationUngroupedEditor = ({
               />
             ))}
             {provided.placeholder}
+
+            <MenuItem
+              LeftIcon={IconNewSection}
+              withIconContainer
+              text={t`Add a Section`}
+              onClick={onAddGroup}
+            />
           </StyledFieldsDroppable>
         )}
       </Droppable>
-
-      <MenuItem
-        LeftIcon={IconNewSection}
-        withIconContainer
-        text={t`Add a Section`}
-        onClick={onAddGroup}
-      />
     </DragDropContext>
   );
 };
