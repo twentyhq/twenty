@@ -1,21 +1,19 @@
-import { css } from '@emotion/react';
+import { themeCssVariables } from '../../theme-constants';
 
-import { type ThemeType } from '..';
-
-export const TEXT_INPUT_STYLE = (props: { theme: ThemeType }) => css`
+export const TEXT_INPUT_STYLE = `
   background-color: transparent;
   border: none;
-  color: ${props.theme.font.color.primary};
-  font-family: ${props.theme.font.family};
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
   font-size: inherit;
   font-weight: inherit;
   outline: none;
-  padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${props.theme.font.color.light};
-    font-family: ${props.theme.font.family};
-    font-weight: ${props.theme.font.weight.medium};
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 `;

@@ -1,10 +1,11 @@
-import { useTheme } from '@emotion/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
@@ -32,7 +33,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   navigationMenuItemFolderContentLength,
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 

@@ -2,13 +2,19 @@ import { type AttachmentFileCategory } from '@/activities/files/types/Attachment
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { type FileUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipVariant,
+  LinkChip,
+} from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const AgentChatFilePreview = ({
   file,
@@ -19,7 +25,7 @@ export const AgentChatFilePreview = ({
   onRemove?: () => void;
   isUploading?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const iconColors: Record<AttachmentFileCategory, string> =
     useFileCategoryColors();
 
@@ -36,20 +42,21 @@ export const AgentChatFilePreview = ({
   const leftComponent = isUploading ? (
     <Loader color="yellow" />
   ) : (
-    <AvatarChip
+    <AvatarOrIcon
       Icon={FileCategoryIcon}
       IconBackgroundColor={iconBackgroundColor}
     />
   );
 
   const rightComponent = onRemove ? (
-    <AvatarChip
+    <AvatarOrIcon
       Icon={IconX}
       IconColor={theme.font.color.secondary}
       onClick={onRemove}
-      divider="left"
     />
   ) : undefined;
+
+  const hasRightDivider = isDefined(onRemove);
 
   if (isDefined(fileUrl)) {
     return (
@@ -61,6 +68,7 @@ export const AgentChatFilePreview = ({
         target="_blank"
         leftComponent={leftComponent}
         rightComponent={rightComponent}
+        rightComponentDivider={hasRightDivider}
       />
     );
   }
@@ -73,6 +81,7 @@ export const AgentChatFilePreview = ({
       clickable={false}
       leftComponent={leftComponent}
       rightComponent={rightComponent}
+      rightComponentDivider={hasRightDivider}
     />
   );
 };

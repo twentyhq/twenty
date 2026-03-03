@@ -1,13 +1,14 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -16,11 +17,13 @@ const StyledContainer = styled.div`
 
 const StyledPicture = styled.button<{ withPicture: boolean }>`
   align-items: center;
-  background: ${({ theme, disabled }) =>
-    disabled ? theme.background.secondary : theme.background.transparent.light};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.light};
+  background: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.background.secondary
+      : themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   height: 66px;
@@ -38,17 +41,17 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
   }
 
   &:hover svg {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 
-  ${({ theme, withPicture, disabled }) => {
+  ${({ withPicture, disabled }) => {
     if ((withPicture || disabled) === true) {
       return '';
     }
 
     return `
       &:hover {
-        background: ${theme.background.transparent.medium};
+        background: ${themeCssVariables.background.transparent.medium};
       }
     `;
   }};
@@ -59,27 +62,27 @@ const StyledContent = styled.div`
   flex: 1;
   flex-direction: column;
   justify-content: start;
-  margin-left: ${({ theme }) => theme.spacing(4)};
+  margin-left: ${themeCssVariables.spacing[4]};
 
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const StyledErrorText = styled.span`
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.xs};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledHiddenFileInput = styled.input`
@@ -108,7 +111,7 @@ export const ImageInput = ({
   className,
 }: ImageInputProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();

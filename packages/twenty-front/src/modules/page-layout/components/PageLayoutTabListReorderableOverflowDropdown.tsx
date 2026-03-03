@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Draggable,
   type DraggableProvided,
@@ -30,6 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -65,7 +65,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onClose,
   pageLayoutType,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 

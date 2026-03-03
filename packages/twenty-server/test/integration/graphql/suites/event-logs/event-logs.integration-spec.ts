@@ -36,7 +36,7 @@ describe('Event Logs (integration)', () => {
 
     const pageviewRecords = Array.from({ length: 25 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userWorkspaceId: testUserWorkspaceId,
+      userId: testUserWorkspaceId,
       name: i % 2 === 0 ? 'settings/profile' : 'objects/companies',
       timestamp: new Date(now.getTime() - i * 60000)
         .toISOString()
@@ -47,7 +47,7 @@ describe('Event Logs (integration)', () => {
 
     const workspaceEventRecords = Array.from({ length: 15 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userWorkspaceId: testUserWorkspaceId,
+      userId: testUserWorkspaceId,
       event:
         i % 3 === 0
           ? 'user.login'
@@ -63,7 +63,7 @@ describe('Event Logs (integration)', () => {
 
     const objectEventRecords = Array.from({ length: 20 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userWorkspaceId: testUserWorkspaceId,
+      userId: testUserWorkspaceId,
       event: i % 2 === 0 ? 'company.created' : 'company.updated',
       timestamp: new Date(now.getTime() - i * 90000)
         .toISOString()
@@ -127,7 +127,7 @@ describe('Event Logs (integration)', () => {
               records {
                 event
                 timestamp
-                userWorkspaceId
+                userId
                 properties
                 recordId
                 objectMetadataId
@@ -462,7 +462,7 @@ describe('Event Logs (integration)', () => {
 
       expect(record).toHaveProperty('event');
       expect(record).toHaveProperty('timestamp');
-      expect(record).toHaveProperty('userWorkspaceId');
+      expect(record).toHaveProperty('userId');
       expect(record).toHaveProperty('properties');
       expect(typeof record.event).toBe('string');
       expect(typeof record.timestamp).toBe('string');

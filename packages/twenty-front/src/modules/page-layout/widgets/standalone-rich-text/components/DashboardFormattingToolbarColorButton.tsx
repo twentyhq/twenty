@@ -1,8 +1,5 @@
-import {
-  useBlockNoteEditor,
-  useEditorContentOrSelectionChange,
-} from '@blocknote/react';
-import styled from '@emotion/styled';
+import { useActiveStyles, useBlockNoteEditor } from '@blocknote/react';
+import { styled } from '@linaria/react';
 import {
   autoUpdate,
   flip,
@@ -21,21 +18,22 @@ import { extractColorFromProps } from '@/page-layout/widgets/standalone-rich-tex
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledColorButton = styled.button`
   align-items: center;
   background: transparent;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
   height: 24px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   width: 24px;
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -47,18 +45,12 @@ export const DashboardFormattingToolbarColorButton = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [currentTextColor, setCurrentTextColor] =
-    useState<BlockNoteColor>('default');
-  const [currentBackgroundColor, setCurrentBackgroundColor] =
-    useState<BlockNoteColor>('default');
-
-  useEditorContentOrSelectionChange(() => {
-    const activeStyles = editor.getActiveStyles();
-    setCurrentTextColor(extractColorFromProps(activeStyles, 'text'));
-    setCurrentBackgroundColor(
-      extractColorFromProps(activeStyles, 'background'),
-    );
-  }, editor);
+  const activeStyles = useActiveStyles(editor);
+  const currentTextColor = extractColorFromProps(activeStyles, 'text');
+  const currentBackgroundColor = extractColorFromProps(
+    activeStyles,
+    'background',
+  );
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',

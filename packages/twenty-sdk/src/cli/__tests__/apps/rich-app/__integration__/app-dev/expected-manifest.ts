@@ -28,6 +28,18 @@ export const EXPECTED_MANIFEST: Manifest = {
         value: 'Alex Karp',
       },
     },
+    serverVariables: {
+      POSTCARD_API_KEY: {
+        description: 'API key for the postcard printing service',
+        isSecret: true,
+        isRequired: true,
+      },
+      POSTCARD_SENDER_NAME: {
+        description: 'Default sender name on postcards',
+        isSecret: false,
+        isRequired: false,
+      },
+    },
     description: 'A simple rich app',
     displayName: 'Rich App',
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
@@ -697,7 +709,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Timeline Activities',
           name: 'timelineActivities',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -713,7 +725,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Favorites',
           name: 'favorites',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -729,7 +741,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -745,7 +757,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Note Targets',
           name: 'noteTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -761,7 +773,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Task Targets',
           name: 'taskTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -895,7 +907,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Timeline Activities',
           name: 'timelineActivities',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -911,7 +923,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Favorites',
           name: 'favorites',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -927,7 +939,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -943,7 +955,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Note Targets',
           name: 'noteTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -959,7 +971,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post Card Recipients tied to the PostCardRecipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Task Targets',
           name: 'taskTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1153,7 +1165,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Timeline Activities',
           name: 'timelineActivities',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1169,7 +1181,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Favorites',
           name: 'favorites',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1185,7 +1197,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1201,7 +1213,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Note Targets',
           name: 'noteTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1217,7 +1229,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Task Targets',
           name: 'taskTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1356,7 +1368,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Timeline Activities',
           name: 'timelineActivities',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1372,7 +1384,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Favorites',
           name: 'favorites',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1388,7 +1400,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1404,7 +1416,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Note Targets',
           name: 'noteTargets',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1420,7 +1432,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           description: 'Recipients tied to the Recipient',
           icon: 'IconBuildingSkyscraper',
-          isNullable: false,
+          isNullable: true,
           label: 'Task Targets',
           name: 'taskTargets',
           relationTargetFieldMetadataUniversalIdentifier:

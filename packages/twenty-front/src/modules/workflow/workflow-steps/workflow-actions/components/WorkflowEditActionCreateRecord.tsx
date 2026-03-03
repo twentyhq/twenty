@@ -12,7 +12,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
@@ -66,8 +65,6 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
-  const theme = useTheme();
-
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -218,7 +215,7 @@ export const WorkflowEditActionCreateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

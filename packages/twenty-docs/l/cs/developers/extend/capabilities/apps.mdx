@@ -52,25 +52,25 @@ npx create-twenty-app@latest my-app --interactive
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Sledujte logy funkcí vaší aplikace
 yarn twenty function:logs
 
-# Execute a function by name
+# Spusťte funkci podle názvu
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Spusťte předinstalační funkci
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Spusťte postinstalační funkci
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Odinstalujte aplikaci z aktuálního pracovního prostoru
 yarn twenty app:uninstall
 
-# Display commands' help
+# Zobrazte nápovědu k příkazům
 yarn twenty help
 ```
 
@@ -83,7 +83,7 @@ Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 * Zkopíruje minimální základní aplikaci do `my-twenty-app/`
 * Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
 * Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, předinstalační a postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
 
 Čerstvě vygenerovaná aplikace s výchozím režimem `--exhaustive` vypadá takto:
 
@@ -99,30 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Výchozí role pro logické funkce
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Ukázková definice vlastního objektu
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Ukázková samostatná definice pole
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Ukázková logická funkce
+  │   ├── pre-install.ts                # Předinstalační logická funkce
+  │   └── post-install.ts               # Postinstalační logická funkce
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Ukázková front-endová komponenta
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Ukázková definice uloženého zobrazení
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Ukázkový odkaz postranní navigace
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Ukázková definice dovednosti agenta AI
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
+S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
 
 V kostce:
 
@@ -139,18 +139,18 @@ V kostce:
 
 SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
 
-| Pomocná funkce                     | Typ entity                                            |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | Definice vlastních objektů                            |
-| `defineLogicFunction()`            | Definice logických funkcí                             |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Definice frontendových komponent                      |
-| `defineRole()`                     | Definice rolí                                         |
-| `defineField()`                    | Rozšíření polí u existujících objektů                 |
-| `defineView()`                     | Definice uložených zobrazení                          |
-| `defineNavigationMenuItem()`       | Definice položek navigační nabídky                    |
-| `defineSkill()`                    | Definice dovedností agenta AI                         |
+| Pomocná funkce                     | Typ entity                                                |
+| ---------------------------------- | --------------------------------------------------------- |
+| `defineObject()`                   | Definice vlastních objektů                                |
+| `defineLogicFunction()`            | Definice logických funkcí                                 |
+| `definePreInstallLogicFunction()`  | Předinstalační logická funkce (spouští se před instalací) |
+| `definePostInstallLogicFunction()` | Postinstalační logická funkce (spouští se po instalaci)   |
+| `defineFrontComponent()`           | Definice frontendových komponent                          |
+| `defineRole()`                     | Definice rolí                                             |
+| `defineField()`                    | Rozšíření polí u existujících objektů                     |
+| `defineView()`                     | Definice uložených zobrazení                              |
+| `defineNavigationMenuItem()`       | Definice položek navigační nabídky                        |
+| `defineSkill()`                    | Definice dovedností agenta AI                             |
 
 <Note>
 **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
@@ -220,8 +220,8 @@ SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je pop
 | `defineApplication()`              | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
 | `defineObject()`                   | Definice vlastních objektů s poli                                 |
 | `defineLogicFunction()`            | Definice logických funkcí s obslužnými funkcemi                   |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                 |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                |
+| `definePreInstallLogicFunction()`  | Definujte předinstalační logickou funkci (jedna na aplikaci)      |
+| `definePostInstallLogicFunction()` | Definujte postinstalační logickou funkci (jedna na aplikaci)      |
 | `defineFrontComponent()`           | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
 | `defineRole()`                     | Konfigurace oprávnění rolí a přístupu k objektům                  |
 | `defineField()`                    | Rozšiřte existující objekty o další pole                          |
@@ -327,7 +327,7 @@ Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(Volitelná) předinstalační funkce**: logická funkce, která se spouští před instalací aplikace.
 * **(Volitelná) postinstalační funkce**: logická funkce, která se spouští po instalaci aplikace.
 
 Use `defineApplication()` to define your application configuration:
@@ -359,7 +359,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* Předinstalační a postinstalační funkce jsou při sestavování manifestu automaticky detekovány. Viz [Předinstalační funkce](#pre-install-functions) a [Postinstalační funkce](#post-install-functions).
 
 #### Role a oprávnění
 
@@ -498,11 +498,11 @@ Poznámky:
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
-### Pre-install functions
+### Předinstalační funkce
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+Předinstalační funkce je logická funkce, která se automaticky spouští před instalací vaší aplikace v pracovním prostoru. To je užitečné pro validační úlohy, kontrolu předpokladů nebo přípravu stavu pracovního prostoru před zahájením hlavní instalace.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří se pro vás předinstalační funkce v `src/logic-functions/pre-install.ts`:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +521,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Předinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +529,12 @@ yarn twenty function:execute --preInstall
 
 Hlavní body:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* Předinstalační funkce používají `definePreInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna předinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `preInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší přípravné úlohy.
+* Předinstalační funkce nepotřebují spouštěče — platforma je vyvolává před instalací nebo je lze spustit ručně pomocí `function:execute --preInstall`.
 
 ### Postinstalační funkce
 
@@ -567,10 +567,10 @@ yarn twenty function:execute --postInstall
 
 Hlavní body:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* Postinstalační funkce používají `definePostInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna postinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `postInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
 * Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší úlohy nastavení, jako je naplnění daty.
 * Postinstalační funkce nepotřebují spouštěče — jsou spouštěny platformou během instalace nebo ručně pomocí `function:execute --postInstall`.
 

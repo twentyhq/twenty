@@ -34,9 +34,11 @@ export const LinkChip = ({
   size = ChipSize.Small,
   label,
   isLabelHidden = false,
+  isBold = false,
   variant = ChipVariant.Regular,
   leftComponent = null,
   rightComponent = null,
+  rightComponentDivider = false,
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
@@ -68,10 +70,12 @@ export const LinkChip = ({
         size={size}
         label={label}
         isLabelHidden={isLabelHidden}
+        isBold={isBold}
         clickable={true}
         variant={variant}
         leftComponent={leftComponent}
         rightComponent={rightComponent}
+        rightComponentDivider={rightComponentDivider}
         accent={accent}
         className={className}
         maxWidth={maxWidth}

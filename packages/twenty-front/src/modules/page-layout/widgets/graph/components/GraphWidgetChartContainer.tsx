@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 type GraphWidgetChartContainerProps = {
   $isClickable?: boolean;
@@ -11,13 +11,13 @@ const StyledGraphWidgetChartContainer = styled.div<GraphWidgetChartContainerProp
   width: 100%;
 
   ${({ $isClickable, $cursorSelector }) =>
-    $isClickable &&
-    $cursorSelector &&
-    `
+    $isClickable && $cursorSelector
+      ? `
     ${$cursorSelector} {
       cursor: pointer;
     }
-  `}
+  `
+      : ''}
 `;
 
 export const GraphWidgetChartContainer = StyledGraphWidgetChartContainer;

@@ -1,11 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAIAgentTableRowProps = {
@@ -19,20 +20,20 @@ export const StyledAIAgentTableRow = styled(TableRow)`
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAIAgentTableRow = ({
@@ -40,7 +41,7 @@ export const SettingsAIAgentTableRow = ({
   agent,
   link,
 }: SettingsAIAgentTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(agent.icon || 'IconRobot');
 

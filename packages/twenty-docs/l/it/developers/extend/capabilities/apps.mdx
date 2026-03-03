@@ -52,25 +52,25 @@ npx create-twenty-app@latest my-app --interactive
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
-# Execute a function by name
+# Esegui una funzione per nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Esegui la funzione di pre-installazione
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Esegui la funzione post-installazione
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn twenty help
 ```
 
@@ -83,7 +83,7 @@ Quando esegui `npx create-twenty-app@latest my-twenty-app`, lo scaffolder:
 * Copia un'applicazione base minimale in `my-twenty-app/`
 * Aggiunge una dipendenza locale `twenty-sdk` e la configurazione di Yarn 4
 * Crea file di configurazione e script collegati alla CLI `twenty`
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* Genera i file principali (configurazione dell'applicazione, ruolo predefinito per le funzioni logiche, funzioni di pre-installazione e post-installazione) più i file di esempio in base alla modalità di scaffolding
 
 Un'app appena creata con la modalità predefinita `--exhaustive` si presenta così:
 
@@ -99,30 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Cartella delle risorse pubbliche (immagini, font, ecc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obbligatorio - configurazione principale dell'applicazione
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Ruolo predefinito per le funzioni logiche
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Definizione di oggetto personalizzato di esempio
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Definizione di campo autonomo di esempio
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Funzione logica di esempio
+  │   ├── pre-install.ts                # Funzione logica di pre-installazione
+  │   └── post-install.ts               # Funzione logica di post-installazione
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Componente front-end di esempio
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Definizione di vista salvata di esempio
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Link di navigazione della barra laterale di esempio
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Definizione di skill per agente IA di esempio
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
+Con `--minimal`, vengono creati solo i file principali (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` e `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
 
 A livello generale:
 
@@ -139,18 +139,18 @@ A livello generale:
 
 L'SDK rileva le entità analizzando i tuoi file TypeScript alla ricerca di chiamate **`export default define<Entity>({...})`**. Ogni tipo di entità ha una corrispondente funzione helper esportata da `twenty-sdk`:
 
-| Funzione helper                    | Tipo di entità                                        |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | Definizioni di oggetti personalizzati                 |
-| `defineLogicFunction()`            | Definizioni di funzioni logiche                       |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Definizioni dei componenti front-end                  |
-| `defineRole()`                     | Definizioni di ruoli                                  |
-| `defineField()`                    | Estensioni di campo per oggetti esistenti             |
-| `defineView()`                     | Definizioni di viste salvate                          |
-| `defineNavigationMenuItem()`       | Definizioni delle voci del menu di navigazione        |
-| `defineSkill()`                    | AI agent skill definitions                            |
+| Funzione helper                    | Tipo di entità                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `defineObject()`                   | Definizioni di oggetti personalizzati                                          |
+| `defineLogicFunction()`            | Definizioni di funzioni logiche                                                |
+| `definePreInstallLogicFunction()`  | Funzione logica di pre-installazione (viene eseguita prima dell'installazione) |
+| `definePostInstallLogicFunction()` | Funzione logica di post-installazione (viene eseguita dopo l'installazione)    |
+| `defineFrontComponent()`           | Definizioni dei componenti front-end                                           |
+| `defineRole()`                     | Definizioni di ruoli                                                           |
+| `defineField()`                    | Estensioni di campo per oggetti esistenti                                      |
+| `defineView()`                     | Definizioni di viste salvate                                                   |
+| `defineNavigationMenuItem()`       | Definizioni delle voci del menu di navigazione                                 |
+| `defineSkill()`                    | AI agent skill definitions                                                     |
 
 <Note>
 **La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
@@ -215,19 +215,19 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
 
-| Funzione                           | Scopo                                                                   |
-| ---------------------------------- | ----------------------------------------------------------------------- |
-| `defineApplication()`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
-| `defineObject()`                   | Definisci oggetti personalizzati con campi                              |
-| `defineLogicFunction()`            | Definisci funzioni logiche con handler                                  |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                       |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                      |
-| `defineFrontComponent()`           | Definisci componenti front-end per un'interfaccia utente personalizzata |
-| `defineRole()`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
-| `defineField()`                    | Estendi gli oggetti esistenti con campi aggiuntivi                      |
-| `defineView()`                     | Definisce viste salvate per gli oggetti                                 |
-| `defineNavigationMenuItem()`       | Definisce i link di navigazione della barra laterale                    |
-| `defineSkill()`                    | Define AI agent skills                                                  |
+| Funzione                           | Scopo                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `defineApplication()`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)         |
+| `defineObject()`                   | Definisci oggetti personalizzati con campi                                 |
+| `defineLogicFunction()`            | Definisci funzioni logiche con handler                                     |
+| `definePreInstallLogicFunction()`  | Definisce una funzione logica di pre-installazione (una per applicazione)  |
+| `definePostInstallLogicFunction()` | Definisce una funzione logica di post-installazione (una per applicazione) |
+| `defineFrontComponent()`           | Definisci componenti front-end per un'interfaccia utente personalizzata    |
+| `defineRole()`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                    |
+| `defineField()`                    | Estendi gli oggetti esistenti con campi aggiuntivi                         |
+| `defineView()`                     | Definisce viste salvate per gli oggetti                                    |
+| `defineNavigationMenuItem()`       | Definisce i link di navigazione della barra laterale                       |
+| `defineSkill()`                    | Define AI agent skills                                                     |
 
 Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
@@ -327,7 +327,7 @@ Ogni app ha un singolo file `application-config.ts` che descrive:
 * **Identità dell'app**: identificatori, nome visualizzato e descrizione.
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(Opzionale) funzione di pre-installazione**: una funzione logica che viene eseguita prima che l'app venga installata.
 * **(Opzionale) funzione post-installazione**: una funzione logica che viene eseguita dopo l'installazione dell'app.
 
 Usa `defineApplication()` per definire la configurazione della tua applicazione:
@@ -359,7 +359,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante la build del manifesto. Vedi [Funzioni di pre-installazione](#pre-install-functions) e [Funzioni di post-installazione](#post-install-functions).
 
 #### Ruoli e permessi
 
@@ -498,11 +498,11 @@ Note:
 * L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
 * Puoi combinare più tipi di trigger in un'unica funzione.
 
-### Pre-install functions
+### Funzioni di pre-installazione
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+Una funzione di pre-installazione è una funzione logica che viene eseguita automaticamente prima che la tua app venga installata in uno spazio di lavoro. È utile per attività di convalida, controlli dei prerequisiti o per preparare lo stato dello spazio di lavoro prima che proceda l'installazione principale.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene generata una funzione di pre-installazione in `src/logic-functions/pre-install.ts`:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +521,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +529,12 @@ yarn twenty function:execute --preInstall
 
 Punti chiave:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* Le funzioni di pre-installazione utilizzano `definePreInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di pre-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `preInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di preparazione più lunghe.
+* Le funzioni di pre-installazione non necessitano di trigger — vengono invocate dalla piattaforma prima dell'installazione o manualmente tramite `function:execute --preInstall`.
 
 ### Funzioni post-installazione
 
@@ -567,10 +567,10 @@ yarn twenty function:execute --postInstall
 
 Punti chiave:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* Le funzioni di post-installazione utilizzano `definePostInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `postInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
 * Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
 * Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `function:execute --postInstall`.
 

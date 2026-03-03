@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
+
+import { ThemeContext } from '@ui/theme';
 
 const StyledAnimatedContainer = styled(motion.div)`
   align-items: center;
@@ -14,7 +15,7 @@ export const AnimatedCircleLoading = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledAnimatedContainer
       initial={{ rotate: 0 }}

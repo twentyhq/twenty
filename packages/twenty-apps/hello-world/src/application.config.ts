@@ -1,6 +1,6 @@
-import { type ApplicationConfig } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 
-const config: ApplicationConfig = {
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'Hello World',
   description: 'A simple hello world app',
@@ -14,6 +14,4 @@ const config: ApplicationConfig = {
     },
   },
   defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-};
-
-export default config;
+});

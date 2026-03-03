@@ -8,6 +8,7 @@ import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/const
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -16,19 +17,20 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { WORKFLOW_DIAGRAM_CREATE_STEP_NODE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramCreateStepNodeClickOutsideId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useTheme } from '@emotion/react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useCallback, useRef } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledCommandMenu = styled(motion.div)`
-  background: ${({ theme }) => theme.background.primary};
-  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  font-family: ${({ theme }) => theme.font.family};
+const StyledCommandMenuBase = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  font-family: ${themeCssVariables.font.family};
   height: 100%;
   overflow: hidden;
   padding: 0;
@@ -39,6 +41,7 @@ const StyledCommandMenu = styled(motion.div)`
   display: flex;
   flex-direction: column;
 `;
+const StyledCommandMenu = motion.create(StyledCommandMenuBase);
 
 export const CommandMenuOpenContainer = ({
   children,
@@ -49,7 +52,7 @@ export const CommandMenuOpenContainer = ({
     ? 'fullScreen'
     : 'normal';
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -76,6 +79,7 @@ export const CommandMenuOpenContainer = ({
     callback: handleClickOutside,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     excludedClickOutsideIds: [
+      NAVIGATION_DRAWER_CLICK_OUTSIDE_ID,
       PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,
       RECORD_CHIP_CLICK_OUTSIDE_ID,

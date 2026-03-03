@@ -1,6 +1,5 @@
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
-import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 import {
   type OrchestratorState,
   type OrchestratorStateStepEvent,
@@ -37,9 +36,9 @@ export class BuildManifestOrchestratorStep {
       { message: 'Building manifest', status: 'info' },
     ];
 
-    const result = await buildManifest(input.appPath);
+    const result = await buildAndValidateManifest(input.appPath);
 
-    if (result.errors.length > 0 || !result.manifest) {
+    if (!result.success) {
       for (const error of result.errors) {
         events.push({ message: error, status: 'error' });
       }
@@ -52,23 +51,8 @@ export class BuildManifestOrchestratorStep {
       return null;
     }
 
-    const validation = manifestValidate(result.manifest);
-
-    if (!validation.isValid) {
-      for (const validationError of validation.errors) {
-        events.push({ message: validationError, status: 'error' });
-      }
-
-      step.output = { result: null };
-      step.status = 'error';
-      this.state.updatePipeline({ status: 'error' });
-      this.state.applyStepEvents(events);
-
-      return null;
-    }
-
-    if (validation.warnings.length > 0) {
-      for (const warning of validation.warnings) {
+    if (result.warnings.length > 0) {
+      for (const warning of result.warnings) {
         events.push({ message: `⚠ ${warning}`, status: 'warning' });
       }
     }
@@ -78,7 +62,12 @@ export class BuildManifestOrchestratorStep {
       status: 'success',
     });
 
-    step.output = { result };
+    const buildResult: ManifestBuildResult = {
+      manifest: result.manifest,
+      filePaths: result.filePaths,
+    };
+
+    step.output = { result: buildResult };
     step.status = 'done';
     this.state.updatePipeline({
       appName: result.manifest.application.displayName,
@@ -86,6 +75,6 @@ export class BuildManifestOrchestratorStep {
     this.state.updateEntitiesFromManifest(result.filePaths);
     this.state.applyStepEvents(events);
 
-    return result;
+    return buildResult;
   }
 }
