@@ -138,9 +138,7 @@ describe('scaffoldIntegrationTest', () => {
         join(testAppDirectory, 'tsconfig.json'),
       );
 
-      expect(tsconfig.references).toEqual([
-        { path: './tsconfig.spec.json' },
-      ]);
+      expect(tsconfig.references).toEqual([{ path: './tsconfig.spec.json' }]);
     });
   });
 });
