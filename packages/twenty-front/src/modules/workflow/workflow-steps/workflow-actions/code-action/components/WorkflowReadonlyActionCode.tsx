@@ -59,6 +59,7 @@ export const WorkflowReadonlyActionCode = ({
         />
         <StyledCodeEditorContainer>
           <CodeEditor
+            componentInstanceId={`workflow-code-readonly-${logicFunctionId}`}
             height={343}
             value={sourceHandlerCode ?? undefined}
             language="typescript"

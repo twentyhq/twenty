@@ -152,6 +152,7 @@ export const RawJsonFieldInput = () => {
       {isEditing ? (
         <StyledCodeEditorContainer>
           <CodeEditor
+            componentInstanceId={`code-editor-${instanceId}`}
             value={draftValue}
             language="application/json"
             height={CONTAINER_HEIGHT - 8}

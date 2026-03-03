@@ -275,6 +275,7 @@ export const CodeExecutionDisplay = ({
         >
           <StyledCodeEditorContainer>
             <CodeEditor
+              componentInstanceId={'code-execution-display'}
               value={code}
               language="python"
               height="300px"

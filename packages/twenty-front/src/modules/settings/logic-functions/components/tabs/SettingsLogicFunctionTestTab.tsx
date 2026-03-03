@@ -40,13 +40,6 @@ export const SettingsLogicFunctionTestTab = ({
     logicFunctionId,
   );
 
-  const onHeightChange = (height: number) => {
-    setLogicFunctionTestData((prev) => ({
-      ...prev,
-      height,
-    }));
-  };
-
   const onChange = (newInput: string) => {
     setLogicFunctionTestData((prev) => ({
       ...prev,
@@ -79,20 +72,18 @@ export const SettingsLogicFunctionTestTab = ({
             ]}
           />
           <CodeEditor
+            componentInstanceId={`settings-logic-function-code-editor-${logicFunctionId}`}
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}
             language="json"
-            height={logicFunctionTestData.height}
+            height={100}
             onChange={onChange}
-            onHeightChange={onHeightChange}
             variant="with-header"
             resizable
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
+          componentInstanceId={`settings-logic-function-execution-result-${logicFunctionId}`}
           logicFunctionTestData={logicFunctionTestData}
-          maxHeight={
-            logicFunctionTestData.output.logs.length > 0 ? 200 : undefined
-          }
           isTesting={isTesting}
         />
         {logicFunctionTestData.output.logs.length > 0 && (

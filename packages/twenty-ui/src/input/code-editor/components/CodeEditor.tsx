@@ -22,7 +22,7 @@ type CodeEditorProps = Pick<
   isLoading?: boolean;
   transparentBackground?: boolean;
   resizable?: boolean;
-  onHeightChange?: (height: number) => void;
+  componentInstanceId: string;
 };
 
 const StyledEditorLoader = styled.div<{
@@ -146,7 +146,7 @@ export const CodeEditor = ({
   isLoading = false,
   options,
   resizable = false,
-  onHeightChange,
+  componentInstanceId,
 }: CodeEditorProps) => {
   const { theme } = useContext(ThemeContext);
   const [monaco, setMonaco] = useState<Monaco | undefined>(undefined);
@@ -156,12 +156,14 @@ export const CodeEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const numericHeight = typeof height === 'number' ? height : 450;
-  const { currentHeight, isResizing, handleResizeStart } = useResizableEditor({
+  const {
+    height: currentHeight,
+    isResizing,
+    handleResizeStart,
+  } = useResizableEditor({
     initialHeight: numericHeight,
-    onHeightChange,
+    componentInstanceId,
   });
-
-  const effectiveHeight = resizable ? currentHeight : height;
 
   const setModelMarkers = (
     editor: editor.IStandaloneCodeEditor | undefined,
@@ -184,7 +186,7 @@ export const CodeEditor = ({
   };
 
   return isLoading ? (
-    <StyledEditorLoader height={effectiveHeight} variant={variant}>
+    <StyledEditorLoader height={currentHeight} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
@@ -200,7 +202,7 @@ export const CodeEditor = ({
         transparentBackground={transparentBackground}
       >
         <Editor
-          height={effectiveHeight}
+          height={currentHeight}
           value={value}
           language={language}
           loading=""

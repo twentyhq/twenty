@@ -60,6 +60,7 @@ export const WorkflowCodeEditor = ({
         </StyledFullScreenButtonContainer>
       )}
       <CodeEditor
+        componentInstanceId={`workflow-code-editor`}
         height="100%"
         value={value}
         language="typescript"
