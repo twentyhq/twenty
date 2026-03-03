@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
@@ -21,7 +20,6 @@ import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { GetChatThreadsDocument } from '~/generated-metadata/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
@@ -166,11 +164,20 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
         setCurrentAIChatThreadTitle(titlePart.data.title);
-        void apolloClient.refetchQueries({
-          include: [
-            getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
-          ],
-        });
+        if (isDefined(currentAIChatThread)) {
+          const threadRef = apolloClient.cache.identify({
+            __typename: 'AgentChatThread',
+            id: currentAIChatThread,
+          });
+          if (isDefined(threadRef)) {
+            apolloClient.cache.modify({
+              id: threadRef,
+              fields: {
+                title: () => titlePart.data.title,
+              },
+            });
+          }
+        }
       }
     },
   });
