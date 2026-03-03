@@ -56,10 +56,11 @@ export const useUploadAppTarball = () => {
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
+        const status = response.status;
         const errorMessage =
           errorBody.messages?.[0] ??
           errorBody.message ??
-          t`Upload failed (${response.status})`;
+          t`Upload failed (${status})`;
 
         enqueueErrorSnackBar({ message: errorMessage });
 
