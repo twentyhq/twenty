@@ -2,12 +2,12 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type Manifest } from 'twenty-shared/application';
+import { runSafe } from '@/cli/utilities/run-safe';
 import {
   APP_ERROR_CODES,
   FUNCTION_ERROR_CODES,
   type CommandResult,
   type FunctionExecutionResult,
-  runSafe,
 } from './types';
 
 export type FunctionExecuteOptions = {

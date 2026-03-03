@@ -1,5 +1,6 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { AUTH_ERROR_CODES, type CommandResult, runSafe } from './types';
+import { runSafe } from '@/cli/utilities/run-safe';
+import { AUTH_ERROR_CODES, type CommandResult } from './types';
 
 export type AuthLogoutOptions = {
   workspace?: string;

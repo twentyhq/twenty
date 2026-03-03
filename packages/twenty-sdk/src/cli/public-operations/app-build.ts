@@ -3,7 +3,8 @@ import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchr
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ClientService } from '@/cli/utilities/client/client-service';
-import { APP_ERROR_CODES, type CommandResult, runSafe } from './types';
+import { runSafe } from '@/cli/utilities/run-safe';
+import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppBuildOptions = {
   appPath: string;

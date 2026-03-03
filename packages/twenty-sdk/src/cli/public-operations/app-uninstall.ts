@@ -1,7 +1,8 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { APP_ERROR_CODES, type CommandResult, runSafe } from './types';
+import { runSafe } from '@/cli/utilities/run-safe';
+import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppUninstallOptions = {
   appPath: string;
