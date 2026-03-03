@@ -154,7 +154,10 @@ export const useSaveNavigationMenuItemsDraft = () => {
           updateInput.position = Math.max(0, Math.round(draftItem.position));
         }
         if (folderIdChanged) {
-          updateInput.folderId = draftItem.folderId ?? null;
+          updateInput.folderId =
+            draftItem.folderId != null
+              ? resolveFolderId(draftItem.folderId)
+              : null;
         }
         if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
           updateInput.name = draftItem.name ?? undefined;
