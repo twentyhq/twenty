@@ -84,6 +84,7 @@ describe('findDefaultNullEquivalentValue', () => {
     it.each([
       'addressStreet1',
       'addressStreet2',
+      'addressStreet3',
       'addressCity',
       'addressState',
       'addressPostcode',

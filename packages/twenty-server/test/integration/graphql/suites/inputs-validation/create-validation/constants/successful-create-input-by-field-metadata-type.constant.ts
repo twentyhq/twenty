@@ -261,6 +261,7 @@ export const successfulCreateInputByFieldMetadataType: {
           addressPostcode: 'address postcode',
           addressStreet1: 'address street 1',
           addressStreet2: 'address street 2',
+          addressStreet3: 'address street 3',
           addressCity: 'address city',
           addressState: 'address state',
           addressCountry: 'address country',
@@ -271,6 +272,7 @@ export const successfulCreateInputByFieldMetadataType: {
           record.addressField.addressPostcode === 'address postcode' &&
           record.addressField.addressStreet1 === 'address street 1' &&
           record.addressField.addressStreet2 === 'address street 2' &&
+          record.addressField.addressStreet3 === 'address street 3' &&
           record.addressField.addressCity === 'address city' &&
           record.addressField.addressState === 'address state' &&
           record.addressField.addressCountry === 'address country'

@@ -196,6 +196,7 @@ export const setupTestObjectsWithAllFieldTypes = async (
           addressField: {
             addressStreet1: 'address street 1',
             addressStreet2: 'address street 2',
+            addressStreet3: 'address street 3',
             addressCity: 'address city',
             addressState: 'address state',
             addressCountry: 'address country',

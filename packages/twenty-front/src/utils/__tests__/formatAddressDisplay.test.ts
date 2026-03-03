@@ -38,6 +38,21 @@ describe('formatAddressDisplay', () => {
     expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
   });
 
+  it('should format address with addressStreet3 when it has a non-empty value', () => {
+    const addressWithStreet3: FieldAddressValue = {
+      ...mockAddressValue,
+      addressStreet3: 'Suite 300',
+    };
+
+    const result = formatAddressDisplay(addressWithStreet3, [
+      'addressStreet1',
+      'addressStreet2',
+      'addressStreet3',
+      'addressCity',
+    ]);
+    expect(result).toBe('123 Main St,Apt 4B,Suite 300,New York');
+  });
+
   it('should format address with all fields when subFields is undefined', () => {
     const result = formatAddressDisplay(mockAddressValue, undefined);
     expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');

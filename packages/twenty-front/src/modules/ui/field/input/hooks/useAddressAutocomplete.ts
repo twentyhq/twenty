@@ -82,6 +82,7 @@ export const useAddressAutocomplete = (
       const updatedAddress = {
         addressStreet1: addressStreet1 || (internalValue?.addressStreet1 ?? ''),
         addressStreet2: internalValue?.addressStreet2 ?? null,
+        addressStreet3: internalValue?.addressStreet3 ?? null,
         addressCity: placeData?.city || (internalValue?.addressCity ?? null),
         addressState: placeData?.state || (internalValue?.addressState ?? null),
         addressCountry: countryName || (internalValue?.addressCountry ?? null),

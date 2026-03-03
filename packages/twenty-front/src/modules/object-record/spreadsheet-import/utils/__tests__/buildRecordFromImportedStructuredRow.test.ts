@@ -343,6 +343,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       'Currency (currencyField)': 'USD',
       'Address 1 (addressField)': '123 Main St',
       'Address 2 (addressField)': 'Apt 4B',
+      'Address 3 (addressField)': 'Suite 300',
       'City (addressField)': 'New York',
       'Post Code (addressField)': '10001',
       'State (addressField)': 'NY',
@@ -411,6 +412,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       addressField: {
         addressStreet1: '123 Main St',
         addressStreet2: 'Apt 4B',
+        addressStreet3: 'Suite 300',
         addressCity: 'New York',
         addressPostcode: '10001',
         addressState: 'NY',

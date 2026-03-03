@@ -69,6 +69,21 @@ describe('joinAddressFieldValues', () => {
     expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
   });
 
+  it('should join addressStreet3 when it has a non-empty value', () => {
+    const addressWithStreet3: FieldAddressValue = {
+      ...mockAddressValue,
+      addressStreet3: 'Suite 300',
+    };
+
+    const result = joinAddressFieldValues(addressWithStreet3, [
+      'addressStreet1',
+      'addressStreet2',
+      'addressStreet3',
+      'addressCity',
+    ]);
+    expect(result).toBe('123 Main St,Apt 4B,Suite 300,New York');
+  });
+
   it('should handle address with empty and null values', () => {
     const emptyAddress: FieldAddressValue = {
       addressStreet1: '',

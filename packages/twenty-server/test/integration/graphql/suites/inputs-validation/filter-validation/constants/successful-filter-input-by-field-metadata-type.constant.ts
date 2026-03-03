@@ -975,6 +975,24 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: {
+        addressField: { addressStreet3: { eq: 'address street 3' } },
+      },
+      restFilterInput: 'addressField.addressStreet3[eq]:"address street 3"',
+      validateFilter: (record: Record<string, any>) => {
+        return record.addressField.addressStreet3 === 'address street 3';
+      },
+    },
+    {
+      gqlFilterInput: {
+        addressField: { addressStreet3: { is: 'NOT_NULL' } },
+      },
+      restFilterInput: 'addressField.addressStreet3[is]:"NOT_NULL"',
+      validateFilter: (record: Record<string, any>) => {
+        return isDefined(record.addressField.addressStreet3);
+      },
+    },
+    {
+      gqlFilterInput: {
         addressField: { addressCity: { eq: 'address city' } },
       },
       restFilterInput: 'addressField.addressCity[eq]:"address city"',

@@ -42,4 +42,20 @@ describe('transformAddressField', () => {
       addressLng: null,
     });
   });
+
+  it('should transform addressStreet3 with non-empty value', () => {
+    const result = transformAddressField({
+      addressStreet1: '123 Main St',
+      addressStreet2: 'Apt 4B',
+      addressStreet3: 'Suite 300',
+      addressCity: 'San Francisco',
+    });
+
+    expect(result).toEqual({
+      addressStreet1: '123 Main St',
+      addressStreet2: 'Apt 4B',
+      addressStreet3: 'Suite 300',
+      addressCity: 'San Francisco',
+    });
+  });
 });

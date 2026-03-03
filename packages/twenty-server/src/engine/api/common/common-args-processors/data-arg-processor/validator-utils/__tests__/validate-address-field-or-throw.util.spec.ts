@@ -13,6 +13,7 @@ describe('validateAddressFieldOrThrow', () => {
       const value = {
         addressStreet1: '123 Main St',
         addressStreet2: 'Apt 4B',
+        addressStreet3: 'Suite 300',
         addressCity: 'New York',
         addressState: 'NY',
         addressPostcode: '10001',
@@ -78,6 +79,16 @@ describe('validateAddressFieldOrThrow', () => {
     it('should throw when addressStreet2 is not a string', () => {
       const value = {
         addressStreet2: 123,
+      };
+
+      expect(() => validateAddressFieldOrThrow(value, 'testField')).toThrow(
+        CommonQueryRunnerException,
+      );
+    });
+
+    it('should throw when addressStreet3 is not a string', () => {
+      const value = {
+        addressStreet3: 123,
       };
 
       expect(() => validateAddressFieldOrThrow(value, 'testField')).toThrow(
