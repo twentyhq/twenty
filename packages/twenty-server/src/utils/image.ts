@@ -35,7 +35,7 @@ export const getImageBufferFromUrl = async (
       responseType: 'arraybuffer',
       validateStatus: (status) => status >= 200 && status < 300,
       maxRedirects: 5,
-      timeout: 5000,
+      timeout: 10000,
     });
 
     if (!response.data) {
