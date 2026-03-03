@@ -28,20 +28,7 @@ const StyledDropTarget = styled.div<{ $compact?: boolean }>`
   }
 
   &[data-drop-forbidden='true'] {
-    background-color: ${themeCssVariables.background.transparent.danger};
     cursor: not-allowed;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: ${themeCssVariables.color.red};
-      border-radius: ${themeCssVariables.border.radius.sm}
-        ${themeCssVariables.border.radius.sm} 0 0;
-    }
   }
 `;
 
@@ -73,7 +60,7 @@ export const NavigationItemDropTarget = ({
   return (
     <StyledDropTarget
       $compact={compact}
-      data-drag-over={isDragOver ? 'true' : undefined}
+      data-drag-over={isDragOver && !isDropForbidden ? 'true' : undefined}
       data-drop-forbidden={isDropForbidden ? 'true' : undefined}
     >
       {children}

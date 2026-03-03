@@ -6,6 +6,7 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
@@ -84,6 +85,13 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     const destinationFolderId = validateAndExtractWorkspaceFolderId(
       destination.droppableId,
     );
+
+    if (
+      isNavigationMenuItemFolder(draggedItem) &&
+      isDefined(destinationFolderId)
+    ) {
+      return;
+    }
     const sourceFolderId = validateAndExtractWorkspaceFolderId(
       source.droppableId,
     );

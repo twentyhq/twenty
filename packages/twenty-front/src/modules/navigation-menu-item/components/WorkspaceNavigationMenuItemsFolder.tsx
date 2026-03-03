@@ -25,6 +25,7 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
@@ -43,6 +44,11 @@ const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
       ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
+  transition: background-color 150ms ease-in-out;
+
+  &[data-forbidden-drop-target='true'] {
+    background-color: ${themeCssVariables.background.transparent.danger};
+  }
 `;
 
 const StyledFolderDroppableContent = styled.div<{
@@ -130,8 +136,13 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
   const folderContentDropDisabled = useIsDropDisabledForSection(true);
 
+  const { forbiddenDropTargetId } = useContext(NavigationDropTargetContext);
   const folderHeaderDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`;
   const folderContentDroppableId = `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}${folderId}`;
+  const isForbiddenDropTarget =
+    isDefined(forbiddenDropTargetId) &&
+    (forbiddenDropTargetId.startsWith(`${folderContentDroppableId}::`) ||
+      forbiddenDropTargetId.startsWith(`${folderHeaderDroppableId}::`));
   const isCompact =
     isNavigationMenuInEditMode || navigationMenuItems.length === 0;
 
@@ -168,7 +179,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   );
 
   return (
-    <StyledFolderContainer $isSelectedInEditMode={isSelectedInEditMode}>
+    <StyledFolderContainer
+      $isSelectedInEditMode={isSelectedInEditMode}
+      data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
+    >
       <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
         <div ref={setSortableDropTargetRef ?? undefined}>
           <WorkspaceDndKitDroppableSlot

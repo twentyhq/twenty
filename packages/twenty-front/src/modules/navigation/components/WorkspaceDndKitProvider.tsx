@@ -18,6 +18,7 @@ import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-me
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { parseDropTargetIdToDestination } from '@/navigation-menu-item/utils/parseDropTargetIdToDestination';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
@@ -163,13 +164,19 @@ export const WorkspaceDndKitProvider = ({
         setForbiddenDropTargetId(null);
       } else {
         const destDroppableId = String(target.group);
-        const folderId = validateAndExtractWorkspaceFolderId(destDroppableId);
+        const destFolderId =
+          validateAndExtractWorkspaceFolderId(destDroppableId);
         const payload =
           store
             .get(addToNavPayloadRegistryState.atom)
             .get(String(source?.id)) ?? null;
+        const sourceItem = workspaceNavigationMenuItems.find(
+          (item) => item.id === source?.id,
+        );
         const isFolderOverFolder =
-          payload?.type === 'folder' && isDefined(folderId);
+          isDefined(destFolderId) &&
+          (payload?.type === 'folder' ||
+            (isDefined(sourceItem) && isNavigationMenuItemFolder(sourceItem)));
         setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
       }
       return;
@@ -194,6 +201,17 @@ export const WorkspaceDndKitProvider = ({
       }
       if (validParsed && !isAddToNavDrag) {
         setActiveDropTargetId(String(target.id));
+        const destFolderId = validateAndExtractWorkspaceFolderId(
+          parsedDestination.droppableId,
+        );
+        const sourceItem = workspaceNavigationMenuItems.find(
+          (item) => item.id === source?.id,
+        );
+        const isFolderIntoFolder =
+          isDefined(destFolderId) &&
+          isDefined(sourceItem) &&
+          isNavigationMenuItemFolder(sourceItem);
+        setForbiddenDropTargetId(isFolderIntoFolder ? String(target.id) : null);
         return;
       }
     }
@@ -306,16 +324,26 @@ export const WorkspaceDndKitProvider = ({
         isWorkspaceDroppableId(initialGroupStr) &&
         isWorkspaceDroppableId(destGroup);
       if (bothWorkspace) {
-        const result = toDropResult(
-          draggableId,
-          { sourceDroppableId: initialGroupStr, sourceIndex: initialIndex },
-          { droppableId: destGroup, index: destIndex },
+        const destFolderId = validateAndExtractWorkspaceFolderId(destGroup);
+        const draggedItem = workspaceNavigationMenuItems.find(
+          (item) => item.id === draggableId,
         );
-        const provided: ResponderProvided = { announce: () => {} };
-        handleWorkspaceNavigationMenuItemDragAndDrop(
-          { ...result, ...DROP_RESULT_OPTIONS },
-          provided,
-        );
+        const isFolderIntoFolder =
+          isDefined(destFolderId) &&
+          isDefined(draggedItem) &&
+          isNavigationMenuItemFolder(draggedItem);
+        if (!isFolderIntoFolder) {
+          const result = toDropResult(
+            draggableId,
+            { sourceDroppableId: initialGroupStr, sourceIndex: initialIndex },
+            { droppableId: destGroup, index: destIndex },
+          );
+          const provided: ResponderProvided = { announce: () => {} };
+          handleWorkspaceNavigationMenuItemDragAndDrop(
+            { ...result, ...DROP_RESULT_OPTIONS },
+            provided,
+          );
+        }
         return;
       }
     }
@@ -356,7 +384,19 @@ export const WorkspaceDndKitProvider = ({
       isDefined(destination) &&
       isWorkspaceDroppableId(destination.droppableId)
     ) {
-      handleWorkspaceNavigationMenuItemDragAndDrop(dropResult, provided);
+      const destFolderId = validateAndExtractWorkspaceFolderId(
+        destination.droppableId,
+      );
+      const draggedItem = workspaceNavigationMenuItems.find(
+        (item) => item.id === draggableId,
+      );
+      const isFolderIntoFolder =
+        isDefined(destFolderId) &&
+        isDefined(draggedItem) &&
+        isNavigationMenuItemFolder(draggedItem);
+      if (!isFolderIntoFolder) {
+        handleWorkspaceNavigationMenuItemDragAndDrop(dropResult, provided);
+      }
     }
   };
 
