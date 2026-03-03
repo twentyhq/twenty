@@ -1,6 +1,6 @@
 {
-  "name": "hello-world",
-  "version": "0.2.2",
+  "name": "test-generated-app",
+  "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -15,13 +15,20 @@
     "build": "twenty app:build",
     "typecheck": "twenty app:typecheck",
     "uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add"
-  },
-  "dependencies": {
-    "twenty-sdk": "0.6.3"
+    "entity:add": "twenty entity:add",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
+    "@types/react": "^18.2.0",
+    "eslint": "^9.32.0",
+    "react": "^18.2.0",
+    "twenty-sdk": "0.6.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0",
     "vitest": "^3.1.1"
   }
 }
