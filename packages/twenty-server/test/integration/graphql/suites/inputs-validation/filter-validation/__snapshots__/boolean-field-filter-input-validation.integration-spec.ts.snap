@@ -8,18 +8,18 @@ exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN fi
 
 exports[`Filter input validation - BOOLEAN Rest filter input - failure BOOLEAN field type - should fail with filter : "booleanField[eq]:\\"[]\\"" 1`] = `
 [
-  "invalid input syntax for type boolean: "[]"",
+  "Invalid boolean value '[]' for field "booleanField"",
 ]
 `;
 
 exports[`Filter input validation - BOOLEAN Rest filter input - failure BOOLEAN field type - should fail with filter : "booleanField[eq]:\\"not-a-boolean\\"" 1`] = `
 [
-  "invalid input syntax for type boolean: "not-a-boolean"",
+  "Invalid boolean value 'not-a-boolean' for field "booleanField"",
 ]
 `;
 
 exports[`Filter input validation - BOOLEAN Rest filter input - failure BOOLEAN field type - should fail with filter : "booleanField[eq]:2" 1`] = `
 [
-  "invalid input syntax for type boolean: "2"",
+  "Invalid boolean value '2' for field "booleanField"",
 ]
 `;

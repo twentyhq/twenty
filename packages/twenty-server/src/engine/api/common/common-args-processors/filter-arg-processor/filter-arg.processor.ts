@@ -6,6 +6,7 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -483,7 +484,7 @@ export class FilterArgProcessor {
         return parseFloat(value);
 
       case FieldMetadataType.BOOLEAN:
-        return value.toLowerCase() === 'true';
+        return parseBooleanFromStringValue(value.toLowerCase());
 
       default:
         return value;
