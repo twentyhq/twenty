@@ -16,7 +16,7 @@ export class AppBuildCommand {
 
     const result = await appBuildAndSync({
       appPath,
-      verbose: true,
+      onProgress: (message) => console.log(chalk.gray(message)),
     });
 
     if (!result.success) {

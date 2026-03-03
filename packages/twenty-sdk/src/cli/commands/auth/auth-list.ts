@@ -1,19 +1,16 @@
-import { authList } from '@/cli/private-operations/auth-list';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 
 export class AuthListCommand {
+  private configService = new ConfigService();
+
   async execute(): Promise<void> {
     try {
-      const result = await authList();
+      const availableWorkspaces =
+        await this.configService.getAvailableWorkspaces();
+      const currentDefault = await this.configService.getDefaultWorkspace();
 
-      if (!result.success) {
-        console.error(chalk.red('List failed:'), result.error.message);
-        process.exit(1);
-      }
-
-      const workspaces = result.data;
-
-      if (workspaces.length === 0) {
+      if (availableWorkspaces.length === 0) {
         console.log(
           chalk.yellow(
             '⚠ No workspaces configured. Use `twenty auth:login` to create one.',
@@ -24,18 +21,21 @@ export class AuthListCommand {
 
       console.log(chalk.blue('Available workspaces:\n'));
 
-      for (const workspace of workspaces) {
-        const defaultIndicator = workspace.isDefault
-          ? chalk.green(' (default)')
-          : '';
-        const credentialStatus = workspace.hasCredentials
+      for (const workspaceName of availableWorkspaces) {
+        const config =
+          await this.configService.getConfigForWorkspace(workspaceName);
+        const hasCredentials = !!config.apiKey;
+        const isDefault = workspaceName === currentDefault;
+
+        const defaultIndicator = isDefault ? chalk.green(' (default)') : '';
+        const credentialStatus = hasCredentials
           ? chalk.green('●')
           : chalk.gray('○');
 
         console.log(
-          `  ${credentialStatus} ${workspace.name}${defaultIndicator}`,
+          `  ${credentialStatus} ${workspaceName}${defaultIndicator}`,
         );
-        console.log(chalk.gray(`      API URL: ${workspace.apiUrl}`));
+        console.log(chalk.gray(`      API URL: ${config.apiUrl}`));
       }
 
       console.log('');

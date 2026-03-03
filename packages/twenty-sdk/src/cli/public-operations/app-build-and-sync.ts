@@ -3,12 +3,11 @@ import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchr
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ClientService } from '@/cli/utilities/client/client-service';
-import chalk from 'chalk';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppBuildAndSyncOptions = {
   appPath: string;
-  verbose?: boolean;
+  onProgress?: (message: string) => void;
 };
 
 export type AppBuildAndSyncResult = {
@@ -18,12 +17,9 @@ export type AppBuildAndSyncResult = {
 export const appBuildAndSync = async (
   options: AppBuildAndSyncOptions,
 ): Promise<CommandResult<AppBuildAndSyncResult>> => {
-  const { appPath, verbose } = options;
-  const log = verbose
-    ? (message: string) => console.log(chalk.gray(message))
-    : () => {};
+  const { appPath, onProgress } = options;
 
-  log('Building manifest...');
+  onProgress?.('Building manifest...');
 
   const manifestResult = await buildAndValidateManifest(appPath);
 
@@ -42,7 +38,7 @@ export const appBuildAndSync = async (
 
   await clientService.ensureGeneratedClientStub({ appPath });
 
-  log('Building application files...');
+  onProgress?.('Building application files...');
 
   const firstBuildResult = await buildApplication({
     appPath,
@@ -50,7 +46,7 @@ export const appBuildAndSync = async (
     filePaths,
   });
 
-  log('Syncing application schema...');
+  onProgress?.('Syncing application schema...');
 
   const firstSyncResult = await synchronizeBuiltApplication({
     appPath,
@@ -62,11 +58,11 @@ export const appBuildAndSync = async (
     return firstSyncResult;
   }
 
-  log('Generating API client...');
+  onProgress?.('Generating API client...');
 
   await clientService.generate({ appPath });
 
-  log('Running typecheck...');
+  onProgress?.('Running typecheck...');
 
   const typecheckErrors = await runTypecheck(appPath);
 
@@ -84,7 +80,7 @@ export const appBuildAndSync = async (
     };
   }
 
-  log('Rebuilding with generated client...');
+  onProgress?.('Rebuilding with generated client...');
 
   const finalBuildResult = await buildApplication({
     appPath,
@@ -92,7 +88,7 @@ export const appBuildAndSync = async (
     filePaths,
   });
 
-  log('Syncing built files...');
+  onProgress?.('Syncing built files...');
 
   const finalSyncResult = await synchronizeBuiltApplication({
     appPath,

@@ -29,6 +29,14 @@ export class LogicFunctionExecuteCommand {
         process.exit(1);
       }
 
+      const identifier = postInstall
+        ? 'post install'
+        : (functionUniversalIdentifier ?? functionName);
+
+      console.log(chalk.blue(`🚀 Executing function "${identifier}"...`));
+      console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
+      console.log('');
+
       const executeOptions = postInstall
         ? { appPath, postInstall: true as const, payload: parsedPayload }
         : functionUniversalIdentifier
@@ -38,51 +46,56 @@ export class LogicFunctionExecuteCommand {
       const result = await functionExecute(executeOptions);
 
       if (!result.success) {
-        if (result.error.code === APP_ERROR_CODES.MANIFEST_NOT_FOUND) {
-          console.error(chalk.red('Failed to build manifest.'));
-        } else if (
-          result.error.code === FUNCTION_ERROR_CODES.FUNCTION_NOT_FOUND
-        ) {
-          console.error(chalk.red(result.error.message));
-          console.log('');
-
-          const availableFunctions = (result.error.details
-            ?.availableFunctions ?? []) as Array<{
-            name: string;
-            universalIdentifier: string;
-          }>;
-
-          if (availableFunctions.length > 0) {
-            console.log(chalk.cyan('Available functions:'));
-            availableFunctions.forEach((fn) => {
-              console.log(
-                `  - ${chalk.white(fn.name)} (${fn.universalIdentifier})`,
-              );
-            });
-          } else {
-            console.log(
-              chalk.yellow(
-                'No functions found for this application. Have you synced your app with `yarn app:dev`?',
-              ),
-            );
+        switch (result.error.code) {
+          case APP_ERROR_CODES.MANIFEST_NOT_FOUND: {
+            console.error(chalk.red('Failed to build manifest.'));
+            break;
           }
-        } else {
-          console.error(
-            chalk.red(`${result.error.code}: ${result.error.message}`),
-          );
+          case FUNCTION_ERROR_CODES.FETCH_FUNCTIONS_FAILED: {
+            console.error(
+              chalk.red('Failed to fetch functions:'),
+              result.error.message,
+            );
+            break;
+          }
+          case FUNCTION_ERROR_CODES.FUNCTION_NOT_FOUND: {
+            console.error(chalk.red(result.error.message));
+            console.log('');
+
+            const availableFunctions = (result.error.details
+              ?.availableFunctions ?? []) as Array<{
+              name: string;
+              universalIdentifier: string;
+            }>;
+
+            if (availableFunctions.length > 0) {
+              console.log(chalk.cyan('Available functions:'));
+              availableFunctions.forEach((logicFunction) => {
+                console.log(
+                  `  - ${chalk.white(logicFunction.name)} (${logicFunction.universalIdentifier})`,
+                );
+              });
+            } else {
+              console.log(
+                chalk.yellow(
+                  'No functions found for this application. Have you synced your app with `yarn app:dev`?',
+                ),
+              );
+            }
+            break;
+          }
+          case FUNCTION_ERROR_CODES.EXECUTION_FAILED: {
+            console.error(chalk.red('Execution failed:'), result.error.message);
+            break;
+          }
+          default: {
+            console.error(chalk.red(result.error.message));
+          }
         }
         process.exit(1);
       }
 
       const executionResult = result.data;
-
-      console.log(
-        chalk.blue(
-          `🚀 Executing function "${executionResult.functionName}"...`,
-        ),
-      );
-      console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
-      console.log('');
 
       console.log(chalk.cyan('─'.repeat(60)));
       console.log(chalk.cyan('Execution Result'));

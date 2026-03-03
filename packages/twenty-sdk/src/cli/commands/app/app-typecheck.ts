@@ -1,7 +1,9 @@
-import { appTypecheck } from '@/cli/private-operations/app-typecheck';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import {
+  runTypecheck,
+  type TypecheckError,
+} from '@/cli/utilities/build/common/typecheck-plugin';
 import chalk from 'chalk';
-import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
 
 export type AppTypecheckOptions = {
   appPath?: string;
@@ -19,14 +21,7 @@ export class AppTypecheckCommand {
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const result = await appTypecheck({ appPath });
-
-    if (!result.success) {
-      console.error(chalk.red('Typecheck failed:'), result.error.message);
-      process.exit(1);
-    }
-
-    const { errors } = result.data;
+    const errors = await runTypecheck(appPath);
 
     if (errors.length === 0) {
       console.log(chalk.green('✓ No type errors found'));

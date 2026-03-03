@@ -1,27 +1,27 @@
-import { authStatus } from '@/cli/private-operations/auth-status';
+import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 
 export class AuthStatusCommand {
+  private configService = new ConfigService();
+  private apiService = new ApiService();
+
   async execute(): Promise<void> {
     try {
-      const result = await authStatus();
-
-      if (!result.success) {
-        console.error(chalk.red('Status check failed:'), result.error.message);
-        process.exit(1);
-      }
-
-      const { workspace, apiUrl, apiKeyMasked, isAuthenticated, isValid } =
-        result.data;
+      const activeWorkspace = ConfigService.getActiveWorkspace();
+      const config = await this.configService.getConfig();
 
       console.log(chalk.blue('Authentication Status:'));
-      console.log(`Workspace: ${workspace}`);
-      console.log(`API URL: ${apiUrl}`);
-      console.log(`API Key: ${apiKeyMasked ?? 'Not set'}`);
+      console.log(`Workspace: ${activeWorkspace}`);
+      console.log(`API URL: ${config.apiUrl}`);
+      console.log(
+        `API Key: ${config.apiKey ? '***' + config.apiKey.slice(-4) : 'Not set'}`,
+      );
 
-      if (isAuthenticated) {
+      if (config.apiKey) {
+        const validateAuth = await this.apiService.validateAuth();
         console.log(
-          `Status: ${isValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
+          `Status: ${validateAuth.authValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
         );
       } else {
         console.log(`Status: ${chalk.yellow('⚠ Not authenticated')}`);
