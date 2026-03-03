@@ -225,6 +225,9 @@ export const convertObjectMetadataToSchemaProperties = ({
             addressStreet2: {
               type: 'string',
             },
+            addressStreet3: {
+              type: 'string',
+            },
             addressCity: {
               type: 'string',
             },
