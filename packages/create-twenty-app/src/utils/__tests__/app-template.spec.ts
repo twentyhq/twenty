@@ -24,6 +24,7 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
   includeExampleSkill: true,
+  includeIntegrationTest: true,
 };
 
 const NO_EXAMPLES: ExampleOptions = {
@@ -34,6 +35,7 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleFrontComponent: false,
   includeExampleView: false,
   includeExampleNavigationMenuItem: false,
+  includeIntegrationTest: false,
 };
 
 describe('copyBaseApplicationProject', () => {
@@ -352,6 +354,12 @@ describe('copyBaseApplicationProject', () => {
           ),
         ).toBe(true);
 
+        expect(
+          await fs.pathExists(
+            join(srcPath, '__tests__', 'app-install.integration-test.ts'),
+          ),
+        ).toBe(true);
+
         // Install functions should always exist
         expect(
           await fs.pathExists(
@@ -425,6 +433,11 @@ describe('copyBaseApplicationProject', () => {
             ),
           ),
         ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(srcPath, '__tests__', 'app-install.integration-test.ts'),
+          ),
+        ).toBe(false);
       });
     });
 
@@ -443,6 +456,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: true,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
+            includeIntegrationTest: false,
           },
         });
 
@@ -480,6 +494,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: false,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
+            includeIntegrationTest: false,
           },
         });
 
@@ -732,6 +747,76 @@ describe('copyBaseApplicationProject', () => {
       );
 
       expect(await fs.pathExists(preInstallPath)).toBe(true);
+    });
+  });
+
+  describe('integration test', () => {
+    it('should create app-install.integration-test.ts with correct structure when enabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const testPath = join(
+        testAppDirectory,
+        'src',
+        '__tests__',
+        'app-install.integration-test.ts',
+      );
+
+      expect(await fs.pathExists(testPath)).toBe(true);
+
+      const content = await fs.readFile(testPath, 'utf8');
+
+      expect(content).toContain(
+        "import { appBuild, appUninstall } from 'twenty-sdk/cli'",
+      );
+      expect(content).toContain(
+        "import { MetadataApiClient } from 'twenty-sdk/generated'",
+      );
+      expect(content).toContain('assertServerIsReachable');
+      expect(content).toContain('appBuild');
+      expect(content).toContain('appUninstall');
+      expect(content).toContain('findManyApplications');
+    });
+
+    it('should include vitest and test scripts in package.json when enabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const packageJson = await fs.readJson(
+        join(testAppDirectory, 'package.json'),
+      );
+
+      expect(packageJson.scripts.test).toBe('vitest run');
+      expect(packageJson.scripts['test:watch']).toBe('vitest');
+      expect(packageJson.devDependencies.vitest).toBeDefined();
+    });
+
+    it('should not include vitest or test scripts when disabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const packageJson = await fs.readJson(
+        join(testAppDirectory, 'package.json'),
+      );
+
+      expect(packageJson.scripts.test).toBeUndefined();
+      expect(packageJson.scripts['test:watch']).toBeUndefined();
+      expect(packageJson.devDependencies.vitest).toBeUndefined();
     });
   });
 
