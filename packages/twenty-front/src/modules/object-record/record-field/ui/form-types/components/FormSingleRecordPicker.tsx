@@ -14,13 +14,13 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useId } from 'react';
+import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -28,18 +28,19 @@ const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   align-items: center;
   height: 32px;
   justify-content: space-between;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 
-  ${({ readonly, theme }) =>
-    !readonly &&
-    css`
+  ${({ readonly }) =>
+    !readonly
+      ? `
       &:hover,
       &[data-open='true'] {
-        background-color: ${theme.background.transparent.light};
+        background-color: ${themeCssVariables.background.transparent.light};
       }
 
       cursor: pointer;
-    `}
+    `
+      : ''}
 `;
 
 const StyledIconButton = styled.div`
@@ -80,7 +81,7 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -143,7 +144,6 @@ export const FormSingleRecordPicker = ({
   };
 
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
-    // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
     onClear?.();
   };

@@ -1,6 +1,6 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
@@ -9,6 +9,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { v4 } from 'uuid';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
   roleId: string;
@@ -20,7 +21,7 @@ const StyledActionsHeader = styled(TableHeader)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsRolePermissionsSettingsTableHeader = ({

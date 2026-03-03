@@ -27,15 +27,15 @@ import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
 
 // TODO: see how we can merge this with RecordTableStyleWrapper,
 // because we have not decided a strategy for sharing CSS bits yet
@@ -145,7 +145,7 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 }) => {
   const realIndex = rubric.source.index;
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,

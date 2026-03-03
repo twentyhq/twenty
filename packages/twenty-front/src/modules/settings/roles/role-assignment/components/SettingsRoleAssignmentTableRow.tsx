@@ -2,10 +2,9 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useTheme } from '@emotion/react';
-import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   Avatar,
@@ -13,6 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -25,7 +25,7 @@ const StyledIconWrapper = styled.div`
 `;
 
 const StyledNameCell = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
   min-width: 0;
 `;
@@ -34,7 +34,7 @@ const StyledNameContainer = styled.div`
   align-items: center;
   display: flex;
   overflow: hidden;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -54,7 +54,7 @@ type SettingsRoleAssignmentTableRowProps = {
 export const SettingsRoleAssignmentTableRow = ({
   roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );

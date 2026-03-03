@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   forwardRef,
   useRef,
@@ -8,7 +7,7 @@ import {
 } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { TEXT_INPUT_STYLE, themeCssVariables } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
@@ -18,32 +17,34 @@ const StyledInput = styled.input<{
 }>`
   ${TEXT_INPUT_STYLE}
 
-  ${({ hasItem, theme }) =>
-    hasItem &&
-    css`
-      background-color: ${theme.background.transparent.lighter};
+  ${({ hasItem }) =>
+    hasItem
+      ? `
+      background-color: ${themeCssVariables.background.transparent.lighter};
       border-radius: 4px;
-      border: 1px solid ${theme.border.color.medium};
-    `}
+      border: 1px solid ${themeCssVariables.border.color.medium};
+    `
+      : ''}
   
-  ${({ hasError, hasItem, theme }) =>
-    hasError &&
-    hasItem &&
-    css`
-      border: 1px solid ${theme.border.color.danger};
-    `}
+  ${({ hasError, hasItem }) =>
+    hasError && hasItem
+      ? `
+      border: 1px solid ${themeCssVariables.border.color.danger};
+    `
+      : ''}
 
   box-sizing: border-box;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 32px;
   position: relative;
   width: 100%;
 
   ${({ withRightComponent }) =>
-    withRightComponent &&
-    css`
+    withRightComponent
+      ? `
       padding-right: 32px;
-    `}
+    `
+      : ''}
 `;
 
 const StyledInputContainer = styled.div`
@@ -53,20 +54,20 @@ const StyledInputContainer = styled.div`
   width: 100%;
 
   &:not(:first-of-type) {
-    padding: ${({ theme }) => theme.spacing(1)};
+    padding: ${themeCssVariables.spacing[1]};
   }
 `;
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${themeCssVariables.spacing[2]};
   top: 50%;
   transform: translateY(-50%);
 `;
 
 const StyledErrorDiv = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.color.red};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;

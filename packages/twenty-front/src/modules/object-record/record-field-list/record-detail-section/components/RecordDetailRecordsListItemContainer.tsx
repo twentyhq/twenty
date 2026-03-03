@@ -1,21 +1,18 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
-const StyledListItem = styled('div', {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'noHorizontalPadding',
-})<{ noHorizontalPadding?: boolean }>`
+const StyledListItem = styled.div<{ noHorizontalPadding?: boolean }>`
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding-left: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(3)};
-  padding-right: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(2)};
+  height: ${themeCssVariables.spacing[10]};
+  padding-left: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
+  padding-right: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
 `;
 
 type RecordDetailRecordsListItemContainerProps = {

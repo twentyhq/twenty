@@ -1,12 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordDetailSectionContainer = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  padding-top: ${themeCssVariables.spacing[3]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
   width: auto;
 `;
 
@@ -19,29 +20,29 @@ const StyledHeader = styled.header<{
   display: flex;
   height: 24px;
   justify-content: space-between;
-  margin-bottom: ${({ theme, areRecordsAvailable }) =>
-    areRecordsAvailable && theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ areRecordsAvailable }) =>
+    areRecordsAvailable ? themeCssVariables.spacing[2] : ''};
+  padding-left: ${themeCssVariables.spacing[3]};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.div`
   align-items: flex-end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTitleLabel = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   text-decoration: none;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
   :hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 

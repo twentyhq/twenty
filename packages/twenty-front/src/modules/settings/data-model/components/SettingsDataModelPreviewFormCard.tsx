@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;
@@ -13,7 +14,7 @@ type SettingsDataModelPreviewFormCardProps = {
 };
 
 const StyledPreviewContainer = styled(CardContent)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  background-color: ${themeCssVariables.background.transparent.lighter};
 `;
 
 const StyledFormContainer = styled(CardContent)`

@@ -1,5 +1,6 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
@@ -9,13 +10,15 @@ const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
   height: 28px;
 
   margin-left: 7.5px;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${themeCssVariables.spacing[2]};
   width: 9px;
 `;
 
 const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
-  background: ${({ theme, darker }) =>
-    darker ? theme.font.color.tertiary : theme.border.color.strong};
+  background: ${({ darker }) =>
+    darker
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.border.color.strong};
 
   position: relative;
   top: -2px;
@@ -25,8 +28,10 @@ const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
 `;
 
 const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
-  background: ${({ theme, darker }) =>
-    darker ? theme.font.color.tertiary : theme.border.color.strong};
+  background: ${({ darker }) =>
+    darker
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.border.color.strong};
 
   position: relative;
   top: -17px;
@@ -41,8 +46,10 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
   border-bottom-left-radius: 4px;
 
   border: 1px solid
-    ${({ theme, darker }) =>
-      darker ? theme.font.color.tertiary : theme.border.color.strong};
+    ${({ darker }) =>
+      darker
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.border.color.strong};
 
   ${({ darker }) => (darker ? 'z-index: 1;' : '')}
 

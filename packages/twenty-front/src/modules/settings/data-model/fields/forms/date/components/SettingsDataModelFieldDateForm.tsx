@@ -10,10 +10,11 @@ import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/f
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   z.object({
@@ -33,7 +34,7 @@ export const settingsDataModelFieldDateFormSchema = z.object({
 });
 
 const StyledTextInput = styled(SettingsTextInput)`
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
   padding-top: 0;
 `;
 

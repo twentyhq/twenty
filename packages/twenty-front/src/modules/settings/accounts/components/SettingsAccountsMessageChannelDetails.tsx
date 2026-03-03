@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import {
   type MessageChannel,
@@ -14,6 +14,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -33,7 +34,7 @@ type SettingsAccountsMessageChannelDetailsProps = {
 const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsMessageChannelDetails = ({
@@ -98,7 +99,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       <Section>
         <H2Title
           title={t`Import`}
-          description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
+          description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
         />
         <SettingsAccountsMessageFolderCard
           onChange={handleMessageFolderImportPolicyChange}

@@ -1,7 +1,8 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -15,7 +16,7 @@ const StyledText = styled.span`
   gap: 4px;
   flex-grow: 1;
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
   z-index: 1;
 `;
 
@@ -40,7 +41,7 @@ const StyledValueContainer = styled(StyledScrollableContainer)`
 `;
 
 const StyledValue = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   max-width: 100%;
 `;
 

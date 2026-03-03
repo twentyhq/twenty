@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import {
   type CalendarChannel,
@@ -16,9 +16,10 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCalenderContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsCalendarChannelsContainer = () => {

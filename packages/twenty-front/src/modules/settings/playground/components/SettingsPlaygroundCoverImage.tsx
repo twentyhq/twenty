@@ -1,22 +1,38 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
 import { Card } from 'twenty-ui/layout';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme';
 
-export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`
+const StyledCard = styled(Card)<{ backgroundImageUrl: string }>`
   align-items: center;
-  background-image: ${({ theme }) =>
-    theme.name === 'light'
-      ? `url('${LightCoverImage.toString()}')`
-      : `url('${DarkCoverImage.toString()}')`};
+  background-image: ${({ backgroundImageUrl }) =>
+    `url('${backgroundImageUrl}')`};
   background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   height: 153px;
   justify-content: center;
   position: relative;
-  margin-top: ${({ theme }) => theme.spacing(4)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
+
+export const StyledSettingsApiPlaygroundCoverImage = ({
+  children,
+  ...props
+}: StyledSettingsApiPlaygroundCoverImageProps<typeof Card>) => {
+  const { theme } = useContext(ThemeContext);
+  const coverImage =
+    theme.name === 'light'
+      ? LightCoverImage.toString()
+      : DarkCoverImage.toString();
+  return (
+    <StyledCard {...props} backgroundImageUrl={coverImage}>
+      {children}
+    </StyledCard>
+  );
+};

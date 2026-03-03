@@ -6,15 +6,16 @@ import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledNameLabel = styled.div`
@@ -25,7 +26,7 @@ const StyledNameLabel = styled.div`
 
 const StyledOptionsTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
@@ -42,7 +43,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const Icon = getIcon(objectMetadataItem.icon);
 

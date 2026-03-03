@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledTableSubRow = styled(TableRow)`
-  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-left: ${themeCssVariables.spacing[4]};
 `;
 
 export const TableSubRow = StyledTableSubRow;

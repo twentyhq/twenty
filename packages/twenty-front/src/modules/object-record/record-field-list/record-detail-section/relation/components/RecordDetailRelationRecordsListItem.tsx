@@ -1,7 +1,7 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -52,15 +52,16 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
   isDropdownOpen?: boolean;
 }>`
-  ${({ isDropdownOpen, theme }) =>
-    !isDropdownOpen &&
-    css`
+  ${({ isDropdownOpen }) =>
+    !isDropdownOpen
+      ? `
       .displayOnHover {
         opacity: 0;
         pointer-events: none;
-        transition: opacity ${theme.animation.duration.instant}s ease;
+        transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
       }
-    `}
+    `
+      : ''}
 
   &:hover {
     .displayOnHover {

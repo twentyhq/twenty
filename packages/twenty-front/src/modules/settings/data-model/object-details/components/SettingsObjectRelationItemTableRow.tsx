@@ -9,15 +9,15 @@ import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsObjectRelationItemTableRowProps = {
@@ -30,8 +30,8 @@ export const StyledObjectRelationTableRow = styled(TableRow)`
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNameContainer = styled.div`
@@ -39,7 +39,7 @@ const StyledNameContainer = styled.div`
   align-items: center;
   flex: 1;
   min-width: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledNameLabel = styled.div`
@@ -49,8 +49,8 @@ const StyledNameLabel = styled.div`
 `;
 
 const StyledInactiveLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.extraLight};
+  font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -59,38 +59,38 @@ const StyledInactiveLabel = styled.span`
 
   &::before {
     content: '·';
-    margin-right: ${({ theme }) => theme.spacing(1)};
+    margin-right: ${themeCssVariables.spacing[1]};
   }
 `;
 
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledRelationType = styled.div`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   text-decoration: underline;
-  text-decoration-color: ${({ theme }) => theme.border.color.strong};
+  text-decoration-color: ${themeCssVariables.border.color.strong};
   text-underline-offset: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
   &:hover {
-    color: ${({ theme }) => theme.color.blue};
-    text-decoration-color: ${({ theme }) => theme.color.blue};
+    color: ${themeCssVariables.color.blue};
+    text-decoration-color: ${themeCssVariables.color.blue};
   }
 `;
 
@@ -100,7 +100,7 @@ export const SettingsObjectRelationItemTableRow = ({
 }: SettingsObjectRelationItemTableRowProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const theme = useTheme();
+  const theme = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(fieldMetadataItem.icon);

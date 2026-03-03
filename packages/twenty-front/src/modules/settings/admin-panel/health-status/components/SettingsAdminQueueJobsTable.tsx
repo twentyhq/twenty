@@ -12,11 +12,12 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   JobState,
   type QueueJob,
@@ -37,19 +38,19 @@ type SettingsAdminQueueJobsTableProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledControlsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
 `;
 
 const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(8)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
@@ -57,7 +58,7 @@ const StyledPaginationContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTableCell = styled(TableCell)`
@@ -69,11 +70,13 @@ const StyledTableCell = styled(TableCell)`
 
 const StyledExpandableTableRow = styled(TableRow)<{ isExpanded: boolean }>`
   cursor: pointer;
-  background-color: ${({ theme, isExpanded }) =>
-    isExpanded ? theme.background.transparent.light : 'transparent'};
+  background-color: ${({ isExpanded }) =>
+    isExpanded
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -84,19 +87,19 @@ const StyledJobRowWrapper = styled.div`
 const StyledCheckboxCell = styled(TableCell)`
   justify-content: center;
   padding: 0;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledHeaderCheckboxCell = styled(TableHeader)`
   align-items: center;
   display: flex;
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButtonGroup = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const RETRY_MODAL_ID = 'retry-jobs-modal';
@@ -150,7 +153,6 @@ export const SettingsAdminQueueJobsTable = ({
   const totalCount = data?.getQueueJobs?.totalCount || 0;
   const failedJobs = jobs.filter((job) => job.state === JobState.FAILED);
 
-  // Pass retention config to parent when data loads
   const shouldPassConfig =
     data?.getQueueJobs?.retentionConfig !== undefined &&
     onRetentionConfigLoaded !== undefined;
@@ -165,7 +167,6 @@ export const SettingsAdminQueueJobsTable = ({
   const someJobsSelected =
     jobs.some((job) => selectedJobIds.has(job.id)) && !allJobsSelected;
 
-  // Check if all selected jobs are failed (for showing retry button)
   const selectedJobs = jobs.filter((job) => selectedJobIds.has(job.id));
   const allSelectedAreFailed =
     selectedJobs.length > 0 &&

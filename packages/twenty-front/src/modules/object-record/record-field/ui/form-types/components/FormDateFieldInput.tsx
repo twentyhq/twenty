@@ -18,8 +18,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   useId,
@@ -30,7 +29,7 @@ import {
 } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { TEXT_INPUT_STYLE, themeCssVariables } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-ui/utilities';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
@@ -44,21 +43,18 @@ const StyledInputContainer = styled(FormFieldInputInnerContainer)`
 
 const StyledDateInputAbsoluteContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(1)};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
   ${TEXT_INPUT_STYLE}
 
   &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 
-  ${({ hasError, theme }) =>
-    hasError &&
-    css`
-      color: ${theme.color.red};
-    `};
+  ${({ hasError }) =>
+    hasError ? `color: ${themeCssVariables.color.red};` : ''}
 `;
 
 const StyledDateInputContainer = styled.div`

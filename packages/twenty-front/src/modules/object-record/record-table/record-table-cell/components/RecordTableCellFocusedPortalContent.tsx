@@ -9,26 +9,26 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { BORDER_COMMON } from 'twenty-ui/theme';
+import { BORDER_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
   isRecordTableRowActive: boolean;
 }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRecordTableRowActive }) =>
+  background: ${themeCssVariables.background.transparent.secondary};
+  background-color: ${({ isRecordTableRowActive }) =>
     isRecordTableRowActive
-      ? theme.accent.quaternary
-      : theme.background.primary};
+      ? themeCssVariables.accent.quaternary
+      : themeCssVariables.background.primary};
   border-radius: ${BORDER_COMMON.radius.sm};
   box-sizing: border-box;
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme }) => `1px solid ${theme.color.blue8}`};
+  outline: 1px solid ${themeCssVariables.color.blue8};
 
   user-select: none;
 `;

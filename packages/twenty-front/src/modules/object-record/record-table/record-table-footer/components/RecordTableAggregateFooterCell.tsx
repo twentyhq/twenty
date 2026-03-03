@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
@@ -19,10 +20,10 @@ const StyledColumnFooterCell = styled.div<{
   isFirstCell: boolean;
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  background-color: ${themeCssVariables.background.primary};
+  color: ${themeCssVariables.font.color.tertiary};
 
-  border-right: solid 1px ${({ theme }) => theme.background.primary};
+  border-right: solid 1px ${themeCssVariables.background.primary};
 
   padding: 0;
 
@@ -31,13 +32,9 @@ const StyledColumnFooterCell = styled.div<{
       width: ${columnWidth}px;
       `}
   text-align: left;
-  ${({ theme }) => {
-    return `
-    &:hover {
-      background: ${theme.background.secondary};
-    };
-    `;
-  }};
+  &:hover {
+    background: ${themeCssVariables.background.secondary};
+  }
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   overflow: hidden;

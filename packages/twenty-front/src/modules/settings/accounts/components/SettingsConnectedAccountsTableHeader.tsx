@@ -1,11 +1,12 @@
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTableHeader = styled(TableHeader)`
-  padding-right: ${({ theme }) => theme.spacing(14)};
+  padding-right: ${themeCssVariables.spacing[14]};
 `;
 
 export const SettingsConnectedAccountsTableHeader = () => {

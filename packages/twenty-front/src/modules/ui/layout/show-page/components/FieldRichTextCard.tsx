@@ -3,12 +3,12 @@ import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectN
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { lazy, Suspense } from 'react';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -17,7 +17,7 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const StyledShowPageActivityContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  margin-top: ${themeCssVariables.spacing[6]};
   width: 100%;
   padding-inline: 44px;
   box-sizing: border-box;
@@ -27,11 +27,11 @@ const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(0, 4)};
+  padding: 0 ${themeCssVariables.spacing[4]};
 `;
 
 const LoadingSkeleton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledSkeletonContainer>

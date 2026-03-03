@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
@@ -14,14 +14,15 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: inherit;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 export const RecordCalendar = () => {

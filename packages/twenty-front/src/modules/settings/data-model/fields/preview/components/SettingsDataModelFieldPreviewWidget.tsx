@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelFieldPreviewWidgetProps = {
@@ -21,12 +22,12 @@ type SettingsDataModelFieldPreviewWidgetProps = {
 };
 
 const StyledCard = styled(Card)`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledCardContent = styled(CardContent)`
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsDataModelFieldPreviewWidget = ({

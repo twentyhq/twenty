@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
@@ -13,6 +13,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
@@ -26,7 +27,7 @@ const StyledNameContainer = styled.div`
   align-items: center;
   flex: 1;
   min-width: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledNameLabel = styled.div`
@@ -36,8 +37,8 @@ const StyledNameLabel = styled.div`
 `;
 
 const StyledInactiveLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.extraLight};
+  font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -46,7 +47,7 @@ const StyledInactiveLabel = styled.span`
 
   &::before {
     content: '·';
-    margin-right: ${({ theme }) => theme.spacing(1)};
+    margin-right: ${themeCssVariables.spacing[1]};
   }
 `;
 
@@ -57,7 +58,7 @@ export const SettingsObjectMetadataItemTableRow = ({
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem.icon);

@@ -8,7 +8,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
@@ -16,28 +16,29 @@ import { H2Title, IconSearch } from 'twenty-ui/display';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTable = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledTableRows = styled.div`
-  gap: ${({ theme }) => theme.spacing(0.5)};
-  padding-block: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing['0.5']};
+  padding-block: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledEmptyState = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSearchContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
   input {
-    background: ${({ theme }) => theme.background.transparent.lighter};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
   }
 `;
 

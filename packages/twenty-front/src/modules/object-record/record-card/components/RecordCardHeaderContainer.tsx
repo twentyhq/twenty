@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledBoardCardHeaderContainer = styled.div<{
   isCompact: boolean;
@@ -7,18 +8,19 @@ export const StyledBoardCardHeaderContainer = styled.div<{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 24px;
-  padding-bottom: ${({ theme, isCompact }) => theme.spacing(isCompact ? 2 : 1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ isCompact }) =>
+    isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
   transition: padding ease-in-out 160ms;
 
   img {
-    height: ${({ theme }) => theme.icon.size.md}px;
+    height: ${themeCssVariables.icon.size.md}px;
     object-fit: cover;
-    width: ${({ theme }) => theme.icon.size.md}px;
+    width: ${themeCssVariables.icon.size.md}px;
   }
 `;
 

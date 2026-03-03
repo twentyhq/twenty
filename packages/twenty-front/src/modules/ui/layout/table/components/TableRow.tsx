@@ -1,12 +1,8 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
-const StyledTableRow = styled('div', {
-  shouldForwardProp: (prop) =>
-    !['isSelected'].includes(prop) && isPropValid(prop),
-})<{
+const StyledTableRow = styled.div<{
   isSelected?: boolean;
   onClick?: () => void;
   to?: string;
@@ -14,9 +10,9 @@ const StyledTableRow = styled('div', {
   gridTemplateColumns?: string;
   mobileGridAutoColumns?: string;
 }>`
-  background-color: ${({ isSelected, theme }) =>
-    isSelected ? theme.accent.quaternary : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${({ isSelected }) =>
+    isSelected ? themeCssVariables.accent.quaternary : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: grid;
   grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
   ${({ gridTemplateColumns }) =>
@@ -31,13 +27,15 @@ const StyledTableRow = styled('div', {
 
   grid-auto-flow: column;
   transition: background-color
-    ${({ theme }) => theme.animation.duration.normal}s;
+    calc(${themeCssVariables.animation.duration.normal} * 1s);
   width: 100%;
   text-decoration: none;
 
   &:hover {
-    background-color: ${({ onClick, to, theme }) =>
-      onClick || to ? theme.background.transparent.light : 'transparent'};
+    background-color: ${({ onClick, to }) =>
+      onClick || to
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
     cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
   }
 

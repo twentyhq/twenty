@@ -8,7 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Button, ButtonGroup } from 'twenty-ui/input';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
 import {
@@ -23,6 +23,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonGroup = styled(ButtonGroup)`
   & > :not(:first-of-type) > button {
@@ -36,14 +37,14 @@ const StyledButton = styled(Button)`
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledRecordsWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 
   & > :not(:first-of-type) {
-    margin-top: ${({ theme }) => theme.spacing(4)};
+    margin-top: ${themeCssVariables.spacing[4]};
   }
 `;
 

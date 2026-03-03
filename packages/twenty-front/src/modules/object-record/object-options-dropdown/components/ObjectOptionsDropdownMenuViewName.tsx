@@ -12,11 +12,11 @@ import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpda
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
@@ -24,27 +24,27 @@ const StyledDropdownMenuIconAndNameContainer = styled.div`
   display: flex;
   margin-left: 0;
   margin-right: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMenuTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMenuIconContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   align-items: center;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
   justify-content: center;
-  width: ${({ theme }) => theme.spacing(6)};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledMainText = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -110,7 +110,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
     }
   }, [currentView?.key]);
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 

@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
@@ -13,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledPlaceholderDragAndDropFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
   RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   position: sticky;
@@ -29,7 +30,7 @@ const StyledPlaceholderDragAndDropFooterCell = styled.div<{
 const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   position: sticky;
   bottom: 0;
@@ -42,7 +43,7 @@ const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
 const StyledPlaceholderLastColumnEmptyFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   position: sticky;
   bottom: 0;
   z-index: ${({ isTableWithGroups }) =>

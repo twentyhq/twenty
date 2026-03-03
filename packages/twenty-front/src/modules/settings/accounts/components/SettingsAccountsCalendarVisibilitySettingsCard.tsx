@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { msg } from '@lingui/core/macro';
 import { CalendarChannelVisibility } from '~/generated/graphql';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
   onChange: (nextValue: CalendarChannelVisibility) => void;
@@ -11,7 +12,7 @@ type SettingsAccountsEventVisibilitySettingsCardProps = {
 };
 
 const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
 `;
 
 const eventSettingsVisibilityOptions = [

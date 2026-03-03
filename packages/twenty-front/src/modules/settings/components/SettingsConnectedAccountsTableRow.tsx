@@ -3,19 +3,20 @@ import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/a
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNameCell = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTableRow = styled(TableRow)`
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
     cursor: pointer;
   }
 `;
@@ -27,7 +28,7 @@ type SettingsConnectedAccountsTableRowProps = {
 export const SettingsConnectedAccountsTableRow = ({
   account,
 }: SettingsConnectedAccountsTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const IconComponent = SettingsConnectedAccountIcon({ account });
 

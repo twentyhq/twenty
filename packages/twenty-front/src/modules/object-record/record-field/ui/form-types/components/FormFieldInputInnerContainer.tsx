@@ -1,9 +1,9 @@
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { forwardRef, type HTMLAttributes, type Ref } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
@@ -16,19 +16,19 @@ type FormFieldInputInnerContainerProps = {
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'>
 >`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
-  ${({ multiline, hasRightElement, theme }) =>
+  ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement
-      ? css`
+      ? `
           border-right: auto;
-          border-bottom-right-radius: ${theme.border.radius.sm};
-          border-top-right-radius: ${theme.border.radius.sm};
+          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+          border-top-right-radius: ${themeCssVariables.border.radius.sm};
         `
-      : css`
+      : `
           border-right: none;
           border-bottom-right-radius: 0;
           border-top-right-radius: 0;

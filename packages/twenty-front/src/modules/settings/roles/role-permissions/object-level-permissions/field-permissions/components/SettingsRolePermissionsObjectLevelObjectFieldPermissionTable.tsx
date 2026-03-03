@@ -15,12 +15,13 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 
@@ -28,7 +29,7 @@ export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
   'settings-role-permissions-object-level-object-field-permission';
 
 const StyledSearchInput = styled(SettingsTextInput)`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

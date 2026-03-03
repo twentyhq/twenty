@@ -1,11 +1,11 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellSkeletonLoader } from '@/object-record/record-inline-cell/components/RecordInlineCellSkeletonLoader';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledClickableContainer = styled.div<{
   readonly?: boolean;
@@ -13,20 +13,22 @@ const StyledClickableContainer = styled.div<{
 }>`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 
   ${({ isCentered }) =>
-    isCentered === true &&
-    `
+    isCentered === true
+      ? `
       justify-content: center;
-    `};
+    `
+      : ''};
 
   ${({ readonly }) =>
-    !readonly &&
-    css`
+    !readonly
+      ? `
       cursor: pointer;
-    `};
+    `
+      : ''};
 `;
 
 export const RecordInlineCellValue = () => {

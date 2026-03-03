@@ -1,9 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -17,16 +18,16 @@ type SettingsItemTypeTagProps = {
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const SettingsItemTypeTag = ({
   className,
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
     item: { isCustom, isRemote, applicationId },

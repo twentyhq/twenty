@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
@@ -27,8 +28,8 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
-  height: calc(100% - ${({ theme }) => theme.spacing(10)});
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  height: calc(100% - ${themeCssVariables.spacing[10]});
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordIndexContainer = () => {

@@ -3,7 +3,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledResizeHandler = styled.div<{
@@ -18,10 +19,10 @@ const StyledResizeHandler = styled.div<{
   width: 10px;
   z-index: 1;
 
-  ${({ isResizing, theme, position }) => {
+  ${({ isResizing, position }) => {
     if (isResizing === true) {
       return `&:after {
-        background-color: ${theme.color.blue};
+        background-color: ${themeCssVariables.color.blue};
         bottom: 0;
         content: '';
         display: block;
@@ -32,6 +33,7 @@ const StyledResizeHandler = styled.div<{
         width: 2px;
       }`;
     }
+    return '';
   }};
 `;
 

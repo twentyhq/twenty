@@ -1,10 +1,11 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
 
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { type IconComponent, IconTwentyStar } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;
@@ -21,25 +22,25 @@ const StyledDataType = styled.div<{
 }>`
   align-items: center;
   border: 1px solid transparent;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
   height: 20px;
   overflow: hidden;
   text-decoration: none;
 
   user-select: none;
 
-  ${({ to, theme }) =>
+  ${({ to }) =>
     to
-      ? css`
+      ? `
           cursor: pointer;
-          color: ${theme.font.color.secondary};
+          color: ${themeCssVariables.font.color.secondary};
           text-decoration: underline;
 
           &:hover {
-            color: ${theme.font.color.primary};
+            color: ${themeCssVariables.font.color.primary};
           }
         `
       : ''}
@@ -52,7 +53,7 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledSpan = styled.span`
-  color: ${({ theme }) => theme.font.color.extraLight};
+  color: ${themeCssVariables.font.color.extraLight};
 `;
 export const SettingsObjectFieldDataType = ({
   to,
@@ -62,7 +63,7 @@ export const SettingsObjectFieldDataType = ({
   labelDetail,
   onClick,
 }: SettingsObjectFieldDataTypeProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const fieldTypeConfig = getSettingsFieldTypeConfig(value);
   const Icon: IconComponent =

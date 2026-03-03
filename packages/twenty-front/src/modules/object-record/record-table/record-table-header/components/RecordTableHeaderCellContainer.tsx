@@ -1,12 +1,13 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeaderCell = styled.div<{
   zIndex?: number;
   shouldDisplayBorderBottom: boolean;
   isResizing: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   padding: 0;
   text-align: left;
 
@@ -15,26 +16,26 @@ const StyledHeaderCell = styled.div<{
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  background-color: ${({ theme }) => theme.background.primary};
-  border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${themeCssVariables.background.primary};
+  border-right: 1px solid ${themeCssVariables.border.color.light};
 
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
 
   user-select: none;
-  ${({ theme, isResizing }) => {
+  ${({ isResizing }) => {
     if (isResizing) {
       return '';
     }
 
     return `
     &:hover {
-      background: ${theme.background.secondary};
+      background: ${themeCssVariables.background.secondary};
     };
     &:active {
-      background: ${theme.background.tertiary};
+      background: ${themeCssVariables.background.tertiary};
     };
     `;
   }};

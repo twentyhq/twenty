@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import {
@@ -20,9 +20,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMessageContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsMessageChannelsContainer = () => {

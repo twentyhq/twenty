@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 
@@ -10,11 +11,11 @@ export const StyledObjectTableRow = styled(TableRow)`
 `;
 
 export const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const StyledActionTableCell = styled(TableCell)`
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;

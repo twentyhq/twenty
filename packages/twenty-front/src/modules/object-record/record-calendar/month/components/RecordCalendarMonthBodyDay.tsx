@@ -4,8 +4,7 @@ import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/rec
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -16,6 +15,7 @@ import {
   isSamePlainDate,
 } from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
@@ -25,27 +25,29 @@ const StyledContainer = styled.div<{
   width: calc(100% / 7);
   flex-direction: column;
   min-height: 122px;
-  padding: ${({ theme }) => theme.spacing(1)};
-  background: ${({ theme }) => theme.background.primary};
+  padding: ${themeCssVariables.spacing[1]};
+  background: ${themeCssVariables.background.primary};
   min-width: 0;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 
   &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => theme.border.color.light};
+    border-right: 1px solid ${themeCssVariables.border.color.light};
   }
 
-  ${({ isOtherMonth, theme }) =>
-    isOtherMonth &&
-    css`
-      background: ${theme.background.secondary};
-      color: ${theme.font.color.light};
-    `}
+  ${({ isOtherMonth }) =>
+    isOtherMonth
+      ? `
+      background: ${themeCssVariables.background.secondary};
+      color: ${themeCssVariables.font.color.light};
+    `
+      : ''}
 
-  ${({ isDayOfWeekend, theme }) =>
-    isDayOfWeekend &&
-    css`
-      background: ${theme.background.secondary};
-    `}
+  ${({ isDayOfWeekend }) =>
+    isDayOfWeekend
+      ? `
+      background: ${themeCssVariables.background.secondary};
+    `
+      : ''}
 `;
 
 const StyledDayHeader = styled.div`
@@ -61,42 +63,45 @@ const StyledDayHeader = styled.div`
 const StyledDayHeaderDayContainer = styled.div`
   display: flex;
   margin-left: auto;
-  padding: ${({ theme }) => theme.spacing(0.5, 0.5)};
+  padding: ${themeCssVariables.spacing['0.5']}
+    ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: center;
   line-height: 140%;
   width: 20px;
 
-  ${({ isToday, theme }) =>
-    isToday &&
-    css`
+  ${({ isToday }) =>
+    isToday
+      ? `
       border-radius: 4px;
-      background: ${theme.color.blue};
-      color: ${theme.font.color.inverted};
-      font-weight: ${theme.font.weight.medium};
-    `}
+      background: ${themeCssVariables.color.blue};
+      color: ${themeCssVariables.font.color.inverted};
+      font-weight: ${themeCssVariables.font.weight.medium};
+    `
+      : ''}
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing['0.5']};
   flex: 1;
   min-height: 60px;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color 0.1s ease;
 
-  ${({ isDraggedOver, theme }) =>
-    isDraggedOver &&
-    css`
-      background: ${theme.background.transparent.lighter};
-      border: 1px dashed ${theme.border.color.medium};
-    `}
+  ${({ isDraggedOver }) =>
+    isDraggedOver
+      ? `
+      background: ${themeCssVariables.background.transparent.lighter};
+      border: 1px dashed ${themeCssVariables.border.color.medium};
+    `
+      : ''}
 `;
 
 type RecordCalendarMonthBodyDayProps = {

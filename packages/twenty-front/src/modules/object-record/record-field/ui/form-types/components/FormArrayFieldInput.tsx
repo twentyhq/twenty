@@ -22,13 +22,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useId, useRef, useState } from 'react';
+import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -48,7 +48,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   border: none;
   display: flex;
   font-family: inherit;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -59,12 +59,12 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
 
   &:hover,
   &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
+    background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledInput = styled(TextInput)`
-  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPlaceholder = styled(FormFieldPlaceholder)`
@@ -85,7 +85,7 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const instanceId = useId();
 

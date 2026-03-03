@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type TableCellProps = {
   align?: 'left' | 'center' | 'right';
@@ -7,16 +8,16 @@ type TableCellProps = {
 
 const StyledTableCell = styled.div<TableCellProps>`
   align-items: center;
-  color: ${({ color, theme }) => color || theme.font.color.secondary};
+  color: ${({ color }) => color || themeCssVariables.font.color.secondary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
   justify-content: ${({ align }) =>
     align === 'right'
       ? 'flex-end'
       : align === 'center'
         ? 'center'
         : 'flex-start'};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
   text-align: ${({ align }) => align ?? 'left'};
 `;
 

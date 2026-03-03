@@ -1,8 +1,9 @@
 /* @license Enterprise */
 
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { IconVariablePlus } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
@@ -16,31 +17,32 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   display: flex;
   justify-content: center;
 
-  ${({ theme, readonly }) =>
-    !readonly &&
-    css`
+  ${({ readonly }) =>
+    !readonly
+      ? `
       :hover {
-        background-color: ${theme.background.transparent.light};
+        background-color: ${themeCssVariables.background.transparent.light};
       }
-    `}
+    `
+      : ''}
 
-  ${({ theme, multiline }) =>
+  ${({ multiline }) =>
     multiline
-      ? css`
-          border-radius: ${theme.border.radius.sm};
-          padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
+      ? `
+          border-radius: ${themeCssVariables.border.radius.sm};
+          padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]};
           position: absolute;
-          right: ${theme.spacing(0)};
-          top: ${theme.spacing(0)};
+          right: ${themeCssVariables.spacing[0]};
+          top: ${themeCssVariables.spacing[0]};
         `
-      : css`
-          background-color: ${theme.background.transparent.lighter};
-          border-top-right-radius: ${theme.border.radius.sm};
-          border-bottom-right-radius: ${theme.border.radius.sm};
-          border: 1px solid ${theme.border.color.medium};
+      : `
+          background-color: ${themeCssVariables.background.transparent.lighter};
+          border-top-right-radius: ${themeCssVariables.border.radius.sm};
+          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+          border: 1px solid ${themeCssVariables.border.color.medium};
           cursor: pointer;
-          padding: ${theme.spacing(2)};
-          color: ${theme.font.color.tertiary};
+          padding: ${themeCssVariables.spacing[2]};
+          color: ${themeCssVariables.font.color.tertiary};
         `}
 `;
 
@@ -56,7 +58,7 @@ export const createRecordLevelPermissionVariablePicker = (
     disabled,
     multiline,
   }) => {
-    const theme = useTheme();
+    const { theme } = useContext(ThemeContext);
 
     return (
       <Dropdown

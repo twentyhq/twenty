@@ -15,15 +15,15 @@ import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
-import { css, type Theme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-export const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
+export const VerticalScrollBoxShadowCSS = `
   &::before {
     bottom: -1px;
     box-shadow:
-      0px 2px 4px 0px ${theme.boxShadow.color},
-      0px 0px 4px 0px ${theme.boxShadow.color};
+      0px 2px 4px 0px ${themeCssVariables.boxShadow.color},
+      0px 0px 4px 0px ${themeCssVariables.boxShadow.color};
     clip-path: inset(0px 0px -4px 0px);
     content: '';
     height: 4px;
@@ -36,11 +36,7 @@ export const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
   }
 `;
 
-export const HorizontalScrollBoxShadowCSS = ({
-  theme,
-}: {
-  theme: Theme;
-}) => css`
+export const HorizontalScrollBoxShadowCSS = `
   &::after {
     content: '';
     position: absolute;
@@ -49,8 +45,8 @@ export const HorizontalScrollBoxShadowCSS = ({
     width: 4px;
     right: -1px;
     box-shadow:
-      2px 0px 4px 0px ${theme.boxShadow.color},
-      0px 0px 4px 0px ${theme.boxShadow.color};
+      2px 0px 4px 0px ${themeCssVariables.boxShadow.color},
+      0px 0px 4px 0px ${themeCssVariables.boxShadow.color};
     clip-path: inset(0px -4px 0px 0px);
     visibility: var(
       ${RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME},
@@ -92,7 +88,7 @@ const StyledTable = styled.div<{
   div.header-cell:nth-of-type(1) {
     left: 0px;
 
-    background-color: ${({ theme }) => theme.background.primary};
+    background-color: ${themeCssVariables.background.primary};
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
@@ -104,7 +100,7 @@ const StyledTable = styled.div<{
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     top: 0;
 
-    background-color: ${({ theme }) => theme.background.primary};
+    background-color: ${themeCssVariables.background.primary};
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
@@ -117,7 +113,7 @@ const StyledTable = styled.div<{
     RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     right: 0;
 
-    background-color: ${({ theme }) => theme.background.primary};
+    background-color: ${themeCssVariables.background.primary};
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
