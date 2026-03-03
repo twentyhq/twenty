@@ -134,6 +134,7 @@ describe('Manifest update - objects', () => {
       (obj) => obj.universalIdentifier === universalIdentifier,
     );
 
+    expect(ticketBefore).toBeDefined();
     expect(ticketBefore).toMatchObject({
       nameSingular: 'ticket',
       labelSingular: 'Ticket',

@@ -154,7 +154,7 @@ export const getDefaultRelationObjectFields = (
       label: config.label,
       description: `${objectConfig.labelPlural} tied to the ${config.targetLabel(objectConfig)}`,
       icon: config.icon,
-      isNullable: true,
+      isNullable: config.isNullable,
       type: FieldMetadataType.RELATION,
       universalSettings: { relationType: RelationType.ONE_TO_MANY },
       universalIdentifier: forwardFieldUniversalIdentifier,
