@@ -25,8 +25,9 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -54,8 +55,8 @@ import {
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {

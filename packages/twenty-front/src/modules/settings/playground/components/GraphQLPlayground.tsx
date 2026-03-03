@@ -1,7 +1,7 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
@@ -9,6 +9,7 @@ import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type GraphQLPlaygroundProps = {
@@ -26,8 +27,8 @@ const StyledGraphiQLContainer = styled.div`
   width: 100%;
 
   .graphiql-container {
-    background: ${({ theme }) => theme.background.primary};
-    border-radius: ${({ theme }) => theme.border.radius.md};
+    background: ${themeCssVariables.background.primary};
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 `;
 

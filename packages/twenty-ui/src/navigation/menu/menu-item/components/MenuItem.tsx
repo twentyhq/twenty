@@ -50,6 +50,7 @@ export type MenuItemProps = {
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
   focused?: boolean;
+  selected?: boolean;
   hotKeys?: string[];
   isSubMenuOpened?: boolean;
 };
@@ -80,6 +81,7 @@ export const MenuItem = ({
   hasSubMenu = false,
   disabled = false,
   focused = false,
+  selected = false,
   hotKeys,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
@@ -104,7 +106,7 @@ export const MenuItem = ({
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      focused={focused}
+      focused={focused || selected}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}
