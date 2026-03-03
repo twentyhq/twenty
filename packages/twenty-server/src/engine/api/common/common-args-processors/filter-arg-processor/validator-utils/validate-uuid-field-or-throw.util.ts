@@ -18,7 +18,7 @@ export const validateUUIDFieldOrThrow = (
 
     throw new CommonQueryRunnerException(
       `Invalid UUID value ${inspectedValue} for field "${fieldName}"`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       { userFriendlyMessage: msg`Invalid value for UUID: "${inspectedValue}"` },
     );
   }

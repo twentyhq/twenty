@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
-import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
-import { FilterArgProcessor } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg.processor';
+import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
+import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import {
@@ -64,9 +64,9 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
-  protected readonly dataArgProcessor: DataArgProcessor;
+  protected readonly dataArgProcessor: DataArgProcessorService;
   @Inject()
-  protected readonly filterArgProcessor: FilterArgProcessor;
+  protected readonly filterArgProcessor: FilterArgProcessorService;
   @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()

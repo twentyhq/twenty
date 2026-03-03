@@ -21,7 +21,7 @@ export const validateNumberFieldOrThrow = (
 
     throw new CommonQueryRunnerException(
       `Invalid number value ${inspectedValue} for field "${fieldName}"`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       {
         userFriendlyMessage: msg`Invalid value for number: "${inspectedValue}"`,
       },

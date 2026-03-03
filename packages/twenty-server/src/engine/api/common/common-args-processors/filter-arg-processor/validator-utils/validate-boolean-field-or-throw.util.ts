@@ -17,7 +17,7 @@ export const validateBooleanFieldOrThrow = (
 
     throw new CommonQueryRunnerException(
       `Invalid boolean value ${inspect(value)} for field "${fieldName}"`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       { userFriendlyMessage: msg`Invalid value: "${inspectedValue}"` },
     );
   }

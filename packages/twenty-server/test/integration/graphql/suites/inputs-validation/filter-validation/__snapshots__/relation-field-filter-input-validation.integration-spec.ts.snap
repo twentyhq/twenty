@@ -2,7 +2,7 @@
 
 exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationField":{"eq":"6dd71a46-68fe-4420-82b3-0d5b00ad2642"}} 1`] = `"Field "manyToOneRelationField" is not defined by type "ApiInputValidationTestObjectFilterInput". Did you mean "manyToOneRelationFieldId"?"`;
 
-exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID"`;
+exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID: 'invalid-uuid'"`;
 
 exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"oneToManyRelationField":{"eq":"6dd71a46-68fe-4420-82b3-0d5b00ad2642"}} 1`] = `"Field "oneToManyRelationField" is not defined by type "ApiInputValidationTestObjectFilterInput". Did you mean "manyToOneRelationFieldId"?"`;
 

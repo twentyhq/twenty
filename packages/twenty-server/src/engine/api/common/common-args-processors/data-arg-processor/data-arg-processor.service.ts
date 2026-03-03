@@ -62,7 +62,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
-export class DataArgProcessor {
+export class DataArgProcessorService {
   constructor(private readonly recordPositionService: RecordPositionService) {}
 
   async process({

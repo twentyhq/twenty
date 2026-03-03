@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"2025-01-01"}} 1`] = `"Invalid UUID"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"2025-01-01"}} 1`] = `"Invalid UUID: '2025-01-01'"`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID: 'invalid-uuid'"`;
 
 exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":[]}} 1`] = `"UUID must be a string"`;
 
