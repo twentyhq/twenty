@@ -11,6 +11,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -85,10 +86,20 @@ export const getAllSelectableFields = ({
           flatField,
           FieldMetadataType.MORPH_RELATION,
         )) &&
-      flatField.settings.relationType === RelationType.MANY_TO_ONE &&
-      isDefined(flatField.settings.joinColumnName)
+      flatField.settings.relationType === RelationType.MANY_TO_ONE
     ) {
-      result[flatField.settings.joinColumnName] = true;
+      const joinColumnName = isFlatFieldMetadataOfType(
+        flatField,
+        FieldMetadataType.MORPH_RELATION,
+      )
+        ? computeMorphOrRelationFieldJoinColumnName({ name: flatField.name })
+        : flatField.settings.joinColumnName;
+
+      if (isDefined(joinColumnName)) {
+        result[joinColumnName] = true;
+      } else {
+        result[flatField.name] = true;
+      }
     } else {
       result[flatField.name] = true;
     }

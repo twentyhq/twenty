@@ -58,7 +58,9 @@ import { transformRichTextV2Value } from 'src/engine/core-modules/record-transfo
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -237,14 +239,20 @@ export class DataArgProcessor {
           );
         }
 
-        if (key === relationSettings.joinColumnName) {
+        const joinColumnName = isFlatFieldMetadataOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        )
+          ? computeMorphOrRelationFieldJoinColumnName({
+              name: fieldMetadata.name,
+            })
+          : relationSettings.joinColumnName;
+
+        if (key === joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);
         }
 
-        if (
-          isDefined(relationSettings.joinColumnName) &&
-          !isRelationNestedOperation(value)
-        ) {
+        if (isDefined(joinColumnName) && !isRelationNestedOperation(value)) {
           throw new CommonQueryRunnerException(
             `Cannot write to relation name "${key}". Use the relation's foreign key ID field instead.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
