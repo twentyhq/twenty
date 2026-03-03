@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
 import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -26,14 +26,14 @@ const StyledFieldsDroppable = styled.div`
 
 const StyledEmptyGroupDropZone = styled.div`
   align-items: center;
-  border: 1px dashed ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.light};
+  border: 1px dashed ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: center;
-  margin: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  min-height: ${({ theme }) => theme.spacing(10)};
+  margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[10]};
 `;
 
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
