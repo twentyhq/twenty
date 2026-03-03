@@ -21,6 +21,7 @@ export const Default: Story = {
     defaultValue: {
       addressStreet1: '123 Main St',
       addressStreet2: 'Apt 123',
+      addressStreet3: 'Suite 123',
       addressCity: 'Springfield',
       addressState: 'IL',
       addressCountry: 'United States',
@@ -44,6 +45,7 @@ export const WithVariables: Story = {
     defaultValue: {
       addressStreet1: `{{trigger.properties.after.address.addressStreet1}}`,
       addressStreet2: `{{trigger.properties.after.address.addressStreet2}}`,
+      addressStreet3: `{{trigger.properties.after.address.addressStreet3}}`,
       addressCity: `{{trigger.properties.after.address.addressCity}}`,
       addressState: `{{trigger.properties.after.address.addressState}}`,
       addressCountry: `{{trigger.properties.after.address.addressCountry}}`,
@@ -69,7 +71,7 @@ export const WithVariables: Story = {
     expect(postcodeVariable).toBeVisible();
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
-    expect(variablePickers).toHaveLength(6);
+    expect(variablePickers).toHaveLength(7);
   },
 };
 
@@ -80,6 +82,7 @@ export const Disabled: Story = {
     defaultValue: {
       addressStreet1: '123 Main St',
       addressStreet2: 'Apt 123',
+      addressStreet3: 'Suite 123',
       addressCity: 'Springfield',
       addressState: 'IL',
       addressCountry: 'United States',

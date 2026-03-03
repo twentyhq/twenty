@@ -111,6 +111,7 @@ describe('useAddressAutocomplete', () => {
     const internalValue = {
       addressStreet1: '123 Main St',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: null,
       addressState: null,
       addressCountry: null,
@@ -131,6 +132,7 @@ describe('useAddressAutocomplete', () => {
     expect(mockOnChange).toHaveBeenCalledWith({
       addressStreet1: '123 Main St',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: 'New York',
       addressState: 'NY',
       addressCountry: 'United States',
@@ -158,6 +160,7 @@ describe('useAddressAutocomplete', () => {
     const internalValue = {
       addressStreet1: '123 Main St',
       addressStreet2: 'Apt 4B',
+      addressStreet3: 'Suite 4B',
       addressCity: 'Existing City',
       addressState: 'CA',
       addressCountry: 'United States',
@@ -178,6 +181,7 @@ describe('useAddressAutocomplete', () => {
     expect(mockOnChange).toHaveBeenCalledWith({
       addressStreet1: '123 Main St',
       addressStreet2: 'Apt 4B',
+      addressStreet3: 'Suite 4B',
       addressCity: 'Existing City',
       addressState: 'CA',
       addressCountry: 'United States',
