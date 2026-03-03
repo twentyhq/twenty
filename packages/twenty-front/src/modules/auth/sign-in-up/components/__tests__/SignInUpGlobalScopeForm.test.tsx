@@ -14,7 +14,11 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const buildWorkspaceUrlMock = jest.fn();
@@ -55,38 +59,42 @@ jest.mock('@/auth/sign-in-up/hooks/useHandleResetPassword', () => ({
   }),
 }));
 
-jest.mock('@/auth/sign-in-up/components/internal/SignInUpWithCredentials', () => ({
-  SignInUpWithCredentials: () => <div>credentials-form</div>,
-}));
+jest.mock(
+  '@/auth/sign-in-up/components/internal/SignInUpWithCredentials',
+  () => ({
+    SignInUpWithCredentials: () => <div>credentials-form</div>,
+  }),
+);
 
 jest.mock('@/auth/sign-in-up/components/internal/SignInUpWithGoogle', () => ({
   SignInUpWithGoogle: () => null,
 }));
 
-jest.mock('@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft', () => ({
-  SignInUpWithMicrosoft: () => null,
-}));
-
-jest.mock('@/ui/utilities/state/jotai/hooks/useRecoilValueV2', () => ({
-  useRecoilValueV2: () => ({
-    google: false,
-    magicLink: false,
-    microsoft: false,
-    password: true,
-    sso: [],
+jest.mock(
+  '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft',
+  () => ({
+    SignInUpWithMicrosoft: () => null,
   }),
-}));
+);
 
 dynamicActivate(SOURCE_LOCALE);
 
 describe('SignInUpGlobalScopeForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetJotaiStore();
     handleResetPasswordMock.mockReturnValue(resetPasswordClickMock);
   });
 
   it('renders forgot-password link on password step and triggers reset callback', () => {
     jotaiStore.set(signInUpStepState.atom, SignInUpStep.Password);
+    jotaiStore.set(authProvidersState.atom, {
+      google: false,
+      magicLink: false,
+      microsoft: false,
+      password: true,
+      sso: [],
+    });
 
     render(
       <JotaiProvider store={jotaiStore}>
