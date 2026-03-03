@@ -14,17 +14,19 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { useStore } from 'jotai';
 
 export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
@@ -34,6 +36,7 @@ export const useOpenRecordInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
   const { runWorkflowRunOpeningInCommandMenuSideEffects } =
     useRunWorkflowRunOpeningInCommandMenuSideEffects();
+  const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   const openRecordInCommandMenu = useCallback(
     ({
@@ -190,10 +193,23 @@ export const useOpenRecordInCommandMenu = () => {
           recordId,
         });
       }
+
+      if (isNewRecord) {
+        const labelIdentifierField =
+          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+        if (isDefined(labelIdentifierField)) {
+          openNewRecordTitleCell({
+            recordId,
+            fieldName: labelIdentifierField.name,
+          });
+        }
+      }
     },
     [
       getIcon,
       navigateCommandMenu,
+      openNewRecordTitleCell,
       runWorkflowRunOpeningInCommandMenuSideEffects,
       theme,
       store,
