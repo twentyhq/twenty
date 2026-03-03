@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { isFilterOperandExpectingValue } from '@/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -11,13 +10,10 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import {
-  type BillingEntitlement,
-  BillingEntitlementKey,
   FeatureFlagKey,
   useFindOneAgentQuery,
 } from '~/generated-metadata/graphql';
@@ -34,8 +30,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -51,15 +45,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   });
 
   const featureFlagsMap = useFeatureFlagsMap();
-
-  const workspaceBillingEntitlements = currentWorkspace?.billingEntitlements;
-
-  const isRLSBillingEntitlementEnabled =
-    workspaceBillingEntitlements?.some(
-      (entitlement: BillingEntitlement) =>
-        entitlement.key === BillingEntitlementKey.RLS &&
-        entitlement.value === true,
-    ) ?? false;
 
   const isRowLevelPermissionPredicatesEnabled =
     featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
@@ -170,7 +155,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           <SettingsRolePermissionsObjectLevelRecordLevelSection
             objectMetadataItem={objectMetadataItem}
             roleId={roleId}
-            hasOrganizationPlan={isRLSBillingEntitlementEnabled}
+            hasOrganizationPlan={true}
           />
         )}
       </SettingsPageContainer>
