@@ -24,6 +24,7 @@ export const scaffoldIntegrationTest = async ({
   });
 
   await createVitestConfig(appDirectory);
+  await createTsconfigSpec(appDirectory);
 };
 
 const createVitestConfig = async (appDirectory: string) => {
@@ -33,7 +34,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   plugins: [
     tsconfigPaths({
-      root: __dirname,
+      projects: ['tsconfig.spec.json'],
       ignoreConfigErrors: true,
     }),
   ],
@@ -52,6 +53,22 @@ export default defineConfig({
 `;
 
   await fs.writeFile(join(appDirectory, 'vitest.config.ts'), content);
+};
+
+const createTsconfigSpec = async (appDirectory: string) => {
+  const tsconfigSpec = {
+    extends: './tsconfig.json',
+    compilerOptions: {
+      types: ['vitest/globals'],
+    },
+    include: ['src/**/*.ts', 'src/**/*.tsx'],
+    exclude: ['node_modules', 'dist'],
+  };
+
+  await fs.writeFile(
+    join(appDirectory, 'tsconfig.spec.json'),
+    JSON.stringify(tsconfigSpec, null, 2),
+  );
 };
 
 const createSetupTest = async ({

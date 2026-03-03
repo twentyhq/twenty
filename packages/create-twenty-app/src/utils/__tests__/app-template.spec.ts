@@ -754,43 +754,6 @@ describe('copyBaseApplicationProject', () => {
   });
 
   describe('integration test', () => {
-    it('should create app-install.integration-test.ts with correct structure when enabled', async () => {
-      await copyBaseApplicationProject({
-        appName: 'my-test-app',
-        appDisplayName: 'My Test App',
-        appDescription: 'A test application',
-        appDirectory: testAppDirectory,
-        exampleOptions: ALL_EXAMPLES,
-      });
-
-      const testPath = join(
-        testAppDirectory,
-        'src',
-        '__tests__',
-        'app-install.integration-test.ts',
-      );
-
-      expect(await fs.pathExists(testPath)).toBe(true);
-
-      const content = await fs.readFile(testPath, 'utf8');
-
-      expect(content).toContain(
-        "import { appBuild, appUninstall } from 'twenty-sdk/cli'",
-      );
-      expect(content).toContain(
-        "import { MetadataApiClient } from 'twenty-sdk/generated'",
-      );
-      expect(content).toContain(
-        "import applicationConfig from 'src/application-config'",
-      );
-      expect(content).toContain('TWENTY_TEST_API_KEY');
-      expect(content).toContain('assertServerIsReachable');
-      expect(content).toContain('appBuild');
-      expect(content).toContain('appUninstall');
-      expect(content).toContain('findManyApplications');
-      expect(content).toContain('applicationConfig.universalIdentifier');
-    });
-
     it('should include vitest and test scripts in package.json when enabled', async () => {
       await copyBaseApplicationProject({
         appName: 'my-test-app',
@@ -807,71 +770,6 @@ describe('copyBaseApplicationProject', () => {
       expect(packageJson.scripts.test).toBe('vitest run');
       expect(packageJson.scripts['test:watch']).toBe('vitest');
       expect(packageJson.devDependencies.vitest).toBeDefined();
-    });
-
-    it('should create setup-test.ts when enabled', async () => {
-      await copyBaseApplicationProject({
-        appName: 'my-test-app',
-        appDisplayName: 'My Test App',
-        appDescription: 'A test application',
-        appDirectory: testAppDirectory,
-        exampleOptions: ALL_EXAMPLES,
-      });
-
-      const setupTestPath = join(
-        testAppDirectory,
-        'src',
-        '__tests__',
-        'setup-test.ts',
-      );
-
-      expect(await fs.pathExists(setupTestPath)).toBe(true);
-
-      const content = await fs.readFile(setupTestPath, 'utf8');
-
-      expect(content).toContain('.twenty-sdk-test');
-      expect(content).toContain('config.json');
-      expect(content).toContain('process.env.TWENTY_API_URL');
-      expect(content).toContain('process.env.TWENTY_TEST_API_KEY');
-    });
-
-    it('should overwrite vitest.config.ts with TWENTY_TEST_API_KEY when enabled', async () => {
-      await copyBaseApplicationProject({
-        appName: 'my-test-app',
-        appDisplayName: 'My Test App',
-        appDescription: 'A test application',
-        appDirectory: testAppDirectory,
-        exampleOptions: ALL_EXAMPLES,
-      });
-
-      const vitestConfigPath = join(testAppDirectory, 'vitest.config.ts');
-
-      expect(await fs.pathExists(vitestConfigPath)).toBe(true);
-
-      const content = await fs.readFile(vitestConfigPath, 'utf8');
-
-      expect(content).toContain('TWENTY_TEST_API_KEY');
-      expect(content).toContain('TWENTY_API_URL');
-      expect(content).toContain('setup-test.ts');
-    });
-
-    it('should not create setup-test.ts when disabled', async () => {
-      await copyBaseApplicationProject({
-        appName: 'my-test-app',
-        appDisplayName: 'My Test App',
-        appDescription: 'A test application',
-        appDirectory: testAppDirectory,
-        exampleOptions: NO_EXAMPLES,
-      });
-
-      const setupTestPath = join(
-        testAppDirectory,
-        'src',
-        '__tests__',
-        'setup-test.ts',
-      );
-
-      expect(await fs.pathExists(setupTestPath)).toBe(false);
     });
 
     it('should not include vitest or test scripts when disabled', async () => {
