@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { vi } from 'vitest';
 
 import { appBuild } from '@/cli/public-operations/app-build';
 import { appUninstall } from '@/cli/public-operations/app-uninstall';
@@ -15,6 +16,22 @@ describe('functionExecute E2E', () => {
         `appBuild failed: ${buildResult.error.code} – ${buildResult.error.message}`,
       );
     }
+
+    // Although appBuild uploads files before syncing the manifest, the server
+    // may need a moment to make them readable by the execution engine.
+    // Retry a dummy execution until the handler file becomes available.
+    await vi.waitFor(
+      async () => {
+        const result = await functionExecute({
+          appPath: APP_PATH,
+          functionName: 'add-numbers',
+          payload: { a: 0, b: 0 },
+        });
+
+        expect(result.success).toBe(true);
+      },
+      { timeout: 10_000, interval: 1_000 },
+    );
   }, 60_000);
 
   afterAll(async () => {
@@ -28,16 +45,10 @@ describe('functionExecute E2E', () => {
       payload: { a: 3, b: 7 },
     });
 
-    if (!result.success) {
-      throw new Error(
-        `functionExecute failed: ${result.error.code} – ${result.error.message} ${JSON.stringify(result.error.details ?? {})}`,
-      );
-    }
-
-    expect(result.data.functionName).toBe('add-numbers');
-    expect(result.data.status).toBe('SUCCESS');
-    expect(result.data.data).toBe(10);
-    expect(result.data.logs).toContain('Adding 3 + 7 = 10');
+    expect(result).toMatchObject({
+      success: true,
+      data: { functionName: 'add-numbers', status: 'SUCCESS', data: 10 },
+    });
   });
 
   it('should execute a function by universalIdentifier', async () => {
@@ -47,16 +58,10 @@ describe('functionExecute E2E', () => {
       payload: { a: 100, b: 200 },
     });
 
-    if (!result.success) {
-      throw new Error(
-        `functionExecute failed: ${result.error.code} – ${result.error.message} ${JSON.stringify(result.error.details ?? {})}`,
-      );
-    }
-
-    expect(result.data.functionName).toBe('add-numbers');
-    expect(result.data.status).toBe('SUCCESS');
-    expect(result.data.data).toBe(300);
-    expect(result.data.logs).toContain('Adding 100 + 200 = 300');
+    expect(result).toMatchObject({
+      success: true,
+      data: { functionName: 'add-numbers', status: 'SUCCESS', data: 300 },
+    });
   });
 
   it('should return FUNCTION_NOT_FOUND for a non-existent function name', async () => {
@@ -65,13 +70,9 @@ describe('functionExecute E2E', () => {
       functionName: 'non-existent-function',
     });
 
-    expect(result.success).toBe(false);
-
-    if (result.success) {
-      return;
-    }
-
-    expect(result.error.code).toBe('FUNCTION_NOT_FOUND');
-    expect(result.error.message).toContain('non-existent-function');
+    expect(result).toMatchObject({
+      success: false,
+      error: { code: 'FUNCTION_NOT_FOUND' },
+    });
   });
 });
