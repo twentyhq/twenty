@@ -302,6 +302,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         const keys = [
           'addressStreet1',
           'addressStreet2',
+          'addressStreet3',
           'addressCity',
           'addressState',
           'addressCountry',

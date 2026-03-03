@@ -17,6 +17,7 @@ export const getSubfieldsForAggregateOperation = (
         return [
           'addressStreet1',
           'addressStreet2',
+          'addressStreet3',
           'addressCity',
           'addressPostcode',
           'addressState',

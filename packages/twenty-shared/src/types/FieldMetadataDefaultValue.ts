@@ -33,6 +33,7 @@ export type FieldMetadataDefaultValueFullName = {
 export type FieldMetadataDefaultValueAddress = {
   addressStreet1: string | null;
   addressStreet2: string | null;
+  addressStreet3: string | null;
   addressCity: string | null;
   addressPostcode: string | null;
   addressState: string | null;

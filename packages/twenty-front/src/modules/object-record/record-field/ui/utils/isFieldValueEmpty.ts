@@ -140,6 +140,7 @@ export const isFieldValueEmpty = ({
       !isFieldAddressValue(fieldValue) ||
       (isValueEmpty(fieldValue?.addressStreet1) &&
         isValueEmpty(fieldValue?.addressStreet2) &&
+        isValueEmpty(fieldValue?.addressStreet3) &&
         isValueEmpty(fieldValue?.addressCity) &&
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
