@@ -34,7 +34,7 @@ concurrency:
 jobs:
   pull_docs_translations:
     name: Pull docs translations
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4

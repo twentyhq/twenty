@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ActivityTargetChipsProps = {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
@@ -12,7 +13,7 @@ type ActivityTargetChipsProps = {
 const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `;
 

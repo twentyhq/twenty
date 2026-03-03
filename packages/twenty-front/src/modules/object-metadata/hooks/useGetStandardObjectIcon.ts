@@ -1,9 +1,10 @@
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getIconForObjectType } from '@/object-metadata/utils/getIconForObjectType';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const useGetStandardObjectIcon = (objectNameSingular: string) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { Icon, IconColor } = {
     Icon: getIconForObjectType(objectNameSingular),

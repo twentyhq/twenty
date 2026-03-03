@@ -460,6 +460,54 @@ describe('shouldExecuteChildStep', () => {
     expect(result).toBe(false);
   });
 
+  it('should return false when one parent succeeded and another is FAILED_SAFELY', () => {
+    const stepInfos = {
+      'parent-1': {
+        status: StepStatus.SUCCESS,
+      },
+      'parent-2': {
+        status: StepStatus.FAILED_SAFELY,
+      },
+    };
+
+    const result = shouldExecuteChildStep({
+      parentSteps,
+      stepInfos,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when single parent is FAILED_SAFELY', () => {
+    const singleParent = [
+      {
+        id: 'parent-1',
+        type: WorkflowActionType.CODE,
+        settings: {
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+          outputSchema: {},
+        },
+        nextStepIds: [],
+      } as unknown as WorkflowAction,
+    ];
+
+    const stepInfos = {
+      'parent-1': {
+        status: StepStatus.FAILED_SAFELY,
+      },
+    };
+
+    const result = shouldExecuteChildStep({
+      parentSteps: singleParent,
+      stepInfos,
+    });
+
+    expect(result).toBe(false);
+  });
+
   it('should return false with large number of parents when not all completed', () => {
     const manyParentSteps = Array.from({ length: 25 }, (_, i) => ({
       id: `parent-${i + 1}`,

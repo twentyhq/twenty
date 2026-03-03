@@ -4,9 +4,10 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFullScreenOverlay = styled.div`
   position: fixed;
@@ -14,7 +15,7 @@ const StyledFullScreenOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -23,17 +24,17 @@ const StyledFullScreenOverlay = styled.div`
 `;
 
 const StyledFullScreenHeader = styled(PageHeader)`
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledFullScreenContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   flex: 1;
   min-height: 0;
-  padding: ${({ theme }) =>
-    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[3]};
 
   // Make the immediate child a flex column that grows, so nested components
   // with height="100%" (e.g., editors) can size correctly.
@@ -42,7 +43,7 @@ const StyledFullScreenContent = styled.div`
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    row-gap: ${({ theme }) => theme.spacing(5)};
+    row-gap: ${themeCssVariables.spacing[5]};
   }
 `;
 

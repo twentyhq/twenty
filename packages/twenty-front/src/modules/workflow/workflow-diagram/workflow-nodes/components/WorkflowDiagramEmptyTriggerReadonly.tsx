@@ -19,10 +19,12 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -73,6 +75,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
   return (
     <WorkflowNodeContainer
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      theme={theme}
       onClick={handleClick}
       selected={selected}
     >
@@ -85,7 +88,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
           </WorkflowNodeLabel>
         </WorkflowNodeLabelWithCounterPart>
 
-        <WorkflowNodeTitle selected={selected}>
+        <WorkflowNodeTitle theme={theme} selected={selected}>
           {t`Add a Trigger`}
         </WorkflowNodeTitle>
       </WorkflowNodeRightPart>

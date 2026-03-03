@@ -1,13 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { forwardRef, type InputHTMLAttributes } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   align-items: center;
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
   display: flex;
   flex-direction: row;
   min-height: calc(36px - 2 * var(--vertical-padding));
@@ -19,7 +20,7 @@ const StyledDropdownMenuSearchInputContainer = styled.div`
 const StyledInput = styled.input`
   ${TEXT_INPUT_STYLE}
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   background-color: transparent;
   width: 100%;
 

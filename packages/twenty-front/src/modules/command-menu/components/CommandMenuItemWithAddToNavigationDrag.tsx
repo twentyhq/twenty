@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';

@@ -1,18 +1,20 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EmailThreadMessageReceiversProps = {
   receivers: EmailThreadMessageParticipant[];
 };
 
 const StyledThreadMessageReceivers = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  padding: ${({ theme }) => theme.spacing(2, 0, 0, 1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]}
+    ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
   width: 50%;
 `;
 

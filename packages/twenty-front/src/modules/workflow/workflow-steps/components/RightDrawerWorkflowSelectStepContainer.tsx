@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 const StyledStepListContainer = styled.div`
   display: flex;
@@ -6,8 +7,8 @@ const StyledStepListContainer = styled.div`
   height: 100%;
   overflow-y: auto;
 
-  padding-block: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-block: ${themeCssVariables.spacing[1]};
+  padding-inline: ${themeCssVariables.spacing[2]};
 `;
 
 export { StyledStepListContainer as RightDrawerStepListContainer };
