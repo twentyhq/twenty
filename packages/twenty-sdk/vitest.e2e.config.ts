@@ -24,7 +24,9 @@ export default defineConfig({
     sequence: {
       concurrent: false,
     },
-    setupFiles: ['src/cli/__tests__/constants/setupTest.ts'],
+    env: {
+      TWENTY_CONFIG_PATH: '.twenty-test/config.json',
+    },
     globalSetup: undefined,
     onConsoleLog: () => true,
   },

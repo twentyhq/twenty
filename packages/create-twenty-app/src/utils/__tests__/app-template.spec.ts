@@ -780,6 +780,7 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain(
         "import { MetadataApiClient } from 'twenty-sdk/generated'",
       );
+      expect(content).toContain('TWENTY_CONFIG_PATH');
       expect(content).toContain('assertServerIsReachable');
       expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
@@ -802,6 +803,47 @@ describe('copyBaseApplicationProject', () => {
       expect(packageJson.scripts.test).toBe('vitest run');
       expect(packageJson.scripts['test:watch']).toBe('vitest');
       expect(packageJson.devDependencies.vitest).toBeDefined();
+    });
+
+    it('should create .twenty-test/config.example.json when enabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const exampleConfigPath = join(
+        testAppDirectory,
+        '.twenty-test',
+        'config.example.json',
+      );
+
+      expect(await fs.pathExists(exampleConfigPath)).toBe(true);
+
+      const content = await fs.readJson(exampleConfigPath);
+
+      expect(content.apiUrl).toBe('http://localhost:3000');
+      expect(content.apiKey).toBe('your-api-key');
+    });
+
+    it('should not create .twenty-test/config.example.json when disabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const exampleConfigPath = join(
+        testAppDirectory,
+        '.twenty-test',
+        'config.example.json',
+      );
+
+      expect(await fs.pathExists(exampleConfigPath)).toBe(false);
     });
 
     it('should not include vitest or test scripts when disabled', async () => {

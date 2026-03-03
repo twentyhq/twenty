@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
 import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -7,21 +6,19 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = path.resolve(__dirname, '../..');
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+const TWENTY_CONFIG_PATH = process.env.TWENTY_CONFIG_PATH;
 
 const POST_CARD_OBJECT_UNIVERSAL_IDENTIFIER =
   '54b589ca-eeed-4950-a176-358418b85c05';
 
 const readApiKeyFromConfig = (): string | undefined => {
-  const configPath = path.join(os.homedir(), '.twenty', 'config.json');
-
-  if (!fs.existsSync(configPath)) {
+  if (!TWENTY_CONFIG_PATH || !fs.existsSync(TWENTY_CONFIG_PATH)) {
     return undefined;
   }
 
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-  const defaultProfile = config.profiles?.default;
+  const config = JSON.parse(fs.readFileSync(TWENTY_CONFIG_PATH, 'utf-8'));
 
-  return defaultProfile?.apiKey ?? config.apiKey;
+  return config.apiKey;
 };
 
 const assertServerIsReachable = async () => {

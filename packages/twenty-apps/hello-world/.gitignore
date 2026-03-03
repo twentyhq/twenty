@@ -1,3 +1,4 @@
 .yarn/install-state.gz
 .env
 .twenty
+.twenty-test

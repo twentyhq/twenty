@@ -108,6 +108,8 @@ export const copyBaseApplicationProject = async ({
       fileFolder: '__tests__',
       fileName: 'app-install.integration-test.ts',
     });
+
+    await createTestConfigExample(appDirectory);
   }
 
   await createDefaultPreInstallFunction({
@@ -128,6 +130,22 @@ export const copyBaseApplicationProject = async ({
     appDirectory: sourceFolderPath,
     fileName: 'application-config.ts',
   });
+};
+
+const createTestConfigExample = async (appDirectory: string) => {
+  const content = JSON.stringify(
+    {
+      apiUrl: 'http://localhost:3000',
+      apiKey: 'your-api-key',
+    },
+    null,
+    2,
+  );
+
+  const configDir = join(appDirectory, '.twenty-test');
+
+  await fs.ensureDir(configDir);
+  await fs.writeFile(join(configDir, 'config.example.json'), content);
 };
 
 const createPublicAssetDirectory = async (appDirectory: string) => {
@@ -160,6 +178,7 @@ generated
 /dist/
 
 .twenty
+.twenty-test
 
 # production
 /build
@@ -518,7 +537,6 @@ const createIntegrationTest = async ({
   fileName: string;
 }) => {
   const content = `import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
 import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -526,18 +544,16 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = path.resolve(__dirname, '../..');
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+const TWENTY_CONFIG_PATH = process.env.TWENTY_CONFIG_PATH;
 
 const readApiKeyFromConfig = (): string | undefined => {
-  const configPath = path.join(os.homedir(), '.twenty', 'config.json');
-
-  if (!fs.existsSync(configPath)) {
+  if (!TWENTY_CONFIG_PATH || !fs.existsSync(TWENTY_CONFIG_PATH)) {
     return undefined;
   }
 
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-  const defaultProfile = config.profiles?.default;
+  const config = JSON.parse(fs.readFileSync(TWENTY_CONFIG_PATH, 'utf-8'));
 
-  return defaultProfile?.apiKey ?? config.apiKey;
+  return config.apiKey;
 };
 
 const assertServerIsReachable = async () => {
@@ -659,6 +675,7 @@ const createPackageJson = async ({
   };
 
   const devDependencies: Record<string, string> = {
+    'twenty-sdk': createTwentyAppPackageJson.version,
     typescript: '^5.9.3',
     '@types/node': '^24.7.2',
     '@types/react': '^18.2.0',
@@ -683,21 +700,9 @@ const createPackageJson = async ({
       yarn: '>=4.0.2',
     },
     packageManager: 'yarn@4.9.2',
-    scripts: {
-      twenty: 'twenty',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
+    scripts,
     dependencies: {},
-    devDependencies: {
-      'twenty-sdk': createTwentyAppPackageJson.version,
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^18.2.0',
-      react: '^18.2.0',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
+    devDependencies,
   };
 
   await fs.writeFile(
