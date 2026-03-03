@@ -1,3 +1,6 @@
+import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
+
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -6,18 +9,19 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { GetChatThreadsDocument } from '~/generated-metadata/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
@@ -28,6 +32,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
+  const apolloClient = useApolloClient();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
 
@@ -161,6 +166,11 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
         setCurrentAIChatThreadTitle(titlePart.data.title);
+        void apolloClient.refetchQueries({
+          include: [
+            getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
+          ],
+        });
       }
     },
   });
