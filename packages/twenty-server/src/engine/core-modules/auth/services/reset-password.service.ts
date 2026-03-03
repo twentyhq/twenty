@@ -27,24 +27,20 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
-import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
+import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
-// eslint-disable-next-line twenty/inject-workspace-repository
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -52,7 +48,6 @@ export class ResetPasswordService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userService: UserService,
   ) {}
 
@@ -62,12 +57,14 @@ export class ResetPasswordService {
   ): Promise<PasswordResetToken> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
+        userFriendlyMessage: msg`User not found.`,
+      }),
     );
 
     const targetWorkspaceId =
       workspaceId ??
-      (await this.findFirstPasswordAuthEnabledWorkspaceId(user.id));
+      (await this.findFirstPasswordAuthEnabledWorkspaceIdOrThrow(user.id));
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -100,6 +97,9 @@ export class ResetPasswordService {
       throw new AuthException(
         `Token has already been generated. Please wait for ${timeToWait} to generate again.`,
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Password reset token has already been generated. Please wait for ${timeToWait} to generate again.`,
+        },
       );
     }
 
@@ -116,11 +116,6 @@ export class ResetPasswordService {
         value: hashedResetToken,
         expiresAt,
         type: AppTokenType.PasswordResetToken,
-      });
-    } else {
-      // Mimic save timing to prevent timing attacks
-      await this.appTokenRepository.count({
-        where: { userId: user.id },
       });
     }
 
@@ -257,16 +252,33 @@ export class ResetPasswordService {
     return { success: true };
   }
 
-  private async findFirstPasswordAuthEnabledWorkspaceId(
+  private async findFirstPasswordAuthEnabledWorkspaceIdOrThrow(
     userId: string,
-  ): Promise<string | null> {
-    const workspaces =
-      await this.userWorkspaceService.findWorkspacesByUserId(userId);
+  ): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        workspaceUsers: {
+          user: {
+            id: userId,
+          },
+        },
+        isPasswordAuthEnabled: true,
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+    });
 
-    const passwordAuthEnabledWorkspace = workspaces.find(
-      (workspace) => workspace.isPasswordAuthEnabled,
-    );
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'No password auth enabled workspace found',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`No workspace found with password auth enabled.`,
+        },
+      );
+    }
 
-    return passwordAuthEnabledWorkspace?.id ?? null;
+    return workspace.id;
   }
 }
