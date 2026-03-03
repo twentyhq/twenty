@@ -69,10 +69,12 @@ export const useAgentChatData = () => {
   });
 
   const { loading: threadsLoading } = useGetChatThreadsQuery({
+    variables: { input: { first: 20 } },
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
-      if (data.chatThreads.length > 0) {
-        const firstThread = data.chatThreads[0];
+      const threads = data?.chatThreads?.threads ?? [];
+      if (threads.length > 0) {
+        const firstThread = threads[0];
 
         setCurrentAIChatThread(firstThread.id);
         setCurrentAIChatThreadTitle(firstThread.title ?? null);
