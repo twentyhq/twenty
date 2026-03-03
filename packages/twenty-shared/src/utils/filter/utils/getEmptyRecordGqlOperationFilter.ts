@@ -216,6 +216,20 @@ export const getEmptyRecordGqlOperationFilter = ({
               or: [
                 {
                   [correspondingField.name]: {
+                    addressStreet3: { ilike: '' },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressStreet3: { is: 'NULL' },
+                  } as AddressFilter,
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  [correspondingField.name]: {
                     addressCity: { ilike: '' },
                   } as AddressFilter,
                 },

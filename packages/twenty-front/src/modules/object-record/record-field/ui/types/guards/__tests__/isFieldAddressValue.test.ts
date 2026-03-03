@@ -9,6 +9,7 @@ describe('isFieldAddressValue', () => {
       isFieldAddressValue({
         addressStreet1: '123 Main St',
         addressStreet2: null,
+        addressStreet3: null,
         addressCity: 'Paris',
         addressState: null,
         addressPostcode: '75001',
@@ -24,6 +25,7 @@ describe('isFieldAddressValue', () => {
       isFieldAddressValue({
         addressStreet1: '',
         addressStreet2: null,
+        addressStreet3: null,
         addressCity: null,
         addressState: null,
         addressPostcode: null,
@@ -49,6 +51,7 @@ describe('addressSchema', () => {
     const result = addressSchema.safeParse({
       addressStreet1: '123 Main St',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: 'Paris',
       addressState: null,
       addressPostcode: '75001',

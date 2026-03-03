@@ -46,6 +46,10 @@ export const findDefaultNullEquivalentValue = ({
           return isNullEquivalentTextFieldValue(value)
             ? DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
+        case 'addressStreet3':
+          return isNullEquivalentTextFieldValue(value)
+            ? DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
+            : undefined;
         case 'addressCity':
           return isNullEquivalentTextFieldValue(value)
             ? DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE

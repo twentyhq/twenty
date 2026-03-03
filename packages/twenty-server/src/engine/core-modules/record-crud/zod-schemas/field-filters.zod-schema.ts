@@ -312,6 +312,42 @@ export const generateFieldFilterZodSchema = (
             })
             .optional()
             .describe('Filter by street 1'),
+          addressStreet2: z
+            .object({
+              eq: z.string().optional().describe('Street 2 equals'),
+              neq: z.string().optional().describe('Street 2 not equals'),
+              like: z
+                .string()
+                .optional()
+                .describe('Street 2 case-sensitive pattern match'),
+              ilike: z
+                .string()
+                .optional()
+                .describe('Street 2 case-insensitive pattern match'),
+              is: NullCheckEnum.optional().describe(
+                'Street 2 is null or not null',
+              ),
+            })
+            .optional()
+            .describe('Filter by street 2'),
+          addressStreet3: z
+            .object({
+              eq: z.string().optional().describe('Street 3 equals'),
+              neq: z.string().optional().describe('Street 3 not equals'),
+              like: z
+                .string()
+                .optional()
+                .describe('Street 3 case-sensitive pattern match'),
+              ilike: z
+                .string()
+                .optional()
+                .describe('Street 3 case-insensitive pattern match'),
+              is: NullCheckEnum.optional().describe(
+                'Street 3 is null or not null',
+              ),
+            })
+            .optional()
+            .describe('Filter by street 3'),
           addressCity: z
             .object({
               eq: z.string().optional().describe('City equals'),

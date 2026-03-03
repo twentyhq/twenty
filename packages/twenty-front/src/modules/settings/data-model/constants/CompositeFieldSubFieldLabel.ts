@@ -30,6 +30,7 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
   [FieldMetadataType.ADDRESS]: {
     addressStreet1: 'Address 1',
     addressStreet2: 'Address 2',
+    addressStreet3: 'Address 3',
     addressCity: 'City',
     addressState: 'State',
     addressCountry: 'Country',

@@ -46,6 +46,7 @@ export const TEST_OBJECT_GQL_FIELDS = `
     addressField {
         addressStreet1
         addressStreet2
+        addressStreet3
         addressCity
         addressState
         addressCountry

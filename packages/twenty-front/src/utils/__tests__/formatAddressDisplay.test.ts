@@ -5,6 +5,7 @@ describe('formatAddressDisplay', () => {
   const mockAddressValue: FieldAddressValue = {
     addressStreet1: '123 Main St',
     addressStreet2: 'Apt 4B',
+    addressStreet3: null,
     addressCity: 'New York',
     addressState: 'NY',
     addressPostcode: '10001',
@@ -51,6 +52,7 @@ describe('formatAddressDisplay', () => {
     const partialAddress: FieldAddressValue = {
       addressStreet1: '456 Oak Ave',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: 'Boston',
       addressState: null,
       addressPostcode: '02101',
@@ -78,6 +80,7 @@ describe('formatAddressDisplay', () => {
     const emptyAddress: FieldAddressValue = {
       addressStreet1: '',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: null,
       addressState: null,
       addressPostcode: null,

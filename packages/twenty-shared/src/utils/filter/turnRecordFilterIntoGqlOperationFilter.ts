@@ -721,6 +721,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                 },
                 {
                   [correspondingFieldMetadataItem.name]: {
+                    addressStreet3: {
+                      ilike: `%${recordFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
                     addressCity: {
                       ilike: `%${recordFilter.value}%`,
                     },
@@ -814,6 +821,26 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                     {
                       [correspondingFieldMetadataItem.name]: {
                         addressStreet2: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingFieldMetadataItem.name]: {
+                          addressStreet3: {
+                            ilike: `%${recordFilter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingFieldMetadataItem.name]: {
+                        addressStreet3: {
                           is: 'NULL',
                         },
                       },

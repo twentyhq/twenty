@@ -27,6 +27,7 @@ export const COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES = {
   [FieldMetadataType.ADDRESS]: {
     addressStreet1: 'addressStreet1',
     addressStreet2: 'addressStreet2',
+    addressStreet3: 'addressStreet3',
     addressCity: 'addressCity',
     addressState: 'addressState',
     addressCountry: 'addressCountry',

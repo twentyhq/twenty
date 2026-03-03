@@ -15,6 +15,7 @@ export const validateAddressFieldOrThrow = (
 ): {
   addressStreet1?: string | null;
   addressStreet2?: string | null;
+  addressStreet3?: string | null;
   addressCity?: string | null;
   addressState?: string | null;
   addressPostcode?: string | null;
@@ -32,6 +33,9 @@ export const validateAddressFieldOrThrow = (
         validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       case 'addressStreet2':
+        validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        break;
+      case 'addressStreet3':
         validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       case 'addressCity':
@@ -64,6 +68,7 @@ export const validateAddressFieldOrThrow = (
   return value as {
     addressStreet1?: string | null;
     addressStreet2?: string | null;
+    addressStreet3?: string | null;
     addressCity?: string | null;
     addressState?: string | null;
     addressPostcode?: string | null;

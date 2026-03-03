@@ -5,6 +5,7 @@ describe('joinAddressFieldValues', () => {
   const mockAddressValue: FieldAddressValue = {
     addressStreet1: '123 Main St',
     addressStreet2: 'Apt 4B',
+    addressStreet3: null,
     addressCity: 'New York',
     addressState: 'NY',
     addressPostcode: '10001',
@@ -26,6 +27,7 @@ describe('joinAddressFieldValues', () => {
     const addressWithNulls: FieldAddressValue = {
       addressStreet1: '456 Oak Ave',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: '',
       addressState: 'CA',
       addressPostcode: '90210',
@@ -71,6 +73,7 @@ describe('joinAddressFieldValues', () => {
     const emptyAddress: FieldAddressValue = {
       addressStreet1: '',
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: null,
       addressState: null,
       addressPostcode: null,

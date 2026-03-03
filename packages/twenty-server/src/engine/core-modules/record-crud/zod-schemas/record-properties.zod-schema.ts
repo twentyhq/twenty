@@ -190,6 +190,7 @@ export const generateRecordPropertiesZodSchema = (
         fieldSchema = z.object({
           addressStreet1: z.string().optional(),
           addressStreet2: z.string().optional(),
+          addressStreet3: z.string().optional(),
           addressCity: z.string().optional(),
           addressPostcode: z.string().optional(),
           addressState: z.string().optional(),

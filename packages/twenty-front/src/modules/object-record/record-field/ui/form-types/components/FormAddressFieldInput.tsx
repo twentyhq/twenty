@@ -28,6 +28,7 @@ export const FormAddressFieldInput = ({
       const updatedAddress = {
         addressStreet1: defaultValue?.addressStreet1 ?? '',
         addressStreet2: defaultValue?.addressStreet2 ?? '',
+        addressStreet3: defaultValue?.addressStreet3 ?? '',
         addressCity: defaultValue?.addressCity ?? '',
         addressState: defaultValue?.addressState ?? '',
         addressPostcode: defaultValue?.addressPostcode ?? '',
@@ -58,6 +59,14 @@ export const FormAddressFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder={t`Street address 2`}
+        />
+        <FormTextFieldInput
+          label={t`Address 3`}
+          defaultValue={defaultValue?.addressStreet3 ?? ''}
+          onChange={handleChange('addressStreet3')}
+          readonly={readonly}
+          VariablePicker={VariablePicker}
+          placeholder={t`Street address 3`}
         />
         <FormTextFieldInput
           label={t`City`}

@@ -55,6 +55,7 @@ export const computeDraftValueFromString = <FieldValue>({
     return {
       addressStreet1: value,
       addressStreet2: null,
+      addressStreet3: null,
       addressCity: null,
       addressState: null,
       addressPostcode: null,

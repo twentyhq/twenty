@@ -6,6 +6,7 @@ import { type FieldAddressValue } from '@/object-record/record-field/ui/types/Fi
 export const addressSchema = z.object({
   addressStreet1: z.string(),
   addressStreet2: z.string().nullable(),
+  addressStreet3: z.string().nullable(),
   addressCity: z.string().nullable(),
   addressState: z.string().nullable(),
   addressPostcode: z.string().nullable(),

@@ -1,6 +1,7 @@
 export const ALLOWED_ADDRESS_SUBFIELDS = [
   'addressStreet1',
   'addressStreet2',
+  'addressStreet3',
   'addressCity',
   'addressState',
   'addressPostcode',

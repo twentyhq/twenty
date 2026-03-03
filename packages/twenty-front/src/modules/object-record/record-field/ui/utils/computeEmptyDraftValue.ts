@@ -44,6 +44,7 @@ export const computeEmptyDraftValue = <FieldValue>({
     return {
       addressStreet1: '',
       addressStreet2: '',
+      addressStreet3: '',
       addressCity: '',
       addressState: '',
       addressCountry: '',

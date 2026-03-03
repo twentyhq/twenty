@@ -7,6 +7,7 @@ export const transformAddressField = (
   value: {
     addressStreet1?: string | null;
     addressStreet2?: string | null;
+    addressStreet3?: string | null;
     addressCity?: string | null;
     addressState?: string | null;
     addressPostcode?: string | null;
@@ -17,6 +18,7 @@ export const transformAddressField = (
 ): {
   addressStreet1?: string | null;
   addressStreet2?: string | null;
+  addressStreet3?: string | null;
   addressCity?: string | null;
   addressState?: string | null;
   addressPostcode?: string | null;
@@ -33,6 +35,9 @@ export const transformAddressField = (
     addressStreet2: isUndefined(value.addressStreet2)
       ? undefined
       : transformTextField(value.addressStreet2),
+    addressStreet3: isUndefined(value.addressStreet3)
+      ? undefined
+      : transformTextField(value.addressStreet3),
     addressCity: isUndefined(value.addressCity)
       ? undefined
       : transformTextField(value.addressCity),

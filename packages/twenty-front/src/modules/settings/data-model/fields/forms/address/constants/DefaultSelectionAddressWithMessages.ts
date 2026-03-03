@@ -14,6 +14,10 @@ export const DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES: {
     label: msg`Address 2`,
   },
   {
+    value: 'addressStreet3',
+    label: msg`Address 3`,
+  },
+  {
     value: 'addressCity',
     label: msg`City`,
   },

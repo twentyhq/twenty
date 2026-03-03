@@ -21,6 +21,7 @@ export const AddressFieldInput = () => {
     return {
       addressStreet1: newAddress?.addressStreet1 ?? '',
       addressStreet2: newAddress?.addressStreet2 ?? null,
+      addressStreet3: newAddress?.addressStreet3 ?? null,
       addressCity: newAddress?.addressCity ?? null,
       addressState: newAddress?.addressState ?? null,
       addressCountry: newAddress?.addressCountry ?? null,

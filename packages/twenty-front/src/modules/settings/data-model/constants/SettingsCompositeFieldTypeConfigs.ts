@@ -335,6 +335,17 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressStreet3,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressStreet3,
+        isImportable: true,
+        isFilterable: true,
+        isIncludedInUniqueConstraint: false,
+      },
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressCity,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
@@ -403,6 +414,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         addressStreet1: '456 Oak Street',
         addressStreet2: '',
+        addressStreet3: '',
         addressCity: 'Springfield',
         addressState: 'California',
         addressCountry: 'United States',
@@ -413,6 +425,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         addressStreet1: '123 Main Street',
         addressStreet2: '',
+        addressStreet3: '',
         addressCity: 'New York',
         addressState: 'New York',
         addressCountry: 'United States',
@@ -423,6 +436,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         addressStreet1: '8 rue Saint-Anne',
         addressStreet2: '',
+        addressStreet3: '',
         addressCity: 'Paris',
         addressState: 'Ile-de-France',
         addressCountry: 'France',

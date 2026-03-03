@@ -180,13 +180,14 @@ describe('Generate Column Definitions', () => {
         workspaceId,
       });
 
-      expect(columns).toHaveLength(8);
+      expect(columns).toHaveLength(9);
 
       const columnNames = columns.map((col) => col.name);
 
       expect(columnNames).toEqual([
         'homeAddressAddressStreet1',
         'homeAddressAddressStreet2',
+        'homeAddressAddressStreet3',
         'homeAddressAddressCity',
         'homeAddressAddressPostcode',
         'homeAddressAddressState',

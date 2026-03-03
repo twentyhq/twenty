@@ -83,6 +83,7 @@ export const query = gql`
             address {
               addressStreet1
               addressStreet2
+              addressStreet3
               addressCity
               addressState
               addressCountry

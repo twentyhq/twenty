@@ -26,6 +26,7 @@ export const useAddressSettingsFormInitialValues = ({
   const defaultDefaultValue = {
     addressStreet1: "''",
     addressStreet2: null,
+    addressStreet3: null,
     addressCity: null,
     addressState: null,
     addressPostcode: null,

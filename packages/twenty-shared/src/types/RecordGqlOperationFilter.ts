@@ -88,6 +88,7 @@ export type FullNameFilter = {
 export type AddressFilter = {
   addressStreet1?: StringFilter;
   addressStreet2?: StringFilter;
+  addressStreet3?: StringFilter;
   addressCity?: StringFilter;
   addressState?: StringFilter;
   addressCountry?: StringFilter;

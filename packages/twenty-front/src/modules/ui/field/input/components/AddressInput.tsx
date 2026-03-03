@@ -92,6 +92,7 @@ export const AddressInput = ({
 
   const addressStreet1InputRef = useRef<HTMLInputElement>(null);
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
+  const addressStreet3InputRef = useRef<HTMLInputElement>(null);
   const addressCityInputRef = useRef<HTMLInputElement>(null);
   const addressStateInputRef = useRef<HTMLInputElement>(null);
   const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
@@ -101,6 +102,7 @@ export const AddressInput = ({
     () => ({
       addressStreet1: addressStreet1InputRef,
       addressStreet2: addressStreet2InputRef,
+      addressStreet3: addressStreet3InputRef,
       addressCity: addressCityInputRef,
       addressState: addressStateInputRef,
       addressPostcode: addressPostcodeInputRef,
@@ -331,6 +333,16 @@ export const AddressInput = ({
           fullWidth
           onChange={getChangeHandler('addressStreet2')}
           onFocus={getFocusHandler('addressStreet2')}
+        />
+      )}
+      {isFieldInputInSubFieldsAddress('addressStreet3') && (
+        <TextInput
+          value={internalValue.addressStreet3 ?? ''}
+          ref={inputRefs.addressStreet3}
+          label={t`Address 3`}
+          fullWidth
+          onChange={getChangeHandler('addressStreet3')}
+          onFocus={getFocusHandler('addressStreet3')}
         />
       )}
       <StyledHalfRowContainer>

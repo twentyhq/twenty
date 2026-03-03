@@ -51,6 +51,7 @@ export type FieldFullNameDraftValue = { firstName: string; lastName: string };
 export type FieldAddressDraftValue = {
   addressStreet1: string;
   addressStreet2: string | null;
+  addressStreet3: string | null;
   addressCity: string | null;
   addressState: string | null;
   addressPostcode: string | null;

@@ -42,6 +42,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
       'addressStreet2',
+      'addressStreet3',
       'addressCity',
       'addressState',
       'addressPostcode',
@@ -63,6 +64,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
       'addressStreet2',
+      'addressStreet3',
       'addressCity',
       'addressState',
       'addressPostcode',
@@ -90,6 +92,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
       'addressStreet2',
+      'addressStreet3',
       'addressCity',
       'addressState',
       'addressPostcode',
@@ -117,6 +120,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
       'addressStreet2',
+      'addressStreet3',
       'addressCity',
       'addressState',
       'addressPostcode',
@@ -170,6 +174,7 @@ describe('useAddressSettingsFormInitialValues', () => {
       defaultValue: [
         'addressStreet1',
         'addressStreet2',
+        'addressStreet3',
         'addressCity',
         'addressState',
         'addressPostcode',
