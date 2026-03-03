@@ -26,10 +26,8 @@ const StyledColumnFooterCell = styled.div<{
 
   padding: 0;
 
-  ${({ columnWidth }) => `
-      min-width: ${columnWidth}px;
-      width: ${columnWidth}px;
-      `}
+  min-width: ${({ columnWidth }) => columnWidth}px;
+  width: ${({ columnWidth }) => columnWidth}px;
   text-align: left;
   &:hover {
     background: ${themeCssVariables.background.secondary};
@@ -41,21 +39,33 @@ const StyledColumnFooterCell = styled.div<{
   position: sticky;
   bottom: 0;
 
-  ${({ isFirstCell }) =>
+  left: ${({ isFirstCell }) =>
     isFirstCell
-      ? `
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-          }
-  `
-      : ''}
+      ? `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`
+      : 'auto'};
+  z-index: ${({ isFirstCell, isTableWithGroups }) =>
+    isFirstCell
+      ? isTableWithGroups
+        ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn
+        : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn
+      : isTableWithGroups
+        ? TABLE_Z_INDEX.footer.tableWithGroups.default
+        : TABLE_Z_INDEX.footer.tableWithoutGroups.default};
 
-  ${({ isFirstCell, isTableWithGroups }) =>
-    isFirstCell
-      ? `left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px; z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn};`
-      : `z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.default : TABLE_Z_INDEX.footer.tableWithoutGroups.default};`}
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    max-width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : 'none'};
+    min-width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : '0'};
+    width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : 'auto'};
+  }
 `;
 
 const StyledColumnFootContainer = styled.div`

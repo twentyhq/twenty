@@ -22,15 +22,11 @@ const StyledFormFieldInputInnerContainer = styled.div<
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
   border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement
-      ? themeCssVariables.border.radius.sm
-      : '0'};
+    multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
   border-right: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? 'auto' : 'none'};
   border-top-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement
-      ? themeCssVariables.border.radius.sm
-      : '0'};
+    multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
   box-sizing: border-box;
   display: flex;
   overflow-x: auto;

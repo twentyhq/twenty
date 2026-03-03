@@ -21,14 +21,9 @@ const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
 
-  ${({ hideTitle }) =>
-    hideTitle
-      ? `
-      @media (max-width: ${MOBILE_VIEWPORT}px) {
-        display: none;
-      }
-    `
-      : ''}
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: ${({ hideTitle }) => (hideTitle ? 'none' : 'flex')};
+  }
 `;
 
 const StyledIcon = styled.div`

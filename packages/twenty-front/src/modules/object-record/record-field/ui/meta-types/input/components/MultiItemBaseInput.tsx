@@ -31,34 +31,23 @@ const StyledInput = styled.input<{
     font-weight: ${themeCssVariables.font.weight.medium};
   }
 
-  ${({ hasItem }) =>
+  background-color: ${({ hasItem }) =>
+    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
+  border: ${({ hasItem, hasError }) =>
     hasItem
-      ? `
-      background-color: ${themeCssVariables.background.transparent.lighter};
-      border-radius: 4px;
-      border: 1px solid ${themeCssVariables.border.color.medium};
-    `
-      : ''}
-
-  ${({ hasError, hasItem }) =>
-    hasError && hasItem
-      ? `
-      border: 1px solid ${themeCssVariables.border.color.danger};
-    `
-      : ''}
-
+      ? hasError
+        ? `1px solid ${themeCssVariables.border.color.danger}`
+        : `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
   box-sizing: border-box;
   font-weight: ${themeCssVariables.font.weight.medium};
   height: 32px;
   position: relative;
   width: 100%;
 
-  ${({ withRightComponent }) =>
-    withRightComponent
-      ? `
-      padding-right: 32px;
-    `
-      : ''}
+  padding-right: ${({ withRightComponent }) =>
+    withRightComponent ? '32px' : '0'};
 `;
 
 const StyledInputContainer = styled.div`

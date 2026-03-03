@@ -31,17 +31,15 @@ const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   justify-content: space-between;
   padding-right: ${themeCssVariables.spacing[2]};
 
-  ${({ readonly }) =>
-    !readonly
-      ? `
-      &:hover,
-      &[data-open='true'] {
-        background-color: ${themeCssVariables.background.transparent.light};
-      }
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-      cursor: pointer;
-    `
-      : ''}
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ readonly }) =>
+      readonly
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledIconButton = styled.div`

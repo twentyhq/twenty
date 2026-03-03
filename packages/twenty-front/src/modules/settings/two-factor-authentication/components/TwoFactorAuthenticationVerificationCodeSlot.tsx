@@ -23,14 +23,12 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   outline: 0;
   outline-color: ${themeCssVariables.border.color.medium};
 
-  ${({ isActive }) =>
+  outline-color: ${({ isActive }) =>
     isActive
-      ? `
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${themeCssVariables.border.color.strong};
-    `
-      : ''}
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.border.color.medium};
+  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
+  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
 `;
 
 const StyledCaretContainer = styled.div`

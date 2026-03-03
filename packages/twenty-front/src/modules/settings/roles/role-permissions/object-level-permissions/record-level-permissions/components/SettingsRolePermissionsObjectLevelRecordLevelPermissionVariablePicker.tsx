@@ -18,33 +18,37 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   display: flex;
   justify-content: center;
 
-  ${({ readonly }) =>
-    !readonly
-      ? `
-      :hover {
-        background-color: ${themeCssVariables.background.transparent.light};
-      }
-    `
-      : ''}
-
-  ${({ multiline }) =>
+  background-color: ${({ multiline }) =>
     multiline
-      ? `
-          border-radius: ${themeCssVariables.border.radius.sm};
-          padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]};
-          position: absolute;
-          right: ${themeCssVariables.spacing[0]};
-          top: ${themeCssVariables.spacing[0]};
-        `
-      : `
-          background-color: ${themeCssVariables.background.transparent.lighter};
-          border-top-right-radius: ${themeCssVariables.border.radius.sm};
-          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-          border: 1px solid ${themeCssVariables.border.color.medium};
-          cursor: pointer;
-          padding: ${themeCssVariables.spacing[2]};
-          color: ${themeCssVariables.font.color.tertiary};
-        `}
+      ? 'transparent'
+      : themeCssVariables.background.transparent.lighter};
+  border: ${({ multiline }) =>
+    multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+  border-bottom-right-radius: ${({ multiline }) =>
+    multiline ? '0' : themeCssVariables.border.radius.sm};
+  border-radius: ${({ multiline }) =>
+    multiline ? themeCssVariables.border.radius.sm : '0'};
+  border-top-right-radius: ${({ multiline }) =>
+    multiline ? '0' : themeCssVariables.border.radius.sm};
+  color: ${({ multiline }) =>
+    multiline ? 'inherit' : themeCssVariables.font.color.tertiary};
+  cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
+  padding: ${({ multiline }) =>
+    multiline
+      ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]}`
+      : themeCssVariables.spacing[2]};
+  position: ${({ multiline }) => (multiline ? 'absolute' : 'relative')};
+  right: ${({ multiline }) =>
+    multiline ? themeCssVariables.spacing[0] : 'auto'};
+  top: ${({ multiline }) =>
+    multiline ? themeCssVariables.spacing[0] : 'auto'};
+
+  &:hover {
+    background-color: ${({ readonly }) =>
+      readonly
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
+  }
 `;
 
 export const createRecordLevelPermissionVariablePicker = (

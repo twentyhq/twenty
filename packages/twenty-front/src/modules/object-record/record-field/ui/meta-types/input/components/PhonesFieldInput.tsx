@@ -31,20 +31,16 @@ const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;
 }>`
-  ${({ hasItem }) =>
+  background-color: ${({ hasItem }) =>
+    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
+  border: ${({ hasItem, hasError }) =>
     hasItem
-      ? `
-      background-color: ${themeCssVariables.background.transparent.lighter};
-      border-radius: 4px;
-      border: 1px solid ${themeCssVariables.border.color.medium};
-      height: 30px;
-    `
-      : ''}
-
-  ${({ hasError, hasItem }) =>
-    hasError && hasItem
-      ? `border: 1px solid ${themeCssVariables.border.color.danger};`
-      : ''}
+      ? hasError
+        ? `1px solid ${themeCssVariables.border.color.danger}`
+        : `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
+  height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`

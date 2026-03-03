@@ -68,7 +68,9 @@ const StyledDateInput = styled.input<{ hasError?: boolean }>`
   }
 
   color: ${({ hasError }) =>
-    hasError ? themeCssVariables.color.red : themeCssVariables.font.color.primary};
+    hasError
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
 `;
 
 const StyledDateInputContainer = styled.div`

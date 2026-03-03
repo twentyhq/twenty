@@ -32,18 +32,12 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   overflow: hidden;
   padding-right: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
-  ${(props) =>
-    props.isHovered === true && !props.readonly
-      ? `
-        background-color: ${
-          !props.disableHoverEffect
-            ? themeCssVariables.background.transparent.light
-            : 'transparent'
-        };
-
-        cursor: pointer;
-      `
-      : ''}
+  background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
+    isHovered && !readonly && !disableHoverEffect
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  cursor: ${({ isHovered, readonly }) =>
+    isHovered && !readonly ? 'pointer' : 'default'};
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`

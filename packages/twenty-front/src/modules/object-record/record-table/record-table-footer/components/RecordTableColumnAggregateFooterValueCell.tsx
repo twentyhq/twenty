@@ -33,12 +33,10 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   background: ${({ isUnfolded }) =>
     isUnfolded ? themeCssVariables.background.tertiary : 'none'};
 
-  ${({ isFirstCell }) =>
+  padding-left: ${({ isFirstCell }) =>
     isFirstCell
-      ? `
-    padding-left: calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH} + ${themeCssVariables.spacing[1]});
-  `
-      : ''}
+      ? `calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH} + ${themeCssVariables.spacing[1]})`
+      : '0'};
 `;
 
 const StyledIcon = styled(IconChevronDown)`
