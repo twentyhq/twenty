@@ -162,7 +162,7 @@ export const Dropdown = ({
 
             setDropdownMaxHeight(maxHeightToApply);
             setDropdownMaxWidth(maxWidthToApply);
-            setDropdownYPosition(floatingY);
+            setDropdownYPosition(Math.round(floatingY));
           });
         },
         ...boundaryOptions,
