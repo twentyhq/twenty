@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-import React, { useContext } from 'react';
 import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/components/WorkspaceDndKitDroppableSlot';
 import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/components/WorkspaceDndKitSortableItem';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
@@ -9,16 +7,24 @@ import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/N
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import styled from '@emotion/styled';
+import { useContext } from 'react';
 
-import { WorkspaceSectionAddMenuItemButton } from '@/object-metadata/components/WorkspaceSectionAddMenuItemButton';
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
-import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
 import { WorkspaceOrphanDropTarget } from '@/object-metadata/components/WorkspaceOrphanDropTarget';
+import { WorkspaceSectionAddMenuItemButton } from '@/object-metadata/components/WorkspaceSectionAddMenuItemButton';
+import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
 
 const StyledList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.betweenSiblingsGap};
+`;
+
+const StyledListItemRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 `;
 
 export const WorkspaceSectionListDndKit = ({
@@ -44,7 +50,7 @@ export const WorkspaceSectionListDndKit = ({
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
-        <React.Fragment key={item.id}>
+        <StyledListItemRow key={item.id}>
           <WorkspaceOrphanDropTarget index={index} compact />
           <WorkspaceDndKitSortableItem
             id={item.id}
@@ -65,7 +71,7 @@ export const WorkspaceSectionListDndKit = ({
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             />
           </WorkspaceDndKitSortableItem>
-        </React.Fragment>
+        </StyledListItemRow>
       ))}
       <WorkspaceDndKitDroppableSlot
         droppableId={
@@ -78,9 +84,7 @@ export const WorkspaceSectionListDndKit = ({
           index={filteredItems.length}
           compact={!isAddMenuItemButtonVisible}
         >
-          {isAddMenuItemButtonVisible && (
-            <WorkspaceSectionAddMenuItemButton />
-          )}
+          {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
         </WorkspaceOrphanDropTarget>
       </WorkspaceDndKitDroppableSlot>
       {addToNavigationFallbackDestination?.droppableId ===
