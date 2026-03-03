@@ -3,6 +3,7 @@ import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchr
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ClientService } from '@/cli/utilities/client/client-service';
+import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppBuildOptions = {
@@ -14,7 +15,7 @@ export type AppBuildResult = {
   fileCount: number;
 };
 
-export const appBuild = async (
+const innerAppBuild = async (
   options: AppBuildOptions,
 ): Promise<CommandResult<AppBuildResult>> => {
   const { appPath, onProgress } = options;
@@ -34,6 +35,10 @@ export const appBuild = async (
   }
 
   const { manifest, filePaths } = manifestResult;
+
+  for (const warning of manifestResult.warnings) {
+    onProgress?.(`⚠ ${warning}`);
+  }
   const clientService = new ClientService();
 
   await clientService.ensureGeneratedClientStub({ appPath });
@@ -68,13 +73,14 @@ export const appBuild = async (
 
   if (typecheckErrors.length > 0) {
     const errorMessages = typecheckErrors.map(
-      (error) => `${error.file}(${error.line},${error.column}): ${error.text}`,
+      (error) =>
+        `${error.file}(${error.line},${error.column + 1}): ${error.text}`,
     );
 
     return {
       success: false,
       error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
+        code: APP_ERROR_CODES.TYPECHECK_FAILED,
         message: `Typecheck failed:\n${errorMessages.join('\n')}`,
       },
     };
@@ -107,3 +113,8 @@ export const appBuild = async (
     },
   };
 };
+
+export const appBuild = (
+  options: AppBuildOptions,
+): Promise<CommandResult<AppBuildResult>> =>
+  runSafe(() => innerAppBuild(options), APP_ERROR_CODES.SYNC_FAILED);

@@ -9,11 +9,13 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "create-entity": "twenty app add",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "auth": "twenty auth login"
+    "twenty": "twenty",
+    "auth": "twenty auth:login",
+    "dev": "twenty app:dev",
+    "build": "twenty app:build",
+    "typecheck": "twenty app:typecheck",
+    "uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add"
   },
   "dependencies": {
     "twenty-sdk": "0.6.3"

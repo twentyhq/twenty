@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import {
   Avatar,
@@ -18,6 +17,8 @@ import { useAddLinkToNavigationMenu } from '@/command-menu/pages/navigation-menu
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type CommandMenuNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
@@ -31,7 +32,7 @@ export const CommandMenuNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: CommandMenuNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
 

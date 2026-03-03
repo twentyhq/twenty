@@ -4,17 +4,15 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledEditButton = styled(LightIconButton)<{ isMobile: boolean }>`
-  ${({ theme, isMobile }) => css`
-    opacity: ${isMobile ? 1 : 0};
-    pointer-events: none;
-    transition: opacity ${theme.animation.duration.instant}s ease;
-  `}
+const StyledEditButtonWrapper = styled.div<{ isMobile: boolean }>`
+  opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};
+  pointer-events: none;
+  transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
 
   .widget:hover & {
     opacity: 1;
@@ -37,11 +35,12 @@ export const FieldWidgetEditAction = () => {
   };
 
   return (
-    <StyledEditButton
-      Icon={IconPencil}
-      accent="secondary"
-      onClick={handleClick}
-      isMobile={isMobile}
-    />
+    <StyledEditButtonWrapper isMobile={isMobile}>
+      <LightIconButton
+        Icon={IconPencil}
+        accent="secondary"
+        onClick={handleClick}
+      />
+    </StyledEditButtonWrapper>
   );
 };

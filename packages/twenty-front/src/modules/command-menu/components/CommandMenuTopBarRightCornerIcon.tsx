@@ -2,7 +2,7 @@ import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconEdit, IconSparkles } from 'twenty-ui/display';
@@ -11,9 +11,10 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconButton = styled(IconButton)`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const CommandMenuTopBarRightCornerIcon = () => {

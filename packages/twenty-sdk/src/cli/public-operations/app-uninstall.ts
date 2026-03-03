@@ -1,6 +1,7 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppUninstallOptions = {
@@ -8,7 +9,7 @@ export type AppUninstallOptions = {
   workspace?: string;
 };
 
-export const appUninstall = async (
+const innerAppUninstall = async (
   options: AppUninstallOptions,
 ): Promise<CommandResult> => {
   if (options.workspace) {
@@ -23,7 +24,8 @@ export const appUninstall = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message: 'Failed to build manifest.',
+        message:
+          'Manifest not found. Run `app:build` or `app:dev` to generate it first.',
       },
     };
   }
@@ -49,3 +51,8 @@ export const appUninstall = async (
 
   return { success: true, data: undefined };
 };
+
+export const appUninstall = (
+  options: AppUninstallOptions,
+): Promise<CommandResult> =>
+  runSafe(() => innerAppUninstall(options), APP_ERROR_CODES.UNINSTALL_FAILED);

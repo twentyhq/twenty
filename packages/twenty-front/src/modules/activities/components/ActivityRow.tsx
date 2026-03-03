@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { CardContent } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRowContent = styled(CardContent)`
+const StyledRowContent = styled.div<{ isClickable: boolean }>`
   align-items: center;
+  background-color: ${themeCssVariables.background.secondary};
+  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[12]};
