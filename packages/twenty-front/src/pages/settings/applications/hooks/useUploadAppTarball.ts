@@ -59,7 +59,7 @@ export const useUploadAppTarball = () => {
         const errorMessage =
           errorBody.messages?.[0] ??
           errorBody.message ??
-          `Upload failed (${response.status})`;
+          t`Upload failed (${response.status})`;
 
         enqueueErrorSnackBar({ message: errorMessage });
 
