@@ -184,10 +184,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             containAnimation
             initial={!skipInitialExpandAnimation}
           >
-            <StyledFolderDroppableContent
-              $compact={isCompact}
-              data-dnd-group={folderContentDroppableId}
-            >
+            <StyledFolderDroppableContent $compact={isCompact}>
               {navigationMenuItems.map((navigationMenuItem, index) => (
                 <WorkspaceDndKitSortableItem
                   key={navigationMenuItem.id}

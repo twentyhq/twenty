@@ -150,20 +150,29 @@ export const WorkspaceDndKitProvider = ({
       source !== null &&
       target !== null &&
       isSortable(source) &&
-      isSortable(target)
+      isSortable(target) &&
+      isDefined(target.group) &&
+      isDefined(target.index)
     ) {
-      const group = source.group ?? target.group;
-      const index = source.group === target.group ? source.index : target.index;
-      if (isDefined(group) && isDefined(index) && isAddToNavDrag) {
-        setActiveDropTargetId(getDndKitDropTargetId(String(group), index));
+      const dropTargetId = getDndKitDropTargetId(
+        String(target.group),
+        target.index,
+      );
+      setActiveDropTargetId(dropTargetId);
+      if (isAddToNavDrag) {
         setForbiddenDropTargetId(null);
-        return;
+      } else {
+        const destDroppableId = String(target.group);
+        const folderId = validateAndExtractWorkspaceFolderId(destDroppableId);
+        const payload =
+          store
+            .get(addToNavPayloadRegistryState.atom)
+            .get(String(source?.id)) ?? null;
+        const isFolderOverFolder =
+          payload?.type === 'folder' && isDefined(folderId);
+        setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
       }
-      if (isDefined(group) && isDefined(index) && !isAddToNavDrag) {
-        setActiveDropTargetId(null);
-        setForbiddenDropTargetId(null);
-        return;
-      }
+      return;
     }
 
     const targetIdIsString =
@@ -184,7 +193,7 @@ export const WorkspaceDndKitProvider = ({
         return;
       }
       if (validParsed && !isAddToNavDrag) {
-        setActiveDropTargetId(null);
+        setActiveDropTargetId(String(target.id));
         return;
       }
     }
@@ -297,19 +306,6 @@ export const WorkspaceDndKitProvider = ({
         isWorkspaceDroppableId(initialGroupStr) &&
         isWorkspaceDroppableId(destGroup);
       if (bothWorkspace) {
-        const isCrossGroup = initialGroupStr !== destGroup;
-        const sourceElement =
-          isCrossGroup && sourceDraggable?.sortable
-            ? sourceDraggable.sortable.element
-            : null;
-        const sourceContainer =
-          isCrossGroup && typeof document !== 'undefined'
-            ? document.querySelector(`[data-dnd-group="${initialGroupStr}"]`)
-            : null;
-        if (isDefined(sourceElement) && isDefined(sourceContainer)) {
-          const child = sourceContainer.children[initialIndex] ?? null;
-          sourceContainer.insertBefore(sourceElement, child);
-        }
         const result = toDropResult(
           draggableId,
           { sourceDroppableId: initialGroupStr, sourceIndex: initialIndex },

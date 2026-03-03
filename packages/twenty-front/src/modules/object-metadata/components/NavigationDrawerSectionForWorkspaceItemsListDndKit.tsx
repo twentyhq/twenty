@@ -42,11 +42,7 @@ export const WorkspaceSectionListDndKit = ({
   ).length;
   const isAddMenuItemButtonVisible = isNavigationMenuInEditMode;
   return (
-    <StyledList
-      data-dnd-group={
-        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-      }
-    >
+    <StyledList>
       {filteredItems.map((item, index) => (
         <React.Fragment key={item.id}>
           <WorkspaceOrphanDropTarget index={index} compact />

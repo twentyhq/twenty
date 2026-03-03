@@ -1,3 +1,4 @@
+import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
 import { useSortable } from '@dnd-kit/react/sortable';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
@@ -5,6 +6,8 @@ import { type ReactNode } from 'react';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 
 const SORTABLE_COLLISION_PRIORITY = 3;
+
+const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
 const StyledSortableRoot = styled.div`
   min-height: 0;
@@ -36,6 +39,8 @@ export const WorkspaceDndKitSortableItem = ({
       sourceIndex: index,
     },
     disabled,
+    transition: null,
+    plugins: PLUGINS_WITHOUT_OPTIMISTIC,
   });
 
   return (
