@@ -53,11 +53,7 @@ const StyledPageContainerBase = styled.div`
 `;
 const StyledPageContainer = motion.create(StyledPageContainerBase);
 
-const StyledAppNavigationDrawer = styled(AppNavigationDrawer)`
-  flex-shrink: 0;
-`;
-
-const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
+const StyledNavigationDrawerWrapper = styled.div`
   flex-shrink: 0;
 `;
 
@@ -100,9 +96,13 @@ export const DefaultLayout = () => {
               <PageDragDropProvider>
                 {!showAuthModal && <KeyboardShortcutMenu />}
                 {showAuthModal ? (
-                  <StyledAppNavigationDrawerMock />
+                  <StyledNavigationDrawerWrapper>
+                    <SignInAppNavigationDrawerMock />
+                  </StyledNavigationDrawerWrapper>
                 ) : useShowFullScreen ? null : (
-                  <StyledAppNavigationDrawer />
+                  <StyledNavigationDrawerWrapper>
+                    <AppNavigationDrawer />
+                  </StyledNavigationDrawerWrapper>
                 )}
                 {showAuthModal ? (
                   <>
