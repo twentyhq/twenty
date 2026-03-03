@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import type { FlatWorkspaceItem } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import type { FlatWorkspaceItem } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 

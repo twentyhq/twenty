@@ -13,6 +13,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
+import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -151,7 +152,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
         (isNavigationMenuInEditMode ? (
           <Suspense
             fallback={
-              <NavigationDrawerSectionForWorkspaceItemsListReadOnly
+              <WorkspaceSectionListEditModeFallback
                 filteredItems={filteredItems}
                 folderChildrenById={folderChildrenById}
                 onActiveObjectMetadataItemClick={
