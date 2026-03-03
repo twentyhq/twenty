@@ -7,15 +7,12 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { css } from '@linaria/core';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditButtonWrapper = styled.div<{ isMobile: boolean }>`
-  ${({ isMobile }) => css`
-    opacity: ${isMobile ? 1 : 0};
-    pointer-events: none;
-    transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
-  `}
+  opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};
+  pointer-events: none;
+  transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
 
   .widget:hover & {
     opacity: 1;

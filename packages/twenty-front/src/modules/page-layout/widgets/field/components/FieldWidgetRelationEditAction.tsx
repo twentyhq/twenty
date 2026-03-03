@@ -25,7 +25,6 @@ import { styled } from '@linaria/react';
 import { CustomError } from 'twenty-shared/utils';
 import { IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { css } from '@linaria/core';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FieldWidgetRelationEditActionProps = {
@@ -39,15 +38,13 @@ const StyledEditButtonWrapper = styled.div<{
   isDropdownOpen: boolean;
   isMobile: boolean;
 }>`
-  ${({ isDropdownOpen, isMobile }) =>
-    !isDropdownOpen
-      ? css`
-          opacity: ${isMobile ? 1 : 0};
-          pointer-events: none;
-          transition: opacity ${themeCssVariables.animation.duration.instant}s
-            ease;
-        `
-      : ''}
+  opacity: ${({ isDropdownOpen, isMobile }) =>
+    isDropdownOpen ? '1' : isMobile ? '1' : '0'};
+  pointer-events: ${({ isDropdownOpen }) => (isDropdownOpen ? 'auto' : 'none')};
+  transition: ${({ isDropdownOpen }) =>
+    isDropdownOpen
+      ? 'none'
+      : `opacity ${themeCssVariables.animation.duration.instant}s ease`};
 
   .widget:hover & {
     opacity: 1;

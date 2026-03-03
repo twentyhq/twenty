@@ -13,25 +13,19 @@ import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledButtonWrapper = styled.div<{
-  alignWithCommandMenuTopBar: boolean;
-}>`
+const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
+  align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
+  display: ${({ alignToTop }) => (alignToTop ? 'flex' : 'block')};
+  height: ${({ alignToTop }) =>
+    alignToTop ? `${COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE}px` : 'auto'};
+  position: ${({ alignToTop }) => (alignToTop ? 'fixed' : 'static')};
+  right: ${({ alignToTop }) =>
+    alignToTop ? themeCssVariables.spacing[3] : 'auto'};
+  top: ${({ alignToTop }) => (alignToTop ? '0' : 'auto')};
   z-index: ${RootStackingContextZIndices.CommandMenuButton};
-  ${({ alignWithCommandMenuTopBar }) =>
-    alignWithCommandMenuTopBar
-      ? css`
-          align-items: center;
-          display: flex;
-          height: ${COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE}px;
-          position: fixed;
-          right: ${themeCssVariables.spacing[3]};
-          top: 0;
-        `
-      : ''}
 `;
 
 const StyledTooltipWrapper = styled.div`
@@ -143,9 +137,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButtonWrapper
-      alignWithCommandMenuTopBar={alignWithCommandMenuTopBar}
-    >
+    <StyledButtonWrapper alignToTop={alignWithCommandMenuTopBar}>
       <div id="toggle-command-menu-button">
         <AnimatedButton
           animatedSvg={

@@ -3,7 +3,6 @@ import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getW
 import { styled } from '@linaria/react';
 import type { ThemeType } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 
 const StyledNodeContainer = styled.div<{
   theme: ThemeType;
@@ -25,35 +24,35 @@ const StyledNodeContainer = styled.div<{
   position: relative;
   transition: border-color 0.1s;
 
-  ${({ theme, runStatus, selected, isConnectable }) => {
+  background: ${({ theme, runStatus, selected }) => {
     const colors = getWorkflowDiagramColors({ theme, runStatus });
+    return selected ? colors.selected.background : colors.unselected.background;
+  }};
 
-    const background = selected
-      ? colors.selected.background
-      : colors.unselected.background;
+  border-color: ${({ theme, runStatus, selected }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
+    return selected
+      ? colors.selected.borderColor
+      : colors.unselected.borderColor;
+  }};
 
-    return css`
-      background: ${background};
-      border-color: ${selected
+  &:hover {
+    background: ${({ theme, runStatus, selected }) => {
+      const colors = getWorkflowDiagramColors({ theme, runStatus });
+      const bg = selected
+        ? colors.selected.background
+        : colors.unselected.background;
+      return `linear-gradient(0deg, ${themeCssVariables.background.transparent.lighter} 0%, ${themeCssVariables.background.transparent.lighter} 100%), ${bg}`;
+    }};
+
+    border-color: ${({ theme, runStatus, selected, isConnectable }) => {
+      if (isConnectable === true) return themeCssVariables.color.blue;
+      const colors = getWorkflowDiagramColors({ theme, runStatus });
+      return selected
         ? colors.selected.borderColor
-        : colors.unselected.borderColor};
-
-      &:hover {
-        background: linear-gradient(
-            0deg,
-            ${themeCssVariables.background.transparent.lighter} 0%,
-            ${themeCssVariables.background.transparent.lighter} 100%
-          ),
-          ${background};
-
-        ${isConnectable
-          ? css`
-              border-color: ${themeCssVariables.color.blue} !important;
-            `
-          : ''};
-      }
-    `;
-  }}
+        : colors.unselected.borderColor;
+    }};
+  }
 `;
 
 export { StyledNodeContainer as WorkflowNodeContainer };

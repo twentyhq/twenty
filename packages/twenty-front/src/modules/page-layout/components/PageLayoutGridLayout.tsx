@@ -39,7 +39,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { css } from '@linaria/core';
 
-const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
+const disabledTransitionsClass = css`
+  .react-grid-layout {
+    transition: none !important;
+  }
+
+  .react-grid-item {
+    transition: none !important;
+  }
+
+  .react-grid-item.cssTransforms {
+    transition-property: none !important;
+  }
+`;
+
+const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -69,23 +83,6 @@ const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
   .react-grid-item:hover .widget-card-resize-handle {
     display: block !important;
   }
-
-  ${({ $disableTransitions }) =>
-    $disableTransitions
-      ? css`
-          .react-grid-layout {
-            transition: none !important;
-          }
-
-          .react-grid-item {
-            transition: none !important;
-          }
-
-          .react-grid-item.cssTransforms {
-            transition-property: none !important;
-          }
-        `
-      : ''}
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -174,7 +171,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   return (
     <StyledGridContainer
       ref={gridContainerRef}
-      $disableTransitions={shouldDisableTransitions}
+      className={
+        shouldDisableTransitions ? disabledTransitionsClass : undefined
+      }
     >
       {isPageLayoutInEditMode && (
         <>

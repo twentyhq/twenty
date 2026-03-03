@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
@@ -35,18 +34,11 @@ export const StyledControlContainer = styled.div<{
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
 
-  ${({ hasRightElement }) =>
-    !hasRightElement
-      ? css`
-          border-right: auto;
-          border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-          border-top-right-radius: ${themeCssVariables.border.radius.sm};
-        `
-      : css`
-          border-right: none;
-          border-bottom-right-radius: none;
-          border-top-right-radius: none;
-        `}
+  border-right: ${({ hasRightElement }) => (hasRightElement ? 'none' : 'auto')};
+  border-bottom-right-radius: ${({ hasRightElement }) =>
+    hasRightElement ? '0' : themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${({ hasRightElement }) =>
+    hasRightElement ? '0' : themeCssVariables.border.radius.sm};
 
   color: ${({ disabled, textAccent }) =>
     disabled

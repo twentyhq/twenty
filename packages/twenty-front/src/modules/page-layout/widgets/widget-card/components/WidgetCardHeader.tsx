@@ -13,7 +13,6 @@ import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetG
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { ThemeContext } from 'twenty-ui/theme';
 
 export type WidgetCardHeaderProps = {
@@ -46,16 +45,8 @@ const StyledTitleContainer = styled.div<{ variant: WidgetCardVariant }>`
   user-select: none;
   overflow: hidden;
 
-  ${({ variant }) => {
-    switch (variant) {
-      case 'side-column':
-        return '';
-      default:
-        return css`
-          padding-inline: ${themeCssVariables.spacing[1]};
-        `;
-    }
-  }}
+  padding-inline: ${({ variant }) =>
+    variant === 'side-column' ? '0' : themeCssVariables.spacing[1]};
 `;
 
 const StyledRightContainer = styled.div`

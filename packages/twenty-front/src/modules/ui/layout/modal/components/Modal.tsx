@@ -16,7 +16,6 @@ import React, { useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { ThemeContext } from 'twenty-ui/theme';
 const StyledModalDivBase = styled.div<{
   size?: ModalSize;
@@ -109,18 +108,10 @@ const StyledContent = styled.div<{
   flex: 1 1 0%;
   flex-direction: column;
   padding: ${themeCssVariables.spacing[10]};
-  ${({ isVerticalCentered }) =>
-    isVerticalCentered
-      ? css`
-          align-items: center;
-        `
-      : ''}
-  ${({ isHorizontalCentered }) =>
-    isHorizontalCentered
-      ? css`
-          justify-content: center;
-        `
-      : ''}
+  align-items: ${({ isVerticalCentered }) =>
+    isVerticalCentered ? 'center' : 'stretch'};
+  justify-content: ${({ isHorizontalCentered }) =>
+    isHorizontalCentered ? 'center' : 'flex-start'};
 `;
 
 const StyledFooter = styled.div`

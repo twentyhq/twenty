@@ -14,7 +14,6 @@ import { useParseDateInputStringToPlainDate } from '@/ui/input/components/intern
 import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -29,18 +28,15 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
-  color: ${themeCssVariables.font.color.primary};
   outline: none;
   padding: 4px 8px 4px 8px;
   font-weight: 500;
   font-size: ${themeCssVariables.font.size.md};
   width: 100%;
-  ${({ hasError }) =>
+  color: ${({ hasError }) =>
     hasError
-      ? css`
-          color: ${themeCssVariables.color.red};
-        `
-      : ''};
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
 `;
 
 type DatePickerInputProps = {

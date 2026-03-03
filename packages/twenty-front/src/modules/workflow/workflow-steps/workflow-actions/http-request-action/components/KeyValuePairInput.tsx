@@ -11,7 +11,6 @@ import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -23,15 +22,10 @@ const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
 
-  ${({ readonly }) =>
+  grid-template-columns: ${({ readonly }) =>
     readonly
-      ? css`
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        `
-      : css`
-          grid-template-columns: repeat(2, minmax(0, 1fr)) ${themeCssVariables
-              .spacing[8]};
-        `};
+      ? 'repeat(2, minmax(0, 1fr))'
+      : `repeat(2, minmax(0, 1fr)) ${themeCssVariables.spacing[8]}`};
 `;
 export type KeyValuePair = {
   id: string;

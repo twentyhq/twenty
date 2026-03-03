@@ -11,7 +11,6 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -25,12 +24,8 @@ const StyledInput = styled.input<{
   position: relative;
   width: 100%;
 
-  ${({ withRightComponent }) =>
-    withRightComponent
-      ? css`
-          padding-right: 32px;
-        `
-      : ''}
+  padding-right: ${({ withRightComponent }) =>
+    withRightComponent ? '32px' : '0'};
 `;
 
 const StyledInputContainer = styled.div`

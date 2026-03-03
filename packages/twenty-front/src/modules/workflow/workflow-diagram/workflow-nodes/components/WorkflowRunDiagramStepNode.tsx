@@ -32,7 +32,6 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { ThemeContext, type ThemeType } from 'twenty-ui/theme';
 
 const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
@@ -64,15 +63,10 @@ const StyledIterationCounter = styled.div<{
   theme: ThemeType;
   runStatus?: WorkflowRunStepStatus;
 }>`
+  color: ${({ theme, runStatus }) =>
+    getWorkflowDiagramColors({ theme, runStatus }).unselected.color};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-
-  ${({ theme, runStatus }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-    return css`
-      color: ${colors.unselected.color};
-    `;
-  }}
 `;
 
 const StyledRightPartContainer = styled.div`

@@ -24,7 +24,6 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
-import { css } from '@linaria/core';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLink = styled(Link)`
@@ -33,11 +32,9 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledSeeAllButtonWrapper = styled.div<{ isMobile: boolean }>`
-  ${({ isMobile }) => css`
-    opacity: ${isMobile ? 1 : 0};
-    pointer-events: none;
-    transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
-  `}
+  opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};
+  pointer-events: none;
+  transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
 
   .widget:hover & {
     opacity: 1;

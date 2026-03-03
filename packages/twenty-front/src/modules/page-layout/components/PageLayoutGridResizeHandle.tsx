@@ -7,7 +7,6 @@ import {
   IconRadiusTopRight,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 import { ThemeContext } from 'twenty-ui/theme';
 
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
@@ -110,77 +109,53 @@ const StyledResizeHandleWrapper = styled.div<{
   widgetHandleAxis?: WidgetHandleAxis;
 }>`
   position: absolute;
-  ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 'w') {
-      return css`
-        left: ${themeCssVariables.spacing[1.5]};
-        top: 50%;
-        transform: translateY(-50%);
-      `;
+
+  top: ${({ widgetHandleAxis }) => {
+    if (widgetHandleAxis === 'w' || widgetHandleAxis === 'e') return '50%';
+    if (widgetHandleAxis === 'n') return themeCssVariables.spacing[1.5];
+    if (widgetHandleAxis === 'ne' || widgetHandleAxis === 'nw') return '0';
+    return 'auto';
+  }};
+
+  bottom: ${({ widgetHandleAxis }) => {
+    if (widgetHandleAxis === 's') return themeCssVariables.spacing[1.5];
+    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'sw') return '0';
+    return 'auto';
+  }};
+
+  left: ${({ widgetHandleAxis }) => {
+    if (widgetHandleAxis === 'w') return themeCssVariables.spacing[1.5];
+    if (widgetHandleAxis === 'n' || widgetHandleAxis === 's') return '50%';
+    if (widgetHandleAxis === 'sw' || widgetHandleAxis === 'nw') return '0';
+    return 'auto';
+  }};
+
+  right: ${({ widgetHandleAxis }) => {
+    if (widgetHandleAxis === 'e') return themeCssVariables.spacing[1.5];
+    if (widgetHandleAxis === 'se' || widgetHandleAxis === 'ne') return '0';
+    return 'auto';
+  }};
+
+  transform: ${({ widgetHandleAxis }) => {
+    switch (widgetHandleAxis) {
+      case 'w':
+      case 'e':
+        return 'translateY(-50%)';
+      case 'n':
+      case 's':
+        return 'translateX(-50%)';
+      case 'se':
+        return `translate(${themeCssVariables.spacing[1]}, ${themeCssVariables.spacing[1]})`;
+      case 'sw':
+        return `translate(-${themeCssVariables.spacing[1]}, ${themeCssVariables.spacing[1]})`;
+      case 'ne':
+        return `translate(${themeCssVariables.spacing[1]}, -${themeCssVariables.spacing[1]})`;
+      case 'nw':
+        return `translate(-${themeCssVariables.spacing[1]}, -${themeCssVariables.spacing[1]})`;
+      default:
+        return 'none';
     }
-    if (widgetHandleAxis === 'e') {
-      return css`
-        right: ${themeCssVariables.spacing[1.5]};
-        top: 50%;
-        transform: translateY(-50%);
-      `;
-    }
-    if (widgetHandleAxis === 'n') {
-      return css`
-        top: ${themeCssVariables.spacing[1.5]};
-        left: 50%;
-        transform: translateX(-50%);
-      `;
-    }
-    if (widgetHandleAxis === 's') {
-      return css`
-        bottom: ${themeCssVariables.spacing[1.5]};
-        left: 50%;
-        transform: translateX(-50%);
-      `;
-    }
-    if (widgetHandleAxis === 'se') {
-      return css`
-        bottom: 0;
-        right: 0;
-        transform: translate(
-          ${themeCssVariables.spacing[1]},
-          ${themeCssVariables.spacing[1]}
-        );
-      `;
-    }
-    if (widgetHandleAxis === 'sw') {
-      return css`
-        bottom: 0;
-        left: 0;
-        transform: translate(
-          -${themeCssVariables.spacing[1]},
-          ${themeCssVariables.spacing[1]}
-        );
-      `;
-    }
-    if (widgetHandleAxis === 'ne') {
-      return css`
-        right: 0;
-        top: 0;
-        transform: translate(
-          ${themeCssVariables.spacing[1]},
-          -${themeCssVariables.spacing[1]}
-        );
-      `;
-    }
-    if (widgetHandleAxis === 'nw') {
-      return css`
-        left: 0;
-        top: 0;
-        transform: translate(
-          -${themeCssVariables.spacing[1]},
-          -${themeCssVariables.spacing[1]}
-        );
-      `;
-    }
-    return '';
-  }}
+  }};
 `;
 
 const isVerticalHandle = (

@@ -34,7 +34,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { css } from '@linaria/core';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -107,16 +106,13 @@ const StyledFieldContainer = styled.div<{
 
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-  ${({ readonly }) =>
-    !readonly
-      ? css`
-          &:hover,
-          &[data-open='true'] {
-            background-color: ${themeCssVariables.background.transparent
-              .lighter};
-          }
-        `
-      : ''}
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ readonly }) =>
+      readonly
+        ? 'transparent'
+        : themeCssVariables.background.transparent.lighter};
+  }
 `;
 
 const StyledPlaceholder = styled(FormFieldPlaceholder)`
