@@ -8,7 +8,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
@@ -24,6 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
@@ -31,8 +32,8 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 const StyledAnimatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(8)} 0;
-  gap: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[8]} 0;
+  gap: ${themeCssVariables.spacing[4]};
   overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
@@ -50,7 +51,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledActionSkipLinkContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
 const validationSchema = z.object({

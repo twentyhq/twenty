@@ -1,12 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShimmeringText = styled.div`
-  background: ${({ theme }) => theme.font.color.light}
+  background: ${themeCssVariables.font.color.light}
     linear-gradient(
       90deg,
-      ${({ theme }) => theme.font.color.light} 0%,
-      ${({ theme }) => theme.font.color.primary} 50%,
-      ${({ theme }) => theme.font.color.light} 100%
+      ${themeCssVariables.font.color.light} 0%,
+      ${themeCssVariables.font.color.primary} 50%,
+      ${themeCssVariables.font.color.light} 100%
     );
   background-size: 200% 100%;
   background-position: -200% top;

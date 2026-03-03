@@ -1,12 +1,11 @@
-import chalk from 'chalk';
+import { authLogout } from '@/cli/public-operations/auth-logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import chalk from 'chalk';
 
 export class AuthLogoutCommand {
-  private configService = new ConfigService();
-
   async execute(): Promise<void> {
     try {
-      await this.configService.clearConfig();
+      await authLogout();
       const activeWorkspace = ConfigService.getActiveWorkspace();
       console.log(
         chalk.green(

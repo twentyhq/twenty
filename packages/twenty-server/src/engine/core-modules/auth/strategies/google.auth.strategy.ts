@@ -2,14 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { type Request } from 'express';
-import { Strategy, type VerifyCallback } from 'passport-google-oauth20';
+import {
+  Strategy,
+  type Profile as GoogleProfile,
+  type VerifyCallback,
+} from 'passport-google-oauth20';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { parseJson } from 'twenty-shared/utils';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<
@@ -52,6 +58,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
         action: req.query.action,
+        locale: req.query.locale,
       }),
     };
 
@@ -62,18 +69,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     request: GoogleRequest,
     _accessToken: string,
     _refreshToken: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    profile: any,
+    profile: GoogleProfile,
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
-    const state =
-      typeof request.query.state === 'string'
-        ? JSON.parse(request.query.state)
-        : undefined;
+    const state = parseJson<SocialSSOState>(request.query.state as string);
 
-    const firstVerifiedEmail = emails.find(
-      (email: { verified: boolean }) => email?.verified === true,
+    const firstVerifiedEmail = emails?.find(
+      (email) => email?.verified === true,
     )?.value;
 
     if (!firstVerifiedEmail) {
@@ -85,15 +88,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     const user: GoogleRequest['user'] = {
       email: firstVerifiedEmail,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos?.[0]?.value,
-      workspaceInviteHash: state.workspaceInviteHash,
-      workspacePersonalInviteToken: state.workspacePersonalInviteToken,
-      workspaceId: state.workspaceId,
-      billingCheckoutSessionState: state.billingCheckoutSessionState,
-      action: state.action,
-      locale: state.locale,
+      firstName: name?.givenName,
+      lastName: name?.familyName,
+      picture: photos?.[0]?.value ?? null,
+      workspaceInviteHash: state?.workspaceInviteHash,
+      workspacePersonalInviteToken: state?.workspacePersonalInviteToken,
+      workspaceId: state?.workspaceId,
+      billingCheckoutSessionState: state?.billingCheckoutSessionState,
+      action: state?.action ?? 'list-available-workspaces',
+      locale: state?.locale,
     };
 
     done(null, user);

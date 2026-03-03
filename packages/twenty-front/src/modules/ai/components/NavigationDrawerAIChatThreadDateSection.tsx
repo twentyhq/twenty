@@ -1,34 +1,35 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconComment } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const StyledDateSection = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledThreadList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledDateHeader = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0, 2)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledThreadTimestamp = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  padding-right: ${themeCssVariables.spacing['0.5']};
 `;
 
 export type NavigationDrawerAIChatThreadDateSectionProps = {
