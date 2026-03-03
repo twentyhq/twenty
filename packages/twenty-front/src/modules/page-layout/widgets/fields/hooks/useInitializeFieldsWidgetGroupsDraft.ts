@@ -17,17 +17,17 @@ import { useCallback, useEffect } from 'react';
 type UseInitializeFieldsWidgetGroupsDraftParams = {
   pageLayoutId: string;
   widgetId: string;
-  serverGroups: FieldsWidgetGroup[];
-  serverUngroupedFields: FieldsWidgetGroupField[];
-  serverMode: FieldsWidgetEditorMode;
+  persistedGroups: FieldsWidgetGroup[];
+  persistedUngroupedFields: FieldsWidgetGroupField[];
+  persistedMode: FieldsWidgetEditorMode;
 };
 
 export const useInitializeFieldsWidgetGroupsDraft = ({
   pageLayoutId,
   widgetId,
-  serverGroups,
-  serverUngroupedFields,
-  serverMode,
+  persistedGroups,
+  persistedUngroupedFields,
+  persistedMode,
 }: UseInitializeFieldsWidgetGroupsDraftParams) => {
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
@@ -85,22 +85,22 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
     if (!hasDraftForWidget) {
       store.set(fieldsWidgetGroupsDraftState, (prev) => ({
         ...prev,
-        [widgetId]: serverGroups,
+        [widgetId]: persistedGroups,
       }));
 
       store.set(fieldsWidgetGroupsPersistedState, (prev) => ({
         ...prev,
-        [widgetId]: serverGroups,
+        [widgetId]: persistedGroups,
       }));
 
       store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
         ...prev,
-        [widgetId]: serverUngroupedFields,
+        [widgetId]: persistedUngroupedFields,
       }));
 
       store.set(fieldsWidgetUngroupedFieldsPersistedState, (prev) => ({
         ...prev,
-        [widgetId]: serverUngroupedFields,
+        [widgetId]: persistedUngroupedFields,
       }));
     }
 
@@ -111,12 +111,12 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
     if (!(widgetId in currentModes)) {
       store.set(fieldsWidgetModeDraftState, (prev) => ({
         ...prev,
-        [widgetId]: serverMode,
+        [widgetId]: persistedMode,
       }));
 
       store.set(fieldsWidgetModePersistedState, (prev) => ({
         ...prev,
-        [widgetId]: serverMode,
+        [widgetId]: persistedMode,
       }));
     }
 
@@ -133,17 +133,18 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
     fieldsWidgetModeDraftState,
     fieldsWidgetModePersistedState,
     widgetId,
-    serverGroups,
-    serverUngroupedFields,
-    serverMode,
+    persistedGroups,
+    persistedUngroupedFields,
+    persistedMode,
     store,
   ]);
 
   useEffect(() => {
-    const hasData = serverGroups.length > 0 || serverUngroupedFields.length > 0;
+    const hasData =
+      persistedGroups.length > 0 || persistedUngroupedFields.length > 0;
 
     if (hasData) {
       initializeDraft();
     }
-  }, [serverGroups, serverUngroupedFields, initializeDraft]);
+  }, [persistedGroups, persistedUngroupedFields, initializeDraft]);
 };
