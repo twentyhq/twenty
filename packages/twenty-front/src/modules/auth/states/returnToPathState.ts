@@ -1,5 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-export const previousUrlState = createAtomState<string>({
-  key: 'previousUrlState',
+
+export const returnToPathState = createAtomState<string>({
+  key: 'returnToPathState',
   defaultValue: '',
 });

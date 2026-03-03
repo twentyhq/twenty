@@ -32,5 +32,6 @@ export type WorkspaceInvitation = {
   __typename: 'WorkspaceInvitation';
   id: string;
   email: string;
+  roleId?: string | null;
   expiresAt: string;
 };

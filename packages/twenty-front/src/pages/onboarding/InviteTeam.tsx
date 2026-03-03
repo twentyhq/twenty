@@ -130,6 +130,12 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
+
+      if (emails.length === 0) {
+        setNextOnboardingStatus();
+        return;
+      }
+
       const result = await sendInvitation({ emails });
 
       if (isDefined(result.errors)) {

@@ -1,4 +1,5 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -31,6 +32,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${themeCssVariables.spacing[8]};
@@ -137,6 +139,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
+  const returnToPath = useAtomStateValue(returnToPathState);
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -147,7 +150,10 @@ export const SignInUpGlobalScopeForm = () => {
     return buildWorkspaceUrl(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
-      searchParams,
+      {
+        ...searchParams,
+        ...(isNonEmptyString(returnToPath) ? { returnToPath } : {}),
+      },
     );
   };
 
