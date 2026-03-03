@@ -17,6 +17,7 @@ import {
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
+  instanceId?: string,
 ) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -25,6 +26,7 @@ export const useFindManyRecordIndexTableParams = (
 
   const { recordGroupFilter } = useRecordGroupFilter(
     objectMetadataItem?.fields,
+    instanceId,
   );
 
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();

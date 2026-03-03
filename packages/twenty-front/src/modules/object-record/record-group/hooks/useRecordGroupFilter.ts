@@ -5,10 +5,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
+export const useRecordGroupFilter = (
+  fields: FieldMetadataItem[],
+  instanceId?: string,
+) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
+    instanceId,
   );
 
   const recordGroupFilter = useMemo(() => {

@@ -109,9 +109,10 @@ export class BillingPortalWorkspaceService {
         (subscription) => subscription.status !== SubscriptionStatus.Canceled,
       )
     ) {
-      // Subscription already exists (e.g. race condition / duplicate request).
-      // Return successUrl idempotently instead of throwing a user-facing error.
-      return successUrl;
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
     }
 
     const stripeSubscription =

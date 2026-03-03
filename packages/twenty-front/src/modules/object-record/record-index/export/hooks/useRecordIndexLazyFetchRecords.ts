@@ -89,6 +89,7 @@ export const useRecordIndexLazyFetchRecords = ({
 
   const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
+    recordIndexId,
   );
 
   const queryFilter = computeContextStoreFilters({
