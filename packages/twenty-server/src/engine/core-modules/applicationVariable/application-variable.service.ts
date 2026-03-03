@@ -97,31 +97,33 @@ export class ApplicationVariableEntityService {
       applicationVariables,
     )) {
       const isSecretValue = isSecret ?? false;
-      const encryptedValue = this.encryptSecretValue(
-        value ?? '',
-        isSecretValue,
-      );
 
-      if (
-        await this.applicationVariableRepository.findOne({
+      const existingVariable = await this.applicationVariableRepository.findOne(
+        {
           where: {
             key,
             applicationId,
           },
-        })
-      ) {
+        },
+      );
+
+      if (isDefined(existingVariable)) {
         await this.applicationVariableRepository.update(
           {
             key,
             applicationId,
           },
           {
-            value: encryptedValue,
             description: description ?? '',
             isSecret: isSecretValue,
           },
         );
       } else {
+        const encryptedValue = this.encryptSecretValue(
+          value ?? '',
+          isSecretValue,
+        );
+
         await this.applicationVariableRepository.save({
           key,
           value: encryptedValue,

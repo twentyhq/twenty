@@ -271,7 +271,6 @@ describe('ApplicationVariableEntityService', () => {
         {
           description: 'Updated description',
           isSecret: true,
-          value: 'encrypted_new-value',
         },
       );
       expect(repository.save).not.toHaveBeenCalled();
