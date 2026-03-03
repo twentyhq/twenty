@@ -78,8 +78,24 @@ export type { ActionLinkProps } from './action';
 export { ActionOpenSidePanelPage } from './action';
 export type { ActionOpenSidePanelPageProps } from './action';
 
-// Conditional availability constants for command menu items
-export { ConditionalAvailabilityVariables } from './front-component-api';
+// Conditional availability typed variables for command menu items
+export {
+  isShowPage,
+  isInRightDrawer,
+  isFavorite,
+  isRemote,
+  isNoteOrTask,
+  isSelectAll,
+  hasAnySoftDeleteFilterOnView,
+  numberOfSelectedRecords,
+  objectPermissions,
+  selectedRecord,
+  featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
+  isDefined,
+  isNonEmptyString,
+} from './front-component-api';
 
 // Front Component API exports
 export {

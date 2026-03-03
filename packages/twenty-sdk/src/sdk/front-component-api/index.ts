@@ -1,4 +1,20 @@
-export { ConditionalAvailabilityVariables } from './conditional-availability/conditional-availability-variables';
+export {
+  isShowPage,
+  isInRightDrawer,
+  isFavorite,
+  isRemote,
+  isNoteOrTask,
+  isSelectAll,
+  hasAnySoftDeleteFilterOnView,
+  numberOfSelectedRecords,
+  objectPermissions,
+  selectedRecord,
+  featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
+  isDefined,
+  isNonEmptyString,
+} from './conditional-availability/conditional-availability-variables';
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
