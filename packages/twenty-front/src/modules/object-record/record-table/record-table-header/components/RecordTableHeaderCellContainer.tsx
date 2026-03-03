@@ -28,12 +28,16 @@ const StyledHeaderCell = styled.div<{
 
   &:hover {
     background: ${({ isResizing }) =>
-      isResizing ? 'inherit' : themeCssVariables.background.secondary};
+      isResizing
+        ? themeCssVariables.background.primary
+        : themeCssVariables.background.secondary};
   }
 
   &:active {
     background: ${({ isResizing }) =>
-      isResizing ? 'inherit' : themeCssVariables.background.tertiary};
+      isResizing
+        ? themeCssVariables.background.primary
+        : themeCssVariables.background.tertiary};
   }
 
   cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};

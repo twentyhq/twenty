@@ -20,7 +20,7 @@ const StyledCardContentBase = styled.div<{
     background: ${({ hasHoverHighlight }) =>
       hasHoverHighlight
         ? themeCssVariables.background.transparent.light
-        : 'inherit'};
+        : 'transparent'};
   }
 `;
 

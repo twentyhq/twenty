@@ -84,7 +84,7 @@ const StyledItem = styled.button<StyledItemProps>`
   box-sizing: border-box;
   align-items: center;
   background: ${({ active }) =>
-    active ? themeCssVariables.background.transparent.light : 'inherit'};
+    active ? themeCssVariables.background.transparent.light : 'transparent'};
   height: ${themeCssVariables.spacing[7]};
   border: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
@@ -104,7 +104,8 @@ const StyledItem = styled.button<StyledItemProps>`
     }
     return themeCssVariables.font.color.secondary;
   }};
-  cursor: ${({ soon }) => (soon ? 'default' : 'pointer')};
+  cursor: ${({ soon, isDragging }) =>
+    isDragging ? 'grabbing' : soon ? 'default' : 'pointer'};
   display: flex;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.md};
@@ -127,9 +128,7 @@ const StyledItem = styled.button<StyledItemProps>`
       ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
       : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
-  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'inherit')};
-
-  :hover {
+  &:hover {
     background: ${themeCssVariables.background.transparent.light};
     color: ${({ danger }) =>
       danger
@@ -137,7 +136,7 @@ const StyledItem = styled.button<StyledItemProps>`
         : themeCssVariables.font.color.primary};
   }
 
-  :hover .keyboard-shortcuts {
+  &:hover .keyboard-shortcuts {
     visibility: visible;
   }
 

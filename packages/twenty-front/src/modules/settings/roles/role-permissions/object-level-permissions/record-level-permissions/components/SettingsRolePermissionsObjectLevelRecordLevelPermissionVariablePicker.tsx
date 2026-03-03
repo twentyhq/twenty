@@ -31,7 +31,9 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   border-top-right-radius: ${({ multiline }) =>
     multiline ? '0' : themeCssVariables.border.radius.sm};
   color: ${({ multiline }) =>
-    multiline ? 'inherit' : themeCssVariables.font.color.tertiary};
+    multiline
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.tertiary};
   cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
   padding: ${({ multiline }) =>
     multiline

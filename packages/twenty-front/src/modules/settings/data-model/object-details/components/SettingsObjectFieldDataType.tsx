@@ -25,7 +25,9 @@ const StyledDataType = styled.div<{
   border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${({ to }) =>
-    to ? themeCssVariables.font.color.secondary : 'inherit'};
+    to
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.primary};
   cursor: ${({ to }) => (to ? 'pointer' : 'default')};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
@@ -37,7 +39,9 @@ const StyledDataType = styled.div<{
 
   &:hover {
     color: ${({ to }) =>
-      to ? themeCssVariables.font.color.primary : 'inherit'};
+      to
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.primary};
   }
 `;
 

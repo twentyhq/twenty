@@ -47,7 +47,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
   &:hover {
     background: ${({ withPicture, disabled }) =>
       withPicture || disabled
-        ? 'inherit'
+        ? 'transparent'
         : themeCssVariables.background.transparent.medium};
   }
 `;

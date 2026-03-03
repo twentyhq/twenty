@@ -38,8 +38,10 @@ const StyledDataGrid = styled(DataGrid)`
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.semiBold};
     letter-spacing: wider;
-    border: ${({ headerRowHeight }) =>
-      headerRowHeight === 0 ? 'none' : 'inherit'};
+    border-bottom: ${({ headerRowHeight }) =>
+      headerRowHeight === 0
+        ? 'none'
+        : `1px solid ${themeCssVariables.border.color.medium}`};
   }
 
   .rdg-cell {

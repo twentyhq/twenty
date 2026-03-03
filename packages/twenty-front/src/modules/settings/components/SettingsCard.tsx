@@ -52,7 +52,9 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
   color: ${({ disabled }) =>
-    disabled ? 'inherit' : themeCssVariables.font.color.secondary};
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.secondary};
   display: flex;
   flex: 1 0 auto;
   font-weight: ${themeCssVariables.font.weight.medium};

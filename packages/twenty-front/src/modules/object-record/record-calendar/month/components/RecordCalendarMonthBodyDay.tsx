@@ -69,9 +69,11 @@ const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   background: ${({ isToday }) =>
     isToday ? themeCssVariables.color.blue : 'transparent'};
   color: ${({ isToday }) =>
-    isToday ? themeCssVariables.font.color.inverted : 'inherit'};
+    isToday
+      ? themeCssVariables.font.color.inverted
+      : themeCssVariables.font.color.primary};
   font-weight: ${({ isToday }) =>
-    isToday ? themeCssVariables.font.weight.medium : 'inherit'};
+    isToday ? themeCssVariables.font.weight.medium : 'normal'};
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
