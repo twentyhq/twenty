@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import axiosRetry from 'axios-retry';
 import FileType from 'file-type';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +25,8 @@ import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()
 export class FileCorePictureService {
+  private readonly logger = new Logger(FileCorePictureService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
@@ -187,6 +190,9 @@ export class FileCorePictureService {
   ): Promise<{ buffer: Buffer; extension: string } | undefined> {
     try {
       const httpClient = this.secureHttpClientService.getHttpClient();
+
+      axiosRetry(httpClient, { retries: 2 });
+
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
       const type = await FileType.fromBuffer(buffer);
@@ -196,7 +202,12 @@ export class FileCorePictureService {
       }
 
       return { buffer, extension: type.ext };
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch image from URL: ${imageUrl}`,
+        error instanceof Error ? error.message : error,
+      );
+
       return undefined;
     }
   }

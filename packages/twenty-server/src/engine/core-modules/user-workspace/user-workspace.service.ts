@@ -490,7 +490,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     });
 
     if (!files.length) {
-      throw new Error('Failed to upload avatar');
+      return;
     }
 
     return files[0].path;

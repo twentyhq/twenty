@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import axiosRetry from 'axios-retry';
 import FileType from 'file-type';
 import sharp from 'sharp';
 import { FileFolder } from 'twenty-shared/types';
@@ -23,6 +24,8 @@ export type SignedFilesResult = {
 
 @Injectable()
 export class FileUploadService {
+  private readonly logger = new Logger(FileUploadService.name);
+
   constructor(
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
@@ -95,31 +98,48 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }) {
-    const httpClient = this.secureHttpClientService.getHttpClient();
+    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
-    const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
-
-    const type = await FileType.fromBuffer(buffer);
-
-    if (!type || !type.ext || !type.mime) {
-      throw new Error(
-        'Unable to detect image type from buffer. The file may not be a valid image format.',
-      );
-    }
-
-    if (!type.mime.startsWith('image/')) {
-      throw new Error(
-        `Detected file type is not an image: ${type.mime}. Please provide a valid image URL.`,
-      );
+    if (!imageData) {
+      return { name: '', mimeType: undefined, files: [] };
     }
 
     return await this.uploadImage({
-      file: buffer,
-      filename: `${v4()}.${type.ext}`,
-      mimeType: type.mime,
+      file: imageData.buffer,
+      filename: `${v4()}.${imageData.extension}`,
+      mimeType: imageData.mimeType,
       fileFolder,
       workspaceId,
     });
+  }
+
+  private async fetchImageBufferFromUrl(
+    imageUrl: string,
+  ): Promise<
+    { buffer: Buffer; extension: string; mimeType: string } | undefined
+  > {
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+
+      axiosRetry(httpClient, { retries: 2 });
+
+      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+
+      const type = await FileType.fromBuffer(buffer);
+
+      if (!type || !type.ext || !type.mime || !type.mime.startsWith('image/')) {
+        return undefined;
+      }
+
+      return { buffer, extension: type.ext, mimeType: type.mime };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch image from URL: ${imageUrl}`,
+        error instanceof Error ? error.message : error,
+      );
+
+      return undefined;
+    }
   }
 
   async uploadImage({
