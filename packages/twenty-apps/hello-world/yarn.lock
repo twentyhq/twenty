@@ -15,7 +15,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ark-ui/react@npm:^5.31.0":
+"@ark-ui/react@npm:^5.34.1":
   version: 5.34.1
   resolution: "@ark-ui/react@npm:5.34.1"
   dependencies:
@@ -201,10 +201,10 @@ __metadata:
   linkType: hard
 
 "@chakra-ui/react@npm:^3.33.0":
-  version: 3.33.0
-  resolution: "@chakra-ui/react@npm:3.33.0"
+  version: 3.34.0
+  resolution: "@chakra-ui/react@npm:3.34.0"
   dependencies:
-    "@ark-ui/react": "npm:^5.31.0"
+    "@ark-ui/react": "npm:^5.34.1"
     "@emotion/is-prop-valid": "npm:^1.4.0"
     "@emotion/serialize": "npm:^1.3.3"
     "@emotion/use-insertion-effect-with-fallbacks": "npm:^1.2.0"
@@ -215,7 +215,7 @@ __metadata:
     "@emotion/react": ">=11"
     react: ">=18"
     react-dom: ">=18"
-  checksum: 10c0/eeaab4f785098f19999c315e72a63c2fca9b6e96fa7ca46970e78079794d79e7cb78131c60e571488a47e768215892409c2dd667027bbcf8472830a2ff2976dd
+  checksum: 10c0/42eb3edc63a6155d13763c4759b42d2c073742a681fd14dee96dba73379aa724955b0deb7f95024cfb942710906a5fb4da1d74685946def7281eec1bdcfd2c72
   languageName: node
   linkType: hard
 
@@ -4400,13 +4400,13 @@ __metadata:
   linkType: hard
 
 "fs-extra@npm:^11.2.0":
-  version: 11.3.3
-  resolution: "fs-extra@npm:11.3.3"
+  version: 11.3.4
+  resolution: "fs-extra@npm:11.3.4"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 10c0/984924ff4104e3e9f351b658a864bf3b354b2c90429f57aec0acd12d92c4e6b762cbacacdffb4e745b280adce882e1f980c485d9f02c453f769ab4e7fc646ce3
+  checksum: 10c0/e08276f767a62496ae97d711aaa692c6a478177f24a85979b6a2881c9db9c68b8c2ad5da0bcf92c0b2a474cea6e935ec245656441527958fd8372cb647087df0
   languageName: node
   linkType: hard
 
@@ -4675,6 +4675,22 @@ __metadata:
   checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
   languageName: node
   linkType: hard
+
+"hello-world@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "hello-world@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.7.2"
+    "@types/react": "npm:^18.2.0"
+    eslint: "npm:^9.32.0"
+    react: "npm:^18.2.0"
+    twenty-sdk: "npm:0.6.3"
+    typescript: "npm:^5.9.3"
+    typescript-eslint: "npm:^8.50.0"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^3.1.1"
+  languageName: unknown
+  linkType: soft
 
 "hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
@@ -6774,21 +6790,6 @@ __metadata:
   checksum: 10c0/8df9166c037ba694b49d32a49858e314c60e513d55ac5e084dbf1ddbb827c5fa43cc389a81e87684419c21283308e9d68bb068798189c767ec4c252f890b8a77
   languageName: node
   linkType: hard
-
-"test-generated-app@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "test-generated-app@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^18.2.0"
-    eslint: "npm:^9.32.0"
-    react: "npm:^18.2.0"
-    twenty-sdk: "npm:0.6.3"
-    typescript: "npm:^5.9.3"
-    typescript-eslint: "npm:^8.50.0"
-    vitest: "npm:^3.1.1"
-  languageName: unknown
-  linkType: soft
 
 "text-decoder@npm:^1.1.0":
   version: 1.2.7

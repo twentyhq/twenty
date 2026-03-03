@@ -5,7 +5,7 @@ const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
 };
 
 export default definePostInstallLogicFunction({
-  universalIdentifier: 'd8a147fd-533a-45cd-a591-515b0a3d94de',
+  universalIdentifier: '7962bf37-93d7-40aa-b9f4-6bbb64079e01',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,

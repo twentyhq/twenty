@@ -18,14 +18,32 @@
     "strictBindCallApply": false,
     "target": "es2018",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "src/*": ["./src/*"],
-      "~/*": ["./*"]
+      "src/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./*"
+      ]
     }
   },
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.integration-test.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.integration-test.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

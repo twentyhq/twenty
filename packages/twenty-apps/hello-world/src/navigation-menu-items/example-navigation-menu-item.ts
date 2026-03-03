@@ -1,7 +1,7 @@
 import { defineNavigationMenuItem } from 'twenty-sdk';
 
 export default defineNavigationMenuItem({
-  universalIdentifier: '7b88edc9-2318-401f-bff1-102a88be7fa3',
+  universalIdentifier: 'd741dce9-8dc6-4c85-8d11-bbcbaba31d6c',
   name: 'example-navigation-menu-item',
   icon: 'IconList',
   position: 0,

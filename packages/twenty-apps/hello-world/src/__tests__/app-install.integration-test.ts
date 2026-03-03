@@ -1,22 +1,10 @@
-import * as fs from 'fs';
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
 import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import applicationConfig from 'src/application-config';
 
 const APP_PATH = process.cwd();
 const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
-const TWENTY_CONFIG_PATH = process.env.TWENTY_CONFIG_PATH;
-
-const readApiKeyFromConfig = (): string | undefined => {
-  if (!TWENTY_CONFIG_PATH || !fs.existsSync(TWENTY_CONFIG_PATH)) {
-    return undefined;
-  }
-
-  const config = JSON.parse(fs.readFileSync(TWENTY_CONFIG_PATH, 'utf-8'));
-
-  return config.apiKey;
-};
 
 const assertServerIsReachable = async () => {
   let response: Response;
@@ -70,11 +58,11 @@ describe('App installation', () => {
   });
 
   it('should find the installed app in the applications list', async () => {
-    const apiKey = readApiKeyFromConfig();
+    const apiKey = process.env.TWENTY_TEST_API_KEY;
 
     if (!apiKey) {
       throw new Error(
-        'No API key found. Ensure TWENTY_CONFIG_PATH points to a valid config file containing an apiKey.',
+        'No API key found. Set TWENTY_TEST_API_KEY in your vitest config env.',
       );
     }
 
@@ -96,7 +84,7 @@ describe('App installation', () => {
     const installedApp = result.findManyApplications.find(
       (application: { universalIdentifier: string }) =>
         application.universalIdentifier ===
-        applicationConfig.universalIdentifier,
+        APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
     expect(installedApp).toBeDefined();
