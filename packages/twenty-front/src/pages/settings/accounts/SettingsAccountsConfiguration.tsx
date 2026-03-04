@@ -30,7 +30,7 @@ export const SettingsAccountsConfiguration = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [startChannelSyncMutation, { loading: isSubmitting }] =
     useStartChannelSyncMutation();
-  const setSelectedMessageChannel = useSetAtomState(
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );
 
@@ -55,7 +55,7 @@ export const SettingsAccountsConfiguration = () => {
     recordGqlFields,
     onCompleted: (data) => {
       if (isDefined(data[0])) {
-        setSelectedMessageChannel(data[0]);
+        setSettingsAccountsSelectedMessageChannel(data[0]);
       }
     },
     skip: !connectedAccountId,

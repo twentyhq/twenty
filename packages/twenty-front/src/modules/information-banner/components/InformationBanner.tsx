@@ -1,7 +1,7 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -10,7 +10,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   overflow: hidden;
@@ -18,7 +18,7 @@ const StyledText = styled.div`
 `;
 
 const StyledCloseButton = styled(IconButton)`
-  color: ${GRAY_SCALE_LIGHT.gray1};
+  color: ${themeCssVariables.grayScale.gray1};
   display: flex;
 `;
 
@@ -28,7 +28,7 @@ const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   display: flex;
   flex: 1;
   margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const InformationBanner = ({
@@ -50,7 +50,7 @@ export const InformationBanner = ({
   onClose?: () => void;
   componentInstanceId: string;
 }) => {
-  const informationBannerIsOpenComponent = useAtomComponentStateValue(
+  const informationBannerIsOpen = useAtomComponentStateValue(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );
@@ -61,7 +61,7 @@ export const InformationBanner = ({
         instanceId: componentInstanceId,
       }}
     >
-      {informationBannerIsOpenComponent && (
+      {informationBannerIsOpen && (
         <Banner variant={variant}>
           <StyledContent hasCloseButton={!!onClose}>
             <StyledText>{message}</StyledText>

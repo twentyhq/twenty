@@ -37,12 +37,13 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetAtomFamilyState(
+  const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     mockPerformance.recordId,
   );
 
-  const setRelationEntity = useSetAtomFamilyState(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setRelationRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     mockPerformance.relationRecordId,
   );
@@ -55,8 +56,8 @@ const RelationFieldValueSetterEffect = () => {
   const [, setObjectMetadataItems] = useAtomState(objectMetadataItemsState);
 
   useEffect(() => {
-    setEntity(mockPerformance.entityValue);
-    setRelationEntity(mockPerformance.relationFieldValue);
+    setRecordStore(mockPerformance.entityValue);
+    setRelationRecordStore(mockPerformance.relationFieldValue);
     setCurrentRecordFields(
       mockPerformance.visibleTableColumns.map(
         (tableColumn) =>
@@ -72,8 +73,8 @@ const RelationFieldValueSetterEffect = () => {
 
     setObjectMetadataItems(generatedMockObjectMetadataItems);
   }, [
-    setEntity,
-    setRelationEntity,
+    setRecordStore,
+    setRelationRecordStore,
     setObjectMetadataItems,
     setCurrentRecordFields,
   ]);
@@ -162,6 +163,7 @@ const meta: Meta = {
                 viewBarId: mockPerformance.recordId,
                 // TODO: update performance mocks with new data, and merge with common mocks if possible
                 objectMetadataItem: mockPerformance.objectMetadataItem as any,
+                objectMetadataItems: [],
                 objectNameSingular:
                   mockPerformance.objectMetadataItem.nameSingular,
                 objectPermissions: {

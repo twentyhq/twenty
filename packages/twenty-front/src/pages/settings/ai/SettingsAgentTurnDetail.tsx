@@ -7,7 +7,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
@@ -15,15 +15,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 
 const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTableHeaderRow = styled(TableRow)`
   grid-template-columns: 140px 80px 1fr;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -31,12 +32,12 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 const StyledDateCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledScoreCell = styled(TableCell)`
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCommentCell = styled(TableCell)`
@@ -48,24 +49,24 @@ const StyledCommentCell = styled(TableCell)`
 const StyledMessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledMessageBubble = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMessageRole = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
   text-transform: uppercase;
 `;
 
 const StyledMessageContent = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   max-width: 100%;
 `;
 

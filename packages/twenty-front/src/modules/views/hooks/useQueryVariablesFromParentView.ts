@@ -13,7 +13,7 @@ export const useQueryVariablesFromParentView = ({
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const recordShowParentView = useAtomComponentStateValue(
+  const contextStoreRecordShowParentView = useAtomComponentStateValue(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -21,9 +21,10 @@ export const useQueryVariablesFromParentView = ({
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
-    recordFilterGroups: recordShowParentView?.parentViewFilterGroups ?? [],
-    recordFilters: recordShowParentView?.parentViewFilters ?? [],
-    recordSorts: recordShowParentView?.parentViewSorts ?? [],
+    recordFilterGroups:
+      contextStoreRecordShowParentView?.parentViewFilterGroups ?? [],
+    recordFilters: contextStoreRecordShowParentView?.parentViewFilters ?? [],
+    recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
     filterValueDependencies,

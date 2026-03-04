@@ -59,33 +59,30 @@ export const useRecordIndexLazyFetchRecords = ({
     viewBarId: recordIndexId,
   });
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
     recordIndexId,
   );
 
   const hiddenKanbanFieldColumn = hiddenBoardFields.find(
-    (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
+    (column) =>
+      column.metadata.fieldName === recordIndexGroupFieldMetadataItem?.name,
   );
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
-    recordIndexId,
   );
 
   const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

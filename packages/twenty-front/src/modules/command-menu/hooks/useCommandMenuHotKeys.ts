@@ -38,7 +38,7 @@ export const useCommandMenuHotKeys = () => {
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const contextStoreTargetedRecordsRuleComponent = useAtomComponentStateValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
@@ -101,9 +101,8 @@ export const useCommandMenuHotKeys = () => {
       if (
         commandMenuPage === CommandMenuPages.Root &&
         !(
-          contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
-          contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length ===
-            0
+          contextStoreTargetedRecordsRule.mode === 'selection' &&
+          contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
         )
       ) {
         setGlobalCommandMenuContext();
@@ -116,7 +115,7 @@ export const useCommandMenuHotKeys = () => {
     dependencies: [
       commandMenuPage,
       commandMenuSearch,
-      contextStoreTargetedRecordsRuleComponent,
+      contextStoreTargetedRecordsRule,
       goBackFromCommandMenu,
       setGlobalCommandMenuContext,
     ],

@@ -9,7 +9,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -38,8 +37,6 @@ export const WorkflowEditActionDeleteRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionDeleteRecordProps) => {
-  const theme = useTheme();
-
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -136,7 +133,7 @@ export const WorkflowEditActionDeleteRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

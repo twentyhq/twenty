@@ -1,12 +1,16 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  IconColumnInsertRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 
 import { CommandMenuAskAIInfo } from '@/command-menu/components/CommandMenuAskAIInfo';
 import { CommandMenuFolderInfo } from '@/command-menu/components/CommandMenuFolderInfo';
 import { CommandMenuLinkInfo } from '@/command-menu/components/CommandMenuLinkInfo';
 import { CommandMenuMultipleRecordsInfo } from '@/command-menu/components/CommandMenuMultipleRecordsInfo';
 import { CommandMenuObjectViewRecordInfo } from '@/command-menu/components/CommandMenuObjectViewRecordInfo';
+import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { CommandMenuPageLayoutInfo } from '@/command-menu/components/CommandMenuPageLayoutInfo';
 import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuRecordInfo';
 import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
@@ -17,11 +21,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledPageTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 type CommandMenuPageInfoProps = {
@@ -29,6 +36,7 @@ type CommandMenuPageInfoProps = {
 };
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
+  const { theme } = useContext(ThemeContext);
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
@@ -119,6 +127,20 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
 
   if (isAskAIPage) {
     return <CommandMenuAskAIInfo />;
+  }
+
+  if (pageChip.page?.page === CommandMenuPages.NavigationMenuAddItem) {
+    return (
+      <CommandMenuPageInfoLayout
+        icon={
+          <IconColumnInsertRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        }
+        title={<OverflowingTextWithTooltip text={pageChip.text ?? ''} />}
+      />
+    );
   }
 
   return (

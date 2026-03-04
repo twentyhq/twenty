@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   useEffect,
   useRef,
@@ -17,14 +17,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   justify-content: space-between;
 
   & > input:last-child {
-    border-left: 1px solid ${({ theme }) => theme.border.color.strong};
-    padding-left: ${({ theme }) => theme.spacing(2)};
+    border-left: 1px solid ${themeCssVariables.border.color.strong};
+    padding-left: ${themeCssVariables.spacing[2]};
   }
 `;
 

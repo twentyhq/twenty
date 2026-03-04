@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -21,15 +21,14 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 `;
 
 export const RecordBoardFetchMoreInViewTriggerComponent = () => {
-  const [shouldFetchMore, setShouldFetchMore] = useAtomComponentState(
-    recordBoardShouldFetchMoreComponentState,
-  );
+  const [recordBoardShouldFetchMore, setRecordBoardShouldFetchMore] =
+    useAtomComponentState(recordBoardShouldFetchMoreComponentState);
 
-  const isInitialLoading = useAtomComponentStateValue(
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const isFetchingMore = useAtomComponentStateValue(
+  const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -52,19 +51,22 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     1;
 
   useEffect(() => {
-    if (!isInitialLoading && !isFetchingMore) {
+    if (
+      !recordIndexRecordGroupsAreInInitialLoading &&
+      !recordBoardIsFetchingMore
+    ) {
       const newShouldFetchMore = inView;
 
-      if (shouldFetchMore !== newShouldFetchMore) {
-        setShouldFetchMore(newShouldFetchMore);
+      if (recordBoardShouldFetchMore !== newShouldFetchMore) {
+        setRecordBoardShouldFetchMore(newShouldFetchMore);
       }
     }
   }, [
-    shouldFetchMore,
-    setShouldFetchMore,
+    recordBoardShouldFetchMore,
+    setRecordBoardShouldFetchMore,
     inView,
-    isInitialLoading,
-    isFetchingMore,
+    recordIndexRecordGroupsAreInInitialLoading,
+    recordBoardIsFetchingMore,
   ]);
 
   return (

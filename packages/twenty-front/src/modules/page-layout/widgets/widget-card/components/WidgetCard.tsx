@@ -1,18 +1,35 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
-const StyledWidgetCard = styled.div<{
+type WidgetCardStyledProps = {
   variant: WidgetCardVariant;
   isEditable: boolean;
-  onClick?: () => void;
   isEditing: boolean;
   isDragging: boolean;
   isResizing: boolean;
   headerLess?: boolean;
   isLastWidget?: boolean;
-}>`
+  hasClickHandler: boolean;
+};
+
+const computeBorderColor = (
+  props: Pick<
+    WidgetCardStyledProps,
+    'variant' | 'isEditable' | 'isEditing' | 'isDragging'
+  >,
+): string => {
+  if (props.isEditable && (props.isEditing || props.isDragging)) {
+    return themeCssVariables.color.blue;
+  }
+  if (props.variant === 'dashboard') {
+    return themeCssVariables.border.color.light;
+  }
+  return 'transparent';
+};
+
+const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -20,123 +37,136 @@ const StyledWidgetCard = styled.div<{
   height: 100%;
   width: 100%;
 
-  ${({
-    theme,
-    variant,
-    isEditable,
-    isEditing,
-    isDragging,
-    isResizing,
-    onClick,
-    headerLess,
-    isLastWidget,
-  }) => {
-    if (variant === 'dashboard' && !isEditable) {
-      return css`
-        background: ${theme.background.secondary};
-        border: 1px solid ${theme.border.color.light};
-        border-radius: ${theme.border.radius.md};
-        padding: ${headerLess ? 0 : theme.spacing(2)};
-      `;
+  background: ${(props) => {
+    if (props.isEditable && props.isDragging) {
+      return `linear-gradient(0deg, ${themeCssVariables.background.transparent.lighter} 0%, ${themeCssVariables.background.transparent.lighter} 100%), ${themeCssVariables.background.secondary}`;
     }
-
-    if (variant === 'dashboard' && isEditable) {
-      return css`
-        background: ${theme.background.secondary};
-        border: 1px solid ${theme.border.color.light};
-        border-radius: ${theme.border.radius.md};
-        padding: ${headerLess ? 0 : theme.spacing(2)};
-
-        ${!isDragging &&
-        !isEditing &&
-        !isResizing &&
-        css`
-          &:hover {
-            border: 1px solid ${theme.border.color.strong};
-            cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
-          }
-        `}
-
-        ${isEditing &&
-        !isDragging &&
-        css`
-          border: 1px solid ${theme.color.blue} !important;
-        `}
-
-        ${isDragging &&
-        css`
-          background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
-          border: 1px solid ${theme.color.blue} !important;
-        `}
-      `;
-    }
-
-    if (variant === 'side-column' && !isEditable) {
-      return css`
-        padding: ${theme.spacing(3)};
-
-        ${isLastWidget !== true &&
-        css`
-          border-bottom: 1px solid ${theme.border.color.light};
-        `}
-      `;
-    }
-
-    if (variant === 'record-page' && !isEditable) {
-      return css`
-        background: ${theme.background.primary};
-        border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
-      `;
-    }
-
     if (
-      (variant === 'side-column' && isEditable) ||
-      (variant === 'record-page' && isEditable)
+      props.variant === 'dashboard' ||
+      (props.variant === 'side-column' && props.isEditable)
     ) {
-      return css`
-        background: ${variant === 'side-column'
-          ? theme.background.secondary
-          : theme.background.primary};
-        border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
-
-        ${!isDragging &&
-        !isEditing &&
-        !isResizing &&
-        css`
-          &:hover {
-            border: 1px solid ${theme.border.color.strong};
-            cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
-          }
-        `}
-
-        ${isEditing &&
-        !isDragging &&
-        css`
-          border: 1px solid ${theme.color.blue} !important;
-        `}
-
-        ${isDragging &&
-        css`
-          background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
-          border: 1px solid ${theme.color.blue} !important;
-        `}
-      `;
+      return themeCssVariables.background.secondary;
     }
-  }}
+    if (props.variant === 'record-page') {
+      return themeCssVariables.background.primary;
+    }
+    return 'none';
+  }};
+
+  border-style: ${({ variant, isEditable }) =>
+    variant === 'dashboard' || variant === 'record-page' || isEditable
+      ? 'solid'
+      : 'none'};
+
+  border-width: ${({ variant, isEditable }) =>
+    variant === 'dashboard' || variant === 'record-page' || isEditable
+      ? '1px'
+      : '0'};
+
+  border-color: ${(props) => computeBorderColor(props)};
+
+  border-radius: ${({ variant, isEditable }) =>
+    variant === 'dashboard' || variant === 'record-page' || isEditable
+      ? themeCssVariables.border.radius.md
+      : '0'};
+
+  padding: ${({ variant, isEditable, headerLess }) => {
+    if (variant === 'dashboard' && headerLess === true) return '0';
+    if (variant === 'dashboard') return themeCssVariables.spacing[2];
+    if (variant === 'side-column' && !isEditable)
+      return themeCssVariables.spacing[3];
+    if (variant === 'record-page' || isEditable)
+      return themeCssVariables.spacing[2];
+    return '0';
+  }};
+
+  border-bottom: ${(props) => {
+    const { variant, isEditable, isLastWidget } = props;
+    if (variant === 'side-column' && !isEditable) {
+      return isLastWidget !== true
+        ? `1px solid ${themeCssVariables.border.color.light}`
+        : 'none';
+    }
+    return `1px solid ${computeBorderColor(props)}`;
+  }};
+
+  cursor: ${({
+    isEditable,
+    isDragging,
+    isEditing,
+    isResizing,
+    hasClickHandler,
+  }) =>
+    isEditable && !isDragging && !isEditing && !isResizing && hasClickHandler
+      ? 'pointer'
+      : 'default'};
+
+  &:hover {
+    border-color: ${(props) => {
+      if (
+        props.isEditable &&
+        !props.isDragging &&
+        !props.isEditing &&
+        !props.isResizing
+      ) {
+        return themeCssVariables.border.color.strong;
+      }
+      return computeBorderColor(props);
+    }};
+  }
 `;
 
-export { StyledWidgetCard as WidgetCard };
+export type WidgetCardProps = {
+  variant: WidgetCardVariant;
+  isEditable: boolean;
+  isEditing: boolean;
+  isDragging: boolean;
+  isResizing: boolean;
+  headerLess?: boolean;
+  isLastWidget?: boolean;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
+  children?: React.ReactNode;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+  'data-testid'?: string;
+  'data-widget-id'?: string;
+};
+
+export const WidgetCard = ({
+  variant,
+  isEditable,
+  isEditing,
+  isDragging,
+  isResizing,
+  headerLess,
+  isLastWidget,
+  onClick,
+  className,
+  children,
+  onMouseEnter,
+  onMouseLeave,
+  'data-testid': dataTestId,
+  'data-widget-id': dataWidgetId,
+}: WidgetCardProps) => {
+  return (
+    <StyledWidgetCard
+      variant={variant}
+      isEditable={isEditable}
+      isEditing={isEditing}
+      isDragging={isDragging}
+      isResizing={isResizing}
+      headerLess={headerLess}
+      isLastWidget={isLastWidget}
+      hasClickHandler={isDefined(onClick)}
+      onClick={onClick}
+      className={className}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      data-testid={dataTestId}
+      data-widget-id={dataWidgetId}
+    >
+      {children}
+    </StyledWidgetCard>
+  );
+};

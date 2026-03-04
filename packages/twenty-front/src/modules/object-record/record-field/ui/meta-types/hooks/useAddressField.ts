@@ -30,7 +30,7 @@ export const useAddressField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldAddressValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -38,7 +38,7 @@ export const useAddressField = () => {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
   };
 };

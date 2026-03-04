@@ -10,20 +10,21 @@ import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/reco
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDebugRow = styled.div`
   position: absolute;
   left: 250px;
-  top: ${({ theme }) => theme.spacing(1.25)};
+  top: 5px;
   z-index: 20;
-  color: ${({ theme }) => theme.font.color.primary};
-  background-color: ${({ theme }) => theme.color.gray3};
-  border: 1px solid ${({ theme }) => theme.color.blue8};
-  padding: ${({ theme }) => theme.spacing(0.5)};
+  color: ${themeCssVariables.font.color.primary};
+  background-color: ${themeCssVariables.color.gray3};
+  border: 1px solid ${themeCssVariables.color.blue8};
+  padding: ${themeCssVariables.spacing['0.5']};
   display: flex;
-  max-height: ${({ theme }) => theme.spacing(4)};
+  max-height: ${themeCssVariables.spacing[4]};
 
   overflow: hidden;
 `;
@@ -35,8 +36,8 @@ const StyledDebugColumn = styled.div<{ width: number }>`
 
   display: flex;
   text-wrap-mode: nowrap;
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
+  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-left: ${themeCssVariables.spacing['0.5']};
 `;
 
 type RecordTableRowVirtualizedDebugRowHelperProps = {
@@ -46,26 +47,26 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useAtomComponentFamilyStateValue(
+  const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const dataLoadingStatus = useAtomComponentFamilySelectorValue(
     dataLoadingStatusByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const pixelsFromTop =
-    (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
+    (realIndexByVirtualIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useAtomFamilyStateValue(
+  const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     recordId ?? '',
   );
@@ -73,16 +74,21 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  const labelIdentifier = isDefined(record)
-    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
+  const labelIdentifier = isDefined(recordStore)
+    ? getLabelIdentifierFieldValue(
+        recordStore,
+        labelIdentifierFieldMetadataItem,
+      )
     : '-';
 
-  const position = record?.position;
+  const position = recordStore?.position;
 
   return (
     <StyledDebugRow>
       <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
-      <StyledDebugColumn width={70}>real :{realIndex}</StyledDebugColumn>
+      <StyledDebugColumn width={70}>
+        real :{realIndexByVirtualIndex}
+      </StyledDebugColumn>
       <StyledDebugColumn width={100}>pos :{position}</StyledDebugColumn>
       <StyledDebugColumn width={80}>
         px:

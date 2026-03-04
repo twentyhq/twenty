@@ -2,27 +2,30 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { Card } from 'twenty-ui/layout';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled(Card)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
 `;
 
 const StyledTableRow = styled(TableRow)`
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledTableCellLabel = styled(TableCell)<{
   align?: 'left' | 'center' | 'right';
 }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  height: ${({ theme }) => theme.spacing(6)};
+  color: ${themeCssVariables.font.color.tertiary};
+  height: ${themeCssVariables.spacing[6]};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: ${({ align }) =>
     align === 'right'
       ? 'flex-end'
@@ -33,9 +36,11 @@ const StyledTableCellLabel = styled(TableCell)<{
 
 const StyledTableCellValue = styled(TableCell)<{
   align?: 'left' | 'center' | 'right';
+  clickable?: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  height: ${({ theme }) => theme.spacing(6)};
+  color: ${themeCssVariables.font.color.primary};
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
+  height: ${themeCssVariables.spacing[6]};
   justify-content: ${({ align }) =>
     align === 'left'
       ? 'flex-start'
@@ -48,6 +53,7 @@ type TableItem = {
   Icon?: IconComponent;
   label: string;
   value: string | number | React.ReactNode;
+  onClick?: () => void;
 };
 
 type SettingsAdminTableCardProps = {
@@ -67,7 +73,7 @@ export const SettingsAdminTableCard = ({
   valueAlign = 'left',
   className,
 }: SettingsAdminTableCardProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledCard rounded={rounded} className={className}>
@@ -82,7 +88,11 @@ export const SettingsAdminTableCard = ({
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
               </StyledTableCellLabel>
-              <StyledTableCellValue align={valueAlign}>
+              <StyledTableCellValue
+                align={valueAlign}
+                onClick={item.onClick}
+                clickable={isDefined(item.onClick)}
+              >
                 {item.value}
               </StyledTableCellValue>
             </StyledTableRow>

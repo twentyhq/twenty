@@ -25,7 +25,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
   );
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const setWorkspacePublicDataState = useSetAtomState(workspacePublicDataState);
+  const setWorkspacePublicData = useSetAtomState(workspacePublicDataState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
@@ -43,7 +43,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       setWorkspaceAuthBypassProviders(
         data.getPublicWorkspaceDataByDomain.authBypassProviders ?? null,
       );
-      setWorkspacePublicDataState(data.getPublicWorkspaceDataByDomain);
+      setWorkspacePublicData(data.getPublicWorkspaceDataByDomain);
     },
     onError: (error) => {
       // Only redirect to default domain if it's a workspace not found error

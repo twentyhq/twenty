@@ -11,10 +11,18 @@ const getSize = (size: string) => {
   }
 };
 
-export const GithubIcon = ({ size = 'S', color = 'rgb(179, 179, 179)' }) => {
+export const GithubIcon = ({
+  size = 'S',
+  color = 'rgb(179, 179, 179)',
+  className,
+}: {
+  size?: string;
+  color?: string;
+  className?: string;
+}) => {
   const dimension = getSize(size);
   return (
-    <div style={{ width: dimension, height: dimension }}>
+    <div className={className} style={{ width: dimension, height: dimension }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">
         <path
           d="M 6.979 0 C 3.12 0 0 3.143 0 7.031 C 0 10.139 1.999 12.77 4.772 13.701 C 5.119 13.771 5.246 13.55 5.246 13.364 C 5.246 13.201 5.234 12.642 5.234 12.06 C 3.293 12.479 2.889 11.222 2.889 11.222 C 2.577 10.407 2.114 10.197 2.114 10.197 C 1.479 9.767 2.161 9.767 2.161 9.767 C 2.866 9.813 3.235 10.488 3.235 10.488 C 3.859 11.559 4.865 11.257 5.269 11.07 C 5.327 10.616 5.512 10.302 5.708 10.127 C 4.16 9.964 2.531 9.359 2.531 6.658 C 2.531 5.89 2.808 5.262 3.247 4.773 C 3.178 4.598 2.935 3.876 3.316 2.91 C 3.316 2.91 3.906 2.724 5.234 3.632 C 5.803 3.478 6.39 3.4 6.979 3.399 C 7.568 3.399 8.169 3.481 8.724 3.632 C 10.053 2.724 10.642 2.91 10.642 2.91 C 11.023 3.876 10.781 4.598 10.711 4.773 C 11.162 5.262 11.428 5.89 11.428 6.658 C 11.428 9.359 9.799 9.953 8.239 10.127 C 8.493 10.349 8.712 10.768 8.712 11.431 C 8.712 12.374 8.701 13.131 8.701 13.363 C 8.701 13.55 8.828 13.771 9.175 13.701 C 11.948 12.77 13.947 10.139 13.947 7.031 C 13.958 3.143 10.827 0 6.979 0 Z"
@@ -118,10 +126,18 @@ export const GithubIcon2 = ({ size = 'S', color = 'rgb(179, 179, 179)' }) => {
   );
 };
 
-export const PullRequestIcon = ({ size = 'S', color = 'rgb(179,179,179)' }) => {
+export const PullRequestIcon = ({
+  size = 'S',
+  color = 'rgb(179,179,179)',
+  className,
+}: {
+  size?: string;
+  color?: string;
+  className?: string;
+}) => {
   const dimension = getSize(size);
   return (
-    <div style={{ width: dimension, height: dimension }}>
+    <div className={className} style={{ width: dimension, height: dimension }}>
       <svg viewBox="0 0 18 19" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M3 14C3.53043 14 4.03914 14.2107 4.41421 14.5858C4.78929 14.9609 5 15.4696 5 16C5 16.5304 4.78929 17.0391 4.41421 17.4142C4.03914 17.7893 3.53043 18 3 18C2.46957 18 1.96086 17.7893 1.58579 17.4142C1.21071 17.0391 1 16.5304 1 16C1 15.4696 1.21071 14.9609 1.58579 14.5858C1.96086 14.2107 2.46957 14 3 14ZM3 14V6M3 6C2.46957 6 1.96086 5.78929 1.58579 5.41421C1.21071 5.03914 1 4.53043 1 4C1 3.46957 1.21071 2.96086 1.58579 2.58579C1.96086 2.21071 2.46957 2 3 2C3.53043 2 4.03914 2.21071 4.41421 2.58579C4.78929 2.96086 5 3.46957 5 4C5 4.53043 4.78929 5.03914 4.41421 5.41421C4.03914 5.78929 3.53043 6 3 6ZM15 14C15.5304 14 16.0391 14.2107 16.4142 14.5858C16.7893 14.9609 17 15.4696 17 16C17 16.5304 16.7893 17.0391 16.4142 17.4142C16.0391 17.7893 15.5304 18 15 18C14.4696 18 13.9609 17.7893 13.5858 17.4142C13.2107 17.0391 13 16.5304 13 16C13 15.4696 13.2107 14.9609 13.5858 14.5858C13.9609 14.2107 14.4696 14 15 14ZM15 14V6C15 5.46957 14.7893 4.96086 14.4142 4.58579C14.0391 4.21071 13.5304 4 13 4H8M8 4L11 7M8 4L11 1"
@@ -136,10 +152,19 @@ export const PullRequestIcon = ({ size = 'S', color = 'rgb(179,179,179)' }) => {
   );
 };
 
-export const HeartIcon = ({ size = 'S', color = 'rgb(179,179,179)' }) => {
+export const HeartIcon = ({
+  size = 'S',
+  color = 'rgb(179,179,179)',
+  className,
+}: {
+  size?: string;
+  color?: string;
+  className?: string;
+}) => {
   const dimension = getSize(size);
   return (
     <span
+      className={className}
       style={{ width: dimension, height: dimension, display: 'inline-block' }}
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 20" fill="none">

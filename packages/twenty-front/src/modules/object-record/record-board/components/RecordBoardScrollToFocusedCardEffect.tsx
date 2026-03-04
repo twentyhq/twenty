@@ -8,22 +8,22 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 export const RecordBoardScrollToFocusedCardEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const focusedCardIndexes = useAtomComponentStateValue(
+  const focusedRecordBoardCardIndexes = useAtomComponentStateValue(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const isFocusActive = useAtomComponentStateValue(
+  const isRecordBoardCardFocusActive = useAtomComponentStateValue(
     isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );
 
   useEffect(() => {
-    if (!isFocusActive || !focusedCardIndexes) {
+    if (!isRecordBoardCardFocusActive || !focusedRecordBoardCardIndexes) {
       return;
     }
 
-    const { rowIndex, columnIndex } = focusedCardIndexes;
+    const { rowIndex, columnIndex } = focusedRecordBoardCardIndexes;
 
     const focusElement = document.getElementById(
       `record-board-card-${columnIndex}-${rowIndex}`,
@@ -36,7 +36,7 @@ export const RecordBoardScrollToFocusedCardEffect = () => {
     if (focusElement instanceof HTMLElement) {
       focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [focusedCardIndexes, isFocusActive]);
+  }, [focusedRecordBoardCardIndexes, isRecordBoardCardFocusActive]);
 
   return null;
 };

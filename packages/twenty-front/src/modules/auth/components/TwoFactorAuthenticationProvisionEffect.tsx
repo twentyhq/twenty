@@ -20,7 +20,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const { origin } = useOrigin();
   const loginToken = useAtomStateValue(loginTokenState);
   const qrCode = useAtomStateValue(qrCodeState);
-  const setQrCodeState = useSetAtomState(qrCodeState);
+  const setQrCode = useSetAtomState(qrCodeState);
 
   const { t } = useLingui();
 
@@ -52,7 +52,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         if (!initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri)
           return;
 
-        setQrCodeState(
+        setQrCode(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
       } catch {

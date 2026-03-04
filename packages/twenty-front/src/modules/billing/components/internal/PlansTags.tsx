@@ -2,7 +2,8 @@ import React from 'react';
 import { Tag } from 'twenty-ui/components';
 import { t } from '@lingui/core/macro';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type PlansTagsProps = {
   plan: BillingPlanKey;
@@ -11,7 +12,7 @@ export type PlansTagsProps = {
 
 const StyledTagsWrapper = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {

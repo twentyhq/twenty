@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Draggable,
   type DraggableProvided,
@@ -30,6 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -65,7 +65,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onClose,
   pageLayoutType,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 
@@ -81,17 +81,17 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const shouldShowEditButton =
     isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
-  const isTabDragging = useAtomComponentStateValue(
+  const isPageLayoutTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setIsTabDragging = useSetAtomComponentState(
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -99,19 +99,19 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleClose = () => {
-    if (!isTabDragging) {
+    if (!isPageLayoutTabDragging) {
       onClose();
     }
   };
 
   const handleTabSelect = (tabId: string) => {
-    setIsTabDragging(false);
+    setIsPageLayoutTabDragging(false);
     onSelect(tabId);
     handleClose();
   };
 
   const handleEditClick = (tabId: string) => {
-    setTabSettingsOpenTabId(tabId);
+    setPageLayoutTabSettingsOpenTabId(tabId);
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
     });

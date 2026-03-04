@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -12,6 +12,7 @@ import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 
@@ -27,16 +28,16 @@ const StyledContainer = styled.div`
 
 const StyledSwitchModeButtonContainer = styled.div`
   position: fixed;
-  top: ${({ theme }) => theme.spacing(1)};
-  right: ${({ theme }) => theme.spacing(1)};
+  top: ${themeCssVariables.spacing[1]};
+  right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCodeEditorContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledJsonTreeContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   width: min-content;
 `;
 

@@ -12,7 +12,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const currentlyEditingWidgetId = useAtomComponentStateValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutIdFromProps,
   );
@@ -33,7 +33,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
         tabs: prev.tabs.map((tab) => ({
           ...tab,
           widgets: tab.widgets.map((widget) =>
-            widget.id === currentlyEditingWidgetId
+            widget.id === pageLayoutEditingWidgetId
               ? {
                   ...widget,
                   objectMetadataId: objectMetadataId ?? widget.objectMetadataId,
@@ -47,7 +47,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
         })),
       });
     },
-    [pageLayoutDraft, currentlyEditingWidgetId, store],
+    [pageLayoutDraft, pageLayoutEditingWidgetId, store],
   );
 
   return { updateCurrentWidgetConfig };

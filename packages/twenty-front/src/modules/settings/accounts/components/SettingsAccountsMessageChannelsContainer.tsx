@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import {
@@ -20,9 +20,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessageContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsMessageChannelsContainer = () => {
@@ -31,7 +32,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const setSelectedMessageChannel = useSetAtomState(
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );
 
@@ -68,7 +69,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     },
     recordGqlFields,
     onCompleted: (data) => {
-      setSelectedMessageChannel(data[0]);
+      setSettingsAccountsSelectedMessageChannel(data[0]);
     },
     skip: !accounts.length,
   });
@@ -84,10 +85,10 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         (channel) => channel.id === tabId,
       );
       if (isDefined(selectedMessageChannel)) {
-        setSelectedMessageChannel(selectedMessageChannel);
+        setSettingsAccountsSelectedMessageChannel(selectedMessageChannel);
       }
     },
-    [messageChannels, setSelectedMessageChannel],
+    [messageChannels, setSettingsAccountsSelectedMessageChannel],
   );
 
   if (!messageChannels.length) {

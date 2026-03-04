@@ -6,23 +6,24 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(20)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  min-width: ${themeCssVariables.spacing[20]};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 type AdvancedFilterCommandMenuLogicalOperatorCellProps = {

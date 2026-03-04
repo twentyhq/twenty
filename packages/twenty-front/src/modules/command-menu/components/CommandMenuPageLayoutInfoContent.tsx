@@ -11,36 +11,38 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const CommandMenuPageLayoutInfoContent = ({
   pageLayoutId,
 }: {
   pageLayoutId: string;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useAtomComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
 
   const handleTitleInputOpen = () => {
-    setShouldFocusTitleInput(false);
+    setCommandMenuShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
@@ -50,7 +52,7 @@ export const CommandMenuPageLayoutInfoContent = ({
     pageLayoutId,
   );
 
-  const [openTabId] = useAtomComponentState(
+  const [pageLayoutTabSettingsOpenTabId] = useAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -63,9 +65,9 @@ export const CommandMenuPageLayoutInfoContent = ({
 
   const headerInfo = usePageLayoutHeaderInfo({
     commandMenuPage,
-    draftPageLayout,
+    draftPageLayout: pageLayoutDraft,
     pageLayoutEditingWidgetId,
-    openTabId,
+    openTabId: pageLayoutTabSettingsOpenTabId,
     editedTitle,
   });
 
@@ -136,7 +138,7 @@ export const CommandMenuPageLayoutInfoContent = ({
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
-          shouldFocus={shouldFocusTitleInput}
+          shouldFocus={commandMenuShouldFocusTitleInput}
           onFocus={handleTitleInputOpen}
         />
       }

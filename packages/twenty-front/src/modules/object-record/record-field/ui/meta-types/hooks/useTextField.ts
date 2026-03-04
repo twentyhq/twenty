@@ -27,12 +27,12 @@ export const useTextField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldTextValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
   return {
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
     maxWidth,
     fieldDefinition,

@@ -3,26 +3,26 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { createReactInlineContentSpec } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledRecordChip = styled(RecordChip)`
   height: auto;
   margin: 0;
-  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 const StyledInlineMentionRecordChip = styled(MentionRecordChip)`
   height: auto;
   margin: 0;
-  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-// Backward-compatible renderer for legacy notes that only stored objectMetadataId + recordId
 const LegacyMentionRenderer = ({
   recordId,
   objectMetadataId,

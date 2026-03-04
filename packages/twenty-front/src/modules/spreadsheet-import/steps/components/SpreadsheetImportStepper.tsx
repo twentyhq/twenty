@@ -1,10 +1,9 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
@@ -16,12 +15,6 @@ import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
 
-const StyledProgressBarContainer = styled(Modal.Content)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
-
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
   prevStep: () => void;
@@ -31,7 +24,7 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { initialStepState } = useSpreadsheetImportInternal();
 
@@ -137,13 +130,13 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <StyledProgressBarContainer>
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
           <CircularProgressBar
             size={80}
             barWidth={8}
             barColor={theme.font.color.primary}
           />
-        </StyledProgressBarContainer>
+        </ModalContent>
       );
   }
 };

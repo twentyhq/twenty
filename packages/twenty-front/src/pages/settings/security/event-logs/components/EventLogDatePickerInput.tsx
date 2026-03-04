@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -12,6 +12,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendar } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div`
   position: relative;
@@ -19,29 +20,31 @@ const StyledInputContainer = styled.div`
 
 const StyledInput = styled.div<{ hasValue: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme, hasValue }) =>
-    hasValue ? theme.font.color.primary : theme.font.color.light};
+  color: ${({ hasValue }) =>
+    hasValue
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.light};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   height: 32px;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover {
-    border-color: ${({ theme }) => theme.border.color.strong};
+    border-color: ${themeCssVariables.border.color.strong};
   }
 `;
 
 const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDatePickerContainer = styled.div`
@@ -52,7 +55,7 @@ const StyledDatePickerContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
 `;
 

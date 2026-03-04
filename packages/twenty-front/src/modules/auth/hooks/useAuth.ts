@@ -131,6 +131,8 @@ export const useAuth = () => {
       isCaptchaScriptLoadedState.atom,
     );
 
+    store.set(isAppEffectRedirectEnabledState.atom, false);
+
     sessionStorage.clear();
     localStorage.clear();
 
@@ -158,6 +160,7 @@ export const useAuth = () => {
     setLastAuthenticateWorkspaceDomain(null);
     await resetToMockedMetadata();
     navigate(AppPath.SignInUp);
+    store.set(isAppEffectRedirectEnabledState.atom, true);
   }, [
     client,
     setLastAuthenticateWorkspaceDomain,

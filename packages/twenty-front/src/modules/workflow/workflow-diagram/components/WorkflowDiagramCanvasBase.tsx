@@ -32,8 +32,7 @@ import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Background,
   ReactFlow,
@@ -64,6 +63,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -92,7 +93,7 @@ const StyledStatusTagContainer = styled.div`
   left: 0;
   top: 0;
   position: absolute;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const defaultFitViewOptions = {
@@ -166,17 +167,17 @@ export const WorkflowDiagramCanvasBase = ({
   }) => void;
 }) => {
   const store = useStore();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const reactflow = useReactFlow();
 
-  const currentWorkflowDiagram = useAtomComponentStateValue(
+  const workflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
   const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
-  const workflowDiagram = useAtomComponentStateCallbackState(
+  const workflowDiagramCallbackState = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
   const setWorkflowDiagram = useSetAtomComponentState(
@@ -213,12 +214,12 @@ export const WorkflowDiagramCanvasBase = ({
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
-    if (!isDefined(currentWorkflowDiagram)) {
+    if (!isDefined(workflowDiagram)) {
       return { nodes: [], edges: [] };
     }
 
-    const nodes = [...currentWorkflowDiagram.nodes];
-    const edges = [...currentWorkflowDiagram.edges];
+    const nodes = [...workflowDiagram.nodes];
+    const edges = [...workflowDiagram.edges];
 
     if (
       isDefined(workflowInsertStepIds.position) &&
@@ -255,7 +256,7 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [currentWorkflowDiagram, workflowInsertStepIds]);
+  }, [workflowDiagram, workflowInsertStepIds]);
 
   const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -357,10 +358,10 @@ export const WorkflowDiagramCanvasBase = ({
         isInRightDrawer,
         isCommandMenuOpened,
         workflowDiagramFlowInitialized,
-        workflowDiagram: store.get(workflowDiagram),
+        workflowDiagram: store.get(workflowDiagramCallbackState),
       });
     },
-    [setFlowViewport, workflowDiagram, store],
+    [setFlowViewport, workflowDiagramCallbackState, store],
   );
 
   useEffect(() => {
@@ -378,7 +379,7 @@ export const WorkflowDiagramCanvasBase = ({
 
   const handleNodesChanges = useCallback(
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
-      const existingWorkflowDiagram = store.get(workflowDiagram);
+      const existingWorkflowDiagram = store.get(workflowDiagramCallbackState);
 
       const filteredChanges = changes.filter(
         (change) =>
@@ -399,7 +400,7 @@ export const WorkflowDiagramCanvasBase = ({
         };
       }
 
-      store.set(workflowDiagram, updatedWorkflowDiagram);
+      store.set(workflowDiagramCallbackState, updatedWorkflowDiagram);
 
       const currentWorkflowDiagramWaitingNodesDimensions = store.get(
         workflowDiagramWaitingNodesDimensions,
@@ -419,7 +420,7 @@ export const WorkflowDiagramCanvasBase = ({
       isCommandMenuOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
-      workflowDiagram,
+      workflowDiagramCallbackState,
       workflowDiagramWaitingNodesDimensions,
       isInRightDrawer,
       store,

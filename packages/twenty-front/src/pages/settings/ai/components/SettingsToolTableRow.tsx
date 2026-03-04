@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconCode, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type LogicFunction } from '~/generated-metadata/graphql';
 
@@ -23,8 +24,8 @@ export const StyledToolTableRow = styled(TableRow)`
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -37,7 +38,7 @@ const StyledIconContainer = styled.div`
 
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsToolTableRow = ({

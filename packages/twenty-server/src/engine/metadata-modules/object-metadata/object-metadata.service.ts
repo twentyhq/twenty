@@ -633,6 +633,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
+      viewSortUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   }
@@ -675,6 +676,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
+      viewSortUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   }
@@ -896,6 +898,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       name: null,
       link: null,
       icon: null,
+      color: null,
       position: nextPosition,
       workspaceId,
       applicationId: workspaceCustomApplicationId,

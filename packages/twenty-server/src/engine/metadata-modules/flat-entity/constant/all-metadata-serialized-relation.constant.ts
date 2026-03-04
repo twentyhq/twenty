@@ -39,10 +39,12 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
     fieldMetadata: true,
     view: true,
     viewFieldGroup: true,
+    frontComponent: true,
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
   viewFilterGroup: {},
+  viewSort: {},
   frontComponent: {},
   webhook: {},
 } as const satisfies MetadataSerializedRelationProperties;

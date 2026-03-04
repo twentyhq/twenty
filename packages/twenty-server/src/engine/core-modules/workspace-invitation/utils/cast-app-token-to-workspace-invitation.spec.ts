@@ -55,6 +55,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
     expect(invitation).toEqual({
       id: '1',
       email: 'test@example.com',
+      roleId: null,
       expiresAt: appToken.expiresAt,
     });
   });

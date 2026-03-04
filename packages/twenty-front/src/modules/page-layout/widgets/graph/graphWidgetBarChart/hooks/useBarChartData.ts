@@ -24,7 +24,7 @@ export const useBarChartData = ({
   seriesLabels,
   colorMode,
 }: UseBarChartDataProps) => {
-  const hiddenLegendIds = useAtomComponentStateValue(
+  const graphWidgetHiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -62,10 +62,12 @@ export const useBarChartData = ({
     color: item.colorScheme.solid,
   }));
 
-  const visibleKeys = keys.filter((key) => !hiddenLegendIds.includes(key));
+  const visibleKeys = keys.filter(
+    (key) => !graphWidgetHiddenLegendIds.includes(key),
+  );
 
   const enrichedKeys = allEnrichedKeys.filter(
-    (item) => !hiddenLegendIds.includes(item.key),
+    (item) => !graphWidgetHiddenLegendIds.includes(item.key),
   );
 
   const enrichedKeysMap = useMemo(

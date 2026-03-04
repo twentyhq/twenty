@@ -36,12 +36,12 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
         wrapper: Wrapper,
         initialProps: {
           record: { id: 'recordId' } as any,
-          objectNameSingular: 'viewSort',
+          objectNameSingular: 'blocklist',
         },
       },
     );
 
-    expect(result.current.linkToShowPage).toBe('/object/viewSort/recordId');
+    expect(result.current.linkToShowPage).toBe('/object/blocklist/recordId');
 
     rerender({
       record: { id: 'recordId', avatarUrl: 'https://fake-url.com' },

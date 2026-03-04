@@ -1,10 +1,11 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -31,18 +32,18 @@ const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFiltersContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledActionButtonWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps =

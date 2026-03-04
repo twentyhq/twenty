@@ -42,7 +42,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
   return (
     <>
       <ConfirmationModal
-        modalId={OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID}
+        modalInstanceId={OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID}
         title={t`A draft already exists`}
         subtitle={t`A draft already exists for this workflow. Are you sure you want to erase it?`}
         onConfirmClick={handleOverrideDraft}

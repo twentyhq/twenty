@@ -18,8 +18,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
@@ -29,7 +30,7 @@ const StyledCompactIconContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCheckboxContainer = styled.div`
@@ -54,14 +55,13 @@ export const RecordBoardCardHeader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
-    recordBoardCardIsExpandedComponentState,
-  );
+  const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
+    useAtomComponentState(recordBoardCardIsExpandedComponentState);
 
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
     useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
@@ -73,7 +73,7 @@ export const RecordBoardCardHeader = () => {
     recordIndexOpenRecordInState,
   );
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
@@ -84,10 +84,10 @@ export const RecordBoardCardHeader = () => {
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
-          {isDefined(record) && (
+          {isDefined(recordStore) && (
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
+              record={recordStore}
               variant={ChipVariant.Transparent}
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
@@ -104,10 +104,10 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={isCardExpanded ? IconEyeOff : IconEye}
+              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
               accent="tertiary"
               onClick={() => {
-                setIsCardExpanded(!isCardExpanded);
+                setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
             />
           </StopPropagationContainer>
@@ -117,9 +117,9 @@ export const RecordBoardCardHeader = () => {
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordBoardCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordBoardCardSelected(value.target.checked);
               checkIfLastUnselectAndCloseDropdown();
             }}
             variant={CheckboxVariant.Secondary}

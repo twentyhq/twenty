@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { lazy, type ReactElement, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -9,7 +9,8 @@ import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { ModalContent, ModalHeader } from 'twenty-ui/layout';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -20,6 +21,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
   FeatureFlagKey,
@@ -45,28 +47,29 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2, 6, 6)};
-  width: calc(100% - ${({ theme }) => theme.spacing(12)});
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[6]};
+  width: calc(100% - ${themeCssVariables.spacing[12]});
   height: 100%;
 `;
 
 const StyledTitleBar = styled.h3`
   display: flex;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[4]};
   place-items: center;
   width: 100%;
 `;
 
 const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCount = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.light};
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDropZoneContainer = styled.div`
@@ -77,7 +80,7 @@ const StyledDropZoneContainer = styled.div`
 
 const StyledLoadingContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.primary};
+  background: ${themeCssVariables.background.primary};
   display: flex;
   height: 80vh;
   justify-content: center;
@@ -85,9 +88,9 @@ const StyledLoadingContainer = styled.div`
 `;
 
 const StyledLoadingText = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledHeader = styled.div`
@@ -99,27 +102,13 @@ const StyledHeader = styled.div`
 `;
 
 const StyledModalTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const StyledModalHeader = styled(Modal.Header)`
-  height: auto;
-  padding: 0;
-`;
-
-const StyledModalContent = styled(Modal.Content)`
-  padding: 0;
-`;
-
-const StyledModal = styled(Modal)`
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const PREVIEW_MODAL_ID = 'preview-modal';
@@ -229,14 +218,16 @@ export const AttachmentList = ({
       {previewedAttachment &&
         isAttachmentPreviewEnabled &&
         createPortal(
-          <StyledModal
-            modalId={PREVIEW_MODAL_ID}
+          <ModalStatefulWrapper
+            modalInstanceId={PREVIEW_MODAL_ID}
             size="large"
             isClosable
             onClose={handleClosePreview}
-            ignoreContainer
+            renderInDocumentBody
+            gap={2}
+            padding="small"
           >
-            <StyledModalHeader>
+            <ModalHeader noPadding autoHeight>
               <StyledHeader>
                 <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
                 <StyledButtonContainer>
@@ -254,11 +245,11 @@ export const AttachmentList = ({
                   />
                 </StyledButtonContainer>
               </StyledHeader>
-            </StyledModalHeader>
+            </ModalHeader>
             <ScrollWrapper
               componentInstanceId={`preview-modal-${previewedAttachment.id}`}
             >
-              <StyledModalContent>
+              <ModalContent noPadding>
                 <Suspense
                   fallback={
                     <StyledLoadingContainer>
@@ -273,9 +264,9 @@ export const AttachmentList = ({
                     documentUrl={getAttachmentUrl(previewedAttachment)}
                   />
                 </Suspense>
-              </StyledModalContent>
+              </ModalContent>
             </ScrollWrapper>
-          </StyledModal>,
+          </ModalStatefulWrapper>,
           document.body,
         )}
     </>

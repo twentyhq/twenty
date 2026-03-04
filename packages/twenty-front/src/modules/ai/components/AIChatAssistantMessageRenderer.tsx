@@ -6,33 +6,35 @@ import { IconDotsVertical } from 'twenty-ui/display';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { isStaticToolUIPart } from 'ai';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLoadingIconContainer = styled.div`
   align-items: center;
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLoadingIcon = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   transform: rotate(90deg);
 `;
 
 const InitialLoadingIndicator = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledLoadingIconContainer>
@@ -67,8 +69,13 @@ const MessagePartRenderer = ({
         />
       );
     default:
-      if (isStaticToolUIPart(part) === true) {
-        return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
+      if (isToolUIPart(part) === true && part.type !== 'dynamic-tool') {
+        return (
+          <ToolStepRenderer
+            toolPart={part as ToolUIPart}
+            isStreaming={isStreaming}
+          />
+        );
       }
       return null;
   }

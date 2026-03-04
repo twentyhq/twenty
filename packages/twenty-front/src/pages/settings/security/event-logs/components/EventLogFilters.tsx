@@ -1,12 +1,13 @@
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { IconUser, IconBox, useIcons } from 'twenty-ui/display';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { IconBox, IconUser, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
 import { type EventLogFiltersState } from '~/pages/settings/security/event-logs/SettingsEventLogs';
@@ -23,7 +24,7 @@ const StyledFiltersContainer = styled.div`
   align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFilterItem = styled.div`

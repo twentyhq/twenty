@@ -321,6 +321,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
             },
           }));
 
+        if (operationSignatures.length === 0) {
+          return;
+        }
+
         performCombinedFindManyRecords({ operationSignatures }).then(
           ({ result }) => {
             Object.values(result)

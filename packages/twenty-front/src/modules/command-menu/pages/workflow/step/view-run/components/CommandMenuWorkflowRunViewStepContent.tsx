@@ -22,11 +22,12 @@ import {
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNull } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -35,8 +36,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 type TabId = WorkflowRunTabIdType;

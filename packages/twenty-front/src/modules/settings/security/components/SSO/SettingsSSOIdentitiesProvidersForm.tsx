@@ -6,17 +6,18 @@ import { SettingsSSOOIDCForm } from '@/settings/security/components/SSO/Settings
 import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/SettingsSSOSAMLForm';
 import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, type IconComponent, IconKey } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { IdentityProviderType } from '~/generated-metadata/graphql';
 
 const StyledInputsContainer = styled.div`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(2, 4)};
+  gap: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
   grid-template-columns: 1fr 1fr;
   grid-template-areas: 'input-1 input-1';
 

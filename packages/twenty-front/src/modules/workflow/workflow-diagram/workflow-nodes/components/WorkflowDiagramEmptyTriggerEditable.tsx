@@ -17,9 +17,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
 
@@ -60,6 +62,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   return (
     <WorkflowNodeContainer
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      theme={theme}
       onClick={handleClick}
       selected={selected}
     >
@@ -72,7 +75,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
           </WorkflowNodeLabel>
         </WorkflowNodeLabelWithCounterPart>
 
-        <WorkflowNodeTitle selected={selected}>
+        <WorkflowNodeTitle theme={theme} selected={selected}>
           {t`Add a Trigger`}
         </WorkflowNodeTitle>
       </WorkflowNodeRightPart>

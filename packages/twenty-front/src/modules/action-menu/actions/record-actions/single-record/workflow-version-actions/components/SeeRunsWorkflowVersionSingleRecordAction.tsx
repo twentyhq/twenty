@@ -27,7 +27,7 @@ const SeeRunsWorkflowVersionSingleRecordActionContent = ({
               selectedRecordIds: [workflowWithCurrentVersion?.id],
             },
           },
-          workflowVersion: {
+          recordStore: {
             [ViewFilterOperand.IS]: {
               selectedRecordIds: [recordId],
             },
@@ -40,12 +40,9 @@ const SeeRunsWorkflowVersionSingleRecordActionContent = ({
 
 export const SeeRunsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const workflowId = workflowVersion?.workflow?.id;
+  const workflowId = recordStore?.workflow?.id;
 
   if (!isDefined(workflowId)) {
     return null;

@@ -22,12 +22,12 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo, useRef, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;
@@ -84,37 +84,39 @@ export const GraphWidgetBarChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetBarChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const colorRegistry = createGraphColorRegistry(theme);
 
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setActiveBarTooltip = useSetAtomComponentState(
+  const setGraphWidgetBarTooltip = useSetAtomComponentState(
     graphWidgetBarTooltipComponentState,
   );
 
-  const setHoveredSliceIndex = useSetAtomComponentState(
+  const setGraphWidgetHoveredSliceIndex = useSetAtomComponentState(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useAtomComponentStateValue(
+  const graphWidgetHoveredSliceIndex = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useAtomComponentStateValue(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useAtomComponentStateValue(
+  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
   const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const isLayoutAnimating =
-    isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;
+    isSidePanelAnimating ||
+    pageLayoutDraggingWidgetId === id ||
+    pageLayoutResizingWidgetId === id;
 
   const allowDataTransitions = !isLayoutAnimating;
 
@@ -157,8 +159,8 @@ export const GraphWidgetBarChart = ({
   const hasClickableItems = isDefined(onSliceClick);
 
   const hideTooltip = () => {
-    setActiveBarTooltip(null);
-    setHoveredSliceIndex(null);
+    setGraphWidgetBarTooltip(null);
+    setGraphWidgetHoveredSliceIndex(null);
   };
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
@@ -172,8 +174,8 @@ export const GraphWidgetBarChart = ({
   const handleSliceHover = (sliceData: BarChartSliceHoverData | null) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
-      setHoveredSliceIndex(sliceData.slice.indexValue);
-      setActiveBarTooltip({
+      setGraphWidgetHoveredSliceIndex(sliceData.slice.indexValue);
+      setGraphWidgetBarTooltip({
         offsetLeft: sliceData.offsetLeft,
         offsetTop: sliceData.offsetTop,
         slice: sliceData.slice,
@@ -224,7 +226,7 @@ export const GraphWidgetBarChart = ({
             formatOptions={formatOptions}
             groupMode={groupMode}
             hasNoData={hasNoData}
-            hoveredSliceIndexValue={hoveredSliceIndexValue}
+            hoveredSliceIndexValue={graphWidgetHoveredSliceIndex}
             indexBy={indexBy}
             keys={orderedKeys}
             layout={layout}

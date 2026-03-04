@@ -26,7 +26,7 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetAtomState(isMergeInProgressState);
+  const setIsMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -34,7 +34,7 @@ export const useMergeRecordsActions = ({
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
-    setMergeInProgress(true);
+    setIsMergeInProgress(true);
     try {
       const mergedRecord = await mergeManyRecords({
         recordIds: selectedRecords.map((record) => record.id),
@@ -65,7 +65,7 @@ export const useMergeRecordsActions = ({
             : t`Failed to merge records. Please try again.`,
       });
     } finally {
-      setMergeInProgress(false);
+      setIsMergeInProgress(false);
     }
   };
 

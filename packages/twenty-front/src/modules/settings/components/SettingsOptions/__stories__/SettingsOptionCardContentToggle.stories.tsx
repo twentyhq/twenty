@@ -1,5 +1,5 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { IconBell, IconLock, IconRobot, IconUsers } from 'twenty-ui/display';

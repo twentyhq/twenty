@@ -29,7 +29,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const setContextStoreTargetedRecords = useSetAtomComponentState(
+  const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
     recordCalendarId,
   );
@@ -64,18 +64,18 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
   ]);
 
   useEffect(() => {
-    setContextStoreTargetedRecords({
+    setContextStoreTargetedRecordsRule({
       mode: 'selection',
       selectedRecordIds,
     });
 
     return () => {
-      setContextStoreTargetedRecords({
+      setContextStoreTargetedRecordsRule({
         mode: 'selection',
         selectedRecordIds: [],
       });
     };
-  }, [selectedRecordIds, setContextStoreTargetedRecords]);
+  }, [selectedRecordIds, setContextStoreTargetedRecordsRule]);
 
   return <></>;
 };

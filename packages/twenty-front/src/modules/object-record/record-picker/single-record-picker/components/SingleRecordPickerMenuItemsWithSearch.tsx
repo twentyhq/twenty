@@ -49,7 +49,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     SingleRecordPickerComponentInstanceContext,
   );
 
-  const recordPickerSearchFilter = useAtomComponentStateValue(
+  const singleRecordPickerSearchFilter = useAtomComponentStateValue(
     singleRecordPickerSearchFilterComponentState,
     recordPickerInstanceId,
   );
@@ -75,7 +75,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   );
 
   const handleCreateNew = () => {
-    onCreate?.(recordPickerSearchFilter);
+    onCreate?.(singleRecordPickerSearchFilter);
   };
 
   return (

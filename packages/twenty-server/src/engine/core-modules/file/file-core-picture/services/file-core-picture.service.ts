@@ -12,7 +12,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
@@ -88,7 +88,7 @@ export class FileCorePictureService {
     file: Buffer;
     filename: string;
     workspace: WorkspaceEntity;
-  }): Promise<FileWithSignedUrlDto> {
+  }): Promise<FileWithSignedUrlDTO> {
     const savedFile = await this.uploadCorePicture({
       file,
       filename,
@@ -130,7 +130,7 @@ export class FileCorePictureService {
     workspaceId: string;
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
-  }): Promise<FileWithSignedUrlDto> {
+  }): Promise<FileWithSignedUrlDTO> {
     const savedFile = await this.uploadCorePicture({
       file,
       filename,
@@ -211,7 +211,7 @@ export class FileCorePictureService {
     workspaceId: string;
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
-  }): Promise<FileWithSignedUrlDto | undefined> {
+  }): Promise<FileWithSignedUrlDTO | undefined> {
     const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
     if (!isDefined(imageData)) {
@@ -265,7 +265,7 @@ export class FileCorePictureService {
     targetWorkspaceId: string;
     targetApplicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
-  }): Promise<FileWithSignedUrlDto> {
+  }): Promise<FileWithSignedUrlDTO> {
     const sourceFile = await this.fileRepository.findOneOrFail({
       where: {
         id: sourceFileId,

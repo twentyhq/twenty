@@ -21,6 +21,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
   flatViewFilterGroupMaps: 'flat-maps:view-filter-group',
+  flatViewSortMaps: 'flat-maps:view-sort',
   flatLogicFunctionMaps: 'flat-maps:logic-function',
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',

@@ -3,13 +3,15 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledHeaderIcon = styled.div`
-  margin: ${({ theme }) => theme.spacing(1, 1, 1, 1.5)};
+  margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]}
+    ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing['1.5']};
 `;
 
 export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {

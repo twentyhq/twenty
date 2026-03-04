@@ -92,6 +92,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(22);
+    expect(columnDefinitions.length).toBe(25);
   });
 });

@@ -3,14 +3,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuWorkflowIdOrThrow = () => {
-  const workflowId = useAtomComponentStateValue(
+  const commandMenuWorkflowId = useAtomComponentStateValue(
     commandMenuWorkflowIdComponentState,
   );
-  if (!isDefined(workflowId)) {
+  if (!isDefined(commandMenuWorkflowId)) {
     throw new Error(
       'Expected commandMenuWorkflowIdComponentState to be defined',
     );
   }
 
-  return workflowId;
+  return commandMenuWorkflowId;
 };

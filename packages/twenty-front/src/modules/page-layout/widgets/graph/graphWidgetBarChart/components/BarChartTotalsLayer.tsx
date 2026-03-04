@@ -5,7 +5,7 @@ import { computeBarChartGroupedLabels } from '@/page-layout/widgets/graph/graphW
 import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartTotalsLayerProps = {

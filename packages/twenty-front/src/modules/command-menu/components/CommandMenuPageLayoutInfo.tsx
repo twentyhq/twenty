@@ -7,16 +7,16 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutInfo = () => {
-  const objectMetadataId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  if (!isDefined(objectMetadataId)) {
+  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
     throw new Error('Object metadata ID is not defined');
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
+    objectId: contextStoreCurrentObjectMetadataItemId,
   });
 
   const isDashboardContext =

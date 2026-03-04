@@ -8,7 +8,8 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
@@ -23,11 +24,11 @@ const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordCardHeaderContainer = styled(RecordCardHeaderContainer)`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 type RecordCalendarCardHeaderProps = {
@@ -38,7 +39,7 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -49,7 +50,7 @@ export const RecordCalendarCardHeader = ({
     isDraggingRecordComponentState,
   );
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
@@ -62,7 +63,7 @@ export const RecordCalendarCardHeader = ({
     openRecordFromIndexView({ recordId });
   };
 
-  if (!isDefined(record)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
 
@@ -72,7 +73,7 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
+            record={recordStore}
             variant={ChipVariant.Transparent}
             isIconHidden={true}
             onClick={handleChipClick}
@@ -84,9 +85,9 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordCalendarCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordCalendarCardSelected(value.target.checked);
             }}
             variant={CheckboxVariant.Secondary}
           />

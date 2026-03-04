@@ -7,17 +7,18 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   position: relative;
   user-select: none;
   width: 100%;
@@ -31,7 +32,7 @@ const StyledTabContainer = styled.div`
   max-width: 100%;
 
   &::after {
-    background-color: ${({ theme }) => theme.border.color.light};
+    background-color: ${themeCssVariables.border.color.light};
     bottom: 0;
     content: '';
     height: 1px;

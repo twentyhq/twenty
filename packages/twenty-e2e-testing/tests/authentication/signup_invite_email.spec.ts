@@ -45,6 +45,7 @@ test('Sign up with invite link via email', async ({
   });
 
   await test.step('Delete account from workspace', async () => {
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();

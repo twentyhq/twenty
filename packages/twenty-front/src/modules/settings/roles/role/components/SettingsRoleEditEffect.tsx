@@ -19,7 +19,7 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useAtomFamilyStateValue(
+  const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
     roleId,
   );
@@ -44,14 +44,19 @@ export const SettingsRoleEditEffect = ({
   );
 
   useEffect(() => {
-    if (isInitialized || !isDefined(role)) {
+    if (isInitialized || !isDefined(settingsPersistedRole)) {
       return;
     }
 
     setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS);
-    updateDraftRoleIfNeeded(role);
+    updateDraftRoleIfNeeded(settingsPersistedRole);
     setIsInitialized(true);
-  }, [isInitialized, role, setActiveTabId, updateDraftRoleIfNeeded]);
+  }, [
+    isInitialized,
+    settingsPersistedRole,
+    setActiveTabId,
+    updateDraftRoleIfNeeded,
+  ]);
 
   return <></>;
 };

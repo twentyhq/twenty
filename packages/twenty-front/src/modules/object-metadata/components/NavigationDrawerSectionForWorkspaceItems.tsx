@@ -1,11 +1,11 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPlus } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
@@ -18,7 +18,6 @@ import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
@@ -39,7 +38,7 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 const StyledWorkspaceDroppableList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  gap: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
@@ -67,7 +66,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -206,6 +204,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                             folderId={item.id}
                             folderName={item.name ?? 'Folder'}
                             folderIconKey={item.Icon}
+                            folderColor={
+                              'color' in item ? item.color : undefined
+                            }
                             navigationMenuItems={
                               folderChildrenById.get(item.id) ?? []
                             }
@@ -231,7 +232,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
                 if (type === 'link') {
                   const linkItem = item as ProcessedNavigationMenuItem;
-                  const iconColors = getNavigationMenuItemIconColors(theme);
                   return (
                     <NavigationItemDropTarget
                       key={item.id}
@@ -259,7 +259,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                                 : undefined
                             }
                             Icon={IconLink}
-                            iconBackgroundColor={iconColors.link}
+                            iconColor={linkItem.color}
                             active={false}
                             isSelectedInEditMode={
                               editModeProps.isSelectedInEditMode

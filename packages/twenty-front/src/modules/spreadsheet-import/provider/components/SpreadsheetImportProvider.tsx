@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import React from 'react';
+import React, { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -17,7 +17,7 @@ const SpreadsheetImport = React.lazy(() =>
 );
 
 const LoadingSkeleton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SkeletonTheme
@@ -39,7 +39,7 @@ export const SpreadsheetImportProvider = (
     spreadsheetImportDialogState,
   );
 
-  const setMatchColumnsState = useSetAtomState(matchColumnsState);
+  const setMatchColumns = useSetAtomState(matchColumnsState);
 
   const { closeModal } = useModal();
 
@@ -53,7 +53,7 @@ export const SpreadsheetImportProvider = (
 
     closeModal(SPREADSHEET_IMPORT_MODAL_ID);
 
-    setMatchColumnsState([]);
+    setMatchColumns([]);
   };
 
   return (

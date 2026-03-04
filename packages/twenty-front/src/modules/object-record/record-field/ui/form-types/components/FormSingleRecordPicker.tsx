@@ -14,13 +14,14 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useId } from 'react';
+import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -28,18 +29,17 @@ const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   align-items: center;
   height: 32px;
   justify-content: space-between;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 
-  ${({ readonly, theme }) =>
-    !readonly &&
-    css`
-      &:hover,
-      &[data-open='true'] {
-        background-color: ${theme.background.transparent.light};
-      }
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-      cursor: pointer;
-    `}
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ readonly }) =>
+      readonly
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledIconButton = styled.div`
@@ -80,7 +80,7 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -116,14 +116,14 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetAtomComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
+    setSingleRecordPickerSearchFilter('');
+  }, [setSingleRecordPickerSearchFilter]);
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
@@ -143,12 +143,11 @@ export const FormSingleRecordPicker = ({
   };
 
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
-    // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
     onClear?.();
   };
 
-  const setRecordPickerSelectedId = useSetAtomComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -158,7 +157,7 @@ export const FormSingleRecordPicker = ({
       isDefined(draftValue?.value) &&
       !isStandaloneVariableString(draftValue.value)
     ) {
-      setRecordPickerSelectedId(draftValue.value);
+      setSingleRecordPickerSelectedId(draftValue.value);
     }
   };
 

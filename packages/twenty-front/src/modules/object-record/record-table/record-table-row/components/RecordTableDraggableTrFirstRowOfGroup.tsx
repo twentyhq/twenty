@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
@@ -29,11 +29,11 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
   onClick,
   children,
 }: RecordTableDraggableTrFirstRowOfGroupProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
-  const isScrolledVertically = useAtomComponentStateValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
@@ -68,7 +68,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             data-selectable-id={recordId}
             onClick={onClick}
             isFirstRowOfGroup={true}
-            isScrolledVertically={isScrolledVertically}
+            isScrolledVertically={isRecordTableScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{

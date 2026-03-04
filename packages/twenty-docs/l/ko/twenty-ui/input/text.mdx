@@ -14,7 +14,6 @@ image: /images/user-guide/notes/notes_header.png
 <Tabs>
   <Tab title="사용법">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { TextInput } from "@/ui/input/components/TextInput";
 
     export const MyComponent = () => {
@@ -27,7 +26,6 @@ image: /images/user-guide/notes/notes_header.png
       };
 
       return (
-        <RecoilRoot>
           <TextInput
             className
             label="사용자 이름"
@@ -38,7 +36,6 @@ image: /images/user-guide/notes/notes_header.png
             onKeyDown={handleKeyDown}
             RightIcon={null}
           />
-        </RecoilRoot>
       );
     };
     ```
@@ -67,12 +64,10 @@ image: /images/user-guide/notes/notes_header.png
 <Tabs>
   <Tab title="사용법">
     ```jsx
-    import { RecoilRoot } from "recoil";
     import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
     export const MyComponent = () => {
       return (
-        <RecoilRoot>
           <AutosizeTextInput
             onValidate={() => console.log("onValidate 함수 실행됨")}
             minRows={1}
@@ -82,7 +77,6 @@ image: /images/user-guide/notes/notes_header.png
             buttonTitle
             value="작업: "
           />
-        </RecoilRoot>
       );
     };
     ```

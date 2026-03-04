@@ -2,10 +2,9 @@ import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetAct
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -13,6 +12,8 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
@@ -32,47 +33,40 @@ export type WidgetCardHeaderProps = {
 const StyledWidgetCardHeader = styled.div`
   align-items: center;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
   flex-shrink: 0;
 `;
 
 const StyledTitleContainer = styled.div<{ variant: WidgetCardVariant }>`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
   user-select: none;
   overflow: hidden;
 
-  ${({ theme, variant }) => {
-    switch (variant) {
-      case 'side-column':
-        return undefined;
-      default:
-        return css`
-          padding-inline: ${theme.spacing(1)};
-        `;
-    }
-  }}
+  padding-inline: ${({ variant }) =>
+    variant === 'side-column' ? '0' : themeCssVariables.spacing[1]};
 `;
 
 const StyledRightContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 const StyledActionsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledIconButtonContainer = styled(motion.div)`
+const StyledIconButtonContainerBase = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
+const StyledIconButtonContainer = motion.create(StyledIconButtonContainerBase);
 
 export const WidgetCardHeader = ({
   widgetId,
@@ -88,9 +82,9 @@ export const WidgetCardHeader = ({
   actions,
   className,
 }: WidgetCardHeaderProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
-  const isWidgetCardHovered = useAtomComponentFamilyStateValue(
+  const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
     widgetId,
   );
@@ -123,7 +117,7 @@ export const WidgetCardHeader = ({
             isInEditMode &&
             isDeletingWidgetEnabled &&
             onRemove &&
-            isWidgetCardHovered && (
+            widgetCardHovered && (
               <StyledIconButtonContainer
                 initial={{ width: 0, opacity: 0 }}
                 animate={{ width: 'auto', opacity: 1 }}

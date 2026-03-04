@@ -36,6 +36,7 @@ import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
+import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -48,6 +49,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
     private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
+    private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
     private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
@@ -134,6 +136,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFilterGroupMaps,
       flatViewGroupMaps,
       flatViewFieldGroupMaps,
+      flatViewSortMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
@@ -355,6 +358,28 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatViewSortMaps)) {
+      const { from: fromFlatViewSortMaps, to: toFlatViewSortMaps } =
+        flatViewSortMaps;
+      const viewSortResult =
+        await this.workspaceMigrationViewSortActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatViewSortMaps,
+            to: toFlatViewSortMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (viewSortResult.status === 'fail') {
+        orchestratorFailureReport.viewSort.push(...viewSortResult.errors);
+      } else {
+        orchestratorActionsReport.viewSort = viewSortResult.actions;
+      }
+    }
+
     if (isDefined(flatRowLevelPermissionPredicateGroupMaps)) {
       const {
         from: fromFlatRowLevelPermissionPredicateGroupMaps,
@@ -523,6 +548,31 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatFrontComponentMaps)) {
+      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
+        flatFrontComponentMaps;
+
+      const frontComponentResult =
+        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatFrontComponentMaps,
+            to: toFlatFrontComponentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (frontComponentResult.status === 'fail') {
+        orchestratorFailureReport.frontComponent.push(
+          ...frontComponentResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
+      }
+    }
+
     if (isDefined(flatCommandMenuItemMaps)) {
       const {
         from: fromFlatCommandMenuItemMaps,
@@ -655,31 +705,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(flatFrontComponentMaps)) {
-      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
-        flatFrontComponentMaps;
-
-      const frontComponentResult =
-        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFrontComponentMaps,
-            to: toFlatFrontComponentMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (frontComponentResult.status === 'fail') {
-        orchestratorFailureReport.frontComponent.push(
-          ...frontComponentResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
-      }
-    }
-
     if (isDefined(flatWebhookMaps)) {
       const { from: fromFlatWebhookMaps, to: toFlatWebhookMaps } =
         flatWebhookMaps;
@@ -763,6 +788,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.create,
+          ...aggregatedOrchestratorActionsReport.viewSort.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.delete,
           ///
 
           // Logic functions
@@ -793,6 +821,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.skill.delete,
           ...aggregatedOrchestratorActionsReport.skill.create,
           ...aggregatedOrchestratorActionsReport.skill.update,
+          ///
+
+          // Front components
+          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+          ...aggregatedOrchestratorActionsReport.frontComponent.create,
+          ...aggregatedOrchestratorActionsReport.frontComponent.update,
           ///
 
           // Command Menu Items
@@ -841,12 +875,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .create,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
             .update,
-          ///
-
-          // Front components
-          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
-          ...aggregatedOrchestratorActionsReport.frontComponent.create,
-          ...aggregatedOrchestratorActionsReport.frontComponent.update,
           ///
 
           // Webhooks

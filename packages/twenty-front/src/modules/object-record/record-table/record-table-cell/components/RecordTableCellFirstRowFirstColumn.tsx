@@ -6,7 +6,7 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { useContext, type ReactNode } from 'react';
@@ -33,19 +33,21 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
   const isFocusPortalOnThisCell =
-    focusPosition?.column === 0 && focusPosition.row === 0;
+    recordTableFocusPosition?.column === 0 &&
+    recordTableFocusPosition.row === 0;
 
   const isHoveredPortalOnThisCell =
-    hoverPosition?.column === 0 && hoverPosition.row === 0;
+    recordTableHoverPosition?.column === 0 &&
+    recordTableHoverPosition.row === 0;
 
   const [isRecordTableScrolledVertically] = useAtomComponentState(
     isRecordTableScrolledVerticallyComponentState,

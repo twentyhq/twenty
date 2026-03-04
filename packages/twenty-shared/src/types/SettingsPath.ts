@@ -39,6 +39,7 @@ export enum SettingsPath {
   ApplicationDetail = 'applications/:applicationId',
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
+  ApplicationRegistrationDetail = 'applications/registrations/:applicationRegistrationId',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',
   LogicFunctionDetail = 'functions/:logicFunctionId',

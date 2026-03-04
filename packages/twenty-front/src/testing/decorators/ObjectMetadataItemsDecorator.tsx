@@ -9,8 +9,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 
 export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
@@ -23,7 +25,11 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   useEffect(() => {
-    setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
+    setCurrentWorkspaceMember(
+      getRecordFromRecordNode<WorkspaceMember>({
+        recordNode: mockedWorkspaceMemberRecords[0],
+      }),
+    );
     setCurrentUser(mockedUserData);
     setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
     loadMockedObjectMetadataItems();

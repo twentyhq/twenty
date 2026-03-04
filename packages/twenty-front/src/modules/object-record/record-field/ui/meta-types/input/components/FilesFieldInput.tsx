@@ -122,12 +122,12 @@ export const FilesFieldInput = () => {
     fieldDefinition,
   ]);
 
-  const setIsFieldInError = useSetAtomComponentState(
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const handleError = (hasError: boolean, values: FieldFilesValue[]) => {
-    setIsFieldInError(hasError && values.length === 0);
+    setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
   const handleClickOutside = (

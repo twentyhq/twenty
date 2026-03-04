@@ -12,12 +12,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useSetMeteredSubscriptionPriceMutation,
   SubscriptionInterval,
@@ -27,7 +28,7 @@ const StyledRow = styled.div`
   align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSelect = styled(Select<string>)`
@@ -182,7 +183,7 @@ export const MeteredPriceSelector = ({
         )}
       </StyledRow>
       <ConfirmationModal
-        modalId={confirmModalId}
+        modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
         subtitle={t`Confirm changing your current credit plan.`}
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}

@@ -40,6 +40,7 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "scripts/**/*.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx",
     "lingui.config.ts",

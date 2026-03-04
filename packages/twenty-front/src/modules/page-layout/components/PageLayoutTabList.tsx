@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   type DropResult,
@@ -47,17 +47,18 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   position: relative;
   user-select: none;
   width: 100%;
 
   &::after {
-    background-color: ${({ theme }) => theme.border.color.light};
+    background-color: ${themeCssVariables.border.color.light};
     bottom: 0;
     content: '';
     height: 1px;
@@ -70,7 +71,7 @@ const StyledContainer = styled.div`
 const StyledAddButton = styled.div`
   display: flex;
   align-items: center;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
@@ -143,7 +144,7 @@ export const PageLayoutTabList = ({
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
-  const setIsTabDragging = useSetAtomComponentState(
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     componentInstanceId,
   );
@@ -188,9 +189,9 @@ export const PageLayoutTabList = ({
   };
 
   const handleDragStart = useCallback<OnDragStartResponder>(() => {
-    setIsTabDragging(true);
+    setIsPageLayoutTabDragging(true);
     toggleClickOutside(false);
-  }, [setIsTabDragging, toggleClickOutside]);
+  }, [setIsPageLayoutTabDragging, toggleClickOutside]);
 
   const handleDragEnd = useCallback<OnDragEndResponder>(
     (result, provided) => {
@@ -199,7 +200,7 @@ export const PageLayoutTabList = ({
         PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
 
       if (!droppedInOverflow) {
-        setIsTabDragging(false);
+        setIsPageLayoutTabDragging(false);
       }
 
       toggleClickOutside(true);
@@ -216,18 +217,24 @@ export const PageLayoutTabList = ({
         });
       }
     },
-    [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
+    [
+      onReorder,
+      setIsPageLayoutTabDragging,
+      toggleClickOutside,
+      openDropdown,
+      dropdownId,
+    ],
   );
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
-  const tabSettingsOpenTabId = useAtomComponentStateValue(
+  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -235,16 +242,16 @@ export const PageLayoutTabList = ({
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      setTabSettingsOpenTabId(tabId);
+      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
 
-  const isTabSettingsOpen = isDefined(tabSettingsOpenTabId);
+  const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
   const handleSelectTab = useCallback(
     (tabId: string) => {

@@ -18,7 +18,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -41,7 +41,7 @@ export const FieldWidgetDisplay = ({
 }: FieldWidgetDisplayProps) => {
   const widget = useCurrentWidget();
 
-  const [isHovered, setIsHovered] = useAtomComponentState(
+  const [fieldWidgetHover, setFieldWidgetHover] = useAtomComponentState(
     fieldWidgetHoverComponentState,
   );
 
@@ -63,8 +63,8 @@ export const FieldWidgetDisplay = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseEnter = () => setFieldWidgetHover(true);
+  const handleMouseLeave = () => setFieldWidgetHover(false);
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
@@ -116,7 +116,7 @@ export const FieldWidgetDisplay = ({
             fieldMetadataItem={fieldMetadataItem}
             recordId={recordId}
             instanceId={instanceId}
-            isHovered={isHovered}
+            isHovered={fieldWidgetHover}
             onMouseLeave={handleMouseLeave}
           />
           <FieldWidgetCellEditModePortal

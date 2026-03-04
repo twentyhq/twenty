@@ -9,7 +9,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   autoUpdate,
   flip,
@@ -45,19 +45,19 @@ export type RecordTableCellEditModeProps = {
 export const RecordTableCellEditMode = ({
   children,
 }: RecordTableCellEditModeProps) => {
-  const isFieldInError = useAtomComponentStateValue(
+  const recordFieldInputIsFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
-  const setFieldInputLayoutDirection = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirection = useSetAtomComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -65,10 +65,10 @@ export const RecordTableCellEditMode = ({
   const setFieldInputLayoutDirectionMiddleware = {
     name: 'middleware',
     fn: async (state: MiddlewareState) => {
-      setFieldInputLayoutDirection(
+      setRecordFieldInputLayoutDirection(
         state.placement.startsWith('bottom') ? 'downward' : 'upward',
       );
-      setFieldInputLayoutDirectionLoading(false);
+      setRecordFieldInputLayoutDirectionLoading(false);
       return {};
     },
   };
@@ -112,7 +112,7 @@ export const RecordTableCellEditMode = ({
           ref={refs.setFloating}
           style={floatingStyles}
           borderRadius="sm"
-          hasDangerBorder={isFieldInError}
+          hasDangerBorder={recordFieldInputIsFieldInError}
         >
           {children}
         </OverlayContainer>

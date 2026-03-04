@@ -45,8 +45,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   ] = useAtomComponentState(lastContextStoreVirtualizedViewIdComponentState);
 
   const [
-    lastContextStoreVisibleRecordFields,
-    setLastContextStoreVisibleRecordFields,
+    lastContextStoreVirtualizedVisibleRecordFields,
+    setLastContextStoreVirtualizedVisibleRecordFields,
   ] = useAtomComponentState(
     lastContextStoreVirtualizedVisibleRecordFieldsComponentState,
   );
@@ -69,7 +69,7 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
         setLastRecordTableQueryIdentifier(queryIdentifier);
-        setLastContextStoreVisibleRecordFields(visibleRecordFields);
+        setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
 
         await triggerInitialRecordTableDataLoad();
       } else if (
@@ -80,13 +80,13 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
         await triggerInitialRecordTableDataLoad();
       } else if (
-        JSON.stringify(lastContextStoreVisibleRecordFields) !==
+        JSON.stringify(lastContextStoreVirtualizedVisibleRecordFields) !==
         JSON.stringify(visibleRecordFields)
       ) {
-        const lastFields = lastContextStoreVisibleRecordFields || [];
+        const lastFields = lastContextStoreVirtualizedVisibleRecordFields || [];
         const currentFields = visibleRecordFields || [];
 
-        setLastContextStoreVisibleRecordFields(visibleRecordFields);
+        setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
 
         const shouldRefetchData = currentFields.length > lastFields.length;
 
@@ -107,8 +107,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     currentView,
     lastContextStoreVirtualizedViewId,
     setLastContextStoreVirtualizedViewId,
-    lastContextStoreVisibleRecordFields,
-    setLastContextStoreVisibleRecordFields,
+    lastContextStoreVirtualizedVisibleRecordFields,
+    setLastContextStoreVirtualizedVisibleRecordFields,
     visibleRecordFields,
   ]);
 

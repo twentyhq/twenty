@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -9,18 +9,11 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
-
-const StyledContent = styled(Modal.Content)`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(8)};
-`;
 
 const StyledHeading = styled(Heading)`
   display: flex;
@@ -32,7 +25,7 @@ const StyledRadioContainer = styled.div`
 `;
 
 const StyledRadio = styled(Radio)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 type SelectSheetStepProps = {
@@ -110,7 +103,7 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <StyledContent>
+      <ModalContent isVerticallyCentered isHorizontallyCentered gap={8}>
         <StyledHeading title={t`Select the sheet to use`} />
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
@@ -123,7 +116,7 @@ export const SelectSheetStep = ({
             ))}
           </RadioGroup>
         </StyledRadioContainer>
-      </StyledContent>
+      </ModalContent>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}
         onBack={onBack}

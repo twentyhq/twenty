@@ -9,7 +9,7 @@ type ModalHotkeysAndClickOutsideEffectProps = {
   onEnter?: () => void;
   isClosable?: boolean;
   onClose?: () => void;
-  modalId: string;
+  modalInstanceId: string;
 };
 
 export const ModalHotkeysAndClickOutsideEffect = ({
@@ -17,14 +17,14 @@ export const ModalHotkeysAndClickOutsideEffect = ({
   onEnter,
   isClosable = false,
   onClose,
-  modalId,
+  modalInstanceId,
 }: ModalHotkeysAndClickOutsideEffectProps) => {
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: () => {
       onEnter?.();
     },
-    focusId: modalId,
+    focusId: modalInstanceId,
     dependencies: [onEnter],
   });
 
@@ -35,7 +35,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
         onClose();
       }
     },
-    focusId: modalId,
+    focusId: modalInstanceId,
     dependencies: [isClosable, onClose],
   });
 
@@ -45,7 +45,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID,
       DIALOG_CLICK_OUTSIDE_ID,
     ],
-    listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalId}`,
+    listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalInstanceId}`,
     callback: () => {
       if (isClosable && onClose !== undefined) {
         onClose();

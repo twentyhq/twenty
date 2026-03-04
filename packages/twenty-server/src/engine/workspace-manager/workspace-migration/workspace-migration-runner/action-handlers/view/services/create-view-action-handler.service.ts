@@ -62,6 +62,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         viewGroupIds: [],
         viewFilterIds: [],
         viewFilterGroupIds: [],
+        viewSortIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };
