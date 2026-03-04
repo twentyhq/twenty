@@ -55,7 +55,7 @@ export class SecureHttpClientService {
         retries,
         shouldResetTimeout,
         retryCondition: (error) =>
-          axiosRetry.isNetworkError(error) &&
+          axiosRetry.isNetworkOrIdempotentRequestError(error) &&
           error.code !== 'ECONNABORTED' &&
           error.code !== 'ETIMEDOUT',
       });
