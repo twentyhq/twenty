@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const BREADCRUMB_WIDTH = 24;
 const ICON_CENTER_OFFSET = 8;
@@ -22,8 +23,8 @@ const StyledAncestorLine = styled.div<{
   index: number;
   showLine: boolean;
 }>`
-  background: ${({ theme, showLine }) =>
-    showLine ? theme.border.color.strong : 'transparent'};
+  background: ${({ showLine }) =>
+    showLine ? themeCssVariables.border.color.strong : 'transparent'};
   height: 28px;
   left: ${({ index }) => index * BREADCRUMB_WIDTH + ICON_CENTER_OFFSET}px;
   position: absolute;
@@ -40,7 +41,7 @@ const StyledBreadcrumbConnector = styled.div<{ depth: number }>`
 `;
 
 const StyledVerticalLineTop = styled.div`
-  background: ${({ theme }) => theme.border.color.strong};
+  background: ${themeCssVariables.border.color.strong};
   height: 12px;
   left: 0;
   position: absolute;
@@ -49,9 +50,9 @@ const StyledVerticalLineTop = styled.div`
 `;
 
 const StyledRoundedCorner = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.strong};
+  border-bottom: 1px solid ${themeCssVariables.border.color.strong};
   border-bottom-left-radius: 4px;
-  border-left: 1px solid ${({ theme }) => theme.border.color.strong};
+  border-left: 1px solid ${themeCssVariables.border.color.strong};
   height: 8px;
   left: 0;
   position: absolute;
@@ -60,7 +61,7 @@ const StyledRoundedCorner = styled.div`
 `;
 
 const StyledVerticalLineBottom = styled.div`
-  background: ${({ theme }) => theme.border.color.strong};
+  background: ${themeCssVariables.border.color.strong};
   height: 16px;
   left: 0;
   position: absolute;

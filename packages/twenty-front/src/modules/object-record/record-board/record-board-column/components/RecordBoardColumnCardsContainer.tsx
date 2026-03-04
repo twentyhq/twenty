@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
@@ -19,7 +20,7 @@ const StyledColumnCardsContainer = styled.div`
 `;
 
 const StyledNewButtonContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type RecordBoardColumnCardsContainerProps = {
