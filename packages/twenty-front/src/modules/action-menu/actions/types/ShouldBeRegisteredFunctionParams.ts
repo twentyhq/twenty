@@ -1,11 +1,12 @@
-import {
-  type ActionViewType,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import {
+  type ActionViewType,
+  type ObjectPermissions,
+} from 'twenty-shared/types';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
@@ -23,7 +24,11 @@ export type ShouldBeRegisteredFunctionParams = {
   numberOfSelectedRecords?: number;
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
   viewType?: ActionViewType;
-  targetObjectReadPermissions: Record<string, boolean>;
-  targetObjectWritePermissions: Record<string, boolean>;
-  featureFlags: Record<string, boolean>;
+  getTargetObjectReadPermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
+  getTargetObjectWritePermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
+  isFeatureFlagEnabled: (featureFlagKey: FeatureFlagKey) => boolean;
 };
