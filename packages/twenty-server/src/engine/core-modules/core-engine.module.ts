@@ -10,6 +10,7 @@ import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.modu
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application-registration/application-registration.module';
 import { ApplicationSyncModule } from 'src/engine/core-modules/application/application-sync.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { MarketplaceModule } from 'src/engine/core-modules/marketplace/marketplace.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -92,6 +93,7 @@ import { FileModule } from './file/file.module';
     ApplicationRegistrationModule,
     ApplicationModule,
     ApplicationSyncModule,
+    MarketplaceModule,
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
