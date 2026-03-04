@@ -13,7 +13,7 @@ type Checkers = Parameters<typeof checker>[0];
 import packageJson from './package.json';
 
 const entries = Object.keys(packageJson.exports)
-  .filter((el) => el !== './style.css')
+  .filter((el) => !el.endsWith('.css'))
   .map((module) => `src/${module}/index.ts`);
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
