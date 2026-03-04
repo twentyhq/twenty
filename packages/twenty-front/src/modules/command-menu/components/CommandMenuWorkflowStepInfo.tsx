@@ -24,6 +24,7 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { ICON_SIZES, ICON_STROKES } from 'twenty-ui/theme-constants';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 import { ThemeContext } from 'twenty-ui/theme';
 
@@ -32,7 +33,6 @@ export const CommandMenuWorkflowStepInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
@@ -122,14 +122,8 @@ export const CommandMenuWorkflowStepInfo = ({
     : getActionIcon(stepDefinition.definition.type);
 
   const headerIconColor = isTrigger
-    ? getTriggerIconColor({
-        theme,
-        triggerType: stepDefinition.definition.type,
-      })
-    : getActionIconColorOrThrow({
-        theme,
-        actionType: stepDefinition.definition.type,
-      });
+    ? getTriggerIconColor(stepDefinition.definition.type)
+    : getActionIconColorOrThrow(stepDefinition.definition.type);
 
   const headerType = isTrigger ? t`Trigger` : t`Action`;
 
@@ -177,7 +171,7 @@ export const CommandMenuWorkflowStepInfo = ({
     <CommandMenuPageInfoLayout
       icon={
         headerIcon ? (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
         ) : undefined
       }
       iconColor={headerIconColor}
