@@ -21,7 +21,7 @@ import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/wi
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -129,7 +129,7 @@ export const FieldWidgetRelationCard = ({
   const hasMoreRecords = remainingCount > 0;
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInRightDrawer }}>
       <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
         <FieldContext.Provider
           value={{
@@ -171,6 +171,6 @@ export const FieldWidgetRelationCard = ({
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

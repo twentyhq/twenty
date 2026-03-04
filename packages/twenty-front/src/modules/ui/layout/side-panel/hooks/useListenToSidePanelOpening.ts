@@ -1,4 +1,4 @@
-import { SIDE_PANEL_OPEN_EVENT_NAME } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
+import { SIDE_PANEL_OPEN_EVENT_NAME } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
 import { useEffect } from 'react';
 
 export const useListenToSidePanelOpening = (callback: () => void) => {

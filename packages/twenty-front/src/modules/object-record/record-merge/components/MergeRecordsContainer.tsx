@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -59,7 +59,7 @@ export const MergeRecordsContainer = ({
   );
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInRightDrawer: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <TabListComponentInstanceContext.Provider
@@ -86,6 +86,6 @@ export const MergeRecordsContainer = ({
           <MergeRecordsFooter objectNameSingular={objectNameSingular} />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

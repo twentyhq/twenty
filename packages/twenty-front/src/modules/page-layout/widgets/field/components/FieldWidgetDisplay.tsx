@@ -16,7 +16,7 @@ import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/stat
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 
@@ -68,7 +68,7 @@ export const FieldWidgetDisplay = ({
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInRightDrawer }}>
         <RecordFieldComponentInstanceContext.Provider
           value={{
             instanceId: getRecordFieldInputInstanceId({
@@ -126,7 +126,7 @@ export const FieldWidgetDisplay = ({
             instanceId={instanceId}
           />
         </RecordFieldComponentInstanceContext.Provider>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     </RecordFieldsScopeContextProvider>
   );
 };

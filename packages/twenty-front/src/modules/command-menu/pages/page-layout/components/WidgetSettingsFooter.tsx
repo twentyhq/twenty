@@ -3,7 +3,7 @@ import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePa
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -48,7 +48,7 @@ export const WidgetSettingsFooter = ({
   );
 
   return (
-    <RightDrawerFooter
+    <SidePanelFooter
       actions={[
         <OptionsDropdownMenu
           key="options"

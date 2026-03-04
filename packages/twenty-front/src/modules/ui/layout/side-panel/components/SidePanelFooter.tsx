@@ -15,11 +15,11 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-type RightDrawerFooterProps = {
+type SidePanelFooterProps = {
   actions: React.ReactNode[];
 };
 
-export const RightDrawerFooter = ({ actions }: RightDrawerFooterProps) => {
+export const SidePanelFooter = ({ actions }: SidePanelFooterProps) => {
   return (
     <StyledContainer>
       {actions.map((action, index) => (

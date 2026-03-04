@@ -9,7 +9,7 @@ import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer'
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -101,7 +101,7 @@ export const PageLayoutRecordPageRenderer = ({
         </StyledContentContainer>
 
         {isInRightDrawer && (
-          <RightDrawerFooter
+          <SidePanelFooter
             actions={[
               <RecordShowRightDrawerActionMenu />,
               <RecordShowRightDrawerOpenRecordButton

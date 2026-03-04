@@ -1,7 +1,7 @@
 import { FilesCard } from '@/activities/files/components/FilesCard';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
@@ -19,10 +19,10 @@ export const FileWidget = ({ widget: _widget }: FileWidgetProps) => {
   const { isInRightDrawer } = useLayoutRenderingContext();
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInRightDrawer }}>
       <StyledContainer>
         <FilesCard />
       </StyledContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

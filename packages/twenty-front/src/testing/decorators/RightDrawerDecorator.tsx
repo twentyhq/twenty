@@ -1,8 +1,8 @@
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { type Decorator } from '@storybook/react-vite';
 
 export const RightDrawerDecorator: Decorator = (Story) => (
-  <RightDrawerProvider value={{ isInRightDrawer: false }}>
+  <SidePanelProvider value={{ isInRightDrawer: false }}>
     <Story />
-  </RightDrawerProvider>
+  </SidePanelProvider>
 );

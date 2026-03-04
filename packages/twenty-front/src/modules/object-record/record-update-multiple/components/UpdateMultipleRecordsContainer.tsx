@@ -4,7 +4,7 @@ import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multipl
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -85,7 +85,7 @@ export const UpdateMultipleRecordsContainer = ({
   };
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInRightDrawer: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <StyledContentContainer>
@@ -105,6 +105,6 @@ export const UpdateMultipleRecordsContainer = ({
           />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

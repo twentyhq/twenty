@@ -3,7 +3,7 @@ import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistor
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -181,7 +181,7 @@ export const WorkflowEditActionFormFiller = ({
         })}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
-        <RightDrawerFooter
+        <SidePanelFooter
           actions={[
             <CmdEnterActionButton
               title={t`Submit`}

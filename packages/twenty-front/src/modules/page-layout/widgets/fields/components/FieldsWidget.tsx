@@ -26,7 +26,7 @@ import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/ho
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -109,7 +109,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   if (!hasFieldsToDisplay) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInRightDrawer }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
             // eslint-disable-next-line react/jsx-props-no-spreading
@@ -126,7 +126,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             </AnimatedPlaceholderEmptyTextContainer>
           </AnimatedPlaceholderEmptyContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 

@@ -16,7 +16,7 @@ import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -69,17 +69,17 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   if (isPrefetchLoading) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInRightDrawer }}>
         <StyledContainer>
           <PropertyBoxSkeletonLoader />
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInRightDrawer }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
             // eslint-disable-next-line react/jsx-props-no-spreading
@@ -96,7 +96,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
             </AnimatedPlaceholderEmptyTextContainer>
           </AnimatedPlaceholderEmptyContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 

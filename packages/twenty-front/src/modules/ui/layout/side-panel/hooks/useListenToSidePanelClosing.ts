@@ -1,4 +1,4 @@
-import { SIDE_PANEL_CLOSE_EVENT_NAME } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
+import { SIDE_PANEL_CLOSE_EVENT_NAME } from '@/ui/layout/side-panel/utils/emitSidePanelCloseEvent';
 import { useEffect } from 'react';
 
 export const useListenToSidePanelClosing = (callback: () => void) => {

@@ -43,7 +43,7 @@ jest.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
   }),
 }));
 
-jest.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
+jest.mock('@/ui/layout/side-panel/utils/emitSidePanelCloseEvent', () => ({
   emitSidePanelCloseEvent: () => {
     mockEmitSidePanelCloseEvent();
   },
