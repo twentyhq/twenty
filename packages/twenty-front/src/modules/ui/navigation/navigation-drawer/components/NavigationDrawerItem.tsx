@@ -452,12 +452,7 @@ export const NavigationDrawerItem = ({
 
           {rightOptions && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <StyledRightOptionsContainer
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-              >
+              <StyledRightOptionsContainer>
                 <StyledRightOptionsVisbility
                   data-visible={
                     isMobile ||
