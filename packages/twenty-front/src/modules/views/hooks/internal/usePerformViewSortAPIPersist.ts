@@ -1,6 +1,12 @@
 import { useCallback } from 'react';
 
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewSortOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewSortOptimisticEffect';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewSortMutationVariables,
@@ -12,12 +18,6 @@ import {
   useDestroyCoreViewSortMutation,
   useUpdateCoreViewSortMutation,
 } from '~/generated-metadata/graphql';
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { ApolloError } from '@apollo/client';
-import { CrudOperationType } from 'twenty-shared/types';
-import { t } from '@lingui/core/macro';
 
 export const usePerformViewSortAPIPersist = () => {
   const { triggerViewSortOptimisticEffect } =
@@ -175,12 +175,17 @@ export const usePerformViewSortAPIPersist = () => {
               variables,
               update: (_cache, { data }) => {
                 const deletedViewSort = data?.deleteCoreViewSort;
+
                 if (!isDefined(deletedViewSort)) {
                   return;
                 }
 
                 triggerViewSortOptimisticEffect({
-                  deletedViewSorts: [deletedViewSort],
+                  deletedViewSorts: [
+                    {
+                      id: variables.input.id,
+                    },
+                  ],
                 });
               },
             }),
