@@ -368,22 +368,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatViewSortMaps,
             to: toFlatViewSortMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {
-              flatFieldMetadataMaps:
-                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
-              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
-            },
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
             workspaceId,
           },
         );
-
-      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
-        {
-          allFlatEntityMaps: optimisticAllFlatEntityMaps,
-          flatEntityMapsAndRelatedFlatEntityMaps:
-            viewSortResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        },
-      );
 
       if (viewSortResult.status === 'fail') {
         orchestratorFailureReport.viewSort.push(...viewSortResult.errors);
