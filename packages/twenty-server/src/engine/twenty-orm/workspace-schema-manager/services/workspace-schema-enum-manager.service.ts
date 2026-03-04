@@ -35,7 +35,7 @@ export class WorkspaceSchemaEnumManagerService {
       .map((value) => escapeLiteral(value.toString()))
       .join(', ');
 
-    const sql = `CREATE TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} AS ENUM (${sanitizedValues})`;
+    const sql = `CREATE TYPE IF NOT EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} AS ENUM (${sanitizedValues})`;
 
     await queryRunner.query(sql);
   }
