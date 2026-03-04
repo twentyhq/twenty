@@ -20,6 +20,8 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/constants/yarn-engine-dirname';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
+import { readJsonFile } from 'src/engine/core-modules/application/utils/read-json-file.util';
+import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -61,7 +63,7 @@ export class AppPackageResolverService implements OnModuleInit {
         return this.resolveFromNpm(appRegistration, options?.targetVersion);
       case AppRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
-      case AppRegistrationSourceType.NONE:
+      case AppRegistrationSourceType.LOCAL:
         return null;
     }
   }
@@ -103,8 +105,14 @@ export class AppPackageResolverService implements OnModuleInit {
       await this.runYarnInstall(workDir);
 
       const packageDir = join(workDir, 'node_modules', sourcePackage);
-      const manifest = await this.readManifest(packageDir);
-      const packageJson = await this.readPackageJson(packageDir);
+      const manifest = await readJsonFile<Manifest>(
+        packageDir,
+        'manifest.json',
+      );
+      const packageJson = await readJsonFile<PackageJson>(
+        packageDir,
+        'package.json',
+      );
 
       return { extractedDir: workDir, manifest, packageJson };
     } catch (error) {
@@ -135,9 +143,15 @@ export class AppPackageResolverService implements OnModuleInit {
       await extractTarballSecurely(tarballPath, workDir);
       await fs.rm(tarballPath);
 
-      const contentDir = await this.findContentDir(workDir);
-      const manifest = await this.readManifest(contentDir);
-      const packageJson = await this.readPackageJson(contentDir);
+      const contentDir = await resolvePackageContentDir(workDir);
+      const manifest = await readJsonFile<Manifest>(
+        contentDir,
+        'manifest.json',
+      );
+      const packageJson = await readJsonFile<PackageJson>(
+        contentDir,
+        'package.json',
+      );
 
       return { extractedDir: workDir, manifest, packageJson };
     } catch (error) {
@@ -152,23 +166,6 @@ export class AppPackageResolverService implements OnModuleInit {
         ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
       );
     }
-  }
-
-  // npm pack wraps contents in a package/ subdirectory
-  private async findContentDir(extractDir: string): Promise<string> {
-    const packageSubdir = join(extractDir, 'package');
-
-    try {
-      const stat = await fs.stat(packageSubdir);
-
-      if (stat.isDirectory()) {
-        return packageSubdir;
-      }
-    } catch {
-      // no package/ subdirectory — contents are at root
-    }
-
-    return extractDir;
   }
 
   private async writeNpmrc(
@@ -255,36 +252,6 @@ export class AppPackageResolverService implements OnModuleInit {
         error instanceof Error ? error.message : String(error);
 
       throw new Error(`yarn install failed: ${errorMessage}`);
-    }
-  }
-
-  private async readManifest(dir: string): Promise<Manifest> {
-    const manifestPath = join(dir, 'manifest.json');
-
-    try {
-      const content = await fs.readFile(manifestPath, 'utf-8');
-
-      return JSON.parse(content) as Manifest;
-    } catch {
-      throw new ApplicationException(
-        'manifest.json not found in resolved package',
-        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-      );
-    }
-  }
-
-  private async readPackageJson(dir: string): Promise<PackageJson> {
-    const packageJsonPath = join(dir, 'package.json');
-
-    try {
-      const content = await fs.readFile(packageJsonPath, 'utf-8');
-
-      return JSON.parse(content) as PackageJson;
-    } catch {
-      throw new ApplicationException(
-        'package.json not found in resolved package',
-        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-      );
     }
   }
 }

@@ -1,3 +1,4 @@
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 export const TWENTY_STANDARD_APPLICATION = {
@@ -7,7 +8,7 @@ export const TWENTY_STANDARD_APPLICATION = {
     'Twenty is an open-source CRM that allows you to manage your sales and customer relationships',
   version: '1.0.0',
   sourcePath: 'cli-sync',
-  sourceType: 'local',
+  sourceType: AppRegistrationSourceType.LOCAL,
 } as const satisfies Pick<
   ApplicationEntity,
   | 'universalIdentifier'

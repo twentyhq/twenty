@@ -1,16 +1,8 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
-import {
-  ApplicationRegistrationEntity,
-  AppRegistrationSourceType,
-} from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { AppUpgradeService } from 'src/engine/core-modules/application/services/app-upgrade.service';
@@ -26,12 +18,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @MetadataResolver()
 @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 export class MarketplaceResolver {
-  private readonly logger = new Logger(MarketplaceResolver.name);
-  private lastSyncAttemptAt: number | null = null;
-
   constructor(
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly marketplaceCatalogSyncService: MarketplaceCatalogSyncService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly appUpgradeService: AppUpgradeService,
@@ -39,31 +26,7 @@ export class MarketplaceResolver {
 
   @Query(() => [MarketplaceAppDTO])
   async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    let registrations = await this.appRegistrationRepository.find({
-      where: { sourceType: AppRegistrationSourceType.NPM },
-    });
-
-    const syncCooldownMs = 5 * 60 * 1000;
-    const canRetrySync =
-      this.lastSyncAttemptAt === null ||
-      Date.now() - this.lastSyncAttemptAt > syncCooldownMs;
-
-    if (registrations.length === 0 && canRetrySync) {
-      this.logger.log(
-        'No marketplace registrations found, triggering catalog sync',
-      );
-      this.lastSyncAttemptAt = Date.now();
-
-      await this.marketplaceCatalogSyncService.syncCatalog();
-
-      registrations = await this.appRegistrationRepository.find({
-        where: { sourceType: AppRegistrationSourceType.NPM },
-      });
-    }
-
-    return registrations
-      .map((registration) => this.enrichRegistration(registration))
-      .filter(isDefined);
+    return this.marketplaceCatalogSyncService.findManyMarketplaceApps();
   }
 
   @Mutation(() => Boolean)
@@ -74,10 +37,11 @@ export class MarketplaceResolver {
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const registration = await this.findOrCreateRegistration({
-      universalIdentifier,
-      workspaceId: workspace.id,
-    });
+    const registration =
+      await this.marketplaceCatalogSyncService.findOrCreateRegistration({
+        universalIdentifier,
+        workspaceId: workspace.id,
+      });
 
     return this.applicationInstallService.installApplication({
       appRegistrationId: registration.id,
@@ -98,97 +62,5 @@ export class MarketplaceResolver {
       targetVersion,
       workspaceId: workspace.id,
     });
-  }
-
-  private async findOrCreateRegistration(params: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const isUuid =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        params.universalIdentifier,
-      );
-
-    if (isUuid) {
-      const registration = await this.appRegistrationRepository.findOne({
-        where: { universalIdentifier: params.universalIdentifier },
-      });
-
-      if (isDefined(registration)) {
-        return registration;
-      }
-
-      throw new Error(
-        `No application registration found for identifier "${params.universalIdentifier}"`,
-      );
-    }
-
-    const packageName = params.universalIdentifier;
-
-    const existingByPackage = await this.appRegistrationRepository.findOne({
-      where: { sourcePackage: packageName },
-    });
-
-    if (isDefined(existingByPackage)) {
-      return existingByPackage;
-    }
-
-    this.logger.log(
-      `Creating new registration for npm package "${packageName}"`,
-    );
-
-    const registration = this.appRegistrationRepository.create({
-      universalIdentifier: v4(),
-      name: packageName,
-      sourceType: AppRegistrationSourceType.NPM,
-      sourcePackage: packageName,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      workspaceId: params.workspaceId,
-    });
-
-    return this.appRegistrationRepository.save(registration);
-  }
-
-  private enrichRegistration(
-    registration: ApplicationRegistrationEntity,
-  ): MarketplaceAppDTO | null {
-    const curatedEntry = this.marketplaceCatalogSyncService.getCuratedEntry(
-      registration.universalIdentifier,
-    );
-
-    if (isDefined(curatedEntry)) {
-      return {
-        id: registration.universalIdentifier,
-        name: curatedEntry.name,
-        description: curatedEntry.description,
-        author: curatedEntry.author,
-        sourcePackage: curatedEntry.sourcePackage,
-        websiteUrl: curatedEntry.websiteUrl,
-        termsUrl: curatedEntry.termsUrl,
-        ...curatedEntry.richDisplayData,
-      };
-    }
-
-    // Non-curated npm app — return minimal info from the registration
-    return {
-      id: registration.universalIdentifier,
-      name: registration.name,
-      description: registration.description ?? '',
-      icon: 'IconApps',
-      version: registration.latestAvailableVersion ?? '0.0.0',
-      author: registration.author ?? 'Unknown',
-      category: '',
-      screenshots: [],
-      aboutDescription: registration.description ?? '',
-      providers: [],
-      websiteUrl: registration.websiteUrl ?? undefined,
-      objects: [],
-      fields: [],
-      logicFunctions: [],
-      frontComponents: [],
-      sourcePackage: registration.sourcePackage ?? undefined,
-    };
   }
 }

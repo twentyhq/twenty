@@ -25,7 +25,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 export enum AppRegistrationSourceType {
   NPM = 'npm',
   TARBALL = 'tarball',
-  NONE = 'none',
+  LOCAL = 'local',
 }
 
 registerEnumType(AppRegistrationSourceType, {
@@ -109,7 +109,7 @@ export class ApplicationRegistrationEntity {
   @Field(() => AppRegistrationSourceType)
   @Column({
     type: 'text',
-    default: AppRegistrationSourceType.NONE,
+    default: AppRegistrationSourceType.LOCAL,
   })
   sourceType: AppRegistrationSourceType;
 
@@ -135,6 +135,13 @@ export class ApplicationRegistrationEntity {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
   termsUrl: string | null;
+
+  @Field(() => Boolean)
+  @Column({ name: 'isFeatured', type: 'boolean', default: false })
+  isFeatured: boolean;
+
+  @Column({ type: 'jsonb', nullable: true })
+  marketplaceDisplayData: Record<string, unknown> | null;
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

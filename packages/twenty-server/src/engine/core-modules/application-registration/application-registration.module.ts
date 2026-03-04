@@ -10,6 +10,7 @@ import { AppRegistrationUploadController } from 'src/engine/core-modules/applica
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application-registration/controllers/oauth-discovery.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application-registration/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application-registration/oauth.service';
+import { AppTarballUploadService } from 'src/engine/core-modules/application-registration/services/app-tarball-upload.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -47,6 +48,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationRegistrationService,
     ApplicationRegistrationVariableService,
     ApplicationRegistrationResolver,
+    AppTarballUploadService,
     OAuthService,
   ],
   exports: [

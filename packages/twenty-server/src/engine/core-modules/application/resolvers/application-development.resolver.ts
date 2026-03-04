@@ -12,6 +12,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
@@ -97,7 +98,7 @@ export class ApplicationDevelopmentResolver {
   ) {
     return await this.applicationService.create({
       ...input,
-      sourceType: 'local',
+      sourceType: AppRegistrationSourceType.LOCAL,
       workspaceId,
     });
   }

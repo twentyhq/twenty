@@ -1,9 +1,20 @@
 import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 
+export type MarketplaceDisplayData = Omit<
+  MarketplaceAppDTO,
+  | 'id'
+  | 'name'
+  | 'description'
+  | 'author'
+  | 'websiteUrl'
+  | 'termsUrl'
+  | 'sourcePackage'
+>;
+
 export type CuratedAppEntry = {
   universalIdentifier: string;
   sourcePackage: string;
-  featured: boolean;
+  isFeatured: boolean;
 
   name: string;
   description: string;
@@ -12,16 +23,7 @@ export type CuratedAppEntry = {
   websiteUrl?: string;
   termsUrl?: string;
 
-  richDisplayData: Omit<
-    MarketplaceAppDTO,
-    | 'id'
-    | 'name'
-    | 'description'
-    | 'author'
-    | 'websiteUrl'
-    | 'termsUrl'
-    | 'sourcePackage'
-  >;
+  richDisplayData: MarketplaceDisplayData;
 };
 
 const MOCK_ENRICHMENT_APP_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
@@ -37,7 +39,7 @@ export const MARKETPLACE_CATALOG_INDEX: CuratedAppEntry[] = [
   {
     universalIdentifier: MOCK_ENRICHMENT_APP_ID,
     sourcePackage: '@twentyhq/app-data-enrichment',
-    featured: true,
+    isFeatured: true,
     name: 'Data Enrichment',
     description: 'Enrich your data easily. Choose your provider.',
     author: 'Twenty',
@@ -150,7 +152,7 @@ export const MARKETPLACE_CATALOG_INDEX: CuratedAppEntry[] = [
   {
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     sourcePackage: '@twentyhq/hello-world',
-    featured: false,
+    isFeatured: false,
     name: 'Hello World',
     description: 'A simple hello world app to get started with Twenty apps.',
     author: 'Twenty',

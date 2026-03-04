@@ -89,7 +89,7 @@ export class AppUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
-    if (appRegistration.sourceType === AppRegistrationSourceType.NONE) {
+    if (appRegistration.sourceType === AppRegistrationSourceType.LOCAL) {
       throw new ApplicationException(
         'Cannot upgrade an app with no source channel',
         ApplicationExceptionCode.UPGRADE_FAILED,

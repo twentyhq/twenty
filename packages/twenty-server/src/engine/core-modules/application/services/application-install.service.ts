@@ -65,7 +65,7 @@ export class ApplicationInstallService {
       where: { id: params.appRegistrationId },
     });
 
-    if (appRegistration.sourceType === AppRegistrationSourceType.NONE) {
+    if (appRegistration.sourceType === AppRegistrationSourceType.LOCAL) {
       this.logger.log(
         `App ${appRegistration.universalIdentifier} has no source code to install (OAuth-only)`,
       );
@@ -108,12 +108,10 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
-      const sourceType = this.mapSourceType(appRegistration.sourceType);
-
       await this.updateApplicationSourceType(
         appRegistration.universalIdentifier,
         params.workspaceId,
-        sourceType,
+        appRegistration.sourceType,
       );
 
       await this.applicationSyncService.synchronizeFromManifest({
@@ -216,24 +214,10 @@ export class ApplicationInstallService {
     return result;
   }
 
-  private mapSourceType(
-    registrationSourceType: AppRegistrationSourceType,
-  ): 'npm' | 'tarball' | 'local' {
-    switch (registrationSourceType) {
-      case AppRegistrationSourceType.NPM:
-        return 'npm';
-      case AppRegistrationSourceType.TARBALL:
-        return 'tarball';
-      case AppRegistrationSourceType.NONE:
-      default:
-        return 'local';
-    }
-  }
-
   private async updateApplicationSourceType(
     universalIdentifier: string,
     workspaceId: string,
-    sourceType: 'npm' | 'tarball' | 'local',
+    sourceType: AppRegistrationSourceType,
   ): Promise<void> {
     await this.applicationRepository.update(
       { universalIdentifier, workspaceId },
@@ -266,7 +250,7 @@ export class ApplicationInstallService {
     requestedChannel: 'npm' | 'tarball',
   ): void {
     if (
-      appRegistration.sourceType !== AppRegistrationSourceType.NONE &&
+      appRegistration.sourceType !== AppRegistrationSourceType.LOCAL &&
       appRegistration.sourceType !== requestedChannel
     ) {
       throw new ApplicationException(

@@ -1,8 +1,5 @@
 // Returns true if versionA is strictly greater than versionB (major.minor.patch)
-export const isNewerSemver = (
-  versionA: string,
-  versionB: string,
-): boolean => {
+export const isNewerSemver = (versionA: string, versionB: string): boolean => {
   const partsA = versionA.split('.').map(Number);
   const partsB = versionB.split('.').map(Number);
 

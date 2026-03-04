@@ -1,6 +1,6 @@
 import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -10,7 +10,6 @@ import {
   StyledApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
