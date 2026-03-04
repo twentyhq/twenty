@@ -1,16 +1,11 @@
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDownload, IconUpload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  useFindManyApplicationRegistrationsQuery,
-  useFindManyApplicationsQuery,
-} from '~/generated-metadata/graphql';
+import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import {
   SettingsInstallNpmAppModal,
@@ -30,25 +25,9 @@ const StyledButtonGroup = styled.div`
 export const SettingsApplicationsInstalledTab = () => {
   const { t } = useLingui();
   const { data } = useFindManyApplicationsQuery();
-  const { data: registrationsData } =
-    useFindManyApplicationRegistrationsQuery();
   const { openModal } = useModal();
 
   const applications = data?.findManyApplications ?? [];
-
-  const registrationVersionMap = useMemo(() => {
-    const map = new Map<string, string>();
-    const registrations =
-      registrationsData?.findManyApplicationRegistrations ?? [];
-
-    for (const registration of registrations) {
-      if (isDefined(registration.latestAvailableVersion)) {
-        map.set(registration.id, registration.latestAvailableVersion);
-      }
-    }
-
-    return map;
-  }, [registrationsData]);
 
   return (
     <>
@@ -72,10 +51,7 @@ export const SettingsApplicationsInstalledTab = () => {
       </Section>
 
       {applications.length > 0 && (
-        <SettingsApplicationsTable
-          applications={applications}
-          registrationVersionMap={registrationVersionMap}
-        />
+        <SettingsApplicationsTable applications={applications} />
       )}
 
       <SettingsInstallNpmAppModal />

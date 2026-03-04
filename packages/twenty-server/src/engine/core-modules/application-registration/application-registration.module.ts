@@ -6,7 +6,6 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
-import { AppRegistrationUploadController } from 'src/engine/core-modules/application-registration/controllers/app-registration-upload.controller';
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application-registration/controllers/oauth-discovery.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application-registration/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application-registration/oauth.service';
@@ -39,11 +38,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     FileStorageModule,
     WorkspaceCacheStorageModule,
   ],
-  controllers: [
-    OAuthTokenController,
-    OAuthDiscoveryController,
-    AppRegistrationUploadController,
-  ],
+  controllers: [OAuthTokenController, OAuthDiscoveryController],
   providers: [
     ApplicationRegistrationService,
     ApplicationRegistrationVariableService,

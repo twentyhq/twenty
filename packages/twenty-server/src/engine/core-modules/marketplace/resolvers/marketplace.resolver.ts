@@ -1,12 +1,13 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application-registration/application-registration-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { AppUpgradeService } from 'src/engine/core-modules/application/services/app-upgrade.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/marketplace/dtos/marketplace-app.dto';
-import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/marketplace/services/marketplace-catalog-sync.service';
+import { MarketplaceQueryService } from 'src/engine/core-modules/marketplace/services/marketplace-query.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -16,17 +17,18 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @MetadataResolver()
+@UseFilters(ApplicationRegistrationExceptionFilter)
 @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 export class MarketplaceResolver {
   constructor(
-    private readonly marketplaceCatalogSyncService: MarketplaceCatalogSyncService,
+    private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly appUpgradeService: AppUpgradeService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
   async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceCatalogSyncService.findManyMarketplaceApps();
+    return this.marketplaceQueryService.findManyMarketplaceApps();
   }
 
   @Mutation(() => Boolean)
@@ -38,7 +40,7 @@ export class MarketplaceResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const registration =
-      await this.marketplaceCatalogSyncService.findRegistrationByUniversalIdentifier(
+      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
 
@@ -58,9 +60,9 @@ export class MarketplaceResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const registration =
-      await this.marketplaceCatalogSyncService.findOrCreateNpmRegistration({
+      await this.marketplaceQueryService.findOrCreateNpmRegistration({
         packageName,
-        workspaceId: workspace.id,
+        ownerWorkspaceId: workspace.id,
       });
 
     return this.applicationInstallService.installApplication({

@@ -1,15 +1,11 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  type Application,
-  useUpgradeApplicationMutation,
-} from '~/generated-metadata/graphql';
+import { type Application } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 export const SettingsApplicationVersionContainer = ({
@@ -32,35 +28,17 @@ export const SettingsApplicationVersionContainer = ({
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
 
-  const [upgradeApplication] = useUpgradeApplicationMutation();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [isUpgrading, setIsUpgrading] = useState(false);
+  const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const handleUpgrade = async () => {
     if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
       return;
     }
 
-    setIsUpgrading(true);
-
-    try {
-      await upgradeApplication({
-        variables: {
-          appRegistrationId,
-          targetVersion: latestAvailableVersion,
-        },
-      });
-
-      enqueueSuccessSnackBar({
-        message: t`Application upgraded successfully.`,
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to upgrade the application.`,
-      });
-    } finally {
-      setIsUpgrading(false);
-    }
+    await upgrade({
+      appRegistrationId,
+      targetVersion: latestAvailableVersion,
+    });
   };
 
   const versionItems = [

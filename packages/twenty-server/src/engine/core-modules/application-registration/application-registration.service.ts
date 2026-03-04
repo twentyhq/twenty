@@ -33,20 +33,20 @@ export class ApplicationRegistrationService {
   ) {}
 
   async findMany(
-    workspaceId: string,
+    ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { workspaceId },
+      where: { ownerWorkspaceId },
       order: { createdAt: 'DESC' },
     });
   }
 
   async findOneById(
     id: string,
-    workspaceId: string,
+    ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id, workspaceId },
+      where: { id, ownerWorkspaceId },
     });
 
     if (!registration) {
@@ -93,10 +93,10 @@ export class ApplicationRegistrationService {
   async isOwnedByWorkspace(id: string, workspaceId: string): Promise<boolean> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { id },
-      select: ['id', 'workspaceId'],
+      select: ['id', 'ownerWorkspaceId'],
     });
 
-    return registration?.workspaceId === workspaceId;
+    return registration?.ownerWorkspaceId === workspaceId;
   }
 
   // Global lookup — used by app sync to find existing registrations
@@ -110,7 +110,7 @@ export class ApplicationRegistrationService {
 
   async create(
     input: CreateApplicationRegistrationInput,
-    workspaceId: string,
+    ownerWorkspaceId: string,
     createdByUserId: string | null,
   ): Promise<{
     applicationRegistration: ApplicationRegistrationEntity;
@@ -152,7 +152,7 @@ export class ApplicationRegistrationService {
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
         createdByUserId,
-        workspaceId,
+        ownerWorkspaceId,
         websiteUrl: input.websiteUrl ?? null,
         termsUrl: input.termsUrl ?? null,
       });
@@ -166,11 +166,11 @@ export class ApplicationRegistrationService {
 
   async update(
     input: UpdateApplicationRegistrationInput,
-    workspaceId: string,
+    ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    await this.findOneById(id, workspaceId);
+    await this.findOneById(id, ownerWorkspaceId);
 
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
@@ -198,18 +198,21 @@ export class ApplicationRegistrationService {
       await this.applicationRegistrationRepository.update(id, updateData);
     }
 
-    return this.findOneById(id, workspaceId);
+    return this.findOneById(id, ownerWorkspaceId);
   }
 
-  async delete(id: string, workspaceId: string): Promise<boolean> {
-    await this.findOneById(id, workspaceId);
+  async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
+    await this.findOneById(id, ownerWorkspaceId);
     await this.applicationRegistrationRepository.softDelete(id);
 
     return true;
   }
 
-  async rotateClientSecret(id: string, workspaceId: string): Promise<string> {
-    await this.findOneById(id, workspaceId);
+  async rotateClientSecret(
+    id: string,
+    ownerWorkspaceId: string,
+  ): Promise<string> {
+    await this.findOneById(id, ownerWorkspaceId);
 
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
@@ -234,9 +237,9 @@ export class ApplicationRegistrationService {
 
   async getStats(
     applicationRegistrationId: string,
-    workspaceId: string,
+    ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneById(applicationRegistrationId, workspaceId);
+    await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
 
     const versionDistribution: { version: string; count: number }[] =
       await this.applicationRepository

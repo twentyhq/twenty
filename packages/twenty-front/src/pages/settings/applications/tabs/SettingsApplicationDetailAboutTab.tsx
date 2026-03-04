@@ -12,7 +12,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';
 import {
   type Application,
-  useFindOneApplicationRegistrationQuery,
   useUninstallApplicationMutation,
 } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -39,14 +38,8 @@ export const SettingsApplicationDetailAboutTab = ({
 
   const registrationId = application?.applicationRegistrationId;
 
-  const { data: registrationData } = useFindOneApplicationRegistrationQuery({
-    variables: { id: registrationId ?? '' },
-    skip: !isDefined(registrationId),
-  });
-
   const latestAvailableVersion =
-    registrationData?.findOneApplicationRegistration?.latestAvailableVersion ??
-    null;
+    application?.applicationRegistration?.latestAvailableVersion ?? null;
 
   if (!isDefined(application)) {
     return null;

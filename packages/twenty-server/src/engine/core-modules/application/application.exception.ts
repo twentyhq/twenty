@@ -15,8 +15,6 @@ export enum ApplicationExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
-  INSTALL_LOCK_TIMEOUT = 'INSTALL_LOCK_TIMEOUT',
-  INSTALL_HOOK_EXECUTION_FAILED = 'INSTALL_HOOK_EXECUTION_FAILED',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
 }
@@ -45,10 +43,6 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Source channel mismatch.`;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       return msg`Unable to retrieve the application package.`;
-    case ApplicationExceptionCode.INSTALL_LOCK_TIMEOUT:
-      return msg`Another installation is in progress.`;
-    case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:
-      return msg`Install hook execution failed.`;
     case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:

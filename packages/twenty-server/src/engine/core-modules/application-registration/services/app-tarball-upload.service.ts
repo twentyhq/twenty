@@ -35,7 +35,7 @@ export class AppTarballUploadService {
   async uploadTarball(params: {
     tarballBuffer: Buffer;
     universalIdentifier?: string;
-    workspaceId: string;
+    ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
     const tempDir = join(tmpdir(), 'twenty-tarball-upload', v4());
 
@@ -82,7 +82,7 @@ export class AppTarballUploadService {
       let appRegistration = await this.appRegistrationRepository.findOne({
         where: {
           universalIdentifier,
-          workspaceId: params.workspaceId,
+          ownerWorkspaceId: params.ownerWorkspaceId,
         },
       });
 
@@ -104,7 +104,7 @@ export class AppTarballUploadService {
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
-          workspaceId: params.workspaceId,
+          ownerWorkspaceId: params.ownerWorkspaceId,
         });
 
         appRegistration =

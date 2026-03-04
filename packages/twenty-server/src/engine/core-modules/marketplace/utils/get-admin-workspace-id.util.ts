@@ -1,12 +1,17 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
 
-// Every ApplicationRegistration must be owned by a workspace (workspaceId
+// Every ApplicationRegistration must be owned by a workspace (ownerWorkspaceId
 // represents ownership / write-access, not visibility scoping — marketplace
 // registrations are readable by all workspaces). When the catalog sync creates
 // registrations for marketplace apps that no developer has explicitly claimed,
 // we assign them to the "admin" workspace: the oldest active workspace whose
 // owner has admin privileges.
+//
+// TODO: This heuristic is fragile — on fresh instances with no admin users the
+// catalog sync is silently skipped, and if the admin workspace is later deleted
+// all marketplace registrations become orphaned. Consider introducing a
+// dedicated "platform" workspace or making ownerWorkspaceId nullable instead.
 export const getAdminWorkspaceId = async (
   dataSource: DataSource,
 ): Promise<string | null> => {

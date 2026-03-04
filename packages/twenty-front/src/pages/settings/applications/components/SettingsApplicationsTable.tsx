@@ -32,10 +32,8 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsApplicationsTable = ({
   applications,
-  registrationVersionMap,
 }: {
   applications: ApplicationWithoutRelation[];
-  registrationVersionMap?: Map<string, string>;
 }) => {
   const { t } = useLingui();
 
@@ -74,9 +72,8 @@ export const SettingsApplicationsTable = ({
           <TableHeader />
         </StyledTableHeaderRow>
         {filteredApplications.map((application) => {
-          const latestVersion = application.applicationRegistrationId
-            ? registrationVersionMap?.get(application.applicationRegistrationId)
-            : undefined;
+          const latestVersion =
+            application.applicationRegistration?.latestAvailableVersion;
 
           const hasUpdate =
             isDefined(latestVersion) &&

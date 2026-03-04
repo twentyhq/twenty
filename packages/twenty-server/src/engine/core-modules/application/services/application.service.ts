@@ -126,6 +126,7 @@ export class ApplicationService {
         'applicationVariables',
         'packageJsonFile',
         'yarnLockFile',
+        'applicationRegistration',
       ],
     });
   }
@@ -160,6 +161,7 @@ export class ApplicationService {
         'applicationVariables',
         'packageJsonFile',
         'yarnLockFile',
+        'applicationRegistration',
       ],
     });
   }

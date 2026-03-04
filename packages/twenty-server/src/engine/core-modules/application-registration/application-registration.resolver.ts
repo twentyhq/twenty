@@ -6,6 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
@@ -23,9 +24,9 @@ import { RotateClientSecretDTO } from 'src/engine/core-modules/application-regis
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application-registration/application-registration.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -43,6 +44,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(
+  ApplicationRegistrationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
@@ -241,16 +243,16 @@ export class ApplicationRegistrationResolver {
     const tarballBuffer = await streamToBuffer(stream);
 
     if (tarballBuffer.length > MAX_TARBALL_UPLOAD_SIZE_BYTES) {
-      throw new ApplicationException(
+      throw new ApplicationRegistrationException(
         `Tarball exceeds maximum size of ${MAX_TARBALL_UPLOAD_SIZE_BYTES} bytes`,
-        ApplicationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }
 
     return this.appTarballUploadService.uploadTarball({
       tarballBuffer,
       universalIdentifier,
-      workspaceId,
+      ownerWorkspaceId: workspaceId,
     });
   }
 }

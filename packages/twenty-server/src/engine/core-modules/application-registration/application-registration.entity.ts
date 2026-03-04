@@ -96,8 +96,8 @@ export class ApplicationRegistrationEntity {
   // Represents ownership (who can edit), not visibility scoping.
   // Marketplace registrations are readable by all workspaces but owned by the
   // admin workspace when no developer has explicitly claimed them.
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  @Column({ name: 'workspaceId', nullable: false, type: 'uuid' })
+  ownerWorkspaceId: string;
 
   @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspaceId' })

@@ -30,8 +30,6 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
-      case ApplicationExceptionCode.INSTALL_LOCK_TIMEOUT:
-      case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
         throw new InternalServerError(exception);

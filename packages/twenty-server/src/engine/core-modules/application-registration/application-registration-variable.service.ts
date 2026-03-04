@@ -176,7 +176,7 @@ export class ApplicationRegistrationVariableService {
     workspaceId: string,
   ): Promise<void> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id: registrationId, workspaceId },
+      where: { id: registrationId, ownerWorkspaceId: workspaceId },
     });
 
     if (!registration) {
