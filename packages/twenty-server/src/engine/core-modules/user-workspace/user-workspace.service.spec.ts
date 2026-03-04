@@ -26,8 +26,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -300,6 +300,50 @@ describe('UserWorkspaceService', () => {
         userId,
         workspaceId,
         defaultAvatarUrl: 'path/to/file',
+      });
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+    it('should create a user workspace without a default avatar url if image fetch fails', async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as UserWorkspaceEntity;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      jest
+        .spyOn(fileUploadService, 'uploadImageFromUrl')
+        .mockRejectedValue(
+          new Error(
+            'Failed to fetch image from https://lh3.googleusercontent.com/a/invalid: Request failed with status code 404',
+          ),
+        );
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: 'https://lh3.googleusercontent.com/a/invalid',
+      });
+
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledTimes(1);
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledWith({
+        imageUrl: 'https://lh3.googleusercontent.com/a/invalid',
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: undefined,
       });
       expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
       expect(result).toEqual(userWorkspace);

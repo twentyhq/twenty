@@ -2857,6 +2857,11 @@ msgstr "Ingen utlösartyp angiven"
 msgid "No valid authentication context found."
 msgstr "Ingen giltig autentiseringskontext hittades."
 
+#. js-lingui-id: AzXrd9
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "No workspace found with password auth enabled."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -3198,6 +3203,11 @@ msgstr ""
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
+msgstr ""
+
+#. js-lingui-id: cd6AP5
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
 msgstr ""
 
 #. js-lingui-id: wT0H4O
@@ -4368,6 +4378,7 @@ msgstr "Användare är inte en del av arbetsutrymmet"
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "User not found."
 msgstr "Användare hittades inte."
 
