@@ -29,7 +29,7 @@ import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/comp
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -61,7 +61,7 @@ const StandardContent = ({
   onClickOnLogo: () => void;
 }) => {
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
         <Logo
           secondaryLogo={workspacePublicData?.logo}
@@ -77,7 +77,7 @@ const StandardContent = ({
         SignInUpStep.TwoFactorAuthenticationVerification,
         SignInUpStep.WorkspaceSelection,
       ].includes(signInUpStep) && <FooterNote />}
-    </Modal.Content>
+    </ModalContent>
   );
 };
 
@@ -205,9 +205,9 @@ export const SignInUp = () => {
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
     return (
-      <Modal.Content isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <EmailVerificationSent email={searchParams.get('email')} />
-      </Modal.Content>
+      </ModalContent>
     );
   }
 

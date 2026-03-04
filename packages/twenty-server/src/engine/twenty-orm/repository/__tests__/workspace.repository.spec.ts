@@ -105,6 +105,8 @@ describe('WorkspaceRepository', () => {
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      viewSortIds: [],
+      viewSortUniversalIdentifiers: [],
       universalSettings: null,
     };
 

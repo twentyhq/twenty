@@ -96,6 +96,11 @@
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.cjs"
     },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
+    },
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
       "import": "./dist/workflow.mjs",
@@ -119,6 +124,7 @@
     "translations",
     "types",
     "utils",
+    "vite",
     "workflow",
     "workspace"
   ],
@@ -153,6 +159,9 @@
       ],
       "utils": [
         "dist/utils/index.d.ts"
+      ],
+      "vite": [
+        "dist/vite/index.d.ts"
       ],
       "workflow": [
         "dist/workflow/index.d.ts"

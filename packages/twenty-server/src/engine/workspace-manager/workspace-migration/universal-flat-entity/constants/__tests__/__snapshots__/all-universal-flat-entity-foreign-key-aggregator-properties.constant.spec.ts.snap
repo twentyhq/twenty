@@ -5,6 +5,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "agent": [],
   "commandMenuItem": [],
   "fieldMetadata": [
+    "viewSortUniversalIdentifiers",
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
     "kanbanAggregateOperationViewUniversalIdentifiers",
@@ -56,6 +57,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "viewFilterUniversalIdentifiers",
   ],
   "viewGroup": [],
+  "viewSort": [],
   "webhook": [],
 }
 `;

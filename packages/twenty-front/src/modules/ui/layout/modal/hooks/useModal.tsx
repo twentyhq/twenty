@@ -14,9 +14,11 @@ export const useModal = () => {
   const store = useStore();
 
   const closeModal = useCallback(
-    (modalId: string) => {
+    (modalInstanceId: string) => {
       const isModalOpen = store.get(
-        isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+        isModalOpenedComponentState.atomFamily({
+          instanceId: modalInstanceId,
+        }),
       );
 
       if (!isModalOpen) {
@@ -24,11 +26,13 @@ export const useModal = () => {
       }
 
       removeFocusItemFromFocusStackById({
-        focusId: modalId,
+        focusId: modalInstanceId,
       });
 
       store.set(
-        isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+        isModalOpenedComponentState.atomFamily({
+          instanceId: modalInstanceId,
+        }),
         false,
       );
     },
@@ -36,9 +40,11 @@ export const useModal = () => {
   );
 
   const openModal = useCallback(
-    (modalId: string) => {
+    (modalInstanceId: string) => {
       const isModalOpened = store.get(
-        isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+        isModalOpenedComponentState.atomFamily({
+          instanceId: modalInstanceId,
+        }),
       );
 
       if (isModalOpened) {
@@ -46,15 +52,17 @@ export const useModal = () => {
       }
 
       store.set(
-        isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+        isModalOpenedComponentState.atomFamily({
+          instanceId: modalInstanceId,
+        }),
         true,
       );
 
       pushFocusItemToFocusStack({
-        focusId: modalId,
+        focusId: modalInstanceId,
         component: {
           type: FocusComponentType.MODAL,
-          instanceId: modalId,
+          instanceId: modalInstanceId,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysWithModifiers: false,
@@ -66,15 +74,17 @@ export const useModal = () => {
   );
 
   const toggleModal = useCallback(
-    (modalId: string) => {
+    (modalInstanceId: string) => {
       const isModalOpen = store.get(
-        isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+        isModalOpenedComponentState.atomFamily({
+          instanceId: modalInstanceId,
+        }),
       );
 
       if (isModalOpen) {
-        closeModal(modalId);
+        closeModal(modalInstanceId);
       } else {
-        openModal(modalId);
+        openModal(modalInstanceId);
       }
     },
     [store, closeModal, openModal],

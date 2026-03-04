@@ -1,9 +1,10 @@
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
+import { type ViewSort } from '@/views/types/ViewSort';
 
 describe('getViewSortsToCreate', () => {
-  const baseSort: CoreViewSortEssential = {
+  const baseSort: ViewSort = {
+    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,
@@ -11,14 +12,14 @@ describe('getViewSortsToCreate', () => {
   };
 
   it('should return all sorts when current sorts array is empty', () => {
-    const currentViewSorts: CoreViewSortEssential[] = [];
-    const newViewSorts: CoreViewSortEssential[] = [
+    const currentViewSorts: ViewSort[] = [];
+    const newViewSorts: ViewSort[] = [
       { ...baseSort },
       {
         ...baseSort,
         id: 'sort-2',
         fieldMetadataId: 'field-2',
-      } satisfies CoreViewSortEssential,
+      } satisfies ViewSort,
     ];
 
     const result = getViewSortsToCreate(currentViewSorts, newViewSorts);
@@ -27,8 +28,8 @@ describe('getViewSortsToCreate', () => {
   });
 
   it('should return empty array when new sorts array is empty', () => {
-    const currentViewSorts: CoreViewSortEssential[] = [baseSort];
-    const newViewSorts: CoreViewSortEssential[] = [];
+    const currentViewSorts: ViewSort[] = [baseSort];
+    const newViewSorts: ViewSort[] = [];
 
     const result = getViewSortsToCreate(currentViewSorts, newViewSorts);
 
@@ -41,11 +42,11 @@ describe('getViewSortsToCreate', () => {
       ...baseSort,
       id: 'sort-2',
       fieldMetadataId: 'field-2',
-    } satisfies CoreViewSortEssential;
+    } satisfies ViewSort;
 
-    const currentViewSorts: CoreViewSortEssential[] = [existingSort];
+    const currentViewSorts: ViewSort[] = [existingSort];
 
-    const newViewSorts: CoreViewSortEssential[] = [
+    const newViewSorts: ViewSort[] = [
       existingSort,
       newSortWithDifferentFieldMetadataId,
     ];
@@ -56,8 +57,8 @@ describe('getViewSortsToCreate', () => {
   });
 
   it('should handle empty arrays for both inputs', () => {
-    const currentViewSorts: CoreViewSortEssential[] = [];
-    const newViewSorts: CoreViewSortEssential[] = [];
+    const currentViewSorts: ViewSort[] = [];
+    const newViewSorts: ViewSort[] = [];
 
     const result = getViewSortsToCreate(currentViewSorts, newViewSorts);
 

@@ -5,11 +5,12 @@ import {
 } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { ModalContent, ModalFooter, ModalHeader } from 'twenty-ui/layout';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
@@ -37,9 +38,9 @@ const JotaiInitDecorator: Decorator = (Story) => {
   return <Story />;
 };
 
-const meta: Meta<typeof Modal> = {
-  title: 'UI/Layout/Modal/Modal',
-  component: Modal,
+const meta: Meta<typeof ModalStatefulWrapper> = {
+  title: 'UI/Layout/Modal/ModalStatefulWrapper',
+  component: ModalStatefulWrapper,
   decorators: [JotaiInitDecorator, RootDecorator, ComponentDecorator],
   parameters: {
     disableHotkeyInitialization: true,
@@ -47,26 +48,26 @@ const meta: Meta<typeof Modal> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Modal>;
+type Story = StoryObj<typeof ModalStatefulWrapper>;
 
 const closeMock = fn();
 
 export const Default: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     children: (
       <>
-        <Modal.Header>Stay in touch</Modal.Header>
-        <Modal.Content>
+        <ModalHeader>Stay in touch</ModalHeader>
+        <ModalContent>
           This is a dummy newletter form so don't bother trying to test it. Not
           that I expect you to, anyways. :)
-        </Modal.Content>
-        <Modal.Footer>
+        </ModalContent>
+        <ModalFooter>
           By using Twenty, you're opting for the finest CRM experience you'll
           ever encounter.
-        </Modal.Footer>
+        </ModalFooter>
       </>
     ),
   },
@@ -74,17 +75,17 @@ export const Default: Story = {
 
 export const CloseClosableModalOnClickOutside: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,
     onClose: closeMock,
     children: (
       <>
-        <Modal.Header>Click Outside Test</Modal.Header>
-        <Modal.Content>
+        <ModalHeader>Click Outside Test</ModalHeader>
+        <ModalContent>
           This modal should close when clicking outside of it.
-        </Modal.Content>
+        </ModalContent>
       </>
     ),
   },
@@ -94,7 +95,6 @@ export const CloseClosableModalOnClickOutside: Story = {
     await canvas.findByText('Click Outside Test');
 
     const backdrop = await canvas.findByTestId('modal-backdrop');
-    // We need to wait for the outside click listener to be registered
     await sleep(100);
     await userEvent.click(backdrop);
 
@@ -106,17 +106,17 @@ export const CloseClosableModalOnClickOutside: Story = {
 
 export const CloseClosableModalOnEscape: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,
     onClose: closeMock,
     children: (
       <>
-        <Modal.Header>Escape Key Test</Modal.Header>
-        <Modal.Content>
+        <ModalHeader>Escape Key Test</ModalHeader>
+        <ModalContent>
           This modal should close when pressing the Escape key.
-        </Modal.Content>
+        </ModalContent>
       </>
     ),
   },
