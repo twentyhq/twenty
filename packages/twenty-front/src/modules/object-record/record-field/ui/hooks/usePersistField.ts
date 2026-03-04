@@ -28,8 +28,10 @@ import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { buildMorphRelationUpdateInput } from '@/object-record/record-field/ui/meta-types/input/utils/buildMorphRelationUpdateInput';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
@@ -65,6 +67,8 @@ export const usePersistField = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -218,25 +222,57 @@ export const usePersistField = ({
         }
 
         if (fieldIsMorphRelationManyToOne) {
-          if (valueToPersist?.id === currentValue?.id) {
+          if (!valueToPersist || valueToPersist.id === currentValue?.id) {
             return;
           }
+
+          const morphMetadata = (
+            fieldDefinition as FieldDefinition<FieldMorphRelationMetadata>
+          ).metadata;
+
+          const targetObjectMetadataItem = objectMetadataItems.find(
+            (item) => item.id === valueToPersist.objectMetadataId,
+          );
+
+          if (!targetObjectMetadataItem) {
+            throw new Error(
+              `Target object metadata item not found for id ${valueToPersist.objectMetadataId}`,
+            );
+          }
+
+          const { updateInput, allMorphFksNulled } =
+            buildMorphRelationUpdateInput({
+              morphRelations: morphMetadata.morphRelations,
+              fieldName,
+              relationType: morphMetadata.relationType,
+              targetObjectMetadataNameSingular:
+                targetObjectMetadataItem.nameSingular,
+              targetObjectMetadataNamePlural:
+                targetObjectMetadataItem.namePlural,
+              targetRecordId: valueToPersist.id,
+            });
 
           const newRecord = await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
-            updateOneRecordInput: {
-              [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                valueToPersist?.id ?? null,
-            },
+            updateOneRecordInput: updateInput,
           });
+
+          const morphFkGqlFields: Record<string, true> = {};
+
+          for (const key of Object.keys(allMorphFksNulled)) {
+            morphFkGqlFields[key] = true;
+          }
 
           upsertRecordsInStore({
             partialRecords: [
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
+              {
+                ...getRecordFromRecordNode({ recordNode: newRecord }),
+                ...allMorphFksNulled,
+                ...updateInput,
+              },
             ],
+            recordGqlFields: morphFkGqlFields,
           });
 
           return;
@@ -270,6 +306,7 @@ export const usePersistField = ({
     },
     [
       objectMetadataItem?.nameSingular,
+      objectMetadataItems,
       store,
       updateOneRecord,
       upsertRecordsInStore,
