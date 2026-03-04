@@ -9,7 +9,14 @@ import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import {
+  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+  agentChatDraftsByThreadIdState,
+} from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
@@ -24,12 +31,31 @@ type UseAIChatEditorProps = {
   onSendMessage: () => void;
 };
 
+const textToTiptapContent = (text: string) => ({
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: text ? [{ type: 'text', text }] : [],
+    },
+  ],
+});
+
 export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
   const setAgentChatInput = useSetAtomState(agentChatInputState);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
+    useAtomState(agentChatDraftsByThreadIdState);
+
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+
+  const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const initialContent = textToTiptapContent(
+    agentChatDraftsByThreadId[draftKey] ?? '',
+  );
 
   const extensions = useMemo(
     () => [
@@ -49,6 +75,7 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
   );
 
   const editor = useEditor({
+    content: initialContent,
     extensions,
     editorProps: {
       handleKeyDown: (view, event) => {
@@ -75,6 +102,7 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
         currentEditor.getText({ blockSeparator: '\n' }),
       );
       setAgentChatInput(text);
+      setAgentChatDraftsByThreadId((prev) => ({ ...prev, [draftKey]: text }));
     },
     onFocus: () => {
       pushFocusItemToFocusStack({

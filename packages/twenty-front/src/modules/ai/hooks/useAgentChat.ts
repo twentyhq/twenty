@@ -5,6 +5,10 @@ import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
+import {
+  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+  agentChatDraftsByThreadIdState,
+} from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -38,6 +42,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   );
 
   const [agentChatInput, setAgentChatInput] = useAtomState(agentChatInputState);
+  const setAgentChatDraftsByThreadId = useSetAtomState(
+    agentChatDraftsByThreadIdState,
+  );
 
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,
@@ -176,6 +183,10 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
     const content = agentChatInput.trim();
     setAgentChatInput('');
+    setAgentChatDraftsByThreadId((prev) => ({
+      ...prev,
+      [currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
+    }));
 
     const browsingContext = getBrowsingContext();
 

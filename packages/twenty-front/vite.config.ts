@@ -235,6 +235,7 @@ export default defineConfig(({ command, mode }) => {
             '**/AIChatAssistantMessageRenderer.tsx',
             '**/AIChatBanner.tsx',
             '**/AIChatContextUsageButton.tsx',
+            '**/AIChatEditorSection.tsx',
             '**/AIChatEmptyState.tsx',
             '**/AIChatErrorMessage.tsx',
             '**/AIChatMessage.stories.tsx',
