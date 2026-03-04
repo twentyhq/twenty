@@ -6,7 +6,11 @@ import {
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import { ICON_SIZES, ICON_STROKES, themeCssVariables } from '@ui/theme-constants';
+import {
+  ICON_SIZES,
+  ICON_STROKES,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{

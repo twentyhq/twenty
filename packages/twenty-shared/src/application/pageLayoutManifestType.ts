@@ -2,7 +2,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
-  type PageLayoutWidgetUniversalConfiguration
+  type PageLayoutWidgetUniversalConfiguration,
 } from '@/types';
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {

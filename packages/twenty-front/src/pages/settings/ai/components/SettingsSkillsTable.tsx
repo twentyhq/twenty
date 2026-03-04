@@ -24,7 +24,11 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
-import { ICON_SIZES, ICON_STROKES, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ICON_SIZES,
+  ICON_STROKES,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import {
   useActivateSkillMutation,

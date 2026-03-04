@@ -7,7 +7,11 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
-import { ICON_SIZES, ICON_STROKES, themeCssVariables } from '@ui/theme-constants';
+import {
+  ICON_SIZES,
+  ICON_STROKES,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';

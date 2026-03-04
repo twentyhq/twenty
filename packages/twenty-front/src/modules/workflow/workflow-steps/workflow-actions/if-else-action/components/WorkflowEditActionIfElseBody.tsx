@@ -38,7 +38,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-
 type WorkflowEditActionIfElseBodyProps = {
   action: WorkflowIfElseAction;
   actionOptions:

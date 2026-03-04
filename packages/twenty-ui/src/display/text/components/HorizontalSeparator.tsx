@@ -18,16 +18,20 @@ const StyledSeparator = styled.div<{
   background-color: ${({ backgroundColor }) => backgroundColor};
   height: ${({ visible }) => (visible ? '1px' : '0')};
   flex-shrink: 0;
-  margin-bottom: ${({ noMargin }) => (noMargin ? '0' : themeCssVariables.spacing[3])};
-  margin-top: ${({ noMargin }) => (noMargin ? '0' : themeCssVariables.spacing[3])};
+  margin-bottom: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
+  margin-top: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
 const StyledSeparatorContainer = styled.div<{ noMargin: boolean }>`
   align-items: center;
   display: flex;
-  margin-bottom: ${({ noMargin }) => (noMargin ? '0' : themeCssVariables.spacing[3])};
-  margin-top: ${({ noMargin }) => (noMargin ? '0' : themeCssVariables.spacing[3])};
+  margin-bottom: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
+  margin-top: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
   width: 100%;
 `;
 

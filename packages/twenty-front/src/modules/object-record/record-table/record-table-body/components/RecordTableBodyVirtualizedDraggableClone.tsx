@@ -1,7 +1,5 @@
-import {
-  getRecordTableColumnWidthInlineStyles,
-  HorizontalScrollBoxShadowCSS,
-} from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { getRecordTableColumnWidthInlineStyles } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/RecordTableScrollShadowCSS';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';

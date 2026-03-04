@@ -70,21 +70,21 @@ export const LinkChip = ({
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
       >
-      <Chip
-        size={size}
-        label={label}
-        isLabelHidden={isLabelHidden}
-        isBold={isBold}
-        clickable={true}
-        variant={variant}
-        leftComponent={leftComponent}
-        rightComponent={rightComponent}
-        rightComponentDivider={rightComponentDivider}
-        accent={accent}
-        className={className}
-        maxWidth={maxWidth}
-        emptyLabel={emptyLabel}
-      />
+        <Chip
+          size={size}
+          label={label}
+          isLabelHidden={isLabelHidden}
+          isBold={isBold}
+          clickable={true}
+          variant={variant}
+          leftComponent={leftComponent}
+          rightComponent={rightComponent}
+          rightComponentDivider={rightComponentDivider}
+          accent={accent}
+          className={className}
+          maxWidth={maxWidth}
+          emptyLabel={emptyLabel}
+        />
       </Link>
     </StyledLinkContainer>
   );

@@ -83,29 +83,27 @@ export const JsonNestedNode = ({
       exit={{ height: 0, opacity: 0, overflow: 'clip' }}
       transition={{ duration: 0.3 }}
     >
-    <StyledJsonListBase
-      depth={depth}
-    >
-      {elements.length === 0 ? (
-        <JsonNodeValue valueAsString={emptyElementsText} />
-      ) : (
-        elements.map(({ id, label, value }) => {
-          const nextKeyPath = isNonEmptyString(keyPath)
-            ? `${keyPath}.${id}`
-            : String(id);
+      <StyledJsonListBase depth={depth}>
+        {elements.length === 0 ? (
+          <JsonNodeValue valueAsString={emptyElementsText} />
+        ) : (
+          elements.map(({ id, label, value }) => {
+            const nextKeyPath = isNonEmptyString(keyPath)
+              ? `${keyPath}.${id}`
+              : String(id);
 
-          return (
-            <JsonNode
-              key={id}
-              label={label}
-              value={value}
-              depth={depth + 1}
-              keyPath={nextKeyPath}
-            />
-          );
-        })
-      )}
-    </StyledJsonListBase>
+            return (
+              <JsonNode
+                key={id}
+                label={label}
+                value={value}
+                depth={depth + 1}
+                keyPath={nextKeyPath}
+              />
+            );
+          })
+        )}
+      </StyledJsonListBase>
     </motion.div>
   );
 

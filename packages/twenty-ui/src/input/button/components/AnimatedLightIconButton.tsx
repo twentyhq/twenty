@@ -121,7 +121,9 @@ export const AnimatedLightIconButton = ({
       title={title}
     >
       <StyledIconContainer animate={animate} transition={transition}>
-        {Icon && <Icon size={size === 'medium' ? ICON_SIZES.md : ICON_SIZES.sm} />}
+        {Icon && (
+          <Icon size={size === 'medium' ? ICON_SIZES.md : ICON_SIZES.sm} />
+        )}
       </StyledIconContainer>
     </StyledButton>
   );

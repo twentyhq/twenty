@@ -57,7 +57,10 @@ export const ProgressBar = ({
       animate={{ width: `${Math.ceil(value)}%` }}
       transition={{ duration: 0.3, ease: 'linear' }}
     >
-      <StyledBarFilling barColor={barColor} withBorderRadius={withBorderRadius} />
+      <StyledBarFilling
+        barColor={barColor}
+        withBorderRadius={withBorderRadius}
+      />
     </motion.div>
   </StyledBar>
 );
