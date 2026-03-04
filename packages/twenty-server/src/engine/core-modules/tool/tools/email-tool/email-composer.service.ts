@@ -6,7 +6,7 @@ import { Readable } from 'stream';
 import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
 import {
   extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
@@ -16,7 +16,6 @@ import { WorkflowAttachment } from 'twenty-shared/workflow';
 import { In, type Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';

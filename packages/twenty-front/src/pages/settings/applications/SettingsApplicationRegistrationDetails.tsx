@@ -592,7 +592,7 @@ export const SettingsApplicationRegistrationDetails = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={ROTATE_SECRET_MODAL_ID}
+        modalInstanceId={ROTATE_SECRET_MODAL_ID}
         title={t`Rotate client secret`}
         subtitle={
           <Trans>
@@ -609,7 +609,7 @@ export const SettingsApplicationRegistrationDetails = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={DELETE_REGISTRATION_MODAL_ID}
+        modalInstanceId={DELETE_REGISTRATION_MODAL_ID}
         title={t`Delete app`}
         subtitle={
           <Trans>

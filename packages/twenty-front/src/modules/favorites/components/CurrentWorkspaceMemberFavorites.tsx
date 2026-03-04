@@ -259,7 +259,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={modalId}
+            modalInstanceId={modalId}
             title={
               folder.favorites.length > 1
                 ? t`Remove ${favoriteCount} favorites?`

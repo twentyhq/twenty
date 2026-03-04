@@ -1,7 +1,7 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useContext } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ThemeColor, ThemeContext } from 'twenty-ui/theme';
 

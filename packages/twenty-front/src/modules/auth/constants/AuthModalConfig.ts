@@ -1,12 +1,9 @@
-import {
-  type ModalSize,
-  type ModalVariants,
-} from '@/ui/layout/modal/components/Modal';
+import { type ModalOverlay, type ModalSize } from 'twenty-ui/layout';
 import { AppPath } from 'twenty-shared/types';
 
 type AuthModalConfigType = {
   size: ModalSize;
-  variant: ModalVariants;
+  overlay: ModalOverlay;
   showScrollWrapper: boolean;
 };
 
@@ -16,12 +13,12 @@ export const AUTH_MODAL_CONFIG: {
 } = {
   default: {
     size: 'medium',
-    variant: 'primary',
+    overlay: 'dark',
     showScrollWrapper: true,
   },
   [AppPath.BookCall]: {
     size: 'extraLarge',
-    variant: 'transparent',
+    overlay: 'transparent',
     showScrollWrapper: false,
   },
 };

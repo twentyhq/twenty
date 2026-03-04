@@ -32,10 +32,6 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
-  width: 100%;
-`;
-
 export const SettingsAIModelsTab = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -358,12 +354,13 @@ export const SettingsAIModelsTab = () => {
           />
 
           <StyledSearchContainer>
-            <StyledSearchInput
+            <SettingsTextInput
               instanceId="model-table-search"
               LeftIcon={IconSearch}
               placeholder={t`Search a model...`}
               value={searchQuery}
               onChange={setSearchQuery}
+              fullWidth
             />
           </StyledSearchContainer>
 
