@@ -71,6 +71,7 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
               accent="tertiary"
             />
           }
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (

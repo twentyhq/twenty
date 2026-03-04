@@ -70,6 +70,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               accent="tertiary"
             />
           }
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (

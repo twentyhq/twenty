@@ -146,6 +146,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           onClick={() => toggleNavigationSection()}
           rightIcon={rightIcon}
           alwaysShowRightIcon={isNavigationMenuInEditMode}
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) &&

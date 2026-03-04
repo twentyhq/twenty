@@ -117,6 +117,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             label={sectionTitle}
             onClick={() => toggleNavigationSection()}
             rightIcon={rightIcon}
+            isOpen={isNavigationSectionOpen}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen &&

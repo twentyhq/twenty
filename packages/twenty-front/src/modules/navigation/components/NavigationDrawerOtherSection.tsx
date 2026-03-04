@@ -54,6 +54,7 @@ export const NavigationDrawerOtherSection = () => {
         <NavigationDrawerSectionTitle
           label={t`Other`}
           onClick={toggleNavigationSection}
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
