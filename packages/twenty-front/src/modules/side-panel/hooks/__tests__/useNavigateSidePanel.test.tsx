@@ -2,10 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { useNavigateSidePanel } from '@/command-menu/hooks/useNavigateSidePanel';
-import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { SidePanelPages } from 'twenty-shared/types';

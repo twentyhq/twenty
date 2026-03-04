@@ -13,8 +13,8 @@ import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandM
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { useAddFolderToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
-import { useAddLinkToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
+import { useAddFolderToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
+import { useAddLinkToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';

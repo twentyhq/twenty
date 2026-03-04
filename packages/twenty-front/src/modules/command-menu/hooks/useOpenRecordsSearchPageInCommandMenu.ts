@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 export const useOpenRecordsSearchPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const openRecordsSearchPage = () => {
     navigateCommandMenu({

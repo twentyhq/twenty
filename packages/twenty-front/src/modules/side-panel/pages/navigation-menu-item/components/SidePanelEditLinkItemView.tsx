@@ -5,13 +5,13 @@ import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { SidePanelEditColorOption } from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditColorOption';
+import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
-} from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
-import { SidePanelEditOwnerSection } from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditOwnerSection';
-import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
+} from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
+import { SidePanelEditOwnerSection } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOwnerSection';
+import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { TextInput } from '@/ui/input/components/TextInput';

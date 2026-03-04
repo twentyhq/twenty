@@ -11,7 +11,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
@@ -69,7 +69,7 @@ export const WorkspaceNavigationMenuItems = () => {
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { getIcon } = useIcons();

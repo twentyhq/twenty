@@ -1,5 +1,5 @@
-import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { useCallback } from 'react';
 import { type IconComponent, IconDotsVertical } from 'twenty-ui/display';
 import { useStore } from 'jotai';

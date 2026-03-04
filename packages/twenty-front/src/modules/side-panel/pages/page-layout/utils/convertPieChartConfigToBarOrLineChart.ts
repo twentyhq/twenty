@@ -1,5 +1,5 @@
-import { type BarLineChartConvertibleFields } from '@/command-menu/pages/page-layout/types/BarLineChartConvertibleFields';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type BarLineChartConvertibleFields } from '@/side-panel/pages/page-layout/types/BarLineChartConvertibleFields';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 export const convertPieChartConfigToBarOrLineChart = (

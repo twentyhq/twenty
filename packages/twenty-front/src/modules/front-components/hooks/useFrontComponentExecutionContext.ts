@@ -7,7 +7,7 @@ import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
@@ -30,7 +30,7 @@ export const useFrontComponentExecutionContext = ({
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();

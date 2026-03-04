@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { SidePanelNewSidebarItemMainMenu } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu';
-import { SidePanelNewSidebarItemObjectFlow } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow';
-import { SidePanelNewSidebarItemRecordSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView';
-import { SidePanelNewSidebarItemViewFlow } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewFlow';
+import { SidePanelNewSidebarItemMainMenu } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu';
+import { SidePanelNewSidebarItemObjectFlow } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow';
+import { SidePanelNewSidebarItemRecordSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView';
+import { SidePanelNewSidebarItemViewFlow } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewFlow';
 
 type SelectedOption = 'object' | 'record' | 'view' | null;
 

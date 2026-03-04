@@ -1,11 +1,11 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -26,7 +26,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
+  const { goBackFromCommandMenu } = useSidePanelHistory();
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
@@ -34,7 +34,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(sidePanelPageState);
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 

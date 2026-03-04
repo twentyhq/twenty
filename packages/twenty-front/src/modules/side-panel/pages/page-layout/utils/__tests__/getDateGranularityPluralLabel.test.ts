@@ -1,4 +1,4 @@
-import { getDateGranularityPluralLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel';
+import { getDateGranularityPluralLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 describe('getDateGranularityPluralLabel', () => {

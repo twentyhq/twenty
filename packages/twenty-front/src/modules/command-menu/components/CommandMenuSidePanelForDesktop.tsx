@@ -1,13 +1,13 @@
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { CommandMenuWidthEffect } from '@/command-menu/components/CommandMenuWidthEffect';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
+import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import {
   COMMAND_MENU_WIDTH_VAR,
   commandMenuWidthState,
 } from '@/command-menu/states/commandMenuWidthState';
-import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
@@ -59,14 +59,14 @@ const StyledModalContainer = styled.div`
 const GAP_WIDTH = 8;
 
 export const CommandMenuSidePanelForDesktop = () => {
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
-  const isCommandMenuClosing = useAtomStateValue(isCommandMenuClosingState);
+  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isCommandMenuClosing = useAtomStateValue(isSidePanelClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useAtomState(
     commandMenuWidthState,
   );
   const { closeCommandMenu } = useCommandMenu();
   const { commandMenuCloseAnimationCompleteCleanup } =
-    useCommandMenuCloseAnimationCompleteCleanup();
+    useSidePanelCloseAnimationCompleteCleanup();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -144,7 +144,7 @@ export const CommandMenuSidePanelForDesktop = () => {
         <StyledSidePanel>
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
-            {shouldShowContent && <CommandMenuRouter />}
+            {shouldShowContent && <SidePanelRouter />}
           </ModalContainerContext.Provider>
         </StyledSidePanel>
       </StyledSidePanelWrapper>

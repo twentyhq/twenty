@@ -1,4 +1,4 @@
-import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
+import { getDefaultManualSortOrder } from '@/side-panel/pages/page-layout/utils/getDefaultManualSortOrder';
 
 describe('getDefaultManualSortOrder', () => {
   it('should return empty array for null options', () => {

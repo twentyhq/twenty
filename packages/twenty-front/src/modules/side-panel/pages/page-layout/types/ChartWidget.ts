@@ -1,4 +1,4 @@
-import { type ChartWidgetConfiguration } from '@/command-menu/pages/page-layout/types/ChartWidgetConfiguration';
+import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type ModifiedProperties } from 'twenty-shared/types';
 import { type WidgetType } from '~/generated-metadata/graphql';

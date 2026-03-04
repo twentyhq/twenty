@@ -1,8 +1,8 @@
-import { ChartRatioOptionBooleanSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionBooleanSelectableListItem';
-import { ChartRatioOptionSelectSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionSelectSelectableListItem';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { ChartRatioOptionBooleanSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionBooleanSelectableListItem';
+import { ChartRatioOptionSelectSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionSelectSelectableListItem';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';

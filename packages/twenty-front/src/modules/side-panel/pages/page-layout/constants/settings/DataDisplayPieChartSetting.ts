@@ -1,7 +1,7 @@
-import { ChartPieFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartPieFieldSelectionDropdownContent';
-import { CHART_CONFIGURATION_SETTING_LABELS } from '@/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { ChartPieFieldSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartPieFieldSelectionDropdownContent';
+import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { IconChartPie } from 'twenty-ui/display';
 
 export const DATA_DISPLAY_PIE_CHART_SETTING: ChartSettingsItem = {

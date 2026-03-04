@@ -1,7 +1,7 @@
 import {
   type CHART_CONFIGURATION_SETTING_IDS,
   CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP,
-} from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+} from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 
 export const getConfigKeyFromSettingId = (
   settingId: CHART_CONFIGURATION_SETTING_IDS,

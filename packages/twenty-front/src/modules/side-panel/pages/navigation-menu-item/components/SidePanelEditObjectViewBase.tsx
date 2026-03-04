@@ -1,11 +1,11 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { SidePanelEditColorOption } from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditColorOption';
+import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
-} from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
-import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
+} from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
+import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { useLingui } from '@lingui/react/macro';

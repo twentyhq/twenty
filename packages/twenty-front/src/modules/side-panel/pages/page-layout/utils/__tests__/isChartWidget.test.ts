@@ -1,4 +1,4 @@
-import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
+import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import {
   createTestWidget,
   TEST_BAR_CHART_CONFIGURATION,

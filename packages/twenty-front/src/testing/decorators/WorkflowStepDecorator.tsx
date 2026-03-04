@@ -1,5 +1,5 @@
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -93,7 +93,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   );
 
   return (
-    <CommandMenuPageComponentInstanceContext.Provider
+    <SidePanelPageComponentInstanceContext.Provider
       value={{
         instanceId: workflowVisualizerComponentInstanceId,
       }}
@@ -105,6 +105,6 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
       >
         {ready && isDefined(workflowVersionId) && <Story />}
       </WorkflowVisualizerComponentInstanceContext.Provider>
-    </CommandMenuPageComponentInstanceContext.Provider>
+    </SidePanelPageComponentInstanceContext.Provider>
   );
 };

@@ -1,5 +1,5 @@
-import { SidePanelDashboardPageLayoutInfo } from '@/command-menu/components/SidePanelDashboardPageLayoutInfo';
-import { SidePanelRecordPageLayoutInfo } from '@/command-menu/components/SidePanelRecordPageLayoutInfo';
+import { SidePanelDashboardPageLayoutInfo } from '@/side-panel/components/SidePanelDashboardPageLayoutInfo';
+import { SidePanelRecordPageLayoutInfo } from '@/side-panel/components/SidePanelRecordPageLayoutInfo';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

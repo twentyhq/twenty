@@ -1,4 +1,4 @@
-import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isFieldOrRelationNestedFieldDateKind } from '@/side-panel/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 

@@ -1,4 +1,4 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';

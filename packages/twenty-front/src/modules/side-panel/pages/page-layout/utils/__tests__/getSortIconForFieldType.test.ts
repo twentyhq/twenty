@@ -8,7 +8,7 @@ import {
   IconSortDescendingNumbers,
 } from 'twenty-ui/display';
 
-import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
+import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('getSortIconForFieldType', () => {

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { sidePanelNavigationMorphItemsByPageState } from '@/command-menu/states/sidePanelNavigationMorphItemsByPageState';
-import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';

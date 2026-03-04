@@ -1,5 +1,5 @@
-import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
-import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
+import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
+import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

@@ -5,9 +5,9 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { SidePanelMessageThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/SidePanelMessageThreadIntermediaryMessages';
-import { useEmailThreadInSidePanel } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInSidePanel';
-import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
+import { SidePanelMessageThreadIntermediaryMessages } from '@/side-panel/pages/message-thread/components/SidePanelMessageThreadIntermediaryMessages';
+import { useEmailThreadInSidePanel } from '@/side-panel/pages/message-thread/hooks/useEmailThreadInSidePanel';
+import { messageThreadComponentState } from '@/side-panel/pages/message-thread/states/messageThreadComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';

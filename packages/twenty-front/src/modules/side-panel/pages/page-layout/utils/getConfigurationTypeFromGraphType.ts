@@ -1,4 +1,4 @@
-import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 

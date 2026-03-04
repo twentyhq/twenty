@@ -1,10 +1,10 @@
-import { ChartColorGradientOption } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartColorGradientOption';
-import { ChartColorPaletteOption } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { ChartColorGradientOption } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartColorGradientOption';
+import { ChartColorPaletteOption } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';

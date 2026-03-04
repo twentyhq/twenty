@@ -1,5 +1,5 @@
-import { useSidePanelWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
-import { SidePanelWorkflowEditStepContent } from '@/command-menu/pages/workflow/step/edit/components/SidePanelWorkflowEditStepContent';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
+import { SidePanelWorkflowEditStepContent } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStepContent';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 

@@ -1,8 +1,8 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
+import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -50,7 +50,7 @@ export const useOpenRecordInCommandMenu = () => {
       isNewRecord?: boolean;
       resetNavigationStack?: boolean;
     }) => {
-      const navigationStack = store.get(commandMenuNavigationStackState.atom);
+      const navigationStack = store.get(sidePanelNavigationStackState.atom);
 
       const currentNavigationStackItem = navigationStack.at(-1);
 
@@ -149,7 +149,7 @@ export const useOpenRecordInCommandMenu = () => {
       );
 
       const currentMorphItems = store.get(
-        commandMenuNavigationMorphItemsByPageState.atom,
+        sidePanelNavigationMorphItemsByPageState.atom,
       );
 
       const morphItemToAdd = {
@@ -161,7 +161,7 @@ export const useOpenRecordInCommandMenu = () => {
       newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
 
       store.set(
-        commandMenuNavigationMorphItemsByPageState.atom,
+        sidePanelNavigationMorphItemsByPageState.atom,
         newMorphItemsMap,
       );
 

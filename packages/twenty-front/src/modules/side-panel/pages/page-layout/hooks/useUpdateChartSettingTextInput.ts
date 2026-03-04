@@ -1,5 +1,5 @@
-import { type CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { getConfigKeyFromSettingId } from '@/command-menu/pages/page-layout/utils/getConfigKeyFromSettingId';
+import { type CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { getConfigKeyFromSettingId } from '@/side-panel/pages/page-layout/utils/getConfigKeyFromSettingId';
 import { useUpdateCurrentWidgetConfig } from './useUpdateCurrentWidgetConfig';
 
 export const useUpdateChartSettingTextInput = (pageLayoutId: string) => {

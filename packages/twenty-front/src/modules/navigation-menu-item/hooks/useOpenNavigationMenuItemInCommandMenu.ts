@@ -1,9 +1,9 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { SidePanelPages } from 'twenty-shared/types';
 import type { IconComponent } from 'twenty-ui/display';
 
 export const useOpenNavigationMenuItemInCommandMenu = () => {
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
 
   const openNavigationMenuItemInCommandMenu = ({
     pageTitle,

@@ -1,11 +1,11 @@
-import { useSidePanelHistory } from '@/command-menu/hooks/useSidePanelHistory';
-import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/components/SidePanelSubPageNavigationHeader';
-import { ChartFiltersSettingsInitializeStateEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { type ChartWidget } from '@/command-menu/pages/page-layout/types/ChartWidget';
-import { type ChartWidgetConfiguration } from '@/command-menu/pages/page-layout/types/ChartWidgetConfiguration';
-import { getChartFiltersSettingsInstanceId } from '@/command-menu/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
+import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
+import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
+import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterSidePanelContainer';

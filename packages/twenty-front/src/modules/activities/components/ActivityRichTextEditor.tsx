@@ -20,7 +20,7 @@ import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/com
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

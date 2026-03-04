@@ -2,8 +2,8 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import {
   CommandMenuWorkflowSelectAction,
   type WorkflowActionSelection,
-} from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
-import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
+} from '@/side-panel/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';

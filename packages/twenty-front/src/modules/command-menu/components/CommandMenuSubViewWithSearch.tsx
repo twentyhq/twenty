@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/components/SidePanelSubPageNavigationHeader';
+import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSubViewContainer = styled.div`

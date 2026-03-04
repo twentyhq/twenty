@@ -1,8 +1,8 @@
 import { CommandMenuContextChipIconWrapper } from '@/command-menu/components/CommandMenuContextChipIconWrapper';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
@@ -16,7 +16,7 @@ import { ThemeContext } from 'twenty-ui/theme';
 
 export const useCommandMenuContextChips = () => {
   const commandMenuNavigationStack = useAtomStateValue(
-    commandMenuNavigationStackState,
+    sidePanelNavigationStackState,
   );
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -25,12 +25,12 @@ export const useCommandMenuContextChips = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const { navigateCommandMenuHistory } = useCommandMenuHistory();
+  const { navigateCommandMenuHistory } = useSidePanelHistory();
 
   const { theme } = useContext(ThemeContext);
 
   const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
-    commandMenuNavigationMorphItemsByPageState,
+    sidePanelNavigationMorphItemsByPageState,
   );
 
   const allRecordIds = Array.from(

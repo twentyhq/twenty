@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
-import { useEmailThreadInSidePanel } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInSidePanel';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { SidePanelPageComponentInstanceContext } from '@/command-menu/states/contexts/SidePanelPageComponentInstanceContext';
+import { useEmailThreadInSidePanel } from '@/side-panel/pages/message-thread/hooks/useEmailThreadInSidePanel';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import gql from 'graphql-tag';
 import {

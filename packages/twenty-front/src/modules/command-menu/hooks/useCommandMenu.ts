@@ -1,8 +1,8 @@
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
@@ -18,19 +18,19 @@ import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
+    const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
 
     if (isCommandMenuOpened) {
       store.set(addToNavPayloadRegistryState.atom, new Map());
-      store.set(isCommandMenuOpenedState.atom, false);
-      store.set(isCommandMenuClosingState.atom, true);
+      store.set(isSidePanelOpenedState.atom, false);
+      store.set(isSidePanelClosingState.atom, true);
       closeAnyOpenDropdown();
       removeFocusItemFromFocusStackById({
         focusId: SIDE_PANEL_FOCUS_ID,
@@ -72,7 +72,7 @@ export const useCommandMenu = () => {
   }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
 
   const toggleCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
+    const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
 
     store.set(commandMenuSearchState.atom, '');
 

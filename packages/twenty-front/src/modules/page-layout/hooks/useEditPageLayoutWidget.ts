@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -26,7 +26,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
   const { closeCommandMenu } = useCommandMenu();
-  const setCommandMenuPage = useSetAtomState(commandMenuPageState);
+  const setCommandMenuPage = useSetAtomState(sidePanelPageState);
 
   const handleEditWidget = useCallback(
     ({

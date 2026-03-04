@@ -2,9 +2,9 @@ import { renderHook } from '@testing-library/react';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
+import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { commandMenuWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -23,8 +23,8 @@ jest.mock('uuid', () => ({
 }));
 
 const mockNavigateCommandMenu = jest.fn();
-jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
-  useNavigateCommandMenu: () => ({
+jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
+  useNavigateSidePanel: () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
 }));

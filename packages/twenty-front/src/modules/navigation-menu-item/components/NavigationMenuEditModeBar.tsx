@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
@@ -42,7 +42,7 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(sidePanelPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,

@@ -1,6 +1,6 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
-import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,

@@ -1,5 +1,5 @@
-import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
-import { CommandMenuWorkflowEditStepType } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepType';
+import { CommandMenuWorkflowSelectAction } from '@/side-panel/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import { CommandMenuWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepType';
 import { type WorkflowEmptyAction } from '@/workflow/types/Workflow';
 
 type WorkflowEditActionEmptyProps = {

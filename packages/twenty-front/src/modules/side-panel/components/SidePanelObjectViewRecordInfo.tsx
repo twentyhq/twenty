@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-import { SidePanelPageInfoLayout } from '@/command-menu/components/SidePanelPageInfoLayout';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';

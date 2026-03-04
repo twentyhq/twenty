@@ -1,4 +1,4 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -12,7 +12,7 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
 );
 
 describe('useCreateWidgetFromClick', () => {

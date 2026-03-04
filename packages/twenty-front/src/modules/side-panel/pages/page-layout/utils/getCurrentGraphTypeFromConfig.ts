@@ -1,6 +1,6 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { t } from '@lingui/core/macro';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 

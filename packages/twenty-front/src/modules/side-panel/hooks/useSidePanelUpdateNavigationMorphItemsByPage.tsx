@@ -1,4 +1,4 @@
-import { sidePanelNavigationMorphItemsByPageState } from '@/command-menu/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 

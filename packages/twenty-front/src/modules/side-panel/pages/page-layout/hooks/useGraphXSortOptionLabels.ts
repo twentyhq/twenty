@@ -1,5 +1,5 @@
-import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
-import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
+import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
+import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';

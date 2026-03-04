@@ -1,4 +1,4 @@
-import { SidePanelNavigationItemActions } from '@/command-menu/pages/navigation-menu-item/command-menu-navigation-item-actions';
+import { SidePanelNavigationItemActions } from '@/side-panel/pages/navigation-menu-item/command-menu-navigation-item-actions';
 
 const ORGANIZE_ACTIONS_WITHOUT_MOVE_TO_FOLDER: SidePanelNavigationItemActions[] =
   [

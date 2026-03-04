@@ -1,6 +1,6 @@
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
@@ -120,7 +120,7 @@ const AnimatedIcon = ({
 
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );

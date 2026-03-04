@@ -1,6 +1,6 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isMinMaxRangeValid = (

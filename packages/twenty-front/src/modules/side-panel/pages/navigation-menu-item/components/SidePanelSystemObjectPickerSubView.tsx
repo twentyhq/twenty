@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { SidePanelObjectPickerItem } from '@/command-menu/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
+import { SidePanelObjectPickerItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

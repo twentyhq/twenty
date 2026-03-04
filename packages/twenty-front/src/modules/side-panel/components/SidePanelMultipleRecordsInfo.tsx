@@ -1,7 +1,7 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import { SidePanelPageInfoLayout } from '@/command-menu/components/SidePanelPageInfoLayout';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';

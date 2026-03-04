@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getChartDefaultOrderByForFieldType } from '@/command-menu/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
+import { getChartDefaultOrderByForFieldType } from '@/side-panel/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('getChartDefaultOrderByForFieldType', () => {

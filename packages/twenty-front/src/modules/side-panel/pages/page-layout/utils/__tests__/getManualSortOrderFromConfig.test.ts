@@ -1,4 +1,4 @@
-import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
+import { getManualSortOrderFromConfig } from '@/side-panel/pages/page-layout/utils/getManualSortOrderFromConfig';
 import {
   WidgetConfigurationType,
   type BarChartConfiguration,

@@ -1,4 +1,4 @@
-import { type PageLayoutSidePanelPage } from '@/command-menu/pages/page-layout/types/PageLayoutSidePanelPage';
+import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
 import { SidePanelPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {

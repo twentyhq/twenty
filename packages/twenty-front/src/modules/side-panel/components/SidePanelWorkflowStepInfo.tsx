@@ -1,7 +1,7 @@
-import { useUpdateSidePanelPageInfo } from '@/command-menu/hooks/useUpdateSidePanelPageInfo';
-import { useSidePanelWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
-import { sidePanelWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
+import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';

@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
+import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

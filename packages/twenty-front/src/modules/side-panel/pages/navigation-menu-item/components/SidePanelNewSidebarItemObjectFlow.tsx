@@ -2,9 +2,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { SidePanelObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
-import { SidePanelSystemObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
-import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { SidePanelObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
+import { SidePanelSystemObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
+import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';

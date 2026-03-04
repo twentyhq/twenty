@@ -1,7 +1,7 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { getChartDefaultOrderByForFieldType } from '@/command-menu/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
-import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { getChartDefaultOrderByForFieldType } from '@/side-panel/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
+import { isFieldOrRelationNestedFieldDateKind } from '@/side-panel/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataArrayKind } from 'twenty-shared/utils';

@@ -1,9 +1,9 @@
-import { ChartAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
-import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
-import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { ChartAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
+import { ChartRatioAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
+import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';

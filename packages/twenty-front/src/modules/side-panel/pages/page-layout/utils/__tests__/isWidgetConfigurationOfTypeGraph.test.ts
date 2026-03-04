@@ -1,4 +1,4 @@
-import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import {
   ALL_CHART_CONFIGURATIONS,
   TEST_FIELDS_CONFIGURATION,

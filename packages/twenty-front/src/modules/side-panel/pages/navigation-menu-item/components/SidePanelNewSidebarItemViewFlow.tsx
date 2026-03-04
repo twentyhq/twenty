@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView';
-import { SidePanelNewSidebarItemViewPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView';
-import { SidePanelNewSidebarItemViewSystemSubView } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView';
-import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView';
+import { SidePanelNewSidebarItemViewPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView';
+import { SidePanelNewSidebarItemViewSystemSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView';
+import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';

@@ -23,11 +23,11 @@ import { sleep } from '~/utils/sleep';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -74,7 +74,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
-  component: CommandMenuRouter,
+  component: SidePanelRouter,
   decorators: [
     (Story) => {
       jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
@@ -86,8 +86,8 @@ const meta: Meta<typeof CommandMenu> = {
         currentUserWorkspaceState.atom,
         mockedUserData.currentUserWorkspace,
       );
-      jotaiStore.set(isCommandMenuOpenedState.atom, true);
-      jotaiStore.set(commandMenuNavigationStackState.atom, [
+      jotaiStore.set(isSidePanelOpenedState.atom, true);
+      jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.Root,
           pageTitle: 'Command Menu',

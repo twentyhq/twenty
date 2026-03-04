@@ -1,4 +1,4 @@
-import { type CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { type CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type MessageDescriptor } from '@lingui/core';
 import { type ComponentType } from 'react';
 import { type IconComponent } from 'twenty-ui/display';

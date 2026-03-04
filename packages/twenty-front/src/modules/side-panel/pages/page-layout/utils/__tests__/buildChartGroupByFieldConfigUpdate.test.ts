@@ -1,7 +1,7 @@
-import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
-import { type TypedLineChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedLineChartConfiguration';
-import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
-import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
+import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
+import { type TypedLineChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedLineChartConfiguration';
+import { type TypedPieChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedPieChartConfiguration';
+import { buildChartGroupByFieldConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   FieldMetadataType,

@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -29,7 +29,7 @@ export const useStartNodeCreation = () => {
   );
 
   const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+    sidePanelNavigationStackState,
   );
 
   /**

@@ -1,5 +1,5 @@
-import { useSidePanelWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
-import { SidePanelWorkflowSelectTriggerTypeContent } from '@/command-menu/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
+import { SidePanelWorkflowSelectTriggerTypeContent } from '@/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 

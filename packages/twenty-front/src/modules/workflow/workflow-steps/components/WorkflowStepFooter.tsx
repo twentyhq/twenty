@@ -1,5 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
+import { useCommandMenuWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';

@@ -1,4 +1,4 @@
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';

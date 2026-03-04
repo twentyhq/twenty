@@ -1,5 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -63,7 +63,7 @@ export const useVariableDropdown = ({
     workflowDiagramComponentState,
   );
   const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+    sidePanelNavigationStackState,
   );
 
   const getDisplayedSubStepFields = () => {

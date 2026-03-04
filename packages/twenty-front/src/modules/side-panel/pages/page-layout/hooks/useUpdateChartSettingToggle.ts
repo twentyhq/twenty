@@ -1,6 +1,6 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { getConfigKeyFromSettingId } from '@/command-menu/pages/page-layout/utils/getConfigKeyFromSettingId';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { getConfigKeyFromSettingId } from '@/side-panel/pages/page-layout/utils/getConfigKeyFromSettingId';
 import { BarChartGroupMode } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from './useChartSettingsValues';
 import { useUpdateCurrentWidgetConfig } from './useUpdateCurrentWidgetConfig';

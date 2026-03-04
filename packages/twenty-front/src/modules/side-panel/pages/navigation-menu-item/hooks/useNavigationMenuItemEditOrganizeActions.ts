@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconColumnInsertRight } from 'twenty-ui/display';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useNavigateSidePanel } from '@/command-menu/hooks/useNavigateSidePanel';
-import { type OrganizeActionsProps } from '@/command-menu/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { type OrganizeActionsProps } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';

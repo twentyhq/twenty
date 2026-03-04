@@ -1,5 +1,5 @@
-import { useCommandMenuUpdateNavigationMorphItemsByPage } from '@/command-menu/hooks/useCommandMenuUpdateNavigationMorphItemsByPage';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useSidePanelUpdateNavigationMorphItemsByPage } from '@/side-panel/hooks/useSidePanelUpdateNavigationMorphItemsByPage';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
@@ -26,9 +26,9 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     objectNameSingular,
   });
 
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const { updateCommandMenuNavigationMorphItemsByPage } =
-    useCommandMenuUpdateNavigationMorphItemsByPage();
+    useSidePanelUpdateNavigationMorphItemsByPage();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 

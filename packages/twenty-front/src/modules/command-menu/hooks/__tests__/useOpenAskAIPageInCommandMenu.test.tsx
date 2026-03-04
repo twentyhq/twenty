@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/display';
@@ -26,7 +26,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 describe('useOpenAskAIPageInCommandMenu', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jotaiStore.set(isCommandMenuOpenedState.atom, false);
+    jotaiStore.set(isSidePanelOpenedState.atom, false);
   });
 
   it('should navigate to AskAI page with correct defaults', () => {
@@ -48,7 +48,7 @@ describe('useOpenAskAIPageInCommandMenu', () => {
   });
 
   it('should use resetNavigationStack from argument when provided', () => {
-    jotaiStore.set(isCommandMenuOpenedState.atom, true);
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {
       wrapper: Wrapper,
@@ -66,7 +66,7 @@ describe('useOpenAskAIPageInCommandMenu', () => {
   });
 
   it('should default resetNavigationStack to isCommandMenuOpened', () => {
-    jotaiStore.set(isCommandMenuOpenedState.atom, true);
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {
       wrapper: Wrapper,

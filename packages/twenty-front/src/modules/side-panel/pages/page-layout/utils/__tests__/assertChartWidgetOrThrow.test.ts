@@ -1,4 +1,4 @@
-import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
+import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/assertChartWidgetOrThrow';
 import {
   ALL_CHART_CONFIGURATIONS,
   createTestWidget,

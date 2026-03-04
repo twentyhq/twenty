@@ -1,4 +1,4 @@
-import { type TypedGaugeChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedGaugeChartConfiguration';
+import { type TypedGaugeChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedGaugeChartConfiguration';
 import { type TypedAggregateChartConfiguration } from './TypedAggregateChartConfiguration';
 import { type TypedBarChartConfiguration } from './TypedBarChartConfiguration';
 import { type TypedLineChartConfiguration } from './TypedLineChartConfiguration';

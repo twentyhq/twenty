@@ -1,6 +1,6 @@
-import { ChartFiltersSettings } from '@/command-menu/pages/page-layout/components/ChartFiltersSettings';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
+import { ChartFiltersSettings } from '@/side-panel/pages/page-layout/components/ChartFiltersSettings';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';

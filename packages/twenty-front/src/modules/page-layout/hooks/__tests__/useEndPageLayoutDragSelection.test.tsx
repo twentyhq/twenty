@@ -1,4 +1,4 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
@@ -15,7 +15,7 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
 );
 jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
 

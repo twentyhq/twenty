@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
 
-import { SidePanelPageInfoLayout } from '@/command-menu/components/SidePanelPageInfoLayout';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
-import { sidePanelShouldFocusTitleInputComponentState } from '@/command-menu/states/sidePanelShouldFocusTitleInputComponentState';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';

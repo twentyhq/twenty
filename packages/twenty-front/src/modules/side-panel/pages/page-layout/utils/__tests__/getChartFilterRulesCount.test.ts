@@ -1,5 +1,5 @@
-import { type ChartFilters } from '@/command-menu/pages/page-layout/types/ChartFilters';
-import { getChartFilterRulesCount } from '@/command-menu/pages/page-layout/utils/getChartFilterRulesCount';
+import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
 
 describe('getChartFilterRulesCount', () => {
   it('should return 0 for undefined filter', () => {

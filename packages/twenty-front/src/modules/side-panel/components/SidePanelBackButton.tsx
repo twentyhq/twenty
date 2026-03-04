@@ -1,6 +1,6 @@
 import { COMMAND_MENU_NAVIGATION_HISTORY_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuNavigationHistoryDropdownId';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
-import { useSidePanelHistory } from '@/command-menu/hooks/useSidePanelHistory';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

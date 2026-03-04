@@ -1,8 +1,8 @@
-import { usePageLayoutHeaderInfo } from '@/command-menu/components/hooks/usePageLayoutHeaderInfo';
-import { useUpdateSidePanelPageInfo } from '@/command-menu/hooks/useUpdateSidePanelPageInfo';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
-import { sidePanelShouldFocusTitleInputComponentState } from '@/command-menu/states/sidePanelShouldFocusTitleInputComponentState';
+import { usePageLayoutHeaderInfo } from '@/side-panel/components/hooks/usePageLayoutHeaderInfo';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';

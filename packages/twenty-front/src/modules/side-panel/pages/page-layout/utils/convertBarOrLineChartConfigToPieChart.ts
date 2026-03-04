@@ -1,4 +1,4 @@
-import { type PieChartConvertibleFields } from '@/command-menu/pages/page-layout/types/PieChartConvertibleFields';
+import { type PieChartConvertibleFields } from '@/side-panel/pages/page-layout/types/PieChartConvertibleFields';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,

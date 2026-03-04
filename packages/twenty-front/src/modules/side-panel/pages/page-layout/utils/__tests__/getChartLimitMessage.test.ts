@@ -1,4 +1,4 @@
-import { getChartLimitMessage } from '@/command-menu/pages/page-layout/utils/getChartLimitMessage';
+import { getChartLimitMessage } from '@/side-panel/pages/page-layout/utils/getChartLimitMessage';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 

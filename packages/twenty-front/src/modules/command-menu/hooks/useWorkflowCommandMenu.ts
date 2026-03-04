@@ -1,8 +1,8 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
-import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
-import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { commandMenuWorkflowRunIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
+import { commandMenuWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
+import { commandMenuWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunSidePanelTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunSidePanelTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -20,7 +20,7 @@ import { useStore } from 'jotai';
 
 export const useWorkflowCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const { setInitialWorkflowRunSidePanelTab } =
     useSetInitialWorkflowRunSidePanelTab();
 

@@ -1,5 +1,5 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -9,7 +9,7 @@ import { useStore } from 'jotai';
 
 export const useOpenEmailThreadInCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
 
   const openEmailThreadInCommandMenu = useCallback(
     (emailThreadId: string) => {

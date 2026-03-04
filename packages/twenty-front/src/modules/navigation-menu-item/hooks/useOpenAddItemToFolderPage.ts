@@ -1,4 +1,4 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -13,7 +13,7 @@ type OpenAddItemToFolderPageParams = {
 
 export const useOpenAddItemToFolderPage = () => {
   const { t } = useLingui();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
   const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );

@@ -1,6 +1,6 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -165,7 +165,7 @@ export const useSetGlobalCommandMenuContext = () => {
           ContextStoreViewType.Table,
         );
 
-        batchSet(commandMenuPageInfoState.atom, {
+        batchSet(sidePanelPageInfoState.atom, {
           title: undefined,
           Icon: undefined,
           instanceId: '',

@@ -1,5 +1,5 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { convertAggregateOperationForDateField } from '@/side-panel/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from 'twenty-shared/types';

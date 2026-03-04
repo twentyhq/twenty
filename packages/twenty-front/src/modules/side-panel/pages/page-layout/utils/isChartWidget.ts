@@ -1,5 +1,5 @@
-import { type ChartWidget } from '@/command-menu/pages/page-layout/types/ChartWidget';
-import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
+import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 
 export const isChartWidget = (

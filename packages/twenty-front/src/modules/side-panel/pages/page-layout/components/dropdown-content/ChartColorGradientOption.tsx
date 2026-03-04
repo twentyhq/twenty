@@ -1,4 +1,4 @@
-import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/command-menu/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
+import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';

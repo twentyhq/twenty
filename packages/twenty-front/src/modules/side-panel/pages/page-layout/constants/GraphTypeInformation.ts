@@ -1,10 +1,10 @@
-import { AGGREGATE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/AggregateChartSettings';
-import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/GaugeChartSettings';
-import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
-import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
-import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
-import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
-import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
+import { AGGREGATE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/AggregateChartSettings';
+import { GAUGE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/GaugeChartSettings';
+import { LINE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/LineChartSettings';
+import { PIE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/PieChartSettings';
+import { type ChartSettingsGroup } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { getBarChartSettings } from '@/side-panel/pages/page-layout/utils/getBarChartSettings';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {

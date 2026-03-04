@@ -1,4 +1,4 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';

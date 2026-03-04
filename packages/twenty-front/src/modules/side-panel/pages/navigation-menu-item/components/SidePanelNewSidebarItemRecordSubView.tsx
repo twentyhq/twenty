@@ -8,7 +8,7 @@ import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandM
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { SidePanelNewSidebarItemRecordItem } from '@/command-menu/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
+import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

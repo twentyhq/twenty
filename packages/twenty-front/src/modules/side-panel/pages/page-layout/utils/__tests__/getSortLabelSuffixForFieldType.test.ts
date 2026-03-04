@@ -1,4 +1,4 @@
-import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
+import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 

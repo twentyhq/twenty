@@ -3,7 +3,7 @@ import { act } from 'react';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -16,8 +16,8 @@ jest.mock('uuid', () => ({
 }));
 
 const mockNavigateCommandMenu = jest.fn();
-jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
-  useNavigateCommandMenu: () => ({
+jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
+  useNavigateSidePanel: () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
 }));

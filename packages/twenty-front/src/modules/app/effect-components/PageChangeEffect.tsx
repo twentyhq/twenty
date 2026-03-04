@@ -11,7 +11,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -116,7 +116,7 @@ export const PageChangeEffect = () => {
   );
 
   const closeCommandMenuUnlessOnEditPage = useCallback(() => {
-    const currentPage = store.get(commandMenuPageState.atom);
+    const currentPage = store.get(sidePanelPageState.atom);
     if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }

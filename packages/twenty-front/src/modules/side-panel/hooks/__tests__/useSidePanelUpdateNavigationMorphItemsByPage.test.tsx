@@ -1,5 +1,5 @@
-import { useSidePanelUpdateNavigationMorphItemsByPage } from '@/command-menu/hooks/useSidePanelUpdateNavigationMorphItemsByPage';
-import { sidePanelNavigationMorphItemsByPageState } from '@/command-menu/states/sidePanelNavigationMorphItemsByPageState';
+import { useSidePanelUpdateNavigationMorphItemsByPage } from '@/side-panel/hooks/useSidePanelUpdateNavigationMorphItemsByPage';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';

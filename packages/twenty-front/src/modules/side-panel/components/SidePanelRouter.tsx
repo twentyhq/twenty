@@ -1,10 +1,10 @@
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
-import { SidePanelContainer } from '@/command-menu/components/SidePanelContainer';
-import { SidePanelTopBar } from '@/command-menu/components/SidePanelTopBar';
-import { SIDE_PANEL_PAGES_CONFIG } from '@/command-menu/constants/SidePanelPagesConfig';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/command-menu/states/sidePanelPageState';
-import { SidePanelPageComponentInstanceContext } from '@/command-menu/states/contexts/SidePanelPageComponentInstanceContext';
+import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
+import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
+import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';

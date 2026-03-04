@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -15,7 +15,7 @@ import {
   GraphOrderBy,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
-import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockObjectMetadataItem: ObjectMetadataItem = {

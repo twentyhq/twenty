@@ -3,9 +3,9 @@ import { act } from 'react';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
+import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -24,8 +24,8 @@ jest.mock('uuid', () => ({
 }));
 
 const mockNavigateCommandMenu = jest.fn();
-jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
-  useNavigateCommandMenu: () => ({
+jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
+  useNavigateSidePanel: () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
 }));
@@ -141,7 +141,7 @@ describe('useOpenRecordInCommandMenu', () => {
     );
 
     const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
-      commandMenuNavigationMorphItemsByPageState.atom,
+      sidePanelNavigationMorphItemsByPageState.atom,
     );
     expect(commandMenuNavigationMorphItemsByPage.size).toBe(1);
     expect(commandMenuNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([

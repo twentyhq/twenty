@@ -1,17 +1,17 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { useUpdateSidePanelPageInfo } from '@/command-menu/hooks/useUpdateSidePanelPageInfo';
-import { ChartSettingItem } from '@/command-menu/pages/page-layout/components/chart-settings/ChartSettingItem';
-import { ChartLimitInfoBanner } from '@/command-menu/pages/page-layout/components/ChartLimitInfoBanner';
-import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
-import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/constants/ChartSettingsHeadings';
-import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
-import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { ChartSettingItem } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingItem';
+import { ChartLimitInfoBanner } from '@/side-panel/pages/page-layout/components/ChartLimitInfoBanner';
+import { ChartTypeSelectionSection } from '@/side-panel/pages/page-layout/components/ChartTypeSelectionSection';
+import { CHART_SETTINGS_HEADINGS } from '@/side-panel/pages/page-layout/constants/ChartSettingsHeadings';
+import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
+import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { useGetConfigToUpdateAfterGraphTypeChange } from '@/side-panel/pages/page-layout/hooks/useUpdateGraphTypeConfig';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { shouldHideChartSetting } from '@/side-panel/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -19,10 +19,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
-import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
-import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/assertChartWidgetOrThrow';
+import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 
 const StyledSidePanelContainer = styled.div`

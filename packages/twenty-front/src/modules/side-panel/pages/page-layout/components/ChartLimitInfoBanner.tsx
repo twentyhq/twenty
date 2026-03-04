@@ -1,4 +1,4 @@
-import { getChartLimitMessage } from '@/command-menu/pages/page-layout/utils/getChartLimitMessage';
+import { getChartLimitMessage } from '@/side-panel/pages/page-layout/utils/getChartLimitMessage';
 import { t } from '@lingui/core/macro';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 import { type WidgetConfigurationType } from '~/generated-metadata/graphql';

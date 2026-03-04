@@ -1,5 +1,5 @@
-import { SidePanelPageLayoutInfoContent } from '@/command-menu/components/SidePanelPageLayoutInfoContent';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
+import { SidePanelPageLayoutInfoContent } from '@/side-panel/components/SidePanelPageLayoutInfoContent';
+import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 
 export const SidePanelRecordPageLayoutInfo = () => {
   const { pageLayoutId } =

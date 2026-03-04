@@ -1,7 +1,7 @@
 import { CalendarEventDetails } from '@/activities/calendar/components/CalendarEventDetails';
 import { CalendarEventDetailsEffect } from '@/activities/calendar/components/CalendarEventDetailsEffect';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';

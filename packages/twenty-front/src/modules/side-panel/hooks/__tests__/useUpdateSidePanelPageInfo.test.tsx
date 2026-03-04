@@ -1,6 +1,6 @@
-import { useUpdateSidePanelPageInfo } from '@/command-menu/hooks/useUpdateSidePanelPageInfo';
-import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';

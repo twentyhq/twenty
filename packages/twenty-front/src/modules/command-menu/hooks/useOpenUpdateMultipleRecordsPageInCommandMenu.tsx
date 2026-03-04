@@ -1,4 +1,4 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
@@ -12,7 +12,7 @@ type UseOpenUpdateMultipleRecordsPageInCommandMenuProps = {
 export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
   contextStoreInstanceId,
 }: UseOpenUpdateMultipleRecordsPageInCommandMenuProps) => {
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateSidePanel();
 
   const openUpdateMultipleRecordsPageInCommandMenu = useCallback(async () => {
     navigateCommandMenu({

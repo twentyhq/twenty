@@ -1,4 +1,4 @@
-import { sidePanelWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
+import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 

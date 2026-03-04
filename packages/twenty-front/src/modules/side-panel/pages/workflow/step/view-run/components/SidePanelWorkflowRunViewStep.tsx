@@ -1,5 +1,5 @@
-import { SidePanelWorkflowRunViewStepContent } from '@/command-menu/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent';
-import { useSidePanelWorkflowRunIdOrThrow } from '@/command-menu/pages/workflow/step/view-run/hooks/useSidePanelWorkflowRunIdOrThrow';
+import { SidePanelWorkflowRunViewStepContent } from '@/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent';
+import { useSidePanelWorkflowRunIdOrThrow } from '@/side-panel/pages/workflow/step/view-run/hooks/useSidePanelWorkflowRunIdOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 

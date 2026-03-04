@@ -5,15 +5,15 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
-import { SidePanelAskAIInfo } from '@/command-menu/components/SidePanelAskAIInfo';
-import { SidePanelFolderInfo } from '@/command-menu/components/SidePanelFolderInfo';
-import { SidePanelLinkInfo } from '@/command-menu/components/SidePanelLinkInfo';
-import { SidePanelMultipleRecordsInfo } from '@/command-menu/components/SidePanelMultipleRecordsInfo';
-import { SidePanelObjectViewRecordInfo } from '@/command-menu/components/SidePanelObjectViewRecordInfo';
-import { SidePanelPageInfoLayout } from '@/command-menu/components/SidePanelPageInfoLayout';
-import { SidePanelPageLayoutInfo } from '@/command-menu/components/SidePanelPageLayoutInfo';
-import { SidePanelRecordInfo } from '@/command-menu/components/SidePanelRecordInfo';
-import { SidePanelWorkflowStepInfo } from '@/command-menu/components/SidePanelWorkflowStepInfo';
+import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
+import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
+import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
+import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
+import { SidePanelObjectViewRecordInfo } from '@/side-panel/components/SidePanelObjectViewRecordInfo';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
+import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
+import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';

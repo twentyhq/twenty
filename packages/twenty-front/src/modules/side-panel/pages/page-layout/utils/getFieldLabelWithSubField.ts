@@ -1,4 +1,4 @@
-import { getRelationFieldLabel } from '@/command-menu/pages/page-layout/utils/getRelationFieldLabel';
+import { getRelationFieldLabel } from '@/side-panel/pages/page-layout/utils/getRelationFieldLabel';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';

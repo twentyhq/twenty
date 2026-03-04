@@ -8,7 +8,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -51,7 +51,7 @@ export const MergeRecordsContainer = ({
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
-    CommandMenuPageComponentInstanceContext,
+    SidePanelPageComponentInstanceContext,
   );
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,

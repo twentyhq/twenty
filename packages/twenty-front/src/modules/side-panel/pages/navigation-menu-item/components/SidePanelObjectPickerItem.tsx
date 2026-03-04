@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelObjectMenuItem } from '@/command-menu/pages/navigation-menu-item/components/SidePanelObjectMenuItem';
+import { SidePanelObjectMenuItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

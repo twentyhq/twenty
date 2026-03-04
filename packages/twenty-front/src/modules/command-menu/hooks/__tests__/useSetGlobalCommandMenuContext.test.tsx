@@ -4,7 +4,7 @@ import { act } from 'react';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -115,7 +115,7 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
     );
-    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
     expect(commandMenuPageInfo).toEqual({
       title: undefined,
       Icon: undefined,
@@ -141,7 +141,7 @@ describe('useSetGlobalCommandMenuContext', () => {
       ContextStoreViewType.Table,
     );
     const commandMenuPageInfoAfter = jotaiStore.get(
-      commandMenuPageInfoState.atom,
+      sidePanelPageInfoState.atom,
     );
     expect(commandMenuPageInfoAfter).toEqual({
       title: undefined,

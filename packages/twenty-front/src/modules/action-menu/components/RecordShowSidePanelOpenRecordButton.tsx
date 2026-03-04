@@ -1,9 +1,9 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -45,7 +45,7 @@ export const RecordShowSidePanelOpenRecordButton = ({
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(
-    CommandMenuPageComponentInstanceContext,
+    SidePanelPageComponentInstanceContext,
   );
 
   const tabListComponentId = getShowPageTabListComponentId({
@@ -102,7 +102,7 @@ export const RecordShowSidePanelOpenRecordButton = ({
       store.set(parentViewState, undefined);
     }
 
-    store.set(commandMenuNavigationStackState.atom, []);
+    store.set(sidePanelNavigationStackState.atom, []);
 
     navigate(AppPath.RecordShowPage, {
       objectNameSingular,

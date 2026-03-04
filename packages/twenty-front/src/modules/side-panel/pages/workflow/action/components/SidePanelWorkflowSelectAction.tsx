@@ -1,4 +1,4 @@
-import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
+import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';

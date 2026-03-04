@@ -1,4 +1,4 @@
-import { type ChartFilters } from '@/command-menu/pages/page-layout/types/ChartFilters';
+import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getChartFilterRulesCount = (
