@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { isBoolean } from 'class-validator';
 
 import {
   CommonQueryRunnerException,
@@ -9,7 +10,7 @@ export const validateIsEmptyArrayOperatorValueOrThrow = (
   value: unknown,
   fieldName: string,
 ): void => {
-  if (typeof value !== 'boolean') {
+  if (isBoolean(value)) {
     throw new CommonQueryRunnerException(
       `Filter operator "isEmptyArray" requires a boolean value for field ${fieldName}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,

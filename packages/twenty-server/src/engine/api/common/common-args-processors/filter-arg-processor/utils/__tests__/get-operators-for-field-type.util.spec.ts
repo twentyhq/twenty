@@ -31,10 +31,4 @@ describe('getOperatorsForFieldType', () => {
     expect(result).toContain('containsIlike');
     expect(result).toContain('isEmptyArray');
   });
-
-  it('should return default operators for unknown field type', () => {
-    const result = getOperatorsForFieldType('UNKNOWN' as FieldMetadataType);
-
-    expect(result).toEqual(['eq', 'neq', 'is']);
-  });
 });

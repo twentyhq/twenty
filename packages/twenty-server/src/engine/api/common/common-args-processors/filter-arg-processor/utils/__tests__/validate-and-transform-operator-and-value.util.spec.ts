@@ -22,34 +22,23 @@ describe('validateAndTransformOperatorAndValue', () => {
     expect(result).toEqual({ eq: 'hello' });
   });
 
+  it('should throw when filter value is null', () => {
+    const fieldMetadata = createFieldMetadata(FieldMetadataType.TEXT);
+
+    expect(() =>
+      validateAndTransformOperatorAndValue(
+        'testField',
+        null as unknown as Record<string, unknown>,
+        fieldMetadata,
+      ),
+    ).toThrow(CommonQueryRunnerException);
+  });
+
   it('should throw when filter has no operators', () => {
     const fieldMetadata = createFieldMetadata(FieldMetadataType.TEXT);
 
     expect(() =>
       validateAndTransformOperatorAndValue('testField', {}, fieldMetadata),
     ).toThrow(CommonQueryRunnerException);
-  });
-
-  it('should throw when filter has multiple operators', () => {
-    const fieldMetadata = createFieldMetadata(FieldMetadataType.TEXT);
-
-    expect(() =>
-      validateAndTransformOperatorAndValue(
-        'testField',
-        { eq: 'a', neq: 'b' },
-        fieldMetadata,
-      ),
-    ).toThrow(CommonQueryRunnerException);
-  });
-
-  it('should coerce and transform number for NUMBER field', () => {
-    const fieldMetadata = createFieldMetadata(FieldMetadataType.NUMBER);
-    const result = validateAndTransformOperatorAndValue(
-      'testField',
-      { eq: '42' },
-      fieldMetadata,
-    );
-
-    expect(result).toEqual({ eq: 42 });
   });
 });

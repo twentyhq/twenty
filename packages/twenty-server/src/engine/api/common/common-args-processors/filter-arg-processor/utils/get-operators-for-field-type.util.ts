@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ARRAY_FILTER_OPERATORS,
@@ -56,7 +57,17 @@ export const getOperatorsForFieldType = (
     case FieldMetadataType.RICH_TEXT_V2:
       return RICH_TEXT_V2_FILTER_OPERATORS;
 
-    default:
+    case FieldMetadataType.TS_VECTOR:
+    case FieldMetadataType.ACTOR:
+    case FieldMetadataType.ADDRESS:
+    case FieldMetadataType.CURRENCY:
+    case FieldMetadataType.EMAILS:
+    case FieldMetadataType.FULL_NAME:
+    case FieldMetadataType.LINKS:
+    case FieldMetadataType.PHONES:
       return ['eq', 'neq', 'is'];
+
+    default:
+      assertUnreachable(fieldType);
   }
 };

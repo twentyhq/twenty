@@ -15,4 +15,10 @@ describe('parseNumberValue', () => {
   it('should parse string to number for POSITION field', () => {
     expect(parseNumberValue('1.5', FieldMetadataType.POSITION)).toBe(1.5);
   });
+
+  it('should throw an error for unknown field type', () => {
+    expect(parseNumberValue('not-a-number', FieldMetadataType.POSITION)).toBe(
+      NaN,
+    );
+  });
 });

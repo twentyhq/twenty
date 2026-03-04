@@ -15,6 +15,16 @@ export const validateAndTransformOperatorAndValue = (
   filterValue: Record<string, unknown>,
   fieldMetadata: FlatFieldMetadata,
 ): Record<string, unknown> => {
+  if (filterValue === null || typeof filterValue !== 'object') {
+    throw new CommonQueryRunnerException(
+      `Filter value for field "${fieldName}" must be an object`,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+      {
+        userFriendlyMessage: msg`Invalid filter: filter value must be an object`,
+      },
+    );
+  }
+
   const entries = Object.entries(filterValue);
 
   if (entries.length !== 1) {
