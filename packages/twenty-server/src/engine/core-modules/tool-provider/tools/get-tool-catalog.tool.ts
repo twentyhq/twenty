@@ -1,16 +1,21 @@
 import { z } from 'zod';
 
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 
 export const GET_TOOL_CATALOG_TOOL_NAME = 'get_tool_catalog';
+
+const availableCategories = Object.values(ToolCategory)
+  .map((entry) => entry.toString())
+  .join(', ');
 
 export const getToolCatalogInputSchema = z.object({
   categories: z
     .array(z.string())
     .optional()
     .describe(
-      'Filter by category. Available categories: DATABASE_CRUD, METADATA, VIEW, VIEW_FIELD, WORKFLOW, DASHBOARD, LOGIC_FUNCTION, ACTION. Omit to get all.',
+      `Filter by category. Available categories: ${availableCategories}. Omit to get all.`,
     ),
 });
 
@@ -32,7 +37,7 @@ export const createGetToolCatalogTool = (
   },
 ) => ({
   description:
-    'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool.',
+    'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool — do not guess tool names.',
   inputSchema: getToolCatalogInputSchema,
   execute: async (
     parameters: GetToolCatalogInput,
