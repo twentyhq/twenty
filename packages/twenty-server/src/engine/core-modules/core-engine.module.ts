@@ -7,10 +7,11 @@ import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
-import { ApplicationRegistrationModule } from 'src/engine/core-modules/application-registration/application-registration.module';
-import { ApplicationSyncModule } from 'src/engine/core-modules/application/application-sync.module';
+import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
+import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { MarketplaceModule } from 'src/engine/core-modules/marketplace/marketplace.module';
+import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -92,7 +93,8 @@ import { FileModule } from './file/file.module';
     OpenApiModule,
     ApplicationRegistrationModule,
     ApplicationModule,
-    ApplicationSyncModule,
+    ApplicationInstallModule,
+    ApplicationDevelopmentModule,
     MarketplaceModule,
     AppTokenModule,
     TimelineMessagingModule,
