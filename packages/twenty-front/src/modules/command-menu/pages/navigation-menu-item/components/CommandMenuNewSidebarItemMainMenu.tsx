@@ -53,6 +53,7 @@ export const CommandMenuNewSidebarItemMainMenu = ({
   const isAddingToFolder = isDefined(
     addMenuItemInsertionContext?.targetFolderId,
   );
+  const hasInsertionContext = isDefined(addMenuItemInsertionContext);
   const selectableItemIds = isAddingToFolder
     ? MAIN_MENU_ITEM_IDS.filter((itemId) => itemId !== 'folder')
     : [...MAIN_MENU_ITEM_IDS];
@@ -121,13 +122,14 @@ export const CommandMenuNewSidebarItemMainMenu = ({
                   label={t`Folder`}
                   id="folder"
                   onClick={handleAddFolder}
-                  dragIndex={isAddingToFolder ? undefined : 3}
+                  dragIndex={hasInsertionContext ? undefined : 3}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
                   disabled={isAddingToFolder}
+                  disableDrag={hasInsertionContext}
                 />
               </SelectableListItem>
               <SelectableListItem itemId="link" onEnter={handleAddLink}>
@@ -136,13 +138,14 @@ export const CommandMenuNewSidebarItemMainMenu = ({
                   label={t`Link`}
                   id="link"
                   onClick={handleAddLink}
-                  dragIndex={4}
+                  dragIndex={hasInsertionContext ? undefined : 4}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',
                   }}
+                  disableDrag={hasInsertionContext}
                 />
               </SelectableListItem>
             </CommandGroup>

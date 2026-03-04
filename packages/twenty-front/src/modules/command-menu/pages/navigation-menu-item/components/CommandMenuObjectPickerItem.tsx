@@ -18,6 +18,7 @@ type CommandMenuObjectPickerItemProps = {
   ) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   dragIndex?: number;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuObjectPickerItem = ({
@@ -27,6 +28,7 @@ export const CommandMenuObjectPickerItem = ({
   onChangeObject,
   objectMenuItemVariant = 'edit',
   dragIndex,
+  disableDrag = false,
 }: CommandMenuObjectPickerItemProps) => {
   const { getIcon } = useIcons();
 
@@ -59,6 +61,7 @@ export const CommandMenuObjectPickerItem = ({
       onSelect={onChangeObject}
       variant={objectMenuItemVariant}
       dragIndex={dragIndex}
+      disableDrag={disableDrag}
     />
   );
 };

@@ -23,11 +23,13 @@ type SearchRecord = {
 type CommandMenuNewSidebarItemRecordItemProps = {
   record: SearchRecord;
   dragIndex?: number;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuNewSidebarItemRecordItem = ({
   record,
   dragIndex,
+  disableDrag = false,
 }: CommandMenuNewSidebarItemRecordItemProps) => {
   const { closeCommandMenu } = useCommandMenu();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
@@ -89,6 +91,7 @@ export const CommandMenuNewSidebarItemRecordItem = ({
         id={record.recordId}
         onClick={handleSelectRecord}
         dragIndex={dragIndex}
+        disableDrag={disableDrag}
         payload={recordPayload}
       />
     </SelectableListItem>

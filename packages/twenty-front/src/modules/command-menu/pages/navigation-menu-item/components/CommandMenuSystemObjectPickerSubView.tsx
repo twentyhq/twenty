@@ -21,6 +21,7 @@ type CommandMenuSystemObjectPickerSubViewProps = {
   ) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuSystemObjectPickerSubView = ({
@@ -33,6 +34,7 @@ export const CommandMenuSystemObjectPickerSubView = ({
   onChangeObject,
   objectMenuItemVariant = 'edit',
   emptyNoResultsText,
+  disableDrag = false,
 }: CommandMenuSystemObjectPickerSubViewProps) => {
   const { t } = useLingui();
   const { filteredItems, selectableItemIds, isEmpty, hasSearchQuery } =
@@ -58,7 +60,8 @@ export const CommandMenuSystemObjectPickerSubView = ({
           onSelectObjectForViewEdit={onSelectObjectForViewEdit}
           onChangeObject={onChangeObject}
           objectMenuItemVariant={objectMenuItemVariant}
-          dragIndex={isAddVariant ? index : undefined}
+          dragIndex={isAddVariant && !disableDrag ? index : undefined}
+          disableDrag={disableDrag}
         />
       ))}
     </CommandGroup>

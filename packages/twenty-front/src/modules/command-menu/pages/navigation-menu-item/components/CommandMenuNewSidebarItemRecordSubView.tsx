@@ -25,10 +25,12 @@ type SearchRecordBase = {
 
 type CommandMenuNewSidebarItemRecordSubViewProps = {
   onBack: () => void;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuNewSidebarItemRecordSubView = ({
   onBack,
+  disableDrag = false,
 }: CommandMenuNewSidebarItemRecordSubViewProps) => {
   const { t } = useLingui();
   const { currentDraft } = useDraftNavigationMenuItems();
@@ -105,7 +107,8 @@ export const CommandMenuNewSidebarItemRecordSubView = ({
                   <CommandMenuNewSidebarItemRecordItem
                     key={record.recordId}
                     record={record}
-                    dragIndex={index}
+                    dragIndex={disableDrag ? undefined : index}
+                    disableDrag={disableDrag}
                   />
                 ))}
               </CommandGroup>

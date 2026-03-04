@@ -6,16 +6,17 @@ import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-
 import { CommandMenuSystemObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
+import { isDefined } from 'twenty-shared/utils';
 
 type CommandMenuNewSidebarItemObjectFlowProps = {
   onBack: () => void;
@@ -85,6 +86,8 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
     setSystemObjectSearchInput('');
   };
 
+  const disableDrag = isDefined(addMenuItemInsertionContext);
+
   if (isInSystemPicker) {
     return (
       <CommandMenuSystemObjectPickerSubView
@@ -96,6 +99,7 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
         onChangeObject={handleSelectObject}
         objectMenuItemVariant="add"
         emptyNoResultsText={t`All system objects are already in the sidebar`}
+        disableDrag={disableDrag}
       />
     );
   }
@@ -110,6 +114,7 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
       isViewItem={false}
       onChangeObject={handleSelectObject}
       objectMenuItemVariant="add"
+      disableDrag={disableDrag}
     />
   );
 };

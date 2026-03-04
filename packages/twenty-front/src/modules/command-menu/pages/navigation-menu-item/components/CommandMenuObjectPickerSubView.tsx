@@ -26,6 +26,7 @@ type CommandMenuObjectPickerSubViewProps = {
   ) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuObjectPickerSubView = ({
@@ -39,6 +40,7 @@ export const CommandMenuObjectPickerSubView = ({
   onChangeObject,
   objectMenuItemVariant = 'edit',
   emptyNoResultsText,
+  disableDrag = false,
 }: CommandMenuObjectPickerSubViewProps) => {
   const { t } = useLingui();
   const { filteredItems, selectableItemIds, isEmpty, hasSearchQuery } =
@@ -65,7 +67,8 @@ export const CommandMenuObjectPickerSubView = ({
           onSelectObjectForViewEdit={onSelectObjectForViewEdit}
           onChangeObject={onChangeObject}
           objectMenuItemVariant={objectMenuItemVariant}
-          dragIndex={isAddVariant ? index : undefined}
+          dragIndex={isAddVariant && !disableDrag ? index : undefined}
+          disableDrag={disableDrag}
         />
       ))}
       <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>

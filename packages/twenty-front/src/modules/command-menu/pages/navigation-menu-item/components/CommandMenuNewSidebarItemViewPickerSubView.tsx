@@ -75,6 +75,8 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
     ? t`No results found`
     : t`No custom views available`;
 
+  const hasInsertionContext = isDefined(addMenuItemInsertionContext);
+
   const handleSelectView = (view: View) => {
     addViewToDraft(
       view.id,
@@ -136,7 +138,8 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}
-                      dragIndex={index}
+                      dragIndex={hasInsertionContext ? undefined : index}
+                      disableDrag={hasInsertionContext}
                       payload={{
                         type: NavigationMenuItemType.VIEW,
                         viewId: view.id,

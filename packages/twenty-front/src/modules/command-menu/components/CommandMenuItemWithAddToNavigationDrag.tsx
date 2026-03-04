@@ -28,15 +28,21 @@ type CommandMenuItemWithAddToNavigationDragProps = {
   payload: AddToNavigationDragPayload;
   dragIndex?: number;
   disabled?: boolean;
+  disableDrag?: boolean;
 };
 
-const StyledDraggableMenuItem = styled.div<{ $disabled?: boolean }>`
-  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'grab')};
+const StyledDraggableMenuItem = styled.div<{
+  $disabled?: boolean;
+  $disableDrag?: boolean;
+}>`
+  cursor: ${({ $disabled, $disableDrag }) =>
+    $disabled || $disableDrag ? 'default' : 'grab'};
   width: 100%;
   pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
 
   &:active {
-    cursor: ${({ $disabled }) => ($disabled ? 'default' : 'grabbing')};
+    cursor: ${({ $disabled, $disableDrag }) =>
+      $disabled || $disableDrag ? 'default' : 'grabbing'};
   }
 `;
 
@@ -50,6 +56,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   payload,
   dragIndex,
   disabled = false,
+  disableDrag = false,
 }: CommandMenuItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
   const setAddToNavPayloadRegistry = useSetAtomState(
@@ -57,24 +64,26 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   );
   const [isHovered, setIsHovered] = useState(false);
 
-  const contextualDescription = disabled
-    ? description
-    : isHovered
-      ? t`Drag to add to navbar`
-      : description;
+  const showDragAffordance = !disabled && !disableDrag && isHovered;
+  const contextualDescription =
+    disabled || disableDrag
+      ? description
+      : isHovered
+        ? t`Drag to add to navbar`
+        : description;
 
   const DragHandleIcon = () => (
     <AddToNavigationDragHandle
       icon={icon}
       customIconContent={customIconContent}
       payload={payload}
-      isHovered={!disabled && isHovered}
+      isHovered={showDragAffordance}
       disabled={disabled}
     />
   );
 
   const registerPayload = () => {
-    if (!disabled && isDefined(dragIndex)) {
+    if (!disabled && !disableDrag && isDefined(dragIndex)) {
       setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
     }
   };
@@ -82,14 +91,15 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   const menuItemContent = (
     <StyledDraggableMenuItem
       $disabled={disabled}
+      $disableDrag={disableDrag}
       onMouseEnter={() => {
-        if (!disabled) {
+        if (!disabled && !disableDrag) {
           setIsHovered(true);
           registerPayload();
         }
       }}
       onMouseLeave={() => {
-        if (!disabled) setIsHovered(false);
+        if (!disabled && !disableDrag) setIsHovered(false);
       }}
       onMouseDown={registerPayload}
     >
@@ -104,7 +114,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
     </StyledDraggableMenuItem>
   );
 
-  if (!isDefined(dragIndex)) {
+  if (!isDefined(dragIndex) || disableDrag) {
     return menuItemContent;
   }
 

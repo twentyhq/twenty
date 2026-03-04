@@ -22,6 +22,7 @@ type CommandMenuObjectMenuItemProps = {
   ) => void;
   variant: 'add' | 'edit';
   dragIndex?: number;
+  disableDrag?: boolean;
 };
 
 export const CommandMenuObjectMenuItem = ({
@@ -29,6 +30,7 @@ export const CommandMenuObjectMenuItem = ({
   onSelect,
   variant,
   dragIndex,
+  disableDrag = false,
 }: CommandMenuObjectMenuItemProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -66,6 +68,7 @@ export const CommandMenuObjectMenuItem = ({
           id={objectMetadataItem.id}
           onClick={handleClick}
           dragIndex={dragIndex}
+          disableDrag={disableDrag}
           payload={{
             type: NavigationMenuItemType.OBJECT,
             objectMetadataId: objectMetadataItem.id,
