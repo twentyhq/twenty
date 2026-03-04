@@ -67,17 +67,6 @@ const StyledIcon = styled.div`
   justify-content: center;
 `;
 
-const EDIT_WINDOW_OPTIONS: SelectOption<number | null>[] = [
-  { value: null, label: 'No limit' },
-  { value: 5, label: '5 minutes' },
-  { value: 60, label: '1 hour' },
-  { value: 240, label: '4 hours' },
-  { value: 720, label: '12 hours' },
-  { value: 1440, label: '24 hours' },
-  { value: 2880, label: '48 hours' },
-  { value: 10080, label: '7 days' },
-];
-
 type SettingsRolePermissionsObjectLevelEditWindowRowProps = {
   roleId: string;
   objectMetadataItemId: string;
@@ -92,6 +81,19 @@ export const SettingsRolePermissionsObjectLevelEditWindowRow = ({
   settingsDraftRoleObjectPermissions,
 }: SettingsRolePermissionsObjectLevelEditWindowRowProps) => {
   const theme = useTheme();
+
+  const editWindowOptions: SelectOption<number | null>[] = [
+    { value: null, label: t`No limit` },
+    { value: 5, label: t`5 minutes` },
+    { value: 10, label: t`10 minutes` },
+    { value: 15, label: t`15 minutes` },
+    { value: 60, label: t`1 hour` },
+    { value: 240, label: t`4 hours` },
+    { value: 720, label: t`12 hours` },
+    { value: 1440, label: t`24 hours` },
+    { value: 2880, label: t`48 hours` },
+    { value: 10080, label: t`7 days` },
+  ];
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -139,8 +141,8 @@ export const SettingsRolePermissionsObjectLevelEditWindowRow = ({
             <>
               {' · '}
               {t`Inherited from role`} (
-              {EDIT_WINDOW_OPTIONS.find((o) => o.value === roleDefault)
-                ?.label ?? `${roleDefault} min`}
+              {editWindowOptions.find((o) => o.value === roleDefault)?.label ??
+                `${roleDefault} min`}
               )
             </>
           ) : null}
@@ -149,7 +151,7 @@ export const SettingsRolePermissionsObjectLevelEditWindowRow = ({
       <StyledSelectCell onClick={(e) => e.stopPropagation()}>
         <Select
           dropdownId={`edit-window-${objectMetadataItemId}`}
-          options={EDIT_WINDOW_OPTIONS}
+          options={editWindowOptions}
           value={effectiveValue}
           onChange={handleChange}
           disabled={!isEditable}

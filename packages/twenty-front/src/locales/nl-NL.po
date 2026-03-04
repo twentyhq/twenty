@@ -501,6 +501,11 @@ msgstr "0 */1 * * *"
 msgid "1 day"
 msgstr ""
 
+#. js-lingui-id: vp5vfW
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "1 hour"
+msgstr ""
+
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -523,10 +528,20 @@ msgstr "1. Selecteer een object"
 msgid "1. Type"
 msgstr "1. Type"
 
+#. js-lingui-id: AJLByM
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "10 minutes"
+msgstr ""
+
 #. js-lingui-id: 7IIx+y
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "10,000 workflow node executions"
 msgstr "{num, plural, one {10 werkknooppuntuitvoering} other {# werkknooppuntuitvoeringen}}"
+
+#. js-lingui-id: 8gE33P
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "12 hours"
+msgstr ""
 
 #. js-lingui-id: bM5lnW
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -537,6 +552,11 @@ msgstr "12u - {hour12Label}"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12u ({hour12Label})"
+
+#. js-lingui-id: Cz+K13
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "15 minutes"
+msgstr ""
 
 #. js-lingui-id: yXvRMf
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
@@ -565,6 +585,11 @@ msgstr "{num, plural, one {20 werkknooppuntuitvoering} other {# werkknooppuntuit
 msgid "200 OK - {0}ms"
 msgstr ""
 
+#. js-lingui-id: VaA9mu
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "24 hours"
+msgstr ""
+
 #. js-lingui-id: mwTnop
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h - {hour24Label}"
@@ -585,10 +610,30 @@ msgstr "2FA-methode is succesvol verwijderd."
 msgid "2FA Method Reset"
 msgstr "2FA-methode reset"
 
+#. js-lingui-id: g2ANwH
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "4 hours"
+msgstr ""
+
+#. js-lingui-id: UtXEjp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "48 hours"
+msgstr ""
+
+#. js-lingui-id: PEGxvo
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "5 minutes"
+msgstr ""
+
 #. js-lingui-id: r99JUI
 #. placeholder {0}: duration ?? 0
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "500 Error - {0}ms"
+msgstr ""
+
+#. js-lingui-id: rJe6vw
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "7 days"
 msgstr ""
 
 #. js-lingui-id: keUlu+
@@ -9407,6 +9452,11 @@ msgstr "Er werden geen taken opnieuw geprobeerd {errorDetails}"
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Geen nieuwste versie gevonden"
+
+#. js-lingui-id: qtoOYG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow.tsx
+msgid "No limit"
+msgstr ""
 
 #. js-lingui-id: 5sf2dF
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
