@@ -14,7 +14,7 @@ export const createWywProfilingPlugin = (
   options?: WywProfilingOptions,
 ): Plugin => {
   const slowThresholdMs = options?.slowThresholdMs ?? 50;
-  const topSlowFilesCount = options?.topSlowFilesCount ?? 10;
+  const topSlowFilesCount = options?.topSlowFilesCount ?? 20;
   const progressIntervalFiles = options?.progressIntervalFiles ?? 50;
 
   let totalMs = 0;
