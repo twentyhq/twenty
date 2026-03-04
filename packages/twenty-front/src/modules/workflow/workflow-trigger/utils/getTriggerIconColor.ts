@@ -1,11 +1,11 @@
-import { type Theme } from '@emotion/react';
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { type ThemeType } from 'twenty-ui/theme';
 
 export const getTriggerIconColor = ({
   theme,
   triggerType,
 }: {
-  theme: Theme;
+  theme: ThemeType;
   triggerType: WorkflowTriggerType;
 }) => {
   switch (triggerType) {

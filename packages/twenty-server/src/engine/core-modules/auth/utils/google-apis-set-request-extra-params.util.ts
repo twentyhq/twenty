@@ -2,9 +2,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 
-type GoogleAPIsRequestExtraParams = {
+type APIsOAuthRequestExtraParams = {
   transientToken?: string;
   redirectLocation?: string;
   calendarVisibility?: string;
@@ -16,8 +16,8 @@ type GoogleAPIsRequestExtraParams = {
 };
 
 export const setRequestExtraParams = (
-  request: GoogleAPIsRequest,
-  params: GoogleAPIsRequestExtraParams,
+  request: APIsOAuthRequest,
+  params: APIsOAuthRequestExtraParams,
 ): void => {
   const {
     transientToken,

@@ -6,7 +6,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsEmailingDomainRowDropdownMenu } from '@/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';

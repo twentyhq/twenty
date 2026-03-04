@@ -1,6 +1,6 @@
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const functionRole: RoleConfig = {
+export default defineRole({
   universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -14,7 +14,7 @@ export const functionRole: RoleConfig = {
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -23,11 +23,11 @@ export const functionRole: RoleConfig = {
   ],
   fieldPermissions: [
     {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
-      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
   ],
   permissionFlags: [PermissionFlag.APPLICATIONS],
-};
+});

@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useTheme } from '@emotion/react';
-import { ANIMATION } from 'twenty-ui/theme';
+import { useContext } from 'react';
+import { ANIMATION, ThemeContext } from 'twenty-ui/theme';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 
 const StyledAnimatedContainer = styled(motion.div)`
@@ -48,7 +48,7 @@ const StyledSkeletonTitleContainer = styled.div`
 
 export const LeftPanelSkeletonLoader = () => {
   const isMobile = useIsMobile();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledAnimatedContainer

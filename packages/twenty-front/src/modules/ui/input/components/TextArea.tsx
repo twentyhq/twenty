@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -6,6 +6,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MAX_ROWS = 5;
 
@@ -30,43 +31,41 @@ const StyledContainer = styled.div`
 `;
 
 const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: block;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTextArea = styled(TextareaAutosize)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 16px;
   overflow: auto;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   resize: none;
   width: 100%;
 
   &:focus {
     outline: none;
-    ${({ theme }) => {
-      return `box-shadow: 0px 0px 0px 3px ${theme.color.transparent.blue2};
-      border-color: ${theme.color.blue};`;
-    }};
+    box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
+    border-color: ${themeCssVariables.color.blue};
   }
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
+    color: ${themeCssVariables.font.color.light};
+    font-weight: ${themeCssVariables.font.weight.regular};
   }
 
   &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 `;
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -22,14 +22,14 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     flex-wrap: wrap;

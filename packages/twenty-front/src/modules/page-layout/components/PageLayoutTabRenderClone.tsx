@@ -4,11 +4,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledDraggableWrapper = styled.div`
   display: flex;
@@ -28,7 +29,7 @@ export const PageLayoutTabRenderClone = ({
   provided: DraggableProvided;
   activeTabId: string | null;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,

@@ -3,13 +3,14 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type FunctionInput } from 'twenty-shared/workflow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isObject } from '@sniptt/guards';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   flex-wrap: wrap;
 
   > * {

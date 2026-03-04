@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
 import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
@@ -10,12 +10,13 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-right: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -24,14 +25,14 @@ const StyledContainer = styled.div`
 const StyledThreadsContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledButtonsContainer = styled.div`
   display: flex;
-  padding: ${({ theme }) => theme.spacing(2, 2.5)};
+  padding: ${themeCssVariables.spacing[2]} 10px;
   justify-content: flex-end;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
 `;
 
 export const AIChatThreadsList = () => {

@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
 export type SettingsApplicationTableRowProps = {
@@ -17,15 +18,15 @@ export const StyledApplicationTableRow = styled(TableRow)`
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.secondary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsApplicationTableRow = ({

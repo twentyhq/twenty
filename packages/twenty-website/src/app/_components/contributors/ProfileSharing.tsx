@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconDownload } from '@tabler/icons-react';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
