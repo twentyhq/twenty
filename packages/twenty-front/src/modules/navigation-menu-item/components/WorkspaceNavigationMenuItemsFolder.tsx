@@ -108,10 +108,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     useWorkspaceFolderOpenState({ folderId, navigationMenuItems });
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
 
-  const folderContentLengthForTree =
-    isNavigationMenuInEditMode
-      ? navigationMenuItems.length + 1
-      : navigationMenuItems.length;
+  const folderContentLengthForTree = isNavigationMenuInEditMode
+    ? navigationMenuItems.length + 1
+    : navigationMenuItems.length;
 
   const handleAddMenuItemToFolder = () => {
     openAddItemToFolderPage({
