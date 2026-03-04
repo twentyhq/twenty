@@ -5,7 +5,7 @@ import {
 } from '@apollo/client';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
@@ -573,12 +573,14 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const emptyTitle = await canvas.findByText('No fields to display');
-    expect(emptyTitle).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByText('No fields to display')).toBeVisible();
+    });
 
-    const emptySubtitle = await canvas.findByText(
-      'Configure this widget to display fields',
-    );
-    expect(emptySubtitle).toBeVisible();
+    await waitFor(() => {
+      expect(
+        canvas.getByText('Configure this widget to display fields'),
+      ).toBeVisible();
+    });
   },
 };
