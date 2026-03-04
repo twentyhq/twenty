@@ -8,8 +8,8 @@ const AVAILABILITY_TYPE_MAP: Record<
   CommandMenuItemAvailabilityType
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
-  SINGLE_RECORD: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-  BULK_RECORDS: CommandMenuItemAvailabilityType.BULK_RECORDS,
+  SINGLE_RECORD: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  BULK_RECORDS: CommandMenuItemAvailabilityType.RECORD_SELECTION,
 };
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({

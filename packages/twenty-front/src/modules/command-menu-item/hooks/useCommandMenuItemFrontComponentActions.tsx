@@ -193,9 +193,9 @@ export const useCommandMenuItemFrontComponentActions = (
 
   const recordScopedItems = frontComponentItems.filter((item) => {
     if (!objectMatches(item)) return false;
-    if (item.availabilityType === CommandMenuItemAvailabilityType.SINGLE_RECORD)
-      return selectedRecordCount === 1;
-    if (item.availabilityType === CommandMenuItemAvailabilityType.BULK_RECORDS)
+    if (
+      item.availabilityType === CommandMenuItemAvailabilityType.RECORD_SELECTION
+    )
       return selectedRecordCount >= 1;
     return false;
   });
