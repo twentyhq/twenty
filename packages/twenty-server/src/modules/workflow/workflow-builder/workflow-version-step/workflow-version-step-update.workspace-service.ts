@@ -73,9 +73,18 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           additionalCreatedSteps: undefined,
         };
 
+    const resolvedPosition =
+      isDefined(updatedStep.position) &&
+      isDefined(updatedStep.position.x) &&
+      isDefined(updatedStep.position.y)
+        ? updatedStep.position
+        : existingStep.position;
+
+    const normalizedUpdatedStep = { ...updatedStep, position: resolvedPosition };
+
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
-        return updatedStep;
+        return normalizedUpdatedStep;
       } else {
         return existingStep;
       }
@@ -93,7 +102,7 @@ export class WorkflowVersionStepUpdateWorkspaceService {
       },
     );
 
-    return updatedStep;
+    return normalizedUpdatedStep;
   }
 
   private async updateWorkflowVersionStepType({
