@@ -1,4 +1,5 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { type RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
@@ -7,37 +8,54 @@ export const buildMorphRelationUpdateInput = ({
   morphRelations,
   fieldName,
   relationType,
-  targetObjectMetadataNameSingular,
-  targetObjectMetadataNamePlural,
+  objectMetadataItems,
   targetRecordId,
+  targetObjectMetadataId,
 }: {
   morphRelations: FieldMetadataItemRelation[];
   fieldName: string;
   relationType: RelationType;
-  targetObjectMetadataNameSingular: string;
-  targetObjectMetadataNamePlural: string;
-  targetRecordId: string;
+  objectMetadataItems: ObjectMetadataItem[];
+  targetRecordId?: string;
+  targetObjectMetadataId?: string;
 }): {
   updateInput: Record<string, string | null>;
-  allMorphFksNulled: Record<string, null>;
+  allMorphForeignKeysNulled: Record<string, null>;
 } => {
-  const allMorphFksNulled = buildRecordWithAllMorphObjectIdsToNull({
+  const allMorphForeignKeysNulled = buildRecordWithAllMorphObjectIdsToNull({
     morphRelations,
     fieldName,
     relationType,
   });
 
+  if (!targetRecordId || !targetObjectMetadataId) {
+    return {
+      updateInput: { ...allMorphForeignKeysNulled },
+      allMorphForeignKeysNulled,
+    };
+  }
+
+  const targetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === targetObjectMetadataId,
+  );
+
+  if (!targetObjectMetadataItem) {
+    throw new Error(
+      `Target object metadata item not found for id ${targetObjectMetadataId}`,
+    );
+  }
+
   const computedFieldName = computeMorphRelationFieldName({
     fieldName,
     relationType,
-    targetObjectMetadataNameSingular,
-    targetObjectMetadataNamePlural,
+    targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
+    targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
   });
 
   const updateInput: Record<string, string | null> = {
-    ...allMorphFksNulled,
+    ...allMorphForeignKeysNulled,
     [`${computedFieldName}Id`]: targetRecordId,
   };
 
-  return { updateInput, allMorphFksNulled };
+  return { updateInput, allMorphForeignKeysNulled };
 };

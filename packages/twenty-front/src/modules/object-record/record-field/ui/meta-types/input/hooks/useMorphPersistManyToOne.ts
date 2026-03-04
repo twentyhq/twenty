@@ -9,10 +9,9 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { buildMorphRelationUpdateInput } from '@/object-record/record-field/ui/meta-types/input/utils/buildMorphRelationUpdateInput';
-import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -48,29 +47,20 @@ export const useMorphPersistManyToOne = ({
 
       const fieldName = fieldDefinition.metadata.fieldName;
 
-      if (!isDefined(valueToPersist)) {
-        const recordWithAllMorphObjectIdsToNull =
-          buildRecordWithAllMorphObjectIdsToNull({
-            morphRelations: fieldDefinition.metadata.morphRelations,
-            fieldName,
-            relationType: fieldDefinition.metadata.relationType,
-          });
+      const targetObjectMetadataItem = isDefined(
+        targetObjectMetadataNameSingular,
+      )
+        ? objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.nameSingular ===
+              targetObjectMetadataNameSingular,
+          )
+        : undefined;
 
-        updateOneRecord?.({
-          objectNameSingular: objectMetadataNameSingular,
-          idToUpdate: recordId,
-          updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
-        });
-
-        return;
-      }
-
-      const targetObjectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === targetObjectMetadataNameSingular,
-      );
-
-      if (!isDefined(targetObjectMetadataItem)) {
+      if (
+        isDefined(targetObjectMetadataNameSingular) &&
+        !isDefined(targetObjectMetadataItem)
+      ) {
         throw new Error('Object metadata item not found');
       }
 
@@ -82,8 +72,9 @@ export const useMorphPersistManyToOne = ({
       );
 
       if (
+        isFieldRelationManyToOneValue(currentValue) &&
         isDefined(currentValue) &&
-        (currentValue as ObjectRecord).id === valueToPersist
+        currentValue.id === valueToPersist
       ) {
         return;
       }
@@ -92,9 +83,9 @@ export const useMorphPersistManyToOne = ({
         morphRelations: fieldDefinition.metadata.morphRelations,
         fieldName,
         relationType: fieldDefinition.metadata.relationType,
-        targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
-        targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
-        targetRecordId: valueToPersist,
+        objectMetadataItems,
+        targetRecordId: valueToPersist ?? undefined,
+        targetObjectMetadataId: targetObjectMetadataItem?.id,
       });
 
       updateOneRecord({
@@ -102,8 +93,6 @@ export const useMorphPersistManyToOne = ({
         idToUpdate: recordId,
         updateOneRecordInput: updateInput,
       });
-
-      return;
     },
     [objectMetadataItems, objectMetadataNameSingular, store, updateOneRecord],
   );
