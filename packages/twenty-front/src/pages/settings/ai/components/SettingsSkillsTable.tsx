@@ -118,13 +118,16 @@ export const SettingsSkillsTable = () => {
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="skill-table-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a skill...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputWrapper>
+          <SettingsTextInput
+            instanceId="skill-table-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a skill...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+            fullWidth
+          />
+        </StyledSearchInputWrapper>
         <Dropdown
           dropdownId="settings-skills-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -155,21 +158,23 @@ export const SettingsSkillsTable = () => {
       </StyledSearchAndFilterContainer>
 
       <Table>
-        <StyledTableHeaderRow>
-          {SETTINGS_SKILL_TABLE_METADATA.fields.map(
-            (settingsSkillTableMetadataField) => (
-              <SortableTableHeader
-                key={settingsSkillTableMetadataField.fieldName}
-                fieldName={settingsSkillTableMetadataField.fieldName}
-                label={t(settingsSkillTableMetadataField.fieldLabel)}
-                tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
-                align={settingsSkillTableMetadataField.align}
-                initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
-              />
-            ),
-          )}
-          <TableHeader />
-        </StyledTableHeaderRow>
+        <StyledTableHeaderRowContainer>
+          <TableRow gridTemplateColumns="1fr 120px 36px">
+            {SETTINGS_SKILL_TABLE_METADATA.fields.map(
+              (settingsSkillTableMetadataField) => (
+                <SortableTableHeader
+                  key={settingsSkillTableMetadataField.fieldName}
+                  fieldName={settingsSkillTableMetadataField.fieldName}
+                  label={t(settingsSkillTableMetadataField.fieldLabel)}
+                  tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
+                  align={settingsSkillTableMetadataField.align}
+                  initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
+                />
+              ),
+            )}
+            <TableHeader />
+          </TableRow>
+        </StyledTableHeaderRowContainer>
         {showSkeleton
           ? Array.from({ length: 3 }).map((_, index) => (
               <Skeleton height={32} borderRadius={4} key={index} />
@@ -181,8 +186,8 @@ export const SettingsSkillsTable = () => {
                 action={
                   skill.isActive ? (
                     <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
+                      size={ICON_SIZES.md}
+                      stroke={ICON_STROKES.sm}
                     />
                   ) : (
                     <SettingsSkillInactiveMenuDropDown
