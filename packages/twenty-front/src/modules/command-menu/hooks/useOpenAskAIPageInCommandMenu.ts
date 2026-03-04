@@ -3,7 +3,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
@@ -23,7 +23,7 @@ export const useOpenAskAIPageInCommandMenu = () => {
           : isCommandMenuOpened;
 
       navigateCommandMenu({
-        page: CommandMenuPages.AskAI,
+        page: SidePanelPages.AskAI,
         pageTitle: t`Ask AI`,
         pageIcon: IconSparkles,
         pageId: v4(),

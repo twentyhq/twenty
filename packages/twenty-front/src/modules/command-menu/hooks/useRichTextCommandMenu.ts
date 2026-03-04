@@ -3,7 +3,7 @@ import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-p
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
 export const useRichTextCommandMenu = () => {
@@ -26,7 +26,7 @@ export const useRichTextCommandMenu = () => {
 
       openCommandMenu();
       navigateCommandMenu({
-        page: CommandMenuPages.EditRichText,
+        page: SidePanelPages.EditRichText,
         pageTitle: t`Rich Text`,
         pageIcon: IconPencil,
       });

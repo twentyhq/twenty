@@ -1,5 +1,5 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import type { IconComponent } from 'twenty-ui/display';
 
 export const useOpenNavigationMenuItemInCommandMenu = () => {
@@ -15,7 +15,7 @@ export const useOpenNavigationMenuItemInCommandMenu = () => {
     focusTitleInput?: boolean;
   }) => {
     navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuItemEdit,
+      page: SidePanelPages.NavigationMenuItemEdit,
       pageTitle,
       pageIcon,
       resetNavigationStack: true,

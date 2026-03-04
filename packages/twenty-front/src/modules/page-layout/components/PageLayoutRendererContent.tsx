@@ -22,7 +22,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -82,7 +82,7 @@ export const PageLayoutRendererContent = () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setPageLayoutTabSettingsOpenTabId(newTabId);
           navigatePageLayoutCommandMenu({
-            commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+            commandMenuPage: SidePanelPages.PageLayoutTabSettings,
             focusTitleInput: true,
           });
         }

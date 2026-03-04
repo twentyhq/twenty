@@ -24,63 +24,63 @@ import { CommandMenuWorkflowEditStepType } from '@/command-menu/pages/workflow/s
 import { CommandMenuWorkflowRunViewStep } from '@/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStep';
 import { CommandMenuWorkflowViewStep } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStep';
 import { CommandMenuWorkflowSelectTriggerType } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 export const COMMAND_MENU_PAGES_CONFIG = new Map<
-  CommandMenuPages,
+  SidePanelPages,
   React.ReactNode
 >([
-  [CommandMenuPages.Root, <CommandMenu />],
-  [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
-  [CommandMenuPages.MergeRecords, <CommandMenuMergeRecordPage />],
-  [CommandMenuPages.UpdateRecords, <CommandMenuUpdateMultipleRecords />],
-  [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
-  [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
-  [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],
+  [SidePanelPages.Root, <CommandMenu />],
+  [SidePanelPages.ViewRecord, <CommandMenuRecordPage />],
+  [SidePanelPages.MergeRecords, <CommandMenuMergeRecordPage />],
+  [SidePanelPages.UpdateRecords, <CommandMenuUpdateMultipleRecords />],
+  [SidePanelPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
+  [SidePanelPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
+  [SidePanelPages.EditRichText, <CommandMenuEditRichTextPage />],
   [
-    CommandMenuPages.WorkflowTriggerSelectType,
+    SidePanelPages.WorkflowTriggerSelectType,
     <CommandMenuWorkflowSelectTriggerType />,
   ],
-  [CommandMenuPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],
-  [CommandMenuPages.WorkflowStepEditType, <CommandMenuWorkflowEditStepType />],
-  [CommandMenuPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
-  [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
-  [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
-  [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
-  [CommandMenuPages.AskAI, <CommandMenuAskAIPage />],
-  [CommandMenuPages.ViewPreviousAIChats, <CommandMenuAIChatThreadsPage />],
+  [SidePanelPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],
+  [SidePanelPages.WorkflowStepEditType, <CommandMenuWorkflowEditStepType />],
+  [SidePanelPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
+  [SidePanelPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
+  [SidePanelPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
+  [SidePanelPages.SearchRecords, <CommandMenuSearchRecordsPage />],
+  [SidePanelPages.AskAI, <CommandMenuAskAIPage />],
+  [SidePanelPages.ViewPreviousAIChats, <CommandMenuAIChatThreadsPage />],
   [
-    CommandMenuPages.PageLayoutWidgetTypeSelect,
+    SidePanelPages.PageLayoutWidgetTypeSelect,
     <CommandMenuPageLayoutWidgetTypeSelect />,
   ],
   [
-    CommandMenuPages.PageLayoutGraphTypeSelect,
+    SidePanelPages.PageLayoutGraphTypeSelect,
     <CommandMenuPageLayoutChartSettings />,
   ],
   [
-    CommandMenuPages.PageLayoutGraphFilter,
+    SidePanelPages.PageLayoutGraphFilter,
     <CommandMenuPageLayoutGraphFilter />,
   ],
   [
-    CommandMenuPages.PageLayoutIframeSettings,
+    SidePanelPages.PageLayoutIframeSettings,
     <CommandMenuPageLayoutIframeSettings />,
   ],
   [
-    CommandMenuPages.PageLayoutTabSettings,
+    SidePanelPages.PageLayoutTabSettings,
     <CommandMenuPageLayoutTabSettings />,
   ],
   [
-    CommandMenuPages.PageLayoutFieldsSettings,
+    SidePanelPages.PageLayoutFieldsSettings,
     <CommandMenuPageLayoutFieldsSettings />,
   ],
   [
-    CommandMenuPages.PageLayoutFieldsLayout,
+    SidePanelPages.PageLayoutFieldsLayout,
     <CommandMenuPageLayoutFieldsLayout />,
   ],
-  [CommandMenuPages.ViewFrontComponent, <CommandMenuFrontComponentPage />],
+  [SidePanelPages.ViewFrontComponent, <CommandMenuFrontComponentPage />],
   [
-    CommandMenuPages.NavigationMenuItemEdit,
+    SidePanelPages.NavigationMenuItemEdit,
     <CommandMenuNavigationMenuItemEditPage />,
   ],
-  [CommandMenuPages.NavigationMenuAddItem, <CommandMenuNewSidebarItemPage />],
+  [SidePanelPages.NavigationMenuAddItem, <CommandMenuNewSidebarItemPage />],
 ]);

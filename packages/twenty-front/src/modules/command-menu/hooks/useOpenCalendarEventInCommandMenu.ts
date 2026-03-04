@@ -2,7 +2,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
@@ -48,7 +48,7 @@ export const useOpenCalendarEventInCommandMenu = () => {
       // );
 
       navigateCommandMenu({
-        page: CommandMenuPages.ViewCalendarEvent,
+        page: SidePanelPages.ViewCalendarEvent,
         pageTitle: t`Calendar Event`,
         pageIcon: IconCalendarEvent,
         pageId: pageComponentInstanceId,

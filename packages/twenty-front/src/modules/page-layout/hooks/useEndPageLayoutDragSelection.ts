@@ -8,7 +8,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useEndPageLayoutDragSelection = (
@@ -50,7 +50,7 @@ export const useEndPageLayoutDragSelection = (
         store.set(pageLayoutEditingWidgetIdState, null);
 
         navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+          commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
           resetNavigationStack: true,
         });
       }

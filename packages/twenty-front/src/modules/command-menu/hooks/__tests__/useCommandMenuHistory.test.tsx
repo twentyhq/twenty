@@ -10,7 +10,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconList, IconSearch } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -46,7 +46,7 @@ describe('useCommandMenuHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
         pageId: '1',
@@ -55,7 +55,7 @@ describe('useCommandMenuHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
+        page: SidePanelPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -64,13 +64,13 @@ describe('useCommandMenuHistory', () => {
 
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
         pageId: '1',
       },
       {
-        page: CommandMenuPages.ViewRecord,
+        page: SidePanelPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -83,14 +83,14 @@ describe('useCommandMenuHistory', () => {
 
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
         pageId: '1',
       },
     ]);
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.SearchRecords,
+      SidePanelPages.SearchRecords,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Search',
@@ -105,7 +105,7 @@ describe('useCommandMenuHistory', () => {
 
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([]);
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.Root,
+      SidePanelPages.Root,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: undefined,
@@ -120,7 +120,7 @@ describe('useCommandMenuHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
         pageId: '1',
@@ -132,7 +132,7 @@ describe('useCommandMenuHistory', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.SearchRecords,
+      SidePanelPages.SearchRecords,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Search',

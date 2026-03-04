@@ -19,7 +19,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useRef } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -168,12 +168,12 @@ export const CommandMenuTopBar = () => {
           )}
         </AnimatePresence>
         {lastChip &&
-          commandMenuPage !== CommandMenuPages.Root &&
-          commandMenuPage !== CommandMenuPages.SearchRecords && (
+          commandMenuPage !== SidePanelPages.Root &&
+          commandMenuPage !== SidePanelPages.SearchRecords && (
             <CommandMenuPageInfo pageChip={lastChip} />
           )}
-        {(commandMenuPage === CommandMenuPages.Root ||
-          commandMenuPage === CommandMenuPages.SearchRecords) && (
+        {(commandMenuPage === SidePanelPages.Root ||
+          commandMenuPage === SidePanelPages.SearchRecords) && (
           <>
             <StyledInput
               data-testid={SIDE_PANEL_FOCUS_ID}

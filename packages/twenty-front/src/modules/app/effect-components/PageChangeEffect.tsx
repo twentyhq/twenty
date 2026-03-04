@@ -39,7 +39,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
+import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -117,7 +117,7 @@ export const PageChangeEffect = () => {
 
   const closeCommandMenuUnlessOnEditPage = useCallback(() => {
     const currentPage = store.get(commandMenuPageState.atom);
-    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+    if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }
     closeCommandMenu();

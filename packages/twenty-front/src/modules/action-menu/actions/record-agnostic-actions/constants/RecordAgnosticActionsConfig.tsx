@@ -5,7 +5,7 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { msg } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
@@ -21,7 +21,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.SearchRecords}
+        page={SidePanelPages.SearchRecords}
         pageTitle={msg`Search`}
         pageIcon={IconSearch}
         shouldResetSearchState={true}
@@ -42,7 +42,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.SearchRecords}
+        page={SidePanelPages.SearchRecords}
         pageTitle={msg`Search`}
         pageIcon={IconSearch}
       />
@@ -62,7 +62,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.AskAI}
+        page={SidePanelPages.AskAI}
         pageTitle={msg`Ask AI`}
         pageIcon={IconSparkles}
       />
@@ -82,7 +82,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.ViewPreviousAIChats}
+        page={SidePanelPages.ViewPreviousAIChats}
         pageTitle={msg`View Previous AI Chats`}
         pageIcon={IconSparkles}
       />

@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/display';
 
 const navigateCommandMenuMock = jest.fn();
@@ -40,7 +40,7 @@ describe('useOpenAskAIPageInCommandMenu', () => {
 
     expect(navigateCommandMenuMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        page: CommandMenuPages.AskAI,
+        page: SidePanelPages.AskAI,
         pageTitle: 'Ask AI',
         pageIcon: IconSparkles,
       }),

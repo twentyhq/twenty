@@ -15,12 +15,12 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export type CommandMenuNavigationStackItem = {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: string;
   pageIcon: IconComponent;
   pageIconColor?: string;

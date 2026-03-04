@@ -27,7 +27,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { ThemeContext } from 'twenty-ui/theme';
 
@@ -113,7 +113,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const handleEditClick = (tabId: string) => {
     setPageLayoutTabSettingsOpenTabId(tabId);
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+      commandMenuPage: SidePanelPages.PageLayoutTabSettings,
     });
     onClose();
   };

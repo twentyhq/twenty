@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -40,7 +40,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.IFRAME) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
+          commandMenuPage: SidePanelPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
         });
@@ -49,7 +49,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.GRAPH) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+          commandMenuPage: SidePanelPages.PageLayoutGraphTypeSelect,
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
         });
@@ -58,14 +58,14 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.FIELDS) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutFieldsSettings,
+          commandMenuPage: SidePanelPages.PageLayoutFieldsSettings,
           pageTitle: t`Edit Fields`,
           resetNavigationStack: true,
         });
         return;
       }
 
-      setCommandMenuPage(CommandMenuPages.Root);
+      setCommandMenuPage(SidePanelPages.Root);
       closeCommandMenu();
     },
     [

@@ -2,7 +2,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconMail } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
@@ -48,7 +48,7 @@ export const useOpenEmailThreadInCommandMenu = () => {
       // );
 
       navigateCommandMenu({
-        page: CommandMenuPages.ViewEmailThread,
+        page: SidePanelPages.ViewEmailThread,
         pageTitle: t`Email Thread`,
         pageIcon: IconMail,
         pageId: pageComponentInstanceId,

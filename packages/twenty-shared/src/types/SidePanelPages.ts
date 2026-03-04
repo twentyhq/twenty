@@ -1,4 +1,4 @@
-export enum CommandMenuPages {
+export enum SidePanelPages {
   Root = 'root',
   ViewRecord = 'view-record',
   MergeRecords = 'merge-records',

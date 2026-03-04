@@ -5,7 +5,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -52,7 +52,7 @@ describe('useCreateWidgetFromClick', () => {
     expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
     expect(result.current.editingWidgetId).toBeNull();
     expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
-      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });

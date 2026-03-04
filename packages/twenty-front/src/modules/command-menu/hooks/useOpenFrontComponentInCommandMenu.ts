@@ -1,6 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
@@ -30,7 +30,7 @@ export const useOpenFrontComponentInCommandMenu = () => {
     );
 
     navigateCommandMenu({
-      page: CommandMenuPages.ViewFrontComponent,
+      page: SidePanelPages.ViewFrontComponent,
       pageTitle,
       pageIcon,
       pageId: pageComponentInstanceId,

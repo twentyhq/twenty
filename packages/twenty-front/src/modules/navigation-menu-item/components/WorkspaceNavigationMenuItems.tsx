@@ -34,7 +34,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -130,7 +130,7 @@ export const WorkspaceNavigationMenuItems = () => {
   const handleAddMenuItem = (event?: React.MouseEvent) => {
     event?.stopPropagation();
     navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
+      page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,

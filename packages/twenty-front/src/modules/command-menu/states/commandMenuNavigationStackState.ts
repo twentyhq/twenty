@@ -1,9 +1,9 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 
 export type CommandMenuNavigationStackItem = {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: string;
   pageIcon: IconComponent;
   pageIconColor?: string;

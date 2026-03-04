@@ -1,23 +1,23 @@
 import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getPageLayoutPageTitle = (page: PageLayoutCommandMenuPage) => {
   switch (page) {
-    case CommandMenuPages.PageLayoutWidgetTypeSelect:
+    case SidePanelPages.PageLayoutWidgetTypeSelect:
       return t`Add Widget`;
-    case CommandMenuPages.PageLayoutGraphTypeSelect:
+    case SidePanelPages.PageLayoutGraphTypeSelect:
       return t`Select Graph Type`;
-    case CommandMenuPages.PageLayoutIframeSettings:
+    case SidePanelPages.PageLayoutIframeSettings:
       return t`iFrame Settings`;
-    case CommandMenuPages.PageLayoutGraphFilter:
+    case SidePanelPages.PageLayoutGraphFilter:
       return t`Configure filters`;
-    case CommandMenuPages.PageLayoutTabSettings:
+    case SidePanelPages.PageLayoutTabSettings:
       return t`Tab Settings`;
-    case CommandMenuPages.PageLayoutFieldsSettings:
+    case SidePanelPages.PageLayoutFieldsSettings:
       return t`Fields Settings`;
-    case CommandMenuPages.PageLayoutFieldsLayout:
+    case SidePanelPages.PageLayoutFieldsLayout:
       return t`Layout`;
     default:
       assertUnreachable(page);

@@ -5,7 +5,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
 
 const mockedPageInfo = {
@@ -16,7 +16,7 @@ const mockedPageInfo = {
 
 const mockedNavigationStack = [
   {
-    page: CommandMenuPages.Root,
+    page: SidePanelPages.Root,
     pageTitle: 'Initial Title',
     pageIcon: IconDotsVertical,
     pageId: 'test-page-id',
@@ -65,7 +65,7 @@ describe('useUpdateCommandMenuPageInfo', () => {
     );
     expect(commandMenuNavigationStack).toEqual([
       {
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'New Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',
@@ -94,7 +94,7 @@ describe('useUpdateCommandMenuPageInfo', () => {
     );
     expect(commandMenuNavigationStack).toEqual([
       {
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'New Title',
         pageIcon: IconDotsVertical,
         pageId: 'test-page-id',
@@ -123,7 +123,7 @@ describe('useUpdateCommandMenuPageInfo', () => {
     );
     expect(commandMenuNavigationStack).toEqual([
       {
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'Initial Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',

@@ -16,7 +16,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Key } from 'ts-key-enum';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
@@ -99,7 +99,7 @@ export const useCommandMenuHotKeys = () => {
       }
 
       if (
-        commandMenuPage === CommandMenuPages.Root &&
+        commandMenuPage === SidePanelPages.Root &&
         !(
           contextStoreTargetedRecordsRule.mode === 'selection' &&
           contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
@@ -107,7 +107,7 @@ export const useCommandMenuHotKeys = () => {
       ) {
         setGlobalCommandMenuContext();
       }
-      if (commandMenuPage !== CommandMenuPages.Root) {
+      if (commandMenuPage !== SidePanelPages.Root) {
         goBackFromCommandMenu();
       }
     },

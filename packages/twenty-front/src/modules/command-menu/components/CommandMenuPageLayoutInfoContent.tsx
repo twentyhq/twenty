@@ -14,7 +14,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
@@ -104,7 +104,7 @@ export const CommandMenuPageLayoutInfoContent = ({
     });
 
     if (
-      commandMenuPage === CommandMenuPages.PageLayoutTabSettings &&
+      commandMenuPage === SidePanelPages.PageLayoutTabSettings &&
       isDefined(tab)
     ) {
       updatePageLayoutTab(tab.id, { title: finalTitle });

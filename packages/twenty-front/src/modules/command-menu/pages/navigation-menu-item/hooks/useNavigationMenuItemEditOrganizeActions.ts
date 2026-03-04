@@ -13,7 +13,7 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { type AddMenuItemInsertionContext } from '@/navigation-menu-item/types/AddMenuItemInsertionContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 const getAddMenuItemInsertionContext = (
   selectedItem: { id: string; folderId?: string | null },
@@ -117,7 +117,7 @@ export const useNavigationMenuItemEditOrganizeActions =
       if (!context) return;
       setAddMenuItemInsertionContext(context);
       navigateCommandMenu({
-        page: CommandMenuPages.NavigationMenuAddItem,
+        page: SidePanelPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,
         pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,

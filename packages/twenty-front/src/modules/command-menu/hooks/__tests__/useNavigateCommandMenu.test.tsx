@@ -8,7 +8,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { Icon123, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -64,7 +64,7 @@ describe('useNavigateCommandMenu', () => {
 
     act(() => {
       result.current.navigateCommandMenu({
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'Root',
         pageIcon: Icon123,
         pageIconColor: 'red',
@@ -74,11 +74,11 @@ describe('useNavigateCommandMenu', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.Root,
+      SidePanelPages.Root,
     );
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'Root',
         pageIcon: Icon123,
         pageIconColor: 'red',

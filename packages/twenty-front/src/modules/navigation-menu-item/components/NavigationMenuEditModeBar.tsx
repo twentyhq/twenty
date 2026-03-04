@@ -13,7 +13,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -61,8 +61,8 @@ export const NavigationMenuEditModeBar = () => {
     setSelectedNavigationMenuItemInEditMode(null);
     setIsNavigationMenuInEditMode(false);
     const isNavItemPageOpen =
-      commandMenuPage === CommandMenuPages.NavigationMenuAddItem ||
-      commandMenuPage === CommandMenuPages.NavigationMenuItemEdit;
+      commandMenuPage === SidePanelPages.NavigationMenuAddItem ||
+      commandMenuPage === SidePanelPages.NavigationMenuItemEdit;
     if (isNavItemPageOpen) {
       closeCommandMenu();
     }

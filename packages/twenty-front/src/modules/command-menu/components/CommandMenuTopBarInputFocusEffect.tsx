@@ -1,7 +1,7 @@
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 type CommandMenuTopBarInputFocusEffectProps = {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -14,8 +14,8 @@ export const CommandMenuTopBarInputFocusEffect = ({
 
   useEffect(() => {
     if (
-      commandMenuPage === CommandMenuPages.Root ||
-      commandMenuPage === CommandMenuPages.SearchRecords
+      commandMenuPage === SidePanelPages.Root ||
+      commandMenuPage === SidePanelPages.SearchRecords
     ) {
       inputRef.current?.focus();
     }

@@ -9,7 +9,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -83,7 +83,7 @@ describe('useCommandMenu', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'First Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: false,
@@ -91,7 +91,7 @@ describe('useCommandMenu', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.Root,
+      SidePanelPages.Root,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
       'First Page',
@@ -102,7 +102,7 @@ describe('useCommandMenu', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Second Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: false,
@@ -115,7 +115,7 @@ describe('useCommandMenu', () => {
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: 'Reset Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
@@ -123,7 +123,7 @@ describe('useCommandMenu', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.Root,
+      SidePanelPages.Root,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
       'Reset Page',

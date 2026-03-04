@@ -4,7 +4,7 @@ import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layo
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,
@@ -27,7 +27,7 @@ type PageLayoutHeaderInfo = {
 };
 
 type UsePageLayoutHeaderInfoParams = {
-  commandMenuPage: CommandMenuPages;
+  commandMenuPage: SidePanelPages;
   draftPageLayout: {
     tabs: PageLayoutTab[];
   };
@@ -47,7 +47,7 @@ export const usePageLayoutHeaderInfo = ({
   const iconColor = theme.font.color.tertiary;
 
   switch (commandMenuPage) {
-    case CommandMenuPages.PageLayoutTabSettings: {
+    case SidePanelPages.PageLayoutTabSettings: {
       if (!isDefined(openTabId)) {
         return null;
       }
@@ -75,7 +75,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case CommandMenuPages.PageLayoutIframeSettings: {
+    case SidePanelPages.PageLayoutIframeSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -105,8 +105,8 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case CommandMenuPages.PageLayoutGraphTypeSelect:
-    case CommandMenuPages.PageLayoutGraphFilter: {
+    case SidePanelPages.PageLayoutGraphTypeSelect:
+    case SidePanelPages.PageLayoutGraphFilter: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -130,7 +130,7 @@ export const usePageLayoutHeaderInfo = ({
       const graphTypeLabel = t(graphTypeInfo.label);
 
       const headerType =
-        commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
+        commandMenuPage === SidePanelPages.PageLayoutGraphFilter
           ? graphTypeLabel
           : t`Chart`;
 
@@ -145,14 +145,14 @@ export const usePageLayoutHeaderInfo = ({
         headerIconColor: iconColor,
         headerType,
         title,
-        isReadonly: commandMenuPage === CommandMenuPages.PageLayoutGraphFilter,
+        isReadonly: commandMenuPage === SidePanelPages.PageLayoutGraphFilter,
         tab: undefined,
         widgetInEditMode,
       };
     }
 
-    case CommandMenuPages.PageLayoutFieldsSettings:
-    case CommandMenuPages.PageLayoutFieldsLayout: {
+    case SidePanelPages.PageLayoutFieldsSettings:
+    case SidePanelPages.PageLayoutFieldsLayout: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -182,7 +182,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case CommandMenuPages.PageLayoutWidgetTypeSelect: {
+    case SidePanelPages.PageLayoutWidgetTypeSelect: {
       return {
         headerIcon: IconPlus,
         headerIconColor: iconColor,

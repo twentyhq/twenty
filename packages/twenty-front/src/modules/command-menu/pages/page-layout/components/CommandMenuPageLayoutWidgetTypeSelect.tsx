@@ -21,7 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,
@@ -112,7 +112,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+      commandMenuPage: SidePanelPages.PageLayoutGraphTypeSelect,
       focusTitleInput: true,
     });
   };
@@ -133,7 +133,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
+      commandMenuPage: SidePanelPages.PageLayoutIframeSettings,
       focusTitleInput: true,
     });
   };

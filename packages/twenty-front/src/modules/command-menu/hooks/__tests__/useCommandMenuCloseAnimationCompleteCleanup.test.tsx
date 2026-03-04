@@ -17,7 +17,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/display';
 
 const mockCloseDropdown = jest.fn();
@@ -87,7 +87,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      jotaiStore.set(commandMenuPageState.atom, CommandMenuPages.ViewRecord);
+      jotaiStore.set(commandMenuPageState.atom, SidePanelPages.ViewRecord);
       jotaiStore.set(commandMenuPageInfoState.atom, {
         title: 'Test Record',
         Icon: IconList,
@@ -97,7 +97,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
       jotaiStore.set(commandMenuSearchState.atom, 'test search');
       jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
-          page: CommandMenuPages.SearchRecords,
+          page: SidePanelPages.SearchRecords,
           pageTitle: 'Search',
           pageIcon: IconList,
           pageId: '1',
@@ -109,7 +109,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.ViewRecord,
+      SidePanelPages.ViewRecord,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Test Record',
@@ -120,7 +120,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('test search');
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
-        page: CommandMenuPages.SearchRecords,
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconList,
         pageId: '1',
@@ -135,7 +135,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     });
 
     expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
-      CommandMenuPages.Root,
+      SidePanelPages.Root,
     );
     expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: undefined,

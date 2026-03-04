@@ -18,7 +18,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -47,7 +47,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   }
 
   const isNavigationMenuItemEditPage =
-    pageChip.page?.page === CommandMenuPages.NavigationMenuItemEdit;
+    pageChip.page?.page === SidePanelPages.NavigationMenuItemEdit;
   const selectedNavItem = isNavigationMenuItemEditPage
     ? items.find((item) => item.id === selectedNavigationMenuItemInEditMode)
     : undefined;
@@ -71,7 +71,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
     }
   }
 
-  const isRecordPage = pageChip.page?.page === CommandMenuPages.ViewRecord;
+  const isRecordPage = pageChip.page?.page === SidePanelPages.ViewRecord;
 
   if (isRecordPage && isDefined(pageChip.page?.pageId)) {
     return (
@@ -81,9 +81,9 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
 
   const isWorkflowStepPage = pageChip.page?.page
     ? [
-        CommandMenuPages.WorkflowStepEdit,
-        CommandMenuPages.WorkflowStepView,
-        CommandMenuPages.WorkflowRunStepView,
+        SidePanelPages.WorkflowStepEdit,
+        SidePanelPages.WorkflowStepView,
+        SidePanelPages.WorkflowRunStepView,
       ].includes(pageChip.page?.page)
     : false;
 
@@ -98,13 +98,13 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
 
   const isPageLayoutPage = pageChip.page?.page
     ? [
-        CommandMenuPages.PageLayoutWidgetTypeSelect,
-        CommandMenuPages.PageLayoutGraphTypeSelect,
-        CommandMenuPages.PageLayoutGraphFilter,
-        CommandMenuPages.PageLayoutIframeSettings,
-        CommandMenuPages.PageLayoutTabSettings,
-        CommandMenuPages.PageLayoutFieldsSettings,
-        CommandMenuPages.PageLayoutFieldsLayout,
+        SidePanelPages.PageLayoutWidgetTypeSelect,
+        SidePanelPages.PageLayoutGraphTypeSelect,
+        SidePanelPages.PageLayoutGraphFilter,
+        SidePanelPages.PageLayoutIframeSettings,
+        SidePanelPages.PageLayoutTabSettings,
+        SidePanelPages.PageLayoutFieldsSettings,
+        SidePanelPages.PageLayoutFieldsLayout,
       ].includes(pageChip.page?.page)
     : false;
 
@@ -113,7 +113,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   }
 
   const isMultipleRecordsPage =
-    pageChip.page?.page === CommandMenuPages.UpdateRecords;
+    pageChip.page?.page === SidePanelPages.UpdateRecords;
 
   if (isMultipleRecordsPage && isDefined(pageChip.page?.pageId)) {
     return (
@@ -123,13 +123,13 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
     );
   }
 
-  const isAskAIPage = pageChip.page?.page === CommandMenuPages.AskAI;
+  const isAskAIPage = pageChip.page?.page === SidePanelPages.AskAI;
 
   if (isAskAIPage) {
     return <CommandMenuAskAIInfo />;
   }
 
-  if (pageChip.page?.page === CommandMenuPages.NavigationMenuAddItem) {
+  if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {
     return (
       <CommandMenuPageInfoLayout
         icon={

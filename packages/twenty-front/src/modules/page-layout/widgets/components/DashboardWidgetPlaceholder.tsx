@@ -8,7 +8,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -37,7 +37,7 @@ export const DashboardWidgetPlaceholder = () => {
       setIsPageLayoutInEditMode(true);
     }
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   };

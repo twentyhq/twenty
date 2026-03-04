@@ -1,5 +1,5 @@
 import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {
   IconAppWindow,
@@ -12,19 +12,19 @@ import {
 
 export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {
   switch (page) {
-    case CommandMenuPages.PageLayoutWidgetTypeSelect:
+    case SidePanelPages.PageLayoutWidgetTypeSelect:
       return IconAppWindow;
-    case CommandMenuPages.PageLayoutGraphTypeSelect:
+    case SidePanelPages.PageLayoutGraphTypeSelect:
       return IconChartPie;
-    case CommandMenuPages.PageLayoutIframeSettings:
+    case SidePanelPages.PageLayoutIframeSettings:
       return IconFrame;
-    case CommandMenuPages.PageLayoutGraphFilter:
+    case SidePanelPages.PageLayoutGraphFilter:
       return IconFilter;
-    case CommandMenuPages.PageLayoutTabSettings:
+    case SidePanelPages.PageLayoutTabSettings:
       return IconAppWindow;
-    case CommandMenuPages.PageLayoutFieldsSettings:
+    case SidePanelPages.PageLayoutFieldsSettings:
       return IconList;
-    case CommandMenuPages.PageLayoutFieldsLayout:
+    case SidePanelPages.PageLayoutFieldsLayout:
       return IconLayoutSidebarRight;
     default:
       assertUnreachable(page);

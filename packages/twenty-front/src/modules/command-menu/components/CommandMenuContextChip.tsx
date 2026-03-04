@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -59,7 +59,7 @@ export type CommandMenuContextChipProps = {
   maxWidth?: string;
   forceEmptyText?: boolean;
   page?: {
-    page: CommandMenuPages;
+    page: SidePanelPages;
     pageId: string;
   };
 };

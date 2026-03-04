@@ -1,6 +1,6 @@
 import {
   type AppPath,
-  type CommandMenuPages,
+  type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
 } from 'twenty-shared/types';
@@ -14,7 +14,7 @@ export type NavigateFunction = <T extends AppPath>(
 ) => Promise<void>;
 
 export type OpenSidePanelPageFunction = (params: {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: string;
   pageIcon?: string;
   shouldResetSearchState?: boolean;

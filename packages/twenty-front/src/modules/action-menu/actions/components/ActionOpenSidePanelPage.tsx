@@ -6,7 +6,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 
 export const ActionOpenSidePanelPage = ({
@@ -16,7 +16,7 @@ export const ActionOpenSidePanelPage = ({
   onClick,
   shouldResetSearchState = false,
 }: {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: MessageDescriptor;
   pageIcon: IconComponent;
   onClick?: () => void;

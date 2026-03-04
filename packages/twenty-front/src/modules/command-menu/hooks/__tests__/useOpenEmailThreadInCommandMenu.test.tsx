@@ -6,7 +6,7 @@ import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEma
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconMail } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -80,7 +80,7 @@ describe('useOpenEmailThreadInCommandMenu', () => {
     expect(result.current.viewableRecordId).toBe(emailThreadId);
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.ViewEmailThread,
+      page: SidePanelPages.ViewEmailThread,
       pageTitle: 'Email Thread',
       pageIcon: IconMail,
       pageId: 'mocked-uuid',

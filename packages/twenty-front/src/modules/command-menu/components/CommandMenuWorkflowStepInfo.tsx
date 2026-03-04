@@ -20,7 +20,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
@@ -47,8 +47,8 @@ export const CommandMenuWorkflowStepInfo = ({
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const isReadonly =
-    commandMenuPage === CommandMenuPages.WorkflowStepView ||
-    commandMenuPage === CommandMenuPages.WorkflowRunStepView;
+    commandMenuPage === SidePanelPages.WorkflowStepView ||
+    commandMenuPage === SidePanelPages.WorkflowRunStepView;
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
 

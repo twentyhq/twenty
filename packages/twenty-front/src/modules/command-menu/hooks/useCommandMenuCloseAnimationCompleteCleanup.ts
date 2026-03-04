@@ -26,7 +26,7 @@ import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workfl
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
@@ -59,10 +59,10 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
       resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
 
       const isPageLayoutEditingPage =
-        currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
-        currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-        currentPage === CommandMenuPages.PageLayoutIframeSettings ||
-        currentPage === CommandMenuPages.PageLayoutTabSettings;
+        currentPage === SidePanelPages.PageLayoutWidgetTypeSelect ||
+        currentPage === SidePanelPages.PageLayoutGraphTypeSelect ||
+        currentPage === SidePanelPages.PageLayoutIframeSettings ||
+        currentPage === SidePanelPages.PageLayoutTabSettings;
 
       if (isPageLayoutEditingPage) {
         if (
@@ -96,7 +96,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
       }
 
       store.set(viewableRecordIdState.atom, null);
-      store.set(commandMenuPageState.atom, CommandMenuPages.Root);
+      store.set(commandMenuPageState.atom, SidePanelPages.Root);
       store.set(commandMenuPageInfoState.atom, {
         title: undefined,
         Icon: undefined,

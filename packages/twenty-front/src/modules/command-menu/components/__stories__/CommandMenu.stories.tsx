@@ -37,7 +37,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -89,7 +89,7 @@ const meta: Meta<typeof CommandMenu> = {
       jotaiStore.set(isCommandMenuOpenedState.atom, true);
       jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
-          page: CommandMenuPages.Root,
+          page: SidePanelPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
           pageId: '1',

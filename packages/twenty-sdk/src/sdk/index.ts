@@ -92,7 +92,7 @@ export {
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 
-export { AppPath, CommandMenuPages } from 'twenty-shared/types';
+export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {
   EnqueueSnackbarParams,
   SnackBarVariant,

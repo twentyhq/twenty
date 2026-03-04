@@ -8,7 +8,7 @@ import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diag
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
@@ -36,7 +36,7 @@ export const useWorkflowCommandMenu = () => {
       );
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowTriggerSelectType,
+        page: SidePanelPages.WorkflowTriggerSelectType,
         pageTitle: t`Trigger Type`,
         pageIcon: IconBolt,
         pageId,
@@ -57,7 +57,7 @@ export const useWorkflowCommandMenu = () => {
       );
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowStepCreate,
+        page: SidePanelPages.WorkflowStepCreate,
         pageTitle: t`Select Action`,
         pageIcon: IconSettingsAutomation,
         pageId,
@@ -99,7 +99,7 @@ export const useWorkflowCommandMenu = () => {
       }
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowStepEdit,
+        page: SidePanelPages.WorkflowStepEdit,
         pageTitle: title,
         pageIcon: icon,
         pageId,
@@ -120,7 +120,7 @@ export const useWorkflowCommandMenu = () => {
       );
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowStepEditType,
+        page: SidePanelPages.WorkflowStepEditType,
         pageTitle: t`Select action`,
         pageIcon: IconSettingsAutomation,
         pageId,
@@ -175,7 +175,7 @@ export const useWorkflowCommandMenu = () => {
       }
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowStepView,
+        page: SidePanelPages.WorkflowStepView,
         pageTitle: title,
         pageIcon: icon,
         pageId,
@@ -229,7 +229,7 @@ export const useWorkflowCommandMenu = () => {
       );
 
       navigateCommandMenu({
-        page: CommandMenuPages.WorkflowRunStepView,
+        page: SidePanelPages.WorkflowRunStepView,
         pageTitle: title,
         pageIcon: icon,
         pageId,

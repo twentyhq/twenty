@@ -1,5 +1,5 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -16,7 +16,7 @@ export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
 
   const openUpdateMultipleRecordsPageInCommandMenu = useCallback(async () => {
     navigateCommandMenu({
-      page: CommandMenuPages.UpdateRecords,
+      page: SidePanelPages.UpdateRecords,
       pageTitle: t(msg`Update records`),
       pageIcon: IconBoxMultiple,
       pageId: contextStoreInstanceId,

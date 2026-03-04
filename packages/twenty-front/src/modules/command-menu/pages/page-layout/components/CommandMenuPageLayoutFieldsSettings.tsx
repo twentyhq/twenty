@@ -9,7 +9,7 @@ import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFie
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRight } from 'twenty-ui/display';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
@@ -55,7 +55,7 @@ export const CommandMenuPageLayoutFieldsSettings = () => {
 
   const handleNavigateToLayout = () => {
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutFieldsLayout,
+      commandMenuPage: SidePanelPages.PageLayoutFieldsLayout,
     });
   };
 

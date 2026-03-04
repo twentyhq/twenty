@@ -44,7 +44,7 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -244,7 +244,7 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+        commandMenuPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },

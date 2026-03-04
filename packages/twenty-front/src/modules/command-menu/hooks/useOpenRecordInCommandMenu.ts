@@ -17,7 +17,7 @@ import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorF
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { t } from '@lingui/core/macro';
@@ -177,7 +177,7 @@ export const useOpenRecordInCommandMenu = () => {
       const objectLabelSingular = objectMetadataItem.labelSingular;
 
       navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
+        page: SidePanelPages.ViewRecord,
         pageTitle: isNewRecord
           ? t`New ${objectLabelSingular}`
           : objectLabelSingular,

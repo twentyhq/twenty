@@ -4,7 +4,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -60,7 +60,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     upsertRecordsInStore({ partialRecords: records ?? [] });
 
     navigateCommandMenu({
-      page: CommandMenuPages.MergeRecords,
+      page: SidePanelPages.MergeRecords,
       pageTitle: t(msg`Merge records`),
       pageIcon: IconArrowMerge,
       pageId,

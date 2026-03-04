@@ -21,7 +21,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ChartSettingItemProps = {
@@ -81,7 +81,7 @@ export const ChartSettingItem = ({
 
   const handleFilterClick = () => {
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+      commandMenuPage: SidePanelPages.PageLayoutGraphFilter,
     });
   };
   if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {

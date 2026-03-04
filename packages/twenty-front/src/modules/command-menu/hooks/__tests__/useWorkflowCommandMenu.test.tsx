@@ -13,7 +13,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -133,7 +133,7 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowTriggerSelectType,
+      page: SidePanelPages.WorkflowTriggerSelectType,
       pageTitle: t`Trigger Type`,
       pageIcon: IconBolt,
       pageId: 'mocked-uuid',
@@ -150,7 +150,7 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepCreate,
+      page: SidePanelPages.WorkflowStepCreate,
       pageTitle: t`Select Action`,
       pageIcon: IconSettingsAutomation,
       pageId: 'mocked-uuid',
@@ -167,7 +167,7 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepEditType,
+      page: SidePanelPages.WorkflowStepEditType,
       pageTitle: t`Select action`,
       pageIcon: IconSettingsAutomation,
       pageId: 'mocked-uuid',
@@ -188,7 +188,7 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepEdit,
+      page: SidePanelPages.WorkflowStepEdit,
       pageTitle: 'Edit Step',
       pageIcon: IconSettingsAutomation,
       pageId: 'mocked-uuid',
@@ -213,7 +213,7 @@ describe('useWorkflowCommandMenu', () => {
     );
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepView,
+      page: SidePanelPages.WorkflowStepView,
       pageTitle: 'View Step',
       pageIcon: IconSettingsAutomation,
       pageId: 'mocked-uuid',

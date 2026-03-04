@@ -4,7 +4,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit, IconSparkles } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -29,8 +29,8 @@ export const CommandMenuTopBarRightCornerIcon = () => {
   }
 
   const isOnAskAIPage = [
-    CommandMenuPages.AskAI,
-    CommandMenuPages.ViewPreviousAIChats,
+    SidePanelPages.AskAI,
+    SidePanelPages.ViewPreviousAIChats,
   ].includes(commandMenuPage);
 
   if (!isOnAskAIPage) {

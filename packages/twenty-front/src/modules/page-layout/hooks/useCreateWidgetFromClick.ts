@@ -5,7 +5,7 @@ import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoord
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 export const useCreateWidgetFromClick = () => {
   const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
@@ -29,7 +29,7 @@ export const useCreateWidgetFromClick = () => {
       store.set(pageLayoutEditingWidgetIdState, null);
 
       navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+        commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
         resetNavigationStack: true,
       });
     },

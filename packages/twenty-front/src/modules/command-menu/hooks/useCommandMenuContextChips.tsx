@@ -10,7 +10,7 @@ import { recordStoreRecordsSelector } from '@/object-record/record-store/states/
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme';
 
@@ -53,7 +53,7 @@ export const useCommandMenuContextChips = () => {
   const contextChips = useMemo(() => {
     const filteredCommandMenuNavigationStack =
       commandMenuNavigationStack.filter(
-        (page) => page.page !== CommandMenuPages.Root,
+        (page) => page.page !== SidePanelPages.Root,
       );
 
     return filteredCommandMenuNavigationStack
@@ -61,7 +61,7 @@ export const useCommandMenuContextChips = () => {
         const isLastChip =
           index === filteredCommandMenuNavigationStack.length - 1;
 
-        const isRecordPage = page.page === CommandMenuPages.ViewRecord;
+        const isRecordPage = page.page === SidePanelPages.ViewRecord;
 
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =

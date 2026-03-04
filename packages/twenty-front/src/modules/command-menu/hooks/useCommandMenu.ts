@@ -12,7 +12,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
@@ -49,21 +49,21 @@ export const useCommandMenu = () => {
     );
     if (isNavigationMenuInEditMode && isDefined(selectedNavigationItemId)) {
       navigateCommandMenu({
-        page: CommandMenuPages.NavigationMenuItemEdit,
+        page: SidePanelPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
     } else if (isNavigationMenuInEditMode) {
       navigateCommandMenu({
-        page: CommandMenuPages.NavigationMenuAddItem,
+        page: SidePanelPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,
         pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,
       });
     } else {
       navigateCommandMenu({
-        page: CommandMenuPages.Root,
+        page: SidePanelPages.Root,
         pageTitle: t`Command Menu`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
