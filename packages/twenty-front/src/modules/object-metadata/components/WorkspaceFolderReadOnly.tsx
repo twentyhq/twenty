@@ -70,6 +70,7 @@ export const WorkspaceFolderReadOnly = ({
           className="navigation-drawer-item"
           triggerEvent="CLICK"
           preventCollapseOnMobile={isMobile}
+          alwaysShowRightOptions
           rightOptions={
             isOpen ? (
               <IconChevronDown

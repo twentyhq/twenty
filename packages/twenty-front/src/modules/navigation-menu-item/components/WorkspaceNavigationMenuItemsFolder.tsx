@@ -167,6 +167,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
       triggerEvent="CLICK"
       preventCollapseOnMobile={isMobile}
       isDragging={isDragging}
+      alwaysShowRightOptions
       rightOptions={
         isOpen ? (
           <IconChevronDown
