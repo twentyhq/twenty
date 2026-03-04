@@ -26,7 +26,11 @@ export class ConsoleListener {
   release() {
     Object.keys(this.originalConsole).forEach((method) => {
       // @ts-expect-error legacy noImplicitAny
-      console[method] = this.originalConsole[method];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console[method] = (...args: any[]) => {
+        // @ts-expect-error legacy noImplicitAny
+        this.originalConsole[method](...args);
+      };
     });
   }
 }
