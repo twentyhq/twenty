@@ -18,7 +18,6 @@ import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/availa
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -58,7 +57,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
-    private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
   ) {
@@ -426,57 +424,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       applicationUniversalIdentifier,
       queryRunner,
     );
-  }
-
-  private async computeDefaultAvatarUrlLegacy(
-    userId: string,
-    workspaceId: string,
-    isExistingUser: boolean,
-    pictureUrl?: string,
-  ) {
-    if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarUrl: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
-      });
-
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
-
-      try {
-        const [_, subFolder, filename] =
-          await this.fileService.copyFileFromWorkspaceToWorkspace(
-            userWorkspace.workspaceId,
-            userWorkspace.defaultAvatarUrl,
-            workspaceId,
-          );
-
-        return `${subFolder}/${filename}`;
-      } catch (error) {
-        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-          return;
-        }
-        throw error;
-      }
-    }
-
-    if (!isDefined(pictureUrl) || pictureUrl === '') return;
-
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload avatar');
-    }
-
-    return files[0].path;
   }
 
   private async computeDefaultAvatarUrlMigrated(

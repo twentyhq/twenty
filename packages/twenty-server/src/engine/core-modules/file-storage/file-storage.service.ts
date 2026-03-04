@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { mkdir, readdir, readFile, stat } from 'fs/promises';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
@@ -133,12 +132,6 @@ export class FileStorageService {
     });
   }
 
-  readFileLegacy(params: { filePath: string }): Promise<Readable> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.readFile(params);
-  }
-
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -160,41 +153,6 @@ export class FileStorageService {
         mimeType: undefined,
       });
     }
-  }
-
-  async readFolderLegacy(
-    folderPath: string,
-    localTempPath?: string,
-  ): Promise<Sources> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const tempDir = localTempPath || `/tmp/twenty-read-folder-${Date.now()}`;
-
-    await mkdir(tempDir, { recursive: true });
-
-    await driver.downloadFolder({
-      onStoragePath: folderPath,
-      localPath: tempDir,
-    });
-
-    return this.readLocalFolderToSources(tempDir);
-  }
-
-  private async readLocalFolderToSources(localPath: string): Promise<Sources> {
-    const sources: Sources = {};
-    const entries = await readdir(localPath);
-
-    for (const entry of entries) {
-      const entryPath = join(localPath, entry);
-      const stats = await stat(entryPath);
-
-      if (stats.isFile()) {
-        sources[entry] = await readFile(entryPath, 'utf8');
-      } else {
-        sources[entry] = await this.readLocalFolderToSources(entryPath);
-      }
-    }
-
-    return sources;
   }
 
   downloadFile(

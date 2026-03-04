@@ -1,7 +1,22 @@
 export type CodeExecutionFile = {
+  fileId: string;
   filename: string;
   url: string;
   mimeType: string;
+};
+
+export type ExtendedFileUIPart = {
+  type: 'file';
+  mediaType: string;
+  filename?: string;
+  url: string;
+  fileId: string;
+};
+
+export const isExtendedFileUIPart = (
+  part: { type: string },
+): part is ExtendedFileUIPart => {
+  return part.type === 'file';
 };
 
 export type CodeExecutionState = 'pending' | 'running' | 'completed' | 'error';

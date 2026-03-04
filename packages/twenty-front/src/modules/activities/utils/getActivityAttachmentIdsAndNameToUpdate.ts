@@ -1,4 +1,5 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { filterAttachmentsWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import {
   type AttachmentInfo,
@@ -15,9 +16,11 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
     getActivityAttachmentPathsAndName(newActivityBody);
   if (activityAttachmentsNameAndPaths.length === 0) return [];
 
+  const attachmentsWithFile = filterAttachmentsWithFile(oldActivityAttachments);
+
   return activityAttachmentsNameAndPaths.reduce(
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
-      const foundActivity = oldActivityAttachments.find((attachment) =>
+      const foundActivity = attachmentsWithFile.find((attachment) =>
         compareUrls(getAttachmentUrl({ attachment }), activity.path),
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {

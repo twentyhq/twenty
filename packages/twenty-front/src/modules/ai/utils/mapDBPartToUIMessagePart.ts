@@ -23,6 +23,7 @@ export const mapDBPartToUIMessagePart = (
         mediaType: part.fileMediaType!,
         filename: part.fileFilename!,
         url: part.fileUrl!,
+        ...(part.fileId && { fileId: part.fileId }),
       };
     case 'source-url':
       return {

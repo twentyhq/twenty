@@ -2,42 +2,64 @@ import { type AttachmentFileCategory } from '@/activities/files/types/Attachment
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
+import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { type FileUIPart } from 'ai';
+import { useCallback, useContext } from 'react';
+import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipVariant,
-  LinkChip,
-} from 'twenty-ui/components';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme';
+
+const StyledClickableContainer = styled.div<{ clickable: boolean }>`
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'inherit')};
+  display: inline-flex;
+  min-width: 0;
+`;
 
 export const AgentChatFilePreview = ({
   file,
   onRemove,
   isUploading,
 }: {
-  file: FileUIPart | File;
+  file: ExtendedFileUIPart | File;
   onRemove?: () => void;
   isUploading?: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
   const iconColors: Record<AttachmentFileCategory, string> =
     useFileCategoryColors();
+  const setFilePreview = useSetAtomState(filePreviewState);
 
   const fileName =
     file instanceof File ? file.name : (file.filename ?? t`Unknown file`);
 
   const fileUrl = file instanceof File ? undefined : file.url;
+  const fileId = file instanceof File ? undefined : file.fileId;
 
   const fileCategory: AttachmentFileCategory = getFileType(fileName);
+  const extension = fileName.split('.').pop() ?? '';
 
   const FileCategoryIcon: IconComponent = IconMapping[fileCategory];
   const iconBackgroundColor: string = iconColors[fileCategory];
+
+  const handleClick = useCallback(() => {
+    if (!isDefined(fileUrl) || !isDefined(fileId)) {
+      return;
+    }
+
+    setFilePreview({
+      fileId,
+      label: fileName,
+      extension,
+      url: fileUrl,
+      fileCategory: getFileCategoryFromExtension(extension),
+    });
+  }, [fileUrl, fileId, fileName, extension, setFilePreview]);
 
   const leftComponent = isUploading ? (
     <Loader color="yellow" />
@@ -57,31 +79,31 @@ export const AgentChatFilePreview = ({
   ) : undefined;
 
   const hasRightDivider = isDefined(onRemove);
+  const isClickable = isDefined(fileUrl) && isDefined(fileId);
 
-  if (isDefined(fileUrl)) {
-    return (
-      <LinkChip
+  const handleMouseDown = (event: React.MouseEvent): void => {
+    if (!isClickable) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    handleClick();
+  };
+
+  return (
+    <StyledClickableContainer
+      clickable={isClickable}
+      onMouseDown={handleMouseDown}
+    >
+      <Chip
         label={fileName}
         emptyLabel={t`Untitled`}
         variant={ChipVariant.Static}
-        to={fileUrl}
-        target="_blank"
+        clickable={isClickable}
         leftComponent={leftComponent}
         rightComponent={rightComponent}
         rightComponentDivider={hasRightDivider}
       />
-    );
-  }
-
-  return (
-    <Chip
-      label={fileName}
-      emptyLabel={t`Untitled`}
-      variant={ChipVariant.Static}
-      clickable={false}
-      leftComponent={leftComponent}
-      rightComponent={rightComponent}
-      rightComponentDivider={hasRightDivider}
-    />
+    </StyledClickableContainer>
   );
 };

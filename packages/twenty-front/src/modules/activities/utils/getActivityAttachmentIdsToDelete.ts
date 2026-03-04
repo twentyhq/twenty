@@ -1,4 +1,5 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { isAttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
 import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
@@ -26,10 +27,12 @@ export const getActivityAttachmentIdsToDelete = (
     .map((activity) => activity.path);
 
   return oldActivityAttachments
-    .filter((attachment) =>
-      pathsToDelete.some((pathToDelete) =>
-        compareUrls(getAttachmentUrl({ attachment }), pathToDelete),
-      ),
+    .filter(
+      (attachment) =>
+        isAttachmentWithFile(attachment) &&
+        pathsToDelete.some((pathToDelete) =>
+          compareUrls(getAttachmentUrl({ attachment }), pathToDelete),
+        ),
     )
     .map((attachment) => attachment.id);
 };
