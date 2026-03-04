@@ -37,10 +37,6 @@ const collectEntriesForValue = ({
   return [[`--${name}`, String(value)]];
 };
 
-// Collects a flat [--css-variable-name, value] list by walking a runtime
-// theme object. Used to inject custom properties onto the DOM root.
-//   { font: { color: { primary: '#333' } } }
-//   → [['--t-font-color-primary', '#333']]
 export const prepareThemeForRootCssVariableInjection = ({
   themeNode,
   prefix,
