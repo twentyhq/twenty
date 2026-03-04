@@ -59,6 +59,19 @@ export const computeTwentyORMException = async (
     }
 
     if (
+      errorCode === POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED ||
+      errorCode === POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE
+    ) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.QUERY_READ_TIMEOUT,
+        {
+          userFriendlyMessage: msg`We are experiencing a temporary issue with our database. Please try again later.`,
+        },
+      );
+    }
+
+    if (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
