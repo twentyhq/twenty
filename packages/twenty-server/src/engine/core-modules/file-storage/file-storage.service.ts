@@ -44,23 +44,6 @@ export class FileStorageService {
     ).replace(/\/+/g, '/');
   }
 
-  writeFileLegacy(params: {
-    file: string | Buffer | Uint8Array;
-    name: string;
-    folder: string;
-    mimeType: string | undefined;
-  }): Promise<void> {
-    const { file, name, folder, mimeType } = params;
-
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.writeFile({
-      filePath: `${folder}/${name}`,
-      sourceFile: file,
-      mimeType,
-    });
-  }
-
   async writeFile({
     sourceFile,
     mimeType,

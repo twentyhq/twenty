@@ -72,46 +72,6 @@ describe('FileStorageService', () => {
       mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
     });
 
-    describe('writeFileLegacy', () => {
-      it('should delegate to the current driver', async () => {
-        const writeParams = {
-          file: Buffer.from('test content'),
-          name: 'test.txt',
-          folder: 'documents',
-          mimeType: 'text/plain',
-        };
-
-        mockDriver.writeFile.mockResolvedValue(undefined);
-
-        await service.writeFileLegacy(writeParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.writeFile).toHaveBeenCalledWith({
-          filePath: 'documents/test.txt',
-          sourceFile: writeParams.file,
-          mimeType: 'text/plain',
-        });
-      });
-
-      it('should handle write errors', async () => {
-        const writeParams = {
-          file: 'test content',
-          name: 'test.txt',
-          folder: 'documents',
-          mimeType: 'text/plain',
-        };
-
-        const error = new Error('Write failed');
-
-        mockDriver.writeFile.mockRejectedValue(error);
-
-        await expect(service.writeFileLegacy(writeParams)).rejects.toThrow(
-          'Write failed',
-        );
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-      });
-    });
-
     describe('deleteLegacy', () => {
       it('should delegate to the current driver with filename', async () => {
         const deleteParams = {
