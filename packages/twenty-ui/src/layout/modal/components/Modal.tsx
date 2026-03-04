@@ -51,8 +51,7 @@ const StyledModalDiv = styled.div<{
     gap !== undefined ? `var(--t-spacing-${gap})` : 'unset'};
 
   width: ${({ isMobile, size, narrowWidth }) => {
-    if (narrowWidth)
-      return `calc(400px - ${themeCssVariables.spacing[32]})`;
+    if (narrowWidth) return `calc(400px - ${themeCssVariables.spacing[32]})`;
     if (isMobile)
       return themeCssVariables.modal.size.fullscreen.width ?? 'auto';
     switch (size) {

@@ -140,8 +140,8 @@ const StyledContainer = styled.div<
 `;
 
 const StyledRightComponentDivider = styled.div`
-  border-left: 1px solid ${themeCssVariables.border.color.light};
   align-self: stretch;
+  border-left: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const renderRightComponent = (

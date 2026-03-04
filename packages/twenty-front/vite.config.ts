@@ -16,7 +16,7 @@ import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-import { createWywProfilingPlugin } from './src/utils/vite/createWywProfilingPlugin';
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {

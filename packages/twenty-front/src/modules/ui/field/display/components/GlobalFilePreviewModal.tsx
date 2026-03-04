@@ -105,7 +105,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
           size="large"
           isClosable
           onClose={handleClose}
-          ignoreContainer
+          renderInDocumentBody
         >
           <StyledModalHeader>
             <StyledHeader>

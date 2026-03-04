@@ -122,7 +122,7 @@ export const ConfirmationModal = ({
       padding="large"
       overlay={overlay}
       dataGloballyPreventClickOutside
-      ignoreContainer
+      renderInDocumentBody
       smallBorderRadius
       narrowWidth
       autoHeight

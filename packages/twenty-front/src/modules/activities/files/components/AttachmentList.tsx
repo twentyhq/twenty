@@ -223,7 +223,7 @@ export const AttachmentList = ({
             size="large"
             isClosable
             onClose={handleClosePreview}
-            ignoreContainer
+            renderInDocumentBody
             gap={2}
             padding="small"
           >

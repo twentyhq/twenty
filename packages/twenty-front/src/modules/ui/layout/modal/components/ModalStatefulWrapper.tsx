@@ -25,7 +25,7 @@ export const ModalStatefulWrapper = ({
   overlay = 'dark',
   dataGloballyPreventClickOutside = false,
   shouldCloseModalOnClickOutsideOrEscape = true,
-  ignoreContainer = false,
+  renderInDocumentBody = false,
   gap,
   smallBorderRadius,
   narrowWidth,
@@ -35,12 +35,12 @@ export const ModalStatefulWrapper = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
 
-  const effectiveContainer = ignoreContainer
+  const effectiveContainer = renderInDocumentBody
     ? typeof document !== 'undefined'
       ? document.body
       : null
     : container;
-  const isInContainer = isDefined(container) && !ignoreContainer;
+  const isInContainer = isDefined(container) && !renderInDocumentBody;
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,

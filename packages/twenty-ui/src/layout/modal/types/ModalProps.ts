@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import { type ModalOverlay } from './ModalOverlay';
 import { type ModalPadding } from './ModalPadding';

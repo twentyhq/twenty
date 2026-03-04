@@ -23,7 +23,9 @@ export const createWywProfilingPlugin = (
   const slowFiles: { id: string; ms: number }[] = [];
   const originalTransform = wywPlugin.transform;
 
-  console.log(`[wyw] Profiling enabled (slow threshold: ${slowThresholdMs}ms)`);
+  console.log(
+    `[linaria/wyw] CSS pre-build profiling enabled (slow threshold: ${slowThresholdMs}ms)`,
+  );
 
   return {
     ...wywPlugin,
@@ -49,13 +51,13 @@ export const createWywProfilingPlugin = (
         if (elapsed > slowThresholdMs) {
           slowFiles.push({ id, ms: elapsed });
           console.log(
-            `[wyw] slow: ${id.replace(process.cwd(), '')} ${elapsed.toFixed(0)}ms`,
+            `[linaria/wyw] slow CSS pre-build: ${id.replace(process.cwd(), '')} ${elapsed.toFixed(0)}ms`,
           );
         }
 
         if (fileCount % progressIntervalFiles === 0) {
           console.log(
-            `[wyw] progress: ${fileCount} transformed, ${skippedCount} skipped, ${totalMs.toFixed(0)}ms total`,
+            `[linaria/wyw] CSS pre-build progress: ${fileCount} transformed, ${skippedCount} skipped, ${totalMs.toFixed(0)}ms total`,
           );
         }
       };
@@ -71,27 +73,29 @@ export const createWywProfilingPlugin = (
       return result;
     },
     buildEnd() {
-      console.log('\n[wyw] ===== TIMING SUMMARY =====');
-      console.log(`[wyw] Files transformed: ${fileCount}`);
-      console.log(`[wyw] Files skipped (no @linaria): ${skippedCount}`);
-      console.log(`[wyw] Transform time: ${totalMs.toFixed(0)}ms`);
+      console.log('\n[linaria/wyw] ===== CSS PRE-BUILD TIMING SUMMARY =====');
+      console.log(`[linaria/wyw] Files transformed: ${fileCount}`);
+      console.log(`[linaria/wyw] Files skipped (no @linaria): ${skippedCount}`);
+      console.log(`[linaria/wyw] Transform time: ${totalMs.toFixed(0)}ms`);
       console.log(
-        `[wyw] Avg per transformed file: ${fileCount > 0 ? (totalMs / fileCount).toFixed(1) : 0}ms`,
+        `[linaria/wyw] Avg per transformed file: ${fileCount > 0 ? (totalMs / fileCount).toFixed(1) : 0}ms`,
       );
 
       if (slowFiles.length > 0) {
-        console.log(`[wyw] Slow files (>${slowThresholdMs}ms):`);
+        console.log(
+          `[linaria/wyw] Slow CSS pre-build files (>${slowThresholdMs}ms):`,
+        );
         slowFiles
           .sort((a, b) => b.ms - a.ms)
           .slice(0, topSlowFilesCount)
-          .forEach((f) =>
+          .forEach((slowFile) =>
             console.log(
-              `[wyw]   ${f.ms.toFixed(0)}ms ${f.id.replace(process.cwd(), '')}`,
+              `[linaria/wyw]   ${slowFile.ms.toFixed(0)}ms ${slowFile.id.replace(process.cwd(), '')}`,
             ),
           );
       }
 
-      console.log('[wyw] ==============================\n');
+      console.log('[linaria/wyw] ==========================================\n');
     },
   };
 };

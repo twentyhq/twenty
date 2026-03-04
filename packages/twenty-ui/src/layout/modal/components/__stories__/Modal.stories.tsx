@@ -53,7 +53,10 @@ export const Default: Story = {
   render: (args) => (
     <Modal {...args}>
       <ModalHeader>
-        <H2Title title="Edit workspace" description="Update your workspace settings" />
+        <H2Title
+          title="Edit workspace"
+          description="Update your workspace settings"
+        />
       </ModalHeader>
       <ModalContent>
         <Section>
@@ -82,10 +85,7 @@ export const Confirmation: Story = {
   render: (args) => (
     <Modal {...args}>
       <StyledCenteredTitle>
-        <H1Title
-          title="Delete record?"
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <H1Title title="Delete record?" fontColor={H1TitleFontColor.Primary} />
       </StyledCenteredTitle>
       <StyledSection
         alignment={SectionAlignment.Center}
@@ -94,12 +94,7 @@ export const Confirmation: Story = {
         This action cannot be undone. The record and all of its data will be
         permanently removed.
       </StyledSection>
-      <Button
-        title="Cancel"
-        variant="secondary"
-        fullWidth
-        justify="center"
-      />
+      <Button title="Cancel" variant="secondary" fullWidth justify="center" />
       <Button
         title="Delete"
         variant="secondary"
