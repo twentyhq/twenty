@@ -67,7 +67,7 @@ export const THEME_DARK_CSS_VARIABLE_ENTRIES: [string, string][] = [
   ["--t-table-horizontal-cell-margin", "8px"],
   ["--t-table-checkbox-column-width", "32px"],
   ["--t-table-horizontal-cell-padding", "8px"],
-  ["--t-right-drawer-width", "500px"],
+  ["--t-side-panel-width", "500px"],
   ["--t-clickable-element-background-transition", "background 0.1s ease"],
   ["--t-last-layer-z-index", "2147483647"],
   ["--t-buttons-secondary-text-color", "color(display-p3 0.63 0.69 1)"],

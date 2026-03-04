@@ -14,7 +14,7 @@ export const useWorkflowDiagramScreenToFlowPosition = () => {
     }
 
     const visibleSidePanelWidth = Number(
-      THEME_COMMON.rightDrawerWidth.replace('px', ''),
+      THEME_COMMON.sidePanelWidth.replace('px', ''),
     );
 
     const flowPosition = screenToFlowPosition(position);
