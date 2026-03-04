@@ -75,7 +75,6 @@ export const useExecuteLogicFunction = ({
       setLogicFunctionTestData((prev) => ({
         ...prev,
         language: 'json',
-        height: 300,
         output: {
           data: executionResult?.data
             ? JSON.stringify(executionResult.data, null, 4)

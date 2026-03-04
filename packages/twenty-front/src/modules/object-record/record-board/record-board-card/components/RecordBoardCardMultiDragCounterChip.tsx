@@ -1,6 +1,6 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
 const StyledNotificationCounter = styled(NotificationCounter)`

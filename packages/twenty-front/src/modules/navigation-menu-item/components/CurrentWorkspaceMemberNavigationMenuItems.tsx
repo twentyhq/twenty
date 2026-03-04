@@ -317,7 +317,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={modalId}
+            modalInstanceId={modalId}
             title={
               folder.navigationMenuItems.length > 1
                 ? t`Remove ${navigationMenuItemCount} navigation menu items?`

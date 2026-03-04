@@ -5,15 +5,16 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled(Section)`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
   width: auto;
 `;
 

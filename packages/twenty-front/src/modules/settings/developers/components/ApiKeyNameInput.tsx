@@ -1,17 +1,18 @@
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateApiKeyMutation } from '~/generated-metadata/graphql';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeCssVariables.spacing[4]};
   }
 `;
 

@@ -1,19 +1,20 @@
 import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
 
 const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.color.red};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 export const SettingsAdminConnectedAccountHealthStatus = () => {

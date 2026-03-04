@@ -8,10 +8,11 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { ApolloError } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -140,7 +141,8 @@ export const PasswordReset = () => {
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
     useUpdatePasswordViaResetTokenMutation();
 
-  const { signInWithCredentialsInWorkspace } = useAuth();
+  const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
 
@@ -186,11 +188,15 @@ export const PasswordReset = () => {
 
       const token = readCaptchaToken();
 
-      await signInWithCredentialsInWorkspace(
-        email || '',
-        formData.newPassword,
-        token,
-      );
+      if (isOnAWorkspace) {
+        await signInWithCredentialsInWorkspace(
+          email || '',
+          formData.newPassword,
+          token,
+        );
+      } else {
+        await signInWithCredentials(email || '', formData.newPassword, token);
+      }
 
       redirect(AppPath.Index);
     } catch (err) {
@@ -206,7 +212,7 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <Modal.Content isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <StyledMainContainer>
           <AnimatedEaseIn>
             <Logo
@@ -291,7 +297,7 @@ export const PasswordReset = () => {
             )}
           </StyledContentContainer>
         </StyledMainContainer>
-      </Modal.Content>
+      </ModalContent>
     )
   );
 };

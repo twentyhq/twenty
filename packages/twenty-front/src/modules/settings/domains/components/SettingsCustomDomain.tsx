@@ -1,13 +1,14 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/components/CheckCustomDomainValidRecordsEffect';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
@@ -15,7 +16,7 @@ import { customDomainRecordsState } from '@/settings/domains/states/customDomain
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledButtonGroup = styled(ButtonGroup)`
@@ -29,10 +30,10 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledRecordsWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 
   & > :not(:first-of-type) {
-    margin-top: ${({ theme }) => theme.spacing(4)};
+    margin-top: ${themeCssVariables.spacing[4]};
   }
 `;
 

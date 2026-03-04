@@ -1,11 +1,11 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useApolloClient } from '@apollo/client';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewSort } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { useStore } from 'jotai';
 
 export const useTriggerViewSortOptimisticEffect = () => {
   const store = useStore();
@@ -21,7 +21,7 @@ export const useTriggerViewSortOptimisticEffect = () => {
     }: {
       createdViewSorts?: Omit<CoreViewSort, 'workspaceId'>[];
       updatedViewSorts?: Omit<CoreViewSort, 'workspaceId'>[];
-      deletedViewSorts?: Pick<CoreViewSort, 'id' | 'viewId'>[];
+      deletedViewSorts?: Pick<CoreViewSort, 'id'>[];
     }) => {
       const coreViews = store.get(coreViewsState.atom);
       let newCoreViews = [...coreViews];
@@ -93,40 +93,45 @@ export const useTriggerViewSortOptimisticEffect = () => {
         }
       });
 
-      deletedViewSorts.forEach(
-        (deletedViewSort: Pick<CoreViewSort, 'id' | 'viewId'>) => {
-          cache.modify<CoreViewWithRelations>({
-            id: cache.identify({
-              __typename: 'CoreView',
-              id: deletedViewSort.viewId,
-            }),
-            fields: {
-              viewSorts: (existingViewSorts, { readField }) =>
-                existingViewSorts.filter(
-                  (viewSort) =>
-                    readField('id', viewSort) !== deletedViewSort.id,
-                ),
-            },
-          });
-          const toBeModifiedCoreView = newCoreViews.find(
-            (coreView) => coreView.id === deletedViewSort.viewId,
-          );
+      deletedViewSorts.forEach((deletedViewSort: Pick<CoreViewSort, 'id'>) => {
+        const viewId = coreViews.find((coreView) =>
+          coreView.viewSorts.some(
+            (viewSort) => viewSort.id === deletedViewSort.id,
+          ),
+        )?.id;
 
-          if (isDefined(toBeModifiedCoreView)) {
-            newCoreViews = [
-              ...newCoreViews.filter(
-                (coreView) => coreView.id !== deletedViewSort.viewId,
+        if (!viewId) {
+          return;
+        }
+
+        cache.modify<CoreViewWithRelations>({
+          id: cache.identify({
+            __typename: 'CoreView',
+            id: viewId,
+          }),
+          fields: {
+            viewSorts: (existingViewSorts, { readField }) =>
+              existingViewSorts.filter(
+                (viewSort) => readField('id', viewSort) !== deletedViewSort.id,
               ),
-              {
-                ...toBeModifiedCoreView,
-                viewSorts: toBeModifiedCoreView.viewSorts.filter(
-                  (viewSort) => viewSort.id !== deletedViewSort.id,
-                ),
-              },
-            ];
-          }
-        },
-      );
+          },
+        });
+        const toBeModifiedCoreView = newCoreViews.find(
+          (coreView) => coreView.id === viewId,
+        );
+
+        if (isDefined(toBeModifiedCoreView)) {
+          newCoreViews = [
+            ...newCoreViews.filter((coreView) => coreView.id !== viewId),
+            {
+              ...toBeModifiedCoreView,
+              viewSorts: toBeModifiedCoreView.viewSorts.filter(
+                (viewSort) => viewSort.id !== deletedViewSort.id,
+              ),
+            },
+          ];
+        }
+      });
 
       if (!isDeeplyEqual(coreViews, newCoreViews)) {
         store.set(coreViewsState.atom, newCoreViews);

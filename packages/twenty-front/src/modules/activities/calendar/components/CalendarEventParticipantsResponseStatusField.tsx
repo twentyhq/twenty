@@ -2,6 +2,7 @@ import { useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -21,10 +22,7 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
-const StyledPropertyBox = styled.div`
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
+const StyledPropertyBox = styled(PropertyBox)`
   height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;

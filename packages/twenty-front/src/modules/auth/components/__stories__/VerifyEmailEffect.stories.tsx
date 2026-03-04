@@ -5,14 +5,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // Mock component that just renders the error state of VerifyEmailEffect directly
 // (since normal VerifyEmailEffect has async logic that's hard to test in Storybook)
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <EmailVerificationSent email={email} isError={true} />
-    </Modal.Content>
+    </ModalContent>
   );
 };
 
@@ -29,7 +29,7 @@ const meta: Meta<typeof VerifyEmailEffectErrorState> = {
   ],
   parameters: {
     codeSection: {
-      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmailEffect, always wrap it with Modal.Content to maintain consistent styling.',
+      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmailEffect, always wrap it with ModalContent to maintain consistent styling.',
     },
   },
 };
