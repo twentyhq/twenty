@@ -32,6 +32,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   overflow: hidden;
   padding-right: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
+  width: 100%;
   background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
     isHovered && !readonly && !disableHoverEffect
       ? themeCssVariables.background.transparent.light
