@@ -116,18 +116,27 @@ const migrateWorkflowSteps = (
     let recordChanged = false;
 
     for (const [key, value] of Object.entries(objectRecord)) {
-      if (
+      const isLegacyRelationValue =
         isDefined(value) &&
         !Array.isArray(value) &&
         typeof value === 'object' &&
         Object.keys(value).length === 1 &&
-        typeof (value as Record<string, unknown>).id === 'string'
-      ) {
-        migratedRecord[`${key}Id`] = (value as Record<string, unknown>).id;
-        recordChanged = true;
-      } else {
+        typeof (value as Record<string, unknown>).id === 'string';
+
+      if (!isLegacyRelationValue) {
         migratedRecord[key] = value;
+        continue;
       }
+
+      const joinColumnKey = `${key}Id`;
+
+      if (joinColumnKey in objectRecord) {
+        migratedRecord[key] = value;
+        continue;
+      }
+
+      migratedRecord[joinColumnKey] = (value as Record<string, unknown>).id;
+      recordChanged = true;
     }
 
     if (!recordChanged) {
