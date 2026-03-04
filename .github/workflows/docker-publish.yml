@@ -38,6 +38,16 @@ jobs:
             type=sha,prefix=,format=short
             type=raw,value=latest
 
+      - name: Extract APP_VERSION from upgrade command
+        id: app_version
+        run: |
+          VERSION=$(grep -E "'[0-9]+\.[0-9]+\.[0-9]+': commands_" \
+            packages/twenty-server/src/database/commands/upgrade-version-command/upgrade.command.ts \
+            | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" \
+            | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+          echo "Detected APP_VERSION: ${VERSION}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -47,5 +57,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             REACT_APP_SERVER_BASE_URL=https://crm.tob.sh
+            APP_VERSION=${{ steps.app_version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
