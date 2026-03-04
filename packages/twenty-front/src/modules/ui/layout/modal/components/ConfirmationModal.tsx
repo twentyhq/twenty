@@ -19,7 +19,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
-  modalId: string;
+  modalInstanceId: string;
   title: string;
   loading?: boolean;
   subtitle: ReactNode;
@@ -61,7 +61,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
 const defaultConfirmButtonText = msg`Confirm`;
 
 export const ConfirmationModal = ({
-  modalId,
+  modalInstanceId,
   title,
   loading,
   subtitle,
@@ -96,12 +96,12 @@ export const ConfirmationModal = ({
   const { closeModal } = useModal();
 
   const handleConfirmClick = () => {
-    closeModal(modalId);
+    closeModal(modalInstanceId);
     onConfirmClick();
   };
 
   const handleCancelClick = () => {
-    closeModal(modalId);
+    closeModal(modalInstanceId);
     onClose?.();
   };
 
@@ -113,7 +113,7 @@ export const ConfirmationModal = ({
 
   return (
     <ModalStatefulWrapper
-      modalId={modalId}
+      modalInstanceId={modalInstanceId}
       onClose={() => {
         onClose?.();
       }}

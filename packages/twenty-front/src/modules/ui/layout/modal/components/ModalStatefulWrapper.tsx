@@ -6,38 +6,16 @@ import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalC
 import { useModalContainer } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { type ModalStatefulWrapperProps } from '@/ui/layout/modal/types/ModalStatefulWrapperProps';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Modal,
-  type ModalOverlay,
-  type ModalPadding,
-  type ModalSize,
-} from 'twenty-ui/layout';
-
-export type ModalStatefulWrapperProps = React.PropsWithChildren & {
-  modalId: string;
-  size?: ModalSize;
-  padding?: ModalPadding;
-  onEnter?: () => void;
-  overlay?: ModalOverlay;
-  dataGloballyPreventClickOutside?: boolean;
-  shouldCloseModalOnClickOutsideOrEscape?: boolean;
-  ignoreContainer?: boolean;
-  gap?: number;
-  smallBorderRadius?: boolean;
-  narrowWidth?: boolean;
-  autoHeight?: boolean;
-} & (
-    | { isClosable: true; onClose?: () => void }
-    | { isClosable?: false; onClose?: never }
-  );
+import { Modal } from 'twenty-ui/layout';
 
 export const ModalStatefulWrapper = ({
-  modalId,
+  modalInstanceId,
   children,
   size = 'medium',
   padding = 'medium',
@@ -58,7 +36,7 @@ export const ModalStatefulWrapper = ({
   const { container } = useModalContainer();
 
   const effectiveContainer = ignoreContainer
-    ? isDefined(document)
+    ? typeof document !== 'undefined'
       ? document.body
       : null
     : container;
@@ -66,18 +44,20 @@ export const ModalStatefulWrapper = ({
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    modalId,
+    modalInstanceId,
   );
 
   const { closeModal } = useModal();
 
   const handleClose = () => {
     onClose?.();
-    if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalId);
+    if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalInstanceId);
   };
 
   return (
-    <ModalComponentInstanceContext.Provider value={{ instanceId: modalId }}>
+    <ModalComponentInstanceContext.Provider
+      value={{ instanceId: modalInstanceId }}
+    >
       <ClickOutsideListenerContext.Provider
         value={{
           excludedClickOutsideId: MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID,
@@ -85,7 +65,7 @@ export const ModalStatefulWrapper = ({
       >
         {isModalOpened && (
           <ModalHotkeysAndClickOutsideEffect
-            modalId={modalId}
+            modalInstanceId={modalInstanceId}
             modalRef={modalRef}
             onEnter={onEnter}
             isClosable={isClosable}
@@ -94,7 +74,6 @@ export const ModalStatefulWrapper = ({
         )}
         <Modal
           isOpen={isModalOpened}
-          onClose={handleClose}
           size={size}
           padding={padding}
           overlay={isInContainer ? 'light' : overlay}

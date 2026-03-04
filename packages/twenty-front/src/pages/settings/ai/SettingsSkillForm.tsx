@@ -583,7 +583,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       </SettingsPageContainer>
 
       <ConfirmationModal
-        modalId={DELETE_SKILL_MODAL_ID}
+        modalInstanceId={DELETE_SKILL_MODAL_ID}
         title={t`Delete Skill`}
         subtitle={t`Are you sure you want to delete this skill? This action cannot be undone.`}
         onConfirmClick={handleDelete}

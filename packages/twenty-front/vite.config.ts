@@ -15,9 +15,9 @@ import {
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
-type Checkers = Parameters<typeof checker>[0];
 
-const LINARIA_IMPORT_RE = /@linaria\//;
+import { createWywProfilingPlugin } from './src/utils/vite/createWywProfilingPlugin';
+type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -109,11 +109,9 @@ export default defineConfig(({ command, mode }) => {
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
       checker(checkers),
-      (() => {
-        const wywPlugin = wyw({
-          include: [
-            path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}',
-          ],
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
             '**/testing/mock-data/generated/**',
@@ -138,84 +136,8 @@ export default defineConfig(({ command, mode }) => {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
             plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
-        });
-
-        let wywTotalMs = 0;
-        let wywFileCount = 0;
-        let wywSkippedNoLinaria = 0;
-        const wywSlowFiles: { id: string; ms: number }[] = [];
-        const originalTransform = wywPlugin.transform;
-
-        return {
-          ...wywPlugin,
-          enforce: 'pre' as const,
-          transform(code: string, id: string, ...rest: unknown[]) {
-            if (!LINARIA_IMPORT_RE.test(code)) {
-              wywSkippedNoLinaria++;
-              return null;
-            }
-
-            const start = performance.now();
-            const result = (originalTransform as Function).call(
-              this,
-              code,
-              id,
-              ...rest,
-            );
-
-            const handleTiming = (elapsed: number) => {
-              wywTotalMs += elapsed;
-              wywFileCount++;
-
-              if (elapsed > 50) {
-                wywSlowFiles.push({ id, ms: elapsed });
-                console.log(
-                  `[wyw] slow: ${id.replace(process.cwd(), '')} ${elapsed.toFixed(0)}ms`,
-                );
-              }
-
-              if (wywFileCount % 50 === 0) {
-                console.log(
-                  `[wyw] progress: ${wywFileCount} transformed, ${wywSkippedNoLinaria} skipped, ${wywTotalMs.toFixed(0)}ms total`,
-                );
-              }
-            };
-
-            if (result && typeof result === 'object' && 'then' in result) {
-              return (result as Promise<unknown>).then((res) => {
-                handleTiming(performance.now() - start);
-                return res;
-              });
-            }
-
-            handleTiming(performance.now() - start);
-            return result;
-          },
-          buildEnd() {
-            console.log('\n[wyw] ===== TIMING SUMMARY =====');
-            console.log(`[wyw] Files transformed: ${wywFileCount}`);
-            console.log(`[wyw] Files skipped (no @linaria): ${wywSkippedNoLinaria}`);
-            console.log(`[wyw] Transform time: ${wywTotalMs.toFixed(0)}ms`);
-            console.log(
-              `[wyw] Avg per transformed file: ${wywFileCount > 0 ? (wywTotalMs / wywFileCount).toFixed(1) : 0}ms`,
-            );
-
-            if (wywSlowFiles.length > 0) {
-              console.log(`[wyw] Slow files (>100ms):`);
-              wywSlowFiles
-                .sort((a, b) => b.ms - a.ms)
-                .slice(0, 20)
-                .forEach((f) =>
-                  console.log(
-                    `[wyw]   ${f.ms.toFixed(0)}ms ${f.id.replace(process.cwd(), '')}`,
-                  ),
-                );
-            }
-
-            console.log('[wyw] ==============================\n');
-          },
-        };
-      })(),
+        }),
+      ),
       visualizer({
         open: true,
         gzipSize: true,

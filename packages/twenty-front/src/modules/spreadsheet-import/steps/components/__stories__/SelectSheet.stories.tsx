@@ -43,7 +43,7 @@ export const Default = () => (
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
-        modalId="select-sheet-step"
+        modalInstanceId="select-sheet-step"
         onClose={() => null}
       >
         <SelectSheetStep

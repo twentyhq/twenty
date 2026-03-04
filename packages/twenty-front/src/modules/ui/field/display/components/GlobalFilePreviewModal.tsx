@@ -101,7 +101,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
     <>
       {createPortal(
         <ModalStatefulWrapper
-          modalId={GLOBAL_FILE_PREVIEW_MODAL_ID}
+          modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
           size="large"
           isClosable
           onClose={handleClose}

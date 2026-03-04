@@ -54,7 +54,7 @@ const closeMock = fn();
 
 export const Default: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     children: (
@@ -75,7 +75,7 @@ export const Default: Story = {
 
 export const CloseClosableModalOnClickOutside: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,
@@ -106,7 +106,7 @@ export const CloseClosableModalOnClickOutside: Story = {
 
 export const CloseClosableModalOnEscape: Story = {
   args: {
-    modalId: 'modal-id',
+    modalInstanceId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,

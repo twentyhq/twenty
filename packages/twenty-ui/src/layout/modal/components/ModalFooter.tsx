@@ -22,6 +22,7 @@ export type ModalFooterProps = React.PropsWithChildren & {
   autoHeight?: boolean;
   centered?: boolean;
   smallPadding?: boolean;
+  className?: string;
 };
 
 export const ModalFooter = ({
@@ -29,11 +30,13 @@ export const ModalFooter = ({
   autoHeight,
   centered,
   smallPadding,
+  className,
 }: ModalFooterProps) => (
   <StyledFooter
     autoHeight={autoHeight}
     centered={centered}
     smallPadding={smallPadding}
+    className={className}
   >
     {children}
   </StyledFooter>

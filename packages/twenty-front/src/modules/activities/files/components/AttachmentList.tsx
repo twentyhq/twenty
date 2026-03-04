@@ -219,7 +219,7 @@ export const AttachmentList = ({
         isAttachmentPreviewEnabled &&
         createPortal(
           <ModalStatefulWrapper
-            modalId={PREVIEW_MODAL_ID}
+            modalInstanceId={PREVIEW_MODAL_ID}
             size="large"
             isClosable
             onClose={handleClosePreview}

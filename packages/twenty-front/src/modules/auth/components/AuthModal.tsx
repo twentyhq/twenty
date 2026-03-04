@@ -24,7 +24,7 @@ export const AuthModal = ({ children }: AuthModalProps) => {
     <>
       <AuthModalMountEffect />
       <ModalStatefulWrapper
-        modalId={AUTH_MODAL_ID}
+        modalInstanceId={AUTH_MODAL_ID}
         padding="none"
         size={config.size}
         overlay={config.overlay}

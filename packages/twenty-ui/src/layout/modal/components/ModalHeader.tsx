@@ -18,14 +18,16 @@ const StyledHeader = styled.div<{
 export type ModalHeaderProps = React.PropsWithChildren & {
   noPadding?: boolean;
   autoHeight?: boolean;
+  className?: string;
 };
 
 export const ModalHeader = ({
   children,
   noPadding,
   autoHeight,
+  className,
 }: ModalHeaderProps) => (
-  <StyledHeader noPadding={noPadding} autoHeight={autoHeight}>
+  <StyledHeader noPadding={noPadding} autoHeight={autoHeight} className={className}>
     {children}
   </StyledHeader>
 );

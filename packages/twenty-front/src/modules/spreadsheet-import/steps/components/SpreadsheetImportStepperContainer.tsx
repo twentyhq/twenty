@@ -10,17 +10,13 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ModalHeader } from 'twenty-ui/layout';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
-const StyledHeader = styled.div`
-  align-items: center;
+const StyledHeader = styled(ModalHeader)`
   background-color: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  display: flex;
-  flex-direction: row;
   flex-shrink: 0;
-  height: 60px;
-  overflow: hidden;
   padding: 0px ${themeCssVariables.spacing[30]};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${themeCssVariables.spacing[4]};
@@ -53,7 +49,7 @@ export const SpreadsheetImportStepperContainer = () => {
 
   return (
     <>
-      <StyledHeader>
+      <StyledHeader noPadding>
         {spreadsheetImportDialog.isStepBarVisible && (
           <StepBar activeStep={activeStep}>
             {steps.map((key) => (

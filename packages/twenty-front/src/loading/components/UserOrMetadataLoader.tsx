@@ -3,21 +3,7 @@ import { styled } from '@linaria/react';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledBackdropOverlay = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.overlayPrimary};
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  left: 0;
-  pointer-events: auto;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 39;
-  user-select: none;
-`;
+import { ModalBackdrop } from 'twenty-ui/layout';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 
@@ -43,7 +29,7 @@ export const UserOrMetadataLoader = () => {
 
   return (
     <StyledContainer>
-      {showAuthModal && <StyledBackdropOverlay />}
+      {showAuthModal && <ModalBackdrop overlay="dark" backdropZIndex={39} />}
       <LeftPanelSkeletonLoader />
       <RightPanelSkeletonLoader />
     </StyledContainer>

@@ -35,7 +35,7 @@ const meta: Meta<typeof Modal> = {
     },
     overlay: {
       control: 'select',
-      options: ['light', 'medium', 'dark', 'transparent'],
+      options: ['light', 'dark', 'transparent'],
     },
   },
 };
@@ -158,31 +158,6 @@ export const ExtraLarge: Story = {
       <ModalFooter>
         <Button title="Cancel" variant="secondary" />
         <Button title="Upload & import" variant="primary" accent="blue" />
-      </ModalFooter>
-    </Modal>
-  ),
-};
-
-export const MediumOverlay: Story = {
-  args: {
-    isOpen: true,
-    size: 'medium',
-    padding: 'none',
-    overlay: 'medium',
-  },
-  render: (args) => (
-    <Modal {...args}>
-      <ModalHeader>
-        <H2Title title="Nested action" />
-      </ModalHeader>
-      <ModalContent>
-        <Section>
-          This modal uses the medium overlay, typically shown on top of another
-          modal.
-        </Section>
-      </ModalContent>
-      <ModalFooter>
-        <Button title="Done" variant="primary" accent="blue" />
       </ModalFooter>
     </Modal>
   ),
