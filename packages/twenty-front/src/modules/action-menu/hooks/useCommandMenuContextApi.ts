@@ -32,10 +32,9 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const contextStoreCurrentObjectMetadataItemId =
-    useAtomComponentStateValue(
-      contextStoreCurrentObjectMetadataItemIdComponentState,
-    );
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -62,10 +61,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const isFavorite = (() => {
     if (!isDefined(recordId)) return false;
 
-    if (
-      isNavigationMenuItemEditingEnabled &&
-      isDefined(objectMetadataItem)
-    ) {
+    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
       return !!navigationMenuItems?.find(
         (item) =>
           item.targetRecordId === recordId &&
@@ -73,9 +69,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
       );
     }
 
-    return !!favorites?.find(
-      (favorite) => favorite.recordId === recordId,
-    );
+    return !!favorites?.find((favorite) => favorite.recordId === recordId);
   })();
 
   const selectedRecord =
@@ -112,9 +106,8 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   );
 
   const isShowPage =
-    useAtomComponentStateValue(
-      contextStoreCurrentViewTypeComponentState,
-    ) === ContextStoreViewType.ShowPage;
+    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
+    ContextStoreViewType.ShowPage;
 
   const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -155,8 +148,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
-    selectedRecord:
-      selectedRecord as CommandMenuContextApi['selectedRecord'],
+    selectedRecord: selectedRecord as CommandMenuContextApi['selectedRecord'],
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
