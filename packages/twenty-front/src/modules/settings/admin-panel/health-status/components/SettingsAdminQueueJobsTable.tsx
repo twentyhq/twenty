@@ -399,12 +399,12 @@ export const SettingsAdminQueueJobsTable = ({
       )}
 
       <SettingsAdminRetryJobsConfirmationModal
-        modalId={RETRY_MODAL_ID}
+        modalInstanceId={RETRY_MODAL_ID}
         jobCount={selectedCount > 0 ? selectedCount : failedJobs.length}
         onConfirm={confirmRetrySelected}
       />
       <SettingsAdminDeleteJobsConfirmationModal
-        modalId={DELETE_MODAL_ID}
+        modalInstanceId={DELETE_MODAL_ID}
         jobCount={selectedCount}
         onConfirm={confirmDeleteSelected}
       />

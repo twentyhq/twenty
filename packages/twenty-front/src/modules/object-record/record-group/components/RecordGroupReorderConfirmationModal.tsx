@@ -21,7 +21,7 @@ export const RecordGroupReorderConfirmationModal = ({
     <>
       {createPortal(
         <ConfirmationModal
-          modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
+          modalInstanceId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
           title={t`Group sorting`}
           subtitle={t`Would you like to remove ${recordIndexRecordGroupSort} group sorting?`}
           onConfirmClick={onConfirmClick}

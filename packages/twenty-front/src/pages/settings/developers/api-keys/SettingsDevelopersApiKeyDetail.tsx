@@ -324,7 +324,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={DELETE_API_KEY_MODAL_ID}
+        modalInstanceId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -340,7 +340,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={REGENERATE_API_KEY_MODAL_ID}
+        modalInstanceId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

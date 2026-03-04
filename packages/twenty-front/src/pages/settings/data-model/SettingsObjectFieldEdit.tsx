@@ -429,7 +429,7 @@ export const SettingsObjectFieldEdit = () => {
       </FormProvider>
       {fieldMetadataItem?.isCustom && (
         <ConfirmationModal
-          modalId={DELETE_FIELD_MODAL_ID}
+          modalInstanceId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}
           subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
           confirmButtonText={t`Delete`}

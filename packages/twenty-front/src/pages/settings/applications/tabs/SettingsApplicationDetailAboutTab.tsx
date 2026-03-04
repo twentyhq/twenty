@@ -110,7 +110,7 @@ export const SettingsApplicationDetailAboutTab = ({
           <ConfirmationModal
             confirmationPlaceholder={confirmationValue}
             confirmationValue={confirmationValue}
-            modalId={UNINSTALL_APPLICATION_MODAL_ID}
+            modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
             title={t`Uninstall Application?`}
             subtitle={
               <Trans>
