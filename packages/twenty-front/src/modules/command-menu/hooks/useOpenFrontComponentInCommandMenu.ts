@@ -1,10 +1,10 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
 import { viewableFrontComponentRecordContextComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
+import { useStore } from 'jotai';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { useStore } from 'jotai';
 
 export const useOpenFrontComponentInCommandMenu = () => {
   const store = useStore();

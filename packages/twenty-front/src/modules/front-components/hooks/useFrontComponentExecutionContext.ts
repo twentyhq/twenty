@@ -3,10 +3,7 @@ import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-sdk/front-component-renderer';
-import {
-  type AppPath,
-  type EnqueueSnackbarParams
-} from 'twenty-shared/types';
+import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';

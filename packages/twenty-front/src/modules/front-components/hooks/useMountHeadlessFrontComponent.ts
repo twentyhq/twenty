@@ -15,7 +15,7 @@ export const useMountHeadlessFrontComponent = () => {
     ) => {
       store.set(mountedHeadlessFrontComponentIdsState.atom, (previousMap) => {
         const next = new Map(previousMap);
-        next.set(frontComponentId, context ?? {});
+        next.set(frontComponentId, context ?? undefined);
         return next;
       });
     },

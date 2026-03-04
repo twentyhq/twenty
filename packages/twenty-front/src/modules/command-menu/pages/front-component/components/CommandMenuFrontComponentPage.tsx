@@ -18,7 +18,7 @@ export const CommandMenuFrontComponentPage = () => {
     viewableFrontComponentIdComponentState,
   );
 
-  const recordContext = useAtomComponentStateValue(
+  const viewableFrontComponentRecordContext = useAtomComponentStateValue(
     viewableFrontComponentRecordContextComponentState,
   );
 
@@ -29,10 +29,11 @@ export const CommandMenuFrontComponentPage = () => {
   return (
     <LayoutRenderingProvider
       value={{
-        targetRecordIdentifier: isDefined(recordContext)
+        targetRecordIdentifier: isDefined(viewableFrontComponentRecordContext)
           ? {
-              id: recordContext.recordId,
-              targetObjectNameSingular: recordContext.objectNameSingular,
+              id: viewableFrontComponentRecordContext.recordId,
+              targetObjectNameSingular:
+                viewableFrontComponentRecordContext.objectNameSingular,
             }
           : undefined,
         layoutType: PageLayoutType.DASHBOARD,

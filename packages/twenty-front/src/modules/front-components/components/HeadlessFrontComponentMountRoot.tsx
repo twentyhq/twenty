@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 
-import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,23 +13,23 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const HeadlessFrontComponentMountRoot = () => {
-  const mountedHeadlessFrontComponentMap = useAtomStateValue(
-    mountedHeadlessFrontComponentIdsState,
+  const mountedHeadlessFrontComponentMaps = useAtomStateValue(
+    mountedHeadlessFrontComponentMapsState,
   );
 
-  if (mountedHeadlessFrontComponentMap.size === 0) {
+  if (mountedHeadlessFrontComponentMaps.size === 0) {
     return null;
   }
 
   return (
     <>
-      {[...mountedHeadlessFrontComponentMap.entries()].map(
+      {[...mountedHeadlessFrontComponentMaps.entries()].map(
         ([frontComponentId, mountContext]) => (
           <Suspense key={frontComponentId} fallback={null}>
             <LayoutRenderingProvider
               value={{
                 targetRecordIdentifier:
-                  isDefined(mountContext.recordId) &&
+                  isDefined(mountContext) &&
                   isDefined(mountContext.objectNameSingular)
                     ? {
                         id: mountContext.recordId,

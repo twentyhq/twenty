@@ -1,11 +1,13 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export type HeadlessFrontComponentMountContext = {
-  recordId?: string;
-  objectNameSingular?: string;
-};
+export type HeadlessFrontComponentMountContext =
+  | {
+      recordId: string;
+      objectNameSingular: string;
+    }
+  | undefined;
 
-export const mountedHeadlessFrontComponentIdsState = createAtomState<
+export const mountedHeadlessFrontComponentMapsState = createAtomState<
   Map<string, HeadlessFrontComponentMountContext>
 >({
   key: 'mountedHeadlessFrontComponentIdsState',
