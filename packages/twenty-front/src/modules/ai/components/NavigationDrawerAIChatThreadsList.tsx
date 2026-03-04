@@ -1,16 +1,16 @@
 import { styled } from '@linaria/react';
 
-import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
 import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
 import { getDateGroupTitle } from '@/ai/utils/getDateGroupTitle';
+import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledScrollableList = styled.div`
   display: flex;
@@ -22,35 +22,43 @@ const StyledScrollableList = styled.div`
   width: calc(100% - ${themeCssVariables.spacing[2]});
 `;
 
+const StyledFetchMoreTrigger = styled.div`
+  height: 1px;
+  min-height: 1px;
+  width: 100%;
+`;
+
 export const NavigationDrawerAIChatThreadsList = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const { handleThreadClick } = useAIChatThreadClick({
     resetNavigationStack: true,
   });
 
-  const { data: { chatThreads = [] } = {}, loading } = useGetChatThreadsQuery();
-  const groupedThreads = groupThreadsByDate(chatThreads);
+  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
 
-  if (loading === true) {
+  const groupedThreads = groupThreadsByDate(threads);
+
+  if (loading && threads.length === 0) {
     return <AIChatSkeletonLoader />;
   }
 
   return (
     <StyledScrollableList>
       {DATE_GROUP_KEYS.map((key: DateGroupKey) => {
-        const threads = groupedThreads[key];
-        if (threads.length === 0) return null;
+        const threadsInGroup = groupedThreads[key];
+        if (threadsInGroup.length === 0) return null;
 
         return (
           <NavigationDrawerAIChatThreadDateSection
             key={key}
             title={getDateGroupTitle(key)}
-            threads={threads}
+            threads={threadsInGroup}
             currentThreadId={currentAIChatThread}
             onThreadClick={handleThreadClick}
           />
         );
       })}
+      {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
     </StyledScrollableList>
   );
 };
