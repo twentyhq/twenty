@@ -6398,6 +6398,7 @@ msgstr "Mapper"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Glemt din adgangskode?"
 
@@ -7381,11 +7382,6 @@ msgstr "Ugyldig URL. Klik på rediger for at konfigurere denne widget."
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Ugyldig verifikationskode. Prøv venligst igen."
-
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Ugyldigt arbejdsområde"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx

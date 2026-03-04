@@ -2855,6 +2855,11 @@ msgstr "트리거 유형이 제공되지 않았습니다"
 msgid "No valid authentication context found."
 msgstr "유효한 인증 컨텍스트를 찾을 수 없습니다."
 
+#. js-lingui-id: AzXrd9
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "No workspace found with password auth enabled."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -3196,6 +3201,11 @@ msgstr ""
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
+msgstr ""
+
+#. js-lingui-id: cd6AP5
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
 msgstr ""
 
 #. js-lingui-id: wT0H4O
@@ -4362,6 +4372,7 @@ msgstr "사용자가 작업 공간에 속하지 않습니다"
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "User not found."
 msgstr "사용자를 찾을 수 없음."
 

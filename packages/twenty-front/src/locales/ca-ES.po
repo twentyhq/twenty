@@ -6398,6 +6398,7 @@ msgstr "Carpetes"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Has oblidat la teva contrasenya?"
 
@@ -7381,11 +7382,6 @@ msgstr "URL invàlida. Feu clic a editar per configurar aquest widget."
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Codi de verificació no vàlid. Torna-ho a intentar."
-
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Espai de treball no vàlid"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
