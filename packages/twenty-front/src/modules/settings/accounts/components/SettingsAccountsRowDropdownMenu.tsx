@@ -137,7 +137,7 @@ export const SettingsAccountsRowDropdownMenu = ({
         }
       />
       <ConfirmationModal
-        modalId={deleteAccountModalId}
+        modalInstanceId={deleteAccountModalId}
         title={t`Data deletion`}
         subtitle={
           <Trans>

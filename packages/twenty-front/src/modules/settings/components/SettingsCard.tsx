@@ -1,11 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;
@@ -22,21 +23,23 @@ const StyledCard = styled(Card)<{
   disabled?: boolean;
   onClick?: () => void;
 }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
   width: 100%;
 `;
 
-const StyledCardContent = styled(CardContent)<object>`
+const StyledCardContent = styled(CardContent)`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2, 2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
+    background-color: ${themeCssVariables.background.quaternary};
     cursor: pointer;
   }
 `;
@@ -44,26 +47,28 @@ const StyledCardContent = styled(CardContent)<object>`
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? 'inherit' : theme.font.color.secondary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.secondary};
   display: flex;
   flex: 1 0 auto;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 const StyledDescription = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[7]};
 `;
 
 const StyledIconContainer = styled.div`
@@ -84,7 +89,7 @@ export const SettingsCard = ({
   className,
   Status,
 }: SettingsCardProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledCard

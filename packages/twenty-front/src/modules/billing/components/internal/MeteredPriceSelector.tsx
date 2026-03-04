@@ -183,7 +183,7 @@ export const MeteredPriceSelector = ({
         )}
       </StyledRow>
       <ConfirmationModal
-        modalId={confirmModalId}
+        modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
         subtitle={t`Confirm changing your current credit plan.`}
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}

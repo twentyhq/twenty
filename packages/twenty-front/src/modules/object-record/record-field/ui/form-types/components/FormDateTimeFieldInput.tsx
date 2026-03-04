@@ -18,11 +18,12 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Nullable } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled(FormFieldInputInnerContainer)`
@@ -35,7 +36,7 @@ const StyledInputContainer = styled(FormFieldInputInnerContainer)`
 
 const StyledDateInputAbsoluteContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(1)};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDateInputTextContainer = styled.div`

@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';

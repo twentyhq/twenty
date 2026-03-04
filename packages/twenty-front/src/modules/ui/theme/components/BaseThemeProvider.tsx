@@ -1,4 +1,3 @@
-import { ThemeProvider } from '@emotion/react';
 import { createContext } from 'react';
 
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
@@ -32,9 +31,7 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
 
   return (
     <ThemeSchemeContext.Provider value={setPersistedColorScheme}>
-      <ThemeProvider theme={theme}>
-        <ThemeContextProvider theme={theme}>{children}</ThemeContextProvider>
-      </ThemeProvider>
+      <ThemeContextProvider theme={theme}>{children}</ThemeContextProvider>
     </ThemeSchemeContext.Provider>
   );
 };

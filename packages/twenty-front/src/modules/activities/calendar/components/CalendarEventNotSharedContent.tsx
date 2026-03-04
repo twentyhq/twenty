@@ -2,20 +2,19 @@ import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/display';
+import { Card, CardContent } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledVisibilityCard = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledVisibilityCard = styled(Card)`
   color: ${themeCssVariables.font.color.light};
   flex: 1;
-  overflow: hidden;
+  border-color: ${themeCssVariables.border.color.light};
   transition: color ${themeCssVariables.animation.duration.normal} ease;
   width: 100%;
 `;
 
-const StyledVisibilityCardContent = styled.div`
+const StyledVisibilityCardContent = styled(CardContent)`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   box-sizing: border-box;

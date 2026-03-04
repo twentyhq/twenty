@@ -22,8 +22,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

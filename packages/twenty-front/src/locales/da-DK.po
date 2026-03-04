@@ -5026,10 +5026,10 @@ msgstr "E-mails"
 msgid "Emails and Calendar"
 msgstr "E-mails og kalender"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "E-mails fra blokeringslisten vil blive ignoreret. Administrer blokeringslisten på siden \"Konti\" indstillinger."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
