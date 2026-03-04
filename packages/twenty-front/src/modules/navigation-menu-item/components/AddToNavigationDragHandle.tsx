@@ -12,7 +12,10 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 
-const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
+const StyledIconSlot = styled.div<{
+  $hasFixedSize: boolean;
+  $disabled?: boolean;
+}>`
   align-items: center;
   cursor: grab;
   display: flex;
@@ -22,6 +25,7 @@ const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
   width: ${({ $hasFixedSize }) =>
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
   &:active {
     cursor: grabbing;
@@ -64,6 +68,7 @@ type AddToNavigationDragHandleProps = {
   customIconContent?: ReactNode;
   payload: AddToNavigationDragPayload;
   isHovered: boolean;
+  disabled?: boolean;
 };
 
 export const AddToNavigationDragHandle = ({
@@ -71,6 +76,7 @@ export const AddToNavigationDragHandle = ({
   customIconContent,
   payload,
   isHovered,
+  disabled = false,
 }: AddToNavigationDragHandleProps) => {
   const { theme } = useContext(ThemeContext);
   const effectiveColor =
@@ -90,6 +96,7 @@ export const AddToNavigationDragHandle = ({
   return (
     <StyledIconSlot
       $hasFixedSize={hasBackgroundColor || showCustomContentWithoutWrapper}
+      $disabled={disabled}
     >
       {isHovered ? (
         <IconGripVertical

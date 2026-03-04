@@ -27,14 +27,16 @@ type CommandMenuItemWithAddToNavigationDragProps = {
   onClick: () => void;
   payload: AddToNavigationDragPayload;
   dragIndex?: number;
+  disabled?: boolean;
 };
 
-const StyledDraggableMenuItem = styled.div`
-  cursor: grab;
+const StyledDraggableMenuItem = styled.div<{ $disabled?: boolean }>`
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'grab')};
   width: 100%;
+  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
 
   &:active {
-    cursor: grabbing;
+    cursor: ${({ $disabled }) => ($disabled ? 'default' : 'grabbing')};
   }
 `;
 
@@ -47,6 +49,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   onClick,
   payload,
   dragIndex,
+  disabled = false,
 }: CommandMenuItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
   const setAddToNavPayloadRegistry = useSetAtomState(
@@ -54,32 +57,40 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   );
   const [isHovered, setIsHovered] = useState(false);
 
-  const contextualDescription = isHovered
-    ? t`Drag to add to navbar`
-    : description;
+  const contextualDescription = disabled
+    ? description
+    : isHovered
+      ? t`Drag to add to navbar`
+      : description;
 
   const DragHandleIcon = () => (
     <AddToNavigationDragHandle
       icon={icon}
       customIconContent={customIconContent}
       payload={payload}
-      isHovered={isHovered}
+      isHovered={!disabled && isHovered}
+      disabled={disabled}
     />
   );
 
   const registerPayload = () => {
-    if (isDefined(dragIndex)) {
+    if (!disabled && isDefined(dragIndex)) {
       setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
     }
   };
 
   const menuItemContent = (
     <StyledDraggableMenuItem
+      $disabled={disabled}
       onMouseEnter={() => {
-        setIsHovered(true);
-        registerPayload();
+        if (!disabled) {
+          setIsHovered(true);
+          registerPayload();
+        }
       }}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        if (!disabled) setIsHovered(false);
+      }}
       onMouseDown={registerPayload}
     >
       <CommandMenuItem
@@ -88,6 +99,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
         description={contextualDescription}
         id={id}
         onClick={onClick}
+        disabled={disabled}
       />
     </StyledDraggableMenuItem>
   );
