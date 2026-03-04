@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const isSidePanelOpenedState = createAtomState<boolean>({
-  key: 'command-menu/isSidePanelOpenedState',
+  key: 'side-panel/isSidePanelOpenedState',
   defaultValue: false,
 });

@@ -4,6 +4,6 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export const sidePanelNavigationMorphItemsByPageState = createAtomState<
   Map<string, MorphItem[]>
 >({
-  key: 'command-menu/sidePanelNavigationMorphItemsByPageState',
+  key: 'side-panel/sidePanelNavigationMorphItemsByPageState',
   defaultValue: new Map(),
 });

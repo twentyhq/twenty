@@ -13,6 +13,6 @@ export type SidePanelNavigationStackItem = {
 export const sidePanelNavigationStackState = createAtomState<
   SidePanelNavigationStackItem[]
 >({
-  key: 'command-menu/sidePanelNavigationStackState',
+  key: 'side-panel/sidePanelNavigationStackState',
   defaultValue: [],
 });

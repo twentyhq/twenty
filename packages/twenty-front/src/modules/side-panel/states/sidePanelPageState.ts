@@ -2,6 +2,6 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 import { SidePanelPages } from 'twenty-shared/types';
 
 export const sidePanelPageState = createAtomState<SidePanelPages>({
-  key: 'command-menu/sidePanelPageState',
+  key: 'side-panel/sidePanelPageState',
   defaultValue: SidePanelPages.Root,
 });
