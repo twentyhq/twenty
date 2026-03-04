@@ -5,12 +5,10 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const ACTIVE_SUBSCRIPTION_STATUSES = ['active', 'trialing'];
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { enterpriseKey, returnUrl, billingInterval } = body;
+    const { enterpriseKey, returnUrl } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return new Response(

@@ -251,12 +251,6 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsEnterprise = lazy(() =>
-  import('~/pages/settings/enterprise/SettingsEnterprise').then((module) => ({
-    default: module.SettingsEnterprise,
-  })),
-);
-
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
