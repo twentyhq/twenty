@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { ResizeHandle, useResizableEditor } from 'twenty-ui/input';
+import { ResizeHandle } from 'twenty-ui/layout';
+import { useResizableEditor } from 'twenty-ui/input';
 import { TextArea } from '@/ui/input/components/TextArea';
 
 type LogicFunctionLogsProps = {

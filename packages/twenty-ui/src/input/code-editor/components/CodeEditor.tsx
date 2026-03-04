@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
-import { ResizeHandle } from '@ui/input/code-editor/components/ResizeHandle';
+import { ResizeHandle } from '@ui/layout/resize-handle/components/ResizeHandle';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { useResizableEditor } from '@ui/input/code-editor/hooks/useResizableEditor';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';

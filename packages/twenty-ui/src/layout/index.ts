@@ -39,6 +39,7 @@ export { Card } from './card/components/Card';
 export { CardContent } from './card/components/CardContent';
 export { CardFooter } from './card/components/CardFooter';
 export { CardHeader } from './card/components/CardHeader';
+export { ResizeHandle } from './resize-handle/components/ResizeHandle';
 export {
   SectionAlignment,
   SectionFontColor,

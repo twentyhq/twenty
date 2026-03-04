@@ -1,12 +1,6 @@
 import { styled } from '@linaria/react';
-import { type PointerEvent } from 'react';
+import { type HTMLAttributes } from 'react';
 import { themeCssVariables } from '@ui/theme-constants';
-
-type ResizeHandleProps = {
-  onPointerDown: (event: PointerEvent) => void;
-  onPointerMove: (event: PointerEvent) => void;
-  onPointerUp: (event: PointerEvent) => void;
-};
 
 const StyledResizeHandleArea = styled.div`
   align-items: center;
@@ -29,16 +23,8 @@ const StyledResizeHandleBar = styled.div`
   width: 32px;
 `;
 
-export const ResizeHandle = ({
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-}: ResizeHandleProps) => (
-  <StyledResizeHandleArea
-    onPointerDown={onPointerDown}
-    onPointerMove={onPointerMove}
-    onPointerUp={onPointerUp}
-  >
+export const ResizeHandle = (props: HTMLAttributes<HTMLDivElement>) => (
+  <StyledResizeHandleArea {...props}>
     <StyledResizeHandleBar />
   </StyledResizeHandleArea>
 );
