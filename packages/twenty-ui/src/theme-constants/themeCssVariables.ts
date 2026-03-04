@@ -1,3 +1,5 @@
+// This file is generated from packages/twenty-ui/src/theme/constants/.
+// Do not edit manually — regenerate by running the generation script.
 export const themeCssVariables = {
   icon: {
     size: {
