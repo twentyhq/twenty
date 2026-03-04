@@ -1531,6 +1531,9 @@ msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 msgid "An error occurred"
 msgstr "حدث خطأ"
 
@@ -1556,6 +1559,7 @@ msgstr "حدث خطأ أثناء تحميل الصورة."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -14253,6 +14257,11 @@ msgstr ""
 #. js-lingui-id: mzftV9
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
+msgstr ""
+
+#. js-lingui-id: 4y776f
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view sort"
 msgstr ""
 
 #. js-lingui-id: FNDoRH
