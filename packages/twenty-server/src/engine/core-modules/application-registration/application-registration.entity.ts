@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -44,6 +45,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 )
 @Index('IDX_APPLICATION_REGISTRATION_CREATED_BY_USER_ID', ['createdByUserId'])
 @Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['ownerWorkspaceId'])
+@Check(
+  'CHK_NPM_HAS_SOURCE_PACKAGE',
+  `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,
+)
 export class ApplicationRegistrationEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
