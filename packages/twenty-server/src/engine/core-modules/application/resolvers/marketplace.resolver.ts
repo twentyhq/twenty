@@ -47,9 +47,8 @@ export class MarketplaceResolver {
       this.logger.log(
         'No marketplace registrations found, triggering initial catalog sync',
       );
-      this.hasSyncedOnce = true;
-
       await this.marketplaceCatalogSyncService.syncCatalog();
+      this.hasSyncedOnce = true;
 
       registrations = await this.appRegistrationRepository.find({
         where: { sourceType: AppRegistrationSourceType.NPM },

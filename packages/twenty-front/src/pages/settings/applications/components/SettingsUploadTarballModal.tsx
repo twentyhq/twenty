@@ -46,11 +46,14 @@ export const SettingsUploadTarballModal = () => {
     const uploadResult = await upload(file);
 
     if (uploadResult.success) {
-      await install({
+      const installResult = await install({
         universalIdentifier: uploadResult.universalIdentifier,
       });
-      await refetch();
-      closeModal(UPLOAD_TARBALL_MODAL_ID);
+
+      if (installResult) {
+        await refetch();
+        closeModal(UPLOAD_TARBALL_MODAL_ID);
+      }
     }
 
     if (isDefined(fileInputRef.current)) {

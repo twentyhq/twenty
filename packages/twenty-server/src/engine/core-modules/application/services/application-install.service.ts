@@ -197,6 +197,10 @@ export class ApplicationInstallService {
         continue;
       }
 
+      if (entry.isSymbolicLink()) {
+        continue;
+      }
+
       if (entry.isDirectory()) {
         const subFiles = await this.collectFiles(fullPath);
 
@@ -218,6 +222,7 @@ export class ApplicationInstallService {
       case AppRegistrationSourceType.TARBALL:
         return 'tarball';
       case AppRegistrationSourceType.NONE:
+      default:
         return 'local';
     }
   }

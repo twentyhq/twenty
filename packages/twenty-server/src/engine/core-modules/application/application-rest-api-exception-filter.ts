@@ -52,6 +52,7 @@ export class ApplicationRestApiExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
+      default:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

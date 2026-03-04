@@ -64,23 +64,18 @@ export class AppPushCommand {
 
     console.log(chalk.gray(`Uploading ${path.basename(tarballPath)}...`));
 
-    const formData = new FormData();
     const fileBuffer = fs.readFileSync(tarballPath);
-
-    formData.append(
-      'file',
-      new Blob([fileBuffer], { type: 'application/gzip' }),
-      path.basename(tarballPath),
-    );
+    const base64 = fileBuffer.toString('base64');
 
     const response = await fetch(
-      `${serverUrl}/api/application-registrations/upload-tarball`,
+      `${serverUrl}/api/app-registrations/upload-tarball`,
       {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify({ tarball: base64 }),
       },
     );
 

@@ -98,7 +98,17 @@ export class AppRegistrationUploadController {
 
       const manifestPath = await this.extractAndValidate(tarballPath, tempDir);
       const manifestContent = await fs.readFile(manifestPath, 'utf-8');
-      const manifest = JSON.parse(manifestContent);
+
+      let manifest: Record<string, unknown>;
+
+      try {
+        manifest = JSON.parse(manifestContent) as Record<string, unknown>;
+      } catch {
+        throw new ApplicationException(
+          'manifest.json contains invalid JSON',
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
 
       const universalIdentifier =
         body.universalIdentifier ?? manifest.application?.universalIdentifier;
@@ -131,7 +141,7 @@ export class AppRegistrationUploadController {
         appRegistration = this.appRegistrationRepository.create({
           universalIdentifier,
           name: manifest.application?.displayName ?? 'Unknown App',
-          sourceType: AppRegistrationSourceType.NONE,
+          sourceType: AppRegistrationSourceType.TARBALL,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],

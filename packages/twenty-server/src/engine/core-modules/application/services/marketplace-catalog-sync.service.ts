@@ -116,7 +116,10 @@ export class MarketplaceCatalogSyncService {
     workspaceId: string;
   }): Promise<void> {
     const existing = await this.appRegistrationRepository.findOne({
-      where: { universalIdentifier: params.universalIdentifier },
+      where: {
+        universalIdentifier: params.universalIdentifier,
+        workspaceId: params.workspaceId,
+      },
     });
 
     if (isDefined(existing)) {

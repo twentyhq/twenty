@@ -1,3 +1,5 @@
+import { resolve, sep } from 'path';
+
 import * as tar from 'tar';
 
 import {
@@ -12,12 +14,15 @@ export const extractTarballSecurely = async (
   targetDir: string,
 ): Promise<void> => {
   let totalExtractedSize = 0;
+  const resolvedTarget = resolve(targetDir) + sep;
 
   await tar.extract({
     file: tarballPath,
     cwd: targetDir,
     filter: (entryPath, entry) => {
-      if (entryPath.includes('..')) {
+      const resolvedEntry = resolve(targetDir, entryPath);
+
+      if (!resolvedEntry.startsWith(resolvedTarget)) {
         return false;
       }
 

@@ -246,7 +246,7 @@ export class AppPackageResolverService {
       return JSON.parse(content) as Manifest;
     } catch {
       throw new ApplicationException(
-        `manifest.json not found at ${manifestPath}`,
+        'manifest.json not found in resolved package',
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
@@ -261,7 +261,7 @@ export class AppPackageResolverService {
       return JSON.parse(content) as PackageJson;
     } catch {
       throw new ApplicationException(
-        `package.json not found at ${packageJsonPath}`,
+        'package.json not found in resolved package',
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }

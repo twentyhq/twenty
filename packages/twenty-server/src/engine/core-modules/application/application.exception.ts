@@ -44,7 +44,7 @@ const getApplicationExceptionUserFriendlyMessage = (
     case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
       return msg`Source channel mismatch.`;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
-      return msg`Failed to resolve app package.`;
+      return msg`Unable to retrieve the application package.`;
     case ApplicationExceptionCode.INSTALL_LOCK_TIMEOUT:
       return msg`Another installation is in progress.`;
     case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:

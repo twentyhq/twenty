@@ -40,8 +40,12 @@ export class AppUpgradeService {
       this.twentyConfigService.get('APP_REGISTRY_URL');
 
     try {
+      const encodedPackage = encodeURIComponent(
+        appRegistration.sourcePackage!,
+      );
+
       const response = await fetch(
-        `${registryUrl}/${appRegistration.sourcePackage}/latest`,
+        `${registryUrl}/${encodedPackage}/latest`,
         {
           headers: { 'User-Agent': 'Twenty-AppUpgrade' },
           signal: AbortSignal.timeout(10_000),
