@@ -50,7 +50,7 @@ export const useProcessTreadmillScrollTop = () => {
 
       const numberOfRowsDisplayedInTable = Math.min(
         Math.floor(tableScrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
-        30,
+        40,
       );
 
       const halfNumberOfRowsVisible = Math.floor(

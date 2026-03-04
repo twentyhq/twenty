@@ -5026,10 +5026,10 @@ msgstr "E-postalar"
 msgid "Emails and Calendar"
 msgstr "E-postalar ve Takvim"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Engellenenler listesindeki e-postalar yok sayılacaktır. “Hesaplar” ayar sayfasında engellenenleri yönetin."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

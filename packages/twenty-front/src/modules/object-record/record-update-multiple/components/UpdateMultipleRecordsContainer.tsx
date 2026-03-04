@@ -5,9 +5,10 @@ import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-m
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -21,8 +22,8 @@ const StyledShowPageRightContainer = styled.div`
 const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  background: ${themeCssVariables.background.primary};
+  padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 
 export type UpdateMultipleRecordsState = Record<string, any>;

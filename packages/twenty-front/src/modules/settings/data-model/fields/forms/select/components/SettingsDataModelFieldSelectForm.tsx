@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,9 +29,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -44,6 +43,8 @@ import {
 import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -75,29 +76,30 @@ const StyledOptionsLabel = styled.div<{
   isAdvancedModeEnabled: boolean;
   isBulkInputMode: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing['1.5']};
+  margin-top: ${themeCssVariables.spacing[1]};
   width: 100%;
-  margin-left: ${({ theme, isAdvancedModeEnabled, isBulkInputMode }) =>
-    theme.spacing(isAdvancedModeEnabled && !isBulkInputMode ? 10 : 0)};
-};
+  margin-left: ${({ isAdvancedModeEnabled, isBulkInputMode }) =>
+    isAdvancedModeEnabled && !isBulkInputMode
+      ? themeCssVariables.spacing[10]
+      : themeCssVariables.spacing[0]};
 `;
 
 const StyledApiKeyContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledApiKey = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing['1.5']};
+  margin-top: ${themeCssVariables.spacing[1]};
   width: 100%;
 
   white-space: nowrap;
@@ -111,20 +113,20 @@ const StyledLabelContainer = styled.div`
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  border-right: 1px solid ${({ theme }) => theme.color.yellow};
+  border-right: 1px solid ${themeCssVariables.color.yellow};
   display: flex;
 
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${themeCssVariables.spacing['1.5']};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconPoint = styled(IconPoint)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
+  margin-right: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledFooter = styled(CardFooter)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding: ${({ theme }) => theme.spacing(1)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButton = styled(LightButton)`
@@ -136,20 +138,20 @@ const StyledOptionsHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${themeCssVariables.spacing['1.5']};
+  margin-top: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 const StyledTextAreaContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHelpText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  margin-top: ${themeCssVariables.spacing[1]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsDataModelFieldSelectForm = ({
@@ -300,7 +302,7 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <>

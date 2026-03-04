@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
@@ -8,9 +8,9 @@ import {
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
-import { css } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
@@ -19,34 +19,31 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   > & { isHovered?: boolean }
 >`
   outline: 1px solid
-    ${({ theme, isHovered, readonly }) =>
-      isHovered && readonly ? theme.border.color.medium : 'transparent'};
+    ${({ isHovered, readonly }) =>
+      isHovered && readonly
+        ? themeCssVariables.border.color.medium
+        : 'transparent'};
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   height: ${({ isDisplayModeFixHeight }) =>
     isDisplayModeFixHeight ? '16px' : 'auto'};
   min-height: 16px;
   overflow: hidden;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  ${(props) => {
-    if (props.isHovered === true && !props.readonly) {
-      return css`
-        background-color: ${!props.disableHoverEffect
-          ? props.theme.background.transparent.light
-          : 'transparent'};
-
-        cursor: pointer;
-      `;
-    }
-  }}
+  padding-right: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
+  background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
+    isHovered && !readonly && !disableHoverEffect
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  cursor: ${({ isHovered, readonly }) =>
+    isHovered && !readonly ? 'pointer' : 'default'};
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-content: center;
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   height: fit-content;
 
   overflow: hidden;
@@ -59,7 +56,7 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
 
 const StyledEmptyField = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   height: 20px;
 `;

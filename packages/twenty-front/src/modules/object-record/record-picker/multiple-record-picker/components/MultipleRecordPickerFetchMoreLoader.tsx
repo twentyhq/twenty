@@ -14,19 +14,20 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useStore } from 'jotai';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${({ theme }) => theme.grayScale.gray9};
+  color: ${themeCssVariables.grayScale.gray9};
   display: flex;
   height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(8)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${themeCssVariables.spacing[8]};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIntersectionObserver = styled.div`
