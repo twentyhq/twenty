@@ -18,8 +18,6 @@ import {
 } from '@nivo/radial-bar';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetGaugeChartProps = {
   data: GaugeChartData;
@@ -71,8 +69,7 @@ export const GraphWidgetGaugeChart = ({
   customFormatter,
   onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
-  const { theme } = useContext(ThemeContext);
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
