@@ -1,3 +1,5 @@
+import { isDefined } from '@/utils/validation/isDefined';
+
 export type CodeExecutionFile = {
   fileId: string;
   filename: string;
@@ -15,8 +17,16 @@ export type ExtendedFileUIPart = {
 
 export const isExtendedFileUIPart = (part: {
   type: string;
+  fileId: string;
+  url: string;
+  mediaType: string;
 }): part is ExtendedFileUIPart => {
-  return part.type === 'file';
+  return (
+    part.type === 'file' &&
+    isDefined(part.fileId) &&
+    isDefined(part.url) &&
+    isDefined(part.mediaType)
+  );
 };
 
 export type CodeExecutionState = 'pending' | 'running' | 'completed' | 'error';

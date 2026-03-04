@@ -6,18 +6,27 @@ export type FieldFilesValueWithUrl = FieldFilesValue & {
   url: string;
 };
 
-export type AttachmentWithFile = Attachment & {
+type AttachmentWithFiles = Attachment & {
   file: [FieldFilesValueWithUrl, ...FieldFilesValueWithUrl[]];
 };
 
-export const isAttachmentWithFile = (
-  attachment: Attachment,
-): attachment is AttachmentWithFile => {
-  return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0]?.url);
+export type AttachmentWithFile = Omit<Attachment, 'file'> & {
+  file: FieldFilesValueWithUrl;
 };
+
+const hasFile = (attachment: Attachment): attachment is AttachmentWithFiles => {
+  return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0]);
+};
+
+const normalizeAttachment = (
+  attachment: AttachmentWithFiles,
+): AttachmentWithFile => ({
+  ...attachment,
+  file: attachment.file[0],
+});
 
 export const filterAttachmentsWithFile = (
   attachments: Attachment[],
 ): AttachmentWithFile[] => {
-  return attachments.filter(isAttachmentWithFile);
+  return attachments.filter(hasFile).map(normalizeAttachment);
 };

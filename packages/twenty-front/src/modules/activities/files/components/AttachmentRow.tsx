@@ -1,7 +1,6 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
@@ -17,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -89,16 +89,14 @@ export const AttachmentRow = ({
   );
 
   const { name: originalFileName, extension: attachmentFileExtension } =
-    getFileNameAndExtension(attachment.file[0].label);
+    getFileNameAndExtension(attachment.file.label);
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
 
-  const fileCategory = getFileCategoryFromExtension(
-    attachment.file[0].extension,
-  );
+  const fileCategory = getFileCategoryFromExtension(attachment.file.extension);
 
-  const fileUrl = attachment.file[0].url;
+  const fileUrl = attachment.file.url;
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -124,16 +122,12 @@ export const AttachmentRow = ({
       idToUpdate: attachment.id,
       updateOneRecordInput: {
         name: newFileName,
-        ...(isDefined(attachment.file[0])
-          ? {
-              file: [
-                {
-                  fileId: attachment.file[0].fileId,
-                  label: newFileName,
-                },
-              ],
-            }
-          : {}),
+        file: [
+          {
+            fileId: attachment.file.fileId,
+            label: newFileName,
+          },
+        ],
       },
     });
   };

@@ -25,6 +25,7 @@ import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/u
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
