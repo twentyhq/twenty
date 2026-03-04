@@ -53,12 +53,21 @@ export class AppTarballUploadService {
 
       const contentDir = await resolvePackageContentDir(extractDir);
 
-      const manifest = await readJsonFile<{
+      let manifest: {
         application?: {
           universalIdentifier?: string;
           displayName?: string;
         };
-      }>(contentDir, 'manifest.json');
+      };
+
+      try {
+        manifest = await readJsonFile(contentDir, 'manifest.json');
+      } catch {
+        throw new ApplicationRegistrationException(
+          'manifest.json not found or invalid in tarball',
+          ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
 
       const universalIdentifier =
         params.universalIdentifier ?? manifest.application?.universalIdentifier;

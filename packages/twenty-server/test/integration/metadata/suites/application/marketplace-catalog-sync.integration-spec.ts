@@ -58,6 +58,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     name: string;
     sourcePackage: string;
     latestAvailableVersion?: string;
+    marketplaceDisplayData?: Record<string, unknown>;
   }): Promise<string> => {
     const id = crypto.randomUUID();
     const oAuthClientId = crypto.randomUUID();
@@ -66,8 +67,9 @@ describe('Marketplace Catalog Sync (integration)', () => {
       `INSERT INTO core."applicationRegistration"
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
-         "sourceType", "sourcePackage", "latestAvailableVersion")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+         "sourceType", "sourcePackage", "latestAvailableVersion",
+         "marketplaceDisplayData")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         id,
         params.universalIdentifier,
@@ -79,6 +81,9 @@ describe('Marketplace Catalog Sync (integration)', () => {
         'npm',
         params.sourcePackage,
         params.latestAvailableVersion ?? '1.0.0',
+        params.marketplaceDisplayData
+          ? JSON.stringify(params.marketplaceDisplayData)
+          : null,
       ],
     );
 
@@ -141,14 +146,17 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
 
     it('should enrich curated apps with rich display data', async () => {
-      // The curated index has a Data Enrichment entry with identifier
-      // a1b2c3d4-0000-0000-0000-000000000001 — create a matching registration
       const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
 
       await insertCatalogRegistration({
         universalIdentifier: curatedUid,
         name: 'Data Enrichment',
         sourcePackage: '@twentyhq/app-data-enrichment',
+        marketplaceDisplayData: {
+          icon: 'IconSparkles',
+          version: '1.0.0',
+          category: 'Data',
+        },
       });
 
       const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);

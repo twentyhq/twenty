@@ -75,7 +75,7 @@ const insertRegistrationWithSource = async (
   params: {
     universalIdentifier: string;
     name: string;
-    sourceType: 'npm' | 'tarball' | 'none';
+    sourceType: 'npm' | 'tarball' | 'local';
     sourcePackage?: string;
   },
 ): Promise<string> => {
@@ -248,13 +248,13 @@ describe('App Distribution (integration)', () => {
       expect(res.body.messages[0]).toContain('registered as npm');
     });
 
-    it('should allow tarball upload for none-sourced registration', async () => {
+    it('should allow tarball upload for local-sourced registration', async () => {
       const uid = crypto.randomUUID();
 
       const regId = await insertRegistrationWithSource(ds, {
         universalIdentifier: uid,
-        name: 'None Source App',
-        sourceType: 'none',
+        name: 'Local Source App',
+        sourceType: 'local',
       });
 
       createdRegistrationIds.push(regId);
