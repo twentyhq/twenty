@@ -61,8 +61,6 @@ export class MessagingRelaunchFailedMessageChannelJob {
       await messageChannelRepository.update(messageChannelId, {
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStatus: MessageChannelSyncStatus.ACTIVE,
-        throttleFailureCount: 0,
-        throttleRetryAfter: null,
       });
     }, authContext);
   }

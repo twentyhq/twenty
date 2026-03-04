@@ -385,13 +385,13 @@ export class ViewService {
       },
       order: { position: 'ASC' },
       relations: [
-        'workspace',
         'viewFields',
         'viewFilters',
         'viewSorts',
         'viewGroups',
         'viewFilterGroups',
       ],
+      relationLoadStrategy: 'query',
     });
 
     return views.filter((view) => {
