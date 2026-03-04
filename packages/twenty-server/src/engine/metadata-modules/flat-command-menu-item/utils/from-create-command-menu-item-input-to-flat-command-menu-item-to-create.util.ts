@@ -70,6 +70,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       CommandMenuItemAvailabilityType.GLOBAL,
     availabilityObjectMetadataId:
       createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
+    conditionalAvailabilityExpression:
+      createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
     workspaceId,
     applicationId: flatApplication.id,

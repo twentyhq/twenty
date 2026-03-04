@@ -44,6 +44,11 @@ export class CreateCommandMenuItemInput {
   @Field(() => CommandMenuItemAvailabilityType, { nullable: true })
   availabilityType?: CommandMenuItemAvailabilityType;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalAvailabilityExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
