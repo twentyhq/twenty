@@ -14,7 +14,6 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
-export { SidePanelPages } from './SidePanelPages';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,
@@ -246,6 +245,7 @@ export type {
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 export { SettingsPath } from './SettingsPath';
+export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
 export type {
   StepFilterGroup,
