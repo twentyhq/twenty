@@ -1,5 +1,7 @@
 # Twenty Desktop
 
+> **WARNING: This application is a Proof of Concept (POC) and must NOT be used in production.** It is intended for demonstration and experimentation purposes only. Security, stability, and performance have not been validated for production use.
+
 This is a demo application that shows off what you can build with the [Recall.ai Desktop Recording SDK.](https://www.recall.ai/product/desktop-recording-sdk)
 
 This repo is intended to be a mockup of the kind of experience you can build using the Desktop Recording SDK.
