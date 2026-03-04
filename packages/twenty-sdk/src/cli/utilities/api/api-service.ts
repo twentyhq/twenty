@@ -14,18 +14,24 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor(options?: { disableInterceptors: boolean }) {
-    const { disableInterceptors = false } = options || {};
+  constructor(options?: {
+    disableInterceptors?: boolean;
+    serverUrl?: string;
+    token?: string;
+  }) {
+    const { disableInterceptors = false, serverUrl, token } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
     this.client.interceptors.request.use(async (config) => {
       const twentyConfig = await this.configService.getConfig();
 
-      config.baseURL = twentyConfig.apiUrl;
+      config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
-      if (!config.headers.Authorization && twentyConfig.apiKey) {
-        config.headers.Authorization = `Bearer ${twentyConfig.apiKey}`;
+      const authToken = token ?? twentyConfig.apiKey;
+
+      if (!config.headers.Authorization && authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
       }
 
       return config;
@@ -850,8 +856,7 @@ export class ApiService {
       if (response.data.errors) {
         return {
           success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to upload tarball',
+          error: response.data.errors[0]?.message || 'Failed to upload tarball',
         };
       }
 

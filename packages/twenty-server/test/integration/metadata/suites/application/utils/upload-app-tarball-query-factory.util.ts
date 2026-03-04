@@ -6,14 +6,8 @@ export const uploadAppTarballQueryFactory = ({
   universalIdentifier?: string;
 }) => ({
   query: gql`
-    mutation UploadAppTarball(
-      $file: Upload!
-      $universalIdentifier: String
-    ) {
-      uploadAppTarball(
-        file: $file
-        universalIdentifier: $universalIdentifier
-      ) {
+    mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
+      uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
         id
         universalIdentifier
         name

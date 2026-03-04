@@ -51,7 +51,10 @@ export class AppPushCommand {
 
     const tarballBuffer = fs.readFileSync(tarballPath);
 
-    const apiService = new ApiService();
+    const apiService = new ApiService({
+      serverUrl: options.server,
+      token: options.token,
+    });
 
     const result = await apiService.uploadAppTarball({ tarballBuffer });
 

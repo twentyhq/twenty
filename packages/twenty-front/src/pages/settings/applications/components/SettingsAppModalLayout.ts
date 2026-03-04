@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { Modal, Section } from 'twenty-ui/layout';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledAppModal = styled(Modal)`
