@@ -64,7 +64,7 @@ export const Default: Story = {
           that I expect you to, anyways. :)
         </Modal.Content>
         <Modal.Footer>
-          By using Twenty, you're opting for the finest CRM experience you'll
+          By using Fuse, you're opting for the finest CRM experience you'll
           ever encounter.
         </Modal.Footer>
       </>

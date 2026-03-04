@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Fuse geometric "F" icon mark — light version (for dark backgrounds) -->
+  <!-- Top bar -->
+  <rect x="20" y="20" width="60" height="16" fill="#ffffff"/>
+  <!-- Right vertical bar -->
+  <rect x="80" y="32" width="16" height="64" fill="#ffffff"/>
+  <!-- Middle-left bar -->
+  <rect x="20" y="48" width="36" height="16" fill="#ffffff"/>
+  <!-- Bottom-center block -->
+  <rect x="48" y="68" width="16" height="16" fill="#ffffff"/>
+  <!-- Bottom-left block -->
+  <rect x="20" y="76" width="16" height="16" fill="#ffffff"/>
+</svg>

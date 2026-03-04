@@ -315,7 +315,7 @@ describe('ApprovedAccessDomainService', () => {
       });
 
       expect(emailService.send).toHaveBeenCalledWith({
-        from: 'John Doe (via Twenty) <no-reply@example.com>',
+        from: 'John Doe (via Fuse) <no-reply@example.com>',
         to: email,
         subject: 'Approve your access domain',
         text: expect.any(String),

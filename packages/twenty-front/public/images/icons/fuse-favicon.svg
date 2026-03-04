@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Fuse favicon — white mark on dark background -->
+  <rect width="120" height="120" rx="16" fill="#1d1d1d"/>
+  <!-- Top bar -->
+  <rect x="24" y="24" width="52" height="14" fill="#ffffff"/>
+  <!-- Right vertical bar -->
+  <rect x="76" y="34" width="14" height="56" fill="#ffffff"/>
+  <!-- Middle-left bar -->
+  <rect x="24" y="48" width="32" height="14" fill="#ffffff"/>
+  <!-- Bottom-center block -->
+  <rect x="48" y="66" width="14" height="14" fill="#ffffff"/>
+  <!-- Bottom-left block -->
+  <rect x="24" y="74" width="14" height="14" fill="#ffffff"/>
+</svg>
