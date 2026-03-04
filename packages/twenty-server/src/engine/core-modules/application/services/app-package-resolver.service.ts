@@ -10,17 +10,15 @@ import { type Manifest } from 'twenty-shared/application';
 import { type PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
-import {
-  ApplicationRegistrationEntity,
-  AppRegistrationSourceType,
-} from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/constants/yarn-engine-dirname';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
-import { readJsonFile } from 'src/engine/core-modules/application/utils/read-json-file.util';
+import { readJsonFileOrThrow } from 'src/engine/core-modules/application/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -99,17 +97,22 @@ export class AppPackageResolverService implements OnModuleInit {
       const sourcePackage = appRegistration.sourcePackage;
       const versionSpec = targetVersion ?? 'latest';
 
-      await this.writeNpmrc(workDir, sourcePackage, registryUrl, authToken);
+      await this.writeNpmrc({
+        workDir,
+        packageName: sourcePackage,
+        registryUrl,
+        authToken,
+      });
       await this.setupYarnEngine(workDir);
       await this.writeMinimalPackageJson(workDir, sourcePackage, versionSpec);
       await this.runYarnInstall(workDir);
 
       const packageDir = join(workDir, 'node_modules', sourcePackage);
-      const manifest = await readJsonFile<Manifest>(
+      const manifest = await readJsonFileOrThrow<Manifest>(
         packageDir,
         'manifest.json',
       );
-      const packageJson = await readJsonFile<PackageJson>(
+      const packageJson = await readJsonFileOrThrow<PackageJson>(
         packageDir,
         'package.json',
       );
@@ -144,11 +147,11 @@ export class AppPackageResolverService implements OnModuleInit {
       await fs.rm(tarballPath);
 
       const contentDir = await resolvePackageContentDir(workDir);
-      const manifest = await readJsonFile<Manifest>(
+      const manifest = await readJsonFileOrThrow<Manifest>(
         contentDir,
         'manifest.json',
       );
-      const packageJson = await readJsonFile<PackageJson>(
+      const packageJson = await readJsonFileOrThrow<PackageJson>(
         contentDir,
         'package.json',
       );
@@ -168,29 +171,35 @@ export class AppPackageResolverService implements OnModuleInit {
     }
   }
 
-  private async writeNpmrc(
-    workDir: string,
-    packageName: string,
-    registryUrl: string,
-    authToken?: string,
-  ): Promise<void> {
+  // Note: .npmrc settings take precedence over publishConfig.registry in
+  // individual packages. This is correct for our use case since we want
+  // to control the registry at the resolver level.
+  private async writeNpmrc(config: {
+    workDir: string;
+    packageName: string;
+    registryUrl: string;
+    authToken?: string;
+  }): Promise<void> {
     const lines: string[] = [];
-    const registryHost = new URL(registryUrl).host;
+    const registryHost = new URL(config.registryUrl).host;
 
-    if (packageName.startsWith('@')) {
-      const scope = packageName.split('/')[0];
+    if (config.packageName.startsWith('@')) {
+      const scope = config.packageName.split('/')[0];
 
-      lines.push(`${scope}:registry=${registryUrl}`);
-    } else if (registryUrl !== 'https://registry.npmjs.org') {
-      lines.push(`registry=${registryUrl}`);
+      lines.push(`${scope}:registry=${config.registryUrl}`);
+    } else if (config.registryUrl !== 'https://registry.npmjs.org') {
+      lines.push(`registry=${config.registryUrl}`);
     }
 
-    if (authToken) {
-      lines.push(`//${registryHost}/:_authToken=${authToken}`);
+    if (config.authToken) {
+      lines.push(`//${registryHost}/:_authToken=${config.authToken}`);
     }
 
     if (lines.length > 0) {
-      await fs.writeFile(join(workDir, '.npmrc'), lines.join('\n') + '\n');
+      await fs.writeFile(
+        join(config.workDir, '.npmrc'),
+        lines.join('\n') + '\n',
+      );
     }
   }
 

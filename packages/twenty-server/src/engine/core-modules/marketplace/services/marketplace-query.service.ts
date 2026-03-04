@@ -17,9 +17,13 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
+const MARKETPLACE_CACHE_TTL_MS = 5 * 60 * 1000;
+
 @Injectable()
 export class MarketplaceQueryService {
   private readonly logger = new Logger(MarketplaceQueryService.name);
+  private cachedApps: MarketplaceAppDTO[] | null = null;
+  private cacheExpiresAt = 0;
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -29,6 +33,10 @@ export class MarketplaceQueryService {
   ) {}
 
   async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
+    if (this.cachedApps !== null && Date.now() < this.cacheExpiresAt) {
+      return this.cachedApps;
+    }
+
     const registrations = await this.appRegistrationRepository.find({
       where: { sourceType: AppRegistrationSourceType.NPM },
     });
@@ -45,9 +53,12 @@ export class MarketplaceQueryService {
       return [];
     }
 
-    return registrations.map((registration) =>
+    this.cachedApps = registrations.map((registration) =>
       this.toMarketplaceAppDTO(registration),
     );
+    this.cacheExpiresAt = Date.now() + MARKETPLACE_CACHE_TTL_MS;
+
+    return this.cachedApps;
   }
 
   async findRegistrationByUniversalIdentifier(

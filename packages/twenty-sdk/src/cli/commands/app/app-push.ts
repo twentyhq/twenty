@@ -34,6 +34,8 @@ export class AppPushCommand {
 
     const outputDir = path.join(appPath, '.twenty', 'output');
 
+    // TODO: Extract pack logic into a shared public operation (like appBuild)
+    // so app:pack and app:push share the same implementation.
     const packOutput = execSync('npm pack --pack-destination .', {
       cwd: outputDir,
       encoding: 'utf-8',
@@ -56,13 +58,24 @@ export class AppPushCommand {
       token: options.token,
     });
 
-    const result = await apiService.uploadAppTarball({ tarballBuffer });
+    const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
 
-    if (!result.success) {
-      console.error(chalk.red(`Upload failed: ${result.error}`));
+    if (!uploadResult.success) {
+      console.error(chalk.red(`Upload failed: ${uploadResult.error}`));
       process.exit(1);
     }
 
-    console.log(chalk.green('✓ Application pushed successfully'));
+    console.log(chalk.gray('Installing application...'));
+
+    const installResult = await apiService.installTarballApp({
+      universalIdentifier: uploadResult.data.universalIdentifier,
+    });
+
+    if (!installResult.success) {
+      console.error(chalk.red(`Install failed: ${installResult.error}`));
+      process.exit(1);
+    }
+
+    console.log(chalk.green('✓ Application pushed and installed successfully'));
   }
 }

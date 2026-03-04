@@ -1,22 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import axios from 'axios';
 import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { MarketplaceAppDTO } from 'src/engine/core-modules/marketplace/dtos/marketplace-app.dto';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type NpmSearchResult = {
-  objects: Array<{
-    package: {
-      name: string;
-      version: string;
-      description?: string;
-      keywords?: string[];
-      author?: { name?: string };
-      links?: { homepage?: string };
-    };
-  }>;
-};
+const npmSearchResultSchema = z.object({
+  objects: z.array(
+    z.object({
+      package: z.object({
+        name: z.string(),
+        version: z.string(),
+        description: z.string().optional(),
+        keywords: z.array(z.string()).optional(),
+        author: z.object({ name: z.string().optional() }).optional(),
+        links: z.object({ homepage: z.string().optional() }).optional(),
+      }),
+    }),
+  ),
+});
 
 @Injectable()
 export class MarketplaceService {
@@ -26,32 +30,27 @@ export class MarketplaceService {
 
   async fetchAppsFromNpmRegistry(): Promise<MarketplaceAppDTO[]> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
-    const apps: MarketplaceAppDTO[] = [];
 
     try {
-      const response = await fetch(
+      const { data } = await axios.get(
         `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=250`,
         {
           headers: { 'User-Agent': 'Twenty-Marketplace' },
-          signal: AbortSignal.timeout(10_000),
+          timeout: 10_000,
         },
       );
 
-      if (!response.ok) {
-        this.logger.warn(`npm search failed: ${response.status}`);
+      const parsed = npmSearchResultSchema.safeParse(data);
 
-        return apps;
+      if (!parsed.success) {
+        this.logger.warn(
+          `Unexpected npm search response shape: ${parsed.error.message}`,
+        );
+
+        return [];
       }
 
-      const results = (await response.json()) as Record<string, unknown>;
-
-      if (!Array.isArray(results.objects)) {
-        this.logger.warn('Unexpected npm search response shape');
-
-        return apps;
-      }
-
-      for (const result of results.objects as NpmSearchResult['objects']) {
+      return parsed.data.objects.map((result) => {
         const { name, version, description, author, links } = result.package;
         const twentyKeyword = (result.package.keywords ?? []).find((keyword) =>
           keyword.startsWith('twenty-uid:'),
@@ -60,7 +59,7 @@ export class MarketplaceService {
           ? twentyKeyword.replace('twenty-uid:', '')
           : name;
 
-        apps.push({
+        return {
           id: universalIdentifier,
           name,
           description: description ?? '',
@@ -77,14 +76,14 @@ export class MarketplaceService {
           logicFunctions: [],
           frontComponents: [],
           sourcePackage: name,
-        });
-      }
+        };
+      });
     } catch (error) {
       this.logger.warn(
         `Failed to fetch apps from npm registry: ${error instanceof Error ? error.message : String(error)}`,
       );
-    }
 
-    return apps;
+      return [];
+    }
   }
 }

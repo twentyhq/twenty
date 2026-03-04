@@ -17,6 +17,7 @@ export const APPLICATION_FRAGMENT = gql`
     applicationRegistration {
       id
       latestAvailableVersion
+      sourceType
     }
     canBeUninstalled
     defaultRoleId

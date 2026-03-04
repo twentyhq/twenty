@@ -5,7 +5,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { type Application } from '~/generated-metadata/graphql';
+import {
+  AppRegistrationSourceType,
+  type Application,
+} from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 export const SettingsApplicationVersionContainer = ({
@@ -21,9 +24,16 @@ export const SettingsApplicationVersionContainer = ({
 }) => {
   const loading = !isDefined(application);
   const currentVersion = application?.version;
-  const latestVersion = latestAvailableVersion ?? currentVersion;
+
+  const sourceType = application?.applicationRegistration?.sourceType;
+  const isNpmApp = sourceType === AppRegistrationSourceType.NPM;
+
+  const latestVersion = isNpmApp
+    ? (latestAvailableVersion ?? currentVersion)
+    : currentVersion;
 
   const hasUpdate =
+    isNpmApp &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
@@ -53,17 +63,21 @@ export const SettingsApplicationVersionContainer = ({
         />
       ),
     },
-    {
-      Icon: IconStatusChange,
-      label: t`Latest version`,
-      value: (
-        <SettingsAdminVersionDisplay
-          version={latestVersion}
-          loading={loading}
-          noVersionMessage={t`No latest version found`}
-        />
-      ),
-    },
+    ...(isNpmApp
+      ? [
+          {
+            Icon: IconStatusChange,
+            label: t`Latest version`,
+            value: (
+              <SettingsAdminVersionDisplay
+                version={latestVersion}
+                loading={loading}
+                noVersionMessage={t`No latest version found`}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (

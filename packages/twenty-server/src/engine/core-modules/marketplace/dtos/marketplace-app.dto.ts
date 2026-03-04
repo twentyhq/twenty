@@ -7,7 +7,9 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @ObjectType('MarketplaceAppField')
 export class MarketplaceAppFieldDTO {
@@ -274,6 +276,8 @@ export class MarketplaceAppDTO {
   frontComponents: MarketplaceAppFrontComponentDTO[];
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => MarketplaceAppDefaultRoleDTO)
   @Field(() => MarketplaceAppDefaultRoleDTO, { nullable: true })
   defaultRole?: MarketplaceAppDefaultRoleDTO;
 

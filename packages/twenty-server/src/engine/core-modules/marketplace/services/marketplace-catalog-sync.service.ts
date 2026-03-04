@@ -9,7 +9,6 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/marketplace/constants/marketplace-catalog-index.constant';
 import { MarketplaceService } from 'src/engine/core-modules/marketplace/services/marketplace.service';
-import { type MarketplaceDisplayData } from 'src/engine/core-modules/marketplace/types/marketplace-display-data.type';
 import { getAdminWorkspaceId } from 'src/engine/core-modules/marketplace/utils/get-admin-workspace-id.util';
 
 @Injectable()
@@ -105,21 +104,24 @@ export class MarketplaceCatalogSyncService {
 
   // Lookup by universalIdentifier only (matches the unique constraint).
   // ownerWorkspaceId is only set on insert.
-  private async upsertRegistration(params: {
-    universalIdentifier: string;
-    name: string;
-    description: string;
-    author: string;
-    sourceType: AppRegistrationSourceType;
-    sourcePackage: string;
-    logoUrl: string | null;
-    websiteUrl: string | null;
-    termsUrl: string | null;
-    latestAvailableVersion: string | null;
-    isFeatured: boolean;
-    marketplaceDisplayData: MarketplaceDisplayData | null;
-    ownerWorkspaceId: string;
-  }): Promise<void> {
+  private async upsertRegistration(
+    params: Pick<
+      ApplicationRegistrationEntity,
+      | 'universalIdentifier'
+      | 'name'
+      | 'description'
+      | 'author'
+      | 'sourceType'
+      | 'sourcePackage'
+      | 'logoUrl'
+      | 'websiteUrl'
+      | 'termsUrl'
+      | 'latestAvailableVersion'
+      | 'isFeatured'
+      | 'marketplaceDisplayData'
+      | 'ownerWorkspaceId'
+    >,
+  ): Promise<void> {
     const existing = await this.appRegistrationRepository.findOne({
       where: {
         universalIdentifier: params.universalIdentifier,
@@ -127,19 +129,20 @@ export class MarketplaceCatalogSyncService {
     });
 
     if (isDefined(existing)) {
-      existing.name = params.name;
-      existing.description = params.description;
-      existing.author = params.author;
-      existing.sourceType = params.sourceType;
-      existing.sourcePackage = params.sourcePackage;
-      existing.logoUrl = params.logoUrl;
-      existing.websiteUrl = params.websiteUrl;
-      existing.termsUrl = params.termsUrl;
-      existing.latestAvailableVersion = params.latestAvailableVersion;
-      existing.isFeatured = params.isFeatured;
-      existing.marketplaceDisplayData = params.marketplaceDisplayData;
-
-      await this.appRegistrationRepository.save(existing);
+      await this.appRegistrationRepository.save({
+        ...existing,
+        name: params.name,
+        description: params.description,
+        author: params.author,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        logoUrl: params.logoUrl,
+        websiteUrl: params.websiteUrl,
+        termsUrl: params.termsUrl,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isFeatured: params.isFeatured,
+        marketplaceDisplayData: params.marketplaceDisplayData,
+      });
 
       return;
     }

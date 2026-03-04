@@ -11,6 +11,7 @@ export const FIND_MANY_APPLICATIONS = gql`
       applicationRegistration {
         id
         latestAvailableVersion
+        sourceType
       }
     }
   }

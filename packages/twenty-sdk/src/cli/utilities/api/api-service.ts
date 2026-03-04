@@ -800,6 +800,8 @@ export class ApiService {
     );
   }
 
+  // TODO: Migrate to MetadataClient once available
+  // (see https://github.com/twentyhq/core-team-issues/issues/2289)
   async uploadAppTarball({
     tarballBuffer,
     universalIdentifier,
@@ -863,6 +865,59 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.uploadAppTarball,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async installTarballApp({
+    universalIdentifier,
+  }: {
+    universalIdentifier: string;
+  }): Promise<ApiResponse<boolean>> {
+    try {
+      const mutation = `
+        mutation InstallMarketplaceApp($universalIdentifier: String!) {
+          installMarketplaceApp(universalIdentifier: $universalIdentifier)
+        }
+      `;
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message || 'Failed to install application',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.installMarketplaceApp,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

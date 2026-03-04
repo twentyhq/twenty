@@ -8,10 +8,8 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
-import {
-  ApplicationRegistrationEntity,
-  AppRegistrationSourceType,
-} from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   AppPackageResolverService,
@@ -82,6 +80,9 @@ export class ApplicationInstallService {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
+      // TODO: Consider moving this lock to Redis for better isolation.
+      // pg_advisory_xact_lock serializes at the DB level which is heavier
+      // than needed; a Redis-based distributed lock would be more targeted.
       await queryRunner.query(`SELECT pg_advisory_xact_lock($1, $2)`, [
         lockKey1,
         lockKey2,
@@ -92,6 +93,8 @@ export class ApplicationInstallService {
         { targetVersion: params.version },
       );
 
+      // Safety fallback - resolvePackage returns null for LOCAL, but that
+      // case is handled above. This guard covers any future source types.
       if (!resolvedPackage) {
         await queryRunner.commitTransaction();
 

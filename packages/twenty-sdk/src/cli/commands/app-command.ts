@@ -125,7 +125,9 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('app:push [appPath]')
-    .description('Build and upload the application tarball to a Twenty server')
+    .description(
+      'Build, upload, and install a local application on a Twenty server (for air-gapped/dev deployments)',
+    )
     .option('--server <url>', 'Twenty server URL')
     .option('--token <token>', 'Auth token for the server')
     .action(async (appPath, options) => {

@@ -9,7 +9,7 @@ import {
 export const readJsonFile = async <T>(
   dir: string,
   filename: string,
-): Promise<T> => {
+): Promise<T | null> => {
   const filePath = join(dir, filename);
 
   try {
@@ -17,9 +17,22 @@ export const readJsonFile = async <T>(
 
     return JSON.parse(content) as T;
   } catch {
+    return null;
+  }
+};
+
+export const readJsonFileOrThrow = async <T>(
+  dir: string,
+  filename: string,
+): Promise<T> => {
+  const result = await readJsonFile<T>(dir, filename);
+
+  if (result === null) {
     throw new ApplicationException(
-      `${filename} not found in resolved package`,
+      `${filename} not found or invalid in resolved package`,
       ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
     );
   }
+
+  return result;
 };

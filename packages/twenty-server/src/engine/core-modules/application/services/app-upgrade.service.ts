@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { Repository } from 'typeorm';
+import { z } from 'zod';
 
-import {
-  ApplicationRegistrationEntity,
-  AppRegistrationSourceType,
-} from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -14,6 +14,10 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const npmPackageMetadataSchema = z.object({
+  version: z.string(),
+});
 
 @Injectable()
 export class AppUpgradeService {
@@ -44,23 +48,17 @@ export class AppUpgradeService {
     try {
       const encodedPackage = encodeURIComponent(appRegistration.sourcePackage);
 
-      const response = await fetch(`${registryUrl}/${encodedPackage}/latest`, {
-        headers: { 'User-Agent': 'Twenty-AppUpgrade' },
-        signal: AbortSignal.timeout(10_000),
-      });
+      const { data } = await axios.get(
+        `${registryUrl}/${encodedPackage}/latest`,
+        {
+          headers: { 'User-Agent': 'Twenty-AppUpgrade' },
+          timeout: 10_000,
+        },
+      );
 
-      if (!response.ok) {
-        this.logger.warn(
-          `Version check failed for ${appRegistration.sourcePackage}: ${response.status}`,
-        );
+      const parsed = npmPackageMetadataSchema.safeParse(data);
 
-        return null;
-      }
-
-      const metadata = (await response.json()) as Record<string, unknown>;
-      const latestVersion = metadata.version;
-
-      if (typeof latestVersion !== 'string') {
+      if (!parsed.success) {
         this.logger.warn(
           `Unexpected response shape from registry for ${appRegistration.sourcePackage}`,
         );
@@ -69,10 +67,10 @@ export class AppUpgradeService {
       }
 
       await this.appRegistrationRepository.update(appRegistration.id, {
-        latestAvailableVersion: latestVersion,
+        latestAvailableVersion: parsed.data.version,
       });
 
-      return latestVersion;
+      return parsed.data.version;
     } catch (error) {
       this.logger.warn(
         `Failed to check updates for ${appRegistration.sourcePackage}: ${error}`,
@@ -101,21 +99,15 @@ export class AppUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
-    if (appRegistration.sourceType === AppRegistrationSourceType.LOCAL) {
+    if (
+      appRegistration.sourceType === AppRegistrationSourceType.LOCAL ||
+      appRegistration.sourceType === AppRegistrationSourceType.TARBALL
+    ) {
       throw new ApplicationException(
-        'Cannot upgrade an app with no source channel',
+        'Cannot upgrade an app installed from a tarball or local source',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }
-
-    const application = await this.applicationRepository.findOne({
-      where: {
-        applicationRegistrationId: params.appRegistrationId,
-        workspaceId: params.workspaceId,
-      },
-    });
-
-    const previousVersion = application?.version ?? null;
 
     try {
       return await this.applicationInstallService.installApplication({
@@ -127,33 +119,7 @@ export class AppUpgradeService {
       const appName =
         appRegistration.sourcePackage ?? appRegistration.universalIdentifier;
 
-      this.logger.error(
-        `Upgrade to ${params.targetVersion} failed for ${appName}, ` +
-          `rolling back to ${previousVersion ?? 'unknown'}`,
-      );
-
-      // Rollback is only possible for npm apps where we can re-fetch the old version
-      if (
-        previousVersion &&
-        appRegistration.sourceType === AppRegistrationSourceType.NPM
-      ) {
-        try {
-          await this.applicationInstallService.installApplication({
-            appRegistrationId: params.appRegistrationId,
-            version: previousVersion,
-            workspaceId: params.workspaceId,
-          });
-
-          this.logger.log(
-            `Rollback to ${previousVersion} succeeded for ${appName}`,
-          );
-        } catch (rollbackError) {
-          this.logger.error(
-            `Rollback also failed for ${appName}: ${rollbackError}`,
-          );
-        }
-      }
-
+      // No rollback needed: manifest sync runs inside a transaction
       throw new ApplicationException(
         `Upgrade failed for ${appName}: ${error}`,
         ApplicationExceptionCode.UPGRADE_FAILED,

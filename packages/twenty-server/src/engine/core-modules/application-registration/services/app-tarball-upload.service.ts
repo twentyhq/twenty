@@ -53,16 +53,14 @@ export class AppTarballUploadService {
 
       const contentDir = await resolvePackageContentDir(extractDir);
 
-      let manifest: {
+      const manifest = await readJsonFile<{
         application?: {
           universalIdentifier?: string;
           displayName?: string;
         };
-      };
+      }>(contentDir, 'manifest.json');
 
-      try {
-        manifest = await readJsonFile(contentDir, 'manifest.json');
-      } catch {
+      if (manifest === null) {
         throw new ApplicationRegistrationException(
           'manifest.json not found or invalid in tarball',
           ApplicationRegistrationExceptionCode.INVALID_INPUT,
@@ -111,11 +109,6 @@ export class AppTarballUploadService {
           await this.appRegistrationRepository.save(appRegistration);
       }
 
-      const packageJson = await readJsonFile<{ version?: string }>(
-        contentDir,
-        'package.json',
-      ).catch(() => null);
-
       const storagePath = join('app-tarball', appRegistration.id);
 
       await this.fileStorageService.writeFileLegacy({
@@ -127,9 +120,6 @@ export class AppTarballUploadService {
 
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: AppRegistrationSourceType.TARBALL,
-        ...(isDefined(packageJson?.version)
-          ? { latestAvailableVersion: packageJson.version }
-          : {}),
       });
 
       this.logger.log(

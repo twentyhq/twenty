@@ -24,8 +24,6 @@ import { type MarketplaceDisplayData } from 'src/engine/core-modules/marketplace
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export { AppRegistrationSourceType };
-
 @Entity({ name: 'applicationRegistration', schema: 'core' })
 @ObjectType('ApplicationRegistration')
 @Index(
