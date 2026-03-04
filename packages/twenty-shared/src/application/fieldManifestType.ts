@@ -1,10 +1,10 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
-  FieldMetadataDefaultValue,
-  FieldMetadataOptions,
-  FieldMetadataType,
-  FieldMetadataUniversalSettings,
-  RelationAndMorphRelationFieldMetadataType
+  type FieldMetadataDefaultValue,
+  type FieldMetadataOptions,
+  type FieldMetadataType,
+  type FieldMetadataUniversalSettings,
+  type RelationAndMorphRelationFieldMetadataType,
 } from '@/types';
 
 export type RegularFieldManifest<

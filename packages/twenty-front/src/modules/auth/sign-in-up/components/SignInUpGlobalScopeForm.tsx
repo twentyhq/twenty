@@ -3,8 +3,6 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
@@ -12,6 +10,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import {
@@ -21,6 +20,10 @@ import {
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
+import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import {
   Avatar,
   HorizontalSeparator,
@@ -31,8 +34,6 @@ import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${themeCssVariables.spacing[8]};
@@ -127,18 +128,25 @@ const StyledActionLinkContainer = styled.div`
   justify-content: center;
 `;
 
+const StyledForgotPasswordLinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: ${themeCssVariables.spacing[4]};
+`;
+
 export const SignInUpGlobalScopeForm = () => {
   const authProviders = useAtomStateValue(authProvidersState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
+  const { theme } = useContext(ThemeContext);
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
+  const { handleResetPassword } = useHandleResetPassword();
   const returnToPath = useAtomStateValue(returnToPathState);
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
@@ -241,6 +249,15 @@ export const SignInUpGlobalScopeForm = () => {
           <FormProvider {...form}>
             <SignInUpWithCredentials isGlobalScope />
           </FormProvider>
+          {signInUpStep === SignInUpStep.Password && (
+            <StyledForgotPasswordLinkContainer>
+              <ClickToActionLink
+                onClick={handleResetPassword(form.getValues('email'))}
+              >
+                <Trans>Forgot your password?</Trans>
+              </ClickToActionLink>
+            </StyledForgotPasswordLinkContainer>
+          )}
         </StyledContentContainer>
       )}
     </>

@@ -13,20 +13,25 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  evaluateConditionalAvailabilityExpression,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
-  type CommandMenuItemFieldsFragment,
   CommandMenuItemAvailabilityType,
+  type CommandMenuItemFieldsFragment,
   FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;
+  conditionalAvailabilityExpression?: string | null;
 };
 
 type BuildActionFromItemParams = {
@@ -49,8 +54,11 @@ type BuildActionFromItemParams = {
     context?: HeadlessFrontComponentMountContext,
   ) => void;
   mountContext?: HeadlessFrontComponentMountContext;
+  commandMenuContextApi: CommandMenuContextApi;
 };
 
+// TODO: we should remove this backward compatibility logic in the future
+// once we have migrated all command menu items
 const buildActionFromItem = ({
   item,
   scope,
@@ -60,6 +68,7 @@ const buildActionFromItem = ({
   openFrontComponentInCommandMenu,
   mountHeadlessFrontComponent,
   mountContext,
+  commandMenuContextApi,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
@@ -94,7 +103,11 @@ const buildActionFromItem = ({
     position: index,
     isPinned,
     Icon,
-    shouldBeRegistered: () => true,
+    shouldBeRegistered: () =>
+      evaluateConditionalAvailabilityExpression(
+        item.conditionalAvailabilityExpression,
+        commandMenuContextApi,
+      ),
     component: isHeadless ? (
       <HeadlessFrontComponentAction
         frontComponentId={item.frontComponentId}
@@ -106,7 +119,9 @@ const buildActionFromItem = ({
   };
 };
 
-export const useCommandMenuItemFrontComponentActions = () => {
+export const useCommandMenuItemFrontComponentActions = (
+  commandMenuContextApi: CommandMenuContextApi,
+) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInCommandMenu } =
     useOpenFrontComponentInCommandMenu();
@@ -194,6 +209,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
+      commandMenuContextApi,
     }),
   );
 
@@ -206,6 +222,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
+      commandMenuContextApi,
       mountContext,
     }),
   );

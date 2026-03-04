@@ -6,6 +6,7 @@ import {
   TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import {
   type ApplicationConfig,
   type FrontComponentConfig,
@@ -22,6 +23,7 @@ import {
   type AssetManifest,
   ASSETS_DIR,
   type FieldManifest,
+  type FrontComponentCommandManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -34,7 +36,6 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -237,7 +238,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, ...rest } = extract.config;
+        const { component, command, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -248,6 +249,8 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
+          // transformed by conditionalAvailabilityTransformPlugin
+          command: command as FrontComponentCommandManifest,
         };
 
         frontComponents.push(config);

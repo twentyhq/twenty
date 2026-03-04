@@ -1,16 +1,14 @@
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { isPublicFeatureFlag } from './is-public-feature-flag.util';
 
-jest.mock(
-  'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum',
-  () => ({
-    FeatureFlagKey: {
-      mockKey1: 'MOCK_KEY_1',
-      mockKey2: 'MOCK_KEY_2',
-    },
-  }),
-);
+jest.mock('twenty-shared/types', () => ({
+  ...jest.requireActual('twenty-shared/types'),
+  FeatureFlagKey: {
+    mockKey1: 'MOCK_KEY_1',
+    mockKey2: 'MOCK_KEY_2',
+  },
+}));
 
 jest.mock(
   'src/engine/core-modules/feature-flag/constants/public-feature-flag.const',

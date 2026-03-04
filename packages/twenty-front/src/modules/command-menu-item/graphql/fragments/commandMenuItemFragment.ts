@@ -13,6 +13,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     label
     icon
     isPinned
+    conditionalAvailabilityExpression
     availabilityType
     availabilityObjectMetadataId
   }

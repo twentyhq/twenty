@@ -113,6 +113,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
         workflowRunId: runInfo.workflowRunId,
         workspaceId: runInfo.workspaceId,
         steps,
+        stepInfos,
       });
     }
 
@@ -129,6 +130,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     workflowRunId,
     workspaceId,
     steps,
+    stepInfos,
   }: {
     iteratorStepId: string;
     initialLoopStepIds: string[];
@@ -136,16 +138,9 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     workflowRunId: string;
     workspaceId: string;
     steps: WorkflowAction[];
+    stepInfos: Record<string, WorkflowRunStepInfo>;
   }) {
     let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
-
-    const workflowRunToUpdate =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    const stepInfos = workflowRunToUpdate.state.stepInfos;
 
     if (!hasProcessedAllItems) {
       const subStepsInfos = await this.buildSubStepInfosReset({

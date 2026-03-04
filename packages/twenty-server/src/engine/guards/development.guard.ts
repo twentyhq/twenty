@@ -1,4 +1,8 @@
-import { type CanActivate, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -15,7 +19,7 @@ export class DevelopmentGuard implements CanActivate {
       nodeEnv !== NodeEnvironment.DEVELOPMENT &&
       nodeEnv !== NodeEnvironment.TEST
     ) {
-      throw new Error(
+      throw new ForbiddenException(
         'This endpoint is only available in development or test environments',
       );
     }
