@@ -26,6 +26,7 @@ export const WorkspaceSectionAddMenuItemButton = () => {
       label={t`Add menu item`}
       onClick={handleClick}
       triggerEvent="CLICK"
+      variant="tertiary"
     />
   );
 };

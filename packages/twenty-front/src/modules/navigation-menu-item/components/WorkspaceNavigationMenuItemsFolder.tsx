@@ -269,6 +269,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     Icon={IconPlus}
                     onClick={handleAddMenuItemToFolder}
                     triggerEvent="CLICK"
+                    variant="tertiary"
                     subItemState={getNavigationSubItemLeftAdornment({
                       index: navigationMenuItems.length,
                       arrayLength: folderContentLengthForTree,

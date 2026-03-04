@@ -61,6 +61,7 @@ export type NavigationDrawerItemProps = {
   mouseUpNavigation?: boolean;
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
+  variant?: 'default' | 'tertiary';
 };
 
 type StyledItemProps = Pick<
@@ -72,6 +73,7 @@ type StyledItemProps = Pick<
   | 'to'
   | 'isDragging'
   | 'isSelectedInEditMode'
+  | 'variant'
 > & {
   isNavigationDrawerExpanded: boolean;
   hasRightOptions: boolean;
@@ -92,7 +94,7 @@ const StyledItem = styled.button<StyledItemProps>`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   text-decoration: none;
-  color: ${({ active, danger, soon }) => {
+  color: ${({ active, danger, soon, variant }) => {
     if (active === true) {
       return themeCssVariables.font.color.primary;
     }
@@ -101,6 +103,9 @@ const StyledItem = styled.button<StyledItemProps>`
     }
     if (soon === true) {
       return themeCssVariables.font.color.light;
+    }
+    if (variant === 'tertiary') {
+      return themeCssVariables.font.color.tertiary;
     }
     return themeCssVariables.font.color.secondary;
   }};
@@ -291,6 +296,7 @@ export const NavigationDrawerItem = ({
   mouseUpNavigation = false,
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
+  variant = 'default',
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
@@ -347,6 +353,7 @@ export const NavigationDrawerItem = ({
         aria-selected={active}
         danger={danger}
         soon={soon}
+        variant={variant}
         as={
           to ? (isExternalLink ? 'a' : Link) : rightOptions ? 'div' : undefined
         }
@@ -384,11 +391,13 @@ export const NavigationDrawerItem = ({
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.md}
                   color={
-                    showBreadcrumb &&
-                    !isSettingsPage &&
-                    !isNavigationDrawerExpanded
-                      ? theme.font.color.light
-                      : 'currentColor'
+                    variant === 'tertiary'
+                      ? themeCssVariables.font.color.tertiary
+                      : showBreadcrumb &&
+                          !isSettingsPage &&
+                          !isNavigationDrawerExpanded
+                        ? theme.font.color.light
+                        : 'currentColor'
                   }
                 />
               </StyledIcon>
