@@ -109,7 +109,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
 
   const folderContentLengthForTree =
-    isNavigationMenuInEditMode && isSelectedInEditMode
+    isNavigationMenuInEditMode
       ? navigationMenuItems.length + 1
       : navigationMenuItems.length;
 
@@ -263,7 +263,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     navigationMenuItems.length,
                   )}
                 />
-                {isNavigationMenuInEditMode && isSelectedInEditMode && (
+                {isNavigationMenuInEditMode && (
                   <NavigationDrawerSubItem
                     label={t`Add menu item`}
                     Icon={IconPlus}
