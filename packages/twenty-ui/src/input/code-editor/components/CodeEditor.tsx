@@ -23,7 +23,6 @@ type CodeEditorProps = Pick<
   isLoading?: boolean;
   transparentBackground?: boolean;
   resizable?: boolean;
-  componentInstanceId: string;
 };
 
 const StyledEditorLoader = styled.div<{
@@ -123,7 +122,6 @@ export const CodeEditor = ({
   isLoading = false,
   options,
   resizable = false,
-  componentInstanceId,
 }: CodeEditorProps) => {
   const { theme } = useContext(ThemeContext);
   const [monaco, setMonaco] = useState<Monaco | undefined>(undefined);
@@ -133,9 +131,13 @@ export const CodeEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const numericHeight = typeof height === 'number' ? height : 450;
-  const { height: resizableHeight, handleResizeStart } = useResizableEditor({
+  const {
+    height: resizableHeight,
+    handleResizeStart,
+    handleResizeMove,
+    handleResizeEnd,
+  } = useResizableEditor({
     initialHeight: numericHeight,
-    componentInstanceId,
   });
 
   const currentHeight = resizable ? resizableHeight : height;
@@ -227,7 +229,13 @@ export const CodeEditor = ({
           }}
         />
       </StyledEditorWrapper>
-      {resizable && <ResizeHandle onPointerDown={handleResizeStart} />}
+      {resizable && (
+        <ResizeHandle
+          onPointerDown={handleResizeStart}
+          onPointerMove={handleResizeMove}
+          onPointerUp={handleResizeEnd}
+        />
+      )}
     </StyledCodeEditorContainer>
   );
 };

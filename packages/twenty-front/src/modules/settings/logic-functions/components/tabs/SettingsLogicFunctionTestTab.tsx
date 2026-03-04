@@ -70,7 +70,6 @@ export const SettingsLogicFunctionTestTab = ({
             ]}
           />
           <CodeEditor
-            componentInstanceId={`settings-logic-function-code-editor-${logicFunctionId}`}
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}
             language="json"
             height={100}
@@ -80,7 +79,6 @@ export const SettingsLogicFunctionTestTab = ({
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
-          componentInstanceId={`settings-logic-function-execution-result-${logicFunctionId}`}
           logicFunctionTestData={logicFunctionTestData}
           isTesting={isTesting}
         />

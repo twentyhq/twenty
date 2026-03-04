@@ -13,10 +13,10 @@ export const LogicFunctionLogs = ({
 }: LogicFunctionLogsProps) => {
   const { t } = useLingui();
 
-  const { height, handleResizeStart } = useResizableEditor({
-    initialHeight: 150,
-    componentInstanceId,
-  });
+  const { height, handleResizeStart, handleResizeMove, handleResizeEnd } =
+    useResizableEditor({
+      initialHeight: 150,
+    });
 
   return (
     <>
@@ -27,7 +27,11 @@ export const LogicFunctionLogs = ({
         height={height}
         readOnly
       />
-      <ResizeHandle onPointerDown={handleResizeStart} />
+      <ResizeHandle
+        onPointerDown={handleResizeStart}
+        onPointerMove={handleResizeMove}
+        onPointerUp={handleResizeEnd}
+      />
     </>
   );
 };

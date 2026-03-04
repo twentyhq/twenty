@@ -7,11 +7,9 @@ import { t } from '@lingui/core/macro';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,
-  componentInstanceId,
   isTesting = false,
 }: {
   httpRequestTestData: HttpRequestTestData;
-  componentInstanceId: string;
   isTesting?: boolean;
 }) => {
   const result =
@@ -58,7 +56,6 @@ export const HttpRequestExecutionResult = ({
 
   return (
     <WorkflowStepExecutionResult
-      componentInstanceId={componentInstanceId}
       result={result}
       language={httpRequestTestData.language}
       height="100%"

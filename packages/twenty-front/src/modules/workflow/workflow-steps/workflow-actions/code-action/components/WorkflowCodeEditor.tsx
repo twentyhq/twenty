@@ -33,7 +33,6 @@ type WorkflowCodeEditorProps = {
   readonly?: boolean;
   fullScreenMode?: boolean;
   onEnterFullScreen?: () => void;
-  componentInstanceId: string;
 };
 
 export const WorkflowCodeEditor = ({
@@ -44,7 +43,6 @@ export const WorkflowCodeEditor = ({
   readonly = false,
   fullScreenMode = false,
   onEnterFullScreen,
-  componentInstanceId,
 }: WorkflowCodeEditorProps) => {
   const { t } = useLingui();
 
@@ -62,7 +60,6 @@ export const WorkflowCodeEditor = ({
         </StyledFullScreenButtonContainer>
       )}
       <CodeEditor
-        componentInstanceId={componentInstanceId}
         height="100%"
         value={value}
         language="typescript"

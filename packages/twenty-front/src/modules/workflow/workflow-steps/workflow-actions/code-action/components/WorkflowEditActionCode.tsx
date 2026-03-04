@@ -354,7 +354,6 @@ export const WorkflowEditActionCode = ({
       />
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
-          componentInstanceId={`workflow-edit-action-code-${action.id}`}
           height="100%"
           value={formValues.sourceHandlerCode}
           language="typescript"
@@ -391,7 +390,6 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowCodeEditor
-                componentInstanceId={`workflow-code-editor-${action.id}`}
                 value={formValues.sourceHandlerCode}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
@@ -418,7 +416,6 @@ export const WorkflowEditActionCode = ({
               <StyledCodeEditorContainer>
                 <InputLabel>{t`Result`}</InputLabel>
                 <LogicFunctionExecutionResult
-                  componentInstanceId={`workflow-edit-action-result-${action.id}`}
                   logicFunctionTestData={logicFunctionTestData}
                   isTesting={isExecuting}
                 />

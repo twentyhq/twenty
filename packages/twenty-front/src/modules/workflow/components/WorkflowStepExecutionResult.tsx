@@ -66,7 +66,6 @@ type WorkflowStepExecutionResultProps = {
   isTesting?: boolean;
   loadingMessage?: string;
   idleMessage?: string;
-  componentInstanceId: string;
 };
 
 export const WorkflowStepExecutionResult = ({
@@ -77,7 +76,6 @@ export const WorkflowStepExecutionResult = ({
   isTesting = false,
   loadingMessage = t`Processing...`,
   idleMessage = t`Output`,
-  componentInstanceId,
 }: WorkflowStepExecutionResultProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -137,7 +135,6 @@ export const WorkflowStepExecutionResult = ({
       />
       <StyledCodeEditorWrapper>
         <CodeEditor
-          componentInstanceId={componentInstanceId}
           resizable={true}
           value={result}
           language={language}

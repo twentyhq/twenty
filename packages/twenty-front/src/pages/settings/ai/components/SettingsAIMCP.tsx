@@ -73,7 +73,6 @@ export const SettingsAIMCP = () => {
             />
           </StyledCopyButton>
           <CodeEditor
-            componentInstanceId={'mcp-config'}
             value={mcpConfig}
             language="application/json"
             options={{

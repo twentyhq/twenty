@@ -105,7 +105,6 @@ export const SettingsLogicFunctionCodeEditor = ({
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
       <CodeEditor
-        componentInstanceId={`code-editor-${logicFunctionId}`}
         height={height}
         value={currentFile.content}
         language={currentFile.language}

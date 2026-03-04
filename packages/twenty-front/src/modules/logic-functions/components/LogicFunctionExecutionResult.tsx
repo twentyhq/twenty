@@ -9,9 +9,7 @@ import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 export const LogicFunctionExecutionResult = ({
   logicFunctionTestData,
   isTesting = false,
-  componentInstanceId,
 }: {
-  componentInstanceId: string;
   logicFunctionTestData: LogicFunctionTestData;
   isTesting?: boolean;
 }) => {
@@ -37,7 +35,6 @@ export const LogicFunctionExecutionResult = ({
 
   return (
     <WorkflowStepExecutionResult
-      componentInstanceId={componentInstanceId}
       result={result}
       language={logicFunctionTestData.language}
       height={150}

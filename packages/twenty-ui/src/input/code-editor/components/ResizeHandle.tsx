@@ -4,6 +4,8 @@ import { themeCssVariables } from '@ui/theme-constants';
 
 type ResizeHandleProps = {
   onPointerDown: (event: PointerEvent) => void;
+  onPointerMove: (event: PointerEvent) => void;
+  onPointerUp: (event: PointerEvent) => void;
 };
 
 const StyledResizeHandleArea = styled.div`
@@ -27,8 +29,16 @@ const StyledResizeHandleBar = styled.div`
   width: 32px;
 `;
 
-export const ResizeHandle = ({ onPointerDown }: ResizeHandleProps) => (
-  <StyledResizeHandleArea onPointerDown={onPointerDown}>
+export const ResizeHandle = ({
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+}: ResizeHandleProps) => (
+  <StyledResizeHandleArea
+    onPointerDown={onPointerDown}
+    onPointerMove={onPointerMove}
+    onPointerUp={onPointerUp}
+  >
     <StyledResizeHandleBar />
   </StyledResizeHandleArea>
 );

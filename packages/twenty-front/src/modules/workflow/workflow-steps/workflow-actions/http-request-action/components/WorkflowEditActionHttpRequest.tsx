@@ -196,7 +196,6 @@ export const WorkflowEditActionHttpRequest = ({
               readonly={actionOptions.readonly}
             />
             <HttpRequestExecutionResult
-              componentInstanceId={action.id}
               httpRequestTestData={httpRequestTestData}
               isTesting={isTesting}
             />
