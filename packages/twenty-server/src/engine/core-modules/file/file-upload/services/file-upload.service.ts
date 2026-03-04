@@ -97,7 +97,13 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }) {
-    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
+    const imageData = await this.fetchImageBufferFromUrl(imageUrl).catch((error) => {
+      this.logger.warn(
+        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return null;
+    });
 
     if (!imageData) {
       return { name: '', mimeType: undefined, files: [] };
