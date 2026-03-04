@@ -1,6 +1,5 @@
 import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/formatNumberChartTrend';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H1Title,
@@ -8,6 +7,9 @@ import {
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetAggregateChartProps = {
   value: string | number;
@@ -17,10 +19,10 @@ type GraphWidgetAggregateChartProps = {
 };
 
 const StyledTrendPercentageValue = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContainer = styled.div`
@@ -38,7 +40,7 @@ const StyledTrendIconContainer = styled.div`
 `;
 
 const StyledH1Title = styled(H1Title)`
-  font-size: ${({ theme }) => theme.font.size.xxl};
+  font-size: ${themeCssVariables.font.size.xxl};
   margin: 0;
 `;
 
@@ -48,7 +50,7 @@ export const GraphWidgetAggregateChart = ({
   prefix,
   suffix,
 }: GraphWidgetAggregateChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const formattedPercentage = isDefined(trendPercentage)
     ? formatNumberChartTrend(trendPercentage)

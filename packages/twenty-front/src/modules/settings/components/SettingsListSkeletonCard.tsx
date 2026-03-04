@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Card } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled(Card)`
-  background-color: ${({ theme }) => theme.background.secondary};
+  background-color: ${themeCssVariables.background.secondary};
   height: 40px;
 `;
 

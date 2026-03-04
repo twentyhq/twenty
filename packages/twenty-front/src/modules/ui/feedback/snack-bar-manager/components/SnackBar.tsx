@@ -1,10 +1,14 @@
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
-import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+  useContext,
+  useMemo,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -15,7 +19,8 @@ import {
 } from 'twenty-ui/display';
 import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -43,16 +48,16 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
 };
 
 const StyledContainer = styled.div`
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
-  background-color: ${({ theme }) => theme.background.transparent.primary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  backdrop-filter: ${themeCssVariables.blur.medium};
+  background-color: ${themeCssVariables.background.transparent.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 296px;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
@@ -72,16 +77,16 @@ const StyledProgressBar = styled(ProgressBar)`
 
 const StyledHeader = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledIcon = styled.div`
@@ -96,9 +101,9 @@ const StyledActions = styled.div`
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding-left: ${({ theme }) => theme.spacing(6)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding-left: ${themeCssVariables.spacing[6]};
   overflow: hidden;
   text-overflow: ellipsis;
   width: 200px;
@@ -106,20 +111,20 @@ const StyledDescription = styled.div`
 
 const StyledLink = styled(Link)`
   display: block;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding-left: ${({ theme }) => theme.spacing(6)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding-left: ${themeCssVariables.spacing[6]};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 200px;
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledActionButton = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(6)};
+  padding-left: ${themeCssVariables.spacing[6]};
 `;
 
 const defaultAriaLabelByVariant: Record<
@@ -149,7 +154,7 @@ export const SnackBar = ({
   role = 'status',
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { i18n, t } = useLingui();
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({

@@ -1,11 +1,12 @@
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const graphTypeOptions = [
   GraphType.VERTICAL_BAR,
@@ -19,7 +20,7 @@ const graphTypeOptions = [
 const StyledChartTypeSelectionContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type ChartTypeSelectionSectionProps = {

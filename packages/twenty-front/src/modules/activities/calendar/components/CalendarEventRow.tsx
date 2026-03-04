@@ -34,13 +34,13 @@ const StyledContainer = styled.div<{ showTitle?: boolean }>`
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
-  background-color: ${themeCssVariables.tag.background.gray};
+  background-color: ${({ active }) =>
+    active
+      ? themeCssVariables.tag.background.red
+      : themeCssVariables.tag.background.gray};
   height: 100%;
   width: ${themeCssVariables.spacing[1]};
   border-radius: ${themeCssVariables.border.radius.xs};
-
-  ${({ active }) =>
-    active ? `background-color: ${themeCssVariables.tag.background.red}` : ''}
 `;
 
 const StyledLabels = styled.div`
@@ -60,17 +60,16 @@ const StyledTime = styled.div`
 `;
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
+  color: ${({ active }) =>
+    active ? themeCssVariables.font.color.primary : 'inherit'};
   flex: 1 0 auto;
+  font-weight: ${({ active }) =>
+    active ? themeCssVariables.font.weight.medium : 'inherit'};
   overflow: hidden;
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
   text-overflow: ellipsis;
   white-space: nowrap;
   width: ${themeCssVariables.spacing[10]};
-  ${({ active }) =>
-    active
-      ? `color: ${themeCssVariables.font.color.primary}; font-weight: ${themeCssVariables.font.weight.medium}`
-      : ''}
-
-  ${({ canceled }) => (canceled ? 'text-decoration: line-through' : '')}
 `;
 
 export const CalendarEventRow = ({

@@ -1,26 +1,27 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ComponentProps, type MouseEvent } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.li`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
-  font-size: ${({ theme, onClick }) =>
-    onClick ? theme.font.size.sm : theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  font-size: ${({ onClick }) =>
+    onClick ? themeCssVariables.font.size.sm : themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  padding: ${themeCssVariables.spacing[1]};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
 
   user-select: none;
 
   &:hover {
-    background: ${({ theme, onClick }) =>
-      onClick ? theme.background.transparent.light : 'none'};
+    background: ${({ onClick }) =>
+      onClick ? themeCssVariables.background.transparent.light : 'none'};
   }
 
   flex-shrink: 0;
@@ -28,20 +29,20 @@ const StyledHeader = styled.li`
 
 const StyledChildrenWrapper = styled.span`
   overflow: hidden;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  padding: 0 ${themeCssVariables.spacing[1]};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
 
 const StyledEndComponent = styled.div`
   display: inline-flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   margin-left: auto;
   margin-right: 0;
 
   & > svg {
-    height: ${({ theme }) => theme.icon.size.md}px;
-    width: ${({ theme }) => theme.icon.size.md}px;
+    height: ${themeCssVariables.icon.size.md}px;
+    width: ${themeCssVariables.icon.size.md}px;
   }
 `;
 

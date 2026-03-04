@@ -15,8 +15,9 @@ import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
@@ -26,14 +27,16 @@ const StyledSidePanelWrapper = styled.div<{
   min-width: 0;
   overflow: hidden;
   width: ${({ isOpen }) => (isOpen ? `var(${COMMAND_MENU_WIDTH_VAR})` : '0px')};
-  transition: ${({ isResizing, theme }) =>
-    isResizing ? 'none' : `width ${theme.animation.duration.normal}s`};
+  transition: ${({ isResizing }) =>
+    isResizing
+      ? 'none'
+      : `width ${themeCssVariables.animation.duration.normal}s`};
 `;
 
 const StyledSidePanel = styled.aside`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 100%;

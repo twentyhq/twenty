@@ -83,6 +83,7 @@ export default defineConfig(({ command }) => {
       checker(checkersConfig),
       {
         ...wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
           },

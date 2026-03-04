@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const withLinaria = require('next-with-linaria');
 
 const nextConfig = {
   images: {
@@ -72,4 +73,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withLinaria(nextConfig);

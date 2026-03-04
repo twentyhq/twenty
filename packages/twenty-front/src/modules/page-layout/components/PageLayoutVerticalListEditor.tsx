@@ -6,7 +6,7 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   Draggable,
@@ -15,26 +15,31 @@ import {
 } from '@hello-pangea/dnd';
 import { useId } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
   shouldUseWhiteBackground: boolean;
 }>`
-  background: ${({ theme, shouldUseWhiteBackground }) =>
+  background: ${({ shouldUseWhiteBackground }) =>
     shouldUseWhiteBackground
-      ? theme.background.primary
-      : theme.background.secondary};
+      ? themeCssVariables.background.primary
+      : themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme, variant }) =>
-    variant === 'side-column' ? theme.spacing(1) : theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[4]};
+  padding: ${({ variant }) =>
+    variant === 'side-column'
+      ? themeCssVariables.spacing[1]
+      : themeCssVariables.spacing[2]};
 `;
 
 const StyledDraggableWrapper = styled.div<{ isDragging: boolean }>`
-  background: ${({ theme, isDragging }) =>
-    isDragging ? theme.background.transparent.light : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${({ isDragging }) =>
+    isDragging
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background 0.1s ease;
 `;
 

@@ -7,11 +7,12 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useDeleteUserAccountMutation,
   useDeleteUserWorkspaceMutation,
@@ -21,7 +22,7 @@ const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
 const LEAVE_WORKSPACE_MODAL_ID = 'leave-workspace-modal';
 
 const StyledDiv = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const DeleteAccount = () => {

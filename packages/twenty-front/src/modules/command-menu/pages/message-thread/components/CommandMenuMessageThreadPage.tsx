@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useMemo } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -14,6 +14,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -31,11 +32,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
   box-sizing: border-box;
 `;

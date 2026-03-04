@@ -1,5 +1,5 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { type Theme } from '@emotion/react';
+import type { ThemeType } from 'twenty-ui/theme';
 
 type WorkflowDiagramColors = {
   background: string;
@@ -18,7 +18,7 @@ export const getWorkflowDiagramColors = ({
   theme,
   runStatus,
 }: {
-  theme: Theme;
+  theme: ThemeType;
   runStatus?: WorkflowRunStepStatus;
 }): WorkflowDiagramNodeColors => {
   switch (runStatus) {

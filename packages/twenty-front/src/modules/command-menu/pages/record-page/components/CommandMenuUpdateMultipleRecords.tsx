@@ -3,7 +3,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRightDrawerRecord = styled.div`
   height: 100%;

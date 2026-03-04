@@ -1,7 +1,8 @@
-import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type DraggableItemProps = {
   draggableId: string;
@@ -28,7 +29,7 @@ export const DraggableItem = ({
   disableDraggingBackground,
   containerOffsetY,
 }: DraggableItemProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <Draggable

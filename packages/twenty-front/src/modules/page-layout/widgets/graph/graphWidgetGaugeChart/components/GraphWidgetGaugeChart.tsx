@@ -10,8 +10,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   type RadialBarCustomLayerProps,
@@ -19,6 +18,8 @@ import {
 } from '@nivo/radial-bar';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetGaugeChartProps = {
   data: GaugeChartData;
@@ -43,12 +44,13 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   width: 100%;
 
   ${({ $isClickable }) =>
-    $isClickable &&
-    `
+    $isClickable
+      ? `
     svg g path[fill^="url(#"] {
       cursor: pointer;
     }
-  `}
+  `
+      : ''}
 `;
 
 const StyledH1Title = styled(H1Title)`
@@ -69,7 +71,7 @@ export const GraphWidgetGaugeChart = ({
   customFormatter,
   onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const colorRegistry = createGraphColorRegistry(theme);
 
   const formatOptions: GraphValueFormatOptions = {

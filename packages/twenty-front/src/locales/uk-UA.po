@@ -5026,10 +5026,10 @@ msgstr "Електронні листи"
 msgid "Emails and Calendar"
 msgstr "Електронні листи та календар"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Електронні листи з чорного списку будуть ігноруватися. Керуйте чорним списком на сторінці налаштувань \"Акаунти\"."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

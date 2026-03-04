@@ -9,10 +9,12 @@ type ContainerProps = {
   isOn: boolean;
   color?: string;
   toggleSize: ToggleSize;
+  centered?: boolean;
   'data-disabled'?: boolean;
 };
 
 const StyledContainer = styled.label<ContainerProps>`
+  align-self: ${({ centered }) => (centered ? 'center' : 'flex-start')};
   align-items: center;
   background-color: ${({ isOn, color }) =>
     isOn
@@ -52,6 +54,7 @@ export type ToggleProps = {
   color?: string;
   toggleSize?: ToggleSize;
   className?: string;
+  centered?: boolean;
   disabled?: boolean;
 };
 
@@ -62,6 +65,7 @@ export const Toggle = ({
   color,
   toggleSize = 'medium',
   className,
+  centered,
   disabled,
 }: ToggleProps) => {
   const circleVariants = {
@@ -75,6 +79,7 @@ export const Toggle = ({
       color={color}
       toggleSize={toggleSize}
       className={className}
+      centered={centered}
       data-disabled={disabled}
     >
       <VisibilityHiddenInput

@@ -5026,10 +5026,10 @@ msgstr "Ηλεκτρονικά ταχυδρομεία"
 msgid "Emails and Calendar"
 msgstr "Email και Ημερολόγιο"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Τα email από τη λίστα αποκλεισμού θα αγνοηθούν. Διαχειριστείτε τη λίστα αποκλεισμού στη σελίδα ρυθμίσεων \"Λογαριασμοί\"."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

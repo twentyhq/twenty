@@ -1,7 +1,7 @@
 import { BarChartHoverLayerEffect } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartHoverLayerEffect';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { type BarChartLayout } from '~/generated-metadata/graphql';
 

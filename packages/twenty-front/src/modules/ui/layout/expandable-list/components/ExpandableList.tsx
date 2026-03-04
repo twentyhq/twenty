@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type ReactElement,
   useCallback,
@@ -13,11 +13,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { AnimatedContainer } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
   min-width: 100%;
   width: 100%;
@@ -25,7 +26,7 @@ const StyledContainer = styled.div`
 
 const StyledChildrenContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
   max-width: 100%;
   flex: 0 1 fit-content;
@@ -43,7 +44,7 @@ const StyledChildContainer = styled.div`
 `;
 
 const StyledUnShrinkableContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex-shrink: 0;
 
   width: 24px;

@@ -1,9 +1,9 @@
-import { useTheme } from '@emotion/react';
 import { type Edge, type Node } from '@xyflow/react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelOverviewEffectProps = {
@@ -15,7 +15,7 @@ export const SettingsDataModelOverviewEffect = ({
   setEdges,
   setNodes,
 }: SettingsDataModelOverviewEffectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
 
