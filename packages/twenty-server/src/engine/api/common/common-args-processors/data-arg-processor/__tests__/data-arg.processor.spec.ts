@@ -52,7 +52,7 @@ describe('DataArgProcessor', () => {
 
       byUniversalIdentifier[universalId] = {
         id: fieldId,
-        name: fieldName,
+        name: config.name,
         type: config.type ?? FieldMetadataType.TEXT,
         isNullable: config.isNullable ?? true,
         objectMetadataId: 'object-id',
