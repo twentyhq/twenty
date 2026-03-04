@@ -2,14 +2,14 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { plural, t } from '@lingui/core/macro';
 
 type SettingsAdminRetryJobsConfirmationModalProps = {
-  modalId: string;
+  modalInstanceId: string;
   jobCount: number;
   onConfirm: () => void;
   onClose?: () => void;
 };
 
 export const SettingsAdminRetryJobsConfirmationModal = ({
-  modalId,
+  modalInstanceId,
   jobCount,
   onConfirm,
   onClose,
@@ -26,7 +26,7 @@ export const SettingsAdminRetryJobsConfirmationModal = ({
 
   return (
     <ConfirmationModal
-      modalId={modalId}
+      modalInstanceId={modalInstanceId}
       title={title}
       subtitle={subtitle}
       onConfirmClick={onConfirm}

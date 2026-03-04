@@ -219,7 +219,7 @@ export const SettingsWorkspaceMember = () => {
           </SettingsPageContainer>
 
           <ConfirmationModal
-            modalId={DELETE_MEMBER_MODAL_ID}
+            modalInstanceId={DELETE_MEMBER_MODAL_ID}
             title={t`Remove member from workspace`}
             subtitle={t`This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments.`}
             onConfirmClick={handleDeleteMember}

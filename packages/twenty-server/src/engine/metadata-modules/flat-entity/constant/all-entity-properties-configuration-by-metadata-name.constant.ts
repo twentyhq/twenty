@@ -1162,6 +1162,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  viewSort: {
+    direction: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   viewFilterGroup: {
     viewId: {
       toCompare: true,

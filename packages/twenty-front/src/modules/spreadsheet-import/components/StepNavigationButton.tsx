@@ -1,19 +1,16 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { ModalFooter } from 'twenty-ui/layout';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const StyledFooter = styled(Modal.Footer)`
+const StyledFooter = styled(ModalFooter)`
   border-top: 1px solid ${themeCssVariables.border.color.medium};
   box-shadow: ${themeCssVariables.boxShadow.strong};
-  gap: 10px;
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing[4]};
-  height: auto;
 `;
 
 type StepNavigationButtonProps = {
@@ -34,7 +31,7 @@ export const StepNavigationButton = ({
   isContinueDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
-    <StyledFooter>
+    <StyledFooter autoHeight>
       {!isUndefinedOrNull(onBack) && (
         <MainButton
           Icon={isLoading ? CircularProgressBar : undefined}

@@ -1,4 +1,3 @@
-import { testConfig } from '@/cli/__tests__/constants/testConfig';
 import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -11,7 +10,10 @@ beforeAll(async () => {
 
   const configFile = {
     profiles: {
-      default: testConfig,
+      default: {
+        apiUrl: process.env.TWENTY_API_URL,
+        apiKey: process.env.TWENTY_TEST_API_KEY,
+      },
     },
   };
 

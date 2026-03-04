@@ -33,6 +33,8 @@ import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
+import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
@@ -65,6 +67,7 @@ import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -250,6 +253,14 @@ import {
   type UniversalDeleteWebhookAction,
   type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
+import {
+  type FlatCreateViewSortAction,
+  type FlatDeleteViewSortAction,
+  type FlatUpdateViewSortAction,
+  type UniversalCreateViewSortAction,
+  type UniversalDeleteViewSortAction,
+  type UniversalUpdateViewSortAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -350,6 +361,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatViewGroup;
     universalFlatEntity: UniversalFlatViewGroup;
     entity: MetadataEntity<'viewGroup'>;
+  };
+  viewSort: {
+    flatEntityMaps: FlatViewSortMaps;
+    universalActions: {
+      create: UniversalCreateViewSortAction;
+      update: UniversalUpdateViewSortAction;
+      delete: UniversalDeleteViewSortAction;
+    };
+    flatActions: {
+      create: FlatCreateViewSortAction;
+      update: FlatUpdateViewSortAction;
+      delete: FlatDeleteViewSortAction;
+    };
+    flatEntity: FlatViewSort;
+    universalFlatEntity: UniversalFlatViewSort;
+    entity: MetadataEntity<'viewSort'>;
   };
   rowLevelPermissionPredicate: {
     flatEntityMaps: FlatRowLevelPermissionPredicateMaps;

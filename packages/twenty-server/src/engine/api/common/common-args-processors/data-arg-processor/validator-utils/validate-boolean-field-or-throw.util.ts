@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
+import { isBoolean, isNull } from '@sniptt/guards';
 
 import {
   CommonQueryRunnerException,
@@ -12,7 +12,7 @@ export const validateBooleanFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): boolean | null => {
-  if (typeof value !== 'boolean' && !isNull(value)) {
+  if (!isBoolean(value) && !isNull(value)) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
