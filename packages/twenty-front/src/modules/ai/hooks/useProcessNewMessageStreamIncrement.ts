@@ -20,11 +20,6 @@ export const useProcessNewMessageStreamIncrement = () => {
       return false;
     }
 
-    console.log('Processing new message stream increment:', {
-      messageStreamIncrement,
-      agentChatUISessionStartTime,
-    });
-
     const messageCreatedAt = messageStreamIncrement.metadata?.createdAt;
 
     if (isNonEmptyString(messageCreatedAt)) {

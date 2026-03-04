@@ -7,25 +7,19 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
-import { AIChatErrorUnderMessageList } from '@/ai/components/AIChatErrorUnderMessageList';
-import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
+import { AIChatTabMessageList } from '@/ai/components/AIChatTabMessageList';
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -102,16 +96,6 @@ const StyledEditorWrapper = styled.div`
   }
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[3]};
-  width: calc(100% - 24px);
-`;
-
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -141,15 +125,8 @@ const StyledReadOnlyModelButton = styled(LightButton)`
 `;
 
 export const AIChatTab = () => {
-  console.log('Rendering AIChatTab');
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
-
-  const agentChatMessageIds = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
-  );
-
-  const hasMessages = isNonEmptyArray(agentChatMessageIds);
 
   const { uploadFiles } = useAIChatFileUpload();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -170,16 +147,7 @@ export const AIChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          {hasMessages && (
-            <StyledScrollWrapper
-              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
-            >
-              {agentChatMessageIds.map((messageId) => {
-                return <AIChatMessage messageId={messageId} key={messageId} />;
-              })}
-              <AIChatErrorUnderMessageList />
-            </StyledScrollWrapper>
-          )}
+          <AIChatTabMessageList />
           <AIChatEmptyState editor={editor} />
           <AIChatStandaloneError />
           <AIChatSkeletonLoader />
@@ -192,7 +160,7 @@ export const AIChatTab = () => {
               <StyledButtonsContainer>
                 <StyledLeftButtonsContainer>
                   <AgentChatFileUploadButton />
-                  {hasMessages && <AIChatContextUsageButton />}
+                  <AIChatContextUsageButton />
                 </StyledLeftButtonsContainer>
                 <StyledRightButtonsContainer>
                   <StyledReadOnlyModelButton

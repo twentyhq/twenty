@@ -11,9 +11,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const AIChatErrorUnderMessageList = () => {
   const agentChatError = useAtomStateValue(agentChatErrorState);
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
   const agentChatMessageIds = useAtomComponentSelectorValue(
     agentChatMessageIdsComponentSelector,
   );
+
   const lastMessageId = agentChatMessageIds.at(-1);
   const agentChatMessage = useAtomComponentFamilyStateValue(
     agentChatMessageComponentFamilyState,
@@ -29,5 +31,5 @@ export const AIChatErrorUnderMessageList = () => {
     return null;
   }
 
-  return <AIChatStandaloneError error={agentChatError} />;
+  return <AIChatStandaloneError />;
 };

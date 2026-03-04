@@ -142,7 +142,6 @@ const StyledFilesContainer = styled.div`
 `;
 
 export const AIChatMessage = ({ messageId }: { messageId: string }) => {
-  console.log(`Rendering AIChatMessage for messageId: ${messageId}`);
   const agentChatMessage = useAtomComponentFamilySelectorValue(
     agentChatMessagesComponentSelector,
     { messageId },

@@ -2,11 +2,11 @@ import { styled } from '@linaria/react';
 
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledErrorContainer = styled.div`
   display: flex;
@@ -18,13 +18,11 @@ const StyledErrorContainer = styled.div`
 export const AIChatStandaloneError = () => {
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
 
-  const agentChatMessageIds = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
-  );
-
   const agentChatError = useAtomStateValue(agentChatErrorState);
 
-  const hasMessages = isNonEmptyArray(agentChatMessageIds);
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
 
   const shouldRender =
     !hasMessages && isDefined(agentChatError) && !agentChatIsLoading;
