@@ -26,16 +26,11 @@ export const useHandleResetPassword = () => {
           return;
         }
 
-        if (!workspacePublicData?.id) {
-          enqueueErrorSnackBar({
-            message: t`Invalid workspace`,
-          });
-          return;
-        }
-
         try {
           const { data } = await emailPasswordResetLink({
-            variables: { email, workspaceId: workspacePublicData.id },
+            variables: workspacePublicData?.id
+              ? { email, workspaceId: workspacePublicData.id }
+              : { email },
           });
 
           if (data?.emailPasswordResetLink?.success === true) {

@@ -2,11 +2,12 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
+import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
 import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
   type ORMWorkspaceContext,
@@ -69,9 +70,12 @@ export class GlobalWorkspaceOrmManager {
   async executeInWorkspaceContext<T>(
     fn: () => T | Promise<T>,
     authContext?: WorkspaceAuthContext,
+    options?: ExecuteInWorkspaceContextOptions,
   ): Promise<T> {
     const resolvedAuthContext = authContext ?? getWorkspaceAuthContext();
-    const context = await this.loadWorkspaceContext(resolvedAuthContext);
+    const context = options?.lite
+      ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
+      : await this.loadWorkspaceContext(resolvedAuthContext);
 
     return withWorkspaceContext(context, fn);
   }
@@ -118,6 +122,51 @@ export class GlobalWorkspaceOrmManager {
       permissionsPerRoleId,
       entityMetadatas,
       userWorkspaceRoleMap,
+    };
+  }
+
+  private async loadLiteWorkspaceContext(
+    authContext: WorkspaceAuthContext,
+  ): Promise<ORMWorkspaceContext> {
+    const workspaceId = authContext.workspace.id;
+
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      ORMEntityMetadatas: entityMetadatas,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'ORMEntityMetadatas',
+    ]);
+
+    const { idByNameSingular: objectIdByNameSingular } =
+      buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+    return {
+      authContext,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps: {
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatRowLevelPermissionPredicateMaps: {
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatRowLevelPermissionPredicateGroupMaps: {
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      objectIdByNameSingular,
+      featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
+      permissionsPerRoleId: {},
+      entityMetadatas,
+      userWorkspaceRoleMap: {},
     };
   }
 }

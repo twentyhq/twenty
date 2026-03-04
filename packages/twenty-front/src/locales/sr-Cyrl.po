@@ -6398,6 +6398,7 @@ msgstr "Фасцикле"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Заборавили сте лозинку?"
 
@@ -7382,11 +7383,6 @@ msgstr "Неважећи УРЛ. Кликните на „Измени“ да �
 msgid "Invalid verification code. Please try again."
 msgstr "Неправилан код верификације. Молимо покушајте поново."
 
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Неважећа радна површина"
-
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
@@ -8094,9 +8090,8 @@ msgstr "Одјава"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Дневници"
 

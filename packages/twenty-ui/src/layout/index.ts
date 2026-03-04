@@ -51,6 +51,8 @@ export type { ModalOverlay } from './modal/types/ModalOverlay';
 export type { ModalPadding } from './modal/types/ModalPadding';
 export type { ModalProps } from './modal/types/ModalProps';
 export type { ModalSize } from './modal/types/ModalSize';
+export { ResizeHandle } from './resize-handle/components/ResizeHandle';
+export { useResizeHandle } from './resize-handle/hooks/useResizeHandle';
 export {
   SectionAlignment,
   SectionFontColor,

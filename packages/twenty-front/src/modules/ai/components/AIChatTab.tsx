@@ -107,7 +107,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   gap: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
-  width: calc(100% - 24px);
+  width: calc(100% - 24px) !important;
 `;
 
 const StyledButtonsContainer = styled.div`

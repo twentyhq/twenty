@@ -118,6 +118,40 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentChatThreadConnection = {
+  __typename?: 'AgentChatThreadConnection';
+  /** Array of edges. */
+  edges: Array<AgentChatThreadEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type AgentChatThreadEdge = {
+  __typename?: 'AgentChatThreadEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the AgentChatThread */
+  node: AgentChatThread;
+};
+
+export type AgentChatThreadFilter = {
+  and?: InputMaybe<Array<AgentChatThreadFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<AgentChatThreadFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
+};
+
+export type AgentChatThreadSort = {
+  direction: SortDirection;
+  field: AgentChatThreadSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum AgentChatThreadSortFields {
+  id = 'id',
+  updatedAt = 'updatedAt'
+}
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -1320,6 +1354,26 @@ export enum DatabaseEventAction {
   UPDATED = 'UPDATED',
   UPSERTED = 'UPSERTED'
 }
+
+export type DateFieldComparison = {
+  between?: InputMaybe<DateFieldComparisonBetween>;
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
+  notBetween?: InputMaybe<DateFieldComparisonBetween>;
+  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
+};
+
+export type DateFieldComparisonBetween = {
+  lower: Scalars['DateTime'];
+  upper: Scalars['DateTime'];
+};
 
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
@@ -2894,7 +2948,7 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
-  workspaceId: Scalars['UUID'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -3831,7 +3885,7 @@ export type Query = {
   billingPortalSession: BillingSession;
   chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
-  chatThreads: Array<AgentChatThread>;
+  chatThreads: AgentChatThreadConnection;
   checkUserExists: CheckUserExist;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
@@ -3947,6 +4001,13 @@ export type QueryChatMessagesArgs = {
 
 export type QueryChatThreadArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryChatThreadsArgs = {
+  filter?: AgentChatThreadFilter;
+  paging?: CursorPaging;
+  sorting?: Array<AgentChatThreadSort>;
 };
 
 
@@ -4550,6 +4611,18 @@ export type Skill = {
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
+
+/** Sort Directions */
+export enum SortDirection {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+/** Sort Nulls Options */
+export enum SortNulls {
+  NULLS_FIRST = 'NULLS_FIRST',
+  NULLS_LAST = 'NULLS_LAST'
+}
 
 export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
@@ -5654,10 +5727,12 @@ export type GetChatMessagesQueryVariables = Exact<{
 
 export type GetChatMessagesQuery = { __typename?: 'Query', chatMessages: Array<{ __typename?: 'AgentMessage', id: string, threadId: string, turnId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, fileId?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
-export type GetChatThreadsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetChatThreadsQueryVariables = Exact<{
+  paging?: InputMaybe<CursorPaging>;
+}>;
 
 
-export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, conversationSize: number, totalInputCredits: number, totalOutputCredits: number, createdAt: string, updatedAt: string }> };
+export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: { __typename?: 'AgentChatThreadConnection', edges: Array<{ __typename?: 'AgentChatThreadEdge', cursor: any, node: { __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, conversationSize: number, totalInputCredits: number, totalOutputCredits: number, createdAt: string, updatedAt: string } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage?: boolean | null } } };
 
 export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5725,7 +5800,7 @@ export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
-  workspaceId: Scalars['UUID'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -9006,18 +9081,27 @@ export type GetChatMessagesQueryHookResult = ReturnType<typeof useGetChatMessage
 export type GetChatMessagesLazyQueryHookResult = ReturnType<typeof useGetChatMessagesLazyQuery>;
 export type GetChatMessagesQueryResult = Apollo.QueryResult<GetChatMessagesQuery, GetChatMessagesQueryVariables>;
 export const GetChatThreadsDocument = gql`
-    query GetChatThreads {
-  chatThreads {
-    id
-    title
-    totalInputTokens
-    totalOutputTokens
-    contextWindowTokens
-    conversationSize
-    totalInputCredits
-    totalOutputCredits
-    createdAt
-    updatedAt
+    query GetChatThreads($paging: CursorPaging) {
+  chatThreads(paging: $paging) {
+    edges {
+      node {
+        id
+        title
+        totalInputTokens
+        totalOutputTokens
+        contextWindowTokens
+        conversationSize
+        totalInputCredits
+        totalOutputCredits
+        createdAt
+        updatedAt
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
 }
     `;
@@ -9034,6 +9118,7 @@ export const GetChatThreadsDocument = gql`
  * @example
  * const { data, loading, error } = useGetChatThreadsQuery({
  *   variables: {
+ *      paging: // value for 'paging'
  *   },
  * });
  */
@@ -9303,7 +9388,7 @@ export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMu
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
-    mutation EmailPasswordResetLink($email: String!, $workspaceId: UUID!) {
+    mutation EmailPasswordResetLink($email: String!, $workspaceId: UUID) {
   emailPasswordResetLink(email: $email, workspaceId: $workspaceId) {
     success
   }

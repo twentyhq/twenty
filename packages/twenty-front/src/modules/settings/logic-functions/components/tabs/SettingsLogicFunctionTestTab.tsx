@@ -1,4 +1,5 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
+import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
@@ -8,8 +9,6 @@ import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -48,8 +47,6 @@ export const SettingsLogicFunctionTestTab = ({
     }));
   };
 
-  const testLogsTextAreaId = `${logicFunctionId}-test-logs`;
-
   return (
     <Section>
       <H2Title
@@ -78,23 +75,18 @@ export const SettingsLogicFunctionTestTab = ({
             height={100}
             onChange={onChange}
             variant="with-header"
+            resizable
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
           logicFunctionTestData={logicFunctionTestData}
-          maxHeight={
-            logicFunctionTestData.output.logs.length > 0 ? 200 : undefined
-          }
           isTesting={isTesting}
         />
         {logicFunctionTestData.output.logs.length > 0 && (
           <StyledCodeEditorContainer>
-            <InputLabel>{t`Logs`}</InputLabel>
-            <TextArea
-              textAreaId={testLogsTextAreaId}
+            <LogicFunctionLogs
+              componentInstanceId={`settings-logic-function-logs-${logicFunctionId}`}
               value={isTesting ? '' : logicFunctionTestData.output.logs}
-              maxRows={20}
-              disabled
             />
           </StyledCodeEditorContainer>
         )}

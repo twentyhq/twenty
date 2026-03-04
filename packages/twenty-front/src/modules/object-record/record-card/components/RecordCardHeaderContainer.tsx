@@ -3,6 +3,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledBoardCardHeaderContainer = styled.div<{
   isCompact: boolean;
+  padding?: string;
 }>`
   align-items: center;
   display: flex;
@@ -10,11 +11,9 @@ export const StyledBoardCardHeaderContainer = styled.div<{
   justify-content: space-between;
   font-weight: ${themeCssVariables.font.weight.medium};
   height: 24px;
-  padding-bottom: ${({ isCompact }) =>
-    isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
+  padding: ${({ padding, isCompact }) =>
+    padding ??
+    `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} ${isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
   transition: padding ease-in-out 160ms;
 
   img {

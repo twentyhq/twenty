@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -42,6 +43,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,

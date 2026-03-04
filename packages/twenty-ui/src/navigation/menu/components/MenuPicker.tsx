@@ -1,14 +1,16 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import {
+  ICON_SIZES,
+  ICON_STROKES,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
@@ -135,8 +137,6 @@ export const MenuPicker = ({
   tooltipDelay = TooltipDelay.noDelay,
   tooltipOffset = 5,
 }: MenuPickerProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <>
       <StyledMenuPicker
@@ -151,7 +151,7 @@ export const MenuPicker = ({
         aria-label={label}
       >
         <StyledIconContainer>
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
         </StyledIconContainer>
 
         {isDefined(label) && showLabel && (
