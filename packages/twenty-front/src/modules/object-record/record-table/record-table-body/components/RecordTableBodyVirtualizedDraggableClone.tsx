@@ -34,10 +34,9 @@ import {
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MAX_COLUMNS = 100;
 
@@ -139,8 +138,6 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 }) => {
   const realIndex = rubric.source.index;
 
-  const { theme } = useContext(ThemeContext);
-
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
@@ -178,10 +175,10 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
         style={{
           ...draggableProvided.draggableProps.style,
           background: draggableSnapshot.isDragging
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : undefined,
           borderColor: draggableSnapshot.isDragging
-            ? `${theme.border.color.medium}`
+            ? themeCssVariables.border.color.medium
             : 'transparent',
           opacity: isSecondaryDragged ? 0.3 : undefined,
         }}

@@ -1,13 +1,10 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 
 import { Button } from '@ui/input/button/components/Button/Button';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-// theme.icon.size.md is always 16
-const ICON_SIZE_MD = 16;
 
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {
@@ -75,7 +72,7 @@ export const Info = ({
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <IconInfoCircle size={ICON_SIZE_MD} />
+        <IconInfoCircle size={ICON_SIZES.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && to && (

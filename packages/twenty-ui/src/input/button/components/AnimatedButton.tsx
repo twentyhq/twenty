@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -492,7 +492,7 @@ export const AnimatedButton = ({
       {Icon && (
         <StyledIconContainer>
           <motion.div animate={animate} transition={transition}>
-            <Icon size={14} />
+            <Icon size={ICON_SIZES.sm} />
           </motion.div>
         </StyledIconContainer>
       )}

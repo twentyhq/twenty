@@ -4,7 +4,7 @@ import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplay
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledWorkflowStepBody = styled.div`
+const StyledWorkflowStepBody = styled.div<{ rowGap?: string }>`
   background: ${themeCssVariables.background.primary};
   display: flex;
   flex: 1 1 auto;
@@ -13,18 +13,18 @@ const StyledWorkflowStepBody = styled.div`
   overflow-y: scroll;
   padding-block: ${themeCssVariables.spacing[4]};
   padding-inline: ${themeCssVariables.spacing[3]};
-  row-gap: ${themeCssVariables.spacing[4]};
+  row-gap: ${({ rowGap }) => rowGap ?? themeCssVariables.spacing[4]};
 `;
 
 export const WorkflowStepBody = ({
   children,
-  className,
+  rowGap,
 }: {
   children: React.ReactNode;
-  className?: string;
+  rowGap?: string;
 }) => {
   return (
-    <StyledWorkflowStepBody className={className}>
+    <StyledWorkflowStepBody rowGap={rowGap}>
       <AppErrorBoundary
         resetOnLocationChange={true}
         FallbackComponent={({

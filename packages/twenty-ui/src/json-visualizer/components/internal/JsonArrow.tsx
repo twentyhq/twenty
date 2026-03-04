@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 
 const StyledButton = styled.button<{
@@ -59,7 +59,7 @@ export const JsonArrow = ({
         animate={{ rotate: isOpen ? 0 : -90 }}
         transition={{ duration: 0.3 }}
       >
-        <IconChevronDown size={16} color={iconColor} />
+        <IconChevronDown size={ICON_SIZES.md} color={iconColor} />
       </motion.div>
     </StyledButton>
   );

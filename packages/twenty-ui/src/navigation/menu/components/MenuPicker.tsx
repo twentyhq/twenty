@@ -6,7 +6,7 @@ import {
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, ICON_STROKES, themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
@@ -147,7 +147,7 @@ export const MenuPicker = ({
         aria-label={label}
       >
         <StyledIconContainer>
-          <Icon size={16} stroke={1.6} />
+          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
         </StyledIconContainer>
 
         {isDefined(label) && showLabel && (

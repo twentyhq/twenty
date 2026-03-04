@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -11,6 +11,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -23,8 +24,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ICON_SIZES, ICON_STROKES, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   useActivateSkillMutation,
@@ -34,10 +34,7 @@ import {
 import { SettingsSkillInactiveMenuDropDown } from '~/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import {
-  SettingsSkillTableRow,
-  StyledSkillTableRow,
-} from './SettingsSkillTableRow';
+import { SettingsSkillTableRow } from './SettingsSkillTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
@@ -46,12 +43,11 @@ const StyledSearchAndFilterContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputWrapper = styled.div`
   flex: 1;
-  width: 100%;
 `;
 
-const StyledTableHeaderRow = styled(StyledSkillTableRow)`
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -68,7 +64,6 @@ export const SettingsSkillsTable = () => {
   const [deleteSkill] = useDeleteSkillMutation();
 
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);

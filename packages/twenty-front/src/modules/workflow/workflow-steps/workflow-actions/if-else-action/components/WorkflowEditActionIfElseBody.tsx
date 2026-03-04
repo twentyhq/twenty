@@ -38,9 +38,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledBodyContainer = styled(WorkflowStepBody)`
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 type WorkflowEditActionIfElseBodyProps = {
   action: WorkflowIfElseAction;
@@ -250,7 +247,7 @@ export const WorkflowEditActionIfElseBody = ({
   };
 
   return (
-    <StyledBodyContainer>
+    <WorkflowStepBody rowGap={themeCssVariables.spacing[2]}>
       <InputLabel>{t`Conditions`}</InputLabel>
       <StyledContainer>
         {branches.map((branch, branchIndex) => {
@@ -303,6 +300,6 @@ export const WorkflowEditActionIfElseBody = ({
           );
         })}
       </StyledContainer>
-    </StyledBodyContainer>
+    </WorkflowStepBody>
   );
 };

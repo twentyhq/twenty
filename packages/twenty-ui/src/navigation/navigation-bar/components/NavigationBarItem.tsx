@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;
@@ -32,6 +32,6 @@ export const NavigationBarItem = ({
   onClick,
 }: NavigationBarItemProps) => (
   <StyledIconButton isActive={isActive} onClick={onClick}>
-    <Icon color={themeCssVariables.grayScale.gray10} size={20} />
+    <Icon color={themeCssVariables.grayScale.gray10} size={ICON_SIZES.lg} />
   </StyledIconButton>
 );

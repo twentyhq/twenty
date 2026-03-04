@@ -7,7 +7,7 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, ICON_STROKES, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -68,8 +68,8 @@ export const MenuItemLeftContent = ({
           <MenuItemIconBoxContainer>
             <StyledDraggableItem>
               <IconGripVertical
-                size={16}
-                stroke={1.6}
+                size={ICON_SIZES.md}
+                stroke={ICON_STROKES.sm}
                 color={gripIconColor}
               />
             </StyledDraggableItem>
@@ -77,8 +77,8 @@ export const MenuItemLeftContent = ({
         ) : (
           <StyledDraggableItem>
             <IconGripVertical
-              size={16}
-              stroke={1.6}
+              size={ICON_SIZES.md}
+              stroke={ICON_STROKES.sm}
               color={gripIconColor}
             />
           </StyledDraggableItem>

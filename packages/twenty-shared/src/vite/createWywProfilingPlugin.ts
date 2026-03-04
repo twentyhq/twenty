@@ -21,7 +21,7 @@ export const createWywProfilingPlugin = (
   wywPlugin: Plugin,
   options?: WywProfilingOptions,
 ): Plugin => {
-  const slowThresholdMs = options?.slowThresholdMs ?? 50;
+  const slowThresholdMs = options?.slowThresholdMs ?? 100;
   const topSlowFilesCount = options?.topSlowFilesCount ?? 10;
   const warmupThresholdMs = options?.warmupThresholdMs ?? 500;
 

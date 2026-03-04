@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { motion } from 'framer-motion';
 import { themeCssVariables } from '@ui/theme-constants';
 
 export type ProgressBarProps = {
@@ -24,18 +25,17 @@ const StyledBar = styled.div<StyledBarProps>`
   width: 100%;
 `;
 
+// Width animation is handled by motion.div in JSX; this provides only color/shape styles.
 const StyledBarFilling = styled.div<{
   barColor?: string;
   withBorderRadius?: boolean;
-  value: number;
 }>`
   background-color: ${({ barColor }) =>
     barColor ?? themeCssVariables.font.color.primary};
-  height: 100%;
   border-radius: ${({ withBorderRadius }) =>
     withBorderRadius ? themeCssVariables.border.radius.md : '0'};
-  transition: width 0.3s linear;
-  width: ${({ value }) => `${value}%`};
+  height: 100%;
+  width: 100%;
 `;
 
 export const ProgressBar = ({
@@ -52,10 +52,12 @@ export const ProgressBar = ({
     role="progressbar"
     aria-valuenow={Math.ceil(value)}
   >
-    <StyledBarFilling
-      barColor={barColor}
-      withBorderRadius={withBorderRadius}
-      value={Math.ceil(value)}
-    />
+    <motion.div
+      style={{ height: '100%' }}
+      animate={{ width: `${Math.ceil(value)}%` }}
+      transition={{ duration: 0.3, ease: 'linear' }}
+    >
+      <StyledBarFilling barColor={barColor} withBorderRadius={withBorderRadius} />
+    </motion.div>
   </StyledBar>
 );
