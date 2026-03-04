@@ -99,10 +99,12 @@ export class AppRegistrationUploadController {
       const manifestPath = await this.extractAndValidate(tarballPath, tempDir);
       const manifestContent = await fs.readFile(manifestPath, 'utf-8');
 
-      let manifest: Record<string, unknown>;
+      let manifest: {
+        application?: { universalIdentifier?: string; displayName?: string };
+      };
 
       try {
-        manifest = JSON.parse(manifestContent) as Record<string, unknown>;
+        manifest = JSON.parse(manifestContent);
       } catch {
         throw new ApplicationException(
           'manifest.json contains invalid JSON',

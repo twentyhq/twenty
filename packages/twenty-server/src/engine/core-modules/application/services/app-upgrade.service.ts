@@ -40,17 +40,12 @@ export class AppUpgradeService {
       this.twentyConfigService.get('APP_REGISTRY_URL');
 
     try {
-      const encodedPackage = encodeURIComponent(
-        appRegistration.sourcePackage!,
-      );
+      const encodedPackage = encodeURIComponent(appRegistration.sourcePackage!);
 
-      const response = await fetch(
-        `${registryUrl}/${encodedPackage}/latest`,
-        {
-          headers: { 'User-Agent': 'Twenty-AppUpgrade' },
-          signal: AbortSignal.timeout(10_000),
-        },
-      );
+      const response = await fetch(`${registryUrl}/${encodedPackage}/latest`, {
+        headers: { 'User-Agent': 'Twenty-AppUpgrade' },
+        signal: AbortSignal.timeout(10_000),
+      });
 
       if (!response.ok) {
         this.logger.warn(
