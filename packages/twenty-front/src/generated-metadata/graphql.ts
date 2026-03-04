@@ -138,6 +138,7 @@ export type AgentChatThreadFilter = {
   and?: InputMaybe<Array<AgentChatThreadFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
   or?: InputMaybe<Array<AgentChatThreadFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
 export type AgentChatThreadSort = {
@@ -147,7 +148,8 @@ export type AgentChatThreadSort = {
 };
 
 export enum AgentChatThreadSortFields {
-  id = 'id'
+  id = 'id',
+  updatedAt = 'updatedAt'
 }
 
 export type AgentIdInput = {
@@ -1348,6 +1350,26 @@ export enum DatabaseEventAction {
   UPDATED = 'UPDATED',
   UPSERTED = 'UPSERTED'
 }
+
+export type DateFieldComparison = {
+  between?: InputMaybe<DateFieldComparisonBetween>;
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
+  notBetween?: InputMaybe<DateFieldComparisonBetween>;
+  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
+};
+
+export type DateFieldComparisonBetween = {
+  lower: Scalars['DateTime'];
+  upper: Scalars['DateTime'];
+};
 
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
