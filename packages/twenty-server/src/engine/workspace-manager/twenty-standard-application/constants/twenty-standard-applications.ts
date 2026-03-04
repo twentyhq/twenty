@@ -1,4 +1,4 @@
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 export const TWENTY_STANDARD_APPLICATION = {
