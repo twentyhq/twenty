@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { isValidUuid } from 'twenty-shared/utils';
 
 import {
@@ -13,7 +13,10 @@ export const validateUUIDFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
-  if (!isValidUuid(value as string) && !isNull(value)) {
+  if (
+    (!isNonEmptyString(value) && !isNull(value)) ||
+    (isNonEmptyString(value) && !isValidUuid(value))
+  ) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(

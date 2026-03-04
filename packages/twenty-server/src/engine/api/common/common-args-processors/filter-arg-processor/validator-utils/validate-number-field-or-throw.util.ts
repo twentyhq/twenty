@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
+import { isNull, isNumber } from '@sniptt/guards';
 
 import {
   CommonQueryRunnerException,
@@ -13,8 +13,8 @@ export const validateNumberFieldOrThrow = (
   fieldName: string,
 ): number | null => {
   if (
-    (typeof value !== 'number' && !isNull(value)) ||
-    (typeof value === 'number' &&
+    (!isNumber(value) && !isNull(value)) ||
+    (isNumber(value) &&
       (isNaN(value) || value === Infinity || value === -Infinity))
   ) {
     const inspectedValue = inspect(value);
