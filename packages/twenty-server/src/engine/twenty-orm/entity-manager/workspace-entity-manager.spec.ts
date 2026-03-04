@@ -175,6 +175,8 @@ describe('WorkspaceEntityManager', () => {
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      viewSortIds: [],
+      viewSortUniversalIdentifiers: [],
       universalSettings: null,
     };
 

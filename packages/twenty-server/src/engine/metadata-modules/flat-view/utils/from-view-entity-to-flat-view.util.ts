@@ -121,5 +121,10 @@ export const fromViewEntityToFlatView = ({
       viewEntity.viewFilterGroups?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
+    viewSortIds: viewEntity.viewSorts?.map(({ id }) => id) ?? [],
+    viewSortUniversalIdentifiers:
+      viewEntity.viewSorts?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
   };
 };

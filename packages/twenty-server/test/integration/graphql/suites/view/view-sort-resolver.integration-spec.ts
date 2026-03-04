@@ -213,7 +213,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });
@@ -250,7 +249,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });
@@ -287,7 +285,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });

@@ -42,6 +42,7 @@ export const fromViewManifestToUniversalFlatView = ({
     viewFilterGroupUniversalIdentifiers: [],
     viewGroupUniversalIdentifiers: [],
     viewFieldGroupUniversalIdentifiers: [],
+    viewSortUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
