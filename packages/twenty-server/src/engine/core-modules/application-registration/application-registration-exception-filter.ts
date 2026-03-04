@@ -11,9 +11,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Catch(ApplicationRegistrationException)
-export class ApplicationRegistrationExceptionFilter
-  implements ExceptionFilter
-{
+export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
   catch(exception: ApplicationRegistrationException) {
     switch (exception.code) {
       case ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:

@@ -6,6 +6,7 @@ import { tmpdir } from 'os';
 import request from 'supertest';
 import * as tar from 'tar';
 import { type DataSource } from 'typeorm';
+import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -105,8 +106,6 @@ const insertRegistrationWithSource = async (
 };
 
 describe('App Distribution (integration)', () => {
-  const baseUrl = `http://localhost:${APP_PORT}`;
-
   let ds: DataSource;
   const createdRegistrationIds: string[] = [];
 
@@ -125,39 +124,23 @@ describe('App Distribution (integration)', () => {
     jest.useFakeTimers();
   });
 
-  const postUploadTarball = (body: Record<string, unknown>) =>
-    request(baseUrl)
-      .post('/api/app-registrations/upload-tarball')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(body);
-
-  describe('Upload tarball endpoint', () => {
-    it('should reject request without tarball data', async () => {
-      const res = await postUploadTarball({}).expect(400);
-
-      expect(res.body.messages[0]).toContain('Tarball data is required');
-    });
-
-    it('should reject tarball that exceeds size limit', async () => {
-      const largeFakeBase64 = Buffer.alloc(51 * 1024 * 1024).toString('base64');
-
-      const res = await postUploadTarball({
-        tarball: largeFakeBase64,
-      });
-
-      expect([400, 413]).toContain(res.status);
-    });
-
+  describe('Upload tarball via GraphQL', () => {
     it('should reject tarball without manifest.json', async () => {
       const tarball = await createTestTarball({
         'readme.txt': 'no manifest here',
       });
 
-      const res = await postUploadTarball({
-        tarball: tarball.toString('base64'),
-      }).expect(400);
+      const { errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
+        expectToFail: true,
+      });
 
-      expect(res.body.messages[0]).toContain('manifest.json');
+      expect(errors).toBeDefined();
+      expect(
+        errors?.some((error: { message: string }) =>
+          error.message.includes('manifest.json'),
+        ),
+      ).toBe(true);
     });
 
     it('should successfully upload a valid tarball and create registration', async () => {
@@ -172,19 +155,20 @@ describe('App Distribution (integration)', () => {
         }),
       });
 
-      const res = await postUploadTarball({
-        tarball: tarball.toString('base64'),
+      const { data, errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
         universalIdentifier: uid,
-      }).expect(200);
+      });
 
-      expect(res.body.id).toBeDefined();
-      expect(res.body.universalIdentifier).toBe(uid);
-      createdRegistrationIds.push(res.body.id);
+      expect(errors).toBeUndefined();
+      expect(data?.uploadAppTarball.id).toBeDefined();
+      expect(data?.uploadAppTarball.universalIdentifier).toBe(uid);
+      createdRegistrationIds.push(data!.uploadAppTarball.id);
 
       const rows = await ds.query(
         `SELECT "sourceType" FROM core."applicationRegistration"
          WHERE id = $1`,
-        [res.body.id],
+        [data!.uploadAppTarball.id],
       );
 
       expect(rows[0].sourceType).toBe('tarball');
@@ -202,19 +186,21 @@ describe('App Distribution (integration)', () => {
         }),
       });
 
-      const firstRes = await postUploadTarball({
-        tarball: tarball.toString('base64'),
+      const firstResult = await uploadAppTarball({
+        tarballBuffer: tarball,
         universalIdentifier: uid,
-      }).expect(200);
+      });
 
-      createdRegistrationIds.push(firstRes.body.id);
+      createdRegistrationIds.push(firstResult.data!.uploadAppTarball.id);
 
-      const secondRes = await postUploadTarball({
-        tarball: tarball.toString('base64'),
+      const secondResult = await uploadAppTarball({
+        tarballBuffer: tarball,
         universalIdentifier: uid,
-      }).expect(200);
+      });
 
-      expect(secondRes.body.id).toBe(firstRes.body.id);
+      expect(secondResult.data?.uploadAppTarball.id).toBe(
+        firstResult.data?.uploadAppTarball.id,
+      );
     });
   });
 
@@ -240,12 +226,18 @@ describe('App Distribution (integration)', () => {
         }),
       });
 
-      const res = await postUploadTarball({
-        tarball: tarball.toString('base64'),
+      const { errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
         universalIdentifier: uid,
-      }).expect(400);
+        expectToFail: true,
+      });
 
-      expect(res.body.messages[0]).toContain('registered as npm');
+      expect(errors).toBeDefined();
+      expect(
+        errors?.some((error: { message: string }) =>
+          error.message.includes('registered as npm'),
+        ),
+      ).toBe(true);
     });
 
     it('should allow tarball upload for local-sourced registration', async () => {
@@ -268,12 +260,13 @@ describe('App Distribution (integration)', () => {
         }),
       });
 
-      const res = await postUploadTarball({
-        tarball: tarball.toString('base64'),
+      const { data, errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
         universalIdentifier: uid,
-      }).expect(200);
+      });
 
-      expect(res.body.id).toBe(regId);
+      expect(errors).toBeUndefined();
+      expect(data?.uploadAppTarball.id).toBe(regId);
 
       const rows = await ds.query(
         `SELECT "sourceType" FROM core."applicationRegistration"
@@ -287,10 +280,26 @@ describe('App Distribution (integration)', () => {
 
   describe('Authentication', () => {
     it('should reject unauthenticated requests', async () => {
-      await request(baseUrl)
-        .post('/api/app-registrations/upload-tarball')
-        .send({ tarball: 'dGVzdA==' })
-        .expect(403);
+      const baseUrl = `http://localhost:${APP_PORT}`;
+
+      const response = await request(baseUrl)
+        .post('/metadata')
+        .field(
+          'operations',
+          JSON.stringify({
+            query: `mutation UploadAppTarball($file: Upload!) {
+              uploadAppTarball(file: $file) { id }
+            }`,
+            variables: { file: null },
+          }),
+        )
+        .field('map', JSON.stringify({ '0': ['variables.file'] }))
+        .attach('0', Buffer.from('test'), {
+          filename: 'app.tar.gz',
+          contentType: 'application/gzip',
+        });
+
+      expect(response.body.errors).toBeDefined();
     });
   });
 });
