@@ -93,28 +93,20 @@ describe('Marketplace Catalog Sync (integration)', () => {
   };
 
   describe('findManyMarketplaceApps', () => {
-    it('should return npm-sourced registrations from the database', async () => {
-      const uid = crypto.randomUUID();
+    const npmUid = crypto.randomUUID();
+    const tarballUid = crypto.randomUUID();
+    const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
 
+    // Insert all data before queries so the in-memory cache is populated once
+    // with complete data rather than being stale for later tests.
+    beforeAll(async () => {
       await insertCatalogRegistration({
-        universalIdentifier: uid,
+        universalIdentifier: npmUid,
         name: 'Test Catalog App',
         sourcePackage: '@test/catalog-app',
       });
 
-      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
-      const apps = res.body.data.findManyMarketplaceApps;
-
-      const testApp = apps.find((app: { id: string }) => app.id === uid);
-
-      expect(testApp).toBeDefined();
-      expect(testApp.name).toBe('Test Catalog App');
-      expect(testApp.sourcePackage).toBe('@test/catalog-app');
-    });
-
-    it('should not return tarball-sourced registrations', async () => {
-      const uid = crypto.randomUUID();
-      const id = crypto.randomUUID();
+      const tarballId = crypto.randomUUID();
       const oAuthClientId = crypto.randomUUID();
 
       await ds.query(
@@ -124,8 +116,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
            "sourceType")
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [
-          id,
-          uid,
+          tarballId,
+          tarballUid,
           'Tarball Only App',
           oAuthClientId,
           [],
@@ -135,18 +127,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         ],
       );
 
-      createdRegistrationIds.push(id);
-
-      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
-      const apps = res.body.data.findManyMarketplaceApps;
-
-      const tarballApp = apps.find((app: { id: string }) => app.id === uid);
-
-      expect(tarballApp).toBeUndefined();
-    });
-
-    it('should enrich curated apps with rich display data', async () => {
-      const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
+      createdRegistrationIds.push(tarballId);
 
       await insertCatalogRegistration({
         universalIdentifier: curatedUid,
@@ -158,7 +139,33 @@ describe('Marketplace Catalog Sync (integration)', () => {
           category: 'Data',
         },
       });
+    });
 
+    it('should return npm-sourced registrations from the database', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const apps = res.body.data.findManyMarketplaceApps;
+
+      const testApp = apps.find(
+        (app: { id: string }) => app.id === npmUid,
+      );
+
+      expect(testApp).toBeDefined();
+      expect(testApp.name).toBe('Test Catalog App');
+      expect(testApp.sourcePackage).toBe('@test/catalog-app');
+    });
+
+    it('should not return tarball-sourced registrations', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const apps = res.body.data.findManyMarketplaceApps;
+
+      const tarballApp = apps.find(
+        (app: { id: string }) => app.id === tarballUid,
+      );
+
+      expect(tarballApp).toBeUndefined();
+    });
+
+    it('should enrich curated apps with rich display data', async () => {
       const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
       const apps = res.body.data.findManyMarketplaceApps;
 
