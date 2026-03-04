@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 
-import { isUndefined } from '@sniptt/guards';
-
 import { IconCheck } from '@ui/display';
 import { themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
@@ -45,7 +43,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
 
   color: ${({ accent, disabled }) => {
-    if (!isUndefined(disabled) && disabled !== false) {
+    if (disabled !== undefined && disabled !== false) {
       return themeCssVariables.font.color.tertiary;
     }
     switch (accent) {
@@ -168,7 +166,7 @@ export const StyledHoverableMenuItemBase = styled(
   }
 
   cursor: ${({ cursor, disabled }) => {
-    if (!isUndefined(disabled) && disabled !== false) {
+    if (disabled !== undefined && disabled !== false) {
       return 'default';
     }
 
@@ -181,10 +179,18 @@ export const StyledHoverableMenuItemBase = styled(
   }};
 `;
 
-export const StyledMenuItemIconCheck = styled(IconCheck)`
+const StyledMenuItemIconCheckContainer = styled.div`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
   margin-right: ${themeCssVariables.spacing[1]};
 `;
+
+export const StyledMenuItemIconCheck = ({ size }: { size?: number }) => (
+  <StyledMenuItemIconCheckContainer>
+    <IconCheck size={size} />
+  </StyledMenuItemIconCheckContainer>
+);
 
 export const StyledMenuItemContextualText = styled.div`
   color: ${themeCssVariables.font.color.light};
