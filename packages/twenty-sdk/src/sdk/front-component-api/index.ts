@@ -23,6 +23,7 @@ export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
+export { useRecordId } from './hooks/useRecordId';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentActionErrorDedupeKey } from './utils/getFrontComponentActionErrorDedupeKey';

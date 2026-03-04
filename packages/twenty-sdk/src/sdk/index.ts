@@ -1,3 +1,9 @@
+export {
+  AggregateOperations,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
+export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export type { ApplicationConfig } from './application/application-config';
 export { defineApplication } from './application/define-application';
 export type {
@@ -29,12 +35,12 @@ export type {
   FrontComponentType,
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
-export type {
-  InstallLogicFunctionPayload,
-  InstallLogicFunctionHandler,
-} from './logic-functions/install-logic-function-payload-type';
-export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
 export { definePostInstallLogicFunction } from './logic-functions/define-post-install-logic-function';
+export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
+export type {
+  InstallLogicFunctionHandler,
+  InstallLogicFunctionPayload,
+} from './logic-functions/install-logic-function-payload-type';
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
@@ -54,16 +60,12 @@ export type {
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineNavigationMenuItem } from './navigation-menu-items/define-navigation-menu-item';
 export { defineObject } from './objects/define-object';
-export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
-export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT } from './objects/standard-object-ids';
+export {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from './objects/standard-object-ids';
 export { definePageLayout } from './page-layouts/define-page-layout';
 export type { PageLayoutConfig } from './page-layouts/page-layout-config';
-export {
-  AggregateOperations,
-  ObjectRecordGroupByDateGranularity,
-  PageLayoutTabLayoutMode,
-} from 'twenty-shared/types';
-export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
 export { defineSkill } from './skills/define-skill';
@@ -71,12 +73,12 @@ export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
 
 // Action components for front components
-export { Action } from './action';
-export type { ActionProps } from './action';
-export { ActionLink } from './action';
-export type { ActionLinkProps } from './action';
-export { ActionOpenSidePanelPage } from './action';
-export type { ActionOpenSidePanelPageProps } from './action';
+export { Action, ActionLink, ActionOpenSidePanelPage } from './action';
+export type {
+  ActionLinkProps,
+  ActionOpenSidePanelPageProps,
+  ActionProps,
+} from './action';
 
 // Conditional availability typed variables for command menu items
 export {
@@ -99,14 +101,15 @@ export {
 
 // Front Component API exports
 export {
+  closeSidePanel,
   enqueueSnackbar,
   getFrontComponentActionErrorDedupeKey,
-  closeSidePanel,
   navigate,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
   useFrontComponentId,
+  useRecordId,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';

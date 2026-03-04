@@ -8,7 +8,9 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -18,6 +20,7 @@ import {
 } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
+import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
   CommandMenuItemAvailabilityType,
@@ -41,8 +44,16 @@ type BuildActionFromItemParams = {
     frontComponentId: string;
     pageTitle: string;
     pageIcon: IconComponent;
+    recordContext?: {
+      recordId: string;
+      objectNameSingular: string;
+    };
   }) => void;
-  mountHeadlessFrontComponent: (frontComponentId: string) => void;
+  mountHeadlessFrontComponent: (
+    frontComponentId: string,
+    context?: HeadlessFrontComponentMountContext,
+  ) => void;
+  mountContext?: HeadlessFrontComponentMountContext;
   commandMenuContextApi: CommandMenuContextApi;
 };
 
@@ -56,6 +67,7 @@ const buildActionFromItem = ({
   getIcon,
   openFrontComponentInCommandMenu,
   mountHeadlessFrontComponent,
+  mountContext,
   commandMenuContextApi,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
@@ -66,12 +78,18 @@ const buildActionFromItem = ({
 
   const handleClick = () => {
     if (isHeadless) {
-      mountHeadlessFrontComponent(item.frontComponentId);
+      mountHeadlessFrontComponent(item.frontComponentId, mountContext);
     } else {
       openFrontComponentInCommandMenu({
         frontComponentId: item.frontComponentId,
         pageTitle: displayLabel,
         pageIcon: Icon,
+        recordContext: isDefined(mountContext)
+          ? {
+              recordId: mountContext.recordId,
+              objectNameSingular: mountContext.objectNameSingular,
+            }
+          : undefined,
       });
     }
   };
@@ -122,6 +140,25 @@ export const useCommandMenuItemFrontComponentActions = (
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+
+  const currentObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
+  );
+
+  const selectedRecordIds =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
+      : [];
+
+  const mountContext: HeadlessFrontComponentMountContext | undefined =
+    selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
+      ? {
+          recordId: selectedRecordIds[0],
+          objectNameSingular: currentObjectMetadataItem.nameSingular,
+        }
+      : undefined;
 
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
@@ -186,6 +223,7 @@ export const useCommandMenuItemFrontComponentActions = (
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
       commandMenuContextApi,
+      mountContext,
     }),
   );
 
