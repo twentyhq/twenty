@@ -145,9 +145,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
       const apps = res.body.data.findManyMarketplaceApps;
 
-      const testApp = apps.find(
-        (app: { id: string }) => app.id === npmUid,
-      );
+      const testApp = apps.find((app: { id: string }) => app.id === npmUid);
 
       expect(testApp).toBeDefined();
       expect(testApp.name).toBe('Test Catalog App');
