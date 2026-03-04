@@ -5026,10 +5026,10 @@ msgstr "דוא\"לים"
 msgid "Emails and Calendar"
 msgstr "דוא\"ל ויומן"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "דוא״ל מרשימת החסימה יתעלמו. נהל רשימת חסימה בדף ההגדרות 'חשבונות'."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

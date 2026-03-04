@@ -11,10 +11,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBox,
@@ -27,34 +26,36 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
 const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover {
-    background-color: ${({ theme, disabled }) =>
+    background-color: ${({ disabled }) =>
       disabled
-        ? theme.background.transparent.lighter
-        : theme.background.transparent.light};
+        ? themeCssVariables.background.transparent.lighter
+        : themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledControlLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -63,8 +64,10 @@ const StyledControlLabel = styled.span`
 const StyledControlIconChevronDown = styled(IconChevronDown)<{
   disabled?: boolean;
 }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
 `;
 
 type WebhookEntitySelectProps = {
@@ -80,7 +83,7 @@ export const WebhookEntitySelect = ({
   disabled = false,
   dropdownId = WEBHOOK_ENTITY_DROPDOWN_ID,
 }: WebhookEntitySelectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
@@ -118,7 +121,6 @@ export const WebhookEntitySelect = ({
     option.label.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  // Find selected option label for display
   const getSelectedLabel = () => {
     if (!isDefined(value)) {
       return t`Select entity`;

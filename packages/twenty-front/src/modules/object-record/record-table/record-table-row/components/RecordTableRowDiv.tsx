@@ -1,5 +1,6 @@
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTr = styled.div<{
   isDragging: boolean;
@@ -30,8 +31,8 @@ const StyledTr = styled.div<{
         ? TABLE_Z_INDEX.activeRows.afterFirstRow.normal.scrolledVertically
         : TABLE_Z_INDEX.activeRows.afterFirstRow.normal.noVerticalScroll};
 
-  border-top: ${({ isDragging, theme }) =>
-    isDragging ? `1px solid ${theme.border.color.medium}` : 'none'};
+  border-top: ${({ isDragging }) =>
+    isDragging ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
 
   display: flex;
   flex-direction: row;
@@ -41,12 +42,12 @@ const StyledTr = styled.div<{
     div.table-cell,
     div.table-cell-0-0 {
       &:not(:first-of-type) {
-        border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-        border-color: ${({ theme }) => theme.border.color.medium};
-        background-color: ${({ theme }) => theme.background.tertiary};
+        border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+        border-color: ${themeCssVariables.border.color.medium};
+        background-color: ${themeCssVariables.background.tertiary};
       }
       &:nth-of-type(2) {
-        border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+        border-left: 1px solid ${themeCssVariables.border.color.medium};
 
         margin-left: -1px;
 
@@ -55,9 +56,9 @@ const StyledTr = styled.div<{
         }
       }
       &:last-of-type {
-        border-right: 1px solid ${({ theme }) => theme.border.color.medium};
-        border-radius: 0 ${({ theme }) => theme.border.radius.sm}
-          ${({ theme }) => theme.border.radius.sm} 0;
+        border-right: 1px solid ${themeCssVariables.border.color.medium};
+        border-radius: 0 ${themeCssVariables.border.radius.sm}
+          ${themeCssVariables.border.radius.sm} 0;
       }
     }
   }

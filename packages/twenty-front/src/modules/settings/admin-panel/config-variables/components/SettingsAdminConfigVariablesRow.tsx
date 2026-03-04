@@ -1,10 +1,12 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ConfigVariable } from '~/generated-metadata/graphql';
 
 type SettingsAdminConfigVariablesRowProps = {
@@ -20,7 +22,7 @@ const StyledTruncatedCell = styled(TableCell)`
 
 const StyledTableRow = styled(TableRow)`
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -33,7 +35,7 @@ const StyledEllipsisLabel = styled.div`
 export const SettingsAdminConfigVariablesRow = ({
   variable,
 }: SettingsAdminConfigVariablesRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const displayValue =
     variable.value === ''

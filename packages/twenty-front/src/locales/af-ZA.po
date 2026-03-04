@@ -5026,10 +5026,10 @@ msgstr "E-posse"
 msgid "Emails and Calendar"
 msgstr "E-posse en Kalender"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "E-posse van die bloklys sal geïgnoreer word. Bestuur die bloklys op die \"Rekeninge\"-instellingsbladsy."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

@@ -1,8 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ObjectFieldRowWithoutRelationProps = {
   field: FieldMetadataItem;
@@ -11,21 +13,21 @@ type ObjectFieldRowWithoutRelationProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 export const ObjectFieldRowWithoutRelation = ({
   field,
 }: ObjectFieldRowWithoutRelationProps) => {
   const { getIcon } = useIcons();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const Icon = getIcon(field?.icon);
 

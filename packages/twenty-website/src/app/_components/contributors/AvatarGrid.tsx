@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import Link from 'next/link';
 
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
