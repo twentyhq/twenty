@@ -7509,6 +7509,7 @@ export const ApplicationFieldsFragmentDoc = gql`
   applicationRegistration {
     id
     latestAvailableVersion
+    sourceType
   }
   canBeUninstalled
   defaultRoleId
@@ -9330,6 +9331,7 @@ export const FindManyApplicationsDocument = gql`
     applicationRegistration {
       id
       latestAvailableVersion
+      sourceType
     }
   }
 }
