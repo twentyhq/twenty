@@ -19,7 +19,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
@@ -39,10 +38,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           RoleTargetEntity,
         ]),
         RoleValidationModule,
-        NestjsQueryTypeOrmModule.forFeature([
-          ObjectMetadataEntity,
-          FieldMetadataEntity,
-        ]),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,

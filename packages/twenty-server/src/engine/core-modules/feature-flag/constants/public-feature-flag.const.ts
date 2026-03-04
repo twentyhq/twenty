@@ -1,4 +1,4 @@
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 type FeatureFlagMetadata = {
   label: string;
@@ -27,14 +27,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       description: 'Enable row level permission',
       imagePath:
         'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
-    },
-  },
-  {
-    key: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-    metadata: {
-      label: 'Navigation Menu Editing',
-      description:
-        'Customize the sidebar navigation with folders, views, and custom links',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

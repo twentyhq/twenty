@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableBooleanFieldContainer = styled.div<{ readonly?: boolean }>`
   align-items: center;
@@ -11,8 +12,10 @@ const StyledEditableBooleanFieldContainer = styled.div<{ readonly?: boolean }>`
   height: 100%;
   width: 100%;
 
-  color: ${({ theme, readonly }) =>
-    readonly ? theme.font.color.tertiary : theme.font.color.primary};
+  color: ${({ readonly }) =>
+    readonly
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.primary};
 `;
 
 type BooleanInputProps = {

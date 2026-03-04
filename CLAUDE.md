@@ -90,7 +90,7 @@ npx nx run twenty-front:graphql:generate --configuration=metadata
 ## Architecture Overview
 
 ### Tech Stack
-- **Frontend**: React 18, TypeScript, Jotai (state management), Emotion (styling), Vite
+- **Frontend**: React 18, TypeScript, Jotai (state management), Linaria (styling), Vite
 - **Backend**: NestJS, TypeORM, PostgreSQL, Redis, GraphQL (with GraphQL Yoga)
 - **Monorepo**: Nx workspace managed with Yarn 4
 
@@ -174,26 +174,8 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 4. Check that GraphQL schema changes are backward compatible
 5. Run `graphql:generate` after any GraphQL schema changes
 
-### After Making Changes (MANDATORY)
-**IMPORTANT: You MUST run the customization check after ANY of the following:**
-- Merging upstream (twentyhq/twenty) changes
-- Modifying any file listed in `CUSTOMIZATIONS.md`
-- Resolving merge conflicts
-- Any change touching RLS, permissions, spreadsheet import/export, or navigation
-
-```bash
-./scripts/check-customizations.sh
-```
-
-If any check fails (shows RED), you **must** fix it before committing. This script verifies that Omnia's critical customizations haven't been accidentally overwritten. See `CUSTOMIZATIONS.md` for details on each customization.
-
-Also re-extract Lingui translations if any `.po` files changed or new `t` tagged strings were added:
-```bash
-npx nx run twenty-front:lingui:extract && npx nx run twenty-front:lingui:compile
-```
-
 ### Code Style Notes
-- Use **Emotion** for styling with styled-components pattern
+- Use **Linaria** for styling with zero-runtime CSS-in-JS (styled-components pattern)
 - Follow **Nx** workspace conventions for imports
 - Use **Lingui** for internationalization
 - Apply security first, then formatting (sanitize before format)
@@ -219,39 +201,3 @@ When running in CI, the dev environment is **not** pre-configured. Dependencies 
 - `tsconfig.base.json` - Base TypeScript configuration
 - `package.json` - Root package with workspace definitions
 - `.cursor/rules/` - Detailed development guidelines and best practices
-- `CUSTOMIZATIONS.md` - **All Omnia customizations on top of upstream Twenty** — check after every upstream merge
-- `scripts/check-customizations.sh` - Automated check for overwritten customizations
-
-## Upstream Merge Process
-
-This is a fork of [twentyhq/twenty](https://github.com/twentyhq/twenty). When merging upstream changes:
-
-1. **Before merge**: Read `CUSTOMIZATIONS.md` to know what's at risk
-2. **After merge**: Run `./scripts/check-customizations.sh` to detect overwritten code
-3. **Re-extract Lingui**: `npx nx run twenty-front:lingui:extract && npx nx run twenty-front:lingui:compile`
-4. **Key files that get wiped repeatedly**:
-   - `useBuildRecordInputFromRLSPredicates.ts` — indirect RLS relation resolution (Agent→WorkspaceMember)
-   - `SettingsRolePermissionsObjectLevelObjectForm.tsx` — Organization plan gate on RLS
-   - Lingui `.po` files — custom translation strings
-   - Sidebar/navigation components — layout preferences
-5. **After deploy**: Flush Redis cache: `cache:flat-cache-invalidate --all-metadata`
-6. **Verify**: Log in as member role, create a policy, check RLS settings UI
-
-## Custom Omnia Modules (Server)
-
-These are 100% custom and don't exist upstream:
-- `packages/twenty-server/src/modules/agent-profile/` — AgentProfile resolver for RLS
-- `packages/twenty-server/src/modules/policy/` — Policy query hooks (agentId auto-assign, name derivation, LTV)
-- `packages/twenty-server/src/modules/call/` — Call query hooks (agentId auto-assign)
-- `packages/twenty-server/src/modules/lead/` — Lead/Person query hooks
-
-## Production (Kubernetes)
-
-- **Cluster**: EKS `twenty-crm` (us-east-1), AWS profile `twenty-admin`
-- **Namespace**: `twentycrm` (production), `twentycrm-staging` (staging)
-- **Flush cache**: `kubectl exec -n twentycrm <server-pod> -c server -- node /app/packages/twenty-server/dist/command/command.js cache:flat-cache-invalidate --all-metadata`
-- **Server logs**: `kubectl logs -n twentycrm -l app.kubernetes.io/component=server -c server --tail=100`
-
-## Planning phases
-
-Please put all planning documents in /plans as we can iterate on these and keep track of them as we go along.

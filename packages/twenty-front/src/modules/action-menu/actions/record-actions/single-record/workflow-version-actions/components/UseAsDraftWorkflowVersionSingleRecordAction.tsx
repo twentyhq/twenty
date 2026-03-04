@@ -1,6 +1,6 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
@@ -8,7 +8,6 @@ import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDra
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useState } from 'react';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

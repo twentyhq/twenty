@@ -41,13 +41,13 @@ const StyledJsonListBase = styled.ul<{
   padding: 0;
   display: grid;
   row-gap: ${themeCssVariables.spacing[2]};
-  ${({ depth }) =>
-    depth > 0
-      ? `padding-left: ${themeCssVariables.spacing[8]};
-         > :first-of-type {
-           margin-top: ${themeCssVariables.spacing[2]};
-         }`
-      : ''}
+  padding-left: ${({ depth }) =>
+    depth > 0 ? themeCssVariables.spacing[8] : '0'};
+
+  > :first-of-type {
+    margin-top: ${({ depth }) =>
+      depth > 0 ? themeCssVariables.spacing[2] : '0'};
+  }
 `;
 
 const StyledJsonList = motion.create(StyledJsonListBase);

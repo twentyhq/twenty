@@ -15,7 +15,7 @@ import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/s
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 

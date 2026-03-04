@@ -8,7 +8,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

@@ -6,7 +6,7 @@ import { convertPredicateToRecordFilter } from '@/settings/roles/role-permission
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, RelationType } from 'twenty-shared/types';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -18,7 +18,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
-import { RelationType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const mergeCompositeValues = (

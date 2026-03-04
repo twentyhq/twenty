@@ -26,9 +26,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
-  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'> & {
-    relationType?: string | null;
-  };
+  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
   recordFilter: Omit<RecordFilter, 'id'>;
 };
 
@@ -325,15 +323,9 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
-      if (correspondingField.relationType === 'ONE_TO_MANY') {
-        emptyRecordFilter = {
-          [correspondingField.name]: { is: 'NULL' } as RelationFilter,
-        };
-      } else {
-        emptyRecordFilter = {
-          [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
-        };
-      }
+      emptyRecordFilter = {
+        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
+      };
       break;
     case 'ACTOR':
       emptyRecordFilter = {

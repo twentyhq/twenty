@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { lingui } from '@lingui/vite-plugin';
-import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
@@ -16,6 +15,8 @@ import {
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
@@ -30,8 +31,6 @@ export default defineConfig(({ command, mode }) => {
     SSL_KEY_PATH,
     REACT_APP_PORT,
     IS_DEBUG_MODE,
-    SENTRY_AUTH_TOKEN,
-    SENTRY_RELEASE,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -99,7 +98,6 @@ export default defineConfig(({ command, mode }) => {
 
     plugins: [
       react({
-        jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
@@ -111,153 +109,41 @@ export default defineConfig(({ command, mode }) => {
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
       checker(checkers),
-      {
-        ...wyw({
-          include: [
-            '**/twenty-ui/src/**/*.{ts,tsx}',
-            '**/AdvancedTextEditor.tsx',
-            '**/BubbleMenuIconButton.tsx',
-            '**/TextBubbleMenu.tsx',
-            '**/TurnIntoBlockDropdown.tsx',
-            '**/WorkflowAttachmentChip.tsx',
-            '**/WorkflowSendEmailAttachments.tsx',
-            '**/ResizableImageView.tsx',
-            '**/SettingsBillingSubscriptionInfo.tsx',
-            '**/SubscriptionBenefit.tsx',
-            '**/SubscriptionInfoContainer.tsx',
-            '**/SubscriptionPrice.tsx',
-            '**/TrialCard.tsx',
-            '**/MeteredPriceSelector.tsx',
-            '**/PlansTags.tsx',
-            '**/SettingsBillingLabelValueItem.tsx',
-            '**/SubscriptionInfoRowContainer.tsx',
-            '**/FileBlock.tsx',
-            '**/MentionInlineContent.tsx',
-            '**/BlockEditor.tsx',
-            '**/CustomMentionMenu.tsx',
-            '**/CustomSideMenu.tsx',
-            '**/CustomSideMenuOptions.tsx',
-            '**/CustomSlashMenu.tsx',
-            '**/CurrentWorkspaceMemberOrphanFavorites.tsx',
-            '**/FavoritesBackButton.tsx',
-            '**/FavoritesDroppable.tsx',
-            '**/FavoritesSkeletonLoader.tsx',
-            '**/FavoriteFolderPickerList.tsx',
-            '**/InformationBanner.tsx',
-            '**/InformationBannerWrapper.tsx',
-            '**/InformationBannerDeletedRecord.tsx',
-            '**/AddToNavigationDragHandle.tsx',
-            '**/CurrentWorkspaceMemberOrphanNavigationMenuItems.tsx',
-            '**/NavigationItemDropTarget.tsx',
-            '**/NavigationMenuEditModeBar.tsx',
-            '**/NavigationMenuItemBackButton.tsx',
-            '**/NavigationMenuItemDroppable.tsx',
-            '**/NavigationMenuItemIconContainer.tsx',
-            '**/NavigationMenuItemSkeletonLoader.tsx',
-            '**/ObjectIconWithViewOverlay.tsx',
-            '**/WorkspaceNavigationMenuItems.tsx',
-            '**/WorkspaceNavigationMenuItemsFolder.tsx',
-            '**/MainNavigationDrawerAIChatContent.tsx',
-            '**/MainNavigationDrawerNavigationContent.tsx',
-            '**/MainNavigationDrawerScrollableItems.tsx',
-            '**/MainNavigationDrawerTabsRow.tsx',
-            '**/RecordTableCellBaseContainer.tsx',
-            '**/RecordTableCellDisplayContainer.tsx',
-            '**/RecordTableCellFirstRowFirstColumn.tsx',
-            '**/RecordTableCellLoading.tsx',
-            '**/RecordTableCellStyleWrapper.tsx',
-            '**/RecordTableDragAndDropPlaceholderCell.tsx',
-            '**/RecordTableAggregateFooterCell.tsx',
-            '**/RecordTableHeaderAddColumnButton.tsx',
-            '**/RecordTableHeaderCell.tsx',
-            '**/RecordTableHeaderCheckboxColumn.tsx',
-            '**/RecordTableHeaderDragDropColumn.tsx',
-            '**/RecordTableHeaderFirstCell.tsx',
-            '**/RecordTableHeaderFirstScrollableCell.tsx',
-            '**/RecordTableHeaderLastEmptyColumn.tsx',
-            '**/RecordTableAddButtonPlaceholderCell.tsx',
-            '**/RecordTableGroupSectionLastDynamicFillingCell.tsx',
-            '**/RecordTableLastDynamicFillingCell.tsx',
-            '**/RecordTableRowVirtualizedContainer.tsx',
-            '**/RecordTableVirtualizedBodyPlaceholder.tsx',
-            '**/SignInAppNavigationDrawerMock.tsx',
-            '**/SignInBackgroundMockContainer.tsx',
-            '**/SignInBackgroundMockPage.tsx',
-            '**/Heading.tsx',
-            '**/MatchColumnSelectFieldSelectDropdownContent.tsx',
-            '**/MatchColumnToFieldSelect.tsx',
-            '**/SpreadSheetImportModalCloseButton.tsx',
-            '**/SpreadSheetImportModalWrapper.tsx',
-            '**/SpreadsheetImportTable.tsx',
-            '**/StepNavigationButton.tsx',
-            '**/ImportDataStep.tsx',
-            '**/MatchColumnsStep.tsx',
-            '**/ColumnGrid.tsx',
-            '**/SubMatchingSelectControlContainer.tsx',
-            '**/SubMatchingSelectDropdownButton.tsx',
-            '**/SubMatchingSelectRow.tsx',
-            '**/SubMatchingSelectRowLeftSelect.tsx',
-            '**/SubMatchingSelectRowRightDropdown.tsx',
-            '**/TemplateColumn.tsx',
-            '**/UnmatchColumn.tsx',
-            '**/UnmatchColumnBanner.tsx',
-            '**/UserTableColumn.tsx',
-            '**/SelectHeaderStep.tsx',
-            '**/SelectSheetStep.tsx',
-            '**/SpreadsheetImportStepper.tsx',
-            '**/SpreadsheetImportStepperContainer.tsx',
-            '**/UploadStep.tsx',
-            '**/DropZone.tsx',
-            '**/ValidationStep.tsx',
-            '**/columns.tsx',
-            '**/BooleanDisplay.tsx',
-            '**/EllipsisDisplay.tsx',
-            '**/EmailsDisplay.tsx',
-            '**/MultiSelectDisplay.tsx',
-            '**/PhonesDisplay.tsx',
-            '**/TextDisplay.tsx',
-            '**/RatingInput.tsx',
-            '**/SortOrFilterChip.tsx',
-            '**/UpdateViewButtonGroup.tsx',
-            '**/ViewBarDetails.tsx',
-            '**/ViewBarFilterDropdownAdvancedFilterButton.tsx',
-            '**/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx',
-            '**/ViewBarFilterDropdownBottomMenu.tsx',
-            '**/ViewBarFilterDropdownFieldSelectMenu.tsx',
-            '**/ViewPickerContentCreateMode.tsx',
-            '**/ViewPickerDropdown.tsx',
-            '**/ViewPickerIconAndNameContainer.tsx',
-            '**/ViewPickerListContent.tsx',
-            '**/ViewPickerSaveButtonContainer.tsx',
-            '**/ViewPickerSelectContainer.tsx',
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          exclude: [
+            '**/generated-metadata/**',
+            '**/testing/mock-data/generated/**',
+            '**/*.test.{ts,tsx}',
+            '**/*.spec.{ts,tsx}',
+            '**/types/**',
+            '**/constants/**',
+            '**/states/**',
+            '**/selectors/**',
+            '**/guards/**',
+            '**/schemas/**',
+            '**/utils/**',
+            '**/contexts/**',
+            '**/hooks/**',
+            '**/enums/**',
+            '**/queries/**',
+            '**/mutations/**',
+            '**/fragments/**',
+            '**/graphql/**',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
         }),
-        enforce: 'pre',
-      },
+      ),
       visualizer({
         open: true,
         gzipSize: true,
         brotliSize: true,
         filename: 'dist/stats.html',
       }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
-      ...(isNonEmptyString(SENTRY_AUTH_TOKEN)
-        ? [
-            sentryVitePlugin({
-              org: 'omnia-insurance',
-              project: 'crm-front',
-              authToken: SENTRY_AUTH_TOKEN,
-              release: isNonEmptyString(SENTRY_RELEASE)
-                ? { name: SENTRY_RELEASE }
-                : undefined,
-              sourcemaps: {
-                filesToDeleteAfterUpload: ['./build/**/*.map'],
-              },
-            }),
-          ]
-        : []),
     ],
 
     optimizeDeps: {
@@ -272,13 +158,12 @@ export default defineConfig(({ command, mode }) => {
       minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Set chunk size warning limit (in bytes) - warns at 1MB
-          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
           // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {

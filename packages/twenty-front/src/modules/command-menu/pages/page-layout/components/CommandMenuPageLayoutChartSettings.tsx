@@ -6,7 +6,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`

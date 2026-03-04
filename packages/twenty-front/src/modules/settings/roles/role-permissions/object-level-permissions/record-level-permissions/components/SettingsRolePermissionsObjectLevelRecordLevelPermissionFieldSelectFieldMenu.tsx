@@ -3,8 +3,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -18,7 +17,6 @@ import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-rec
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
-import { hasRelationToWorkspaceMember } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/hasRelationToWorkspaceMember';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -29,7 +27,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps =
   {
@@ -53,8 +50,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
 
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
-    const { objectMetadataItems } = useObjectMetadataItems();
-
     const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
       objectMetadataItem.id,
     );
@@ -69,15 +64,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
             fieldMetadataItem.type,
           ) ||
             (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-              (fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-                CoreObjectNameSingular.WorkspaceMember ||
-                (fieldMetadataItem.relation?.targetObjectMetadata
-                  .nameSingular !== undefined &&
-                  hasRelationToWorkspaceMember(
-                    fieldMetadataItem.relation.targetObjectMetadata
-                      .nameSingular,
-                    objectMetadataItems,
-                  ))))),
+              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+                CoreObjectNameSingular.WorkspaceMember)),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 

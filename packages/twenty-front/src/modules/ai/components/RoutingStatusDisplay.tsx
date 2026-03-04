@@ -1,16 +1,17 @@
 import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
@@ -19,39 +20,41 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   border: none;
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'auto')};
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  color: ${themeCssVariables.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
 
   &:hover {
-    color: ${({ isExpandable, theme }) =>
-      isExpandable ? theme.font.color.secondary : theme.font.color.tertiary};
+    color: ${({ isExpandable }) =>
+      isExpandable
+        ? themeCssVariables.font.color.secondary
+        : themeCssVariables.font.color.tertiary};
   }
 `;
 
 const StyledDisplayMessage = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIconTextContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 
   svg {
-    min-width: ${({ theme }) => theme.icon.size.sm}px;
+    min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
   }
 `;
 
 const StyledContentContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   min-width: 0;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 export const RoutingStatusDisplay = ({
@@ -59,7 +62,7 @@ export const RoutingStatusDisplay = ({
 }: {
   data: DataMessagePart['routing-status'];
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const isLoading = data.state === 'loading';
   const isDebugMode = process.env.IS_DEBUG_MODE === 'true';

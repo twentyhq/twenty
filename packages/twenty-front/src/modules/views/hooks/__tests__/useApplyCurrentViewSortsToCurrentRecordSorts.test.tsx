@@ -16,6 +16,7 @@ import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jes
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
+import { type ViewSort } from '@/views/types/ViewSort';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -38,7 +39,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     throw new Error('Missing mock field metadata item with type TEXT');
   }
 
-  const mockViewSort: CoreViewSortEssential = {
+  const mockViewSort: ViewSort = {
+    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
@@ -103,6 +105,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
 
     expect(result.current.currentRecordSorts).toEqual([
       {
+        __typename: 'ViewSort',
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,

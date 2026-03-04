@@ -15,11 +15,11 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type BarChartProps = {
   data: BarChartDatum[];
@@ -76,7 +76,7 @@ export const BarChart = ({
   allowDataTransitions,
   hasNoData = false,
 }: BarChartProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );

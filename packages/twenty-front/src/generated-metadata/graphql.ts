@@ -237,6 +237,7 @@ export enum AllMetadataName {
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
+  viewSort = 'viewSort',
   webhook = 'webhook'
 }
 
@@ -781,6 +782,7 @@ export type CommandMenuItem = {
   applicationId?: Maybe<Scalars['UUID']>;
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
   availabilityType: CommandMenuItemAvailabilityType;
+  conditionalAvailabilityExpression?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   frontComponent?: Maybe<FrontComponent>;
   frontComponentId?: Maybe<Scalars['UUID']>;
@@ -1072,6 +1074,7 @@ export type CreateApprovedAccessDomainInput = {
 export type CreateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
   frontComponentId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
@@ -1097,7 +1100,6 @@ export type CreateFieldInput = {
   objectMetadataId: Scalars['UUID'];
   options?: InputMaybe<Scalars['JSON']>;
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
-  relationTargetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
 };
@@ -1110,34 +1112,6 @@ export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   sourceComponentPath: Scalars['String'];
-};
-
-export type CreateIngestionFieldMappingInput = {
-  pipelineId: Scalars['UUID'];
-  position?: InputMaybe<Scalars['Int']>;
-  relationAutoCreate?: InputMaybe<Scalars['Boolean']>;
-  relationMatchFieldName?: InputMaybe<Scalars['String']>;
-  relationTargetObjectName?: InputMaybe<Scalars['String']>;
-  sourceFieldPath: Scalars['String'];
-  targetCompositeSubField?: InputMaybe<Scalars['String']>;
-  targetFieldName: Scalars['String'];
-  transform?: InputMaybe<Scalars['JSON']>;
-};
-
-export type CreateIngestionPipelineInput = {
-  dedupFieldName?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  isEnabled?: InputMaybe<Scalars['Boolean']>;
-  mode: Scalars['String'];
-  name: Scalars['String'];
-  paginationConfig?: InputMaybe<Scalars['JSON']>;
-  responseRecordsPath?: InputMaybe<Scalars['String']>;
-  schedule?: InputMaybe<Scalars['String']>;
-  sourceAuthConfig?: InputMaybe<Scalars['JSON']>;
-  sourceHttpMethod?: InputMaybe<Scalars['String']>;
-  sourceRequestConfig?: InputMaybe<Scalars['JSON']>;
-  sourceUrl?: InputMaybe<Scalars['String']>;
-  targetObjectNameSingular: Scalars['String'];
 };
 
 export type CreateLogicFunctionFromSourceInput = {
@@ -1230,11 +1204,9 @@ export type CreateRoleInput = {
   canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
-  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
-  showAllObjectsInSidebar?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateSkillInput = {
@@ -1403,6 +1375,11 @@ export type DeleteViewGroupInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteViewSortInput = {
+  /** The id of the view sort to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeletedWorkspaceMember = {
   __typename?: 'DeletedWorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
@@ -1429,6 +1406,11 @@ export type DestroyViewFilterInput = {
 
 export type DestroyViewGroupInput = {
   /** The id of the view group to destroy. */
+  id: Scalars['UUID'];
+};
+
+export type DestroyViewSortInput = {
+  /** The id of the view sort to destroy. */
   id: Scalars['UUID'];
 };
 
@@ -1630,7 +1612,6 @@ export type Field = {
   object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
-  relationTargetObjectMetadataId?: Maybe<Scalars['UUID']>;
   settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
@@ -2008,60 +1989,6 @@ export enum InferenceProvider {
   XAI = 'XAI'
 }
 
-export type IngestionFieldMapping = {
-  __typename?: 'IngestionFieldMapping';
-  id: Scalars['UUID'];
-  pipelineId: Scalars['UUID'];
-  position: Scalars['Int'];
-  relationAutoCreate: Scalars['Boolean'];
-  relationMatchFieldName?: Maybe<Scalars['String']>;
-  relationTargetObjectName?: Maybe<Scalars['String']>;
-  sourceFieldPath: Scalars['String'];
-  targetCompositeSubField?: Maybe<Scalars['String']>;
-  targetFieldName: Scalars['String'];
-  transform?: Maybe<Scalars['JSON']>;
-};
-
-export type IngestionLog = {
-  __typename?: 'IngestionLog';
-  completedAt?: Maybe<Scalars['DateTime']>;
-  durationMs?: Maybe<Scalars['Int']>;
-  errors?: Maybe<Scalars['JSON']>;
-  id: Scalars['UUID'];
-  incomingPayload?: Maybe<Scalars['JSON']>;
-  pipelineId: Scalars['UUID'];
-  recordsCreated: Scalars['Int'];
-  recordsFailed: Scalars['Int'];
-  recordsSkipped: Scalars['Int'];
-  recordsUpdated: Scalars['Int'];
-  startedAt?: Maybe<Scalars['DateTime']>;
-  status: Scalars['String'];
-  totalRecordsReceived: Scalars['Int'];
-  triggerType: Scalars['String'];
-};
-
-export type IngestionPipeline = {
-  __typename?: 'IngestionPipeline';
-  createdAt: Scalars['DateTime'];
-  dedupFieldName?: Maybe<Scalars['String']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  isEnabled: Scalars['Boolean'];
-  mode: Scalars['String'];
-  name: Scalars['String'];
-  paginationConfig?: Maybe<Scalars['JSON']>;
-  responseRecordsPath?: Maybe<Scalars['String']>;
-  schedule?: Maybe<Scalars['String']>;
-  sourceAuthConfig?: Maybe<Scalars['JSON']>;
-  sourceHttpMethod?: Maybe<Scalars['String']>;
-  sourceRequestConfig?: Maybe<Scalars['JSON']>;
-  sourceUrl?: Maybe<Scalars['String']>;
-  targetObjectNameSingular: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  webhookSecret?: Maybe<Scalars['String']>;
-};
-
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String'];
@@ -2374,9 +2301,6 @@ export type Mutation = {
   /** @deprecated Use specific file service instead */
   createFile: File;
   createFrontComponent: FrontComponent;
-  createIngestionFieldMapping: IngestionFieldMapping;
-  createIngestionFieldMappings: Array<IngestionFieldMapping>;
-  createIngestionPipeline: IngestionPipeline;
   createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
@@ -2415,8 +2339,6 @@ export type Mutation = {
   /** @deprecated  */
   deleteFile: File;
   deleteFrontComponent: FrontComponent;
-  deleteIngestionFieldMapping: Scalars['Boolean'];
-  deleteIngestionPipeline: IngestionPipeline;
   deleteJobs: DeleteJobsResponse;
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
@@ -2486,9 +2408,7 @@ export type Mutation = {
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
-  testIngestionPipeline: TestIngestionPipelineResult;
   trackAnalytics: Analytics;
-  triggerIngestionPull: IngestionLog;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
@@ -2503,8 +2423,6 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
-  updateIngestionFieldMapping: IngestionFieldMapping;
-  updateIngestionPipeline: IngestionPipeline;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
@@ -2680,21 +2598,6 @@ export type MutationCreateFrontComponentArgs = {
 };
 
 
-export type MutationCreateIngestionFieldMappingArgs = {
-  input: CreateIngestionFieldMappingInput;
-};
-
-
-export type MutationCreateIngestionFieldMappingsArgs = {
-  inputs: Array<CreateIngestionFieldMappingInput>;
-};
-
-
-export type MutationCreateIngestionPipelineArgs = {
-  input: CreateIngestionPipelineInput;
-};
-
-
 export type MutationCreateManyCoreViewFieldGroupsArgs = {
   inputs: Array<CreateViewFieldGroupInput>;
 };
@@ -2854,7 +2757,7 @@ export type MutationDeleteCoreViewGroupArgs = {
 
 
 export type MutationDeleteCoreViewSortArgs = {
-  id: Scalars['String'];
+  input: DeleteViewSortInput;
 };
 
 
@@ -2874,16 +2777,6 @@ export type MutationDeleteFileArgs = {
 
 
 export type MutationDeleteFrontComponentArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type MutationDeleteIngestionFieldMappingArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type MutationDeleteIngestionPipelineArgs = {
   id: Scalars['UUID'];
 };
 
@@ -2990,7 +2883,7 @@ export type MutationDestroyCoreViewGroupArgs = {
 
 
 export type MutationDestroyCoreViewSortArgs = {
-  id: Scalars['String'];
+  input: DestroyViewSortInput;
 };
 
 
@@ -3210,21 +3103,11 @@ export type MutationSyncApplicationArgs = {
 };
 
 
-export type MutationTestIngestionPipelineArgs = {
-  input: TestIngestionPipelineInput;
-};
-
-
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
-};
-
-
-export type MutationTriggerIngestionPullArgs = {
-  pipelineId: Scalars['UUID'];
 };
 
 
@@ -3286,7 +3169,6 @@ export type MutationUpdateCoreViewGroupArgs = {
 
 
 export type MutationUpdateCoreViewSortArgs = {
-  id: Scalars['String'];
   input: UpdateViewSortInput;
 };
 
@@ -3299,16 +3181,6 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
-};
-
-
-export type MutationUpdateIngestionFieldMappingArgs = {
-  input: UpdateIngestionFieldMappingInput;
-};
-
-
-export type MutationUpdateIngestionPipelineArgs = {
-  input: UpdateIngestionPipelineInput;
 };
 
 
@@ -3664,12 +3536,10 @@ export type ObjectPermission = {
   canReadObjectRecords?: Maybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
-  editWindowMinutes?: Maybe<Scalars['Int']>;
   objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
-  showInSidebar?: Maybe<Scalars['Boolean']>;
 };
 
 export type ObjectPermissionInput = {
@@ -3677,9 +3547,7 @@ export type ObjectPermissionInput = {
   canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   objectMetadataId: Scalars['UUID'];
-  showInSidebar?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ObjectRecordCount = {
@@ -3941,8 +3809,6 @@ export type PlaceDetailsResult = {
   location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
-  street1?: Maybe<Scalars['String']>;
-  street2?: Maybe<Scalars['String']>;
 };
 
 export type PostgresCredentials = {
@@ -4074,10 +3940,6 @@ export type Query = {
   getToolInputSchema?: Maybe<Scalars['JSON']>;
   index: Index;
   indexMetadatas: IndexConnection;
-  ingestionFieldMappings: Array<IngestionFieldMapping>;
-  ingestionLogs: Array<IngestionLog>;
-  ingestionPipeline?: Maybe<IngestionPipeline>;
-  ingestionPipelines: Array<IngestionPipeline>;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
@@ -4384,22 +4246,6 @@ export type QueryIndexMetadatasArgs = {
 };
 
 
-export type QueryIngestionFieldMappingsArgs = {
-  pipelineId: Scalars['UUID'];
-};
-
-
-export type QueryIngestionLogsArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  pipelineId: Scalars['UUID'];
-};
-
-
-export type QueryIngestionPipelineArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
 };
@@ -4570,7 +4416,6 @@ export type Role = {
   canUpdateAllObjectRecords: Scalars['Boolean'];
   canUpdateAllSettings: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
-  editWindowMinutes?: Maybe<Scalars['Int']>;
   fieldPermissions?: Maybe<Array<FieldPermission>>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -4580,7 +4425,6 @@ export type Role = {
   permissionFlags?: Maybe<Array<PermissionFlag>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
-  showAllObjectsInSidebar: Scalars['Boolean'];
   universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -4830,21 +4674,6 @@ export type TasksConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type TestIngestionPipelineInput = {
-  pipelineId: Scalars['UUID'];
-  sampleRecords: Array<Scalars['JSON']>;
-};
-
-export type TestIngestionPipelineResult = {
-  __typename?: 'TestIngestionPipelineResult';
-  errors?: Maybe<Array<Scalars['JSON']>>;
-  invalidRecords: Scalars['Int'];
-  previewRecords?: Maybe<Array<Scalars['JSON']>>;
-  success: Scalars['Boolean'];
-  totalRecords: Scalars['Int'];
-  validRecords: Scalars['Int'];
-};
-
 export type TimelineConfiguration = {
   __typename?: 'TimelineConfiguration';
   configurationType: WidgetConfigurationType;
@@ -4958,7 +4787,6 @@ export type UpdateFieldInput = {
   morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']>>;
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
-  relationTargetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   settings?: InputMaybe<Scalars['JSON']>;
   universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
@@ -4973,43 +4801,6 @@ export type UpdateFrontComponentInput = {
 export type UpdateFrontComponentInputUpdates = {
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateIngestionFieldMappingInput = {
-  id: Scalars['UUID'];
-  update: UpdateIngestionFieldMappingInputUpdates;
-};
-
-export type UpdateIngestionFieldMappingInputUpdates = {
-  position?: InputMaybe<Scalars['Int']>;
-  relationAutoCreate?: InputMaybe<Scalars['Boolean']>;
-  relationMatchFieldName?: InputMaybe<Scalars['String']>;
-  relationTargetObjectName?: InputMaybe<Scalars['String']>;
-  sourceFieldPath?: InputMaybe<Scalars['String']>;
-  targetCompositeSubField?: InputMaybe<Scalars['String']>;
-  targetFieldName?: InputMaybe<Scalars['String']>;
-  transform?: InputMaybe<Scalars['JSON']>;
-};
-
-export type UpdateIngestionPipelineInput = {
-  id: Scalars['UUID'];
-  update: UpdateIngestionPipelineInputUpdates;
-};
-
-export type UpdateIngestionPipelineInputUpdates = {
-  dedupFieldName?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  isEnabled?: InputMaybe<Scalars['Boolean']>;
-  mode?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  paginationConfig?: InputMaybe<Scalars['JSON']>;
-  responseRecordsPath?: InputMaybe<Scalars['String']>;
-  schedule?: InputMaybe<Scalars['String']>;
-  sourceAuthConfig?: InputMaybe<Scalars['JSON']>;
-  sourceHttpMethod?: InputMaybe<Scalars['String']>;
-  sourceRequestConfig?: InputMaybe<Scalars['JSON']>;
-  sourceUrl?: InputMaybe<Scalars['String']>;
-  targetObjectNameSingular?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -5143,10 +4934,8 @@ export type UpdateRolePayload = {
   canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
-  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
-  showAllObjectsInSidebar?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateSkillInput = {
@@ -5245,10 +5034,14 @@ export type UpdateViewInput = {
 };
 
 export type UpdateViewSortInput = {
+  /** The id of the view sort to update */
+  id: Scalars['UUID'];
+  /** The view sort to update */
+  update: UpdateViewSortInputUpdates;
+};
+
+export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateWebhookInput = {
@@ -5476,7 +5269,6 @@ export enum ViewFilterOperand {
   IS_NOT = 'IS_NOT',
   IS_NOT_EMPTY = 'IS_NOT_EMPTY',
   IS_NOT_NULL = 'IS_NOT_NULL',
-  IS_NOT_RELATIVE = 'IS_NOT_RELATIVE',
   IS_RELATIVE = 'IS_RELATIVE',
   IS_TODAY = 'IS_TODAY',
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
@@ -5934,7 +5726,7 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5946,7 +5738,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -6242,12 +6034,12 @@ export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlan', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
-export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null };
+export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null };
 
 export type FindManyCommandMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null }> };
+export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null }> };
 
 export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null };
 
@@ -6315,21 +6107,21 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 
 export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, isHeadless: boolean, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
 
-export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type CreateOneLogicFunctionMutationVariables = Exact<{
   input: CreateLogicFunctionFromSourceInput;
 }>;
 
 
-export type CreateOneLogicFunctionMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateOneLogicFunctionMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneLogicFunctionMutationVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type ExecuteOneLogicFunctionMutationVariables = Exact<{
   input: ExecuteOneLogicFunctionInput;
@@ -6355,14 +6147,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type FindManyLogicFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneLogicFunctionQueryVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -6496,7 +6288,7 @@ export type UpsertFieldsWidgetMutationVariables = Exact<{
 }>;
 
 
-export type UpsertFieldsWidgetMutation = { __typename?: 'Mutation', upsertFieldsWidget: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type UpsertFieldsWidgetMutation = { __typename?: 'Mutation', upsertFieldsWidget: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
 
 export type FindAllRecordPageLayoutsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6864,102 +6656,6 @@ export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
 
-export type CreateIngestionFieldMappingMutationVariables = Exact<{
-  input: CreateIngestionFieldMappingInput;
-}>;
-
-
-export type CreateIngestionFieldMappingMutation = { __typename?: 'Mutation', createIngestionFieldMapping: { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number } };
-
-export type CreateIngestionFieldMappingsMutationVariables = Exact<{
-  inputs: Array<CreateIngestionFieldMappingInput> | CreateIngestionFieldMappingInput;
-}>;
-
-
-export type CreateIngestionFieldMappingsMutation = { __typename?: 'Mutation', createIngestionFieldMappings: Array<{ __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number }> };
-
-export type UpdateIngestionFieldMappingMutationVariables = Exact<{
-  input: UpdateIngestionFieldMappingInput;
-}>;
-
-
-export type UpdateIngestionFieldMappingMutation = { __typename?: 'Mutation', updateIngestionFieldMapping: { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number } };
-
-export type DeleteIngestionFieldMappingMutationVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type DeleteIngestionFieldMappingMutation = { __typename?: 'Mutation', deleteIngestionFieldMapping: boolean };
-
-export type IngestionFieldMappingFragmentFragment = { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number };
-
-export type GetIngestionFieldMappingsQueryVariables = Exact<{
-  pipelineId: Scalars['UUID'];
-}>;
-
-
-export type GetIngestionFieldMappingsQuery = { __typename?: 'Query', ingestionFieldMappings: Array<{ __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number }> };
-
-export type IngestionLogFragmentFragment = { __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string, totalRecordsReceived: number, recordsCreated: number, recordsUpdated: number, recordsSkipped: number, recordsFailed: number, errors?: any | null, incomingPayload?: any | null, startedAt?: string | null, completedAt?: string | null, durationMs?: number | null };
-
-export type GetIngestionLogsQueryVariables = Exact<{
-  pipelineId: Scalars['UUID'];
-  limit?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type GetIngestionLogsQuery = { __typename?: 'Query', ingestionLogs: Array<{ __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string, totalRecordsReceived: number, recordsCreated: number, recordsUpdated: number, recordsSkipped: number, recordsFailed: number, errors?: any | null, incomingPayload?: any | null, startedAt?: string | null, completedAt?: string | null, durationMs?: number | null }> };
-
-export type CreateIngestionPipelineMutationVariables = Exact<{
-  input: CreateIngestionPipelineInput;
-}>;
-
-
-export type CreateIngestionPipelineMutation = { __typename?: 'Mutation', createIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type UpdateIngestionPipelineMutationVariables = Exact<{
-  input: UpdateIngestionPipelineInput;
-}>;
-
-
-export type UpdateIngestionPipelineMutation = { __typename?: 'Mutation', updateIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type DeleteIngestionPipelineMutationVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type DeleteIngestionPipelineMutation = { __typename?: 'Mutation', deleteIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type TriggerIngestionPullMutationVariables = Exact<{
-  pipelineId: Scalars['UUID'];
-}>;
-
-
-export type TriggerIngestionPullMutation = { __typename?: 'Mutation', triggerIngestionPull: { __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string } };
-
-export type TestIngestionPipelineMutationVariables = Exact<{
-  input: TestIngestionPipelineInput;
-}>;
-
-
-export type TestIngestionPipelineMutation = { __typename?: 'Mutation', testIngestionPipeline: { __typename?: 'TestIngestionPipelineResult', success: boolean, totalRecords: number, validRecords: number, invalidRecords: number, previewRecords?: Array<any> | null, errors?: Array<any> | null } };
-
-export type IngestionPipelineFragmentFragment = { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null };
-
-export type GetIngestionPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetIngestionPipelinesQuery = { __typename?: 'Query', ingestionPipelines: Array<{ __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type GetIngestionPipelineQueryVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type GetIngestionPipelineQuery = { __typename?: 'Query', ingestionPipeline?: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
-
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
@@ -6993,11 +6689,11 @@ export type ApiKeyForRoleFragmentFragment = { __typename?: 'ApiKeyForRole', id: 
 
 export type FieldPermissionFragmentFragment = { __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string };
 
-export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null };
+export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null };
 
 export type PermissionFlagFragmentFragment = { __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string };
 
-export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean };
+export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean };
 
 export type RowLevelPermissionPredicateFragmentFragment = { __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null };
 
@@ -7008,7 +6704,7 @@ export type CreateOneRoleMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
+export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type DeleteOneRoleMutationVariables = Exact<{
   roleId: Scalars['UUID'];
@@ -7022,7 +6718,7 @@ export type UpdateOneRoleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
+export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['UUID'];
@@ -7030,7 +6726,7 @@ export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
+export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
 
 export type UpsertFieldPermissionsMutationVariables = Exact<{
   upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
@@ -7044,7 +6740,7 @@ export type UpsertObjectPermissionsMutationVariables = Exact<{
 }>;
 
 
-export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
 
 export type UpsertPermissionFlagsMutationVariables = Exact<{
   upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
@@ -7063,7 +6759,7 @@ export type UpsertRowLevelPermissionPredicatesMutation = { __typename?: 'Mutatio
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -7135,7 +6831,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -7154,7 +6850,7 @@ export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserF
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -7164,18 +6860,18 @@ export type ViewFilterFragmentFragment = { __typename?: 'CoreViewFilter', id: st
 
 export type ViewFilterGroupFragmentFragment = { __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string };
 
-export type ViewFragmentFragment = { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type ViewFragmentFragment = { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type ViewGroupFragmentFragment = { __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
-export type ViewSortFragmentFragment = { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string };
+export type ViewSortFragmentFragment = { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string };
 
 export type CreateCoreViewMutationVariables = Exact<{
   input: CreateViewInput;
 }>;
 
 
-export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
 
 export type CreateCoreViewFieldMutationVariables = Exact<{
   input: CreateViewFieldInput;
@@ -7217,7 +6913,7 @@ export type CreateCoreViewSortMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoreViewSortMutation = { __typename?: 'Mutation', createCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } };
+export type CreateCoreViewSortMutation = { __typename?: 'Mutation', createCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
 
 export type CreateManyCoreViewFieldGroupsMutationVariables = Exact<{
   inputs: Array<CreateViewFieldGroupInput> | CreateViewFieldGroupInput;
@@ -7283,7 +6979,7 @@ export type DeleteCoreViewGroupMutationVariables = Exact<{
 export type DeleteCoreViewGroupMutation = { __typename?: 'Mutation', deleteCoreViewGroup: { __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DeleteCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DeleteViewSortInput;
 }>;
 
 
@@ -7325,7 +7021,7 @@ export type DestroyCoreViewGroupMutationVariables = Exact<{
 export type DestroyCoreViewGroupMutation = { __typename?: 'Mutation', destroyCoreViewGroup: { __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DestroyCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DestroyViewSortInput;
 }>;
 
 
@@ -7337,7 +7033,7 @@ export type UpdateCoreViewMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
 
 export type UpdateCoreViewFieldMutationVariables = Exact<{
   input: UpdateViewFieldInput;
@@ -7376,26 +7072,25 @@ export type UpdateCoreViewGroupMutationVariables = Exact<{
 export type UpdateCoreViewGroupMutation = { __typename?: 'Mutation', updateCoreViewGroup: { __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type UpdateCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
   input: UpdateViewSortInput;
 }>;
 
 
-export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } };
+export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
 
 export type FindAllCoreViewsQueryVariables = Exact<{
   viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
 }>;
 
 
-export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindFieldsWidgetCoreViewsQueryVariables = Exact<{
   viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
 }>;
 
 
-export type FindFieldsWidgetCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+export type FindFieldsWidgetCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindManyCoreViewFieldsQueryVariables = Exact<{
   viewId: Scalars['String'];
@@ -7430,7 +7125,7 @@ export type FindManyCoreViewSortsQueryVariables = Exact<{
 }>;
 
 
-export type FindManyCoreViewSortsQuery = { __typename?: 'Query', getCoreViewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }> };
+export type FindManyCoreViewSortsQuery = { __typename?: 'Query', getCoreViewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }> };
 
 export type FindManyCoreViewsQueryVariables = Exact<{
   objectMetadataId?: InputMaybe<Scalars['String']>;
@@ -7438,14 +7133,14 @@ export type FindManyCoreViewsQueryVariables = Exact<{
 }>;
 
 
-export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindOneCoreViewQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
+export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
 
 export type FindOneCoreViewFieldQueryVariables = Exact<{
   id: Scalars['String'];
@@ -7480,7 +7175,7 @@ export type FindOneCoreViewSortQueryVariables = Exact<{
 }>;
 
 
-export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } | null };
+export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } | null };
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
@@ -7532,7 +7227,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -7717,6 +7412,9 @@ export const LogicFunctionFieldsFragmentDoc = gql`
   handlerName
   toolInputSchema
   isTool
+  cronTriggerSettings
+  databaseEventTriggerSettings
+  httpRouteTriggerSettings
   applicationId
   createdAt
   updatedAt
@@ -7814,6 +7512,7 @@ export const CommandMenuItemFieldsFragmentDoc = gql`
   label
   icon
   isPinned
+  conditionalAvailabilityExpression
   availabilityType
   availabilityObjectMetadataId
 }
@@ -8190,60 +7889,6 @@ export const WebhookFragmentFragmentDoc = gql`
   secret
 }
     `;
-export const IngestionFieldMappingFragmentFragmentDoc = gql`
-    fragment IngestionFieldMappingFragment on IngestionFieldMapping {
-  id
-  pipelineId
-  sourceFieldPath
-  targetFieldName
-  targetCompositeSubField
-  transform
-  relationTargetObjectName
-  relationMatchFieldName
-  relationAutoCreate
-  position
-}
-    `;
-export const IngestionLogFragmentFragmentDoc = gql`
-    fragment IngestionLogFragment on IngestionLog {
-  id
-  pipelineId
-  status
-  triggerType
-  totalRecordsReceived
-  recordsCreated
-  recordsUpdated
-  recordsSkipped
-  recordsFailed
-  errors
-  incomingPayload
-  startedAt
-  completedAt
-  durationMs
-}
-    `;
-export const IngestionPipelineFragmentFragmentDoc = gql`
-    fragment IngestionPipelineFragment on IngestionPipeline {
-  id
-  name
-  description
-  mode
-  targetObjectNameSingular
-  webhookSecret
-  sourceUrl
-  sourceHttpMethod
-  sourceAuthConfig
-  sourceRequestConfig
-  responseRecordsPath
-  schedule
-  dedupFieldName
-  paginationConfig
-  isEnabled
-  createdAt
-  updatedAt
-  deletedAt
-}
-    `;
 export const ApiKeyForRoleFragmentFragmentDoc = gql`
     fragment ApiKeyForRoleFragment on ApiKeyForRole {
   id
@@ -8343,8 +7988,6 @@ export const ObjectPermissionFragmentFragmentDoc = gql`
   canUpdateObjectRecords
   canSoftDeleteObjectRecords
   canDestroyObjectRecords
-  showInSidebar
-  editWindowMinutes
   restrictedFields
   rowLevelPermissionPredicates {
     ...RowLevelPermissionPredicateFragment
@@ -8427,8 +8070,6 @@ export const RoleFragmentFragmentDoc = gql`
   canUpdateAllObjectRecords
   canSoftDeleteAllObjectRecords
   canDestroyAllObjectRecords
-  showAllObjectsInSidebar
-  editWindowMinutes
   canBeAssignedToUsers
   canBeAssignedToAgents
   canBeAssignedToApiKeys
@@ -8625,6 +8266,9 @@ export const ViewSortFragmentFragmentDoc = gql`
   fieldMetadataId
   direction
   viewId
+  createdAt
+  deletedAt
+  updatedAt
 }
     `;
 export const ViewGroupFragmentFragmentDoc = gql`
@@ -14515,449 +14159,6 @@ export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
 export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
 export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
-export const CreateIngestionFieldMappingDocument = gql`
-    mutation CreateIngestionFieldMapping($input: CreateIngestionFieldMappingInput!) {
-  createIngestionFieldMapping(input: $input) {
-    ...IngestionFieldMappingFragment
-  }
-}
-    ${IngestionFieldMappingFragmentFragmentDoc}`;
-export type CreateIngestionFieldMappingMutationFn = Apollo.MutationFunction<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>;
-
-/**
- * __useCreateIngestionFieldMappingMutation__
- *
- * To run a mutation, you first call `useCreateIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateIngestionFieldMappingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createIngestionFieldMappingMutation, { data, loading, error }] = useCreateIngestionFieldMappingMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>(CreateIngestionFieldMappingDocument, options);
-      }
-export type CreateIngestionFieldMappingMutationHookResult = ReturnType<typeof useCreateIngestionFieldMappingMutation>;
-export type CreateIngestionFieldMappingMutationResult = Apollo.MutationResult<CreateIngestionFieldMappingMutation>;
-export type CreateIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>;
-export const CreateIngestionFieldMappingsDocument = gql`
-    mutation CreateIngestionFieldMappings($inputs: [CreateIngestionFieldMappingInput!]!) {
-  createIngestionFieldMappings(inputs: $inputs) {
-    ...IngestionFieldMappingFragment
-  }
-}
-    ${IngestionFieldMappingFragmentFragmentDoc}`;
-export type CreateIngestionFieldMappingsMutationFn = Apollo.MutationFunction<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>;
-
-/**
- * __useCreateIngestionFieldMappingsMutation__
- *
- * To run a mutation, you first call `useCreateIngestionFieldMappingsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateIngestionFieldMappingsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createIngestionFieldMappingsMutation, { data, loading, error }] = useCreateIngestionFieldMappingsMutation({
- *   variables: {
- *      inputs: // value for 'inputs'
- *   },
- * });
- */
-export function useCreateIngestionFieldMappingsMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>(CreateIngestionFieldMappingsDocument, options);
-      }
-export type CreateIngestionFieldMappingsMutationHookResult = ReturnType<typeof useCreateIngestionFieldMappingsMutation>;
-export type CreateIngestionFieldMappingsMutationResult = Apollo.MutationResult<CreateIngestionFieldMappingsMutation>;
-export type CreateIngestionFieldMappingsMutationOptions = Apollo.BaseMutationOptions<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>;
-export const UpdateIngestionFieldMappingDocument = gql`
-    mutation UpdateIngestionFieldMapping($input: UpdateIngestionFieldMappingInput!) {
-  updateIngestionFieldMapping(input: $input) {
-    ...IngestionFieldMappingFragment
-  }
-}
-    ${IngestionFieldMappingFragmentFragmentDoc}`;
-export type UpdateIngestionFieldMappingMutationFn = Apollo.MutationFunction<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>;
-
-/**
- * __useUpdateIngestionFieldMappingMutation__
- *
- * To run a mutation, you first call `useUpdateIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateIngestionFieldMappingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateIngestionFieldMappingMutation, { data, loading, error }] = useUpdateIngestionFieldMappingMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>(UpdateIngestionFieldMappingDocument, options);
-      }
-export type UpdateIngestionFieldMappingMutationHookResult = ReturnType<typeof useUpdateIngestionFieldMappingMutation>;
-export type UpdateIngestionFieldMappingMutationResult = Apollo.MutationResult<UpdateIngestionFieldMappingMutation>;
-export type UpdateIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>;
-export const DeleteIngestionFieldMappingDocument = gql`
-    mutation DeleteIngestionFieldMapping($id: UUID!) {
-  deleteIngestionFieldMapping(id: $id)
-}
-    `;
-export type DeleteIngestionFieldMappingMutationFn = Apollo.MutationFunction<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>;
-
-/**
- * __useDeleteIngestionFieldMappingMutation__
- *
- * To run a mutation, you first call `useDeleteIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteIngestionFieldMappingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteIngestionFieldMappingMutation, { data, loading, error }] = useDeleteIngestionFieldMappingMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>(DeleteIngestionFieldMappingDocument, options);
-      }
-export type DeleteIngestionFieldMappingMutationHookResult = ReturnType<typeof useDeleteIngestionFieldMappingMutation>;
-export type DeleteIngestionFieldMappingMutationResult = Apollo.MutationResult<DeleteIngestionFieldMappingMutation>;
-export type DeleteIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>;
-export const GetIngestionFieldMappingsDocument = gql`
-    query GetIngestionFieldMappings($pipelineId: UUID!) {
-  ingestionFieldMappings(pipelineId: $pipelineId) {
-    ...IngestionFieldMappingFragment
-  }
-}
-    ${IngestionFieldMappingFragmentFragmentDoc}`;
-
-/**
- * __useGetIngestionFieldMappingsQuery__
- *
- * To run a query within a React component, call `useGetIngestionFieldMappingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIngestionFieldMappingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIngestionFieldMappingsQuery({
- *   variables: {
- *      pipelineId: // value for 'pipelineId'
- *   },
- * });
- */
-export function useGetIngestionFieldMappingsQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>(GetIngestionFieldMappingsDocument, options);
-      }
-export function useGetIngestionFieldMappingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>(GetIngestionFieldMappingsDocument, options);
-        }
-export type GetIngestionFieldMappingsQueryHookResult = ReturnType<typeof useGetIngestionFieldMappingsQuery>;
-export type GetIngestionFieldMappingsLazyQueryHookResult = ReturnType<typeof useGetIngestionFieldMappingsLazyQuery>;
-export type GetIngestionFieldMappingsQueryResult = Apollo.QueryResult<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>;
-export const GetIngestionLogsDocument = gql`
-    query GetIngestionLogs($pipelineId: UUID!, $limit: Int) {
-  ingestionLogs(pipelineId: $pipelineId, limit: $limit) {
-    ...IngestionLogFragment
-  }
-}
-    ${IngestionLogFragmentFragmentDoc}`;
-
-/**
- * __useGetIngestionLogsQuery__
- *
- * To run a query within a React component, call `useGetIngestionLogsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIngestionLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIngestionLogsQuery({
- *   variables: {
- *      pipelineId: // value for 'pipelineId'
- *      limit: // value for 'limit'
- *   },
- * });
- */
-export function useGetIngestionLogsQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>(GetIngestionLogsDocument, options);
-      }
-export function useGetIngestionLogsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>(GetIngestionLogsDocument, options);
-        }
-export type GetIngestionLogsQueryHookResult = ReturnType<typeof useGetIngestionLogsQuery>;
-export type GetIngestionLogsLazyQueryHookResult = ReturnType<typeof useGetIngestionLogsLazyQuery>;
-export type GetIngestionLogsQueryResult = Apollo.QueryResult<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>;
-export const CreateIngestionPipelineDocument = gql`
-    mutation CreateIngestionPipeline($input: CreateIngestionPipelineInput!) {
-  createIngestionPipeline(input: $input) {
-    ...IngestionPipelineFragment
-  }
-}
-    ${IngestionPipelineFragmentFragmentDoc}`;
-export type CreateIngestionPipelineMutationFn = Apollo.MutationFunction<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>;
-
-/**
- * __useCreateIngestionPipelineMutation__
- *
- * To run a mutation, you first call `useCreateIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateIngestionPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createIngestionPipelineMutation, { data, loading, error }] = useCreateIngestionPipelineMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>(CreateIngestionPipelineDocument, options);
-      }
-export type CreateIngestionPipelineMutationHookResult = ReturnType<typeof useCreateIngestionPipelineMutation>;
-export type CreateIngestionPipelineMutationResult = Apollo.MutationResult<CreateIngestionPipelineMutation>;
-export type CreateIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>;
-export const UpdateIngestionPipelineDocument = gql`
-    mutation UpdateIngestionPipeline($input: UpdateIngestionPipelineInput!) {
-  updateIngestionPipeline(input: $input) {
-    ...IngestionPipelineFragment
-  }
-}
-    ${IngestionPipelineFragmentFragmentDoc}`;
-export type UpdateIngestionPipelineMutationFn = Apollo.MutationFunction<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>;
-
-/**
- * __useUpdateIngestionPipelineMutation__
- *
- * To run a mutation, you first call `useUpdateIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateIngestionPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateIngestionPipelineMutation, { data, loading, error }] = useUpdateIngestionPipelineMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>(UpdateIngestionPipelineDocument, options);
-      }
-export type UpdateIngestionPipelineMutationHookResult = ReturnType<typeof useUpdateIngestionPipelineMutation>;
-export type UpdateIngestionPipelineMutationResult = Apollo.MutationResult<UpdateIngestionPipelineMutation>;
-export type UpdateIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>;
-export const DeleteIngestionPipelineDocument = gql`
-    mutation DeleteIngestionPipeline($id: UUID!) {
-  deleteIngestionPipeline(id: $id) {
-    ...IngestionPipelineFragment
-  }
-}
-    ${IngestionPipelineFragmentFragmentDoc}`;
-export type DeleteIngestionPipelineMutationFn = Apollo.MutationFunction<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>;
-
-/**
- * __useDeleteIngestionPipelineMutation__
- *
- * To run a mutation, you first call `useDeleteIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteIngestionPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteIngestionPipelineMutation, { data, loading, error }] = useDeleteIngestionPipelineMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>(DeleteIngestionPipelineDocument, options);
-      }
-export type DeleteIngestionPipelineMutationHookResult = ReturnType<typeof useDeleteIngestionPipelineMutation>;
-export type DeleteIngestionPipelineMutationResult = Apollo.MutationResult<DeleteIngestionPipelineMutation>;
-export type DeleteIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>;
-export const TriggerIngestionPullDocument = gql`
-    mutation TriggerIngestionPull($pipelineId: UUID!) {
-  triggerIngestionPull(pipelineId: $pipelineId) {
-    id
-    pipelineId
-    status
-    triggerType
-  }
-}
-    `;
-export type TriggerIngestionPullMutationFn = Apollo.MutationFunction<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>;
-
-/**
- * __useTriggerIngestionPullMutation__
- *
- * To run a mutation, you first call `useTriggerIngestionPullMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTriggerIngestionPullMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [triggerIngestionPullMutation, { data, loading, error }] = useTriggerIngestionPullMutation({
- *   variables: {
- *      pipelineId: // value for 'pipelineId'
- *   },
- * });
- */
-export function useTriggerIngestionPullMutation(baseOptions?: Apollo.MutationHookOptions<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>(TriggerIngestionPullDocument, options);
-      }
-export type TriggerIngestionPullMutationHookResult = ReturnType<typeof useTriggerIngestionPullMutation>;
-export type TriggerIngestionPullMutationResult = Apollo.MutationResult<TriggerIngestionPullMutation>;
-export type TriggerIngestionPullMutationOptions = Apollo.BaseMutationOptions<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>;
-export const TestIngestionPipelineDocument = gql`
-    mutation TestIngestionPipeline($input: TestIngestionPipelineInput!) {
-  testIngestionPipeline(input: $input) {
-    success
-    totalRecords
-    validRecords
-    invalidRecords
-    previewRecords
-    errors
-  }
-}
-    `;
-export type TestIngestionPipelineMutationFn = Apollo.MutationFunction<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>;
-
-/**
- * __useTestIngestionPipelineMutation__
- *
- * To run a mutation, you first call `useTestIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTestIngestionPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [testIngestionPipelineMutation, { data, loading, error }] = useTestIngestionPipelineMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useTestIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>(TestIngestionPipelineDocument, options);
-      }
-export type TestIngestionPipelineMutationHookResult = ReturnType<typeof useTestIngestionPipelineMutation>;
-export type TestIngestionPipelineMutationResult = Apollo.MutationResult<TestIngestionPipelineMutation>;
-export type TestIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>;
-export const GetIngestionPipelinesDocument = gql`
-    query GetIngestionPipelines {
-  ingestionPipelines {
-    ...IngestionPipelineFragment
-  }
-}
-    ${IngestionPipelineFragmentFragmentDoc}`;
-
-/**
- * __useGetIngestionPipelinesQuery__
- *
- * To run a query within a React component, call `useGetIngestionPipelinesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIngestionPipelinesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIngestionPipelinesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetIngestionPipelinesQuery(baseOptions?: Apollo.QueryHookOptions<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>(GetIngestionPipelinesDocument, options);
-      }
-export function useGetIngestionPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>(GetIngestionPipelinesDocument, options);
-        }
-export type GetIngestionPipelinesQueryHookResult = ReturnType<typeof useGetIngestionPipelinesQuery>;
-export type GetIngestionPipelinesLazyQueryHookResult = ReturnType<typeof useGetIngestionPipelinesLazyQuery>;
-export type GetIngestionPipelinesQueryResult = Apollo.QueryResult<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>;
-export const GetIngestionPipelineDocument = gql`
-    query GetIngestionPipeline($id: UUID!) {
-  ingestionPipeline(id: $id) {
-    ...IngestionPipelineFragment
-  }
-}
-    ${IngestionPipelineFragmentFragmentDoc}`;
-
-/**
- * __useGetIngestionPipelineQuery__
- *
- * To run a query within a React component, call `useGetIngestionPipelineQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIngestionPipelineQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIngestionPipelineQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetIngestionPipelineQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>(GetIngestionPipelineDocument, options);
-      }
-export function useGetIngestionPipelineLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>(GetIngestionPipelineDocument, options);
-        }
-export type GetIngestionPipelineQueryHookResult = ReturnType<typeof useGetIngestionPipelineQuery>;
-export type GetIngestionPipelineLazyQueryHookResult = ReturnType<typeof useGetIngestionPipelineLazyQuery>;
-export type GetIngestionPipelineQueryResult = Apollo.QueryResult<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {
@@ -16419,8 +15620,8 @@ export type DeleteCoreViewGroupMutationHookResult = ReturnType<typeof useDeleteC
 export type DeleteCoreViewGroupMutationResult = Apollo.MutationResult<DeleteCoreViewGroupMutation>;
 export type DeleteCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>;
 export const DeleteCoreViewSortDocument = gql`
-    mutation DeleteCoreViewSort($id: String!) {
-  deleteCoreViewSort(id: $id)
+    mutation DeleteCoreViewSort($input: DeleteViewSortInput!) {
+  deleteCoreViewSort(input: $input)
 }
     `;
 export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>;
@@ -16438,7 +15639,7 @@ export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreVie
  * @example
  * const [deleteCoreViewSortMutation, { data, loading, error }] = useDeleteCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -16611,8 +15812,8 @@ export type DestroyCoreViewGroupMutationHookResult = ReturnType<typeof useDestro
 export type DestroyCoreViewGroupMutationResult = Apollo.MutationResult<DestroyCoreViewGroupMutation>;
 export type DestroyCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>;
 export const DestroyCoreViewSortDocument = gql`
-    mutation DestroyCoreViewSort($id: String!) {
-  destroyCoreViewSort(id: $id)
+    mutation DestroyCoreViewSort($input: DestroyViewSortInput!) {
+  destroyCoreViewSort(input: $input)
 }
     `;
 export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>;
@@ -16630,7 +15831,7 @@ export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreV
  * @example
  * const [destroyCoreViewSortMutation, { data, loading, error }] = useDestroyCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -16842,8 +16043,8 @@ export type UpdateCoreViewGroupMutationHookResult = ReturnType<typeof useUpdateC
 export type UpdateCoreViewGroupMutationResult = Apollo.MutationResult<UpdateCoreViewGroupMutation>;
 export type UpdateCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>;
 export const UpdateCoreViewSortDocument = gql`
-    mutation UpdateCoreViewSort($id: String!, $input: UpdateViewSortInput!) {
-  updateCoreViewSort(id: $id, input: $input) {
+    mutation UpdateCoreViewSort($input: UpdateViewSortInput!) {
+  updateCoreViewSort(input: $input) {
     ...ViewSortFragment
   }
 }
@@ -16863,7 +16064,6 @@ export type UpdateCoreViewSortMutationFn = Apollo.MutationFunction<UpdateCoreVie
  * @example
  * const [updateCoreViewSortMutation, { data, loading, error }] = useUpdateCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
  *      input: // value for 'input'
  *   },
  * });

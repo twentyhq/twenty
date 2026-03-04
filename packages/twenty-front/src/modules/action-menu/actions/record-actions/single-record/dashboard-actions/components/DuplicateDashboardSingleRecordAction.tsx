@@ -1,11 +1,10 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDuplicateDashboard } from '@/dashboards/hooks/useDuplicateDashboard';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

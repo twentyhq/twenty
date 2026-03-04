@@ -1,16 +1,17 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({
@@ -22,14 +23,15 @@ const GLOBAL_FILE_PREVIEW_MODAL_ID = 'global-file-preview-modal';
 
 const StyledModalHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   height: 60px;
   justify-content: space-between;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(0, 4, 0, 4)};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
@@ -37,26 +39,26 @@ const StyledModalHeader = styled.div`
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   width: 100%;
 `;
 
 const StyledModalTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledModalContent = styled.div`
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledLoadingContainer = styled.div`
@@ -67,7 +69,7 @@ const StyledLoadingContainer = styled.div`
 `;
 
 const StyledLoadingText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
@@ -98,12 +100,12 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
   return (
     <>
       {createPortal(
-        <Modal
-          modalId={GLOBAL_FILE_PREVIEW_MODAL_ID}
+        <ModalStatefulWrapper
+          modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
           size="large"
           isClosable
           onClose={handleClose}
-          ignoreContainer
+          renderInDocumentBody
         >
           <StyledModalHeader>
             <StyledHeader>
@@ -139,7 +141,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               </Suspense>
             </StyledModalContent>
           </ScrollWrapper>
-        </Modal>,
+        </ModalStatefulWrapper>,
         document.body,
       )}
     </>

@@ -990,6 +990,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    conditionalAvailabilityExpression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     availabilityObjectMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1168,6 +1173,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     updatedAt: {
       toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  viewSort: {
+    direction: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
+    deletedAt: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },

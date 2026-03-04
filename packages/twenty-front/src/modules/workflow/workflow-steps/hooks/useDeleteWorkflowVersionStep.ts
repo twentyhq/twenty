@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';

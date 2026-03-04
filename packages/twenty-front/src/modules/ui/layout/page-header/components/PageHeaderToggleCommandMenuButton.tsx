@@ -5,33 +5,31 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledButtonWrapper = styled.div<{
-  alignWithCommandMenuTopBar: boolean;
-}>`
+const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
+  align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
+  display: ${({ alignToTop }) => (alignToTop ? 'flex' : 'block')};
+  height: ${({ alignToTop }) =>
+    alignToTop ? `${COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE}px` : 'auto'};
+  position: ${({ alignToTop }) => (alignToTop ? 'fixed' : 'static')};
+  right: ${({ alignToTop }) =>
+    alignToTop ? themeCssVariables.spacing[3] : 'auto'};
+  top: ${({ alignToTop }) => (alignToTop ? '0' : 'auto')};
   z-index: ${RootStackingContextZIndices.CommandMenuButton};
-  ${({ alignWithCommandMenuTopBar, theme }) =>
-    alignWithCommandMenuTopBar &&
-    css`
-      align-items: center;
-      display: flex;
-      height: ${COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE}px;
-      position: fixed;
-      right: ${theme.spacing(3)};
-      top: 0;
-    `}
 `;
 
 const StyledTooltipWrapper = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const xPaths = {
@@ -46,7 +44,7 @@ const AnimatedIcon = ({
 }: {
   isCommandMenuOpened: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -132,16 +130,14 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const alignWithCommandMenuTopBar =
     isMobile && isNavigationMenuInEditMode && isCommandMenuOpened;
 
-  const openLabel = t`Open command menu`;
-  const closeLabel = t`Close command menu`;
-  const ariaLabel = isCommandMenuOpened ? closeLabel : openLabel;
+  const ariaLabel = isCommandMenuOpened
+    ? t`Close command menu`
+    : t`Open command menu`;
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButtonWrapper
-      alignWithCommandMenuTopBar={alignWithCommandMenuTopBar}
-    >
+    <StyledButtonWrapper alignToTop={alignWithCommandMenuTopBar}>
       <div id="toggle-command-menu-button">
         <AnimatedButton
           animatedSvg={

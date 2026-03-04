@@ -2,10 +2,10 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -17,14 +17,13 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { useContext, useState } from 'react';
+import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
 export const CommandMenuWorkflowStepInfo = ({
@@ -32,7 +31,7 @@ export const CommandMenuWorkflowStepInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const commandMenuPage = useAtomStateValue(commandMenuPageState);

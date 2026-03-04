@@ -1,5 +1,5 @@
 import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -12,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -28,28 +29,28 @@ const StyledAppsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: center;
 `;
 
 const StyledText = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-family: 'Inter';
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding: ${({ theme }) => theme.spacing(6)} 0px;
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding: ${themeCssVariables.spacing[6]} 0px;
 `;
 
 const StyledCardWrapper = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 400px;
-  padding: ${({ theme }) => theme.spacing(6)};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${themeCssVariables.spacing[6]};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  border-radius: ${themeCssVariables.border.radius.md};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -62,15 +63,15 @@ const StyledButtonContainer = styled.div`
 const StyledScopeList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0 0 ${({ theme }) => theme.spacing(4)} 0;
+  margin: 0 0 ${themeCssVariables.spacing[4]} 0;
   width: 100%;
 `;
 
 const StyledScopeItem = styled.li`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 
   &:last-child {
     border-bottom: none;
@@ -78,10 +79,10 @@ const StyledScopeItem = styled.li`
 `;
 
 const StyledErrorText = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
   text-align: center;
-  padding: ${({ theme }) => theme.spacing(2)} 0;
+  padding: ${themeCssVariables.spacing[2]} 0;
   width: 100%;
 `;
 
@@ -178,8 +179,8 @@ export const Authorize = () => {
       <StyledCardWrapper>
         <StyledAppsContainer>
           <img
-            src="/images/icons/omnia/logo.png"
-            alt="omnia-icon"
+            src="/images/integrations/twenty-logo.svg"
+            alt="twenty-icon"
             height={40}
             width={40}
           />

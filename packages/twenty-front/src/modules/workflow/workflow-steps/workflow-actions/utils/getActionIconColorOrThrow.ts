@@ -1,12 +1,12 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
-import { type Theme } from '@emotion/react';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { type ThemeType } from 'twenty-ui/theme';
 
 export const getActionIconColorOrThrow = ({
   theme,
   actionType,
 }: {
-  theme: Theme;
+  theme: ThemeType;
   actionType: WorkflowActionType;
 }) => {
   switch (actionType) {

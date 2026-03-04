@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/components/SidePanelSubPageNavigationHeader';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSubViewContainer = styled.div`
   display: flex;
@@ -13,17 +14,17 @@ const StyledSubViewContainer = styled.div`
 
 const StyledSearchContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   min-width: 0;
-  padding-inline: ${({ theme }) => theme.spacing(3)};
+  padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledSearchInput = styled.input`
   background: transparent;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
 
   padding: 0;
@@ -31,7 +32,7 @@ const StyledSearchInput = styled.input`
   outline: none;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 `;
 

@@ -1,5 +1,3 @@
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { AdvancedFilterDropdownFilterInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownFilterInput';
 import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
@@ -16,11 +14,8 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledValueDropdownContainer = styled.div`
   flex: 3;
@@ -65,11 +60,6 @@ export const AdvancedFilterValueInput = ({
     dropdownId,
   );
 
-  const { fieldMetadataItem: filterFieldItem } = useFieldMetadataItemById(
-    recordFilter?.fieldMetadataId ?? '',
-  );
-  const { objectMetadataItems } = useObjectMetadataItems();
-
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);
 
@@ -83,28 +73,6 @@ export const AdvancedFilterValueInput = ({
 
   const handleFilterValueDropdownOpen = () => {
     setObjectFilterDropdownCurrentRecordFilter(recordFilter);
-
-    // For ONE_TO_MANY sub-field filters, use the target field's ID
-    // so the value input resolves the correct field metadata
-    if (
-      isNonEmptyString(recordFilter.subFieldName) &&
-      filterFieldItem?.type === FieldMetadataType.RELATION &&
-      filterFieldItem.relation?.type === RelationType.ONE_TO_MANY
-    ) {
-      const targetObject = objectMetadataItems.find(
-        (o) => o.id === filterFieldItem.relation?.targetObjectMetadata.id,
-      );
-      const targetField = targetObject?.fields.find(
-        (f) => f.name === recordFilter.subFieldName,
-      );
-
-      if (isDefined(targetField)) {
-        setFieldMetadataItemIdUsedInDropdown(targetField.id);
-
-        return;
-      }
-    }
-
     setFieldMetadataItemIdUsedInDropdown(recordFilter.fieldMetadataId);
   };
 

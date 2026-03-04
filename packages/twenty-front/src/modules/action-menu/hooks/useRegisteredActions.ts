@@ -1,14 +1,12 @@
 import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ActionViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { resolveGoToActionLabels } from '@/action-menu/actions/utils/resolveGoToActionLabels';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,12 +15,9 @@ import { useIcons } from 'twenty-ui/display';
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
 ) => {
-  const { objectMetadataItem, forceRegisteredActionsByKey } =
-    shouldBeRegisteredParams;
+  const { objectMetadataItem } = shouldBeRegisteredParams;
 
   const { getIcon } = useIcons();
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -87,18 +82,9 @@ export const useRegisteredActions = (
       ) {
         return false;
       }
-      const forcedShouldBeRegistered = forceRegisteredActionsByKey[action.key];
-
-      if (isDefined(forcedShouldBeRegistered)) {
-        return (
-          forcedShouldBeRegistered &&
-          action.shouldBeRegistered(shouldBeRegisteredParams)
-        );
-      }
-
       return action.shouldBeRegistered(shouldBeRegisteredParams);
     })
     .sort((a, b) => a.position - b.position);
 
-  return resolveGoToActionLabels(actions, objectMetadataItems);
+  return actions;
 };

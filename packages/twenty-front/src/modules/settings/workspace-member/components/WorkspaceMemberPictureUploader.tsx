@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

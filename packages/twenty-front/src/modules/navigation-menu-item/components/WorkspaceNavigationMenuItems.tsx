@@ -9,7 +9,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey, PermissionFlagType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -29,7 +29,6 @@ import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/comp
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -57,13 +56,9 @@ export const WorkspaceNavigationMenuItems = () => {
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
     store.set(isNavigationMenuInEditModeState.atom, true);
   };
-  const isNavigationMenuItemEditingFeatureEnabled = useIsFeatureEnabled(
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const permissionFlagMap = usePermissionFlagMap();
-  const isAdmin = permissionFlagMap[PermissionFlagType.LAYOUTS];
-  const isNavigationMenuItemEditingEnabled =
-    isNavigationMenuItemEditingFeatureEnabled && isAdmin;
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );

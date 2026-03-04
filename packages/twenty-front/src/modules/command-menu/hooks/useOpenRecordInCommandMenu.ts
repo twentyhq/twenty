@@ -12,25 +12,24 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const { navigateCommandMenu } = useCommandMenu();

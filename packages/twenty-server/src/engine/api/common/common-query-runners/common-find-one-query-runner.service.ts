@@ -142,11 +142,11 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
+      filter: this.filterArgProcessor.process({
+        filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      ),
+      }),
     };
   }
 

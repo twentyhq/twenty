@@ -1,9 +1,8 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
+import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
@@ -18,7 +17,6 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -31,8 +29,6 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -48,8 +44,6 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
-  private readonly logger = new Logger(UserWorkspaceService.name);
-
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -57,10 +51,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -154,15 +144,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
       );
     }, authContext);
-
-    try {
-      await this.linkWorkspaceMemberToMatchingAgent(workspaceId, user);
-    } catch (error) {
-      this.logger.error(
-        `Failed to link workspace member to agent for user ${user.email} in workspace ${workspaceId}`,
-        error instanceof Error ? error.stack : error,
-      );
-    }
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
@@ -176,16 +157,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     if (existingUserWorkspace) {
-      // On subsequent logins, try to link if not already linked
-      try {
-        await this.linkWorkspaceMemberToMatchingAgent(workspace.id, user);
-      } catch (error) {
-        this.logger.error(
-          `Failed to link workspace member to agent for user ${user.email} in workspace ${workspace.id}`,
-          error instanceof Error ? error.stack : error,
-        );
-      }
-
       return;
     }
 
@@ -439,139 +410,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       },
       authContext,
     );
-  }
-
-  private async linkWorkspaceMemberToMatchingAgent(
-    workspaceId: string,
-    user: UserEntity,
-  ): Promise<void> {
-    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
-      where: { nameSingular: 'agent', workspaceId, isActive: true },
-    });
-
-    if (!agentObjectMetadata) {
-      agentObjectMetadata = await this.objectMetadataRepository.findOne({
-        where: { nameSingular: 'agentProfile', workspaceId, isActive: true },
-      });
-    }
-
-    if (!agentObjectMetadata) {
-      this.logger.log(
-        `No agent object metadata found in workspace ${workspaceId}, skipping agent linking`,
-      );
-
-      return;
-    }
-
-    const workspaceMemberObjectMetadata =
-      await this.objectMetadataRepository.findOne({
-        where: {
-          nameSingular: 'workspaceMember',
-          workspaceId,
-          isActive: true,
-        },
-      });
-
-    if (!workspaceMemberObjectMetadata) {
-      this.logger.warn(
-        `No workspaceMember object metadata found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const userRelationField = await this.fieldMetadataRepository.findOne({
-      where: {
-        objectMetadataId: agentObjectMetadata.id,
-        type: FieldMetadataType.RELATION,
-        relationTargetObjectMetadataId: workspaceMemberObjectMetadata.id,
-        workspaceId,
-        isActive: true,
-      },
-    });
-
-    if (!userRelationField) {
-      this.logger.warn(
-        `No relation field from Agent to WorkspaceMember found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const emailsField = await this.fieldMetadataRepository.findOne({
-      where: {
-        objectMetadataId: agentObjectMetadata.id,
-        type: FieldMetadataType.EMAILS,
-        workspaceId,
-        isActive: true,
-      },
-    });
-
-    if (!emailsField) {
-      this.logger.warn(
-        `No EMAILS field found on Agent object in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const emailColumnName = `${emailsField.name}PrimaryEmail`;
-    const userForeignKeyColumn = `${userRelationField.name}Id`;
-
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const agentRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          agentObjectMetadata.nameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: { userId: user.id },
-      });
-
-      if (!workspaceMember) {
-        this.logger.warn(
-          `No workspace member found for user ${user.email} in workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      const agent = await agentRepository
-        .createQueryBuilder('agent')
-        .where(`LOWER(agent."${emailColumnName}") = LOWER(:email)`, {
-          email: user.email,
-        })
-        .andWhere(`agent."${userForeignKeyColumn}" IS NULL`)
-        .getOne();
-
-      if (!agent) {
-        this.logger.log(
-          `No unlinked agent found matching email ${user.email} in workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      await agentRepository.update(
-        { id: (agent as Record<string, unknown>).id as string },
-        { [userForeignKeyColumn]: workspaceMember.id },
-      );
-
-      this.logger.log(
-        `Successfully linked agent ${(agent as Record<string, unknown>).id} to workspace member ${workspaceMember.id} for user ${user.email}`,
-      );
-    }, authContext);
   }
 
   private async computeDefaultAvatarUrl(

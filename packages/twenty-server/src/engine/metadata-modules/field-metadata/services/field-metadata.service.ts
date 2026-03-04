@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneOptions, type Repository } from 'typeorm';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';

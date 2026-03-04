@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const getJoinObjectNameSingular = (
   objectNameSingular: CoreObjectNameSingular,

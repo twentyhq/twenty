@@ -4,7 +4,7 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';

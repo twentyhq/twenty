@@ -4,7 +4,6 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -58,10 +57,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
             recordFilterId: recordFilter.id,
           }),
         }),
-        recordFilter.subFieldName as
-          | CompositeFieldSubFieldName
-          | null
-          | undefined,
+        recordFilter.subFieldName,
       );
     },
     [store, filterableFieldMetadataItems],

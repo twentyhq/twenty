@@ -414,11 +414,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
+      filter: this.filterArgProcessor.process({
+        filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      ),
+      }),
     };
   }
 

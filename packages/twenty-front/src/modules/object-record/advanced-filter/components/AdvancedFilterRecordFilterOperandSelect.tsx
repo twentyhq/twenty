@@ -1,5 +1,4 @@
 import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -7,8 +6,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,8 +25,6 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
     currentRecordFiltersComponentState,
   );
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-
   const filter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
   );
@@ -37,17 +33,10 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
 
   const filterType = filter?.type;
 
-  const fieldMetadataItem = isDefined(filter?.fieldMetadataId)
-    ? objectMetadataItems
-        .flatMap((item) => item.fields)
-        .find((field) => field.id === filter.fieldMetadataId)
-    : undefined;
-
   const operandsForFilterType = isDefined(filterType)
     ? getRecordFilterOperands({
         filterType,
         subFieldName: filter?.subFieldName,
-        relationType: fieldMetadataItem?.relation?.type,
       })
     : [];
 

@@ -29,14 +29,19 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import {
+  ActionViewType,
+  CoreObjectNameSingular,
+  AppPath,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
+import {
+  BACKEND_BATCH_REQUEST_MAX_COUNT,
+  MUTATION_MAX_MERGE_RECORDS,
+} from 'twenty-shared/constants';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconArrowMerge,
   IconBuildingSkyscraper,

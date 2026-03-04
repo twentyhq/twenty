@@ -21,18 +21,6 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-const DEFAULT_TYPE_POLICIES = {
-  RemoteTable: {
-    keyFields: ['name'],
-  },
-};
-
-export const createMetadataCache = (): InMemoryCache => {
-  return new InMemoryCache({
-    typePolicies: DEFAULT_TYPE_POLICIES,
-  });
-};
-
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
@@ -57,9 +45,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      // Each factory call gets its own cache unless overridden via options
       cache: new InMemoryCache({
-        typePolicies: DEFAULT_TYPE_POLICIES,
+        typePolicies: {
+          RemoteTable: {
+            keyFields: ['name'],
+          },
+        },
       }),
 
       defaultOptions: {
@@ -112,7 +103,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       },
       extraLinks: [],
       isDebugMode: process.env.IS_DEBUG_MODE === 'true',
-      // Override options (including cache if provided)
+      // Override options
       ...options,
     });
 

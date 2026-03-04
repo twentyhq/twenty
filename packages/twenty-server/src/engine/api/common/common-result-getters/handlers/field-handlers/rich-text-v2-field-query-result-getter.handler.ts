@@ -1,4 +1,5 @@
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   FileFolder,
   type ObjectRecord,
@@ -7,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';

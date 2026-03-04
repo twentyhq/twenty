@@ -4,7 +4,11 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import {
+  CoreObjectNameSingular,
+  ConnectedAccountProvider,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
@@ -24,11 +28,9 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
 import { Callout, IconPlus } from 'twenty-ui/display';
@@ -56,7 +58,6 @@ export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
-  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -242,7 +243,7 @@ export const WorkflowEditActionEmailBase = ({
               handleConnectedAccountChange(connectedAccountId);
             }}
             disabled={actionOptions.readonly}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{ y: 4 }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           {isDefined(missingScopes) && (

@@ -4,26 +4,21 @@ import { useRelationField } from '@/object-record/record-field/ui/meta-types/hoo
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { FieldDependencyContext } from '@/object-record/record-field-dependency/contexts/FieldDependencyContext';
-import { useJunctionBridgeFilter } from '@/object-record/record-field/ui/hooks/useJunctionBridgeFilter';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
-import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
 export const RelationManyToOneFieldInput = () => {
   const { t } = useLingui();
@@ -41,28 +36,6 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
   const { onSubmit, onCancel } = useContext(FieldInputEventContext);
-
-  const fieldDependencyContext = useContext(FieldDependencyContext);
-  const dependencyFilter = fieldDependencyContext?.getFilterForField(
-    fieldDefinition.metadata.fieldName,
-  );
-
-  const recordData = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
-
-  const junctionBridgeFilter = useJunctionBridgeFilter({
-    objectMetadataItem,
-    fieldMetadataItem,
-    recordId,
-    objectMetadataItems,
-    recordData,
-  });
-
-  const additionalFilter = useMemo((): ObjectRecordFilterInput | undefined => {
-    if (isDefined(dependencyFilter) && isDefined(junctionBridgeFilter)) {
-      return { and: [dependencyFilter, junctionBridgeFilter] };
-    }
-    return dependencyFilter ?? junctionBridgeFilter;
-  }, [dependencyFilter, junctionBridgeFilter]);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -153,7 +126,6 @@ export const RelationManyToOneFieldInput = () => {
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }
-      additionalFilter={additionalFilter}
     />
   );
 };

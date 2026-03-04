@@ -27,7 +27,6 @@ import {
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { normalizeSearchInput } from 'src/engine/core-modules/search/utils/normalize-search-input';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -98,8 +97,6 @@ export class SearchService {
                   rolePermissionConfig,
                 );
 
-              const normalizedInput = normalizeSearchInput(searchInput);
-
               return {
                 objectMetadataItem: flatObjectMetadata,
                 records: await this.buildSearchQueryAndGetRecordsWithFallback({
@@ -107,8 +104,8 @@ export class SearchService {
                   flatObjectMetadata,
                   flatFieldMetadataMaps,
                   searchInput,
-                  searchTerms: formatSearchTerms(normalizedInput, 'and'),
-                  searchTermsOr: formatSearchTerms(normalizedInput, 'or'),
+                  searchTerms: formatSearchTerms(searchInput, 'and'),
+                  searchTermsOr: formatSearchTerms(searchInput, 'or'),
                   limit: limit as number,
                   filter: filter ?? ({} as ObjectRecordFilter),
                   after,

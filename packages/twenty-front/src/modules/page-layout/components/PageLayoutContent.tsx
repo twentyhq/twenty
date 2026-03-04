@@ -1,4 +1,3 @@
-import { FieldDependencyProvider } from '@/object-record/record-field-dependency/components/FieldDependencyProvider';
 import { PageLayoutCanvasViewer } from '@/page-layout/components/PageLayoutCanvasViewer';
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
@@ -8,7 +7,6 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
   PageLayoutTabLayoutMode,
@@ -30,44 +28,27 @@ export const PageLayoutContent = () => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const targetRecord = useTargetRecord();
-
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
   const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
-  const content = (() => {
-    if (isCanvasLayout) {
-      return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
-    }
+  if (isCanvasLayout) {
+    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
+  }
 
-    if (isVerticalList) {
-      return isPageLayoutInEditMode ? (
-        <PageLayoutVerticalListEditor
-          widgets={activeTab.widgets}
-          onReorder={reorderWidgets}
-          isReorderEnabled={!isRecordPageLayout}
-        />
-      ) : (
-        <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-      );
-    }
-
-    return <PageLayoutGridLayout tabId={tabId} />;
-  })();
-
-  if (isRecordPageLayout) {
-    return (
-      <FieldDependencyProvider
-        objectNameSingular={targetRecord.targetObjectNameSingular}
-        recordId={targetRecord.id}
-      >
-        {content}
-      </FieldDependencyProvider>
+  if (isVerticalList) {
+    return isPageLayoutInEditMode ? (
+      <PageLayoutVerticalListEditor
+        widgets={activeTab.widgets}
+        onReorder={reorderWidgets}
+        isReorderEnabled={!isRecordPageLayout}
+      />
+    ) : (
+      <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
     );
   }
 
-  return content;
+  return <PageLayoutGridLayout tabId={tabId} />;
 };

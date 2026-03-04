@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import {
   type CalendarChannel,
@@ -7,7 +7,7 @@ import {
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
@@ -16,9 +16,10 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCalenderContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsCalendarChannelsContainer = () => {

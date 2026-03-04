@@ -1,23 +1,40 @@
+import { useContext } from 'react';
+
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Label } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledNodeLabel = styled(Label)<{
+type WorkflowNodeLabelProps = {
   runStatus?: WorkflowRunStepStatus;
   selected: boolean;
-}>`
+  children?: React.ReactNode;
+  className?: string;
+};
+
+const StyledNodeLabelWrapper = styled.div<{ labelColor: string }>`
   box-sizing: border-box;
   flex: 1 0 0;
 
-  ${({ theme, runStatus, selected }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-
-    return css`
-      color: ${selected ? colors.selected.color : colors.unselected.color};
-    `;
-  }}
+  > div {
+    color: ${({ labelColor }) => labelColor};
+  }
 `;
 
-export { StyledNodeLabel as WorkflowNodeLabel };
+export const WorkflowNodeLabel = ({
+  runStatus,
+  selected,
+  children,
+  className,
+}: WorkflowNodeLabelProps) => {
+  const { theme } = useContext(ThemeContext);
+  const colors = getWorkflowDiagramColors({ theme, runStatus });
+  const labelColor = selected ? colors.selected.color : colors.unselected.color;
+
+  return (
+    <StyledNodeLabelWrapper labelColor={labelColor} className={className}>
+      <Label>{children}</Label>
+    </StyledNodeLabelWrapper>
+  );
+};

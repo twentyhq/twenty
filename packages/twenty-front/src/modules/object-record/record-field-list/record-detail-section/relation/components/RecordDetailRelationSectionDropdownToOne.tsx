@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -17,8 +17,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -30,7 +30,6 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';

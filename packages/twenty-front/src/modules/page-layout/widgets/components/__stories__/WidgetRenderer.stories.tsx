@@ -14,7 +14,7 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -1690,8 +1690,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             canUpdateObjectRecords: false,
             canSoftDeleteObjectRecords: false,
             canDestroyObjectRecords: false,
-            showInSidebar: false,
-            editWindowMinutes: null,
             restrictedFields: {},
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
@@ -1709,8 +1707,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
             canDestroyObjectRecords: true,
-            showInSidebar: true,
-            editWindowMinutes: null,
             restrictedFields: {},
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],

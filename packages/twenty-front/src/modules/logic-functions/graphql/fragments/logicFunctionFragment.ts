@@ -11,6 +11,9 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     handlerName
     toolInputSchema
     isTool
+    cronTriggerSettings
+    databaseEventTriggerSettings
+    httpRouteTriggerSettings
     applicationId
     createdAt
     updatedAt

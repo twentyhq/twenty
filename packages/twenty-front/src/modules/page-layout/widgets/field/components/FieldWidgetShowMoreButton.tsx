@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { IconChevronDown } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FieldWidgetShowMoreButtonProps = {
   remainingCount: number;
@@ -12,20 +13,20 @@ const StyledButton = styled.button`
   display: flex;
   width: 100%;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: 24px;
   box-sizing: border-box;
   padding: 0;
   border: none;
   background: transparent;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.instant}s ease;
+  transition: color ${themeCssVariables.animation.duration.instant}s ease;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
