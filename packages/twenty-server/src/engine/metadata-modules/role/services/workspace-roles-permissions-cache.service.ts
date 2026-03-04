@@ -71,6 +71,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
         let showInSidebar = role.showAllObjectsInSidebar;
+        let editWindowMinutes: number | null = role.editWindowMinutes ?? null;
         const restrictedFields: RestrictedFieldsPermissions = {};
 
         if (
@@ -116,6 +117,14 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             ? true
             : (objectRecordPermissionsOverride?.showInSidebar ?? showInSidebar);
 
+          if (
+            isDefined(objectRecordPermissionsOverride?.editWindowMinutes) &&
+            objectRecordPermissionsOverride.editWindowMinutes !== null
+          ) {
+            editWindowMinutes =
+              objectRecordPermissionsOverride.editWindowMinutes;
+          }
+
           const fieldPermissions = role.fieldPermissions.filter(
             (fieldPermission) =>
               fieldPermission.objectMetadataId === objectMetadataId,
@@ -146,6 +155,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canSoftDeleteObjectRecords: canSoftDelete,
           canDestroyObjectRecords: canDestroy,
           showInSidebar,
+          editWindowMinutes,
           restrictedFields,
           rowLevelPermissionPredicates:
             role.rowLevelPermissionPredicates.filter(

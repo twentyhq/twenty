@@ -62,6 +62,9 @@ export class ObjectPermissionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'boolean' })
   showInSidebar?: boolean;
 
+  @Column({ nullable: true, type: 'integer' })
+  editWindowMinutes?: number | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

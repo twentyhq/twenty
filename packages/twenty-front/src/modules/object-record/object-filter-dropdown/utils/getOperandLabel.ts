@@ -38,6 +38,8 @@ export const getOperandLabel = (
       return t`Is not empty`;
     case ViewFilterOperand.IS_RELATIVE:
       return t`Is relative`;
+    case ViewFilterOperand.IS_NOT_RELATIVE:
+      return t`Is not relative`;
     case ViewFilterOperand.IS_IN_PAST:
       return t`Is in past`;
     case ViewFilterOperand.IS_IN_FUTURE:
@@ -85,6 +87,8 @@ export const getOperandLabelShort = (
       return t`: Past`;
     case ViewFilterOperand.IS_IN_FUTURE:
       return t`: Future`;
+    case ViewFilterOperand.IS_NOT_RELATIVE:
+      return t`: Not relative`;
     case ViewFilterOperand.IS_TODAY:
       return t`: Today${timeZoneAbbreviationSuffix}`;
     default:

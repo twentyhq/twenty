@@ -32,6 +32,7 @@ const operandMapping: Record<string, ViewFilterOperand> = {
   [ViewFilterOperand.IS_EMPTY]: ViewFilterOperand.IS_EMPTY,
   [ViewFilterOperand.IS_NOT_EMPTY]: ViewFilterOperand.IS_NOT_EMPTY,
   [ViewFilterOperand.IS_RELATIVE]: ViewFilterOperand.IS_RELATIVE,
+  [ViewFilterOperand.IS_NOT_RELATIVE]: ViewFilterOperand.IS_NOT_RELATIVE,
   [ViewFilterOperand.IS_IN_PAST]: ViewFilterOperand.IS_IN_PAST,
   [ViewFilterOperand.IS_IN_FUTURE]: ViewFilterOperand.IS_IN_FUTURE,
   [ViewFilterOperand.IS_TODAY]: ViewFilterOperand.IS_TODAY,

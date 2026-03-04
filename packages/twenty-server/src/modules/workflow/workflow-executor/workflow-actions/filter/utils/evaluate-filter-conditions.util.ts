@@ -255,6 +255,12 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
         relativeDateString: String(filter.rightOperand),
       });
 
+    case ViewFilterOperand.IS_NOT_RELATIVE:
+      return !parseAndEvaluateRelativeDateFilter({
+        dateToCheck: dateLeftValue,
+        relativeDateString: String(filter.rightOperand),
+      });
+
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for date filter`,

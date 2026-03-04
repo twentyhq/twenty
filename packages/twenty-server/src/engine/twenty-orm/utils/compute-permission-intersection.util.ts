@@ -88,6 +88,7 @@ export const computePermissionIntersection = (
       canSoftDeleteObjectRecords,
       canDestroyObjectRecords,
       showInSidebar,
+      editWindowMinutes: null,
       restrictedFields,
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],

@@ -14,6 +14,7 @@ export const ROLE_FRAGMENT = gql`
     canSoftDeleteAllObjectRecords
     canDestroyAllObjectRecords
     showAllObjectsInSidebar
+    editWindowMinutes
     canBeAssignedToUsers
     canBeAssignedToAgents
     canBeAssignedToApiKeys

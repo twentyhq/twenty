@@ -1,9 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsUUID,
@@ -56,4 +57,9 @@ export class ObjectPermissionInput {
   @IsOptional()
   @Field({ nullable: true })
   showInSidebar?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  editWindowMinutes?: number | null;
 }

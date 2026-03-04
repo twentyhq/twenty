@@ -1,10 +1,7 @@
 name: Deploy Staging
 
 on:
-  push:
-    branches:
-      - main
-      - staging
+  # Disabled — staging env torn down
   workflow_dispatch:
     inputs:
       deploy_only:

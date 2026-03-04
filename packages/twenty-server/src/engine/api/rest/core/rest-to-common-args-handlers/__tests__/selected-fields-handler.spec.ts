@@ -111,6 +111,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         showInSidebar: true,
+        editWindowMinutes: null,
         restrictedFields: options.restrictedFields || {},
         rowLevelPermissionPredicates: [],
         rowLevelPermissionPredicateGroups: [],

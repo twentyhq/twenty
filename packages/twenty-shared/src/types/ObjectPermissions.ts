@@ -8,6 +8,7 @@ export type ObjectPermissions = {
   canSoftDeleteObjectRecords: boolean;
   canDestroyObjectRecords: boolean;
   showInSidebar: boolean;
+  editWindowMinutes: number | null;
   restrictedFields: RestrictedFieldsPermissions;
   rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
   rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];

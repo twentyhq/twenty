@@ -16,6 +16,7 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
     showAllObjectsInSidebar: role.showAllObjectsInSidebar,
+    editWindowMinutes: role.editWindowMinutes,
     canBeAssignedToUsers: role.canBeAssignedToUsers,
     canBeAssignedToAgents: role.canBeAssignedToAgents,
     canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,

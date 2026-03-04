@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,6 +8,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -70,6 +71,30 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
     );
   }
+
+  const isPolicyRelation = relationObjectMetadataNameSingular === 'policy';
+
+  // Fetch policies already assigned to other leads (ineligible for this lead)
+  const { records: policiesAssignedToOtherLeads } = useFindManyRecords({
+    objectNameSingular: 'policy',
+    filter: {
+      and: [
+        { leadId: { is: 'NOT_NULL' } },
+        { not: { leadId: { eq: recordId } } },
+      ],
+    },
+    recordGqlFields: { id: true },
+    skip: !isPolicyRelation,
+    limit: 1000,
+  });
+
+  const ineligiblePolicyIds = useMemo(
+    () =>
+      isPolicyRelation
+        ? policiesAssignedToOtherLeads.map((record) => record.id)
+        : [],
+    [isPolicyRelation, policiesAssignedToOtherLeads],
+  );
 
   const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId,
@@ -154,6 +179,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         isSelected: true,
         isMatchingSearchFilter: true,
       })),
+      forceExcludedRecordIds: ineligiblePolicyIds,
     });
   };
 

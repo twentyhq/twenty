@@ -1097,6 +1097,7 @@ export type CreateFieldInput = {
   objectMetadataId: Scalars['UUID'];
   options?: InputMaybe<Scalars['JSON']>;
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
+  relationTargetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
 };
@@ -1109,6 +1110,34 @@ export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   sourceComponentPath: Scalars['String'];
+};
+
+export type CreateIngestionFieldMappingInput = {
+  pipelineId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['Int']>;
+  relationAutoCreate?: InputMaybe<Scalars['Boolean']>;
+  relationMatchFieldName?: InputMaybe<Scalars['String']>;
+  relationTargetObjectName?: InputMaybe<Scalars['String']>;
+  sourceFieldPath: Scalars['String'];
+  targetCompositeSubField?: InputMaybe<Scalars['String']>;
+  targetFieldName: Scalars['String'];
+  transform?: InputMaybe<Scalars['JSON']>;
+};
+
+export type CreateIngestionPipelineInput = {
+  dedupFieldName?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+  mode: Scalars['String'];
+  name: Scalars['String'];
+  paginationConfig?: InputMaybe<Scalars['JSON']>;
+  responseRecordsPath?: InputMaybe<Scalars['String']>;
+  schedule?: InputMaybe<Scalars['String']>;
+  sourceAuthConfig?: InputMaybe<Scalars['JSON']>;
+  sourceHttpMethod?: InputMaybe<Scalars['String']>;
+  sourceRequestConfig?: InputMaybe<Scalars['JSON']>;
+  sourceUrl?: InputMaybe<Scalars['String']>;
+  targetObjectNameSingular: Scalars['String'];
 };
 
 export type CreateLogicFunctionFromSourceInput = {
@@ -1201,6 +1230,7 @@ export type CreateRoleInput = {
   canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
+  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
@@ -1600,6 +1630,7 @@ export type Field = {
   object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
+  relationTargetObjectMetadataId?: Maybe<Scalars['UUID']>;
   settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
@@ -1977,6 +2008,60 @@ export enum InferenceProvider {
   XAI = 'XAI'
 }
 
+export type IngestionFieldMapping = {
+  __typename?: 'IngestionFieldMapping';
+  id: Scalars['UUID'];
+  pipelineId: Scalars['UUID'];
+  position: Scalars['Int'];
+  relationAutoCreate: Scalars['Boolean'];
+  relationMatchFieldName?: Maybe<Scalars['String']>;
+  relationTargetObjectName?: Maybe<Scalars['String']>;
+  sourceFieldPath: Scalars['String'];
+  targetCompositeSubField?: Maybe<Scalars['String']>;
+  targetFieldName: Scalars['String'];
+  transform?: Maybe<Scalars['JSON']>;
+};
+
+export type IngestionLog = {
+  __typename?: 'IngestionLog';
+  completedAt?: Maybe<Scalars['DateTime']>;
+  durationMs?: Maybe<Scalars['Int']>;
+  errors?: Maybe<Scalars['JSON']>;
+  id: Scalars['UUID'];
+  incomingPayload?: Maybe<Scalars['JSON']>;
+  pipelineId: Scalars['UUID'];
+  recordsCreated: Scalars['Int'];
+  recordsFailed: Scalars['Int'];
+  recordsSkipped: Scalars['Int'];
+  recordsUpdated: Scalars['Int'];
+  startedAt?: Maybe<Scalars['DateTime']>;
+  status: Scalars['String'];
+  totalRecordsReceived: Scalars['Int'];
+  triggerType: Scalars['String'];
+};
+
+export type IngestionPipeline = {
+  __typename?: 'IngestionPipeline';
+  createdAt: Scalars['DateTime'];
+  dedupFieldName?: Maybe<Scalars['String']>;
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isEnabled: Scalars['Boolean'];
+  mode: Scalars['String'];
+  name: Scalars['String'];
+  paginationConfig?: Maybe<Scalars['JSON']>;
+  responseRecordsPath?: Maybe<Scalars['String']>;
+  schedule?: Maybe<Scalars['String']>;
+  sourceAuthConfig?: Maybe<Scalars['JSON']>;
+  sourceHttpMethod?: Maybe<Scalars['String']>;
+  sourceRequestConfig?: Maybe<Scalars['JSON']>;
+  sourceUrl?: Maybe<Scalars['String']>;
+  targetObjectNameSingular: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  webhookSecret?: Maybe<Scalars['String']>;
+};
+
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String'];
@@ -2289,6 +2374,9 @@ export type Mutation = {
   /** @deprecated Use specific file service instead */
   createFile: File;
   createFrontComponent: FrontComponent;
+  createIngestionFieldMapping: IngestionFieldMapping;
+  createIngestionFieldMappings: Array<IngestionFieldMapping>;
+  createIngestionPipeline: IngestionPipeline;
   createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
@@ -2327,6 +2415,8 @@ export type Mutation = {
   /** @deprecated  */
   deleteFile: File;
   deleteFrontComponent: FrontComponent;
+  deleteIngestionFieldMapping: Scalars['Boolean'];
+  deleteIngestionPipeline: IngestionPipeline;
   deleteJobs: DeleteJobsResponse;
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
@@ -2396,7 +2486,9 @@ export type Mutation = {
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
+  testIngestionPipeline: TestIngestionPipelineResult;
   trackAnalytics: Analytics;
+  triggerIngestionPull: IngestionLog;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
@@ -2411,6 +2503,8 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
+  updateIngestionFieldMapping: IngestionFieldMapping;
+  updateIngestionPipeline: IngestionPipeline;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
@@ -2583,6 +2677,21 @@ export type MutationCreateFileArgs = {
 
 export type MutationCreateFrontComponentArgs = {
   input: CreateFrontComponentInput;
+};
+
+
+export type MutationCreateIngestionFieldMappingArgs = {
+  input: CreateIngestionFieldMappingInput;
+};
+
+
+export type MutationCreateIngestionFieldMappingsArgs = {
+  inputs: Array<CreateIngestionFieldMappingInput>;
+};
+
+
+export type MutationCreateIngestionPipelineArgs = {
+  input: CreateIngestionPipelineInput;
 };
 
 
@@ -2765,6 +2874,16 @@ export type MutationDeleteFileArgs = {
 
 
 export type MutationDeleteFrontComponentArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteIngestionFieldMappingArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteIngestionPipelineArgs = {
   id: Scalars['UUID'];
 };
 
@@ -3091,11 +3210,21 @@ export type MutationSyncApplicationArgs = {
 };
 
 
+export type MutationTestIngestionPipelineArgs = {
+  input: TestIngestionPipelineInput;
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
+};
+
+
+export type MutationTriggerIngestionPullArgs = {
+  pipelineId: Scalars['UUID'];
 };
 
 
@@ -3170,6 +3299,16 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
+};
+
+
+export type MutationUpdateIngestionFieldMappingArgs = {
+  input: UpdateIngestionFieldMappingInput;
+};
+
+
+export type MutationUpdateIngestionPipelineArgs = {
+  input: UpdateIngestionPipelineInput;
 };
 
 
@@ -3525,6 +3664,7 @@ export type ObjectPermission = {
   canReadObjectRecords?: Maybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
+  editWindowMinutes?: Maybe<Scalars['Int']>;
   objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
@@ -3537,6 +3677,7 @@ export type ObjectPermissionInput = {
   canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   objectMetadataId: Scalars['UUID'];
   showInSidebar?: InputMaybe<Scalars['Boolean']>;
 };
@@ -3800,6 +3941,8 @@ export type PlaceDetailsResult = {
   location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
+  street2?: Maybe<Scalars['String']>;
 };
 
 export type PostgresCredentials = {
@@ -3931,6 +4074,10 @@ export type Query = {
   getToolInputSchema?: Maybe<Scalars['JSON']>;
   index: Index;
   indexMetadatas: IndexConnection;
+  ingestionFieldMappings: Array<IngestionFieldMapping>;
+  ingestionLogs: Array<IngestionLog>;
+  ingestionPipeline?: Maybe<IngestionPipeline>;
+  ingestionPipelines: Array<IngestionPipeline>;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
@@ -4237,6 +4384,22 @@ export type QueryIndexMetadatasArgs = {
 };
 
 
+export type QueryIngestionFieldMappingsArgs = {
+  pipelineId: Scalars['UUID'];
+};
+
+
+export type QueryIngestionLogsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  pipelineId: Scalars['UUID'];
+};
+
+
+export type QueryIngestionPipelineArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
 };
@@ -4407,6 +4570,7 @@ export type Role = {
   canUpdateAllObjectRecords: Scalars['Boolean'];
   canUpdateAllSettings: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
+  editWindowMinutes?: Maybe<Scalars['Int']>;
   fieldPermissions?: Maybe<Array<FieldPermission>>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -4666,6 +4830,21 @@ export type TasksConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type TestIngestionPipelineInput = {
+  pipelineId: Scalars['UUID'];
+  sampleRecords: Array<Scalars['JSON']>;
+};
+
+export type TestIngestionPipelineResult = {
+  __typename?: 'TestIngestionPipelineResult';
+  errors?: Maybe<Array<Scalars['JSON']>>;
+  invalidRecords: Scalars['Int'];
+  previewRecords?: Maybe<Array<Scalars['JSON']>>;
+  success: Scalars['Boolean'];
+  totalRecords: Scalars['Int'];
+  validRecords: Scalars['Int'];
+};
+
 export type TimelineConfiguration = {
   __typename?: 'TimelineConfiguration';
   configurationType: WidgetConfigurationType;
@@ -4779,6 +4958,7 @@ export type UpdateFieldInput = {
   morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']>>;
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
+  relationTargetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   settings?: InputMaybe<Scalars['JSON']>;
   universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
@@ -4793,6 +4973,43 @@ export type UpdateFrontComponentInput = {
 export type UpdateFrontComponentInputUpdates = {
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIngestionFieldMappingInput = {
+  id: Scalars['UUID'];
+  update: UpdateIngestionFieldMappingInputUpdates;
+};
+
+export type UpdateIngestionFieldMappingInputUpdates = {
+  position?: InputMaybe<Scalars['Int']>;
+  relationAutoCreate?: InputMaybe<Scalars['Boolean']>;
+  relationMatchFieldName?: InputMaybe<Scalars['String']>;
+  relationTargetObjectName?: InputMaybe<Scalars['String']>;
+  sourceFieldPath?: InputMaybe<Scalars['String']>;
+  targetCompositeSubField?: InputMaybe<Scalars['String']>;
+  targetFieldName?: InputMaybe<Scalars['String']>;
+  transform?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateIngestionPipelineInput = {
+  id: Scalars['UUID'];
+  update: UpdateIngestionPipelineInputUpdates;
+};
+
+export type UpdateIngestionPipelineInputUpdates = {
+  dedupFieldName?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+  mode?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  paginationConfig?: InputMaybe<Scalars['JSON']>;
+  responseRecordsPath?: InputMaybe<Scalars['String']>;
+  schedule?: InputMaybe<Scalars['String']>;
+  sourceAuthConfig?: InputMaybe<Scalars['JSON']>;
+  sourceHttpMethod?: InputMaybe<Scalars['String']>;
+  sourceRequestConfig?: InputMaybe<Scalars['JSON']>;
+  sourceUrl?: InputMaybe<Scalars['String']>;
+  targetObjectNameSingular?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -4926,6 +5143,7 @@ export type UpdateRolePayload = {
   canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
+  editWindowMinutes?: InputMaybe<Scalars['Int']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
   showAllObjectsInSidebar?: InputMaybe<Scalars['Boolean']>;
@@ -5258,6 +5476,7 @@ export enum ViewFilterOperand {
   IS_NOT = 'IS_NOT',
   IS_NOT_EMPTY = 'IS_NOT_EMPTY',
   IS_NOT_NULL = 'IS_NOT_NULL',
+  IS_NOT_RELATIVE = 'IS_NOT_RELATIVE',
   IS_RELATIVE = 'IS_RELATIVE',
   IS_TODAY = 'IS_TODAY',
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
@@ -6645,6 +6864,102 @@ export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
 
+export type CreateIngestionFieldMappingMutationVariables = Exact<{
+  input: CreateIngestionFieldMappingInput;
+}>;
+
+
+export type CreateIngestionFieldMappingMutation = { __typename?: 'Mutation', createIngestionFieldMapping: { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number } };
+
+export type CreateIngestionFieldMappingsMutationVariables = Exact<{
+  inputs: Array<CreateIngestionFieldMappingInput> | CreateIngestionFieldMappingInput;
+}>;
+
+
+export type CreateIngestionFieldMappingsMutation = { __typename?: 'Mutation', createIngestionFieldMappings: Array<{ __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number }> };
+
+export type UpdateIngestionFieldMappingMutationVariables = Exact<{
+  input: UpdateIngestionFieldMappingInput;
+}>;
+
+
+export type UpdateIngestionFieldMappingMutation = { __typename?: 'Mutation', updateIngestionFieldMapping: { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number } };
+
+export type DeleteIngestionFieldMappingMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteIngestionFieldMappingMutation = { __typename?: 'Mutation', deleteIngestionFieldMapping: boolean };
+
+export type IngestionFieldMappingFragmentFragment = { __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number };
+
+export type GetIngestionFieldMappingsQueryVariables = Exact<{
+  pipelineId: Scalars['UUID'];
+}>;
+
+
+export type GetIngestionFieldMappingsQuery = { __typename?: 'Query', ingestionFieldMappings: Array<{ __typename?: 'IngestionFieldMapping', id: string, pipelineId: string, sourceFieldPath: string, targetFieldName: string, targetCompositeSubField?: string | null, transform?: any | null, relationTargetObjectName?: string | null, relationMatchFieldName?: string | null, relationAutoCreate: boolean, position: number }> };
+
+export type IngestionLogFragmentFragment = { __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string, totalRecordsReceived: number, recordsCreated: number, recordsUpdated: number, recordsSkipped: number, recordsFailed: number, errors?: any | null, incomingPayload?: any | null, startedAt?: string | null, completedAt?: string | null, durationMs?: number | null };
+
+export type GetIngestionLogsQueryVariables = Exact<{
+  pipelineId: Scalars['UUID'];
+  limit?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetIngestionLogsQuery = { __typename?: 'Query', ingestionLogs: Array<{ __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string, totalRecordsReceived: number, recordsCreated: number, recordsUpdated: number, recordsSkipped: number, recordsFailed: number, errors?: any | null, incomingPayload?: any | null, startedAt?: string | null, completedAt?: string | null, durationMs?: number | null }> };
+
+export type CreateIngestionPipelineMutationVariables = Exact<{
+  input: CreateIngestionPipelineInput;
+}>;
+
+
+export type CreateIngestionPipelineMutation = { __typename?: 'Mutation', createIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+
+export type UpdateIngestionPipelineMutationVariables = Exact<{
+  input: UpdateIngestionPipelineInput;
+}>;
+
+
+export type UpdateIngestionPipelineMutation = { __typename?: 'Mutation', updateIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+
+export type DeleteIngestionPipelineMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteIngestionPipelineMutation = { __typename?: 'Mutation', deleteIngestionPipeline: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+
+export type TriggerIngestionPullMutationVariables = Exact<{
+  pipelineId: Scalars['UUID'];
+}>;
+
+
+export type TriggerIngestionPullMutation = { __typename?: 'Mutation', triggerIngestionPull: { __typename?: 'IngestionLog', id: string, pipelineId: string, status: string, triggerType: string } };
+
+export type TestIngestionPipelineMutationVariables = Exact<{
+  input: TestIngestionPipelineInput;
+}>;
+
+
+export type TestIngestionPipelineMutation = { __typename?: 'Mutation', testIngestionPipeline: { __typename?: 'TestIngestionPipelineResult', success: boolean, totalRecords: number, validRecords: number, invalidRecords: number, previewRecords?: Array<any> | null, errors?: Array<any> | null } };
+
+export type IngestionPipelineFragmentFragment = { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null };
+
+export type GetIngestionPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetIngestionPipelinesQuery = { __typename?: 'Query', ingestionPipelines: Array<{ __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
+export type GetIngestionPipelineQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetIngestionPipelineQuery = { __typename?: 'Query', ingestionPipeline?: { __typename?: 'IngestionPipeline', id: string, name: string, description?: string | null, mode: string, targetObjectNameSingular: string, webhookSecret?: string | null, sourceUrl?: string | null, sourceHttpMethod?: string | null, sourceAuthConfig?: any | null, sourceRequestConfig?: any | null, responseRecordsPath?: string | null, schedule?: string | null, dedupFieldName?: string | null, paginationConfig?: any | null, isEnabled: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
+
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
@@ -6678,11 +6993,11 @@ export type ApiKeyForRoleFragmentFragment = { __typename?: 'ApiKeyForRole', id: 
 
 export type FieldPermissionFragmentFragment = { __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string };
 
-export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null };
+export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null };
 
 export type PermissionFlagFragmentFragment = { __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string };
 
-export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean };
+export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean };
 
 export type RowLevelPermissionPredicateFragmentFragment = { __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null };
 
@@ -6693,7 +7008,7 @@ export type CreateOneRoleMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
+export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type DeleteOneRoleMutationVariables = Exact<{
   roleId: Scalars['UUID'];
@@ -6707,7 +7022,7 @@ export type UpdateOneRoleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
+export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['UUID'];
@@ -6715,7 +7030,7 @@ export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
+export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
 
 export type UpsertFieldPermissionsMutationVariables = Exact<{
   upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
@@ -6729,7 +7044,7 @@ export type UpsertObjectPermissionsMutationVariables = Exact<{
 }>;
 
 
-export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
 
 export type UpsertPermissionFlagsMutationVariables = Exact<{
   upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
@@ -6748,7 +7063,7 @@ export type UpsertRowLevelPermissionPredicatesMutation = { __typename?: 'Mutatio
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -6820,7 +7135,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -6839,7 +7154,7 @@ export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserF
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, showInSidebar?: boolean | null, editWindowMinutes?: number | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -7217,7 +7532,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, showAllObjectsInSidebar: boolean, editWindowMinutes?: number | null, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -7875,6 +8190,60 @@ export const WebhookFragmentFragmentDoc = gql`
   secret
 }
     `;
+export const IngestionFieldMappingFragmentFragmentDoc = gql`
+    fragment IngestionFieldMappingFragment on IngestionFieldMapping {
+  id
+  pipelineId
+  sourceFieldPath
+  targetFieldName
+  targetCompositeSubField
+  transform
+  relationTargetObjectName
+  relationMatchFieldName
+  relationAutoCreate
+  position
+}
+    `;
+export const IngestionLogFragmentFragmentDoc = gql`
+    fragment IngestionLogFragment on IngestionLog {
+  id
+  pipelineId
+  status
+  triggerType
+  totalRecordsReceived
+  recordsCreated
+  recordsUpdated
+  recordsSkipped
+  recordsFailed
+  errors
+  incomingPayload
+  startedAt
+  completedAt
+  durationMs
+}
+    `;
+export const IngestionPipelineFragmentFragmentDoc = gql`
+    fragment IngestionPipelineFragment on IngestionPipeline {
+  id
+  name
+  description
+  mode
+  targetObjectNameSingular
+  webhookSecret
+  sourceUrl
+  sourceHttpMethod
+  sourceAuthConfig
+  sourceRequestConfig
+  responseRecordsPath
+  schedule
+  dedupFieldName
+  paginationConfig
+  isEnabled
+  createdAt
+  updatedAt
+  deletedAt
+}
+    `;
 export const ApiKeyForRoleFragmentFragmentDoc = gql`
     fragment ApiKeyForRoleFragment on ApiKeyForRole {
   id
@@ -7975,6 +8344,7 @@ export const ObjectPermissionFragmentFragmentDoc = gql`
   canSoftDeleteObjectRecords
   canDestroyObjectRecords
   showInSidebar
+  editWindowMinutes
   restrictedFields
   rowLevelPermissionPredicates {
     ...RowLevelPermissionPredicateFragment
@@ -8058,6 +8428,7 @@ export const RoleFragmentFragmentDoc = gql`
   canSoftDeleteAllObjectRecords
   canDestroyAllObjectRecords
   showAllObjectsInSidebar
+  editWindowMinutes
   canBeAssignedToUsers
   canBeAssignedToAgents
   canBeAssignedToApiKeys
@@ -14144,6 +14515,449 @@ export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
 export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
 export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
+export const CreateIngestionFieldMappingDocument = gql`
+    mutation CreateIngestionFieldMapping($input: CreateIngestionFieldMappingInput!) {
+  createIngestionFieldMapping(input: $input) {
+    ...IngestionFieldMappingFragment
+  }
+}
+    ${IngestionFieldMappingFragmentFragmentDoc}`;
+export type CreateIngestionFieldMappingMutationFn = Apollo.MutationFunction<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>;
+
+/**
+ * __useCreateIngestionFieldMappingMutation__
+ *
+ * To run a mutation, you first call `useCreateIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateIngestionFieldMappingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createIngestionFieldMappingMutation, { data, loading, error }] = useCreateIngestionFieldMappingMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>(CreateIngestionFieldMappingDocument, options);
+      }
+export type CreateIngestionFieldMappingMutationHookResult = ReturnType<typeof useCreateIngestionFieldMappingMutation>;
+export type CreateIngestionFieldMappingMutationResult = Apollo.MutationResult<CreateIngestionFieldMappingMutation>;
+export type CreateIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<CreateIngestionFieldMappingMutation, CreateIngestionFieldMappingMutationVariables>;
+export const CreateIngestionFieldMappingsDocument = gql`
+    mutation CreateIngestionFieldMappings($inputs: [CreateIngestionFieldMappingInput!]!) {
+  createIngestionFieldMappings(inputs: $inputs) {
+    ...IngestionFieldMappingFragment
+  }
+}
+    ${IngestionFieldMappingFragmentFragmentDoc}`;
+export type CreateIngestionFieldMappingsMutationFn = Apollo.MutationFunction<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>;
+
+/**
+ * __useCreateIngestionFieldMappingsMutation__
+ *
+ * To run a mutation, you first call `useCreateIngestionFieldMappingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateIngestionFieldMappingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createIngestionFieldMappingsMutation, { data, loading, error }] = useCreateIngestionFieldMappingsMutation({
+ *   variables: {
+ *      inputs: // value for 'inputs'
+ *   },
+ * });
+ */
+export function useCreateIngestionFieldMappingsMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>(CreateIngestionFieldMappingsDocument, options);
+      }
+export type CreateIngestionFieldMappingsMutationHookResult = ReturnType<typeof useCreateIngestionFieldMappingsMutation>;
+export type CreateIngestionFieldMappingsMutationResult = Apollo.MutationResult<CreateIngestionFieldMappingsMutation>;
+export type CreateIngestionFieldMappingsMutationOptions = Apollo.BaseMutationOptions<CreateIngestionFieldMappingsMutation, CreateIngestionFieldMappingsMutationVariables>;
+export const UpdateIngestionFieldMappingDocument = gql`
+    mutation UpdateIngestionFieldMapping($input: UpdateIngestionFieldMappingInput!) {
+  updateIngestionFieldMapping(input: $input) {
+    ...IngestionFieldMappingFragment
+  }
+}
+    ${IngestionFieldMappingFragmentFragmentDoc}`;
+export type UpdateIngestionFieldMappingMutationFn = Apollo.MutationFunction<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>;
+
+/**
+ * __useUpdateIngestionFieldMappingMutation__
+ *
+ * To run a mutation, you first call `useUpdateIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateIngestionFieldMappingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateIngestionFieldMappingMutation, { data, loading, error }] = useUpdateIngestionFieldMappingMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>(UpdateIngestionFieldMappingDocument, options);
+      }
+export type UpdateIngestionFieldMappingMutationHookResult = ReturnType<typeof useUpdateIngestionFieldMappingMutation>;
+export type UpdateIngestionFieldMappingMutationResult = Apollo.MutationResult<UpdateIngestionFieldMappingMutation>;
+export type UpdateIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<UpdateIngestionFieldMappingMutation, UpdateIngestionFieldMappingMutationVariables>;
+export const DeleteIngestionFieldMappingDocument = gql`
+    mutation DeleteIngestionFieldMapping($id: UUID!) {
+  deleteIngestionFieldMapping(id: $id)
+}
+    `;
+export type DeleteIngestionFieldMappingMutationFn = Apollo.MutationFunction<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>;
+
+/**
+ * __useDeleteIngestionFieldMappingMutation__
+ *
+ * To run a mutation, you first call `useDeleteIngestionFieldMappingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteIngestionFieldMappingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteIngestionFieldMappingMutation, { data, loading, error }] = useDeleteIngestionFieldMappingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteIngestionFieldMappingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>(DeleteIngestionFieldMappingDocument, options);
+      }
+export type DeleteIngestionFieldMappingMutationHookResult = ReturnType<typeof useDeleteIngestionFieldMappingMutation>;
+export type DeleteIngestionFieldMappingMutationResult = Apollo.MutationResult<DeleteIngestionFieldMappingMutation>;
+export type DeleteIngestionFieldMappingMutationOptions = Apollo.BaseMutationOptions<DeleteIngestionFieldMappingMutation, DeleteIngestionFieldMappingMutationVariables>;
+export const GetIngestionFieldMappingsDocument = gql`
+    query GetIngestionFieldMappings($pipelineId: UUID!) {
+  ingestionFieldMappings(pipelineId: $pipelineId) {
+    ...IngestionFieldMappingFragment
+  }
+}
+    ${IngestionFieldMappingFragmentFragmentDoc}`;
+
+/**
+ * __useGetIngestionFieldMappingsQuery__
+ *
+ * To run a query within a React component, call `useGetIngestionFieldMappingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIngestionFieldMappingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIngestionFieldMappingsQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useGetIngestionFieldMappingsQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>(GetIngestionFieldMappingsDocument, options);
+      }
+export function useGetIngestionFieldMappingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>(GetIngestionFieldMappingsDocument, options);
+        }
+export type GetIngestionFieldMappingsQueryHookResult = ReturnType<typeof useGetIngestionFieldMappingsQuery>;
+export type GetIngestionFieldMappingsLazyQueryHookResult = ReturnType<typeof useGetIngestionFieldMappingsLazyQuery>;
+export type GetIngestionFieldMappingsQueryResult = Apollo.QueryResult<GetIngestionFieldMappingsQuery, GetIngestionFieldMappingsQueryVariables>;
+export const GetIngestionLogsDocument = gql`
+    query GetIngestionLogs($pipelineId: UUID!, $limit: Int) {
+  ingestionLogs(pipelineId: $pipelineId, limit: $limit) {
+    ...IngestionLogFragment
+  }
+}
+    ${IngestionLogFragmentFragmentDoc}`;
+
+/**
+ * __useGetIngestionLogsQuery__
+ *
+ * To run a query within a React component, call `useGetIngestionLogsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIngestionLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIngestionLogsQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetIngestionLogsQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>(GetIngestionLogsDocument, options);
+      }
+export function useGetIngestionLogsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>(GetIngestionLogsDocument, options);
+        }
+export type GetIngestionLogsQueryHookResult = ReturnType<typeof useGetIngestionLogsQuery>;
+export type GetIngestionLogsLazyQueryHookResult = ReturnType<typeof useGetIngestionLogsLazyQuery>;
+export type GetIngestionLogsQueryResult = Apollo.QueryResult<GetIngestionLogsQuery, GetIngestionLogsQueryVariables>;
+export const CreateIngestionPipelineDocument = gql`
+    mutation CreateIngestionPipeline($input: CreateIngestionPipelineInput!) {
+  createIngestionPipeline(input: $input) {
+    ...IngestionPipelineFragment
+  }
+}
+    ${IngestionPipelineFragmentFragmentDoc}`;
+export type CreateIngestionPipelineMutationFn = Apollo.MutationFunction<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>;
+
+/**
+ * __useCreateIngestionPipelineMutation__
+ *
+ * To run a mutation, you first call `useCreateIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateIngestionPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createIngestionPipelineMutation, { data, loading, error }] = useCreateIngestionPipelineMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>(CreateIngestionPipelineDocument, options);
+      }
+export type CreateIngestionPipelineMutationHookResult = ReturnType<typeof useCreateIngestionPipelineMutation>;
+export type CreateIngestionPipelineMutationResult = Apollo.MutationResult<CreateIngestionPipelineMutation>;
+export type CreateIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<CreateIngestionPipelineMutation, CreateIngestionPipelineMutationVariables>;
+export const UpdateIngestionPipelineDocument = gql`
+    mutation UpdateIngestionPipeline($input: UpdateIngestionPipelineInput!) {
+  updateIngestionPipeline(input: $input) {
+    ...IngestionPipelineFragment
+  }
+}
+    ${IngestionPipelineFragmentFragmentDoc}`;
+export type UpdateIngestionPipelineMutationFn = Apollo.MutationFunction<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>;
+
+/**
+ * __useUpdateIngestionPipelineMutation__
+ *
+ * To run a mutation, you first call `useUpdateIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateIngestionPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateIngestionPipelineMutation, { data, loading, error }] = useUpdateIngestionPipelineMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>(UpdateIngestionPipelineDocument, options);
+      }
+export type UpdateIngestionPipelineMutationHookResult = ReturnType<typeof useUpdateIngestionPipelineMutation>;
+export type UpdateIngestionPipelineMutationResult = Apollo.MutationResult<UpdateIngestionPipelineMutation>;
+export type UpdateIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<UpdateIngestionPipelineMutation, UpdateIngestionPipelineMutationVariables>;
+export const DeleteIngestionPipelineDocument = gql`
+    mutation DeleteIngestionPipeline($id: UUID!) {
+  deleteIngestionPipeline(id: $id) {
+    ...IngestionPipelineFragment
+  }
+}
+    ${IngestionPipelineFragmentFragmentDoc}`;
+export type DeleteIngestionPipelineMutationFn = Apollo.MutationFunction<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>;
+
+/**
+ * __useDeleteIngestionPipelineMutation__
+ *
+ * To run a mutation, you first call `useDeleteIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteIngestionPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteIngestionPipelineMutation, { data, loading, error }] = useDeleteIngestionPipelineMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>(DeleteIngestionPipelineDocument, options);
+      }
+export type DeleteIngestionPipelineMutationHookResult = ReturnType<typeof useDeleteIngestionPipelineMutation>;
+export type DeleteIngestionPipelineMutationResult = Apollo.MutationResult<DeleteIngestionPipelineMutation>;
+export type DeleteIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<DeleteIngestionPipelineMutation, DeleteIngestionPipelineMutationVariables>;
+export const TriggerIngestionPullDocument = gql`
+    mutation TriggerIngestionPull($pipelineId: UUID!) {
+  triggerIngestionPull(pipelineId: $pipelineId) {
+    id
+    pipelineId
+    status
+    triggerType
+  }
+}
+    `;
+export type TriggerIngestionPullMutationFn = Apollo.MutationFunction<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>;
+
+/**
+ * __useTriggerIngestionPullMutation__
+ *
+ * To run a mutation, you first call `useTriggerIngestionPullMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTriggerIngestionPullMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [triggerIngestionPullMutation, { data, loading, error }] = useTriggerIngestionPullMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useTriggerIngestionPullMutation(baseOptions?: Apollo.MutationHookOptions<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>(TriggerIngestionPullDocument, options);
+      }
+export type TriggerIngestionPullMutationHookResult = ReturnType<typeof useTriggerIngestionPullMutation>;
+export type TriggerIngestionPullMutationResult = Apollo.MutationResult<TriggerIngestionPullMutation>;
+export type TriggerIngestionPullMutationOptions = Apollo.BaseMutationOptions<TriggerIngestionPullMutation, TriggerIngestionPullMutationVariables>;
+export const TestIngestionPipelineDocument = gql`
+    mutation TestIngestionPipeline($input: TestIngestionPipelineInput!) {
+  testIngestionPipeline(input: $input) {
+    success
+    totalRecords
+    validRecords
+    invalidRecords
+    previewRecords
+    errors
+  }
+}
+    `;
+export type TestIngestionPipelineMutationFn = Apollo.MutationFunction<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>;
+
+/**
+ * __useTestIngestionPipelineMutation__
+ *
+ * To run a mutation, you first call `useTestIngestionPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTestIngestionPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [testIngestionPipelineMutation, { data, loading, error }] = useTestIngestionPipelineMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useTestIngestionPipelineMutation(baseOptions?: Apollo.MutationHookOptions<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>(TestIngestionPipelineDocument, options);
+      }
+export type TestIngestionPipelineMutationHookResult = ReturnType<typeof useTestIngestionPipelineMutation>;
+export type TestIngestionPipelineMutationResult = Apollo.MutationResult<TestIngestionPipelineMutation>;
+export type TestIngestionPipelineMutationOptions = Apollo.BaseMutationOptions<TestIngestionPipelineMutation, TestIngestionPipelineMutationVariables>;
+export const GetIngestionPipelinesDocument = gql`
+    query GetIngestionPipelines {
+  ingestionPipelines {
+    ...IngestionPipelineFragment
+  }
+}
+    ${IngestionPipelineFragmentFragmentDoc}`;
+
+/**
+ * __useGetIngestionPipelinesQuery__
+ *
+ * To run a query within a React component, call `useGetIngestionPipelinesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIngestionPipelinesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIngestionPipelinesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetIngestionPipelinesQuery(baseOptions?: Apollo.QueryHookOptions<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>(GetIngestionPipelinesDocument, options);
+      }
+export function useGetIngestionPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>(GetIngestionPipelinesDocument, options);
+        }
+export type GetIngestionPipelinesQueryHookResult = ReturnType<typeof useGetIngestionPipelinesQuery>;
+export type GetIngestionPipelinesLazyQueryHookResult = ReturnType<typeof useGetIngestionPipelinesLazyQuery>;
+export type GetIngestionPipelinesQueryResult = Apollo.QueryResult<GetIngestionPipelinesQuery, GetIngestionPipelinesQueryVariables>;
+export const GetIngestionPipelineDocument = gql`
+    query GetIngestionPipeline($id: UUID!) {
+  ingestionPipeline(id: $id) {
+    ...IngestionPipelineFragment
+  }
+}
+    ${IngestionPipelineFragmentFragmentDoc}`;
+
+/**
+ * __useGetIngestionPipelineQuery__
+ *
+ * To run a query within a React component, call `useGetIngestionPipelineQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIngestionPipelineQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIngestionPipelineQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetIngestionPipelineQuery(baseOptions: Apollo.QueryHookOptions<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>(GetIngestionPipelineDocument, options);
+      }
+export function useGetIngestionPipelineLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>(GetIngestionPipelineDocument, options);
+        }
+export type GetIngestionPipelineQueryHookResult = ReturnType<typeof useGetIngestionPipelineQuery>;
+export type GetIngestionPipelineLazyQueryHookResult = ReturnType<typeof useGetIngestionPipelineLazyQuery>;
+export type GetIngestionPipelineQueryResult = Apollo.QueryResult<GetIngestionPipelineQuery, GetIngestionPipelineQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {

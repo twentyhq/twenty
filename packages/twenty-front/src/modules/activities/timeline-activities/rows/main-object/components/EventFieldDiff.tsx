@@ -9,9 +9,11 @@ import { Trans } from '@lingui/react/macro';
 
 type EventFieldDiffProps = {
   diffRecord: Record<string, any>;
+  diffBeforeRecord?: Record<string, any>;
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem | undefined;
   diffArtificialRecordStoreId: string;
+  diffBeforeArtificialRecordStoreId?: string;
 };
 
 const StyledEventFieldDiffContainer = styled.div`
@@ -30,11 +32,23 @@ const StyledEmptyValue = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledBeforeValue = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  text-decoration: line-through;
+`;
+
+const StyledArrow = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  flex-shrink: 0;
+`;
+
 export const EventFieldDiff = ({
   diffRecord,
+  diffBeforeRecord,
   mainObjectMetadataItem,
   fieldMetadataItem,
   diffArtificialRecordStoreId,
+  diffBeforeArtificialRecordStoreId,
 }: EventFieldDiffProps) => {
   if (!fieldMetadataItem) {
     throw new Error('fieldMetadataItem is required');
@@ -52,9 +66,40 @@ export const EventFieldDiff = ({
       diffRecord !== null &&
       isObjectEmpty(diffRecord));
 
+  const isBeforeEmpty =
+    !diffBeforeRecord ||
+    isValueEmpty(diffBeforeRecord) ||
+    (typeof diffBeforeRecord === 'object' &&
+      diffBeforeRecord !== null &&
+      isObjectEmpty(diffBeforeRecord));
+
+  const showBeforeValue = !isBeforeEmpty && !!diffBeforeArtificialRecordStoreId;
+
   return (
     <StyledEventFieldDiffContainer>
-      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />
+      {showBeforeValue && (
+        <>
+          <StyledBeforeValue>
+            <EventFieldDiffValueEffect
+              diffArtificialRecordStoreId={
+                diffBeforeArtificialRecordStoreId as string
+              }
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+              diffRecord={diffBeforeRecord as Record<string, any>}
+            />
+            <EventFieldDiffValue
+              diffArtificialRecordStoreId={
+                diffBeforeArtificialRecordStoreId as string
+              }
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+            />
+          </StyledBeforeValue>
+          <StyledArrow>→</StyledArrow>
+        </>
+      )}
       {isUpdatedToEmpty ? (
         <StyledEmptyValue>
           <Trans>Empty</Trans>

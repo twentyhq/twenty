@@ -1,7 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -76,6 +77,11 @@ export class UpdateRolePayload {
   @IsOptional()
   @Field({ nullable: true })
   canBeAssignedToApiKeys?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  editWindowMinutes?: number | null;
 }
 
 @InputType()

@@ -1,10 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  type ImportedStructuredRow,
   type SpreadsheetImportField,
   type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -64,8 +64,7 @@ const buildRelationGroups = (
     const relationName = relationField.name;
     if (!groups.has(relationName)) {
       const targetObjectMetadataItem = objectMetadataItems.find(
-        (obj) =>
-          obj.id === relationField.relation?.targetObjectMetadata.id,
+        (obj) => obj.id === relationField.relation?.targetObjectMetadata.id,
       );
 
       // Find the connect field for "id" on this relation

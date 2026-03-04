@@ -15,6 +15,7 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canSoftDeleteObjectRecords: permissions.canSoftDeleteObjectRecords,
       canDestroyObjectRecords: permissions.canDestroyObjectRecords,
       showInSidebar: permissions.showInSidebar,
+      editWindowMinutes: permissions.editWindowMinutes,
       restrictedFields: permissions.restrictedFields,
       rowLevelPermissionPredicates: permissions.rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroups:

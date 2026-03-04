@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
@@ -11,6 +11,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -169,6 +170,55 @@ export const RelationOneToManyFieldInput = () => {
     );
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
+
+  // For policies on a lead, exclude policies already assigned to other leads.
+  // Show a loading state until the query resolves so wrong results never flash.
+  const isPolicyRelation =
+    relationFieldDefinition.metadata.relationObjectMetadataNameSingular ===
+    'policy';
+
+  const { records: policiesAssignedToOtherLeads, loading: excludedIdsLoading } =
+    useFindManyRecords({
+      objectNameSingular: 'policy',
+      filter: {
+        and: [
+          { leadId: { is: 'NOT_NULL' } },
+          { not: { leadId: { eq: recordId } } },
+        ],
+      },
+      recordGqlFields: { id: true },
+      skip: !isPolicyRelation,
+      limit: 1000,
+    });
+
+  const ineligiblePolicyIds = useMemo(
+    () =>
+      isPolicyRelation
+        ? policiesAssignedToOtherLeads.map((record) => record.id)
+        : [],
+    [isPolicyRelation, policiesAssignedToOtherLeads],
+  );
+
+  // The hook (useOpenRelationFromManyFieldInput) sets up picker state but
+  // does NOT trigger the initial search — this component owns that so it can
+  // include excluded IDs for policies. For non-policy relations the search
+  // fires immediately (excludedIdsLoading is false, skip is true).
+  useEffect(() => {
+    if (isPolicyRelation && excludedIdsLoading) {
+      return;
+    }
+
+    multipleRecordPickerPerformSearch({
+      multipleRecordPickerInstanceId: instanceId,
+      forceExcludedRecordIds: ineligiblePolicyIds,
+    });
+  }, [
+    excludedIdsLoading,
+    ineligiblePolicyIds,
+    instanceId,
+    isPolicyRelation,
+    multipleRecordPickerPerformSearch,
+  ]);
 
   const handleCreateNew = useCallback(
     async (searchInput?: string) => {

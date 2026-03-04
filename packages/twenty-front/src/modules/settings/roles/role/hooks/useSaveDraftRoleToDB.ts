@@ -36,6 +36,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canBeAssignedToAgents',
   'canBeAssignedToApiKeys',
   'showAllObjectsInSidebar',
+  'editWindowMinutes',
 ];
 
 export const useSaveDraftRoleToDB = ({
@@ -143,6 +144,7 @@ export const useSaveDraftRoleToDB = ({
           canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
           canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
           showAllObjectsInSidebar: settingsDraftRole.showAllObjectsInSidebar,
+          editWindowMinutes: settingsDraftRole.editWindowMinutes,
         } satisfies Partial<Role>,
       },
       refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -202,6 +204,7 @@ export const useSaveDraftRoleToDB = ({
               canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
               showAllObjectsInSidebar:
                 settingsDraftRole.showAllObjectsInSidebar,
+              editWindowMinutes: settingsDraftRole.editWindowMinutes,
             },
           },
         },
@@ -224,6 +227,7 @@ export const useSaveDraftRoleToDB = ({
                 canDestroyObjectRecords:
                   objectPermission.canDestroyObjectRecords,
                 showInSidebar: objectPermission.showInSidebar,
+                editWindowMinutes: objectPermission.editWindowMinutes,
               })) ?? [],
           },
         },
@@ -393,6 +397,7 @@ export const useSaveDraftRoleToDB = ({
                 canDestroyObjectRecords:
                   objectPermission.canDestroyObjectRecords,
                 showInSidebar: objectPermission.showInSidebar,
+                editWindowMinutes: objectPermission.editWindowMinutes,
               })) ?? [],
           },
         },

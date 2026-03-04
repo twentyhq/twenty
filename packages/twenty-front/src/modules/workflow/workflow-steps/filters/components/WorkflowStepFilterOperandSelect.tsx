@@ -36,7 +36,10 @@ export const WorkflowStepFilterOperandSelect = ({
     useGetRelativeDateFilterWithUserTimezone();
 
   const handleChange = (operand: ViewFilterOperand) => {
-    if (operand === ViewFilterOperand.IS_RELATIVE) {
+    if (
+      operand === ViewFilterOperand.IS_RELATIVE ||
+      operand === ViewFilterOperand.IS_NOT_RELATIVE
+    ) {
       const newRelativeDateFilter = getRelativeDateFilterWithUserTimezone(
         DEFAULT_RELATIVE_DATE_FILTER_VALUE,
       );

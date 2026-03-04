@@ -71,6 +71,9 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @Column({ nullable: false, default: true })
   canBeAssignedToApiKeys: boolean;
 
+  @Column({ nullable: true, type: 'integer' })
+  editWindowMinutes: number | null;
+
   @OneToMany(
     () => RoleTargetEntity,
     (roleTargets: RoleTargetEntity) => roleTargets.role,

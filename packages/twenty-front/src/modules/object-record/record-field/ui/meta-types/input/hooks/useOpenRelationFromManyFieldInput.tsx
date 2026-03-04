@@ -4,7 +4,6 @@ import {
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
-import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -19,7 +18,6 @@ import { useCallback } from 'react';
 
 export const useOpenRelationFromManyFieldInput = () => {
   const store = useStore();
-  const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -88,12 +86,9 @@ export const useOpenRelationFromManyFieldInput = () => {
         [objectMetadataItem],
       );
 
-      performSearch({
-        multipleRecordPickerInstanceId: recordPickerInstanceId,
-        forceSearchFilter: '',
-        forceSearchableObjectMetadataItems: [objectMetadataItem],
-        forcePickableMorphItems: pickableMorphItems,
-      });
+      // Initial search is triggered by RelationOneToManyFieldInput on mount
+      // so it can include excluded record IDs (e.g. policies assigned to
+      // other leads). Do NOT call performSearch here.
 
       pushFocusItemToFocusStack({
         focusId: recordPickerInstanceId,
@@ -106,7 +101,7 @@ export const useOpenRelationFromManyFieldInput = () => {
         },
       });
     },
-    [store, openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
+    [store, openMultipleRecordPicker, pushFocusItemToFocusStack],
   );
 
   return { openRelationFromManyFieldInput };

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AgentProfileModule } from 'src/modules/agent-profile/agent-profile.module';
 import { PolicyCreateManyPostQueryHook } from 'src/modules/policy/query-hooks/policy-create-many.post-query.hook';
 import { PolicyCreateManyPreQueryHook } from 'src/modules/policy/query-hooks/policy-create-many.pre-query.hook';
@@ -11,7 +12,7 @@ import { PolicyUpdateOnePostQueryHook } from 'src/modules/policy/query-hooks/pol
 import { PolicyUpdateOnePreQueryHook } from 'src/modules/policy/query-hooks/policy-update-one.pre-query.hook';
 
 @Module({
-  imports: [AgentProfileModule],
+  imports: [AgentProfileModule, WorkspaceCacheModule],
   providers: [
     PolicyCreateOnePreQueryHook,
     PolicyCreateManyPreQueryHook,

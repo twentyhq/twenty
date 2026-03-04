@@ -23,13 +23,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FieldDependencyContext } from '@/object-record/record-field-dependency/contexts/FieldDependencyContext';
 import { useJunctionBridgeFilter } from '@/object-record/record-field/ui/hooks/useJunctionBridgeFilter';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
@@ -98,22 +98,54 @@ export const RecordDetailRelationSectionDropdownToOne = ({
   const fieldDependencyContext = useContext(FieldDependencyContext);
   const dependencyFilter = fieldDependencyContext?.getFilterForField(fieldName);
 
-  const recordData = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const junctionBridgeFilter = useJunctionBridgeFilter({
     objectMetadataItem,
     fieldMetadataItem,
     recordId,
     objectMetadataItems,
-    recordData,
+    recordData: recordStore,
   });
 
-  const additionalFilter = useMemo((): ObjectRecordFilterInput | undefined => {
-    if (isDefined(dependencyFilter) && isDefined(junctionBridgeFilter)) {
-      return { and: [dependencyFilter, junctionBridgeFilter] };
+  // The dependency filter (e.g. { carrierId: { eq: '...' } }) uses per-object
+  // fields not supported by the generic search API's ObjectRecordFilterInput.
+  // Resolve it to an id-based filter by querying the target object first.
+  const { records: resolvedDependencyRecords } = useFindManyRecords({
+    objectNameSingular: relationObjectMetadataNameSingular,
+    filter: dependencyFilter as Record<string, unknown> | undefined,
+    recordGqlFields: { id: true },
+    skip: !isDefined(dependencyFilter),
+    limit: 1000,
+  });
+
+  const resolvedDependencyFilter = useMemo(():
+    | ObjectRecordFilterInput
+    | undefined => {
+    if (!isDefined(dependencyFilter)) {
+      return undefined;
     }
-    return dependencyFilter ?? junctionBridgeFilter;
-  }, [dependencyFilter, junctionBridgeFilter]);
+
+    const ids = resolvedDependencyRecords.map((record) => record.id);
+
+    if (ids.length === 0) {
+      return {
+        id: { eq: '00000000-0000-0000-0000-000000000000' },
+      } as ObjectRecordFilterInput;
+    }
+
+    return { id: { in: ids } } as ObjectRecordFilterInput;
+  }, [dependencyFilter, resolvedDependencyRecords]);
+
+  const additionalFilter = useMemo((): ObjectRecordFilterInput | undefined => {
+    if (
+      isDefined(resolvedDependencyFilter) &&
+      isDefined(junctionBridgeFilter)
+    ) {
+      return { and: [resolvedDependencyFilter, junctionBridgeFilter] };
+    }
+    return resolvedDependencyFilter ?? junctionBridgeFilter;
+  }, [resolvedDependencyFilter, junctionBridgeFilter]);
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,

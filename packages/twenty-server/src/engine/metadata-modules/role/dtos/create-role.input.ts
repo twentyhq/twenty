@@ -1,6 +1,12 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType, Int } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 @InputType()
 export class CreateRoleInput {
@@ -75,4 +81,9 @@ export class CreateRoleInput {
   @IsOptional()
   @Field({ nullable: true })
   canBeAssignedToApiKeys?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  editWindowMinutes?: number | null;
 }

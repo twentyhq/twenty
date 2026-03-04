@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsRolePermissionsObjectLevelEditWindowRow } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelEditWindowRow';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow';
 import { type SettingsRolePermissionsObjectLevelPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
@@ -89,6 +90,14 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
               objectMetadataItemId={objectMetadataItem.id}
             />
           ))}
+          <SettingsRolePermissionsObjectLevelEditWindowRow
+            roleId={roleId}
+            objectMetadataItemId={objectMetadataItem.id}
+            isEditable={settingsDraftRole.isEditable}
+            settingsDraftRoleObjectPermissions={
+              settingsDraftRoleObjectPermissions
+            }
+          />
         </StyledTableRows>
       </StyledTable>
     </Section>

@@ -71,7 +71,7 @@ worker:
 db:
   enabled: false
   external:
-    host: twenty-crm-db.cluster-cgx4wwy00vhj.us-east-1.rds.amazonaws.com
+    host: twenty-crm-staging-db.cluster-cgx4wwy00vhj.us-east-1.rds.amazonaws.com
     port: 5432
     user: twenty_app_user
     database: twenty_staging

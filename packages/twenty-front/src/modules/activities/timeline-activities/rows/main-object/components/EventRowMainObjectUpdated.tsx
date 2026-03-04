@@ -86,6 +86,7 @@ export const EventRowMainObjectUpdated = ({
               mainObjectMetadataItem={mainObjectMetadataItem}
               diffKey={diffEntries[0][0]}
               diffValue={diffEntries[0][1].after}
+              diffBeforeValue={diffEntries[0][1].before}
               eventId={event.id}
               fieldMetadataItemMap={fieldMetadataItemMap}
             />
@@ -107,6 +108,7 @@ export const EventRowMainObjectUpdated = ({
               mainObjectMetadataItem={mainObjectMetadataItem}
               diffKey={diffKey}
               diffValue={diffValue.after}
+              diffBeforeValue={diffValue.before}
               eventId={event.id}
               fieldMetadataItemMap={fieldMetadataItemMap}
             />

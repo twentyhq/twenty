@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { RestrictedFieldsPermissions } from 'twenty-shared/types';
@@ -26,6 +26,9 @@ export class ObjectPermissionDTO {
 
   @Field({ nullable: true })
   showInSidebar?: boolean;
+
+  @Field(() => Int, { nullable: true })
+  editWindowMinutes?: number | null;
 
   @Field(() => GraphQLJSON, {
     nullable: true,

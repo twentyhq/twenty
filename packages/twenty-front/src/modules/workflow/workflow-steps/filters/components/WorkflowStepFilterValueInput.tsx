@@ -148,7 +148,9 @@ export const WorkflowStepFilterValueInput = ({
   const isDateTimeField = variableType === FieldMetadataType.DATE_TIME;
 
   const isRelativeDateFilter =
-    isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE;
+    isDateField &&
+    (stepFilter.operand === ViewFilterOperand.IS_RELATIVE ||
+      stepFilter.operand === ViewFilterOperand.IS_NOT_RELATIVE);
 
   const relativeDateFilter = safeParseRelativeDateFilterJSONStringified(
     stepFilter.value,

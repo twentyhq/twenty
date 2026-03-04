@@ -7,6 +7,7 @@ import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/rec
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerExcludedRecordIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerExcludedRecordIdsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
@@ -36,15 +37,36 @@ export const useMultipleRecordPickerPerformSearch = () => {
       forceSearchFilter = '',
       forceSearchableObjectMetadataItems = [],
       forcePickableMorphItems = [],
+      forceExcludedRecordIds = [],
       loadMore = false,
     }: {
       multipleRecordPickerInstanceId: string;
       forceSearchFilter?: string;
       forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
       forcePickableMorphItems?: RecordPickerPickableMorphItem[];
+      forceExcludedRecordIds?: string[];
       loadMore?: boolean;
     }) => {
       const atomFamilyKey = { instanceId: multipleRecordPickerInstanceId };
+
+      // Persist excluded IDs when provided; read stored value otherwise
+      if (forceExcludedRecordIds.length > 0) {
+        store.set(
+          multipleRecordPickerExcludedRecordIdsComponentState.atomFamily(
+            atomFamilyKey,
+          ),
+          forceExcludedRecordIds,
+        );
+      }
+
+      const excludedRecordIds =
+        forceExcludedRecordIds.length > 0
+          ? forceExcludedRecordIds
+          : store.get(
+              multipleRecordPickerExcludedRecordIdsComponentState.atomFamily(
+                atomFamilyKey,
+              ),
+            );
 
       const paginationState = store.get(
         multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
@@ -114,6 +136,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         pickedRecordIds: selectedPickableMorphItems.map(
           ({ recordId }) => recordId,
         ),
+        excludedRecordIds,
         after: loadMore ? paginationState.endCursor : null,
       });
 
@@ -377,6 +400,7 @@ const performSearchQueries = async ({
   searchFilter,
   searchableObjectMetadataItems,
   pickedRecordIds,
+  excludedRecordIds = [],
   limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
   after = null,
 }: {
@@ -384,6 +408,7 @@ const performSearchQueries = async ({
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
+  excludedRecordIds?: string[];
   limit?: number;
   after?: string | null;
 }): Promise<
@@ -416,23 +441,29 @@ const performSearchQueries = async ({
     };
   };
 
+  const allExcludedIds = [...pickedRecordIds, ...excludedRecordIds];
+
   const searchRecordsExcludingPickedRecordsResult = await searchRecords(
-    pickedRecordIds.length > 0
+    allExcludedIds.length > 0
       ? {
           not: {
             id: {
-              in: pickedRecordIds,
+              in: allExcludedIds,
             },
           },
         }
       : undefined,
   );
 
+  const eligiblePickedRecordIds = pickedRecordIds.filter(
+    (id) => !excludedRecordIds.includes(id),
+  );
+
   const searchRecordsIncludingPickedRecordsResult =
-    pickedRecordIds.length > 0
+    eligiblePickedRecordIds.length > 0
       ? await searchRecords({
           id: {
-            in: pickedRecordIds,
+            in: eligiblePickedRecordIds,
           },
         })
       : { records: [], pageInfo: { hasNextPage: false, endCursor: null } };

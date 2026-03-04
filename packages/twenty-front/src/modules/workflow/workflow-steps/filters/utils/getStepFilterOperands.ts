@@ -46,6 +46,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.IS_BEFORE,
     ViewFilterOperand.IS_AFTER,
     ViewFilterOperand.IS_RELATIVE,
+    ViewFilterOperand.IS_NOT_RELATIVE,
     ...emptyOperands,
   ],
   RATING: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],

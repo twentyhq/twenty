@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 
 import { Relation } from 'typeorm';
 
@@ -88,6 +88,9 @@ export class RoleDTO {
 
   @Field({ nullable: false })
   showAllObjectsInSidebar: boolean;
+
+  @Field(() => Int, { nullable: true })
+  editWindowMinutes?: number | null;
 
   @Field(() => [PermissionFlagDTO], { nullable: true })
   permissionFlags?: PermissionFlagDTO[];

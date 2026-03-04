@@ -10,6 +10,7 @@ export const OBJECT_PERMISSION_FRAGMENT = gql`
     canSoftDeleteObjectRecords
     canDestroyObjectRecords
     showInSidebar
+    editWindowMinutes
     restrictedFields
     rowLevelPermissionPredicates {
       ...RowLevelPermissionPredicateFragment

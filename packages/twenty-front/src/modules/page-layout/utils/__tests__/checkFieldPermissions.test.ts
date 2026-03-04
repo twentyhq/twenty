@@ -8,6 +8,7 @@ describe('checkFieldPermissions', () => {
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
     showInSidebar: true,
+    editWindowMinutes: null,
     restrictedFields: {},
     rowLevelPermissionPredicates: [],
     rowLevelPermissionPredicateGroups: [],
