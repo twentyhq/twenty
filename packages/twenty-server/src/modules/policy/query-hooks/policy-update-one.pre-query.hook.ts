@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -69,7 +69,7 @@ export class PolicyUpdateOnePreQueryHook
               throw new ForbiddenError(
                 `Policies older than ${window} can only be edited by administrators`,
                 {
-                  userFriendlyMessage: msg`This policy can no longer be edited. Only administrators can modify policies after ${window}.`,
+                  userFriendlyMessage: t`This policy can no longer be edited. Only administrators can modify policies after ${window}.`,
                 },
               );
             }
