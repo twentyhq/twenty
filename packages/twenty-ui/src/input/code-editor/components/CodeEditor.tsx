@@ -133,10 +133,12 @@ export const CodeEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const numericHeight = typeof height === 'number' ? height : 450;
-  const { height: currentHeight, handleResizeStart } = useResizableEditor({
+  const { height: resizableHeight, handleResizeStart } = useResizableEditor({
     initialHeight: numericHeight,
     componentInstanceId,
   });
+
+  const currentHeight = resizable ? resizableHeight : height;
 
   const setModelMarkers = (
     editor: editor.IStandaloneCodeEditor | undefined,

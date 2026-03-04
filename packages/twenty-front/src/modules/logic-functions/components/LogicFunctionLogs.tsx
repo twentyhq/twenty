@@ -1,4 +1,3 @@
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useLingui } from '@lingui/react/macro';
 import { ResizeHandle, useResizableEditor } from 'twenty-ui/input';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -21,12 +20,11 @@ export const LogicFunctionLogs = ({
 
   return (
     <>
-      <InputLabel>{t`Logs`}</InputLabel>
       <TextArea
         textAreaId={`logs-${componentInstanceId}`}
+        label={t`Logs`}
         value={value}
         height={height}
-        disabled
         readOnly
       />
       <ResizeHandle onPointerDown={handleResizeStart} />
