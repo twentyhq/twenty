@@ -131,7 +131,6 @@ const migrateWorkflowSteps = (
       const joinColumnKey = `${key}Id`;
 
       if (joinColumnKey in objectRecord) {
-        migratedRecord[key] = value;
         continue;
       }
 
