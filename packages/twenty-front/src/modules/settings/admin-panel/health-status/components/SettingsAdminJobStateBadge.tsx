@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Tag, type TagColor } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { JobState } from '~/generated-metadata/graphql';
 
 type SettingsAdminJobStateBadgeProps = {
@@ -20,17 +21,17 @@ const JOB_STATE_COLORS: Record<JobState, TagColor> = {
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledAttemptBadge = styled.span`
-  background-color: ${({ theme }) => theme.background.danger};
-  border: 1px solid ${({ theme }) => theme.border.color.danger};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => `${theme.spacing(0.5)} ${theme.spacing(1)}`};
+  background-color: ${themeCssVariables.background.danger};
+  border: 1px solid ${themeCssVariables.border.color.danger};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;
 

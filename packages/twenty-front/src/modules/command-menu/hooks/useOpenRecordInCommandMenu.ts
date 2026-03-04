@@ -19,17 +19,17 @@ import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hoo
 import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const { navigateCommandMenu } = useCommandMenu();

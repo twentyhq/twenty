@@ -9,7 +9,6 @@ import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variabl
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
@@ -32,7 +31,6 @@ export const WorkflowStepFilterFieldSelect = ({
 }: WorkflowStepFilterFieldSelectProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { t } = useLingui();
-  const theme = useTheme();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
 
@@ -153,8 +151,8 @@ export const WorkflowStepFilterFieldSelect = ({
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{
-        x: parseInt(theme.spacing(0.5), 10),
-        y: parseInt(theme.spacing(1), 10),
+        x: 2,
+        y: 4,
       }}
     />
   );

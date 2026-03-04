@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
@@ -18,7 +19,7 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   width: 100%;
   display: flex;
   height: fit-content;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   user-select: none;
   align-items: center;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};

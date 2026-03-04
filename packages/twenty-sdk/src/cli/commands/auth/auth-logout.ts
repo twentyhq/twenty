@@ -4,20 +4,16 @@ import chalk from 'chalk';
 
 export class AuthLogoutCommand {
   async execute(): Promise<void> {
-    try {
-      await authLogout();
-      const activeWorkspace = ConfigService.getActiveWorkspace();
-      console.log(
-        chalk.green(
-          `✓ Successfully logged out (workspace: ${activeWorkspace})`,
-        ),
-      );
-    } catch (error) {
-      console.error(
-        chalk.red('Logout failed:'),
-        error instanceof Error ? error.message : error,
-      );
+    const result = await authLogout();
+
+    if (!result.success) {
+      console.error(chalk.red('Logout failed:'), result.error.message);
       process.exit(1);
     }
+
+    const activeWorkspace = ConfigService.getActiveWorkspace();
+    console.log(
+      chalk.green(`✓ Successfully logged out (workspace: ${activeWorkspace})`),
+    );
   }
 }

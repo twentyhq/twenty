@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,10 +25,11 @@ import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissions
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
 import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
   height: 40px;
-  border-block: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-block: 1px solid ${themeCssVariables.border.color.medium};
   input {
     height: 40px;
     line-height: 40px;
@@ -39,7 +40,7 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 const StyledBackButtonText = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 const StyledBackButton = styled.button`
@@ -47,15 +48,15 @@ const StyledBackButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[3]};
   text-align: left;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 

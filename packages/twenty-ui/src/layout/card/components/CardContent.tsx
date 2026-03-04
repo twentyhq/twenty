@@ -5,6 +5,8 @@ import { type ComponentProps, type ReactNode } from 'react';
 
 const StyledCardContentBase = styled.div<{
   divider?: boolean;
+  isClickable?: boolean;
+  hasHoverHighlight?: boolean;
 }>`
   background-color: ${themeCssVariables.background.secondary};
   padding: ${themeCssVariables.spacing[4]};
@@ -12,8 +14,13 @@ const StyledCardContentBase = styled.div<{
   border-bottom: ${({ divider }) =>
     divider ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
 
-  &[data-clickable='true'] {
-    cursor: pointer;
+  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
+
+  &:hover {
+    background: ${({ hasHoverHighlight }) =>
+      hasHoverHighlight
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 `;
 
@@ -24,6 +31,7 @@ type CardContentProps = {
   className?: string;
   divider?: boolean;
   isClickable?: boolean;
+  hasHoverHighlight?: boolean;
 } & Omit<ComponentProps<typeof MotionCardContent>, 'theme'>;
 
 export const CardContent = ({
@@ -31,13 +39,15 @@ export const CardContent = ({
   className,
   divider,
   isClickable,
+  hasHoverHighlight,
   ...rest
 }: CardContentProps) => {
   return (
     <MotionCardContent
       className={className}
       divider={divider}
-      data-clickable={isClickable}
+      isClickable={isClickable}
+      hasHoverHighlight={hasHoverHighlight}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >

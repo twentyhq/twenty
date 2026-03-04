@@ -10,9 +10,10 @@ import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdFor
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledShowPageBannerContainer = styled.div`
@@ -31,9 +32,9 @@ const StyledShowPageRightContainer = styled.div`
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
+  background: ${themeCssVariables.background.primary};
+  padding-bottom: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? themeCssVariables.spacing[16] : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({

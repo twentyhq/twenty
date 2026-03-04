@@ -28,7 +28,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
@@ -59,7 +58,6 @@ export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
-  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -245,7 +243,7 @@ export const WorkflowEditActionEmailBase = ({
               handleConnectedAccountChange(connectedAccountId);
             }}
             disabled={actionOptions.readonly}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{ y: 4 }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           {isDefined(missingScopes) && (

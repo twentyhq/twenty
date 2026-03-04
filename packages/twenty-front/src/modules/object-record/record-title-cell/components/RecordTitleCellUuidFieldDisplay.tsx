@@ -2,22 +2,23 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;
   background: inherit;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   height: 24px;
   justify-content: center;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(0, 1.25)};
+  padding: ${themeCssVariables.spacing[0]} 5px;
 `;
 
 export const RecordTitleCellUuidFieldDisplay = ({
