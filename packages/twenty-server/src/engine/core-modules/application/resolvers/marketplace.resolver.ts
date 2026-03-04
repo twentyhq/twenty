@@ -27,7 +27,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 export class MarketplaceResolver {
   private readonly logger = new Logger(MarketplaceResolver.name);
-  private hasSyncedOnce = false;
+  private lastSyncAttemptAt: number | null = null;
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -43,12 +43,18 @@ export class MarketplaceResolver {
       where: { sourceType: AppRegistrationSourceType.NPM },
     });
 
-    if (registrations.length === 0 && !this.hasSyncedOnce) {
+    const syncCooldownMs = 5 * 60 * 1000;
+    const canRetrySync =
+      this.lastSyncAttemptAt === null ||
+      Date.now() - this.lastSyncAttemptAt > syncCooldownMs;
+
+    if (registrations.length === 0 && canRetrySync) {
       this.logger.log(
-        'No marketplace registrations found, triggering initial catalog sync',
+        'No marketplace registrations found, triggering catalog sync',
       );
+      this.lastSyncAttemptAt = Date.now();
+
       await this.marketplaceCatalogSyncService.syncCatalog();
-      this.hasSyncedOnce = true;
 
       registrations = await this.appRegistrationRepository.find({
         where: { sourceType: AppRegistrationSourceType.NPM },

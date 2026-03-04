@@ -10,7 +10,9 @@ import {
   StyledApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ThemeContext } from 'twenty-ui/theme';
@@ -78,9 +80,9 @@ export const SettingsApplicationsTable = ({
             : undefined;
 
           const hasUpdate =
-            latestVersion !== undefined &&
-            application.version !== undefined &&
-            latestVersion !== application.version;
+            isDefined(latestVersion) &&
+            isDefined(application.version) &&
+            isNewerSemver(latestVersion, application.version);
 
           return (
             <SettingsApplicationTableRow

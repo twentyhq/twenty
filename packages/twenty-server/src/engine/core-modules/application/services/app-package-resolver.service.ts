@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
@@ -36,13 +36,21 @@ export type ResolvedPackage = {
 };
 
 @Injectable()
-export class AppPackageResolverService {
+export class AppPackageResolverService implements OnModuleInit {
   private readonly logger = new Logger(AppPackageResolverService.name);
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    try {
+      await fs.rm(APP_RESOLVER_TMPDIR, { recursive: true, force: true });
+    } catch {
+      // best-effort cleanup of stale temp files from previous runs
+    }
+  }
 
   async resolvePackage(
     appRegistration: ApplicationRegistrationEntity,
@@ -214,8 +222,23 @@ export class AppPackageResolverService {
     );
   }
 
+  private async resolveLocalYarnPath(workDir: string): Promise<string> {
+    const yarnrcPath = join(workDir, '.yarnrc.yml');
+    const yarnrcContent = await fs.readFile(yarnrcPath, 'utf-8');
+    const match = yarnrcContent.match(/^yarnPath:\s*(.+)$/m);
+
+    if (!match) {
+      throw new ApplicationException(
+        'yarnPath not found in .yarnrc.yml',
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    return join(workDir, match[1].trim());
+  }
+
   private async runYarnInstall(workDir: string): Promise<void> {
-    const localYarnPath = join(workDir, '.yarn/releases/yarn-4.9.2.cjs');
+    const localYarnPath = await this.resolveLocalYarnPath(workDir);
 
     const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
 

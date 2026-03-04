@@ -73,7 +73,7 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const lockKey = this.computeLockKey(
+    const [lockKey1, lockKey2] = this.computeLockKeys(
       params.workspaceId,
       appRegistration.universalIdentifier,
     );
@@ -86,7 +86,10 @@ export class ApplicationInstallService {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
-      await queryRunner.query(`SELECT pg_advisory_xact_lock($1)`, [lockKey]);
+      await queryRunner.query(`SELECT pg_advisory_xact_lock($1, $2)`, [
+        lockKey1,
+        lockKey2,
+      ]);
 
       resolvedPackage = await this.appPackageResolverService.resolvePackage(
         appRegistration,
@@ -238,15 +241,18 @@ export class ApplicationInstallService {
     );
   }
 
-  private computeLockKey(
+  private computeLockKeys(
     workspaceId: string,
     universalIdentifier: string,
-  ): number {
-    const combined = `${workspaceId}:${universalIdentifier}`;
+  ): [number, number] {
+    return [this.hashString(workspaceId), this.hashString(universalIdentifier)];
+  }
+
+  private hashString(input: string): number {
     let hash = 0;
 
-    for (let i = 0; i < combined.length; i++) {
-      const char = combined.charCodeAt(i);
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
 
       hash = (hash << 5) - hash + char;
       hash |= 0;
