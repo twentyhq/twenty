@@ -1,6 +1,6 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -100,12 +100,12 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
   return (
     <>
       {createPortal(
-        <Modal
-          modalId={GLOBAL_FILE_PREVIEW_MODAL_ID}
+        <ModalStatefulWrapper
+          modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
           size="large"
           isClosable
           onClose={handleClose}
-          ignoreContainer
+          renderInDocumentBody
         >
           <StyledModalHeader>
             <StyledHeader>
@@ -141,7 +141,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               </Suspense>
             </StyledModalContent>
           </ScrollWrapper>
-        </Modal>,
+        </ModalStatefulWrapper>,
         document.body,
       )}
     </>

@@ -278,7 +278,7 @@ export const RecordDetailRelationRecordsListItem = ({
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
-          modalId={getDeleteRelationModalId(relationRecord.id)}
+          modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
           title={t`Delete Related ${relationObjectTypeName}`}
           subtitle={
             <Trans>

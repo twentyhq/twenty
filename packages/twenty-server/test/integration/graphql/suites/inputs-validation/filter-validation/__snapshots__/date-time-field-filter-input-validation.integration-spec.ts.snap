@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - DATE_TIME Gql filter input - failure DATE_TIME field type - should fail with filter : {"dateTimeField":{"eq":"not-a-date-time"}} 1`] = `"Invalid value 'not-a-date-time' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`Filter input validation - DATE_TIME Gql filter input - failure DATE_TIME field type - should fail with filter : {"dateTimeField":{"eq":[]}} 1`] = `"Invalid value [] for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`Filter input validation - DATE_TIME Gql filter input - failure DATE_TIME field type - should fail with filter : {"dateTimeField":{"eq":{}}} 1`] = `"Invalid value {} for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`Filter input validation - DATE_TIME Gql filter input - failure DATE_TIME field type - should fail with filter : {"dateTimeField":{"eq":true}} 1`] = `"Invalid value true for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`Filter input validation - DATE_TIME Rest filter input - failure DATE_TIME field type - should fail with filter : "dateTimeField[eq]:\\"[]\\"" 1`] = `
+[
+  "Invalid value '[]' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'",
+]
+`;
+
+exports[`Filter input validation - DATE_TIME Rest filter input - failure DATE_TIME field type - should fail with filter : "dateTimeField[eq]:\\"{}\\"" 1`] = `
+[
+  "Invalid value '{}' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'",
+]
+`;
+
+exports[`Filter input validation - DATE_TIME Rest filter input - failure DATE_TIME field type - should fail with filter : "dateTimeField[eq]:\\"not-a-date-time\\"" 1`] = `
+[
+  "Invalid value 'not-a-date-time' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'",
+]
+`;
+
+exports[`Filter input validation - DATE_TIME Rest filter input - failure DATE_TIME field type - should fail with filter : "dateTimeField[eq]:\\"true\\"" 1`] = `
+[
+  "Invalid value 'true' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'",
+]
+`;

@@ -801,11 +801,6 @@ msgstr "Add \"{trimmedName}\" to options"
 msgid "Add a {objectLabelSingular}"
 msgstr "Add a {objectLabelSingular}"
 
-#. js-lingui-id: 7W8nJr
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Group"
-msgstr "Add a Group"
-
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -821,6 +816,12 @@ msgstr "Add a node"
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
 msgstr "Add a record"
+
+#. js-lingui-id: r8W+9y
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Section"
+msgstr "Add a Section"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
@@ -1525,6 +1526,9 @@ msgstr "Amount Micros"
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 msgid "An error occurred"
 msgstr "An error occurred"
 
@@ -1550,6 +1554,7 @@ msgstr "An error occurred while uploading the picture."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -4675,6 +4680,11 @@ msgstr "Drag and Drop Here"
 msgid "Drag to add to navbar"
 msgstr "Drag to add to navbar"
 
+#. js-lingui-id: VIbDgE
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Drop fields here"
+msgstr "Drop fields here"
+
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -5021,10 +5031,10 @@ msgstr "Emails"
 msgid "Emails and Calendar"
 msgstr "Emails and Calendar"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -6496,9 +6506,9 @@ msgstr "Gauge Chart"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "General"
@@ -14245,6 +14255,11 @@ msgstr "View role"
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
 msgstr "View Role"
+
+#. js-lingui-id: 4y776f
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view sort"
+msgstr "view sort"
 
 #. js-lingui-id: FNDoRH
 #: src/pages/settings/ai/SettingsAI.tsx

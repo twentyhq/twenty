@@ -5,21 +5,45 @@
     "declaration": true,
     "outDir": "./dist",
     "rootDir": ".",
+    "jsx": "react-jsx",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "allowUnreachableCode": false,
-    "strictNullChecks": true,
+    "strict": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "target": "es2018",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./*"
+      ]
+    }
   },
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.integration-test.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

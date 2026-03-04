@@ -1,4 +1,4 @@
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';
@@ -14,12 +14,12 @@ export const ChooseYourPlan = () => {
   const { isPlansLoaded } = usePlans();
   const billing = useAtomStateValue(billingState);
   return (
-    <Modal.Content isVerticalCentered>
+    <ModalContent isVerticallyCentered>
       {isDefined(billing) && isPlansLoaded ? (
         <ChooseYourPlanContent billing={billing} />
       ) : (
         <StyledChooseYourPlanPlaceholder />
       )}
-    </Modal.Content>
+    </ModalContent>
   );
 };

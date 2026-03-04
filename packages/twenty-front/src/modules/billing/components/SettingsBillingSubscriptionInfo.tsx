@@ -507,7 +507,7 @@ export const SettingsBillingSubscriptionInfo = ({
           )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
-        modalId={SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID}
+        modalInstanceId={SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID}
         title={t`Change to Yearly?`}
         subtitle={confirmationModalSwitchToYearlyMessage()}
         onConfirmClick={switchInterval}
@@ -516,7 +516,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isSwitchingInterval}
       />
       <ConfirmationModal
-        modalId={SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID}
+        modalInstanceId={SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID}
         title={t`Change to Monthly?`}
         subtitle={confirmationModalSwitchToMonthlyMessage()}
         onConfirmClick={switchInterval}
@@ -525,7 +525,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isSwitchingInterval}
       />
       <ConfirmationModal
-        modalId={CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID}
+        modalInstanceId={CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID}
         title={t`Cancel interval switching?`}
         subtitle={confirmationModalCancelIntervalSwitchingMessage()}
         onConfirmClick={cancelIntervalSwitching}
@@ -534,7 +534,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isCancellingIntervalSwitch}
       />
       <ConfirmationModal
-        modalId={SWITCH_BILLING_PLAN_TO_ENTERPRISE_MODAL_ID}
+        modalInstanceId={SWITCH_BILLING_PLAN_TO_ENTERPRISE_MODAL_ID}
         title={t`Change to Organization Plan?`}
         subtitle={confirmationModalSwitchToOrganizationMessage()}
         onConfirmClick={switchPlan}
@@ -543,7 +543,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isSwitchingPlan}
       />
       <ConfirmationModal
-        modalId={SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID}
+        modalInstanceId={SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID}
         title={t`Change to Pro Plan?`}
         subtitle={confirmationModalSwitchToProMessage()}
         onConfirmClick={switchPlan}
@@ -552,7 +552,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isSwitchingPlan}
       />
       <ConfirmationModal
-        modalId={CANCEL_SWITCH_BILLING_PLAN_MODAL_ID}
+        modalInstanceId={CANCEL_SWITCH_BILLING_PLAN_MODAL_ID}
         title={t`Cancel plan switching?`}
         subtitle={confirmationModalCancelPlanSwitchingMessage()}
         onConfirmClick={cancelPlanSwitching}
@@ -561,7 +561,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isCancellingPlanSwitch}
       />
       <ConfirmationModal
-        modalId={END_TRIAL_PERIOD_MODAL_ID}
+        modalInstanceId={END_TRIAL_PERIOD_MODAL_ID}
         title={t`Start Your Subscription`}
         subtitle={t`We will activate your paid plan. Do you want to proceed?`}
         onConfirmClick={endTrialPeriod}
@@ -570,7 +570,7 @@ export const SettingsBillingSubscriptionInfo = ({
         loading={isEndTrialPeriodLoading}
       />
       <ConfirmationModal
-        modalId={CANCEL_SWITCH_METERED_PRICE_MODAL_ID}
+        modalInstanceId={CANCEL_SWITCH_METERED_PRICE_MODAL_ID}
         title={t`Cancel metered tier switching?`}
         subtitle={t`You have scheduled a metered tier change. Do you want to cancel it?`}
         onConfirmClick={cancelMeteredSwitching}

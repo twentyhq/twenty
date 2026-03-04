@@ -198,7 +198,7 @@ export const SettingsAgentEvalsTab = ({
       </Section>
 
       <ConfirmationModal
-        modalId={DELETE_EVAL_INPUT_MODAL_ID}
+        modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
         title={t`Delete Evaluation Input`}
         subtitle={t`Are you sure you want to delete this evaluation input?`}
         onConfirmClick={handleDeleteInput}

@@ -106,7 +106,14 @@ export const useApplyCoreViewsForObjectMetadataId = () => {
           );
         }
 
-        if (!isDeeplyEqual(coreView.viewSorts, existingView.viewSorts)) {
+        if (
+          !isDeeplyEqual(
+            coreView.viewSorts.map((viewSort) =>
+              removePropertiesFromRecord(viewSort, ['createdAt', 'updatedAt']),
+            ),
+            existingView.viewSorts,
+          )
+        ) {
           const view = convertCoreViewToView(coreView);
           jotaiStore.set(
             currentRecordSortsComponentState.atomFamily({
