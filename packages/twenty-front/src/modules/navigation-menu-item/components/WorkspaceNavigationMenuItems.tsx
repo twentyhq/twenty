@@ -81,6 +81,12 @@ export const WorkspaceNavigationMenuItems = () => {
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     enterEditMode();
+    navigateCommandMenu({
+      page: CommandMenuPages.NavigationMenuAddItem,
+      pageTitle: t`New sidebar item`,
+      pageIcon: IconColumnInsertRight,
+      resetNavigationStack: true,
+    });
   };
 
   const handleNavigationMenuItemClick = (
