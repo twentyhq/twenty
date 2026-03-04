@@ -68,7 +68,6 @@ const StyledVerticalHandle = styled.div`
   width: ${themeCssVariables.icon.stroke.lg}px;
 `;
 
-
 const StyledVerticalHandleWrapper = styled.div<{
   widgetHandleAxis: WidgetVerticalHandleAxis;
 }>`
@@ -185,7 +184,9 @@ export const PageLayoutGridResizeHandle = forwardRef<
             style={{
               cursor: 'row-resize',
               transform:
-                widgetHandleAxis === 'n' ? 'translateY(-50%)' : 'translateY(50%)',
+                widgetHandleAxis === 'n'
+                  ? 'translateY(-50%)'
+                  : 'translateY(50%)',
             }}
           />
         )}

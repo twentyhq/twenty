@@ -3,7 +3,7 @@ import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { ResizeHandle } from '@ui/layout/resize-handle/components/ResizeHandle';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
-import { useResizableEditor } from '@ui/input/code-editor/hooks/useResizableEditor';
+import { useResizeHandle } from '@ui/layout/resize-handle/hooks/useResizeHandle';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { ThemeContext } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
@@ -132,12 +132,12 @@ export const CodeEditor = ({
 
   const numericHeight = typeof height === 'number' ? height : 450;
   const {
-    height: resizableHeight,
+    size: resizableHeight,
     handleResizeStart,
     handleResizeMove,
     handleResizeEnd,
-  } = useResizableEditor({
-    initialHeight: numericHeight,
+  } = useResizeHandle({
+    initialSize: numericHeight,
   });
 
   const currentHeight = resizable ? resizableHeight : height;

@@ -40,6 +40,7 @@ export { CardContent } from './card/components/CardContent';
 export { CardFooter } from './card/components/CardFooter';
 export { CardHeader } from './card/components/CardHeader';
 export { ResizeHandle } from './resize-handle/components/ResizeHandle';
+export { useResizeHandle } from './resize-handle/hooks/useResizeHandle';
 export {
   SectionAlignment,
   SectionFontColor,
