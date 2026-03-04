@@ -30,7 +30,6 @@ import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   height: 100%;
