@@ -12,6 +12,7 @@ import { createRequire } from 'node:module';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import prettier from 'prettier';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -72,10 +73,23 @@ const serializeTupleArray = (entries: [string, string][]): string => {
 const outputDir = resolve(scriptDir, '../src/theme-constants/generated');
 mkdirSync(outputDir, { recursive: true });
 
+const prettierConfig = await prettier.resolveConfig(
+  resolve(outputDir, 'dummy.ts'),
+);
+
+const writeFormatted = async (fileName: string, code: string) => {
+  const formatted = await prettier.format(code, {
+    ...prettierConfig,
+    parser: 'typescript',
+  });
+  writeFileSync(resolve(outputDir, fileName), formatted, 'utf-8');
+  console.log(`Generated ${fileName}`);
+};
+
 // --- themeCssVariables.ts ---
 
-writeFileSync(
-  resolve(outputDir, 'themeCssVariables.ts'),
+await writeFormatted(
+  'themeCssVariables.ts',
   `${HEADER}
 import type { ThemeType } from '@ui/theme/types/ThemeType';
 
@@ -89,9 +103,7 @@ type DeepCSSVariableRefs<T> = {
 
 export const themeCssVariables = ${serializeObject(themeCssVariables)} as DeepCSSVariableRefs<ThemeType>;
 `,
-  'utf-8',
 );
-console.log('Generated themeCssVariables.ts');
 
 // --- themeLightCssVariableEntries.ts ---
 
@@ -100,8 +112,8 @@ const lightEntries = prepareThemeForRootCssVariableInjection({
   prefix: 't',
 }) as [string, string][];
 
-writeFileSync(
-  resolve(outputDir, 'themeLightCssVariableEntries.ts'),
+await writeFormatted(
+  'themeLightCssVariableEntries.ts',
   `${HEADER}
 // CSS custom properties don't work in media queries, so MOBILE_VIEWPORT
 // must be a static number rather than a var(--...) reference.
@@ -114,9 +126,7 @@ export const ICON_STROKES = ${serializeObject(ICON.stroke)} as const;
 
 export const THEME_LIGHT_CSS_VARIABLE_ENTRIES: [string, string][] = ${serializeTupleArray(lightEntries)};
 `,
-  'utf-8',
 );
-console.log('Generated themeLightCssVariableEntries.ts');
 
 // --- themeDarkCssVariableEntries.ts ---
 
@@ -125,11 +135,9 @@ const darkEntries = prepareThemeForRootCssVariableInjection({
   prefix: 't',
 }) as [string, string][];
 
-writeFileSync(
-  resolve(outputDir, 'themeDarkCssVariableEntries.ts'),
+await writeFormatted(
+  'themeDarkCssVariableEntries.ts',
   `${HEADER}
 export const THEME_DARK_CSS_VARIABLE_ENTRIES: [string, string][] = ${serializeTupleArray(darkEntries)};
 `,
-  'utf-8',
 );
-console.log('Generated themeDarkCssVariableEntries.ts');
