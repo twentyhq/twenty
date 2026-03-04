@@ -5,10 +5,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
+import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
-import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
@@ -16,12 +16,6 @@ import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledEditorSectionRoot = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-`;
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -130,7 +124,7 @@ export const AIChatEditorSection = () => {
   });
 
   return (
-    <StyledEditorSectionRoot>
+    <>
       {!hasMessages && !error && !isLoading && (
         <AIChatEmptyState editor={editor} />
       )}
@@ -160,6 +154,6 @@ export const AIChatEditorSection = () => {
           </StyledButtonsContainer>
         </StyledInputBox>
       </StyledInputArea>
-    </StyledEditorSectionRoot>
+    </>
   );
 };
