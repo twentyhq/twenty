@@ -4,7 +4,7 @@ import {
   SandpackLayout,
   SandpackProvider,
 } from '@codesandbox/sandpack-react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const Sandpack = styled.div`
   max-width: 600px;

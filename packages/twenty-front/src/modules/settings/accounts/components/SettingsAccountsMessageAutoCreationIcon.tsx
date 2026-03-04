@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageAutoCreationIconProps = {
   className?: string;
@@ -13,8 +14,10 @@ const StyledIconContainer = styled(SettingsAccountsCardMedia)`
 `;
 
 const StyledDirectionSkeleton = styled.div<{ isActive?: boolean }>`
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.accent.accent4060 : theme.background.quaternary};
+  background-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.accent.accent4060
+      : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 24px;
 `;

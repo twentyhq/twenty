@@ -4,7 +4,7 @@ import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFi
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { Select } from '@/ui/input/components/Select';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
@@ -36,7 +37,7 @@ const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsDataModelObjectIdentifiersForm = ({

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconColumnInsertRight,
@@ -20,13 +20,15 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 
-import { useTheme } from '@emotion/react';
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledPageTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 type CommandMenuPageInfoProps = {
@@ -34,7 +36,7 @@ type CommandMenuPageInfoProps = {
 };
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );

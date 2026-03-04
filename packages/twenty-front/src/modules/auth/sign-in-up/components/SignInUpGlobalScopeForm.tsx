@@ -1,10 +1,10 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
@@ -27,30 +27,32 @@ import {
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 
 const StyledContentContainer = styled(motion.div)`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   min-width: 200px;
 `;
 
 const StyledWorkspaceContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   overflow: hidden;
   width: 100%;
 
   > * {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+    border-bottom: 1px solid ${themeCssVariables.border.color.medium};
 
     &:last-child {
       border-bottom: none;
@@ -63,7 +65,7 @@ const StyledWorkspaceItem = styled.div`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  height: ${({ theme }) => theme.spacing(15)};
+  height: ${themeCssVariables.spacing[15]};
   padding: 0;
   overflow: hidden;
 
@@ -71,7 +73,7 @@ const StyledWorkspaceItem = styled.div`
   justify-content: space-between;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 
   &:last-child {
@@ -82,9 +84,9 @@ const StyledWorkspaceItem = styled.div`
 const StyledWorkspaceContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(4)};
+  padding: 0 ${themeCssVariables.spacing[4]};
 `;
 
 const StyledWorkspaceTextContainer = styled.div`
@@ -94,29 +96,29 @@ const StyledWorkspaceTextContainer = styled.div`
 `;
 
 const StyledWorkspaceLogo = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  height: ${({ theme }) => theme.spacing(6)};
-  width: ${({ theme }) => theme.spacing(6)};
-  background-color: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  height: ${themeCssVariables.spacing[6]};
+  width: ${themeCssVariables.spacing[6]};
+  background-color: ${themeCssVariables.background.transparent.light};
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const StyledWorkspaceName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledWorkspaceUrl = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const StyledChevronIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
 `;
 
@@ -133,7 +135,7 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();

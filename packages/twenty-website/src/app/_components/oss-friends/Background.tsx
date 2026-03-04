@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const BACKGROUND_ROTATION = -5;
 

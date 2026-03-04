@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { MessageFolderImportPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageFolderIconProps = {
   className?: string;
@@ -20,16 +21,20 @@ const StyledFolderRow = styled.div`
 `;
 
 const StyledFolderIcon = styled.div<{ isDisabled?: boolean }>`
-  background-color: ${({ isDisabled, theme }) =>
-    isDisabled ? theme.background.quaternary : theme.accent.accent4060};
+  background-color: ${({ isDisabled }) =>
+    isDisabled
+      ? themeCssVariables.background.quaternary
+      : themeCssVariables.accent.accent4060};
   border-radius: 1px;
   height: 5px;
   width: 5px;
 `;
 
 const StyledFolderLabel = styled.div<{ isDisabled?: boolean }>`
-  background-color: ${({ isDisabled, theme }) =>
-    isDisabled ? theme.background.quaternary : theme.accent.accent4060};
+  background-color: ${({ isDisabled }) =>
+    isDisabled
+      ? themeCssVariables.background.quaternary
+      : themeCssVariables.accent.accent4060};
   border-radius: 1px;
   flex: 1;
   height: 5px;

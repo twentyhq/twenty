@@ -1,11 +1,11 @@
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { type Theme, useTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledStaticCellSkeleton = styled.div<{ theme: Theme }>`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+const StyledStaticCellSkeleton = styled.div`
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   padding: 8px;
   margin: 8px;
 `;
@@ -17,14 +17,12 @@ export const RecordTableCellLoading = ({
   recordFieldIndex: number;
   isSelected?: boolean;
 }) => {
-  const theme = useTheme();
-
   return (
     <RecordTableCellStyleWrapper
       widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
       isSelected={isSelected}
     >
-      <StyledStaticCellSkeleton theme={theme} />
+      <StyledStaticCellSkeleton />
     </RecordTableCellStyleWrapper>
   );
 };

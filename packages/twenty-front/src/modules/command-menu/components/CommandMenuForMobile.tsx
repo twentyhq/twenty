@@ -2,7 +2,7 @@ import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuO
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';

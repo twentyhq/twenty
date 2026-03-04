@@ -29,6 +29,18 @@ describe('getDefaultFieldsInObjectFields', () => {
       ...defaultRelationObjectFields,
     ]);
     expect(fields).toEqual(expectedReverseFields);
+
+    for (const field of fields) {
+      if (field.type === FieldMetadataType.RELATION) {
+        expect(field.isNullable).toBe(true);
+      }
+    }
+
+    for (const objectField of objectFields) {
+      if (objectField.type === FieldMetadataType.RELATION) {
+        expect(objectField.isNullable).toBe(true);
+      }
+    }
   });
 
   it('should preserve custom fields and append missing default fields', () => {

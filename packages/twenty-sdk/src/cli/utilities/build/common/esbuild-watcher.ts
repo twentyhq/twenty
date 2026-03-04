@@ -12,9 +12,9 @@ import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-pl
 import * as esbuild from 'esbuild';
 import path from 'path';
 import {
-  OUTPUT_DIR,
-  NODE_ESM_CJS_BANNER,
   GENERATED_DIR,
+  NODE_ESM_CJS_BANNER,
+  OUTPUT_DIR,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -191,7 +191,9 @@ export class EsbuildWatcher implements RestartableWatcher {
 
 // Resolves twenty-sdk/generated to the actual file path so esbuild
 // bundles it instead of treating it as external (via twenty-sdk/*)
-const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
+export const createSdkGeneratedResolverPlugin = (
+  appPath: string,
+): esbuild.Plugin => ({
   name: 'sdk-generated-resolver',
   setup: (build) => {
     build.onResolve({ filter: /^twenty-sdk\/generated/ }, () => ({

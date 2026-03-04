@@ -28,6 +28,7 @@ const DEFAULT_DEFAULT_RELATION = {
   targetLabel: (objectConfig: ObjectConfig) =>
     capitalize(objectConfig.nameSingular),
   icon: 'IconBuildingSkyscraper',
+  isNullable: true,
 };
 
 const DEFAULT_RELATION_CONFIGS = [
@@ -153,7 +154,7 @@ export const getDefaultRelationObjectFields = (
       label: config.label,
       description: `${objectConfig.labelPlural} tied to the ${config.targetLabel(objectConfig)}`,
       icon: config.icon,
-      isNullable: false,
+      isNullable: config.isNullable,
       type: FieldMetadataType.RELATION,
       universalSettings: { relationType: RelationType.ONE_TO_MANY },
       universalIdentifier: forwardFieldUniversalIdentifier,

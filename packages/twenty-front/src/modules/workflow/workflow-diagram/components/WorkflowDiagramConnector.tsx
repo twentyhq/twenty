@@ -1,7 +1,8 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramConnector = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <svg
