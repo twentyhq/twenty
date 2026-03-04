@@ -1,11 +1,11 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useContext } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>

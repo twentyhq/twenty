@@ -237,7 +237,7 @@ export const SettingsDomain = () => {
         </FormProvider>
       </form>
       <ConfirmationModal
-        modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+        modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}
         subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
         onConfirmClick={() => {

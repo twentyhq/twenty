@@ -490,7 +490,7 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
-  private async skipAndFailSafelyStepsThenContinue({
+  async skipAndFailSafelyStepsThenContinue({
     stepIdsToSkip,
     stepIdsToFailSafely,
     steps,
@@ -505,39 +505,41 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     executedStepsCount: number;
   }) {
-    const stepsToSkip = stepIdsToSkip.map((stepId) => ({
-      stepId,
-      status: StepStatus.SKIPPED,
-    }));
-    const stepsToFailSafely = stepIdsToFailSafely.map((stepId) => ({
-      stepId,
-      status: StepStatus.FAILED_SAFELY,
-    }));
-    const stepsToProcess = [...stepsToSkip, ...stepsToFailSafely];
+    const stepInfos: Record<string, WorkflowRunStepInfo> = {};
 
-    await Promise.all(
-      stepsToProcess.map(async ({ stepId, status }) => {
-        await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-          stepId,
-          stepInfo: { status },
-          workflowRunId,
-          workspaceId,
-        });
+    for (const stepId of stepIdsToSkip) {
+      stepInfos[stepId] = { status: StepStatus.SKIPPED };
+    }
 
-        const step = steps.find((step) => step.id === stepId);
-        const stepNextStepIds = step?.nextStepIds ?? [];
+    for (const stepId of stepIdsToFailSafely) {
+      stepInfos[stepId] = { status: StepStatus.FAILED_SAFELY };
+    }
 
-        if (stepNextStepIds.length > 0) {
-          await this.executeFromSteps({
-            stepIds: stepNextStepIds,
-            workflowRunId,
-            workspaceId,
-            shouldComputeWorkflowRunStatus: false,
-            executedStepsCount,
-          });
-        }
-      }),
-    );
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+      stepInfos,
+      workflowRunId,
+      workspaceId,
+    });
+
+    const nextStepIds = new Set<string>();
+
+    for (const stepId of [...stepIdsToSkip, ...stepIdsToFailSafely]) {
+      const step = steps.find((step) => step.id === stepId);
+
+      for (const nextStepId of step?.nextStepIds ?? []) {
+        nextStepIds.add(nextStepId);
+      }
+    }
+
+    if (nextStepIds.size > 0) {
+      await this.executeFromSteps({
+        stepIds: Array.from(nextStepIds),
+        workflowRunId,
+        workspaceId,
+        shouldComputeWorkflowRunStatus: false,
+        executedStepsCount,
+      });
+    }
   }
 
   private async continueExecutionFromStepInAnotherJob({

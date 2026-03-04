@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
@@ -13,6 +13,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "fieldMetadata",
+  "viewSort",
   "viewField",
   "viewFilter",
   "view",
@@ -145,6 +146,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for viewGroup 1`] = `
 [
+  "view",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewSort 1`] = `
+[
+  "fieldMetadata",
   "view",
 ]
 `;

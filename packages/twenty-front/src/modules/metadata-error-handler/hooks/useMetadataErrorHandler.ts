@@ -44,6 +44,7 @@ export const useMetadataErrorHandler = () => {
     frontComponent: t`front component`,
     navigationMenuItem: t`navigation menu item`,
     webhook: t`webhook`,
+    viewSort: t`view sort`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

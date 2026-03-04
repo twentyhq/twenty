@@ -1,8 +1,9 @@
+import { type FeatureFlagKey } from 'twenty-shared/types';
+
 import {
   PUBLIC_FEATURE_FLAGS,
   type PublicFeatureFlag,
 } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 export const isPublicFeatureFlag = (
   key: FeatureFlagKey,

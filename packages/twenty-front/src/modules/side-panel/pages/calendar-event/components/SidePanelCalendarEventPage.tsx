@@ -2,7 +2,7 @@ import { CalendarEventDetails } from '@/activities/calendar/components/CalendarE
 import { CalendarEventDetailsEffect } from '@/activities/calendar/components/CalendarEventDetailsEffect';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';

@@ -7,10 +7,10 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 
 describe('Row Level Permission Predicate upsert should succeed', () => {

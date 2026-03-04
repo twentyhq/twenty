@@ -139,7 +139,7 @@ export const ObjectSettings = ({
         </StyledFormSection>
       )}
       <ConfirmationModal
-        modalId={DELETE_OBJECT_MODAL_ID}
+        modalInstanceId={DELETE_OBJECT_MODAL_ID}
         title={t`Delete ${objectLabel} object?`}
         subtitle={t`This will permanently delete the object and all its records. Type "yes" to confirm.`}
         confirmButtonText={t`Delete`}

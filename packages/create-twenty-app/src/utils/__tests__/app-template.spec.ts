@@ -1,10 +1,10 @@
 import { type ExampleOptions } from '@/types/scaffolding-options';
-import { GENERATED_DIR } from 'twenty-shared/application';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
-import { join } from 'path';
 import createTwentyAppPackageJson from 'package.json';
+import { join } from 'path';
+import { GENERATED_DIR } from 'twenty-shared/application';
 
 jest.mock('fs-extra', () => {
   const actual = jest.requireActual('fs-extra');
@@ -25,6 +25,16 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
   includeExampleSkill: true,
+  includeExampleIntegrationTest: true,
+};
+
+const SEED_TSCONFIG = {
+  compilerOptions: { paths: { 'src/*': ['./src/*'] } },
+  exclude: ['node_modules', 'dist', '**/*.integration-test.ts'],
+};
+
+const seedTsconfig = async (directory: string) => {
+  await fs.writeJson(join(directory, 'tsconfig.json'), SEED_TSCONFIG);
 };
 
 const NO_EXAMPLES: ExampleOptions = {
@@ -35,6 +45,7 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleFrontComponent: false,
   includeExampleView: false,
   includeExampleNavigationMenuItem: false,
+  includeExampleIntegrationTest: false,
 };
 
 describe('copyBaseApplicationProject', () => {
@@ -46,6 +57,7 @@ describe('copyBaseApplicationProject', () => {
       `test-twenty-app-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     await fs.ensureDir(testAppDirectory);
+    await seedTsconfig(testAppDirectory);
     jest.clearAllMocks();
   });
 
@@ -149,11 +161,18 @@ describe('copyBaseApplicationProject', () => {
       "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role'",
     );
 
+    expect(appConfigContent).toContain(
+      'export const APPLICATION_UNIVERSAL_IDENTIFIER',
+    );
+    expect(appConfigContent).toContain(
+      'universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER',
+    );
+
     expect(appConfigContent).toContain("displayName: 'My Test App'");
     expect(appConfigContent).toContain("description: 'A test application'");
 
     expect(appConfigContent).toMatch(
-      /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      /APPLICATION_UNIVERSAL_IDENTIFIER =\s*'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
     );
 
     expect(appConfigContent).toContain(
@@ -235,6 +254,7 @@ describe('copyBaseApplicationProject', () => {
   it('should generate unique UUIDs for each application', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
+    await seedTsconfig(firstAppDir);
     await copyBaseApplicationProject({
       appName: 'app-one',
       appDisplayName: 'App One',
@@ -245,6 +265,7 @@ describe('copyBaseApplicationProject', () => {
 
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
+    await seedTsconfig(secondAppDir);
     await copyBaseApplicationProject({
       appName: 'app-two',
       appDisplayName: 'App Two',
@@ -263,7 +284,7 @@ describe('copyBaseApplicationProject', () => {
     );
 
     const uuidRegex =
-      /universalIdentifier: '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      /APPLICATION_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstAppConfig.match(uuidRegex)?.[1];
     const secondUuid = secondAppConfig.match(uuidRegex)?.[1];
 
@@ -275,6 +296,7 @@ describe('copyBaseApplicationProject', () => {
   it('should generate unique role UUIDs for each application', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(firstAppDir);
+    await seedTsconfig(firstAppDir);
     await copyBaseApplicationProject({
       appName: 'app-one',
       appDisplayName: 'App One',
@@ -285,6 +307,7 @@ describe('copyBaseApplicationProject', () => {
 
     const secondAppDir = join(testAppDirectory, 'app2');
     await fs.ensureDir(secondAppDir);
+    await seedTsconfig(secondAppDir);
     await copyBaseApplicationProject({
       appName: 'app-two',
       appDisplayName: 'App Two',
@@ -352,6 +375,12 @@ describe('copyBaseApplicationProject', () => {
               'navigation-menu-items',
               'example-navigation-menu-item.ts',
             ),
+          ),
+        ).toBe(true);
+
+        expect(
+          await fs.pathExists(
+            join(srcPath, '__tests__', 'app-install.integration-test.ts'),
           ),
         ).toBe(true);
 
@@ -428,6 +457,11 @@ describe('copyBaseApplicationProject', () => {
             ),
           ),
         ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(srcPath, '__tests__', 'app-install.integration-test.ts'),
+          ),
+        ).toBe(false);
       });
     });
 
@@ -446,6 +480,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: true,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
+            includeExampleIntegrationTest: false,
           },
         });
 
@@ -483,6 +518,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleFrontComponent: false,
             includeExampleView: false,
             includeExampleNavigationMenuItem: false,
+            includeExampleIntegrationTest: false,
           },
         });
 
@@ -540,6 +576,7 @@ describe('copyBaseApplicationProject', () => {
     it('should generate unique UUIDs for example objects across apps', async () => {
       const firstAppDir = join(testAppDirectory, 'app1');
       await fs.ensureDir(firstAppDir);
+      await seedTsconfig(firstAppDir);
       await copyBaseApplicationProject({
         appName: 'app-one',
         appDisplayName: 'App One',
@@ -550,6 +587,7 @@ describe('copyBaseApplicationProject', () => {
 
       const secondAppDir = join(testAppDirectory, 'app2');
       await fs.ensureDir(secondAppDir);
+      await seedTsconfig(secondAppDir);
       await copyBaseApplicationProject({
         appName: 'app-two',
         appDisplayName: 'App Two',
@@ -735,6 +773,44 @@ describe('copyBaseApplicationProject', () => {
       );
 
       expect(await fs.pathExists(preInstallPath)).toBe(true);
+    });
+  });
+
+  describe('integration test', () => {
+    it('should include vitest and test scripts in package.json when enabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const packageJson = await fs.readJson(
+        join(testAppDirectory, 'package.json'),
+      );
+
+      expect(packageJson.scripts.test).toBe('vitest run');
+      expect(packageJson.scripts['test:watch']).toBe('vitest');
+      expect(packageJson.devDependencies.vitest).toBeDefined();
+    });
+
+    it('should not include vitest or test scripts when disabled', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const packageJson = await fs.readJson(
+        join(testAppDirectory, 'package.json'),
+      );
+
+      expect(packageJson.scripts.test).toBeUndefined();
+      expect(packageJson.scripts['test:watch']).toBeUndefined();
+      expect(packageJson.devDependencies.vitest).toBeUndefined();
     });
   });
 

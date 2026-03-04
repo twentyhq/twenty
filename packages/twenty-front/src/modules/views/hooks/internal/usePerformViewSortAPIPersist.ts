@@ -1,107 +1,276 @@
 import { useCallback } from 'react';
 
-import { CREATE_CORE_VIEW_SORT } from '@/views/graphql/mutations/createCoreViewSort';
-import { DESTROY_CORE_VIEW_SORT } from '@/views/graphql/mutations/destroyCoreViewSort';
-import { UPDATE_CORE_VIEW_SORT } from '@/views/graphql/mutations/updateCoreViewSort';
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewSortOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewSortOptimisticEffect';
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
-import { type GraphQLView } from '@/views/types/GraphQLView';
-import { useApolloClient } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewSort } from '~/generated-metadata/graphql';
+import {
+  type CreateCoreViewSortMutationVariables,
+  type DeleteCoreViewSortMutationVariables,
+  type DestroyCoreViewSortMutationVariables,
+  type UpdateCoreViewSortMutationVariables,
+  useCreateCoreViewSortMutation,
+  useDeleteCoreViewSortMutation,
+  useDestroyCoreViewSortMutation,
+  useUpdateCoreViewSortMutation,
+} from '~/generated-metadata/graphql';
 
 export const usePerformViewSortAPIPersist = () => {
-  const apolloClient = useApolloClient();
-
   const { triggerViewSortOptimisticEffect } =
     useTriggerViewSortOptimisticEffect();
+  const [createCoreViewSortMutation] = useCreateCoreViewSortMutation();
+  const [updateCoreViewSortMutation] = useUpdateCoreViewSortMutation();
+  const [deleteCoreViewSortMutation] = useDeleteCoreViewSortMutation();
+  const [destroyCoreViewSortMutation] = useDestroyCoreViewSortMutation();
+
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const performViewSortAPICreate = useCallback(
-    (
-      viewSortsToCreate: CoreViewSortEssential[],
-      view: Pick<GraphQLView, 'id'>,
-    ) => {
-      if (!viewSortsToCreate.length) return;
-      return Promise.all(
-        viewSortsToCreate.map((viewSort) =>
-          apolloClient.mutate({
-            mutation: CREATE_CORE_VIEW_SORT,
-            variables: {
-              input: {
-                id: viewSort.id,
-                fieldMetadataId: viewSort.fieldMetadataId,
-                viewId: view.id,
-                direction: viewSort.direction,
-              } satisfies Partial<CoreViewSort>,
-            },
-            update: (_cache, { data }) => {
-              const createdViewSort = data?.createCoreViewSort;
-              if (!isDefined(createdViewSort)) return;
+    async (
+      createCoreViewSortInputs: CreateCoreViewSortMutationVariables[],
+    ): Promise<
+      MetadataRequestResult<
+        Awaited<ReturnType<typeof createCoreViewSortMutation>>[]
+      >
+    > => {
+      if (createCoreViewSortInputs.length === 0) {
+        return {
+          status: 'successful',
+          response: [],
+        };
+      }
 
-              triggerViewSortOptimisticEffect({
-                createdViewSorts: [createdViewSort],
-              });
-            },
-          }),
-        ),
-      );
+      try {
+        const results = await Promise.all(
+          createCoreViewSortInputs.map((variables) =>
+            createCoreViewSortMutation({
+              variables,
+              update: (_cache, { data }) => {
+                const createdViewSort = data?.createCoreViewSort;
+                if (!isDefined(createdViewSort)) {
+                  return;
+                }
+
+                triggerViewSortOptimisticEffect({
+                  createdViewSorts: [createdViewSort],
+                });
+              },
+            }),
+          ),
+        );
+        return {
+          status: 'successful',
+          response: results,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewSort',
+            operationType: CrudOperationType.CREATE,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred.` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
     },
-    [apolloClient, triggerViewSortOptimisticEffect],
+    [
+      triggerViewSortOptimisticEffect,
+      createCoreViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const performViewSortAPIUpdate = useCallback(
-    (viewSortsToUpdate: CoreViewSortEssential[]) => {
-      if (!viewSortsToUpdate.length) return;
-      return Promise.all(
-        viewSortsToUpdate.map((viewSort) =>
-          apolloClient.mutate({
-            mutation: UPDATE_CORE_VIEW_SORT,
-            variables: {
-              id: viewSort.id,
-              input: {
-                direction: viewSort.direction,
-              } satisfies Partial<CoreViewSort>,
-            },
-            update: (_cache, { data }) => {
-              const updatedViewSort = data?.updateCoreViewSort;
-              if (!isDefined(updatedViewSort)) return;
+    async (
+      updateCoreViewSortInputs: UpdateCoreViewSortMutationVariables[],
+    ): Promise<
+      MetadataRequestResult<
+        Awaited<ReturnType<typeof updateCoreViewSortMutation>>[]
+      >
+    > => {
+      if (updateCoreViewSortInputs.length === 0) {
+        return {
+          status: 'successful',
+          response: [],
+        };
+      }
 
-              triggerViewSortOptimisticEffect({
-                updatedViewSorts: [updatedViewSort],
-              });
-            },
-          }),
-        ),
-      );
+      try {
+        const results = await Promise.all(
+          updateCoreViewSortInputs.map((variables) =>
+            updateCoreViewSortMutation({
+              variables,
+              update: (_cache, { data }) => {
+                const updatedViewSort = data?.updateCoreViewSort;
+                if (!isDefined(updatedViewSort)) {
+                  return;
+                }
+
+                triggerViewSortOptimisticEffect({
+                  updatedViewSorts: [updatedViewSort],
+                });
+              },
+            }),
+          ),
+        );
+
+        return {
+          status: 'successful',
+          response: results,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewSort',
+            operationType: CrudOperationType.UPDATE,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
     },
-    [apolloClient, triggerViewSortOptimisticEffect],
+    [
+      triggerViewSortOptimisticEffect,
+      updateCoreViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const performViewSortAPIDelete = useCallback(
-    (viewSortsToDelete: Pick<CoreViewSortEssential, 'id' | 'viewId'>[]) => {
-      if (!viewSortsToDelete.length) return;
-      return Promise.all(
-        viewSortsToDelete.map((viewSort) =>
-          apolloClient.mutate({
-            mutation: DESTROY_CORE_VIEW_SORT,
-            variables: {
-              id: viewSort.id,
-            },
-            update: (_cache) => {
-              triggerViewSortOptimisticEffect({
-                deletedViewSorts: [viewSort],
-              });
-            },
-          }),
-        ),
-      );
+    async (
+      deleteCoreViewSortInputs: DeleteCoreViewSortMutationVariables[],
+    ): Promise<
+      MetadataRequestResult<
+        Awaited<ReturnType<typeof deleteCoreViewSortMutation>>[]
+      >
+    > => {
+      if (deleteCoreViewSortInputs.length === 0) {
+        return {
+          status: 'successful',
+          response: [],
+        };
+      }
+
+      try {
+        const results = await Promise.all(
+          deleteCoreViewSortInputs.map((variables) =>
+            deleteCoreViewSortMutation({
+              variables,
+              update: (_cache, { data }) => {
+                const deletedViewSort = data?.deleteCoreViewSort;
+
+                if (!isDefined(deletedViewSort)) {
+                  return;
+                }
+
+                triggerViewSortOptimisticEffect({
+                  deletedViewSorts: [
+                    {
+                      id: variables.input.id,
+                    },
+                  ],
+                });
+              },
+            }),
+          ),
+        );
+
+        return {
+          status: 'successful',
+          response: results,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewSort',
+            operationType: CrudOperationType.DELETE,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
     },
-    [apolloClient, triggerViewSortOptimisticEffect],
+    [
+      triggerViewSortOptimisticEffect,
+      deleteCoreViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
+  );
+
+  const performViewSortAPIDestroy = useCallback(
+    async (
+      destroyCoreViewSortInputs: DestroyCoreViewSortMutationVariables[],
+    ): Promise<
+      MetadataRequestResult<
+        Awaited<ReturnType<typeof destroyCoreViewSortMutation>>[]
+      >
+    > => {
+      if (destroyCoreViewSortInputs.length === 0) {
+        return {
+          status: 'successful',
+          response: [],
+        };
+      }
+
+      try {
+        const results = await Promise.all(
+          destroyCoreViewSortInputs.map((variables) =>
+            destroyCoreViewSortMutation({
+              variables,
+            }),
+          ),
+        );
+
+        return {
+          status: 'successful',
+          response: results,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewSort',
+            operationType: CrudOperationType.DESTROY,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
+    },
+    [destroyCoreViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {
     performViewSortAPICreate,
     performViewSortAPIUpdate,
     performViewSortAPIDelete,
+    performViewSortAPIDestroy,
   };
 };

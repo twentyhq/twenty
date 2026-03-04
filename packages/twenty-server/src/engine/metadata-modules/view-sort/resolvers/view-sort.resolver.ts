@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'class-validator';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -17,6 +17,8 @@ import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
+import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 
 @MetadataResolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -42,40 +44,45 @@ export class ViewSortResolver {
   @UseGuards(NoPermissionGuard)
   async getCoreViewSort(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById(id, workspace.id);
+    return this.viewSortService.findById(id, workspaceId);
   }
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(CreateViewSortPermissionGuard)
   async createCoreViewSort(
-    @Args('input') input: CreateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') createViewSortInput: CreateViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.create({
-      ...input,
-      workspaceId: workspace.id,
+    return this.viewSortService.createOne({
+      createViewSortInput,
+      workspaceId,
     });
   }
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(UpdateViewSortPermissionGuard)
   async updateCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @Args('input') input: UpdateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') updateViewSortInput: UpdateViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.update(id, workspace.id, input);
+    return this.viewSortService.updateOne({
+      updateViewSortInput,
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean)
   @UseGuards(DeleteViewSortPermissionGuard)
   async deleteCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') deleteViewSortInput: DeleteViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
+    const deletedViewSort = await this.viewSortService.deleteOne({
+      deleteViewSortInput,
+      workspaceId,
+    });
 
     return isDefined(deletedViewSort);
   }
@@ -83,9 +90,14 @@ export class ViewSortResolver {
   @Mutation(() => Boolean)
   @UseGuards(DestroyViewSortPermissionGuard)
   async destroyCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') destroyViewSortInput: DestroyViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.viewSortService.destroy(id, workspace.id);
+    const destroyedViewSort = await this.viewSortService.destroyOne({
+      destroyViewSortInput,
+      workspaceId,
+    });
+
+    return isDefined(destroyedViewSort);
   }
 }

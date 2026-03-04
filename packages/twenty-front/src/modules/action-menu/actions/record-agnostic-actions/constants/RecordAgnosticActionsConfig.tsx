@@ -3,9 +3,8 @@ import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ActionViewType, SidePanelPages } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
-import { SidePanelPages } from 'twenty-shared/types';
 import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {

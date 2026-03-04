@@ -1,9 +1,10 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
+import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
+import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { useStore } from 'jotai';
 
 export const useOpenFrontComponentInCommandMenu = () => {
   const store = useStore();
@@ -14,11 +15,16 @@ export const useOpenFrontComponentInCommandMenu = () => {
     pageTitle,
     pageIcon,
     resetNavigationStack = false,
+    recordContext,
   }: {
     frontComponentId: string;
     pageTitle: string;
     pageIcon: IconComponent;
     resetNavigationStack?: boolean;
+    recordContext?: {
+      recordId: string;
+      objectNameSingular: string;
+    };
   }) => {
     const pageComponentInstanceId = v4();
 
@@ -27,6 +33,13 @@ export const useOpenFrontComponentInCommandMenu = () => {
         instanceId: pageComponentInstanceId,
       }),
       frontComponentId,
+    );
+
+    store.set(
+      viewableFrontComponentRecordContextComponentState.atomFamily({
+        instanceId: pageComponentInstanceId,
+      }),
+      recordContext ?? null,
     );
 
     navigateCommandMenu({

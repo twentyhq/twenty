@@ -98,7 +98,7 @@ export const DeleteTwoFactorAuthentication = () => {
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
+        modalInstanceId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
         title={t`2FA Method Reset`}
         subtitle={
           isTwoFactorAuthenticationEnforced ? (
