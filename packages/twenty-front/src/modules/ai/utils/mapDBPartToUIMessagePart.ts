@@ -1,5 +1,8 @@
 import { type ReasoningUIPart, type ToolUIPart } from 'ai';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedFileUIPart,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
 import { type AgentMessagePart } from '~/generated-metadata/graphql';
 
 export const mapDBPartToUIMessagePart = (
@@ -23,8 +26,8 @@ export const mapDBPartToUIMessagePart = (
         mediaType: part.fileMediaType!,
         filename: part.fileFilename!,
         url: part.fileUrl!,
-        ...(part.fileId && { fileId: part.fileId }),
-      };
+        fileId: part.fileId!,
+      } as ExtendedFileUIPart;
     case 'source-url':
       return {
         type: 'source-url',

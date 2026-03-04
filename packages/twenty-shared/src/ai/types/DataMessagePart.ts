@@ -13,9 +13,9 @@ export type ExtendedFileUIPart = {
   fileId: string;
 };
 
-export const isExtendedFileUIPart = (
-  part: { type: string },
-): part is ExtendedFileUIPart => {
+export const isExtendedFileUIPart = (part: {
+  type: string;
+}): part is ExtendedFileUIPart => {
   return part.type === 'file';
 };
 

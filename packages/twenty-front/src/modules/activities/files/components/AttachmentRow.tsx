@@ -95,7 +95,7 @@ export const AttachmentRow = ({
     useState(originalFileName);
 
   const fileCategory = getFileCategoryFromExtension(
-    attachment.file?.[0]?.extension,
+    attachment.file[0].extension,
   );
 
   const fileUrl = attachment.file[0].url ?? '';
@@ -124,11 +124,11 @@ export const AttachmentRow = ({
       idToUpdate: attachment.id,
       updateOneRecordInput: {
         name: newFileName,
-        ...(isDefined(attachment.file?.[0]?.fileId)
+        ...(isDefined(attachment.file[0])
           ? {
               file: [
                 {
-                  fileId: attachment.file?.[0]?.fileId,
+                  fileId: attachment.file[0].fileId,
                   label: newFileName,
                 },
               ],

@@ -1,6 +1,5 @@
 import { type UIMessage } from 'ai';
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
 const CODE_INTERPRETER_MIME_TYPES = new Set([
   'text/csv',
@@ -47,11 +46,6 @@ export const extractCodeInterpreterFiles = (
         const mimeType = part.mediaType ?? '';
 
         if (CODE_INTERPRETER_MIME_TYPES.has(mimeType)) {
-          if (!isDefined(part.fileId)) {
-            newParts.push(part);
-            continue;
-          }
-
           filesForThisMessage.push({
             filename: part.filename ?? 'uploaded_file',
             fileId: part.fileId,
