@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
-@ObjectType()
+@ObjectType('WorkspaceMigration')
 export class WorkspaceMigrationDTO {
   @Field(() => String)
   applicationUniversalIdentifier: string;

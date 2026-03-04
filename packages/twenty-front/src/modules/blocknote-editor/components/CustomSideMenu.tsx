@@ -9,16 +9,17 @@ import {
   SideMenu,
   SideMenuController,
 } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CustomSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
 };
 
 const StyledDivToCreateGap = styled.div`
-  width: ${({ theme }) => theme.spacing(2)};
+  width: ${themeCssVariables.spacing[2]};
 `;
 
 export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {

@@ -1,13 +1,13 @@
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
-import { createClient } from 'graphql-sse';
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
+import { createClient } from 'graphql-sse';
 import * as path from 'path';
 import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
@@ -260,8 +260,126 @@ export class ApiService {
     }
   }
 
+  async findApplicationRegistrationByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+      oAuthClientId: string;
+    } | null>
+  > {
+    try {
+      const query = `
+        query FindApplicationRegistrationByUniversalIdentifier($universalIdentifier: String!) {
+          findApplicationRegistrationByUniversalIdentifier(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+            oAuthClientId
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data
+          .findApplicationRegistrationByUniversalIdentifier,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async createApplicationRegistration(input: {
+    name: string;
+    description?: string;
+    universalIdentifier: string;
+  }): Promise<
+    ApiResponse<{
+      applicationRegistration: {
+        id: string;
+        universalIdentifier: string;
+        oAuthClientId: string;
+      };
+      clientSecret: string;
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation CreateApplicationRegistration($input: CreateApplicationRegistrationInput!) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
+              id
+              universalIdentifier
+              oAuthClientId
+            }
+            clientSecret
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { input },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.createApplicationRegistration,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async createApplication(
     manifest: Manifest,
+    options?: { applicationRegistrationId?: string },
   ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
@@ -273,13 +391,19 @@ export class ApiService {
         }
       `;
 
+      const input: Record<string, string> = {
+        universalIdentifier: manifest.application.universalIdentifier,
+        name: manifest.application.displayName,
+        version: '0.0.1',
+        sourcePath: 'cli-sync',
+      };
+
+      if (options?.applicationRegistrationId) {
+        input.applicationRegistrationId = options.applicationRegistrationId;
+      }
+
       const variables = {
-        input: {
-          universalIdentifier: manifest.application.universalIdentifier,
-          name: manifest.application.displayName,
-          version: '0.0.1',
-          sourcePath: 'cli-sync',
-        },
+        input,
       };
 
       const response: AxiosResponse = await this.client.post(

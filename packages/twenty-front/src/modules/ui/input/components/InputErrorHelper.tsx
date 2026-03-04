@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputErrorHelper = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.xs};
   position: absolute;
-  margin-top: ${({ theme }) => theme.spacing(0.25)};
+  margin-top: 1px;
 `;
 
 export const InputErrorHelper = ({

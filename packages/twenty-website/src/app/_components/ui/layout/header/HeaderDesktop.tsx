@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconBook, IconChevronDown, IconRobotFace } from '@tabler/icons-react';
 
 import { ExternalArrow, GithubIcon } from '@/app/_components/ui/icons/SvgIcons';

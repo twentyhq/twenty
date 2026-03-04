@@ -144,7 +144,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "eslint-plugin-storybook": "^0.9.0",
+    "eslint-plugin-storybook": "^10.2.13",
     "eslint-plugin-unicorn": "^56.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "monaco-editor": "^0.51.0",

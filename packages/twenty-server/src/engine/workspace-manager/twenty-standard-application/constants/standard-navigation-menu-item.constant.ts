@@ -7,34 +7,34 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
     position: 0,
   },
-  allDashboards: {
-    universalIdentifier: '20202020-b002-4b02-8b02-c0aba11c0002',
+  allPeople: {
+    universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
     viewUniversalIdentifier:
-      STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
+      STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
     position: 1,
-  },
-  allNotes: {
-    universalIdentifier: '20202020-b003-4b03-8b03-c0aba11c0003',
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
-    position: 2,
   },
   allOpportunities: {
     universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
     viewUniversalIdentifier:
       STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier,
-    position: 3,
-  },
-  allPeople: {
-    universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
-    position: 4,
+    position: 2,
   },
   allTasks: {
     universalIdentifier: '20202020-b006-4b06-8b06-c0aba11c0006',
     viewUniversalIdentifier:
       STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
+    position: 3,
+  },
+  allNotes: {
+    universalIdentifier: '20202020-b003-4b03-8b03-c0aba11c0003',
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
+    position: 4,
+  },
+  allDashboards: {
+    universalIdentifier: '20202020-b002-4b02-8b02-c0aba11c0002',
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
     position: 5,
   },
   workflowsFolder: {
@@ -66,3 +66,18 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 2,
   },
 } as const;
+
+export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
+  Record<keyof typeof STANDARD_NAVIGATION_MENU_ITEMS, string>
+> = {
+  allCompanies: 'blue',
+  allPeople: 'blue',
+  allTasks: 'turquoise',
+  allNotes: 'turquoise',
+  allOpportunities: 'red',
+  workflowsFolder: 'orange',
+  allDashboards: 'gray',
+  workflowsFolderAllWorkflows: 'gray',
+  workflowsFolderAllWorkflowRuns: 'gray',
+  workflowsFolderAllWorkflowVersions: 'gray',
+};

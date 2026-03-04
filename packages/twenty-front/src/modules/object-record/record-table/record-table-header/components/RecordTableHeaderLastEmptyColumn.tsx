@@ -8,20 +8,21 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { cx } from '@linaria/core';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLastColumnHeader = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
 
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   border-left: none !important;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 
   cursor: pointer;
 

@@ -2,27 +2,28 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSortItemContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledAddButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type WorkflowFindRecordsSortsProps = {

@@ -96,7 +96,6 @@ export default defineConfig(({ command, mode }) => {
 
     plugins: [
       react({
-        jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
@@ -110,42 +109,30 @@ export default defineConfig(({ command, mode }) => {
       checker(checkers),
       {
         ...wyw({
-          include: [
-            '**/CurrencyDisplay.tsx',
-            '**/EllipsisDisplay.tsx',
-            '**/ContactLink.tsx',
-            '**/BooleanDisplay.tsx',
-            '**/LinksDisplay.tsx',
-            '**/RoundedLink.tsx',
-            '**/OverflowingTextWithTooltip.tsx',
-            '**/Chip.tsx',
-            '**/Tag.tsx',
-            '**/MultiSelectFieldDisplay.tsx',
-            '**/RatingInput.tsx',
-            '**/RecordTableCellContainer.tsx',
-            '**/RecordTableCellDisplayContainer.tsx',
-            '**/Avatar.tsx',
-            '**/RecordTableBodyDroppable.tsx',
-            '**/RecordTableCellBaseContainer.tsx',
-            '**/RecordTableCellTd.tsx',
-            '**/RecordTableCellStyleWrapper.tsx',
-            '**/RecordTableHeaderDragDropColumn.tsx',
-            '**/ActorDisplay.tsx',
-            '**/BooleanDisplay.tsx',
-            '**/CurrencyDisplay.tsx',
-            '**/TextDisplay.tsx',
-            '**/EllipsisDisplay.tsx',
-            '**/AvatarChip.tsx',
-            '**/URLDisplay.tsx',
-            '**/EmailsDisplay.tsx',
-            '**/PhonesDisplay.tsx',
-            '**/MultiSelectDisplay.tsx',
-            '**/RecordTableRowVirtualizedContainer.tsx',
-            '**/RecordTableVirtualizedBodyPlaceholder.tsx',
-            '**/RecordTableCellLoading.tsx',
+          include: ['**/*.{ts,tsx}'],
+          exclude: [
+            '**/generated-metadata/**',
+            '**/testing/mock-data/generated/**',
+            '**/*.test.{ts,tsx}',
+            '**/*.spec.{ts,tsx}',
+            '**/types/**',
+            '**/constants/**',
+            '**/states/**',
+            '**/selectors/**',
+            '**/guards/**',
+            '**/schemas/**',
+            '**/utils/**',
+            '**/contexts/**',
+            '**/hooks/**',
+            '**/enums/**',
+            '**/queries/**',
+            '**/mutations/**',
+            '**/fragments/**',
+            '**/graphql/**',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
         }),
         enforce: 'pre',
@@ -170,13 +157,12 @@ export default defineConfig(({ command, mode }) => {
       minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Set chunk size warning limit (in bytes) - warns at 1MB
-          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
           // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {
@@ -275,8 +261,6 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
-        // https://github.com/twentyhq/twenty/pull/10782/files
-        // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },

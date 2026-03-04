@@ -28,13 +28,14 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
+import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -45,6 +46,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly roleValidationService: RoleValidationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -153,7 +155,11 @@ export class WorkspaceInvitationService {
     return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
-  async createWorkspaceInvitation(email: string, workspace: WorkspaceEntity) {
+  async createWorkspaceInvitation(
+    email: string,
+    workspace: WorkspaceEntity,
+    roleId?: string,
+  ) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
       email.toLowerCase(),
@@ -185,7 +191,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.generateInvitationToken(workspace.id, email);
+    return this.generateInvitationToken(workspace.id, email, roleId);
   }
 
   async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
@@ -238,15 +244,20 @@ export class WorkspaceInvitationService {
 
     await this.appTokenRepository.delete(appToken.id);
 
-    return this.sendInvitations([appToken.context.email], workspace, sender);
+    return this.sendInvitations(
+      [appToken.context.email],
+      workspace,
+      sender,
+      appToken.context.roleId,
+    );
   }
 
   async sendInvitations(
     emails: string[],
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
-    usePersonalInvitation = true,
-  ): Promise<SendInvitationsOutput> {
+    roleId?: string,
+  ): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
         success: false,
@@ -255,50 +266,45 @@ export class WorkspaceInvitationService {
       };
     }
 
+    if (isDefined(roleId)) {
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        roleId,
+        workspace.id,
+      );
+    }
+
     await this.throttleInvitationSending(workspace.id, emails);
 
-    const invitationsPr = await Promise.allSettled(
+    const invitationResults = await Promise.allSettled(
       emails.map(async (email) => {
-        if (usePersonalInvitation) {
-          const appToken = await this.createWorkspaceInvitation(
-            email,
-            workspace,
+        const appToken = await this.createWorkspaceInvitation(
+          email,
+          workspace,
+          roleId,
+        );
+
+        if (!appToken.context?.email) {
+          throw new WorkspaceInvitationException(
+            'Invalid email',
+            WorkspaceInvitationExceptionCode.EMAIL_MISSING,
           );
-
-          if (!appToken.context?.email) {
-            throw new WorkspaceInvitationException(
-              'Invalid email',
-              WorkspaceInvitationExceptionCode.EMAIL_MISSING,
-            );
-          }
-
-          return {
-            isPersonalInvitation: true as const,
-            appToken,
-            email: appToken.context.email,
-          };
         }
 
-        return {
-          isPersonalInvitation: false as const,
-          email,
-        };
+        return { appToken, email: appToken.context.email };
       }),
     );
 
-    for (const invitation of invitationsPr) {
+    for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
         const link = this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
           pathname: getAppPath(AppPath.Invite, {
             workspaceInviteHash: workspace?.inviteHash,
           }),
-          searchParams: invitation.value.isPersonalInvitation
-            ? {
-                inviteToken: invitation.value.appToken.value,
-                email: invitation.value.email,
-              }
-            : {},
+          searchParams: {
+            inviteToken: invitation.value.appToken.value,
+            email: invitation.value.email,
+          },
         });
 
         if (!isDefined(sender.userEmail)) {
@@ -360,15 +366,9 @@ export class WorkspaceInvitationService {
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 
-    const result = invitationsPr.reduce<{
+    const result = invitationResults.reduce<{
       errors: string[];
-      result: ReturnType<
-        typeof this.workspaceInvitationService.createWorkspaceInvitation
-      >['status'] extends 'rejected'
-        ? never
-        : ReturnType<
-            typeof this.workspaceInvitationService.appTokenToWorkspaceInvitation
-          >;
+      result: ReturnType<typeof castAppTokenToWorkspaceInvitationUtil>[];
     }>(
       (acc, invitation) => {
         if (invitation.status === 'rejected') {
@@ -381,9 +381,7 @@ export class WorkspaceInvitationService {
           }
         } else {
           acc.result.push(
-            invitation.value.isPersonalInvitation
-              ? castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken)
-              : { email: invitation.value.email },
+            castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken),
           );
         }
 
@@ -398,7 +396,11 @@ export class WorkspaceInvitationService {
     };
   }
 
-  async generateInvitationToken(workspaceId: string, email: string) {
+  async generateInvitationToken(
+    workspaceId: string,
+    email: string,
+    roleId?: string,
+  ) {
     const expiresIn = this.twentyConfigService.get(
       'INVITATION_TOKEN_EXPIRES_IN',
     );
@@ -419,6 +421,7 @@ export class WorkspaceInvitationService {
       value: crypto.randomBytes(32).toString('hex'),
       context: {
         email,
+        ...(isDefined(roleId) ? { roleId } : {}),
       },
     });
 

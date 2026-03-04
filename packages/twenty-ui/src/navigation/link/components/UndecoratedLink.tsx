@@ -1,17 +1,11 @@
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
 import React from 'react';
-import { Link, type LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-type StyledLinkProps = LinkProps & {
-  fullWidth?: boolean;
-};
-
-const StyledUndecoratedLink = styled(
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  ({ fullWidth: _, ...props }: StyledLinkProps) => <Link {...props} />,
-)<StyledLinkProps>`
+// Linaria's styled(anonymousFunction) pattern strips the function body during
+// build, so we use the css tag and apply it directly on the Link component.
+const undecoratedLinkClass = css`
   text-decoration: none;
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 type UndecoratedLinkProps = {
@@ -30,13 +24,14 @@ export const UndecoratedLink = ({
   fullWidth = false,
 }: UndecoratedLinkProps) => {
   return (
-    <StyledUndecoratedLink
+    <Link
       to={to as string}
       replace={replace}
       onClick={onClick}
-      fullWidth={fullWidth}
+      className={undecoratedLinkClass}
+      style={fullWidth ? { width: '100%' } : undefined}
     >
       {children}
-    </StyledUndecoratedLink>
+    </Link>
   );
 };

@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 type StyledDropdownButtonProps = {
   isUnfolded?: boolean;
@@ -9,25 +10,29 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
   font-family: inherit;
   align-items: center;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ isActive, theme }) =>
-    isActive ? theme.color.blue : theme.font.color.secondary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
 
-  padding: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
 
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
   user-select: none;
 
-  background: ${({ theme, isUnfolded }) =>
-    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+  background: ${({ isUnfolded }) =>
+    isUnfolded
+      ? themeCssVariables.background.transparent.light
+      : themeCssVariables.background.primary};
 
   &:hover {
-    background: ${({ theme, isUnfolded }) =>
+    background: ${({ isUnfolded }) =>
       isUnfolded
-        ? theme.background.transparent.medium
-        : theme.background.transparent.light};
+        ? themeCssVariables.background.transparent.medium
+        : themeCssVariables.background.transparent.light};
   }
 `;

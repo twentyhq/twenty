@@ -3,8 +3,9 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type CommandMenuMultipleRecordsInfoProps = {
   commandMenuPageInstanceId: string;
@@ -13,7 +14,7 @@ type CommandMenuMultipleRecordsInfoProps = {
 export const CommandMenuMultipleRecordsInfo = ({
   commandMenuPageInstanceId,
 }: CommandMenuMultipleRecordsInfoProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
     instanceId: commandMenuPageInstanceId,

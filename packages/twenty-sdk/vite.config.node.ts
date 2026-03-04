@@ -23,7 +23,11 @@ export default defineConfig(() => {
       emptyOutDir: false,
       outDir: 'dist',
       lib: {
-        entry: ['src/sdk/index.ts', 'src/cli/cli.ts'],
+        entry: {
+          index: 'src/sdk/index.ts',
+          cli: 'src/cli/cli.ts',
+          operations: 'src/cli/public-operations/index.ts',
+        },
         name: 'twenty-sdk',
       },
       rollupOptions: {

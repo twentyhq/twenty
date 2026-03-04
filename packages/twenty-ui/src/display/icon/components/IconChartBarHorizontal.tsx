@@ -1,8 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+
+import { styled } from '@linaria/react';
 
 import { IconChartBar } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext } from '@ui/theme';
 
 const StyledRotatedIconWrapper = styled.div`
   display: inline-flex;
@@ -15,7 +17,7 @@ type IconChartBarHorizontalProps = Pick<
 >;
 
 export const IconChartBarHorizontal = (props: IconChartBarHorizontalProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const size = props.size ?? theme.icon.size.md;
   const stroke = props.stroke ?? theme.icon.stroke.sm;
 

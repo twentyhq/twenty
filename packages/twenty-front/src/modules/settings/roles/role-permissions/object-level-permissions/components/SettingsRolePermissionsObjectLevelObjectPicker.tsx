@@ -3,14 +3,15 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTypeSelectContainer = styled.div`
@@ -22,7 +23,7 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
   flex-wrap: wrap;
   width: 100%;
@@ -32,17 +33,17 @@ const StyledCardContainer = styled.div`
   cursor: pointer;
   display: flex;
   position: relative;
-  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+  width: calc(50% - ${themeCssVariables.spacing[1]});
 `;
 
 const StyledSearchContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
   input {
-    background: ${({ theme }) => theme.background.transparent.lighter};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
   }
 `;
 
@@ -51,7 +52,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }: {
   roleId: string;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const navigate = useNavigateSettings();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
