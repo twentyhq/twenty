@@ -10,7 +10,7 @@ export const HelloWorld = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'c48f8251-eed3-480e-9bfe-3e3437a7823e',
+  universalIdentifier: '26c17445-fbfb-4b34-99d6-f461e734ca97',
   name: 'hello-world-front-component',
   description: 'A sample front component',
   component: HelloWorld,

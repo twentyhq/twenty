@@ -564,6 +564,7 @@ const createPackageJson = async ({
     react: '^18.2.0',
     eslint: '^9.32.0',
     'typescript-eslint': '^8.50.0',
+    'twenty-sdk': createTwentyAppPackageJson.version,
   };
 
   if (includeExampleIntegrationTest) {
@@ -584,9 +585,6 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts,
-    dependencies: {
-      'twenty-sdk': createTwentyAppPackageJson.version,
-    },
     devDependencies,
   };
 

@@ -15,14 +15,12 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "twenty-sdk": "0.6.3"
-  },
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",
     "eslint": "^9.32.0",
     "react": "^18.2.0",
+    "twenty-sdk": "0.6.3",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.0",
     "vite-tsconfig-paths": "^4.2.1",

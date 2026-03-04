@@ -1,10 +1,10 @@
 import { type ExampleOptions } from '@/types/scaffolding-options';
-import { GENERATED_DIR } from 'twenty-shared/application';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
-import { join } from 'path';
 import createTwentyAppPackageJson from 'package.json';
+import { join } from 'path';
+import { GENERATED_DIR } from 'twenty-shared/application';
 
 jest.mock('fs-extra', () => {
   const actual = jest.requireActual('fs-extra');
@@ -101,7 +101,7 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe(
+    expect(packageJson.devDependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
     expect(packageJson.scripts['twenty']).toBe('twenty');
