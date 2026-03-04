@@ -254,7 +254,7 @@ export const WorkflowEditActionCode = ({
 
   const updateAction = useDebouncedCallback(
     (actionUpdate: Partial<WorkflowCodeAction>) => {
-      if (actionOptions.readonly === true) {
+      if (actionOptions.readonly === true || !isDefined(workflow)) {
         return;
       }
 
