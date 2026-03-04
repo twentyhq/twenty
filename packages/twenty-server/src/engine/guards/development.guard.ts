@@ -1,4 +1,8 @@
-import { type CanActivate, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
