@@ -3,7 +3,7 @@ import { SidePanelWorkflowSelectTriggerTypeContent } from '@/side-panel/pages/wo
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const CommandMenuWorkflowSelectTriggerType = () => {
+export const SidePanelWorkflowSelectTriggerType = () => {
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
   return (

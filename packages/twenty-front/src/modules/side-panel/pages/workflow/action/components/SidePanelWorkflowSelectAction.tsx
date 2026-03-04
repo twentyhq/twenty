@@ -23,7 +23,7 @@ export type WorkflowActionSelection = {
   defaultSettings?: Record<string, unknown>;
 };
 
-export const CommandMenuWorkflowSelectAction = ({
+export const SidePanelWorkflowSelectAction = ({
   onActionSelected,
 }: {
   onActionSelected: (selection: WorkflowActionSelection) => void;

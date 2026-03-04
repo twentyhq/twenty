@@ -5,7 +5,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { useNavigatePageLayoutCommandMenu } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -24,7 +24,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
   const { closeCommandMenu } = useCommandMenu();
   const setCommandMenuPage = useSetAtomState(sidePanelPageState);
 

@@ -22,7 +22,7 @@ const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
   value: source,
 }));
 
-export const AdvancedFilterCommandMenuValueFormCompositeFieldInput = ({
+export const AdvancedFilterSidePanelValueFormCompositeFieldInput = ({
   recordFilter,
   onChange,
   onClear,

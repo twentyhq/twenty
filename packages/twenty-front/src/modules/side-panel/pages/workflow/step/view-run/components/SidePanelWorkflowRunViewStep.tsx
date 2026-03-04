@@ -3,7 +3,7 @@ import { useSidePanelWorkflowRunIdOrThrow } from '@/side-panel/pages/workflow/st
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const CommandMenuWorkflowRunViewStep = () => {
+export const SidePanelWorkflowRunViewStep = () => {
   const workflowRunId = useSidePanelWorkflowRunIdOrThrow();
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider

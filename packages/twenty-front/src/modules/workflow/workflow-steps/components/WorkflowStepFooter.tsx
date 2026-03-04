@@ -1,5 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useCommandMenuWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
@@ -37,7 +37,7 @@ export const WorkflowStepFooter = ({
   const { t } = useLingui();
   const { duplicateStep } = useDuplicateStep();
   const { closeDropdown } = useCloseDropdown();
-  const workflowId = useCommandMenuWorkflowIdOrThrow();
+  const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
     openWorkflowEditStepTypeInCommandMenu,
     openWorkflowTriggerTypeInCommandMenu,

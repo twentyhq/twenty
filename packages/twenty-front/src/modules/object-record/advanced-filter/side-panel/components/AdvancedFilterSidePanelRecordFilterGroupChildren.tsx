@@ -1,4 +1,4 @@
-import { AdvancedFilterCommandMenuRecordFilterColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterColumn';
+import { AdvancedFilterSidePanelRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterColumn';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
@@ -23,13 +23,13 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type AdvancedFilterCommandMenuRecordFilterGroupChildrenProps = {
+type AdvancedFilterSidePanelRecordFilterGroupChildrenProps = {
   recordFilterGroupId: string;
 };
 
-export const AdvancedFilterCommandMenuRecordFilterGroupChildren = ({
+export const AdvancedFilterSidePanelRecordFilterGroupChildren = ({
   recordFilterGroupId,
-}: AdvancedFilterCommandMenuRecordFilterGroupChildrenProps) => {
+}: AdvancedFilterSidePanelRecordFilterGroupChildrenProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
   const { currentRecordFilterGroup, childRecordFilters } =
     useChildRecordFiltersAndRecordFilterGroups({
@@ -47,7 +47,7 @@ export const AdvancedFilterCommandMenuRecordFilterGroupChildren = ({
   return (
     <StyledContainer isGrayBackground={hasParentRecordFilterGroup}>
       {childRecordFilters.map((childRecordFilter, childRecordFilterIndex) => (
-        <AdvancedFilterCommandMenuRecordFilterColumn
+        <AdvancedFilterSidePanelRecordFilterColumn
           key={childRecordFilter.id}
           recordFilter={childRecordFilter}
           recordFilterIndex={childRecordFilterIndex}

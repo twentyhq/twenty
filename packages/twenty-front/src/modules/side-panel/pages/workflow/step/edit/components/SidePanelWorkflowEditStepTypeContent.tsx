@@ -1,8 +1,8 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import {
-  CommandMenuWorkflowSelectAction,
+  SidePanelWorkflowSelectAction,
   type WorkflowActionSelection,
-} from '@/side-panel/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+} from '@/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -77,6 +77,6 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
   };
 
   return (
-    <CommandMenuWorkflowSelectAction onActionSelected={handleUpdateStepType} />
+    <SidePanelWorkflowSelectAction onActionSelected={handleUpdateStepType} />
   );
 };

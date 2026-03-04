@@ -17,7 +17,7 @@ import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
-export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
+export const AdvancedFilterSidePanelCreateRootFilterButton = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;

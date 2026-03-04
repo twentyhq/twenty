@@ -1,6 +1,6 @@
-import { AdvancedFilterCommandMenuColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuColumn';
-import { AdvancedFilterCommandMenuLogicalOperatorCell } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell';
-import { AdvancedFilterCommandMenuRecordFilterGroupChildren } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterGroupChildren';
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
+import { AdvancedFilterSidePanelLogicalOperatorCell } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell';
+import { AdvancedFilterSidePanelRecordFilterGroupChildren } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterGroupChildren';
 import { AdvancedFilterRecordFilterGroupOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const AdvancedFilterCommandMenuRecordFilterGroupColumn = ({
+export const AdvancedFilterSidePanelRecordFilterGroupColumn = ({
   parentRecordFilterGroup,
   recordFilterGroup,
   recordFilterGroupIndex,
@@ -28,9 +28,9 @@ export const AdvancedFilterCommandMenuRecordFilterGroupColumn = ({
   const { readonly } = useContext(AdvancedFilterContext);
 
   return (
-    <AdvancedFilterCommandMenuColumn>
+    <AdvancedFilterSidePanelColumn>
       <StyledContainer>
-        <AdvancedFilterCommandMenuLogicalOperatorCell
+        <AdvancedFilterSidePanelLogicalOperatorCell
           index={recordFilterGroupIndex}
           recordFilterGroup={parentRecordFilterGroup}
         />
@@ -40,9 +40,9 @@ export const AdvancedFilterCommandMenuRecordFilterGroupColumn = ({
           />
         )}
       </StyledContainer>
-      <AdvancedFilterCommandMenuRecordFilterGroupChildren
+      <AdvancedFilterSidePanelRecordFilterGroupChildren
         recordFilterGroupId={recordFilterGroup.id}
       />
-    </AdvancedFilterCommandMenuColumn>
+    </AdvancedFilterSidePanelColumn>
   );
 };

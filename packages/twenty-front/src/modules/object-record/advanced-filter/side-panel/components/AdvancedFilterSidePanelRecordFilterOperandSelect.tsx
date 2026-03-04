@@ -9,13 +9,13 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type AdvancedFilterCommandMenuRecordFilterOperandSelectProps = {
+type AdvancedFilterSidePanelRecordFilterOperandSelectProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
+export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
   recordFilterId,
-}: AdvancedFilterCommandMenuRecordFilterOperandSelectProps) => {
+}: AdvancedFilterSidePanelRecordFilterOperandSelectProps) => {
   const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,

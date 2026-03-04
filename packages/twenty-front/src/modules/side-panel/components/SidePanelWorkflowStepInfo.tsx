@@ -39,7 +39,7 @@ export const SidePanelWorkflowStepInfo = ({
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
-  const commandMenuWorkflowStepId = useAtomComponentStateValue(
+  const sidePanelWorkflowStepId = useAtomComponentStateValue(
     sidePanelWorkflowStepIdComponentState,
     commandMenuPageInstanceId,
   );
@@ -71,13 +71,13 @@ export const SidePanelWorkflowStepInfo = ({
     id: undefined,
   };
 
-  const isTriggerStep = commandMenuWorkflowStepId === TRIGGER_STEP_ID;
+  const isTriggerStep = sidePanelWorkflowStepId === TRIGGER_STEP_ID;
 
   const stepDefinition =
-    isDefined(commandMenuWorkflowStepId) && isDefined(trigger)
+    isDefined(sidePanelWorkflowStepId) && isDefined(trigger)
       ? isTriggerStep || isDefined(steps)
         ? getStepDefinitionOrThrow({
-            stepId: commandMenuWorkflowStepId,
+            stepId: sidePanelWorkflowStepId,
             trigger,
             steps,
           })
@@ -109,7 +109,7 @@ export const SidePanelWorkflowStepInfo = ({
 
   if (
     !isDefined(workflowId) ||
-    !isDefined(commandMenuWorkflowStepId) ||
+    !isDefined(sidePanelWorkflowStepId) ||
     !isDefined(workflowWithCurrentVersion?.currentVersion) ||
     !isDefined(stepDefinition) ||
     !isDefined(stepDefinition.definition)

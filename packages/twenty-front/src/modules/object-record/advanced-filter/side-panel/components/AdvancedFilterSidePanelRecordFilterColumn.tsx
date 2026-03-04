@@ -1,9 +1,9 @@
-import { AdvancedFilterCommandMenuColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuColumn';
-import { AdvancedFilterCommandMenuFieldSelectDisabled } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuFieldSelectDisabled';
-import { AdvancedFilterCommandMenuLogicalOperatorCell } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell';
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
+import { AdvancedFilterSidePanelFieldSelectDisabled } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelFieldSelectDisabled';
+import { AdvancedFilterSidePanelLogicalOperatorCell } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell';
 
-import { AdvancedFilterCommandMenuRecordFilterOperandSelect } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect';
-import { AdvancedFilterCommandMenuValueFormInput } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuValueFormInput';
+import { AdvancedFilterSidePanelRecordFilterOperandSelect } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterOperandSelect';
+import { AdvancedFilterSidePanelValueFormInput } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormInput';
 import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -22,17 +22,17 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-type AdvancedFilterCommandMenuRecordFilterColumnProps = {
+type AdvancedFilterSidePanelRecordFilterColumnProps = {
   recordFilterGroup: RecordFilterGroup;
   recordFilter: RecordFilter;
   recordFilterIndex: number;
 };
 
-export const AdvancedFilterCommandMenuRecordFilterColumn = ({
+export const AdvancedFilterSidePanelRecordFilterColumn = ({
   recordFilterGroup,
   recordFilter,
   recordFilterIndex,
-}: AdvancedFilterCommandMenuRecordFilterColumnProps) => {
+}: AdvancedFilterSidePanelRecordFilterColumnProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
 
   return (
@@ -43,9 +43,9 @@ export const AdvancedFilterCommandMenuRecordFilterColumn = ({
         ),
       }}
     >
-      <AdvancedFilterCommandMenuColumn>
+      <AdvancedFilterSidePanelColumn>
         <StyledContainer>
-          <AdvancedFilterCommandMenuLogicalOperatorCell
+          <AdvancedFilterSidePanelLogicalOperatorCell
             index={recordFilterIndex}
             recordFilterGroup={recordFilterGroup}
           />
@@ -56,7 +56,7 @@ export const AdvancedFilterCommandMenuRecordFilterColumn = ({
           )}
         </StyledContainer>
         {readonly ? (
-          <AdvancedFilterCommandMenuFieldSelectDisabled
+          <AdvancedFilterSidePanelFieldSelectDisabled
             recordFilterId={recordFilter.id}
           />
         ) : (
@@ -64,13 +64,13 @@ export const AdvancedFilterCommandMenuRecordFilterColumn = ({
             recordFilterId={recordFilter.id}
           />
         )}
-        <AdvancedFilterCommandMenuRecordFilterOperandSelect
+        <AdvancedFilterSidePanelRecordFilterOperandSelect
           recordFilterId={recordFilter.id}
         />
-        <AdvancedFilterCommandMenuValueFormInput
+        <AdvancedFilterSidePanelValueFormInput
           recordFilterId={recordFilter.id}
         />
-      </AdvancedFilterCommandMenuColumn>
+      </AdvancedFilterSidePanelColumn>
     </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };

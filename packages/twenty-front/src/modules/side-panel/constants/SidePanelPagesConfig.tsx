@@ -6,24 +6,24 @@ import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/
 import { SidePanelMessageThreadPage } from '@/side-panel/pages/message-thread/components/SidePanelMessageThreadPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelNewSidebarItemPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemPage';
-import { CommandMenuPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutChartSettings';
-import { CommandMenuPageLayoutFieldsLayout } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout';
-import { CommandMenuPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings';
-import { CommandMenuPageLayoutGraphFilter } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutGraphFilter';
-import { CommandMenuPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutIframeSettings';
-import { CommandMenuPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutTabSettings';
-import { CommandMenuPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect';
+import { SidePanelPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutChartSettings';
+import { SidePanelPageLayoutFieldsLayout } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsLayout';
+import { SidePanelPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings';
+import { SidePanelPageLayoutGraphFilter } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutGraphFilter';
+import { SidePanelPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings';
+import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
+import { SidePanelPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
 import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
-import { CommandMenuUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/CommandMenuUpdateMultipleRecords';
+import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
-import { CommandMenuWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/CommandMenuWorkflowCreateStep';
-import { CommandMenuWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/CommandMenuWorkflowEditStep';
-import { CommandMenuWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepType';
-import { CommandMenuWorkflowRunViewStep } from '@/side-panel/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStep';
-import { CommandMenuWorkflowViewStep } from '@/side-panel/pages/workflow/step/view/components/CommandMenuWorkflowViewStep';
-import { CommandMenuWorkflowSelectTriggerType } from '@/side-panel/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
+import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
+import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
+import { SidePanelWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStepType';
+import { SidePanelWorkflowRunViewStep } from '@/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStep';
+import { SidePanelWorkflowViewStep } from '@/side-panel/pages/workflow/step/view/components/SidePanelWorkflowViewStep';
+import { SidePanelWorkflowSelectTriggerType } from '@/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerType';
 import { SidePanelPages } from 'twenty-shared/types';
 
 export const SIDE_PANEL_PAGES_CONFIG = new Map<
@@ -33,49 +33,49 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.Root, <CommandMenu />],
   [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
   [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
-  [SidePanelPages.UpdateRecords, <CommandMenuUpdateMultipleRecords />],
+  [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
   [SidePanelPages.ViewEmailThread, <SidePanelMessageThreadPage />],
   [SidePanelPages.ViewCalendarEvent, <SidePanelCalendarEventPage />],
   [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
   [
     SidePanelPages.WorkflowTriggerSelectType,
-    <CommandMenuWorkflowSelectTriggerType />,
+    <SidePanelWorkflowSelectTriggerType />,
   ],
-  [SidePanelPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],
-  [SidePanelPages.WorkflowStepEditType, <CommandMenuWorkflowEditStepType />],
-  [SidePanelPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
-  [SidePanelPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
-  [SidePanelPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
+  [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
+  [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
+  [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
+  [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
+  [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
   [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
   [SidePanelPages.AskAI, <SidePanelAskAIPage />],
   [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
   [
     SidePanelPages.PageLayoutWidgetTypeSelect,
-    <CommandMenuPageLayoutWidgetTypeSelect />,
+    <SidePanelPageLayoutWidgetTypeSelect />,
   ],
   [
     SidePanelPages.PageLayoutGraphTypeSelect,
-    <CommandMenuPageLayoutChartSettings />,
+    <SidePanelPageLayoutChartSettings />,
   ],
   [
     SidePanelPages.PageLayoutGraphFilter,
-    <CommandMenuPageLayoutGraphFilter />,
+    <SidePanelPageLayoutGraphFilter />,
   ],
   [
     SidePanelPages.PageLayoutIframeSettings,
-    <CommandMenuPageLayoutIframeSettings />,
+    <SidePanelPageLayoutIframeSettings />,
   ],
   [
     SidePanelPages.PageLayoutTabSettings,
-    <CommandMenuPageLayoutTabSettings />,
+    <SidePanelPageLayoutTabSettings />,
   ],
   [
     SidePanelPages.PageLayoutFieldsSettings,
-    <CommandMenuPageLayoutFieldsSettings />,
+    <SidePanelPageLayoutFieldsSettings />,
   ],
   [
     SidePanelPages.PageLayoutFieldsLayout,
-    <CommandMenuPageLayoutFieldsLayout />,
+    <SidePanelPageLayoutFieldsLayout />,
   ],
   [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
   [

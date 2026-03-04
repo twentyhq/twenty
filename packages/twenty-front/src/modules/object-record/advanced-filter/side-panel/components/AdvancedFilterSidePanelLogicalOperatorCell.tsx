@@ -26,15 +26,15 @@ const StyledContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-type AdvancedFilterCommandMenuLogicalOperatorCellProps = {
+type AdvancedFilterSidePanelLogicalOperatorCellProps = {
   index: number;
   recordFilterGroup: RecordFilterGroup;
 };
 
-export const AdvancedFilterCommandMenuLogicalOperatorCell = ({
+export const AdvancedFilterSidePanelLogicalOperatorCell = ({
   index,
   recordFilterGroup,
-}: AdvancedFilterCommandMenuLogicalOperatorCellProps) => {
+}: AdvancedFilterSidePanelLogicalOperatorCellProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
 
   return (

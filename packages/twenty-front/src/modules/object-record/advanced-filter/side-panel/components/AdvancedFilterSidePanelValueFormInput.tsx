@@ -1,5 +1,5 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { AdvancedFilterCommandMenuValueFormCompositeFieldInput } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuValueFormCompositeFieldInput';
+import { AdvancedFilterSidePanelValueFormCompositeFieldInput } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormCompositeFieldInput';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { shouldShowFilterTextInput } from '@/object-record/advanced-filter/utils/shouldShowFilterTextInput';
@@ -31,7 +31,7 @@ import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
-export const AdvancedFilterCommandMenuValueFormInput = ({
+export const AdvancedFilterSidePanelValueFormInput = ({
   recordFilterId,
 }: {
   recordFilterId: string;
@@ -152,7 +152,7 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
 
   if (isDefined(subFieldNameUsedInDropdown)) {
     return (
-      <AdvancedFilterCommandMenuValueFormCompositeFieldInput
+      <AdvancedFilterSidePanelValueFormCompositeFieldInput
         recordFilter={recordFilter}
         onChange={handleChange}
         onClear={handleClear}

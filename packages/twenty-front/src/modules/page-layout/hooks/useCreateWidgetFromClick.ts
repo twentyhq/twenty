@@ -1,4 +1,4 @@
-import { useNavigatePageLayoutCommandMenu } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
@@ -16,7 +16,7 @@ export const useCreateWidgetFromClick = () => {
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 

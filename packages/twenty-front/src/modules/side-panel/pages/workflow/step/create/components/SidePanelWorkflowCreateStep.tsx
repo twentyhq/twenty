@@ -3,7 +3,7 @@ import { SidePanelWorkflowCreateStepContent } from '@/side-panel/pages/workflow/
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const CommandMenuWorkflowCreateStep = () => {
+export const SidePanelWorkflowCreateStep = () => {
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
   return (

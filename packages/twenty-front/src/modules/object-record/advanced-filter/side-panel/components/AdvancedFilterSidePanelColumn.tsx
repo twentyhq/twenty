@@ -8,4 +8,4 @@ const StyledColumn = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const AdvancedFilterCommandMenuColumn = StyledColumn;
+export const AdvancedFilterSidePanelColumn = StyledColumn;

@@ -20,7 +20,7 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { type CommandMenuContextChipProps } from '@/command-menu/components/CommandMenuContextChip';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';

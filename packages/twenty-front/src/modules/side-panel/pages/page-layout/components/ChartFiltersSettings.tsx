@@ -8,7 +8,7 @@ import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/ty
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterSidePanelContainer';
+import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';

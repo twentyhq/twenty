@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AdvancedFilterCommandMenuCreateRootFilterButton } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton';
-import { AdvancedFilterCommandMenuRecordFilterColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterColumn';
-import { AdvancedFilterCommandMenuRecordFilterGroupColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterGroupColumn';
+import { AdvancedFilterSidePanelCreateRootFilterButton } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton';
+import { AdvancedFilterSidePanelRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterColumn';
+import { AdvancedFilterSidePanelRecordFilterGroupColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterGroupColumn';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -27,7 +27,7 @@ const StyledChildContainer = styled.div`
   width: 100%;
 `;
 
-export type AdvancedFilterCommandMenuContainerProps = {
+export type AdvancedFilterSidePanelContainerProps = {
   readonly?: boolean;
   onUpdate?: () => void;
   objectMetadataItem: ObjectMetadataItem;
@@ -35,13 +35,13 @@ export type AdvancedFilterCommandMenuContainerProps = {
   isWorkflowFindRecords?: boolean;
 };
 
-export const AdvancedFilterCommandMenuContainer = ({
+export const AdvancedFilterSidePanelContainer = ({
   readonly,
   onUpdate,
   objectMetadataItem,
   VariablePicker,
   isWorkflowFindRecords,
-}: AdvancedFilterCommandMenuContainerProps) => {
+}: AdvancedFilterSidePanelContainerProps) => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -69,14 +69,14 @@ export const AdvancedFilterCommandMenuContainer = ({
                 isRecordFilterGroupChildARecordFilterGroup(
                   recordFilterGroupChild,
                 ) ? (
-                  <AdvancedFilterCommandMenuRecordFilterGroupColumn
+                  <AdvancedFilterSidePanelRecordFilterGroupColumn
                     key={recordFilterGroupChild.id}
                     parentRecordFilterGroup={rootRecordFilterGroup}
                     recordFilterGroup={recordFilterGroupChild}
                     recordFilterGroupIndex={recordFilterGroupChildIndex}
                   />
                 ) : (
-                  <AdvancedFilterCommandMenuRecordFilterColumn
+                  <AdvancedFilterSidePanelRecordFilterColumn
                     key={recordFilterGroupChild.id}
                     recordFilterGroup={rootRecordFilterGroup}
                     recordFilter={recordFilterGroupChild}
@@ -92,7 +92,7 @@ export const AdvancedFilterCommandMenuContainer = ({
           )}
         </StyledContainer>
       ) : (
-        <AdvancedFilterCommandMenuCreateRootFilterButton
+        <AdvancedFilterSidePanelCreateRootFilterButton
           objectMetadataItem={objectMetadataItem}
         />
       )}

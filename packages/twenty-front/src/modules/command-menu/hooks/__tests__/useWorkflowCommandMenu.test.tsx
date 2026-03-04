@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { commandMenuWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
+import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
+import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -86,11 +86,11 @@ const renderHooks = () => {
         'mocked-uuid',
       );
       const commandMenuWorkflowId = useAtomComponentStateValue(
-        commandMenuWorkflowIdComponentState,
+        sidePanelWorkflowIdComponentState,
         'mocked-uuid',
       );
       const commandMenuWorkflowVersionId = useAtomComponentStateValue(
-        commandMenuWorkflowVersionIdComponentState,
+        sidePanelWorkflowVersionIdComponentState,
         'mocked-uuid',
       );
       const { getIcon } = useIcons();

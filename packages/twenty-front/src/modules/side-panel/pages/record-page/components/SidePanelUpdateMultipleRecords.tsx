@@ -9,7 +9,7 @@ const StyledSidePanelRecord = styled.div`
   height: 100%;
 `;
 
-export const CommandMenuUpdateMultipleRecords = () => {
+export const SidePanelUpdateMultipleRecords = () => {
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   )?.instanceId;

@@ -10,7 +10,7 @@ import {
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelNavigationItemActions } from '@/side-panel/pages/navigation-menu-item/command-menu-navigation-item-actions';
+import { SidePanelNavigationItemActions } from '@/side-panel/pages/navigation-menu-item/side-panel-navigation-item-actions';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 export type OrganizeActionsProps = {

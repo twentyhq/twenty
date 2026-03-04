@@ -1,8 +1,8 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
-import { commandMenuWorkflowRunIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
-import { commandMenuWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
-import { commandMenuWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
+import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
+import { sidePanelWorkflowRunIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowRunIdComponentState';
+import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
+import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunSidePanelTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunSidePanelTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -29,7 +29,7 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
@@ -50,7 +50,7 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
@@ -76,7 +76,7 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
@@ -84,7 +84,7 @@ export const useWorkflowCommandMenu = () => {
 
       if (isDefined(stepId)) {
         store.set(
-          commandMenuWorkflowStepIdComponentState.atomFamily({
+          sidePanelWorkflowStepIdComponentState.atomFamily({
             instanceId: pageId,
           }),
           stepId,
@@ -113,7 +113,7 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
@@ -146,13 +146,13 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
       );
       store.set(
-        commandMenuWorkflowVersionIdComponentState.atomFamily({
+        sidePanelWorkflowVersionIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowVersionId,
@@ -160,7 +160,7 @@ export const useWorkflowCommandMenu = () => {
 
       if (isDefined(stepId)) {
         store.set(
-          commandMenuWorkflowStepIdComponentState.atomFamily({
+          sidePanelWorkflowStepIdComponentState.atomFamily({
             instanceId: pageId,
           }),
           stepId,
@@ -203,19 +203,19 @@ export const useWorkflowCommandMenu = () => {
       const pageId = v4();
 
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
       );
       store.set(
-        commandMenuWorkflowRunIdComponentState.atomFamily({
+        sidePanelWorkflowRunIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowRunId,
       );
       store.set(
-        commandMenuWorkflowStepIdComponentState.atomFamily({
+        sidePanelWorkflowStepIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowSelectedNode,

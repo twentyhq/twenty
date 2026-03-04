@@ -1,4 +1,4 @@
-import { commandMenuWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -69,7 +69,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         },
       );
       store.set(
-        commandMenuWorkflowIdComponentState.atomFamily({
+        sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
         }),
         mockedWorkflow.id,
