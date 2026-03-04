@@ -35,11 +35,7 @@ export const ModalStatefulWrapper = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
 
-  const effectiveContainer = renderInDocumentBody
-    ? typeof document !== 'undefined'
-      ? document.body
-      : null
-    : container;
+  const effectiveContainer = renderInDocumentBody ? document.body : container;
   const isInContainer = isDefined(container) && !renderInDocumentBody;
 
   const isModalOpened = useAtomComponentStateValue(
@@ -51,7 +47,9 @@ export const ModalStatefulWrapper = ({
 
   const handleClose = () => {
     onClose?.();
-    if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalInstanceId);
+    if (shouldCloseModalOnClickOutsideOrEscape) {
+      closeModal(modalInstanceId);
+    }
   };
 
   return (

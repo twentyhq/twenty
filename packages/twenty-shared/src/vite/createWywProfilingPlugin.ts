@@ -14,7 +14,7 @@ export const createWywProfilingPlugin = (
   options?: WywProfilingOptions,
 ): Plugin => {
   const slowThresholdMs = options?.slowThresholdMs ?? 50;
-  const topSlowFilesCount = options?.topSlowFilesCount ?? 20;
+  const topSlowFilesCount = options?.topSlowFilesCount ?? 10;
   const progressIntervalFiles = options?.progressIntervalFiles ?? 50;
 
   let totalMs = 0;
@@ -50,9 +50,6 @@ export const createWywProfilingPlugin = (
 
         if (elapsed > slowThresholdMs) {
           slowFiles.push({ id, ms: elapsed });
-          console.log(
-            `[linaria/wyw] slow CSS pre-build: ${id.replace(process.cwd(), '')} ${elapsed.toFixed(0)}ms`,
-          );
         }
 
         if (fileCount % progressIntervalFiles === 0) {

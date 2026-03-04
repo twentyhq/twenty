@@ -10,7 +10,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <EmailVerificationSent email={email} isError={true} />
     </ModalContent>
   );

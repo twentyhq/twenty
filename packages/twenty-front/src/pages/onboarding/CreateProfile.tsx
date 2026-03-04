@@ -172,7 +172,7 @@ export const CreateProfile = () => {
   });
 
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title noMarginTop>
         <Trans>Create profile</Trans>
       </Title>

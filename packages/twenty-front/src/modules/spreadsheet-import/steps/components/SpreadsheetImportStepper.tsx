@@ -130,7 +130,7 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <ModalContent isVerticalCentered isHorizontalCentered>
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
           <CircularProgressBar
             size={80}
             barWidth={8}

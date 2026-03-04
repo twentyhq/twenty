@@ -47,7 +47,7 @@ export const BookCallDecision = () => {
   };
 
   return (
-    <ModalContent gap={8} isVerticalCentered isHorizontalCentered>
+    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
       <StyledTitleContainer>
         <Title noMarginTop>
           <Trans>Book your onboarding</Trans>

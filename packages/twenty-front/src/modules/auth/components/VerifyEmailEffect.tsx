@@ -126,7 +126,7 @@ export const VerifyEmailEffect = () => {
 
   if (isError) {
     return (
-      <ModalContent isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <EmailVerificationSent email={email} isError={true} />
       </ModalContent>
     );

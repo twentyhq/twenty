@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from '@ui/theme-constants';
 import { ThemeContext } from '@ui/theme';
 
@@ -39,8 +40,8 @@ const StyledModalDiv = styled.div<{
       : themeCssVariables.background.primary};
   color: ${themeCssVariables.font.color.primary};
   border-radius: ${({ isMobile, overlay, smallBorderRadius }) => {
-    if (isMobile || overlay === 'transparent') return '0';
-    if (smallBorderRadius) return themeCssVariables.spacing[1];
+    if (isMobile === true || overlay === 'transparent') return '0';
+    if (smallBorderRadius === true) return themeCssVariables.spacing[1];
     return themeCssVariables.border.radius.md;
   }};
   overflow-x: hidden;
@@ -51,7 +52,8 @@ const StyledModalDiv = styled.div<{
     gap !== undefined ? `var(--t-spacing-${gap})` : 'unset'};
 
   width: ${({ isMobile, size, narrowWidth }) => {
-    if (narrowWidth) return `calc(400px - ${themeCssVariables.spacing[32]})`;
+    if (narrowWidth === true)
+      return `calc(400px - ${themeCssVariables.spacing[32]})`;
     if (isMobile)
       return themeCssVariables.modal.size.fullscreen.width ?? 'auto';
     switch (size) {
@@ -83,7 +85,7 @@ const StyledModalDiv = styled.div<{
     }
   }};
   height: ${({ isMobile, size, autoHeight }) => {
-    if (autoHeight) return 'auto';
+    if (autoHeight === true) return 'auto';
     if (isMobile)
       return themeCssVariables.modal.size.fullscreen.height ?? 'auto';
     switch (size) {
@@ -172,7 +174,7 @@ export const Modal = ({
     </AnimatePresence>
   );
 
-  if (container) {
+  if (isDefined(container)) {
     return createPortal(content, container);
   }
 

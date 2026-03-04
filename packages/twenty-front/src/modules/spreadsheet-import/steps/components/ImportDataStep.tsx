@@ -43,7 +43,7 @@ export const ImportDataStep = ({
 
   return (
     <>
-      <ModalContent noPadding isVerticalCentered isHorizontalCentered>
+      <ModalContent noPadding isVerticallyCentered isHorizontallyCentered>
         <StyledHeader>{t`Importing Data ...`}</StyledHeader>
         <StyledDescription>{t`${formattedCreatedRecordsProgress} out of ${formattedRecordsToImportCount} records imported.`}</StyledDescription>
         <Loader />

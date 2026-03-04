@@ -116,7 +116,7 @@ export const SyncEmails = () => {
   });
 
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
         {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}

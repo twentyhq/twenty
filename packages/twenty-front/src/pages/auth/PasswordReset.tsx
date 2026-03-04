@@ -206,7 +206,7 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <ModalContent isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <StyledMainContainer>
           <AnimatedEaseIn>
             <Logo

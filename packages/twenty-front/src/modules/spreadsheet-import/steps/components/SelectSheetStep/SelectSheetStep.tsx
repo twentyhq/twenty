@@ -103,7 +103,7 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <ModalContent isVerticalCentered isHorizontalCentered gap={8}>
+      <ModalContent isVerticallyCentered isHorizontallyCentered gap={8}>
         <StyledHeading title={t`Select the sheet to use`} />
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>

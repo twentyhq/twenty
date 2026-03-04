@@ -3,7 +3,7 @@ import { themeCssVariables } from '@ui/theme-constants';
 
 import { type ModalOverlay } from '../types/ModalOverlay';
 
-export const ModalBackdrop = styled.div<{
+const StyledModalBackdrop = styled.div<{
   overlay: ModalOverlay;
   backdropZIndex: number;
   isInContainer?: boolean;
@@ -24,3 +24,5 @@ export const ModalBackdrop = styled.div<{
   z-index: ${({ backdropZIndex }) => backdropZIndex};
   user-select: none;
 `;
+
+export const ModalBackdrop = StyledModalBackdrop;

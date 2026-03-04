@@ -271,7 +271,7 @@ export const MatchColumnsStep = ({
 
   return (
     <>
-      <ModalContent noPadding isVerticalCentered>
+      <ModalContent noPadding isVerticallyCentered>
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}

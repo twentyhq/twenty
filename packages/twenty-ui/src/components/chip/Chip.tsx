@@ -155,7 +155,7 @@ const renderRightComponent = (
   const rendered =
     typeof rightComponent === 'function' ? rightComponent() : rightComponent;
 
-  if (rightComponentDivider) {
+  if (rightComponentDivider === true) {
     return (
       <>
         <StyledRightComponentDivider />

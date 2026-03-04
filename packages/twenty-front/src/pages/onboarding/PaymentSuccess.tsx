@@ -62,7 +62,7 @@ export const PaymentSuccess = () => {
   };
 
   return (
-    <ModalContent gap={8} isVerticalCentered isHorizontalCentered>
+    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
         <OnboardingModalCircularIcon Icon={IconCheck} />
       </AnimatedEaseIn>

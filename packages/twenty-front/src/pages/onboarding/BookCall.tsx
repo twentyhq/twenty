@@ -41,8 +41,8 @@ export const BookCall = () => {
       <ModalContent
         noPadding
         overflowHidden
-        isHorizontalCentered
-        isVerticalCentered
+        isHorizontallyCentered
+        isVerticallyCentered
       >
         <ScrollWrapper
           componentInstanceId="scroll-wrapper-modal-content"

@@ -14,7 +14,7 @@ export const ChooseYourPlan = () => {
   const { isPlansLoaded } = usePlans();
   const billing = useAtomStateValue(billingState);
   return (
-    <ModalContent isVerticalCentered>
+    <ModalContent isVerticallyCentered>
       {isDefined(billing) && isPlansLoaded ? (
         <ChooseYourPlanContent billing={billing} />
       ) : (

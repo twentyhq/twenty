@@ -169,7 +169,7 @@ export const InviteTeam = () => {
   });
 
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title>
         <Trans>Invite your team</Trans>
       </Title>

@@ -152,7 +152,7 @@ export const CreateWorkspace = () => {
   };
 
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
         <>
           <Logo

@@ -9,7 +9,7 @@ const RenderWithModalContent = (
   args: React.ComponentProps<typeof EmailVerificationSent>,
 ) => {
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <EmailVerificationSent email={args.email} isError={args.isError} />
     </ModalContent>
   );
@@ -21,7 +21,7 @@ const meta: Meta<typeof EmailVerificationSent> = {
   decorators: [ComponentDecorator, SnackBarDecorator],
   parameters: {
     codeSection: {
-      docs: 'This component should always be wrapped with ModalContent in the app.\n\nCorrect usage:\n```tsx\n<ModalContent isVerticalCentered isHorizontalCentered>\n  <EmailVerificationSent email={email} />\n</ModalContent>\n```\n',
+      docs: 'This component should always be wrapped with ModalContent in the app.\n\nCorrect usage:\n```tsx\n<ModalContent isVerticallyCentered isHorizontallyCentered>\n  <EmailVerificationSent email={email} />\n</ModalContent>\n```\n',
     },
   },
   render: RenderWithModalContent,

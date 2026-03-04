@@ -3,25 +3,25 @@ import React from 'react';
 import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledContent = styled.div<{
-  isVerticalCentered?: boolean;
-  isHorizontalCentered?: boolean;
+  isVerticallyCentered?: boolean;
+  isHorizontallyCentered?: boolean;
   noPadding?: boolean;
   overflowHidden?: boolean;
   gap?: number;
   contentPadding?: number;
 }>`
-  align-items: ${({ isVerticalCentered }) =>
-    isVerticalCentered ? 'center' : 'stretch'};
+  align-items: ${({ isVerticallyCentered }) =>
+    isVerticallyCentered ? 'center' : 'stretch'};
   display: flex;
   flex: 1 1 0%;
   flex-direction: column;
   gap: ${({ gap }) =>
     gap !== undefined ? `var(--t-spacing-${gap})` : 'unset'};
-  justify-content: ${({ isHorizontalCentered }) =>
-    isHorizontalCentered ? 'center' : 'flex-start'};
+  justify-content: ${({ isHorizontallyCentered }) =>
+    isHorizontallyCentered ? 'center' : 'flex-start'};
   overflow: ${({ overflowHidden }) => (overflowHidden ? 'hidden' : 'visible')};
   padding: ${({ noPadding, contentPadding }) => {
-    if (noPadding) return '0';
+    if (noPadding === true) return '0';
     if (contentPadding !== undefined)
       return `var(--t-spacing-${contentPadding})`;
     return themeCssVariables.spacing[10];
@@ -29,8 +29,8 @@ const StyledContent = styled.div<{
 `;
 
 export type ModalContentProps = React.PropsWithChildren & {
-  isVerticalCentered?: boolean;
-  isHorizontalCentered?: boolean;
+  isVerticallyCentered?: boolean;
+  isHorizontallyCentered?: boolean;
   noPadding?: boolean;
   overflowHidden?: boolean;
   gap?: number;
@@ -39,16 +39,16 @@ export type ModalContentProps = React.PropsWithChildren & {
 
 export const ModalContent = ({
   children,
-  isVerticalCentered,
-  isHorizontalCentered,
+  isVerticallyCentered,
+  isHorizontallyCentered,
   noPadding,
   overflowHidden,
   gap,
   contentPadding,
 }: ModalContentProps) => (
   <StyledContent
-    isVerticalCentered={isVerticalCentered}
-    isHorizontalCentered={isHorizontalCentered}
+    isVerticallyCentered={isVerticallyCentered}
+    isHorizontallyCentered={isHorizontallyCentered}
     noPadding={noPadding}
     overflowHidden={overflowHidden}
     gap={gap}

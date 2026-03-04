@@ -61,7 +61,7 @@ const StandardContent = ({
   onClickOnLogo: () => void;
 }) => {
   return (
-    <ModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
         <Logo
           secondaryLogo={workspacePublicData?.logo}
@@ -205,7 +205,7 @@ export const SignInUp = () => {
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
     return (
-      <ModalContent isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <EmailVerificationSent email={searchParams.get('email')} />
       </ModalContent>
     );

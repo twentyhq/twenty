@@ -50,8 +50,8 @@ export const Default: Story = {
     padding: 'none',
     overlay: 'dark',
   },
-  render: (args) => (
-    <Modal {...args}>
+  render: ({ isOpen, size, padding, overlay }) => (
+    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
       <ModalHeader>
         <H2Title
           title="Edit workspace"
@@ -82,8 +82,24 @@ export const Confirmation: Story = {
     autoHeight: true,
     gap: 2,
   },
-  render: (args) => (
-    <Modal {...args}>
+  render: ({
+    isOpen,
+    padding,
+    overlay,
+    smallBorderRadius,
+    narrowWidth,
+    autoHeight,
+    gap,
+  }) => (
+    <Modal
+      isOpen={isOpen}
+      padding={padding}
+      overlay={overlay}
+      smallBorderRadius={smallBorderRadius}
+      narrowWidth={narrowWidth}
+      autoHeight={autoHeight}
+      gap={gap}
+    >
       <StyledCenteredTitle>
         <H1Title title="Delete record?" fontColor={H1TitleFontColor.Primary} />
       </StyledCenteredTitle>
@@ -113,8 +129,8 @@ export const Small: Story = {
     padding: 'none',
     overlay: 'dark',
   },
-  render: (args) => (
-    <Modal {...args}>
+  render: ({ isOpen, size, padding, overlay }) => (
+    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
       <ModalHeader>
         <H2Title title="Archive item" />
       </ModalHeader>
@@ -136,8 +152,8 @@ export const ExtraLarge: Story = {
     padding: 'none',
     overlay: 'dark',
   },
-  render: (args) => (
-    <Modal {...args}>
+  render: ({ isOpen, size, padding, overlay }) => (
+    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
       <ModalHeader>
         <H2Title
           title="Import contacts"
@@ -165,8 +181,8 @@ export const Closed: Story = {
     padding: 'medium',
     overlay: 'dark',
   },
-  render: (args) => (
-    <Modal {...args}>
+  render: ({ isOpen, size, padding, overlay }) => (
+    <Modal isOpen={isOpen} size={size} padding={padding} overlay={overlay}>
       <ModalContent>This should not be visible.</ModalContent>
     </Modal>
   ),

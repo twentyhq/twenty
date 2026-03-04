@@ -18,7 +18,7 @@ const StyledHeader = styled.div<{
   padding: ${({ noPadding, paddingHorizontal }) => {
     if (paddingHorizontal !== undefined)
       return `0 var(--t-spacing-${paddingHorizontal})`;
-    if (noPadding) return '0';
+    if (noPadding === true) return '0';
     return themeCssVariables.spacing[5];
   }};
   background-color: ${({ backgroundColor }) => backgroundColor ?? 'unset'};
@@ -40,6 +40,7 @@ export type ModalHeaderProps = React.PropsWithChildren & {
   hasBorderBottom?: boolean;
   paddingHorizontal?: number;
   backgroundColor?: string;
+  className?: string;
 };
 
 export const ModalHeader = ({
@@ -49,6 +50,7 @@ export const ModalHeader = ({
   hasBorderBottom,
   paddingHorizontal,
   backgroundColor,
+  className,
 }: ModalHeaderProps) => (
   <StyledHeader
     noPadding={noPadding}
@@ -56,6 +58,7 @@ export const ModalHeader = ({
     hasBorderBottom={hasBorderBottom}
     paddingHorizontal={paddingHorizontal}
     backgroundColor={backgroundColor}
+    className={className}
   >
     {children}
   </StyledHeader>
