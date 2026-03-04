@@ -806,11 +806,6 @@ msgstr "\"{trimmedName}\" seçeneğe ekle"
 msgid "Add a {objectLabelSingular}"
 msgstr "Bir {objectLabelSingular} ekle"
 
-#. js-lingui-id: 7W8nJr
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Group"
-msgstr ""
-
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -825,6 +820,12 @@ msgstr "Bir düğüm ekle"
 #. js-lingui-id: nGv1DN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
+msgstr ""
+
+#. js-lingui-id: r8W+9y
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -4680,6 +4681,11 @@ msgstr "Buraya sürükleyip bırakın"
 msgid "Drag to add to navbar"
 msgstr ""
 
+#. js-lingui-id: VIbDgE
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Drop fields here"
+msgstr ""
+
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -6501,9 +6507,9 @@ msgstr "Gösterge Grafiği"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Genel"
