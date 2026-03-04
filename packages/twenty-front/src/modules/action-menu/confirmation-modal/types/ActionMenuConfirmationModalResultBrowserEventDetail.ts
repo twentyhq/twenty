@@ -1,6 +1,6 @@
 export type ActionMenuConfirmationModalResult = 'confirm' | 'cancel';
 
 export type ActionMenuConfirmationModalResultBrowserEventDetail = {
-  requesterId: string;
+  frontComponentId: string;
   result: ActionMenuConfirmationModalResult;
 };

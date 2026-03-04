@@ -11,7 +11,7 @@ const ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
   'action-menu-confirmation-modal-result';
 
 type ActionMenuConfirmationModalResultBrowserEventDetail = {
-  requesterId: string;
+  frontComponentId: string;
   result: ActionConfirmationModalResult;
 };
 
@@ -73,7 +73,7 @@ export const FrontComponentWorkerEffect = ({
       const actionMenuConfirmationModalResultBrowserEventDetail = event.detail;
 
       if (
-        actionMenuConfirmationModalResultBrowserEventDetail.requesterId !==
+        actionMenuConfirmationModalResultBrowserEventDetail.frontComponentId !==
         frontComponentId
       ) {
         return;

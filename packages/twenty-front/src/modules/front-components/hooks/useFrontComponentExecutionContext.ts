@@ -1,7 +1,7 @@
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
-  type FrontComponentExecutionContext,
-  type FrontComponentHostCommunicationApi,
+    type FrontComponentExecutionContext,
+    type FrontComponentHostCommunicationApi,
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
@@ -74,7 +74,7 @@ export const useFrontComponentExecutionContext = ({
   const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
       openConfirmationModal({
-        requesterId: frontComponentId,
+        frontComponentId,
         title,
         subtitle,
         confirmButtonText,

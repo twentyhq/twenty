@@ -33,7 +33,7 @@ export const useActionMenuConfirmationModal = () => {
         isActionMenuConfirmationModalOpened
       ) {
         throw new Error(
-          'Action menu confirmation modal is already active for another requester',
+          'Action menu confirmation modal is already active for another front component',
         );
       }
 

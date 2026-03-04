@@ -1,9 +1,10 @@
-import { type ReactNode, useCallback, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
-import { useListenToActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/hooks/useListenToActionMenuConfirmationModalResultBrowserEvent';
+import { ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalResultBrowserEventName';
+import { type ActionMenuConfirmationModalResultBrowserEventDetail } from '@/action-menu/confirmation-modal/types/ActionMenuConfirmationModalResultBrowserEventDetail';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
@@ -40,37 +41,54 @@ export const ActionConfirmationModal = ({
     closeSidePanelOnShowPageOptionsActionExecution,
     closeSidePanelOnCommandMenuListActionExecution,
   });
-  const requesterId = actionConfig
+  const frontComponentId = actionConfig
     ? `${actionMenuComponentInstanceId}:${actionMenuContext.actionMenuType}:${actionMenuContext.displayType}:${actionConfig.key}`
     : null;
 
-  const handleResult = useCallback(
-    async ({ result }: { result: 'confirm' | 'cancel' }) => {
-      if (result === 'confirm') {
-        await onConfirmClick();
-        closeActionMenu();
-      }
-    },
-    [onConfirmClick, closeActionMenu],
-  );
-
-  useListenToActionMenuConfirmationModalResultBrowserEvent({
-    onActionMenuConfirmationModalResultBrowserEvent: handleResult,
-    requesterId,
-  });
-
-  if (!actionConfig || requesterId === null) {
+  if (!actionConfig || frontComponentId === null) {
     return null;
   }
 
   const handleClick = () => {
-    openConfirmationModal({
-      requesterId,
-      title,
-      subtitle,
-      confirmButtonText,
-      confirmButtonAccent,
-    });
+    const handler = async (event: Event) => {
+      const detail = (
+        event as CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>
+      ).detail;
+
+      if (detail.frontComponentId !== frontComponentId) {
+        return;
+      }
+
+      window.removeEventListener(
+        ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+        handler,
+      );
+
+      if (detail.result === 'confirm') {
+        await onConfirmClick();
+        closeActionMenu();
+      }
+    };
+
+    window.addEventListener(
+      ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+      handler,
+    );
+
+    try {
+      openConfirmationModal({
+        frontComponentId,
+        title,
+        subtitle,
+        confirmButtonText,
+        confirmButtonAccent,
+      });
+    } catch {
+      window.removeEventListener(
+        ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+        handler,
+      );
+    }
   };
 
   return <ActionDisplay onClick={handleClick} />;
