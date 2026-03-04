@@ -100,7 +100,7 @@ msgid "A required configuration is missing."
 msgstr ""
 
 #. js-lingui-id: FVCXUT
-#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
 msgstr ""
 
@@ -1853,6 +1853,16 @@ msgstr ""
 msgid "Invalid file ID."
 msgstr ""
 
+#. js-lingui-id: +ECOke
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
+msgstr ""
+
+#. js-lingui-id: kFbvma
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
+msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
+msgstr ""
+
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 #: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
@@ -1864,6 +1874,26 @@ msgstr ""
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: +GVjEm
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires an array"
+msgstr ""
+
+#. js-lingui-id: 4eM03h
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
+msgstr ""
+
+#. js-lingui-id: Np9Fvw
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: exactly one operator per field is required"
+msgstr ""
+
+#. js-lingui-id: gdJXPD
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: filter value must be an object"
 msgstr ""
 
 #. js-lingui-id: rFH0az
@@ -2128,6 +2158,11 @@ msgstr ""
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
 msgstr ""
 
+#. js-lingui-id: XOA98j
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
+msgid "Invalid value for \"is\" operator"
+msgstr ""
+
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
@@ -2144,11 +2179,13 @@ msgid "Invalid value for currency."
 msgstr ""
 
 #. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
 msgstr ""
 
 #. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 msgstr ""
@@ -2189,6 +2226,7 @@ msgid "Invalid value for multi-select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
 msgstr ""
@@ -2214,11 +2252,13 @@ msgid "Invalid value for select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
