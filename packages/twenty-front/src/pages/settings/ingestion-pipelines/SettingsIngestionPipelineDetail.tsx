@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -6,6 +6,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -19,15 +20,15 @@ import { useIngestionPipelineLogs } from '@/settings/ingestion-pipeline/hooks/us
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
 const StyledDangerZone = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  border-top: 1px solid ${({ theme }) => theme.border.color.danger};
+  border-top: 1px solid ${themeCssVariables.border.color.danger};
+  padding-top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledButtonRow = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsIngestionPipelineDetail = () => {

@@ -34,12 +34,12 @@ const StyledEmptyValue = styled.div`
 `;
 
 const StyledBeforeValue = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   text-decoration: line-through;
 `;
 
 const StyledArrow = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
 `;
 

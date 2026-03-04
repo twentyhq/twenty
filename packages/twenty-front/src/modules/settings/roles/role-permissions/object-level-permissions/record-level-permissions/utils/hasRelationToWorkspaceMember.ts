@@ -1,8 +1,7 @@
 /* @license Enterprise */
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const hasRelationToWorkspaceMember = (

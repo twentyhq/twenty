@@ -38,11 +38,6 @@ export const StyledSettingsCardTextContainer = styled.div`
   min-width: 0;
 `;
 
-export const StyledSettingsCardTextContainer = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
 export const StyledSettingsCardDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};

@@ -25,7 +25,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  type CreateCoreViewFilterMutationVariables,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -208,18 +211,20 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         });
 
         const createViewFilterInputs = viewFiltersToCreate.map(
-          (viewFilter) => ({
-            input: {
-              id: viewFilter.id,
-              fieldMetadataId: viewFilter.fieldMetadataId,
-              viewId: newViewId,
-              value: viewFilter.value,
-              operand: viewFilter.operand,
-              viewFilterGroupId: viewFilter.viewFilterGroupId,
-              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-              subFieldName: viewFilter.subFieldName ?? null,
-            },
-          }),
+          (viewFilter) =>
+            ({
+              input: {
+                id: viewFilter.id,
+                fieldMetadataId: viewFilter.fieldMetadataId,
+                viewId: newViewId,
+                value: viewFilter.value,
+                operand: viewFilter.operand,
+                viewFilterGroupId: viewFilter.viewFilterGroupId ?? null,
+                positionInViewFilterGroup:
+                  viewFilter.positionInViewFilterGroup ?? null,
+                subFieldName: viewFilter.subFieldName ?? null,
+              },
+            }) as CreateCoreViewFilterMutationVariables,
         );
 
         const filterResult = await performViewFilterAPICreate(

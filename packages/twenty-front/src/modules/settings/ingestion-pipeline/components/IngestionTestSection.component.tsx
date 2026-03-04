@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIngestionPipelineTest } from '@/settings/ingestion-pipeline/hooks/useIngestionPipelineTest';
 
@@ -14,72 +15,72 @@ type IngestionTestSectionProps = {
 const StyledTextarea = styled.textarea`
   width: 100%;
   min-height: 120px;
-  padding: ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  background: ${({ theme }) => theme.background.primary};
-  color: ${({ theme }) => theme.font.color.primary};
+  padding: ${themeCssVariables.spacing[3]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${themeCssVariables.background.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-family: monospace;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   resize: vertical;
   box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${themeCssVariables.color.blue};
   }
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
+    color: ${themeCssVariables.font.color.light};
   }
 `;
 
 const StyledButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledResultSummary = styled.div`
-  padding: ${({ theme }) => theme.spacing(3)};
-  background: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  padding: ${themeCssVariables.spacing[3]};
+  background: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledPreviewBlock = styled.pre`
-  padding: ${({ theme }) => theme.spacing(3)};
-  background: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  padding: ${themeCssVariables.spacing[3]};
+  background: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.primary};
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
-  margin: ${({ theme }) => theme.spacing(1)} 0;
+  margin: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledErrorItem = styled.div`
-  padding: ${({ theme }) => theme.spacing(2)};
-  background: ${({ theme }) => theme.background.danger};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.color.red};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[2]};
+  background: ${themeCssVariables.background.danger};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.color.red};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledResultContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledParseError = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type TestResult = {
@@ -112,7 +113,9 @@ export const IngestionTestSection = ({
 
       parsed = Array.isArray(value) ? value : [value];
     } catch {
-      setParseError(t`Invalid JSON. Please enter a valid JSON array or object.`);
+      setParseError(
+        t`Invalid JSON. Please enter a valid JSON array or object.`,
+      );
 
       return;
     }

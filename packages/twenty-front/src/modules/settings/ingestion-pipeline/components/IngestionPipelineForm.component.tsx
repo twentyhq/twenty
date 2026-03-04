@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from 'twenty-ui/layout';
@@ -28,60 +29,66 @@ type IngestionPipelineFormProps = {
 const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledRow = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledModeButton = styled.button<{ isActive: boolean }>`
   flex: 1;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
   border: 1px solid
-    ${({ theme, isActive }) =>
-      isActive ? theme.color.blue : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.color.blue10 : theme.background.primary};
+    ${({ isActive }) =>
+      isActive
+        ? themeCssVariables.color.blue
+        : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  background: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.color.blue10
+      : themeCssVariables.background.primary};
   cursor: pointer;
   text-align: center;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ theme, isActive }) =>
-    isActive ? theme.color.blue : theme.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.primary};
   transition: all 0.15s ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${themeCssVariables.color.blue};
   }
 `;
 
 const StyledModeDescription = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: normal;
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledWebhookUrl = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  background: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
+  background: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   font-family: monospace;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   word-break: break-all;
 `;
 
 const StyledButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const IngestionPipelineForm = ({
@@ -93,9 +100,7 @@ export const IngestionPipelineForm = ({
   const isEditing = !!pipeline;
 
   const [name, setName] = useState(pipeline?.name ?? '');
-  const [description, setDescription] = useState(
-    pipeline?.description ?? '',
-  );
+  const [description, setDescription] = useState(pipeline?.description ?? '');
   const [mode, setMode] = useState<'push' | 'pull'>(
     (pipeline?.mode as 'push' | 'pull') ?? 'push',
   );

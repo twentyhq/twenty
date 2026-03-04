@@ -28439,6 +28439,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"apollo3-cache-persist@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "apollo3-cache-persist@npm:0.15.0"
+  peerDependencies:
+    "@apollo/client": ^3.7.17
+  checksum: 10c0/6470fcdf218ac0ee60cfeb08f9e65ff79a69746b9b40ec1ca60a171bce38cc12cfb5a32122e3e8420a789854d64adeea19ca450e7ffab122ec79b875f84350eb
+  languageName: node
+  linkType: hard
+
 "app-root-path@npm:^3.1.0":
   version: 3.1.0
   resolution: "app-root-path@npm:3.1.0"
@@ -57667,6 +57676,7 @@ __metadata:
     ai: "npm:6.0.97"
     apollo-link-rest: "npm:^0.9.0"
     apollo-upload-client: "npm:^17.0.0"
+    apollo3-cache-persist: "npm:^0.15.0"
     buffer: "npm:^6.0.3"
     cron-parser: "npm:5.1.1"
     date-fns: "npm:^2.30.0"
@@ -58015,7 +58025,7 @@ __metadata:
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
-    "@lingui/core": "npm:^5.1.2"
+    "@lingui/core": "npm:^5.6.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"

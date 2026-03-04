@@ -4,12 +4,14 @@ import { Select } from '@/ui/input/components/Select';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockHour8 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 const StyledTableRow = styled(TableRow)`
@@ -21,48 +23,48 @@ const StyledPermissionCell = styled(TableCell)`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPermissionContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPermissionLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledOverrideInfo = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSelectCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconWrapper = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue3};
-  border: 1px solid ${({ theme }) => theme.color.blue7};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.color.blue3};
+  border: 1px solid ${themeCssVariables.color.blue7};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
   justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.color.blue};
+  color: ${themeCssVariables.color.blue};
   display: flex;
   justify-content: center;
 `;
@@ -80,7 +82,7 @@ export const SettingsRolePermissionsObjectLevelEditWindowRow = ({
   isEditable,
   settingsDraftRoleObjectPermissions,
 }: SettingsRolePermissionsObjectLevelEditWindowRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const editWindowOptions: SelectOption<number | null>[] = [
     { value: null, label: t`No limit` },
@@ -108,7 +110,7 @@ export const SettingsRolePermissionsObjectLevelEditWindowRow = ({
   const effectiveValue = isDefined(
     settingsDraftRoleObjectPermissions?.editWindowMinutes,
   )
-    ? settingsDraftRoleObjectPermissions.editWindowMinutes
+    ? settingsDraftRoleObjectPermissions?.editWindowMinutes
     : roleDefault;
 
   const isInherited = !isDefined(

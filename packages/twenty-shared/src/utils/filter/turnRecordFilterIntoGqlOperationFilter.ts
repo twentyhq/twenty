@@ -97,10 +97,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   if (shouldComputeEmptinessFilter) {
     const emptinessFilter = getEmptyRecordGqlOperationFilter({
       operand: recordFilter.operand,
-      correspondingField: {
-        ...correspondingFieldMetadataItem,
-        relationType: correspondingFieldMetadataItem.relation?.type,
-      },
+      correspondingField: correspondingFieldMetadataItem,
       recordFilter: recordFilter,
     });
 

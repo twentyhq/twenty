@@ -10,6 +10,10 @@ import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToView
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type CreateCoreViewFilterMutationVariables,
+  type UpdateCoreViewFilterMutationVariables,
+} from '~/generated-metadata/graphql';
 
 export const useSaveRecordFiltersToViewFilters = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -55,31 +59,39 @@ export const useSaveRecordFiltersToViewFilters = () => {
       newViewFilters,
     );
 
-    const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
-      input: {
-        id: viewFilter.id,
-        fieldMetadataId: viewFilter.fieldMetadataId,
-        viewId: currentView.id,
-        value: viewFilter.value,
-        operand: viewFilter.operand,
-        viewFilterGroupId: viewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-        subFieldName: viewFilter.subFieldName ?? null,
-      },
-    }));
+    const createViewFilterInputs = viewFiltersToCreate.map(
+      (viewFilter) =>
+        ({
+          input: {
+            id: viewFilter.id,
+            fieldMetadataId: viewFilter.fieldMetadataId,
+            viewId: currentView.id,
+            value: viewFilter.value,
+            operand: viewFilter.operand,
+            viewFilterGroupId: viewFilter.viewFilterGroupId ?? null,
+            positionInViewFilterGroup:
+              viewFilter.positionInViewFilterGroup ?? null,
+            subFieldName: viewFilter.subFieldName ?? null,
+          },
+        }) as CreateCoreViewFilterMutationVariables,
+    );
 
-    const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
-      input: {
-        id: viewFilter.id,
-        update: {
-          value: viewFilter.value,
-          operand: viewFilter.operand,
-          positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-          viewFilterGroupId: viewFilter.viewFilterGroupId,
-          subFieldName: viewFilter.subFieldName ?? null,
-        },
-      },
-    }));
+    const updateViewFilterInputs = viewFiltersToUpdate.map(
+      (viewFilter) =>
+        ({
+          input: {
+            id: viewFilter.id,
+            update: {
+              value: viewFilter.value,
+              operand: viewFilter.operand,
+              positionInViewFilterGroup:
+                viewFilter.positionInViewFilterGroup ?? null,
+              viewFilterGroupId: viewFilter.viewFilterGroupId ?? null,
+              subFieldName: viewFilter.subFieldName ?? null,
+            },
+          },
+        }) as UpdateCoreViewFilterMutationVariables,
+    );
 
     const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
       input: {

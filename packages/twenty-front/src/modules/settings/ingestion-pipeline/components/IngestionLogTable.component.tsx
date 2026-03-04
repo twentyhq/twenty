@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type IngestionLog } from '@/settings/ingestion-pipeline/types/ingestion-pipeline.types';
 
@@ -10,46 +11,46 @@ type IngestionLogTableProps = {
 };
 
 const StyledTable = styled.table`
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
 `;
 
 const StyledTh = styled.th`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[2]};
   text-align: left;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledTd = styled.td`
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledClickableRow = styled.tr`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledPayloadRow = styled.tr`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${themeCssVariables.background.secondary};
 `;
 
 const StyledPayloadCell = styled.td`
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledPayloadPre = styled.pre`
   margin: 0;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
+  color: ${themeCssVariables.font.color.secondary};
   white-space: pre-wrap;
   word-break: break-all;
   max-height: 300px;
@@ -57,43 +58,43 @@ const StyledPayloadPre = styled.pre`
 `;
 
 const StyledPayloadLabel = styled.div`
-  font-size: ${({ theme }) => theme.font.size.xs};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledStatusBadge = styled.span<{ status: string }>`
-  padding: ${({ theme }) => `${theme.spacing(0.5)} ${theme.spacing(1)}`};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  background: ${({ theme, status }) => {
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  background: ${({ status }) => {
     switch (status) {
       case 'completed':
-        return theme.color.green10;
+        return themeCssVariables.color.green10;
       case 'failed':
-        return theme.color.red10;
+        return themeCssVariables.color.red10;
       case 'partial':
-        return theme.color.orange10;
+        return themeCssVariables.color.orange10;
       case 'running':
-        return theme.color.blue10;
+        return themeCssVariables.color.blue10;
       default:
-        return theme.background.tertiary;
+        return themeCssVariables.background.tertiary;
     }
   }};
-  color: ${({ theme, status }) => {
+  color: ${({ status }) => {
     switch (status) {
       case 'completed':
-        return theme.color.green;
+        return themeCssVariables.color.green;
       case 'failed':
-        return theme.color.red;
+        return themeCssVariables.color.red;
       case 'partial':
-        return theme.color.orange;
+        return themeCssVariables.color.orange;
       case 'running':
-        return theme.color.blue;
+        return themeCssVariables.color.blue;
       default:
-        return theme.font.color.tertiary;
+        return themeCssVariables.font.color.tertiary;
     }
   }};
 `;
@@ -198,9 +199,7 @@ export const IngestionLogTable = ({ logs }: IngestionLogTableProps) => {
                   )}
                   {log.errors && log.errors.length > 0 && (
                     <>
-                      <StyledPayloadLabel
-                        style={{ marginTop: '8px' }}
-                      >
+                      <StyledPayloadLabel style={{ marginTop: '8px' }}>
                         <Trans>Errors</Trans>
                       </StyledPayloadLabel>
                       <StyledPayloadPre>

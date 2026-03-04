@@ -1,14 +1,23 @@
-import { ApolloProvider as ApolloProviderBase } from '@apollo/client';
+import {
+  ApolloProvider as ApolloProviderBase,
+  InMemoryCache,
+} from '@apollo/client';
 import { useMemo } from 'react';
 
 import { useApolloClientCachePersist } from '@/apollo/hooks/useApolloClientCachePersist';
-import {
-  useApolloFactory,
-  createMetadataCache,
-} from '@/apollo/hooks/useApolloFactory';
+import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import { createCaptchaRefreshLink } from '@/apollo/utils/captchaRefreshLink';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
+const createMetadataCache = () =>
+  new InMemoryCache({
+    typePolicies: {
+      RemoteTable: {
+        keyFields: ['name'],
+      },
+    },
+  });
 
 export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();

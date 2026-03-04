@@ -16,6 +16,8 @@ export const MOCK_OBJECT_PERMISSION_1_REVOKES_ALL: ObjectPermission = {
   canUpdateObjectRecords: false,
   canSoftDeleteObjectRecords: false,
   canDestroyObjectRecords: false,
+  showInSidebar: false,
+  editWindowMinutes: null,
 };
 
 export const MOCK_OBJECT_PERMISSION_2_GRANTS_ALL: ObjectPermission = {
@@ -24,6 +26,8 @@ export const MOCK_OBJECT_PERMISSION_2_GRANTS_ALL: ObjectPermission = {
   canUpdateObjectRecords: true,
   canSoftDeleteObjectRecords: true,
   canDestroyObjectRecords: true,
+  showInSidebar: true,
+  editWindowMinutes: null,
 };
 
 export const MOCK_OBJECT_PERMISSION_3_NULL_ALL: ObjectPermission = {
@@ -32,6 +36,8 @@ export const MOCK_OBJECT_PERMISSION_3_NULL_ALL: ObjectPermission = {
   canUpdateObjectRecords: null,
   canSoftDeleteObjectRecords: null,
   canDestroyObjectRecords: null,
+  showInSidebar: null,
+  editWindowMinutes: null,
 };
 
 export const BASE_FIELD_PERMISSION: Omit<FieldPermission, 'roleId'> = {

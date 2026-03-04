@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -6,56 +6,59 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useIngestionPipelines } from '@/settings/ingestion-pipeline/hooks/useIngestionPipelines';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
 const StyledTable = styled.table`
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
 `;
 
 const StyledTh = styled.th`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[2]};
   text-align: left;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledTd = styled.td`
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  font-size: ${({ theme }) => theme.font.size.md};
+  padding: ${themeCssVariables.spacing[2]};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  font-size: ${themeCssVariables.font.size.md};
   cursor: pointer;
 `;
 
 const StyledModeTag = styled.span<{ mode: string }>`
-  background: ${({ theme, mode }) =>
+  background: ${({ mode }) =>
     mode === 'push'
-      ? theme.color.blue10
-      : theme.color.green10};
-  color: ${({ theme, mode }) =>
+      ? themeCssVariables.color.blue10
+      : themeCssVariables.color.green10};
+  color: ${({ mode }) =>
     mode === 'push'
-      ? theme.color.blue
-      : theme.color.green};
-  padding: ${({ theme }) => `${theme.spacing(0.5)} ${theme.spacing(1)}`};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+      ? themeCssVariables.color.blue
+      : themeCssVariables.color.green};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
   text-transform: uppercase;
 `;
 
 const StyledStatusDot = styled.span<{ isEnabled: boolean }>`
-  display: inline-block;
-  width: 8px;
-  height: 8px;
+  background: ${({ isEnabled }) =>
+    isEnabled
+      ? themeCssVariables.color.green
+      : themeCssVariables.font.color.light};
   border-radius: 50%;
-  background: ${({ theme, isEnabled }) =>
-    isEnabled ? theme.color.green : theme.font.color.light};
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  display: inline-block;
+  height: 8px;
+  margin-right: ${themeCssVariables.spacing[1]};
+  width: 8px;
 `;
 
 export const SettingsIngestionPipelines = () => {
@@ -95,8 +98,7 @@ export const SettingsIngestionPipelines = () => {
           ) : pipelines.length === 0 ? (
             <div>
               <Trans>
-                No pipelines configured yet. Create one to start ingesting
-                data.
+                No pipelines configured yet. Create one to start ingesting data.
               </Trans>
             </div>
           ) : (
@@ -123,10 +125,9 @@ export const SettingsIngestionPipelines = () => {
                     key={pipeline.id}
                     onClick={() =>
                       navigate(
-                        getSettingsPath(
-                          SettingsPath.IngestionPipelineDetail,
-                          { pipelineId: pipeline.id },
-                        ),
+                        getSettingsPath(SettingsPath.IngestionPipelineDetail, {
+                          pipelineId: pipeline.id,
+                        }),
                       )
                     }
                   >

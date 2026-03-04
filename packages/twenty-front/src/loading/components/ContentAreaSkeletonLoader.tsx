@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { BORDER_COMMON, MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { styled } from '@linaria/react';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -15,9 +15,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${BORDER_COMMON.radius.md};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   overflow: auto;
   width: 100%;

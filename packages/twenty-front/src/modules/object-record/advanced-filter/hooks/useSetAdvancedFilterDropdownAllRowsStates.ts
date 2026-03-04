@@ -6,6 +6,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback } from 'react';
@@ -57,7 +58,10 @@ export const useSetAdvancedFilterDropdownStates = () => {
         subFieldNameUsedInDropdownComponentState.atomFamily({
           instanceId,
         }),
-        recordFilter.subFieldName,
+        recordFilter.subFieldName as
+          | CompositeFieldSubFieldName
+          | null
+          | undefined,
       );
     };
 

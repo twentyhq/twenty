@@ -1,9 +1,10 @@
 import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
 import { useExportableRelationFields } from '@/object-record/record-index/export/hooks/useExportableRelationFields';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import styled from '@emotion/styled';
+import { ModalHeader } from 'twenty-ui/layout';
+import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import {
@@ -14,6 +15,7 @@ import {
 } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ExportRelationFieldConfigModalProps = {
   modalId: string;
@@ -22,16 +24,26 @@ type ExportRelationFieldConfigModalProps = {
   onExport: (config: ExportConfig) => void;
 };
 
-const StyledModalContent = styled(Modal.Content)`
-  padding: ${({ theme }) => theme.spacing(4)};
-  gap: ${({ theme }) => theme.spacing(1)};
-  overflow-y: auto;
+const StyledModalContent = styled.div`
+  display: flex;
+  flex: 1 1 0%;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
   max-height: 60vh;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledFooter = styled(Modal.Footer)`
+const StyledFooter = styled.div`
   justify-content: flex-end;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 60px;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledRelationSection = styled.div`
@@ -42,36 +54,36 @@ const StyledRelationSection = styled.div`
 const StyledRelationHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => `${theme.spacing(1.5)} ${theme.spacing(2)}`};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]};
   cursor: pointer;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledRelationLabel = styled.span`
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledSubFieldCount = styled.span`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledSubFieldList = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(6)};
+  padding-left: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledDescription = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) =>
-    `${theme.spacing(0)} ${theme.spacing(4)} ${theme.spacing(2)}`};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 type RelationSelectionState = Record<string, Set<string>>;
@@ -179,19 +191,18 @@ export const ExportRelationFieldConfigModal = ({
   );
 
   return (
-    <Modal
-      modalId={modalId}
+    <ModalStatefulWrapper
+      modalInstanceId={modalId}
       size="medium"
       padding="none"
       isClosable={true}
-      ignoreContainer
     >
-      <Modal.Header>
+      <ModalHeader>
         <H1Title
           title={t`Export with Related Fields`}
           fontColor={H1TitleFontColor.Primary}
         />
-      </Modal.Header>
+      </ModalHeader>
       <StyledDescription>
         {t`Uncheck any related fields you don't need in the export.`}
       </StyledDescription>
@@ -221,9 +232,7 @@ export const ExportRelationFieldConfigModal = ({
                   }}
                   onChange={(e) => e.stopPropagation()}
                 />
-                <StyledRelationLabel>
-                  {relation.fieldLabel}
-                </StyledRelationLabel>
+                <StyledRelationLabel>{relation.fieldLabel}</StyledRelationLabel>
                 <StyledSubFieldCount>
                   {noneSelected
                     ? t`excluded`
@@ -267,6 +276,6 @@ export const ExportRelationFieldConfigModal = ({
           onClick={handleExport}
         />
       </StyledFooter>
-    </Modal>
+    </ModalStatefulWrapper>
   );
 };

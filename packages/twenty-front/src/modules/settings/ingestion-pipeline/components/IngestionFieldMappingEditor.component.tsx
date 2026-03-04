@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconPlus, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -35,13 +36,13 @@ type LocalMapping = {
 const StyledTable = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRow = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldCell = styled.div`
@@ -49,37 +50,37 @@ const StyledFieldCell = styled.div`
 `;
 
 const StyledArrow = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.lg};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDeleteButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   align-items: center;
 
   &:hover {
-    color: ${({ theme }) => theme.color.red};
+    color: ${themeCssVariables.color.red};
   }
 `;
 
 const StyledHeader = styled(StyledRow)`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButtonRow = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 let tempIdCounter = 0;
@@ -248,9 +249,7 @@ export const IngestionFieldMappingEditor = ({
               fullWidth
             />
           </StyledFieldCell>
-          <StyledDeleteButton
-            onClick={() => removeNewMapping(mapping.tempId)}
-          >
+          <StyledDeleteButton onClick={() => removeNewMapping(mapping.tempId)}>
             <IconTrash size={16} />
           </StyledDeleteButton>
         </StyledRow>
