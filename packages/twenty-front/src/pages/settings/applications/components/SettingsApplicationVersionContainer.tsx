@@ -10,6 +10,7 @@ import {
   type Application,
   useUpgradeApplicationMutation,
 } from '~/generated-metadata/graphql';
+import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 export const SettingsApplicationVersionContainer = ({
   application,
@@ -29,7 +30,7 @@ export const SettingsApplicationVersionContainer = ({
   const hasUpdate =
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
-    latestAvailableVersion !== currentVersion;
+    isNewerSemver(latestAvailableVersion, currentVersion);
 
   const [upgradeApplication] = useUpgradeApplicationMutation();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();

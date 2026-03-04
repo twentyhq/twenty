@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { MARKETPLACE_CATALOG_SYNC_CRON_PATTERN } from 'src/engine/core-modules/application/crons/constants/marketplace-catalog-sync-cron-pattern.constant';
-import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/services/marketplace-catalog-sync.service';
+import { MARKETPLACE_CATALOG_SYNC_CRON_PATTERN } from 'src/engine/core-modules/marketplace/crons/constants/marketplace-catalog-sync-cron-pattern.constant';
+import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/marketplace/services/marketplace-catalog-sync.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

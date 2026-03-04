@@ -18,6 +18,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
+import { type MarketplaceDisplayData } from 'src/engine/core-modules/marketplace/types/marketplace-display-data.type';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -99,6 +100,9 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
 
+  // Represents ownership (who can edit), not visibility scoping.
+  // Marketplace registrations are readable by all workspaces but owned by the
+  // admin workspace when no developer has explicitly claimed them.
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -141,7 +145,7 @@ export class ApplicationRegistrationEntity {
   isFeatured: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  marketplaceDisplayData: Record<string, unknown> | null;
+  marketplaceDisplayData: MarketplaceDisplayData | null;
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

@@ -171,6 +171,7 @@ export class ApplicationSyncService {
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
       applicationRegistrationId,
+      workspaceId,
     });
   }
 

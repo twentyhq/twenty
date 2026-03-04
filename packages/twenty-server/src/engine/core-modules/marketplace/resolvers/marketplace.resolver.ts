@@ -3,10 +3,10 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { AppUpgradeService } from 'src/engine/core-modules/application/services/app-upgrade.service';
-import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/services/marketplace-catalog-sync.service';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/marketplace/dtos/marketplace-app.dto';
+import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/marketplace/services/marketplace-catalog-sync.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -38,8 +38,28 @@ export class MarketplaceResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const registration =
-      await this.marketplaceCatalogSyncService.findOrCreateRegistration({
+      await this.marketplaceCatalogSyncService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
+      );
+
+    return this.applicationInstallService.installApplication({
+      appRegistrationId: registration.id,
+      version,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
+  async installNpmApp(
+    @Args('packageName') packageName: string,
+    @Args('version', { type: () => String, nullable: true })
+    version: string | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    const registration =
+      await this.marketplaceCatalogSyncService.findOrCreateNpmRegistration({
+        packageName,
         workspaceId: workspace.id,
       });
 

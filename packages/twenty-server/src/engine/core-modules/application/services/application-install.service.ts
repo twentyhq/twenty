@@ -12,10 +12,6 @@ import {
   ApplicationRegistrationEntity,
   AppRegistrationSourceType,
 } from 'src/engine/core-modules/application-registration/application-registration.entity';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   AppPackageResolverService,
@@ -156,17 +152,15 @@ export class ApplicationInstallService {
       const relativePath = relative(extractedDir, filePath);
       const fileFolder = this.resolveFileFolder(relativePath);
       const content = await fs.readFile(filePath);
-      const storagePath = join(
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder,
-      );
 
-      await this.fileStorageService.writeFileLegacy({
-        file: content,
-        name: relativePath,
-        folder: storagePath,
+      await this.fileStorageService.writeFile({
+        sourceFile: content,
         mimeType: undefined,
+        fileFolder,
+        applicationUniversalIdentifier,
+        workspaceId,
+        resourcePath: relativePath,
+        settings: { isTemporaryFile: false, toDelete: false },
       });
     }
   }
@@ -243,20 +237,5 @@ export class ApplicationInstallService {
     }
 
     return hash;
-  }
-
-  validateSourceChannel(
-    appRegistration: ApplicationRegistrationEntity,
-    requestedChannel: 'npm' | 'tarball',
-  ): void {
-    if (
-      appRegistration.sourceType !== AppRegistrationSourceType.LOCAL &&
-      appRegistration.sourceType !== requestedChannel
-    ) {
-      throw new ApplicationException(
-        `This app is registered as ${appRegistration.sourceType}. Cannot use ${requestedChannel} channel.`,
-        ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH,
-      );
-    }
   }
 }

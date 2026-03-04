@@ -37,8 +37,12 @@ export class AppUpgradeService {
 
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
 
+    if (!appRegistration.sourcePackage) {
+      return null;
+    }
+
     try {
-      const encodedPackage = encodeURIComponent(appRegistration.sourcePackage!);
+      const encodedPackage = encodeURIComponent(appRegistration.sourcePackage);
 
       const response = await fetch(`${registryUrl}/${encodedPackage}/latest`, {
         headers: { 'User-Agent': 'Twenty-AppUpgrade' },
@@ -53,8 +57,16 @@ export class AppUpgradeService {
         return null;
       }
 
-      const metadata = (await response.json()) as { version: string };
+      const metadata = (await response.json()) as Record<string, unknown>;
       const latestVersion = metadata.version;
+
+      if (typeof latestVersion !== 'string') {
+        this.logger.warn(
+          `Unexpected response shape from registry for ${appRegistration.sourcePackage}`,
+        );
+
+        return null;
+      }
 
       await this.appRegistrationRepository.update(appRegistration.id, {
         latestAvailableVersion: latestVersion,

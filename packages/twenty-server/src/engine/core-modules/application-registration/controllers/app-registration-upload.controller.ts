@@ -3,7 +3,6 @@ import {
   Controller,
   HttpCode,
   Post,
-  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
@@ -17,12 +16,15 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception-filter';
-import { AppTarballUploadService } from 'src/engine/core-modules/application-registration/services/app-tarball-upload.service';
+import {
+  AppTarballUploadService,
+  MAX_TARBALL_UPLOAD_SIZE_BYTES,
+} from 'src/engine/core-modules/application-registration/services/app-tarball-upload.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-
-const MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
 type TarballUploadBody = {
   tarball: string;
@@ -42,17 +44,8 @@ export class AppRegistrationUploadController {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   async uploadTarball(
     @Body() body: TarballUploadBody,
-    @Req() req: Request & { workspace?: { id: string } },
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    const workspaceId = req.workspace?.id;
-
-    if (!isDefined(workspaceId)) {
-      throw new ApplicationException(
-        'Workspace context required',
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
     const tarballBase64 = body.tarball;
 
     if (!isDefined(tarballBase64)) {
@@ -64,9 +57,9 @@ export class AppRegistrationUploadController {
 
     const tarballBuffer = Buffer.from(tarballBase64, 'base64');
 
-    if (tarballBuffer.length > MAX_UPLOAD_SIZE_BYTES) {
+    if (tarballBuffer.length > MAX_TARBALL_UPLOAD_SIZE_BYTES) {
       throw new ApplicationException(
-        `Tarball exceeds maximum size of ${MAX_UPLOAD_SIZE_BYTES} bytes`,
+        `Tarball exceeds maximum size of ${MAX_TARBALL_UPLOAD_SIZE_BYTES} bytes`,
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }

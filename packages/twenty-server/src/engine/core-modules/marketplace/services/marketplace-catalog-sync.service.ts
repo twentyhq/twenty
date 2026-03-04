@@ -9,14 +9,19 @@ import {
   ApplicationRegistrationEntity,
   AppRegistrationSourceType,
 } from 'src/engine/core-modules/application-registration/application-registration.entity';
-import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/constants/marketplace-catalog-index.constant';
-import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/crons/marketplace-catalog-sync.cron.job';
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
-import { getAdminWorkspaceId } from 'src/engine/core-modules/application/utils/get-admin-workspace-id.util';
+import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/marketplace/constants/marketplace-catalog-index.constant';
+import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/marketplace/crons/marketplace-catalog-sync.cron.job';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/marketplace/dtos/marketplace-app.dto';
+import { MarketplaceService } from 'src/engine/core-modules/marketplace/services/marketplace.service';
+import { type MarketplaceDisplayData } from 'src/engine/core-modules/marketplace/types/marketplace-display-data.type';
+import { getAdminWorkspaceId } from 'src/engine/core-modules/marketplace/utils/get-admin-workspace-id.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MarketplaceService } from 'src/engine/core-modules/application/services/marketplace.service';
 
 @Injectable()
 export class MarketplaceCatalogSyncService {
@@ -70,48 +75,44 @@ export class MarketplaceCatalogSyncService {
     );
   }
 
-  async findOrCreateRegistration(params: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const isUuid =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        params.universalIdentifier,
-      );
+  async findRegistrationByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.appRegistrationRepository.findOne({
+      where: { universalIdentifier },
+    });
 
-    if (isUuid) {
-      const registration = await this.appRegistrationRepository.findOne({
-        where: { universalIdentifier: params.universalIdentifier },
-      });
-
-      if (isDefined(registration)) {
-        return registration;
-      }
-
-      throw new Error(
-        `No application registration found for identifier "${params.universalIdentifier}"`,
+    if (!isDefined(registration)) {
+      throw new ApplicationException(
+        `No application registration found for identifier "${universalIdentifier}"`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
-    const packageName = params.universalIdentifier;
+    return registration;
+  }
 
-    const existingByPackage = await this.appRegistrationRepository.findOne({
-      where: { sourcePackage: packageName },
+  async findOrCreateNpmRegistration(params: {
+    packageName: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const existing = await this.appRegistrationRepository.findOne({
+      where: { sourcePackage: params.packageName },
     });
 
-    if (isDefined(existingByPackage)) {
-      return existingByPackage;
+    if (isDefined(existing)) {
+      return existing;
     }
 
     this.logger.log(
-      `Creating new registration for npm package "${packageName}"`,
+      `Creating new registration for npm package "${params.packageName}"`,
     );
 
     const registration = this.appRegistrationRepository.create({
       universalIdentifier: v4(),
-      name: packageName,
+      name: params.packageName,
       sourceType: AppRegistrationSourceType.NPM,
-      sourcePackage: packageName,
+      sourcePackage: params.packageName,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
@@ -124,40 +125,30 @@ export class MarketplaceCatalogSyncService {
   toMarketplaceAppDTO(
     registration: ApplicationRegistrationEntity,
   ): MarketplaceAppDTO {
-    const displayData = registration.marketplaceDisplayData ?? {};
+    const displayData = registration.marketplaceDisplayData;
 
     return {
       id: registration.universalIdentifier,
       name: registration.name,
       description: registration.description ?? '',
-      icon: (displayData.icon as string) ?? 'IconApps',
+      icon: displayData?.icon ?? 'IconApps',
       version:
-        (displayData.version as string) ??
-        registration.latestAvailableVersion ??
-        '0.0.0',
+        displayData?.version ?? registration.latestAvailableVersion ?? '0.0.0',
       author: registration.author ?? 'Unknown',
-      category: (displayData.category as string) ?? '',
-      logo: displayData.logo as string | undefined,
-      screenshots: (displayData.screenshots as string[]) ?? [],
+      category: displayData?.category ?? '',
+      logo: displayData?.logo,
+      screenshots: displayData?.screenshots ?? [],
       aboutDescription:
-        (displayData.aboutDescription as string) ??
-        registration.description ??
-        '',
-      providers: (displayData.providers as string[]) ?? [],
+        displayData?.aboutDescription ?? registration.description ?? '',
+      providers: displayData?.providers ?? [],
       websiteUrl: registration.websiteUrl ?? undefined,
       termsUrl: registration.termsUrl ?? undefined,
-      objects: (displayData.objects as MarketplaceAppDTO['objects']) ?? [],
-      fields: (displayData.fields as MarketplaceAppDTO['fields']) ?? [],
-      logicFunctions:
-        (displayData.logicFunctions as MarketplaceAppDTO['logicFunctions']) ??
-        [],
-      frontComponents:
-        (displayData.frontComponents as MarketplaceAppDTO['frontComponents']) ??
-        [],
+      objects: displayData?.objects ?? [],
+      fields: displayData?.fields ?? [],
+      logicFunctions: displayData?.logicFunctions ?? [],
+      frontComponents: displayData?.frontComponents ?? [],
       sourcePackage: registration.sourcePackage ?? undefined,
-      defaultRole:
-        (displayData.defaultRole as MarketplaceAppDTO['defaultRole']) ??
-        undefined,
+      defaultRole: displayData?.defaultRole,
     };
   }
 
@@ -236,7 +227,7 @@ export class MarketplaceCatalogSyncService {
     termsUrl: string | null;
     latestAvailableVersion: string | null;
     isFeatured: boolean;
-    marketplaceDisplayData: Record<string, unknown> | null;
+    marketplaceDisplayData: MarketplaceDisplayData | null;
     workspaceId: string;
   }): Promise<void> {
     const existing = await this.appRegistrationRepository.findOne({

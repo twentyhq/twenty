@@ -1,9 +1,12 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
 
-// Finds the oldest active workspace that has at least one admin user
-// (canAccessFullAdminPanel or canImpersonate). Used to assign marketplace
-// catalog ApplicationRegistrations to a real workspace.
+// Every ApplicationRegistration must be owned by a workspace (workspaceId
+// represents ownership / write-access, not visibility scoping — marketplace
+// registrations are readable by all workspaces). When the catalog sync creates
+// registrations for marketplace apps that no developer has explicitly claimed,
+// we assign them to the "admin" workspace: the oldest active workspace whose
+// owner has admin privileges.
 export const getAdminWorkspaceId = async (
   dataSource: DataSource,
 ): Promise<string | null> => {

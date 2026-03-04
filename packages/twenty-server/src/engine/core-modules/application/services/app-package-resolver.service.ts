@@ -251,7 +251,10 @@ export class AppPackageResolverService implements OnModuleInit {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
 
-      throw new Error(`yarn install failed: ${errorMessage}`);
+      throw new ApplicationException(
+        `yarn install failed: ${errorMessage}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
     }
   }
 }

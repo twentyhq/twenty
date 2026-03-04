@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { useUploadAppTarball } from '~/pages/settings/applications/hooks/useUploadAppTarball';
+import { useUploadAppTarball } from '~/modules/marketplace/hooks/useUploadAppTarball';
 import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import {

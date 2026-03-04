@@ -9,6 +9,8 @@ export enum ApplicationRegistrationExceptionCode {
   UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED = 'UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED',
   INVALID_SCOPE = 'INVALID_SCOPE',
   INVALID_REDIRECT_URI = 'INVALID_REDIRECT_URI',
+  INVALID_INPUT = 'INVALID_INPUT',
+  SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
   VARIABLE_NOT_FOUND = 'VARIABLE_NOT_FOUND',
 }
 
@@ -24,6 +26,10 @@ const getExceptionUserFriendlyMessage = (
       return msg`One or more requested scopes are invalid.`;
     case ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI:
       return msg`One or more redirect URIs are invalid.`;
+    case ApplicationRegistrationExceptionCode.INVALID_INPUT:
+      return msg`Invalid input for application registration.`;
+    case ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH:
+      return msg`The app source channel does not match the expected type.`;
     case ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND:
       return msg`Application registration variable not found.`;
     default:

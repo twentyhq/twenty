@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/marketplace/dtos/marketplace-app.dto';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type NpmSearchResult = {
@@ -43,9 +43,15 @@ export class MarketplaceService {
         return apps;
       }
 
-      const results = (await response.json()) as NpmSearchResult;
+      const results = (await response.json()) as Record<string, unknown>;
 
-      for (const result of results.objects) {
+      if (!Array.isArray(results.objects)) {
+        this.logger.warn('Unexpected npm search response shape');
+
+        return apps;
+      }
+
+      for (const result of results.objects as NpmSearchResult['objects']) {
         const { name, version, description, author, links } = result.package;
         const twentyKeyword = (result.package.keywords ?? []).find((keyword) =>
           keyword.startsWith('twenty-uid:'),

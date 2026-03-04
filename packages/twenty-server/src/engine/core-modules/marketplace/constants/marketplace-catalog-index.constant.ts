@@ -1,15 +1,4 @@
-import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
-
-export type MarketplaceDisplayData = Omit<
-  MarketplaceAppDTO,
-  | 'id'
-  | 'name'
-  | 'description'
-  | 'author'
-  | 'websiteUrl'
-  | 'termsUrl'
-  | 'sourcePackage'
->;
+import { type MarketplaceDisplayData } from 'src/engine/core-modules/marketplace/types/marketplace-display-data.type';
 
 export type CuratedAppEntry = {
   universalIdentifier: string;

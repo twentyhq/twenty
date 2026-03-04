@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
+import { useInstallNpmApp } from '~/modules/marketplace/hooks/useInstallNpmApp';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import {
   StyledAppModal,
@@ -27,7 +27,7 @@ const StyledInputGroup = styled.div`
 export const SettingsInstallNpmAppModal = () => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { install, isInstalling } = useInstallMarketplaceApp();
+  const { install, isInstalling } = useInstallNpmApp();
   const { refetch } = useFindManyApplicationsQuery();
 
   const [packageName, setPackageName] = useState('');
@@ -41,7 +41,7 @@ export const SettingsInstallNpmAppModal = () => {
     }
 
     const success = await install({
-      universalIdentifier: packageName.trim(),
+      packageName: packageName.trim(),
       version: version.trim() || undefined,
     });
 

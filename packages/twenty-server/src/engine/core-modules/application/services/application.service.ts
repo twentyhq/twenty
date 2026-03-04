@@ -237,10 +237,21 @@ export class ApplicationService {
         workspace,
       });
 
-    return {
-      application: twentyStandardFlatApplication as ApplicationEntity,
-      workspace,
-    };
+    const application = await this.applicationRepository.findOne({
+      where: {
+        id: twentyStandardFlatApplication.id,
+        workspaceId: workspace.id,
+      },
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Twenty standard application not found for workspace ${workspace.id}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return { application, workspace };
   }
 
   async createTwentyStandardApplication(
@@ -416,19 +427,23 @@ export class ApplicationService {
 
   async update(
     id: string,
-    data: Parameters<typeof this.applicationRepository.update>[1],
+    data: Parameters<typeof this.applicationRepository.update>[1] & {
+      workspaceId: string;
+    },
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    await this.workspaceCacheService.invalidateAndRecompute(
-      data.workspaceId as string,
-      ['flatApplicationMaps'],
-    );
+    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
+      'flatApplicationMaps',
+    ]);
 
     const updatedApplication = await this.findById(id);
 
-    if (!updatedApplication) {
-      throw new Error(`Failed to update application with id ${id}`);
+    if (!isDefined(updatedApplication)) {
+      throw new ApplicationException(
+        `Application with id ${id} not found after update`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
     }
 
     return updatedApplication;
@@ -441,7 +456,10 @@ export class ApplicationService {
     });
 
     if (!isDefined(application)) {
-      throw new Error(`Application does not exist`);
+      throw new ApplicationException(
+        `Application with universalIdentifier ${universalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
     }
 
     await this.fileStorageService.deleteApplicationFiles({

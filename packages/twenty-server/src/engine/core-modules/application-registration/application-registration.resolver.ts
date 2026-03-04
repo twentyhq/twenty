@@ -1,12 +1,19 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
+
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
+import {
+  AppTarballUploadService,
+  MAX_TARBALL_UPLOAD_SIZE_BYTES,
+} from 'src/engine/core-modules/application-registration/services/app-tarball-upload.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.dto';
@@ -15,6 +22,10 @@ import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application-registration/dtos/rotate-client-secret.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -27,6 +38,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -38,6 +50,7 @@ export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly appTarballUploadService: AppTarballUploadService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -210,5 +223,34 @@ export class ApplicationRegistrationResolver {
       id,
       workspaceId,
     );
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
+  @Mutation(() => ApplicationRegistrationEntity)
+  async uploadAppTarball(
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream }: FileUpload,
+    @Args('universalIdentifier', { type: () => String, nullable: true })
+    universalIdentifier: string | undefined,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    const stream = createReadStream();
+    const tarballBuffer = await streamToBuffer(stream);
+
+    if (tarballBuffer.length > MAX_TARBALL_UPLOAD_SIZE_BYTES) {
+      throw new ApplicationException(
+        `Tarball exceeds maximum size of ${MAX_TARBALL_UPLOAD_SIZE_BYTES} bytes`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return this.appTarballUploadService.uploadTarball({
+      tarballBuffer,
+      universalIdentifier,
+      workspaceId,
+    });
   }
 }

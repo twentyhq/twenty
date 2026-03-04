@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 
 import { AppVersionCheckCronCommand } from 'src/engine/core-modules/application/crons/commands/app-version-check.cron.command';
-import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/crons/commands/marketplace-catalog-sync.cron.command';
+import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';

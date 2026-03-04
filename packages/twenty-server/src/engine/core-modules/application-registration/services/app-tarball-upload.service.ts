@@ -14,13 +14,15 @@ import {
   AppRegistrationSourceType,
 } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application-registration/application-registration.exception';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
 import { readJsonFile } from 'src/engine/core-modules/application/utils/read-json-file.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+
+export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
 @Injectable()
 export class AppTarballUploadService {
@@ -61,13 +63,12 @@ export class AppTarballUploadService {
       }>(contentDir, 'manifest.json');
 
       const universalIdentifier =
-        params.universalIdentifier ??
-        manifest.application?.universalIdentifier;
+        params.universalIdentifier ?? manifest.application?.universalIdentifier;
 
       if (!isDefined(universalIdentifier)) {
-        throw new ApplicationException(
+        throw new ApplicationRegistrationException(
           'universalIdentifier is required (in body or manifest)',
-          ApplicationExceptionCode.INVALID_INPUT,
+          ApplicationRegistrationExceptionCode.INVALID_INPUT,
         );
       }
 
@@ -83,9 +84,9 @@ export class AppTarballUploadService {
           appRegistration.sourceType !== AppRegistrationSourceType.LOCAL &&
           appRegistration.sourceType !== AppRegistrationSourceType.TARBALL
         ) {
-          throw new ApplicationException(
+          throw new ApplicationRegistrationException(
             `This app is registered as ${appRegistration.sourceType}. Cannot upload tarball.`,
-            ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH,
+            ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
           );
         }
       } else {
