@@ -1,10 +1,7 @@
 import { type ViewSort } from '@/views/types/ViewSort';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
-const isSameSortTarget = (
-  sortA: ViewSort,
-  sortB: ViewSort,
-): boolean =>
+const isSameSortTarget = (sortA: ViewSort, sortB: ViewSort): boolean =>
   sortA.fieldMetadataId === sortB.fieldMetadataId &&
   sortA.direction === sortB.direction;
 
