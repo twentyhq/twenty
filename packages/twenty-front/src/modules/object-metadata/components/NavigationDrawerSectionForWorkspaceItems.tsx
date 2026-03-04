@@ -99,12 +99,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
     (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
 
-  const filteredItems = flatItems.filter((item) => {
+  const isItemVisible = (item: FlatWorkspaceItem): boolean => {
     const type = item.itemType;
-    if (
-      type === NavigationMenuItemType.FOLDER ||
-      type === NavigationMenuItemType.LINK
-    ) {
+    if (type === NavigationMenuItemType.LINK) {
       return true;
     }
     if (
@@ -124,8 +121,15 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
       return permissions.canReadObjectRecords && permissions.showInSidebar;
     }
+    if (type === NavigationMenuItemType.FOLDER) {
+      const children = folderChildrenById.get(item.id) ?? [];
+
+      return children.some((child) => isItemVisible(child));
+    }
     return false;
-  });
+  };
+
+  const filteredItems = flatItems.filter(isItemVisible);
 
   const getEditModeProps = (item: FlatWorkspaceItem) => {
     const itemId = item.id;
