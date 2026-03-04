@@ -94,6 +94,31 @@ export class AppModule {
       modules.push(
         ServeStaticModule.forRoot({
           rootPath: frontPath,
+          // OMNIA-CUSTOM: Prevent Cloudflare from caching index.html at
+          // stale asset URLs after deploys. Missing /assets/* must 404,
+          // not return the SPA fallback HTML with a cacheable status.
+          exclude: [
+            '/api/{*splat}',
+            '/metadata/{*splat}',
+            '/graphql',
+            '/assets/{*splat}',
+            '/images/{*splat}',
+          ],
+          serveStaticOptions: {
+            setHeaders: (res, filePath) => {
+              if (filePath.match(/\/assets\//)) {
+                res.setHeader(
+                  'Cache-Control',
+                  'public, max-age=31536000, immutable',
+                );
+              } else if (filePath.endsWith('.html')) {
+                res.setHeader(
+                  'Cache-Control',
+                  'no-cache, no-store, must-revalidate',
+                );
+              }
+            },
+          },
         }),
       );
     }
