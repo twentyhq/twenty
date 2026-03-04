@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { type ReactNode } from 'react';
 import { Radio } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
   {
@@ -17,25 +18,25 @@ const StyledCardContent = styled(CardContent)`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledOptionHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledRadio = styled(Radio)`
@@ -43,7 +44,7 @@ const StyledRadio = styled(Radio)`
 `;
 
 const StyledExpandedContent = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAccountsRadioSettingsCard = <

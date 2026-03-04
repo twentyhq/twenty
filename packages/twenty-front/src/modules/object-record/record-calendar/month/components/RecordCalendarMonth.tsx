@@ -7,7 +7,7 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   type DragStart,

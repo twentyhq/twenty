@@ -15,7 +15,11 @@ export const FieldsWidgetGroupsDraftInitializationEffect = ({
 }: FieldsWidgetGroupsDraftInitializationEffectProps) => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { groups: serverGroups } = useFieldsWidgetEditorGroupsData({
+  const {
+    groups: persistedGroups,
+    ungroupedFields,
+    editorMode,
+  } = useFieldsWidgetEditorGroupsData({
     viewId,
     objectNameSingular: objectMetadataItem.nameSingular,
   });
@@ -23,7 +27,9 @@ export const FieldsWidgetGroupsDraftInitializationEffect = ({
   useInitializeFieldsWidgetGroupsDraft({
     pageLayoutId,
     widgetId,
-    serverGroups,
+    persistedGroups,
+    persistedUngroupedFields: ungroupedFields,
+    persistedEditorMode: editorMode,
   });
 
   return null;

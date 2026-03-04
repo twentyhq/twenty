@@ -104,11 +104,11 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
+      filter: this.filterArgProcessor.process({
+        filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      ),
+      }),
     };
   }
 

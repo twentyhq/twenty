@@ -1,25 +1,26 @@
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDetailsContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding: ${({ theme }) => theme.spacing(4)};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  background-color: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[4]};
+  border-radius: ${themeCssVariables.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  font-size: ${themeCssVariables.font.size.sm};
   overflow-x: auto;
 `;
 
 const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.color.red};
+  margin-top: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAdminJsonDataIndicatorHealthStatus = () => {

@@ -1,6 +1,7 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditor = styled.div<{
   multiline?: boolean;
@@ -9,15 +10,15 @@ const StyledEditor = styled.div<{
   width: 100%;
   display: flex;
   box-sizing: border-box;
-  padding-right: ${({ multiline, theme }) =>
-    multiline ? theme.spacing(4) : undefined};
+  padding-right: ${({ multiline }) =>
+    multiline ? themeCssVariables.spacing[4] : '0'};
 
   .editor-content {
     width: 100%;
   }
 
   .tiptap {
-    padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
     box-sizing: border-box;
     display: flex;
     height: 100%;
@@ -27,10 +28,12 @@ const StyledEditor = styled.div<{
     &::-webkit-scrollbar {
       display: none;
     }
-    color: ${({ theme, readonly }) =>
-      readonly ? theme.font.color.light : theme.font.color.primary};
-    font-family: ${({ theme }) => theme.font.family};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
+    color: ${({ readonly }) =>
+      readonly
+        ? themeCssVariables.font.color.light
+        : themeCssVariables.font.color.primary};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.regular};
     border: none !important;
     align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
@@ -48,17 +51,17 @@ const StyledEditor = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${({ theme }) => theme.color.blue3};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
-      color: ${({ theme }) => theme.color.blue};
-      padding: ${({ theme }) => theme.spacing(1)};
+      background-color: ${themeCssVariables.color.blue3};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.color.blue};
+      padding: ${themeCssVariables.spacing[1]};
     }
 
     .text-tag {
-      background-color: ${({ theme }) => theme.color.blue3};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
-      color: ${({ theme }) => theme.color.blue};
-      padding: ${({ theme }) => theme.spacing(1)};
+      background-color: ${themeCssVariables.color.blue3};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.color.blue};
+      padding: ${themeCssVariables.spacing[1]};
     }
   }
 

@@ -5026,10 +5026,10 @@ msgstr "Correus electrònics"
 msgid "Emails and Calendar"
 msgstr "Correus electrònics i calendari"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Els correus electrònics de la llista negra seran ignorats. Gestiona la llista negra a la pàgina de configuració de \"Comptes\"."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

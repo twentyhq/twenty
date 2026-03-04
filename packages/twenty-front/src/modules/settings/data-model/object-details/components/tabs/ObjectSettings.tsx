@@ -8,12 +8,13 @@ import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/o
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -25,7 +26,7 @@ type ObjectSettingsProps = {
 const StyledContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledFormSection = styled(Section)`
@@ -34,7 +35,7 @@ const StyledFormSection = styled(Section)`
 
 const StyledDangerButtonsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const DELETE_OBJECT_MODAL_ID = 'delete-object-confirmation-modal';
@@ -138,7 +139,7 @@ export const ObjectSettings = ({
         </StyledFormSection>
       )}
       <ConfirmationModal
-        modalId={DELETE_OBJECT_MODAL_ID}
+        modalInstanceId={DELETE_OBJECT_MODAL_ID}
         title={t`Delete ${objectLabel} object?`}
         subtitle={t`This will permanently delete the object and all its records. Type "yes" to confirm.`}
         confirmButtonText={t`Delete`}

@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { Theme } from '@/app/_components/ui/theme/theme';

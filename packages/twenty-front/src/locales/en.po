@@ -5021,10 +5021,10 @@ msgstr "Emails"
 msgid "Emails and Calendar"
 msgstr "Emails and Calendar"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

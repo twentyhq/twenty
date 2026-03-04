@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableHeaderText = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+  padding-bottom: ${themeCssVariables.spacing['0.5']};
 `;
 
 export { StyledTableHeaderText as TableHeaderText };

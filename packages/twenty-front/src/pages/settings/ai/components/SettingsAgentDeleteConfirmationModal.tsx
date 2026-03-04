@@ -46,7 +46,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
     <ConfirmationModal
       confirmationValue={agentName}
       confirmationPlaceholder={agentName}
-      modalId={DELETE_AGENT_MODAL_ID}
+      modalInstanceId={DELETE_AGENT_MODAL_ID}
       title={t`Delete Agent`}
       subtitle={
         <Trans>
