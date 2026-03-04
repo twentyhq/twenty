@@ -176,6 +176,7 @@ type CodeExecutionDisplayProps = {
   stderr: string;
   exitCode?: number;
   files?: Array<{
+    fileId: string;
     filename: string;
     url: string;
     mimeType?: string;
@@ -337,7 +338,7 @@ export const CodeExecutionDisplay = ({
                 const filename = file.filename;
 
                 return (
-                  <StyledFileCard key={file.url}>
+                  <StyledFileCard key={file.fileId}>
                     <StyledFilePreview>
                       {isPreviewableMimeType(file.mimeType) ? (
                         <StyledPreviewImage

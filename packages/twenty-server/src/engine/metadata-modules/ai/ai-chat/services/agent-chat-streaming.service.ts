@@ -68,15 +68,18 @@ export class AgentChatStreamingService {
 
     // Fire user-message save without awaiting to avoid delaying time-to-first-letter.
     // The promise is awaited inside onFinish where we need the turnId.
+    const lastUserMessage = messages[messages.length - 1];
     const lastUserText =
-      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
-        ?.text ?? '';
+      lastUserMessage?.parts.find((part) => part.type === 'text')?.text ?? '';
 
     const userMessagePromise = this.agentChatService.addMessage({
       threadId: thread.id,
       uiMessage: {
         role: AgentMessageRole.USER,
-        parts: [{ type: 'text', text: lastUserText }],
+        parts:
+          lastUserMessage?.parts.filter(
+            (part) => part.type === 'text' || part.type === 'file',
+          ) ?? [],
       },
     });
 
