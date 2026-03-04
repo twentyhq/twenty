@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
+import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -21,8 +21,8 @@ jest.mock(
   }),
 );
 
-describe('DataArgProcessor', () => {
-  let dataArgProcessor: DataArgProcessor;
+describe('DataArgProcessorService', () => {
+  let dataArgProcessorService: DataArgProcessorService;
   let recordPositionService: jest.Mocked<RecordPositionService>;
 
   const mockWorkspaceId = '20202020-1234-1234-1234-123456789012';
@@ -96,7 +96,7 @@ describe('DataArgProcessor', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DataArgProcessor,
+        DataArgProcessorService,
         {
           provide: RecordPositionService,
           useValue: recordPositionService,
@@ -104,7 +104,9 @@ describe('DataArgProcessor', () => {
       ],
     }).compile();
 
-    dataArgProcessor = module.get<DataArgProcessor>(DataArgProcessor);
+    dataArgProcessorService = module.get<DataArgProcessorService>(
+      DataArgProcessorService,
+    );
   });
 
   afterEach(() => {
@@ -112,7 +114,7 @@ describe('DataArgProcessor', () => {
   });
 
   it('should be defined', () => {
-    expect(dataArgProcessor).toBeDefined();
+    expect(dataArgProcessorService).toBeDefined();
   });
 
   describe('failing inputs validation', () => {
@@ -140,7 +142,7 @@ describe('DataArgProcessor', () => {
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
             await expect(
-              dataArgProcessor.process({
+              dataArgProcessorService.process({
                 partialRecordInputs: [testCase.input],
                 authContext: createMockAuthContext(),
                 flatObjectMetadata,
@@ -177,7 +179,7 @@ describe('DataArgProcessor', () => {
               createFlatFieldMetadataMaps(fieldNames);
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-            const result = await dataArgProcessor.process({
+            const result = await dataArgProcessorService.process({
               partialRecordInputs: [testCase.input],
               authContext: createMockAuthContext(),
               flatObjectMetadata,
