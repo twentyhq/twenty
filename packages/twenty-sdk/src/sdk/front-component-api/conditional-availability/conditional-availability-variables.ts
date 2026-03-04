@@ -6,8 +6,7 @@ export const isInRightDrawer =
   null as unknown as CommandMenuContextApi['isInRightDrawer'];
 export const isFavorite =
   null as unknown as CommandMenuContextApi['isFavorite'];
-export const isRemote =
-  null as unknown as CommandMenuContextApi['isRemote'];
+export const isRemote = null as unknown as CommandMenuContextApi['isRemote'];
 export const isNoteOrTask =
   null as unknown as CommandMenuContextApi['isNoteOrTask'];
 export const isSelectAll =
