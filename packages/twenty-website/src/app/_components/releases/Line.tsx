@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledLineContainer = styled.div`
   width: 810px;

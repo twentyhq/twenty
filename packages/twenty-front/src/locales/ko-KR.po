@@ -5026,10 +5026,10 @@ msgstr "이메일"
 msgid "Emails and Calendar"
 msgstr "이메일 및 캘린더"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "차단 목록의 이메일은 무시됩니다. “계정” 설정 페이지에서 차단 목록을 관리하세요."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

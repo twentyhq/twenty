@@ -1,7 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
@@ -15,11 +16,11 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
-  gap: ${({ theme, isExpanded }) => (isExpanded ? 0 : theme.spacing(4))};
+  gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
   user-select: none;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  transition: gap ${({ theme }) => theme.animation.duration.normal}s ease;
+  transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
@@ -27,17 +28,17 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
-  gap: ${({ theme, isExpanded }) => (isExpanded ? 0 : theme.spacing(1))};
-  margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : 0)};
-  transition: gap ${({ theme }) => theme.animation.duration.normal}s ease;
+  gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
+  margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
+  transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
   NavigationDrawerCollapseButton,
 )`
-  height: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
+  padding-right: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledWorkspaceDropdownContainer = styled.div`

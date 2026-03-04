@@ -7,13 +7,14 @@ import {
 } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { Avatar } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const MultiWorkspaceDropdownClickableComponent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,

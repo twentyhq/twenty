@@ -32,6 +32,7 @@ import {
 } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
@@ -84,10 +85,7 @@ const StyledFields = styled.div`
   width: 100%;
 `;
 
-const StyledPropertyBox = styled.div`
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
+const StyledPropertyBox = styled(PropertyBox)`
   height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;

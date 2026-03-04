@@ -5026,10 +5026,10 @@ msgstr "E-maily"
 msgid "Emails and Calendar"
 msgstr "E-maily a kalendář"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "E-maily z blokového seznamu budou ignorovány. Spravujte blokovaný seznam na stránce nastavení \"Účty\"."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

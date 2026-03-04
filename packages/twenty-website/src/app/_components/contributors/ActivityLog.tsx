@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { TimeRange } from '@nivo/calendar';
 
 import { getActivityEndDate } from '@/app/(public)/contributors/utils/get-activity-end-date';

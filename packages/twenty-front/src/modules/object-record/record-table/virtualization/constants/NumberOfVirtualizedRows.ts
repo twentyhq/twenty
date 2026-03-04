@@ -1,1 +1,1 @@
-export const NUMBER_OF_VIRTUALIZED_ROWS = 200;
+export const NUMBER_OF_VIRTUALIZED_ROWS = 240;
