@@ -61,7 +61,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -101,36 +100,20 @@ export class UserResolver {
   }: {
     workspace: WorkspaceEntity;
     currentUserWorkspace: UserWorkspaceEntity;
-  }): Promise<{
-    userWorkspacePermissions: UserWorkspacePermissions;
-    rolesCache: Map<string, RoleEntity[]> | undefined;
-  }> {
+  }): Promise<UserWorkspacePermissions> {
     const workspaceIsPendingOrOngoingCreation = [
       WorkspaceActivationStatus.PENDING_CREATION,
       WorkspaceActivationStatus.ONGOING_CREATION,
     ].includes(workspace.activationStatus);
 
     if (workspaceIsPendingOrOngoingCreation) {
-      return {
-        userWorkspacePermissions:
-          this.permissionsService.getDefaultUserWorkspacePermissions(),
-        rolesCache: undefined,
-      };
+      return this.permissionsService.getDefaultUserWorkspacePermissions();
     }
 
-    const rolesCache = await this.userRoleService.getRolesByUserWorkspaces({
-      userWorkspaceIds: [currentUserWorkspace.id],
+    return await this.permissionsService.getUserWorkspacePermissions({
+      userWorkspaceId: currentUserWorkspace.id,
       workspaceId: workspace.id,
     });
-
-    const userWorkspacePermissions =
-      await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-        preloadedRoles: rolesCache,
-      });
-
-    return { userWorkspacePermissions, rolesCache };
   }
 
   @Query(() => UserEntity)
@@ -170,15 +153,12 @@ export class UserResolver {
       throw new Error('Current user workspace not found');
     }
 
-    const { userWorkspacePermissions, rolesCache } =
-      await this.getUserWorkspacePermissions({
-        currentUserWorkspace,
-        workspace,
-      });
-
-    const userWorkspacePermissionsDto =
+    const userWorkspacePermissions =
       fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
-        userWorkspacePermissions,
+        await this.getUserWorkspacePermissions({
+          currentUserWorkspace,
+          workspace,
+        }),
       );
 
     const twoFactorAuthenticationMethodSummary =
@@ -190,12 +170,11 @@ export class UserResolver {
       ...user,
       currentUserWorkspace: {
         ...currentUserWorkspace,
-        ...userWorkspacePermissionsDto,
+        ...userWorkspacePermissions,
         twoFactorAuthenticationMethodSummary,
       },
       currentWorkspace: workspace,
-      __rolesCache: rolesCache,
-    } as UserEntity;
+    };
   }
 
   @ResolveField(() => GraphQLJSONObject, {
@@ -251,16 +230,11 @@ export class UserResolver {
         workspaceId: workspace.id,
       });
 
-    const cachedRoles = (
-      user as UserEntity & { __rolesCache?: Map<string, RoleEntity[]> }
-    ).__rolesCache;
-
     const roleOfUserWorkspace =
-      cachedRoles ??
-      (await this.userRoleService.getRolesByUserWorkspaces({
+      await this.userRoleService.getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspace.id],
         workspaceId,
-      }));
+      });
 
     const userWorkspaceRoles = roleOfUserWorkspace.get(userWorkspace.id);
 

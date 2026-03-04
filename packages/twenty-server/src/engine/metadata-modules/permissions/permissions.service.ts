@@ -38,20 +38,16 @@ export class PermissionsService {
   public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
-    preloadedRoles,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-    preloadedRoles?: Map<string, RoleEntity[]>;
   }): Promise<UserWorkspacePermissions> {
-    const [roleOfUserWorkspace] = preloadedRoles
-      ? (preloadedRoles.get(userWorkspaceId) ?? [])
-      : await this.userRoleService
-          .getRolesByUserWorkspaces({
-            userWorkspaceIds: [userWorkspaceId],
-            workspaceId,
-          })
-          .then((roles) => roles?.get(userWorkspaceId) ?? []);
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
     if (!isDefined(roleOfUserWorkspace)) {
       throw new PermissionsException(

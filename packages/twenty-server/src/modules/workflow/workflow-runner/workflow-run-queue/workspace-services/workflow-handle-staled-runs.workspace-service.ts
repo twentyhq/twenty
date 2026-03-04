@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -32,6 +34,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
 
       const staledWorkflowRuns = await workflowRunRepository.find({
         where: getStaledRunsFindOptions(),
+        take: QUERY_MAX_RECORDS,
       });
 
       if (staledWorkflowRuns.length <= 0) {
