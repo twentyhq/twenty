@@ -11,6 +11,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -121,6 +122,10 @@ describe('UserWorkspaceService', () => {
         },
         {
           provide: FileCorePictureService,
+          useValue: {},
+        },
+        {
+          provide: FileService,
           useValue: {},
         },
         {
