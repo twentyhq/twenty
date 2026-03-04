@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';

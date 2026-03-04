@@ -1,16 +1,17 @@
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFileInput = styled.input`

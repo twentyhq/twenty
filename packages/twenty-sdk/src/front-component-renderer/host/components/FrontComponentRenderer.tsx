@@ -12,8 +12,7 @@ import {
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ThemeProvider } from '@emotion/react';
-import { type ThemeType } from 'twenty-ui/theme';
+import { type ThemeType, ThemeContextProvider } from 'twenty-ui/theme';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 
@@ -110,12 +109,12 @@ export const FrontComponentRenderer = ({
       )}
 
       {isDefined(receiver) && isExecutionContextInitialized && (
-        <ThemeProvider theme={theme}>
+        <ThemeContextProvider theme={theme}>
           <RemoteRootRenderer
             receiver={receiver}
             components={componentRegistry}
           />
-        </ThemeProvider>
+        </ThemeContextProvider>
       )}
     </>
   );

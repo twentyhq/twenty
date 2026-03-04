@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
@@ -9,13 +9,14 @@ import { EmailThreadNotShared } from '@/activities/emails/components/EmailThread
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledThreadMessage = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(4, 0)};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[0]};
 `;
 
 const StyledThreadMessageHeader = styled.div`
@@ -23,12 +24,12 @@ const StyledThreadMessageHeader = styled.div`
   cursor: pointer;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(0, 6)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[6]};
 `;
 
 const StyledThreadMessageBody = styled.div`
-  padding: ${({ theme }) => theme.spacing(0, 6)};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[6]};
 `;
 
 type EmailThreadMessageProps = {

@@ -1,16 +1,17 @@
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonCardContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.background.quaternary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.background.quaternary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-shadow:
-    0px 4px 8px 0px ${({ theme }) => theme.color.gray2},
-    0px 0px 4px 0px ${({ theme }) => theme.color.gray2};
-  color: ${({ theme }) => theme.font.color.primary};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+    0px 4px 8px 0px ${themeCssVariables.color.gray2},
+    0px 0px 4px 0px ${themeCssVariables.color.gray2};
+  color: ${themeCssVariables.font.color.primary};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordBoardColumnLoadingSkeletonCards = () => {

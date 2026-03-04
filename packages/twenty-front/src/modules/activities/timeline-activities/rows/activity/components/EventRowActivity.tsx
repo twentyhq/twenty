@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import {
@@ -12,12 +12,12 @@ import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectN
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
 const StyledLinkedActivity = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   text-decoration: underline;
   width: 100%;
@@ -29,21 +29,21 @@ const StyledLinkedActivity = styled.span`
 const StyledRowContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
 `;
 
 const StyledEventRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
 `;
 
@@ -51,12 +51,12 @@ const StyledItemTitleDate = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: none;
   }
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledEventRowItemText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 export const EventRowActivity = ({

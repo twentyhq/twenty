@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 
@@ -14,31 +13,30 @@ import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMa
 import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
 import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.md};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.md};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-top-left-radius: ${themeCssVariables.border.radius.md};
+  border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
 const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
-  color: ${({ theme }) => theme.font.color.primary};
   outline: none;
   padding: 4px 8px 4px 8px;
   font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   width: 100%;
-  ${({ hasError, theme }) =>
-    hasError &&
-    css`
-      color: ${theme.color.red};
-    `};
+  color: ${({ hasError }) =>
+    hasError
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
 `;
 
 type DatePickerInputProps = {

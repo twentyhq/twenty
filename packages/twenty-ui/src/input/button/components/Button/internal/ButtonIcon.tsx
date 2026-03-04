@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { ThemeContext, themeCssVariables } from '@ui/theme';
+import { ThemeContext } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { useContext } from 'react';
 
 const StyledIcon = styled.div<{

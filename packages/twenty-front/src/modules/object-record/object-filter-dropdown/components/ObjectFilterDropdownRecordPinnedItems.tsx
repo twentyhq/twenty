@@ -1,12 +1,13 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPinnedItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 export const ObjectFilterDropdownRecordPinnedItems = (props: {

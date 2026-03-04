@@ -15,7 +15,7 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type Placement,
   autoUpdate,

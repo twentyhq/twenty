@@ -13,11 +13,11 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { useStore } from 'jotai';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
@@ -42,7 +42,9 @@ export const useNavigateCommandMenu = () => {
     const isCommandMenuClosing = store.get(isCommandMenuClosingState.atom);
 
     if (isCommandMenuClosing) {
-      commandMenuCloseAnimationCompleteCleanup();
+      commandMenuCloseAnimationCompleteCleanup({
+        emitSidePanelCloseEvent: false,
+      });
     }
 
     if (isCommandMenuOpened) {

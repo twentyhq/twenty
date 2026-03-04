@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 
 const Title = styled.h2`

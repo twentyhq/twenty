@@ -1,4 +1,4 @@
-import type { Theme } from '@emotion/react';
+import type { ThemeType } from 'twenty-ui/theme';
 
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultIconColor.constant';
 import { getColorFromTheme } from '@/navigation-menu-item/utils/get-color-from-theme.util';
@@ -9,7 +9,7 @@ import { type NavigationMenuItemIconStyle } from '@/navigation-menu-item/utils/n
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 
 export const getNavigationMenuItemIconStyleFromColor = (
-  theme: Theme,
+  theme: ThemeType,
   color: string | null | undefined,
 ): NavigationMenuItemIconStyle => {
   const themeColor = parseThemeColor(color ?? DEFAULT_NAV_ITEM_ICON_COLOR);

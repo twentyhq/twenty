@@ -90,7 +90,7 @@ npx nx run twenty-front:graphql:generate --configuration=metadata
 ## Architecture Overview
 
 ### Tech Stack
-- **Frontend**: React 18, TypeScript, Jotai (state management), Emotion (styling), Vite
+- **Frontend**: React 18, TypeScript, Jotai (state management), Linaria (styling), Vite
 - **Backend**: NestJS, TypeORM, PostgreSQL, Redis, GraphQL (with GraphQL Yoga)
 - **Monorepo**: Nx workspace managed with Yarn 4
 
@@ -175,7 +175,7 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 5. Run `graphql:generate` after any GraphQL schema changes
 
 ### Code Style Notes
-- Use **Emotion** for styling with styled-components pattern
+- Use **Linaria** for styling with zero-runtime CSS-in-JS (styled-components pattern)
 - Follow **Nx** workspace conventions for imports
 - Use **Lingui** for internationalization
 - Apply security first, then formatting (sanitize before format)

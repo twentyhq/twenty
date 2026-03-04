@@ -1,14 +1,13 @@
-import { type Theme } from '@emotion/react';
-import { COLOR_LIGHT } from 'twenty-ui/theme';
+import { COLOR_LIGHT, type ThemeType } from 'twenty-ui/theme';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 
 describe('getTriggerIconColor', () => {
-  const mockTheme: Theme = {
+  const mockTheme: ThemeType = {
     color: {
       blue: COLOR_LIGHT.blue,
       purple: COLOR_LIGHT.purple,
     },
-  } as unknown as Theme;
+  } as unknown as ThemeType;
 
   it('returns the blue color for database event from theme', () => {
     const result = getTriggerIconColor({
@@ -29,12 +28,12 @@ describe('getTriggerIconColor', () => {
   });
 
   it('works with different theme configurations', () => {
-    const differentTheme: Theme = {
+    const differentTheme: ThemeType = {
       color: {
         blue: COLOR_LIGHT.blue,
         purple: COLOR_LIGHT.purple,
       },
-    } as unknown as Theme;
+    } as unknown as ThemeType;
 
     const result = getTriggerIconColor({
       theme: differentTheme,
@@ -45,12 +44,12 @@ describe('getTriggerIconColor', () => {
   });
 
   it('maintains reference to theme.color.blue', () => {
-    const customTheme: Theme = {
+    const customTheme: ThemeType = {
       color: {
         blue: COLOR_LIGHT.blue,
         purple: COLOR_LIGHT.purple,
       },
-    } as unknown as Theme;
+    } as unknown as ThemeType;
 
     const result = getTriggerIconColor({
       theme: customTheme,

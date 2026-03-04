@@ -6,4 +6,5 @@ export type ApplicationConfig = Omit<
   | 'yarnLockChecksum'
   | 'apiClientChecksum'
   | 'postInstallLogicFunctionUniversalIdentifier'
+  | 'preInstallLogicFunctionUniversalIdentifier'
 >;

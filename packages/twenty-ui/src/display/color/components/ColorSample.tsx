@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { type ThemeColor, themeCssVariables } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
@@ -11,7 +12,9 @@ type StyledColorSampleProps = {
   variant?: ColorSampleVariant;
 };
 
-export type ColorSampleProps = StyledColorSampleProps;
+export type ColorSampleProps = StyledColorSampleProps & {
+  className?: string;
+};
 
 const getColor = (colorName: ThemeColor, color?: string) => {
   if (isDefined(color)) {
@@ -56,8 +59,14 @@ export const ColorSample = ({
   colorName,
   color,
   variant,
+  className,
 }: ColorSampleProps) => {
   return (
-    <StyledColorSample colorName={colorName} color={color} variant={variant} />
+    <StyledColorSample
+      colorName={colorName}
+      color={color}
+      variant={variant}
+      className={className}
+    />
   );
 };

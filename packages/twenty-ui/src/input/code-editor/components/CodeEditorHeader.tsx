@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledEditorHeader = styled.div`
   align-items: center;

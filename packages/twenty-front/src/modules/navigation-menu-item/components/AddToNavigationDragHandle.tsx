@@ -1,9 +1,10 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import type { ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
@@ -17,13 +18,10 @@ const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-
-  ${({ theme, $hasFixedSize }) =>
-    $hasFixedSize &&
-    css`
-      height: ${theme.spacing(4)};
-      width: ${theme.spacing(4)};
-    `}
+  height: ${({ $hasFixedSize }) =>
+    $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
+  width: ${({ $hasFixedSize }) =>
+    $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
 
   &:active {
     cursor: grabbing;
@@ -41,7 +39,7 @@ const AddToNavigationDragHandleIcon = ({
   customIconContent,
   iconColor,
 }: AddToNavigationDragHandleIconProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const iconSize = theme.icon.size.md;
   const iconStroke = theme.icon.stroke.sm;
 
@@ -74,7 +72,7 @@ export const AddToNavigationDragHandle = ({
   payload,
   isHovered,
 }: AddToNavigationDragHandleProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const effectiveColor =
     payload.type === 'object' && isNonEmptyString(payload.iconColor)
       ? payload.iconColor

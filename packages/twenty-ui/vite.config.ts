@@ -81,11 +81,15 @@ export default defineConfig(({ command }) => {
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
-      wyw({
-        babelOptions: {
-          presets: ['@babel/preset-typescript', '@babel/preset-react'],
-        },
-      }),
+      {
+        ...wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          babelOptions: {
+            presets: ['@babel/preset-typescript', '@babel/preset-react'],
+          },
+        }),
+        enforce: 'pre',
+      },
     ],
     build: {
       cssCodeSplit: false,

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import * as React from 'react';
 
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {

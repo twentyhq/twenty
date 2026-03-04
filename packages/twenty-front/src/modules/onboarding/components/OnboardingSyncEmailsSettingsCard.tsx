@@ -1,7 +1,8 @@
 import { ONBOARDING_SYNC_EMAILS_OPTIONS } from '@/onboarding/constants/OnboardingSyncEmailsOptions';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 type OnboardingSyncEmailsSettingsCardProps = {
@@ -10,7 +11,7 @@ type OnboardingSyncEmailsSettingsCardProps = {
 };
 
 const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
-  width: ${({ theme }) => theme.spacing(10)};
+  width: ${themeCssVariables.spacing[10]};
 `;
 
 export const OnboardingSyncEmailsSettingsCard = ({

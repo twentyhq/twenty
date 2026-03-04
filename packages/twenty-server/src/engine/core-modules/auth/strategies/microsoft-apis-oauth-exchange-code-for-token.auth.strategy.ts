@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { type VerifyCallback } from 'passport-google-oauth20';
+import { parseJson } from 'twenty-shared/utils';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
-import { type MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
+import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { type APIsOAuthState } from 'src/engine/core-modules/auth/types/apis-oauth-state.type';
+import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-export type MicrosoftAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-};
 
 @Injectable()
 export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPIsOauthCommonStrategy {
@@ -17,32 +16,27 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPI
   }
 
   async validate(
-    request: MicrosoftAPIsRequest,
+    request: APIsOAuthRequest,
     accessToken: string,
     refreshToken: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    profile: any,
+    profile: MicrosoftPassportProfile,
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
+    const state = parseJson<APIsOAuthState>(request.query.state as string);
 
-    const state =
-      typeof request.query.state === 'string'
-        ? JSON.parse(request.query.state)
-        : undefined;
-
-    const user: MicrosoftAPIsRequest['user'] = {
-      emails,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos?.[0]?.value,
+    const user: APIsOAuthRequest['user'] = {
+      emails: emails ?? [],
+      firstName: name?.givenName,
+      lastName: name?.familyName,
+      picture: photos?.[0]?.value ?? null,
       accessToken,
       refreshToken,
-      transientToken: state.transientToken,
-      redirectLocation: state.redirectLocation,
-      calendarVisibility: state.calendarVisibility,
-      messageVisibility: state.messageVisibility,
-      skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
+      transientToken: state?.transientToken ?? '',
+      redirectLocation: state?.redirectLocation,
+      calendarVisibility: state?.calendarVisibility,
+      messageVisibility: state?.messageVisibility,
+      skipMessageChannelConfiguration: state?.skipMessageChannelConfiguration,
     };
 
     done(null, user);

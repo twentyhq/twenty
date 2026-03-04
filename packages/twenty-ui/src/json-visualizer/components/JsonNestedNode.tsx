@@ -7,7 +7,8 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ANIMATION, themeCssVariables } from '@ui/theme';
+import { ANIMATION } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,13 +41,11 @@ const StyledJsonListBase = styled.ul<{
   padding: 0;
   display: grid;
   row-gap: ${themeCssVariables.spacing[2]};
-  ${({ depth }) =>
-    depth > 0
-      ? `padding-left: ${themeCssVariables.spacing[8]};
-         > :first-of-type {
-           margin-top: ${themeCssVariables.spacing[2]};
-         }`
-      : ''}
+  padding-left: ${({ depth }) => (depth > 0 ? themeCssVariables.spacing[8] : '0')};
+
+  > :first-of-type {
+    margin-top: ${({ depth }) => (depth > 0 ? themeCssVariables.spacing[2] : '0')};
+  }
 `;
 
 const StyledJsonList = motion.create(StyledJsonListBase);

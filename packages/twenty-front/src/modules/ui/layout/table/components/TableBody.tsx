@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: ${({ theme }) => theme.spacing(2)} 0;
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 export { StyledTableBody as TableBody };

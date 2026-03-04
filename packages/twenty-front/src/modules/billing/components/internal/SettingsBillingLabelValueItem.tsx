@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsBillingLabelValueItemProps = {
   label: string;
@@ -12,16 +13,18 @@ const StyledContainer = styled.div`
 `;
 
 const StyledLabelSpan = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledValueSpan = styled.span<{ isPrimaryColor: boolean }>`
-  color: ${({ theme, isPrimaryColor }) =>
-    isPrimaryColor ? theme.font.color.primary : theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ isPrimaryColor }) =>
+    isPrimaryColor
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 export const SettingsBillingLabelValueItem = ({

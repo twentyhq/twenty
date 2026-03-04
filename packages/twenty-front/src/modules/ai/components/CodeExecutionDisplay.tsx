@@ -1,8 +1,7 @@
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -16,96 +15,97 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(2)} 0;
+  margin: ${themeCssVariables.spacing[2]} 0;
   overflow: hidden;
 `;
 
 const StyledHeader = styled.div<{ status: 'success' | 'error' | 'running' }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledHeaderLeft = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHeaderRight = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledStatusBadge = styled.div<{
   status: 'success' | 'error' | 'running';
 }>`
   align-items: center;
-  background: ${({ status, theme }) =>
+  background: ${({ status }) =>
     status === 'success'
-      ? theme.background.transparent.success
+      ? themeCssVariables.background.transparent.success
       : status === 'error'
-        ? theme.background.transparent.danger
-        : theme.background.transparent.medium};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
-  color: ${({ status, theme }) =>
+        ? themeCssVariables.background.transparent.danger
+        : themeCssVariables.background.transparent.medium};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  color: ${({ status }) =>
     status === 'success'
-      ? theme.color.turquoise
+      ? themeCssVariables.color.turquoise
       : status === 'error'
-        ? theme.color.red
-        : theme.font.color.secondary};
+        ? themeCssVariables.color.red
+        : themeCssVariables.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0.5)}
-    ${({ theme }) => theme.spacing(2)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledSection = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledSectionHeader = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${themeCssVariables.background.secondary};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  transition: background ${({ theme }) => theme.animation.duration.fast}s;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s);
 
   &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${themeCssVariables.background.tertiary};
   }
 `;
 
 const StyledSectionHeaderLeft = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -115,14 +115,14 @@ const StyledCodeEditorContainer = styled.div`
 
 const StyledFilesGrid = styled.div`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledFileCard = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -131,7 +131,7 @@ const StyledFileCard = styled.div`
 const StyledFilePreview = styled.div`
   align-items: center;
   aspect-ratio: 16 / 9;
-  background: ${({ theme }) => theme.background.tertiary};
+  background: ${themeCssVariables.background.tertiary};
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -145,17 +145,16 @@ const StyledPreviewImage = styled.img`
 
 const StyledFileInfo = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${themeCssVariables.background.secondary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1.5)}
-    ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFileName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -163,11 +162,11 @@ const StyledFileName = styled.span`
 
 const StyledDownloadLink = styled.a`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
@@ -203,7 +202,7 @@ export const CodeExecutionDisplay = ({
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [isOutputExpanded, setIsOutputExpanded] = useState(true);

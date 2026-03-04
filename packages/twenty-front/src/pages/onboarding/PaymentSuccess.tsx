@@ -4,7 +4,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -13,12 +13,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledModalContent = styled(Modal.Content)`
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledTitleContainer = styled.div`

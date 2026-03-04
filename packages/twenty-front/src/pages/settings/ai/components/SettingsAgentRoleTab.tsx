@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { v4 } from 'uuid';
@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useAssignRoleToAgentMutation,
   useCreateOneRoleMutation,
@@ -21,9 +22,9 @@ import {
 import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledWarningText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type SettingsAgentRoleTabProps = {

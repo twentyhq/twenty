@@ -5,6 +5,7 @@ export const GET_WORKSPACE_INVITATIONS = gql`
     findWorkspaceInvitations {
       id
       email
+      roleId
       expiresAt
     }
   }
