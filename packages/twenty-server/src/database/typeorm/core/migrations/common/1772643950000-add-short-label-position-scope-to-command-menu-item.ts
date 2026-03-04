@@ -13,6 +13,9 @@ export class AddShortLabelPositionScopeToCommandMenuItem1772643950000
       `ALTER TABLE "core"."commandMenuItem" ADD "position" double precision NOT NULL DEFAULT '0'`,
     );
     await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "availabilityType" DROP DEFAULT`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "availabilityType" TYPE character varying`,
     );
     await queryRunner.query(
