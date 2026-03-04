@@ -35,7 +35,6 @@ export type ConfirmationModalProps = {
 
 export const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;
-  justify-content: center;
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -155,6 +154,7 @@ export const ConfirmationModal = ({
         variant="secondary"
         title={t`Cancel`}
         fullWidth
+        justify="center"
         dataTestId="confirmation-modal-cancel-button"
       />
 
@@ -167,6 +167,7 @@ export const ConfirmationModal = ({
         title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}
         fullWidth
+        justify="center"
         dataTestId="confirmation-modal-confirm-button"
       />
     </ModalStatefulWrapper>
