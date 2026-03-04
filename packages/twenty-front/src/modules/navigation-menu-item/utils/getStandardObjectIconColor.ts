@@ -1,7 +1,7 @@
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultIconColor.constant';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const STANDARD_OBJECT_ICON_COLOR: Partial<
   Record<CoreObjectNameSingular, ThemeColor>

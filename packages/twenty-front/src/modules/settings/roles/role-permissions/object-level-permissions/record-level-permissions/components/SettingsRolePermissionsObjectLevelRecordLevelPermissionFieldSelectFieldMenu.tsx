@@ -3,7 +3,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -27,7 +27,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps =
   {

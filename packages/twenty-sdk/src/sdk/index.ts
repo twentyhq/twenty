@@ -80,6 +80,25 @@ export type {
   ActionProps,
 } from './action';
 
+// Conditional availability typed variables for command menu items
+export {
+  isShowPage,
+  isInRightDrawer,
+  isFavorite,
+  isRemote,
+  isNoteOrTask,
+  isSelectAll,
+  hasAnySoftDeleteFilterOnView,
+  numberOfSelectedRecords,
+  objectPermissions,
+  selectedRecord,
+  featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
+  isDefined,
+  isNonEmptyString,
+} from './front-component-api';
+
 // Front Component API exports
 export {
   closeSidePanel,

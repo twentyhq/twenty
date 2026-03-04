@@ -1,5 +1,4 @@
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -14,7 +13,10 @@ import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/uti
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  type CoreObjectNameSingular,
+  type ObjectPermissions,
+} from 'twenty-shared/types';
 
 type FieldsWidgetFieldItemProps = {
   fieldMetadataItem: FieldMetadataItem;
