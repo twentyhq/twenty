@@ -319,11 +319,13 @@ describe('UserWorkspaceService', () => {
         .spyOn(userWorkspaceRepository, 'save')
         .mockResolvedValue(userWorkspace);
 
-      jest.spyOn(fileUploadService, 'uploadImageFromUrl').mockResolvedValue({
-        name: '',
-        mimeType: undefined,
-        files: [],
-      });
+      jest
+        .spyOn(fileUploadService, 'uploadImageFromUrl')
+        .mockRejectedValue(
+          new Error(
+            'Failed to fetch image from https://lh3.googleusercontent.com/a/invalid: Request failed with status code 404',
+          ),
+        );
 
       const result = await service.create({
         userId,

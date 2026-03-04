@@ -100,6 +100,7 @@ describe('SecureHttpClientService', () => {
       expect(axiosRetry).toHaveBeenCalledWith(client, {
         retries: 2,
         shouldResetTimeout: true,
+        retryCondition: expect.any(Function),
       });
     });
 

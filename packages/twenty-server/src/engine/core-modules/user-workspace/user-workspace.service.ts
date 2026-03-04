@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -44,6 +45,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -482,17 +485,25 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     if (!isDefined(pictureUrl) || pictureUrl === '') return;
 
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
+    try {
+      const { files } = await this.fileUploadService.uploadImageFromUrl({
+        imageUrl: pictureUrl,
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
 
-    if (!files.length) {
+      if (!files.length) {
+        return;
+      }
+
+      return files[0].path;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to upload profile picture from URL: ${pictureUrl} — ${error instanceof Error ? error.message : String(error)}`,
+      );
+
       return;
     }
-
-    return files[0].path;
   }
 
   private async computeDefaultAvatarUrlMigrated(

@@ -97,27 +97,19 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }) {
-    try {
-      const imageData = await this.fetchImageBufferFromUrl(imageUrl);
+    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
-      if (!imageData) {
-        return { name: '', mimeType: undefined, files: [] };
-      }
-
-      return await this.uploadImage({
-        file: imageData.buffer,
-        filename: `${v4()}.${imageData.extension}`,
-        mimeType: imageData.mimeType,
-        fileFolder,
-        workspaceId,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
-      );
-
+    if (!imageData) {
       return { name: '', mimeType: undefined, files: [] };
     }
+
+    return await this.uploadImage({
+      file: imageData.buffer,
+      filename: `${v4()}.${imageData.extension}`,
+      mimeType: imageData.mimeType,
+      fileFolder,
+      workspaceId,
+    });
   }
 
   private async fetchImageBufferFromUrl(imageUrl: string): Promise<{
@@ -132,10 +124,14 @@ export class FileUploadService {
 
     const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
+    if (!buffer || buffer.length === 0) {
+      return null;
+    }
+
     const type = await FileType.fromBuffer(buffer);
 
     if (!type || !type.ext || !type.mime || !type.mime.startsWith('image/')) {
-      return null;
+      throw new Error(`Invalid image type for URL: ${imageUrl}`);
     }
 
     return { buffer, extension: type.ext, mimeType: type.mime };
