@@ -7,8 +7,9 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
-import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
+import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
 import { DeleteJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/delete-jobs-response.dto';
 import { QueueJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-jobs-response.dto';
 import { RetryJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/retry-jobs-response.dto';
@@ -30,6 +31,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
@@ -59,6 +61,7 @@ export class AdminPanelResolver {
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -92,8 +95,8 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => ConfigVariablesOutput)
-  async getConfigVariablesGrouped(): Promise<ConfigVariablesOutput> {
+  @Query(() => ConfigVariablesDTO)
+  async getConfigVariablesGrouped(): Promise<ConfigVariablesDTO> {
     return this.adminService.getConfigVariablesGrouped();
   }
 
@@ -136,6 +139,41 @@ export class AdminPanelResolver {
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
     return this.adminService.getVersionInfo();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => AdminAIModelsDTO)
+  async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+    const models = this.aiModelRegistryService
+      .getAllModelsWithStatus()
+      .map(({ modelConfig, isAvailable, isAdminEnabled }) => ({
+        modelId: modelConfig.modelId,
+        label: modelConfig.label,
+        modelFamily: modelConfig.modelFamily,
+        inferenceProvider: modelConfig.inferenceProvider,
+        isAvailable,
+        isAdminEnabled,
+        deprecated: modelConfig.deprecated,
+        isRecommended: modelConfig.isRecommended,
+      }));
+
+    return {
+      autoEnableNewModels: this.twentyConfigService.get(
+        'AI_AUTO_ENABLE_NEW_MODELS',
+      ),
+      models,
+    };
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminAiModelEnabled(
+    @Args('modelId', { type: () => String }) modelId: string,
+    @Args('enabled', { type: () => Boolean }) enabled: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelAdminEnabled(modelId, enabled);
+
+    return true;
   }
 
   @UseGuards(AdminPanelGuard)

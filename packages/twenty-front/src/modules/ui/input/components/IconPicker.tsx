@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -16,12 +17,12 @@ import {
 } from '@/ui/input/states/iconPickerVisibleCountState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
@@ -31,6 +32,7 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -53,20 +55,53 @@ const StyledMenuIconItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-const StyledLightIconButton = styled(LightIconButton)<{
+const selectedIconButtonStyle = css`
+  background: ${themeCssVariables.background.transparent.medium};
+`;
+
+const focusedIconButtonStyle = css`
+  background: ${themeCssVariables.background.transparent.light};
+`;
+
+type StyledLightIconButtonProps = React.ComponentProps<
+  typeof LightIconButton
+> & {
   isSelected?: boolean;
   isFocused?: boolean;
-}>`
-  background: ${({ theme, isSelected, isFocused }) =>
-    isSelected
-      ? theme.background.transparent.medium
-      : isFocused
-        ? theme.background.transparent.light
-        : 'transparent'};
-`;
+};
+
+const StyledLightIconButton = ({
+  isSelected,
+  isFocused,
+  className,
+  'aria-label': ariaLabel,
+  size,
+  title,
+  Icon,
+  onClick,
+  testId,
+  active,
+  accent,
+  disabled,
+  focus,
+}: StyledLightIconButtonProps) => (
+  <LightIconButton
+    aria-label={ariaLabel}
+    size={size}
+    title={title}
+    Icon={Icon}
+    onClick={onClick}
+    testId={testId}
+    active={active}
+    accent={accent}
+    disabled={disabled}
+    focus={focus}
+    className={`${className ?? ''} ${isSelected ? selectedIconButtonStyle : isFocused ? focusedIconButtonStyle : ''}`}
+  />
+);
 
 const StyledLoadingMore = styled.div`
   display: flex;
@@ -103,7 +138,7 @@ const IconPickerIcon = ({
   Icon,
   focusedIconKey,
 }: IconPickerIconProps) => {
-  const isSelectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
   );
@@ -116,7 +151,7 @@ const IconPickerIcon = ({
           aria-label={convertIconKeyToLabel(iconKey)}
           size="medium"
           title={iconKey}
-          isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
+          isSelected={iconKey === selectedIconKey || !!selectedItemId}
           isFocused={iconKey === focusedIconKey}
           Icon={Icon}
           onClick={onSelect}
@@ -163,7 +198,7 @@ export const IconPicker = ({
   const store = useStore();
 
   const iconPickerVisibleCount =
-    useFamilyRecoilValueV2(iconPickerVisibleCountState, dropdownId) ??
+    useAtomFamilyStateValue(iconPickerVisibleCountState, dropdownId) ??
     maxIconsVisible;
 
   const resetIconPickerVisibleCount = useCallback(() => {
@@ -252,7 +287,7 @@ export const IconPicker = ({
   const selectableListInstanceId = 'icon-list';
 
   const focusedIconKey =
-    useRecoilComponentValueV2(
+    useAtomComponentStateValue(
       selectedItemIdComponentState,
       selectableListInstanceId,
     ) ?? undefined;

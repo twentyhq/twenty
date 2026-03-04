@@ -1,19 +1,20 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import {
-  agentChatUsageStateV2,
+  agentChatUsageState,
   type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+} from '@/ai/states/agentChatUsageState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -26,31 +27,34 @@ const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   height: 24px;
   justify-content: center;
   min-width: 24px;
-  transition: background ${({ theme }) => theme.animation.duration.fast}s ease;
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease;
 
   &:hover {
-    background: ${({ theme, hasUsage }) =>
-      hasUsage ? theme.background.transparent.light : 'transparent'};
+    background: ${({ hasUsage }) =>
+      hasUsage
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 `;
 
 const StyledHoverCard = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   min-width: 280px;
   position: absolute;
   left: 0;
   bottom: calc(100% + 8px);
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+  z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledRow = styled.div`
@@ -60,16 +64,16 @@ const StyledRow = styled.div`
 `;
 
 const StyledContextWindowValue = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledSectionTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const formatTokenCount = (count: number): string => {
@@ -86,8 +90,6 @@ const formatTokenCount = (count: number): string => {
 };
 
 const formatCredits = (credits: number): string => {
-  // Credits are already in display units from the API (internal / 1000)
-  // Show up to 1 decimal for fractional values, none for whole numbers
   if (Number.isInteger(credits)) {
     return credits.toLocaleString();
   }
@@ -112,9 +114,9 @@ const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
 
 export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useRecoilValueV2(agentChatUsageStateV2);
+  const agentChatUsage = useAtomStateValue(agentChatUsageState);
 
   if (!agentChatUsage) {
     return (

@@ -3,7 +3,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 
 export const useQueryVariablesFromParentView = ({
@@ -13,7 +13,7 @@ export const useQueryVariablesFromParentView = ({
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const recordShowParentView = useRecoilComponentValue(
+  const contextStoreRecordShowParentView = useAtomComponentStateValue(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -21,9 +21,10 @@ export const useQueryVariablesFromParentView = ({
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
-    recordFilterGroups: recordShowParentView?.parentViewFilterGroups ?? [],
-    recordFilters: recordShowParentView?.parentViewFilters ?? [],
-    recordSorts: recordShowParentView?.parentViewSorts ?? [],
+    recordFilterGroups:
+      contextStoreRecordShowParentView?.parentViewFilterGroups ?? [],
+    recordFilters: contextStoreRecordShowParentView?.parentViewFilters ?? [],
+    recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
     filterValueDependencies,

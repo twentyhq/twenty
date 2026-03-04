@@ -6,8 +6,7 @@ import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.serv
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -25,7 +24,7 @@ const mockWorkspaceId = 'workspace-id';
 describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let service: WorkflowVersionStepOperationsWorkspaceService;
   let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
-  let logicFunctionMetadataService: jest.Mocked<LogicFunctionMetadataService>;
+  let logicFunctionFromSourceService: jest.Mocked<LogicFunctionFromSourceService>;
   let codeStepBuildService: jest.Mocked<CodeStepBuildService>;
   let agentService: jest.Mocked<AgentService>;
   let roleTargetRepository: jest.Mocked<any>;
@@ -33,7 +32,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
-  let flatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   beforeEach(async () => {
     codeStepBuildService = {
@@ -89,10 +87,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       }),
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
-    logicFunctionMetadataService = {
-      createOne: jest.fn(),
-      destroyOne: jest.fn(),
-    } as unknown as jest.Mocked<LogicFunctionMetadataService>;
+    logicFunctionFromSourceService = {
+      deleteOneWithSource: jest.fn(),
+    } as unknown as jest.Mocked<LogicFunctionFromSourceService>;
 
     agentService = {
       deleteManyAgents: jest.fn().mockResolvedValue([]),
@@ -132,8 +129,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: globalWorkspaceOrmManager,
         },
         {
-          provide: LogicFunctionMetadataService,
-          useValue: logicFunctionMetadataService,
+          provide: LogicFunctionFromSourceService,
+          useValue: logicFunctionFromSourceService,
         },
         {
           provide: CodeStepBuildService,
@@ -165,12 +162,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: (flatEntityMapsCacheService = {
+          useValue: {
             flushFlatEntityMaps: jest.fn(),
             getOrRecomputeManyOrAllFlatEntityMaps: jest
               .fn()
               .mockResolvedValue(createEmptyAllFlatEntityMaps()),
-          } as unknown as jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>),
+          },
         },
       ],
     }).compile();
@@ -203,7 +200,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionMetadataService.destroyOne).toHaveBeenCalledWith({
+      expect(
+        logicFunctionFromSourceService.deleteOneWithSource,
+      ).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
@@ -286,35 +285,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
   describe('runStepCreationSideEffectsAndBuildStep', () => {
     it('should create code step with logic function', async () => {
-      const mockFlatLogicFunction: FlatLogicFunction = {
-        id: 'new-function-id',
-        name: 'Test Function',
-        description: 'Test Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'src/index.mjs',
-        handlerName: 'main',
-        checksum: null,
-        toolInputSchema: null,
-        isTool: false,
-        universalIdentifier: 'universal-id',
-        applicationId: 'application-id',
-        applicationUniversalIdentifier: 'application-universal-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
-        isBuildUpToDate: false,
-      };
-
-      logicFunctionMetadataService.createOne.mockResolvedValue(
-        mockFlatLogicFunction,
-      );
-
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
         workspaceId: mockWorkspaceId,
@@ -359,78 +329,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
         nextStepIds: ['next-step'],
       } as unknown as WorkflowAction;
-
-      const mockExistingFlatLogicFunction: FlatLogicFunction = {
-        id: 'function-id',
-        name: 'Existing Function',
-        description: 'Existing Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'workflow/function-id/src/index.ts',
-        builtHandlerPath: 'workflow/function-id/src/index.mjs',
-        handlerName: 'main',
-        checksum: 'existing-checksum',
-        toolInputSchema: null,
-        isTool: false,
-        universalIdentifier: 'existing-universal-id',
-        applicationId: 'application-id',
-        applicationUniversalIdentifier: 'application-universal-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
-        isBuildUpToDate: true,
-      };
-
-      const mockNewFlatLogicFunction: FlatLogicFunction = {
-        id: 'new-function-id',
-        name: 'Test Function',
-        description: 'Test Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'src/index.mjs',
-        handlerName: 'main',
-        checksum: null,
-        toolInputSchema: null,
-        isTool: false,
-        universalIdentifier: 'universal-id',
-        applicationId: 'application-id',
-        applicationUniversalIdentifier: 'application-universal-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
-        isBuildUpToDate: false,
-      };
-
-      const emptyMaps = createEmptyAllFlatEntityMaps();
-      const flatLogicFunctionMapsKey = 'flatLogicFunctionMaps' as const;
-
-      flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValueOnce(
-        {
-          ...emptyMaps,
-          [flatLogicFunctionMapsKey]: {
-            byUniversalIdentifier: {
-              'existing-universal-id': mockExistingFlatLogicFunction,
-            },
-            universalIdentifierById: {
-              'function-id': 'existing-universal-id',
-            },
-            universalIdentifiersByApplicationId: {},
-          },
-        },
-      );
-
-      logicFunctionMetadataService.createOne.mockResolvedValue(
-        mockNewFlatLogicFunction,
-      );
 
       const clonedStep = await service.cloneStep({
         step: originalStep,

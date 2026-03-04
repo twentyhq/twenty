@@ -1,18 +1,16 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { selector } from 'recoil';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const flattenedFieldMetadataItemsSelector = selector<
+export const flattenedFieldMetadataItemsSelector = createAtomSelector<
   FieldMetadataItem[]
 >({
   key: 'flattenedFieldMetadataItemsSelector',
   get: ({ get }) => {
     const objectMetadataItems = get(objectMetadataItemsState);
 
-    const flattenedFieldMetadataItems = objectMetadataItems.flatMap(
+    return objectMetadataItems.flatMap(
       (objectMetadataItem) => objectMetadataItem.fields,
     );
-
-    return flattenedFieldMetadataItems;
   },
 });

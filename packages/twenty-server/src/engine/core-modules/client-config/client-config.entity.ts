@@ -5,18 +5,23 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import {
+  InferenceProvider,
+  ModelFamily,
   ModelId,
-  ModelProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
 });
 
-registerEnumType(ModelProvider, {
-  name: 'ModelProvider',
+registerEnumType(InferenceProvider, {
+  name: 'InferenceProvider',
+});
+
+registerEnumType(ModelFamily, {
+  name: 'ModelFamily',
 });
 
 @ObjectType()
@@ -36,20 +41,62 @@ export class ClientAIModelConfig {
   @Field(() => String)
   label: string;
 
-  @Field(() => ModelProvider)
-  provider: ModelProvider;
+  @Field(() => ModelFamily, { nullable: true })
+  modelFamily?: ModelFamily;
+
+  @Field(() => InferenceProvider)
+  inferenceProvider: InferenceProvider;
 
   @Field(() => Number)
-  inputCostPer1kTokensInCredits: number;
+  inputCostPerMillionTokensInCredits: number;
 
   @Field(() => Number)
-  outputCostPer1kTokensInCredits: number;
+  outputCostPerMillionTokensInCredits: number;
 
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;
 
   @Field(() => Boolean, { nullable: true })
   deprecated?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  isRecommended?: boolean;
+}
+
+@ObjectType()
+export class AdminAIModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => ModelFamily, { nullable: true })
+  modelFamily?: ModelFamily;
+
+  @Field(() => InferenceProvider)
+  inferenceProvider: InferenceProvider;
+
+  @Field(() => Boolean)
+  isAvailable: boolean;
+
+  @Field(() => Boolean)
+  isAdminEnabled: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  deprecated?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  isRecommended?: boolean;
+}
+
+@ObjectType('AdminAIModels')
+export class AdminAIModelsDTO {
+  @Field(() => Boolean)
+  autoEnableNewModels: boolean;
+
+  @Field(() => [AdminAIModelConfig])
+  models: AdminAIModelConfig[];
 }
 
 @ObjectType()

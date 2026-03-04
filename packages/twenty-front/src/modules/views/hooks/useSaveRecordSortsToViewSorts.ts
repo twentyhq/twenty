@@ -1,6 +1,5 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewSortAPIPersist } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -8,7 +7,8 @@ import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordSortsToViewSorts = () => {
@@ -21,92 +21,85 @@ export const useSaveRecordSortsToViewSorts = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
 
-  const saveRecordSortsToViewSorts = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        if (!canPersistChanges || !isDefined(currentView)) {
-          return;
-        }
+  const store = useStore();
 
-        const currentViewSorts = currentView?.viewSorts ?? [];
+  const saveRecordSortsToViewSorts = useCallback(async () => {
+    if (!canPersistChanges || !isDefined(currentView)) {
+      return;
+    }
 
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortsCallbackState,
-        );
+    const currentViewSorts = currentView?.viewSorts ?? [];
 
-        const newViewSorts = currentRecordSorts.map(mapRecordSortToViewSort);
+    const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
-        const viewSortsToCreate = getViewSortsToCreate(
-          currentViewSorts,
-          newViewSorts,
-        );
+    const newViewSorts = currentRecordSorts.map(mapRecordSortToViewSort);
 
-        const viewSortsToDelete = getViewSortsToDelete(
-          currentViewSorts,
-          newViewSorts,
-        );
+    const viewSortsToCreate = getViewSortsToCreate(
+      currentViewSorts,
+      newViewSorts,
+    );
 
-        const viewSortsToUpdate = getViewSortsToUpdate(
-          currentViewSorts,
-          newViewSorts,
-        );
+    const viewSortsToDelete = getViewSortsToDelete(
+      currentViewSorts,
+      newViewSorts,
+    );
 
-        const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-            fieldMetadataId: viewSort.fieldMetadataId,
-            viewId: currentView.id,
-            direction: viewSort.direction,
-          },
-        }));
+    const viewSortsToUpdate = getViewSortsToUpdate(
+      currentViewSorts,
+      newViewSorts,
+    );
 
-        const updateViewSortInputs = viewSortsToUpdate.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-            update: {
-              direction: viewSort.direction,
-            },
-          },
-        }));
-
-        const deleteViewSortInputs = viewSortsToDelete.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-          },
-        }));
-
-        const createResult =
-          await performViewSortAPICreate(createViewSortInputs);
-        if (createResult.status === 'failed') {
-          return;
-        }
-
-        const updateResult =
-          await performViewSortAPIUpdate(updateViewSortInputs);
-        if (updateResult.status === 'failed') {
-          return;
-        }
-
-        const deleteResult =
-          await performViewSortAPIDelete(deleteViewSortInputs);
-        if (deleteResult.status === 'failed') {
-          return;
-        }
+    const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
+      input: {
+        id: viewSort.id,
+        fieldMetadataId: viewSort.fieldMetadataId,
+        viewId: currentView.id,
+        direction: viewSort.direction,
       },
-    [
-      canPersistChanges,
-      currentView,
-      currentRecordSortsCallbackState,
-      performViewSortAPICreate,
-      performViewSortAPIUpdate,
-      performViewSortAPIDelete,
-    ],
-  );
+    }));
+
+    const updateViewSortInputs = viewSortsToUpdate.map((viewSort) => ({
+      input: {
+        id: viewSort.id,
+        update: {
+          direction: viewSort.direction,
+        },
+      },
+    }));
+
+    const deleteViewSortInputs = viewSortsToDelete.map((viewSort) => ({
+      input: {
+        id: viewSort.id,
+      },
+    }));
+
+    const createResult = await performViewSortAPICreate(createViewSortInputs);
+    if (createResult.status === 'failed') {
+      return;
+    }
+
+    const updateResult = await performViewSortAPIUpdate(updateViewSortInputs);
+    if (updateResult.status === 'failed') {
+      return;
+    }
+
+    const deleteResult = await performViewSortAPIDelete(deleteViewSortInputs);
+    if (deleteResult.status === 'failed') {
+      return;
+    }
+  }, [
+    canPersistChanges,
+    currentView,
+    store,
+    currentRecordSortsCallbackState,
+    performViewSortAPICreate,
+    performViewSortAPIUpdate,
+    performViewSortAPIDelete,
+  ]);
 
   return {
     saveRecordSortsToViewSorts,

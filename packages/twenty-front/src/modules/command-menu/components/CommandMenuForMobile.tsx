@@ -1,8 +1,8 @@
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 
 import { AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
@@ -13,7 +13,7 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   return (
     <AnimatePresence>

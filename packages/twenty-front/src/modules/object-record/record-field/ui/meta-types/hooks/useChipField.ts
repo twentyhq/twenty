@@ -1,10 +1,9 @@
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -18,10 +17,10 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   return {
     objectNameSingular,
-    record,
+    recordStore,
   };
 };

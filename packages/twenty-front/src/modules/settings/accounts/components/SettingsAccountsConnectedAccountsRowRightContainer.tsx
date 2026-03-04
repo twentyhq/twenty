@@ -2,14 +2,15 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Status } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAccountsConnectedAccountsRowRightContainer = ({

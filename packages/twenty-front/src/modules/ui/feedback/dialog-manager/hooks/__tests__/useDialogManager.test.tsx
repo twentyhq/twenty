@@ -1,13 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -19,15 +18,13 @@ jest.mock('uuid');
 (uuidv4 as jest.Mock).mockReturnValue(mockedUuid);
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <JotaiProvider store={jotaiStore}>
-      <DialogComponentInstanceContext.Provider
-        value={{ instanceId: 'dialog-manager' }}
-      >
-        {children}
-      </DialogComponentInstanceContext.Provider>
-    </JotaiProvider>
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <DialogComponentInstanceContext.Provider
+      value={{ instanceId: 'dialog-manager' }}
+    >
+      {children}
+    </DialogComponentInstanceContext.Provider>
+  </JotaiProvider>
 );
 
 const renderHookConfig = {
@@ -84,7 +81,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => ({
       dialogManager: useDialogManager(),
-      dialogInternal: useRecoilComponentValueV2(dialogInternalComponentState),
+      dialogInternal: useAtomComponentStateValue(dialogInternalComponentState),
     }),
     renderHookConfig,
   );

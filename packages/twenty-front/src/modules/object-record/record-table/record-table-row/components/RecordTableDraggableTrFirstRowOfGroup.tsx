@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
@@ -8,7 +8,7 @@ import { RecordTableTr } from '@/object-record/record-table/record-table-row/com
 
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type RecordTableDraggableTrFirstRowOfGroupProps = {
   className?: string;
@@ -29,11 +29,11 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
   onClick,
   children,
 }: RecordTableDraggableTrFirstRowOfGroupProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
@@ -68,7 +68,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             data-selectable-id={recordId}
             onClick={onClick}
             isFirstRowOfGroup={true}
-            isScrolledVertically={isScrolledVertically}
+            isScrolledVertically={isRecordTableScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{

@@ -12,9 +12,10 @@ import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-t
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -30,7 +31,7 @@ export type RecordTableColumnHeadDropdownMenuProps = {
 };
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+  z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
 export const RecordTableColumnHeadDropdownMenu = ({
@@ -44,10 +45,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const isLabelIdentifier = useRecoilValue(
-    isFieldMetadataItemLabelIdentifierSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const isLabelIdentifier = useAtomFamilySelectorValue(
+    isFieldMetadataItemLabelIdentifierSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const secondVisibleRecordField = visibleRecordFields[1];
@@ -125,10 +125,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const { isFilterable, isSortable } = useRecoilValue(
-    isFieldMetadataItemFilterableAndSortableSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
+    isFieldMetadataItemFilterableAndSortableSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const showSeparator =

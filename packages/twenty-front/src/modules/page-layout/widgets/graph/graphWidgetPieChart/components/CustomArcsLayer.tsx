@@ -1,7 +1,7 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useArcsTransition } from '@nivo/arcs';
 import { type MouseEventHandler, type PieCustomLayerProps } from '@nivo/pie';
 import { animated } from '@react-spring/web';
@@ -27,7 +27,7 @@ export const CustomArcsLayer = ({
   onMouseLeave,
   onClick,
 }: CustomArcsLayerProps) => {
-  const highlightedLegendId = useRecoilComponentValue(
+  const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
@@ -37,8 +37,8 @@ export const CustomArcsLayer = ({
     <g transform={`translate(${centerX},${centerY})`}>
       {transition((_, datum) => {
         const isDimmed =
-          isDefined(highlightedLegendId) &&
-          String(highlightedLegendId) !== String(datum.id);
+          isDefined(graphWidgetHighlightedLegendId) &&
+          String(graphWidgetHighlightedLegendId) !== String(datum.id);
         const arcLength = datum.arc.endAngle - datum.arc.startAngle;
         const padAngleRadians = (padAngle * Math.PI) / 180;
         const clampedPadAngle = Math.min(

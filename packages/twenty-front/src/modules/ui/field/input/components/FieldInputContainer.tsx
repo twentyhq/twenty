@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 // eslint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const FieldInputContainer = styled.div`

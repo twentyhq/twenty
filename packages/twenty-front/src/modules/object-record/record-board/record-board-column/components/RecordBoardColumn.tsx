@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -7,19 +8,19 @@ import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/use
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledColumn = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   max-width: 200px;
   min-width: 200px;
   min-height: 100%;
   flex: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   padding-top: 0px;
   position: relative;
   height: 100%;
@@ -34,10 +35,11 @@ export const RecordBoardColumn = ({
   recordBoardColumnId,
   recordBoardColumnIndex,
 }: RecordBoardColumnProps) => {
-  const recordGroupDefinition = useRecoilValue(
-    recordGroupDefinitionFamilyState(recordBoardColumnId),
+  const recordGroupDefinition = useAtomFamilyStateValue(
+    recordGroupDefinitionFamilyState,
+    recordBoardColumnId,
   );
-  const recordIdsByGroup = useRecoilComponentFamilyValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
@@ -57,7 +59,7 @@ export const RecordBoardColumn = ({
       value={{
         columnDefinition: recordGroupDefinition,
         columnId: recordBoardColumnId,
-        recordIds: recordIdsByGroup,
+        recordIds: recordIndexRecordIdsByGroup,
         columnIndex: recordBoardColumnIndex,
       }}
     >

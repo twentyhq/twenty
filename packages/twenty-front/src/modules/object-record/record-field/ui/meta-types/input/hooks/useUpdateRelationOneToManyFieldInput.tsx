@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordOneToManyFieldAttachTargetRecord } from '@/object-record/hooks/useRecordOneToManyFieldAttachTargetRecord';
@@ -49,8 +48,8 @@ export const useUpdateRelationOneToManyFieldInput = () => {
   const { recordOneToManyFieldAttachTargetRecord } =
     useRecordOneToManyFieldAttachTargetRecord();
 
-  const updateRelation = useRecoilCallback(
-    () => async (morphItem: RecordPickerPickableMorphItem) => {
+  const updateRelation = useCallback(
+    async (morphItem: RecordPickerPickableMorphItem) => {
       if (
         !fieldDefinition.metadata?.relationObjectMetadataNameSingular ||
         !fieldDefinition.metadata?.targetFieldMetadataName

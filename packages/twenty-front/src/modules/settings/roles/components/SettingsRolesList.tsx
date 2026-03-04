@@ -2,16 +2,15 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Table } from '@/ui/layout/table/components/Table';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   H2Title,
@@ -24,30 +23,31 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 const StyledCreateRoleSection = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNoRoles = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -61,7 +61,7 @@ export const SettingsRolesList = () => {
   const [showAgentRoles, setShowAgentRoles] = useState(false);
   const [showApiKeyRoles, setShowApiKeyRoles] = useState(false);
 
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const settingsAllRoles = useSettingsAllRoles();
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
     sortByAscString(a.label, b.label),

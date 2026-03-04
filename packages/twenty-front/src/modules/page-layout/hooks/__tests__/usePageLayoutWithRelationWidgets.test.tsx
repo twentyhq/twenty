@@ -60,7 +60,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             configuration: {
               __typename: 'FieldsConfiguration',
               configurationType: WidgetConfigurationType.FIELDS,
-              sections: [],
+              viewId: null,
             },
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -124,6 +124,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
   const mockRelationFields: FieldMetadataItem[] = [
     {
       id: 'field-1',
+      universalIdentifier: 'field-1',
       label: 'Related Companies',
       name: 'relatedCompanies',
       type: 'RELATION',
@@ -142,6 +143,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
     } as FieldMetadataItem,
     {
       id: 'field-2',
+      universalIdentifier: 'field-2',
       label: 'Related People',
       name: 'relatedPeople',
       type: 'RELATION',

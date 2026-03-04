@@ -4,7 +4,7 @@ import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/Fie
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -15,7 +15,7 @@ export const usePhonesFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValueV2<FieldPhonesValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldPhonesValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

@@ -29,38 +29,32 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const frontComponentHostCommunicationApiRef = useRef(
-    frontComponentHostCommunicationApi,
-  );
-  frontComponentHostCommunicationApiRef.current =
-    frontComponentHostCommunicationApi;
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
+    if (isInitializedRef.current) {
+      return;
+    }
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const worker = createRemoteWorker();
 
     worker.onerror = (event: ErrorEvent) => {
       const workerError =
-        event.error ??
-        new Error(event.message || 'Unknown worker error');
+        event.error ?? new Error(event.message || 'Unknown worker error');
 
       console.error('[FrontComponentRenderer] Worker error:', workerError);
       setError(workerError);
     };
 
-    const stableFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-      {
-        navigate: (...args) =>
-          frontComponentHostCommunicationApiRef.current.navigate(...args),
-      };
-
     const thread = new ThreadWebWorker<
       WorkerExports,
       FrontComponentHostCommunicationApi
     >(worker, {
-      exports: stableFrontComponentHostCommunicationApi,
+      exports: frontComponentHostCommunicationApi,
     });
+
     setThread(thread);
 
     thread.imports
@@ -74,10 +68,12 @@ export const FrontComponentWorkerEffect = ({
       });
 
     setReceiver(newReceiver);
+    isInitializedRef.current = true;
 
     return () => {
       setThread(null);
       worker.terminate();
+      isInitializedRef.current = false;
     };
   }, [
     componentUrl,
@@ -86,6 +82,7 @@ export const FrontComponentWorkerEffect = ({
     setError,
     setReceiver,
     setThread,
+    frontComponentHostCommunicationApi,
   ]);
 
   return null;

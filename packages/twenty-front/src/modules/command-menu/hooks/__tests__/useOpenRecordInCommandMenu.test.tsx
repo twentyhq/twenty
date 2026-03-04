@@ -1,20 +1,20 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -29,6 +29,16 @@ jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
 }));
+
+const mockOpenNewRecordTitleCell = jest.fn();
+jest.mock(
+  '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell',
+  () => ({
+    useOpenNewRecordTitleCell: () => ({
+      openNewRecordTitleCell: mockOpenNewRecordTitleCell,
+    }),
+  }),
+);
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -53,32 +63,28 @@ const renderHooks = () => {
     () => {
       const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
-        commandMenuNavigationMorphItemsByPageState,
-      );
-
-      const viewableRecordId = useRecoilComponentValue(
+      const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
-      const viewableRecordNameSingular = useRecoilComponentValue(
+      const viewableRecordNameSingular = useAtomComponentStateValue(
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useRecoilComponentValue(
-        contextStoreCurrentObjectMetadataItemIdComponentState,
-        'mocked-uuid',
-      );
-      const targetedRecordsRule = useRecoilComponentValue(
+      const contextStoreCurrentObjectMetadataItemId =
+        useAtomComponentStateValue(
+          contextStoreCurrentObjectMetadataItemIdComponentState,
+          'mocked-uuid',
+        );
+      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useRecoilComponentValue(
+      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useRecoilComponentValue(
+      const contextStoreCurrentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
@@ -87,13 +93,11 @@ const renderHooks = () => {
       return {
         openRecordInCommandMenu,
         viewableRecordId,
-        commandMenuPage,
-        commandMenuNavigationMorphItemsByPage,
         viewableRecordNameSingular,
-        currentObjectMetadataItemId,
-        targetedRecordsRule,
-        numberOfSelectedRecords,
-        currentViewType,
+        contextStoreCurrentObjectMetadataItemId,
+        contextStoreTargetedRecordsRule,
+        contextStoreNumberOfSelectedRecords,
+        contextStoreCurrentViewType,
         getIcon,
       };
     },
@@ -124,20 +128,23 @@ describe('useOpenRecordInCommandMenu', () => {
 
     expect(result.current.viewableRecordId).toBe(recordId);
     expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.currentObjectMetadataItemId).toBe(
+    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
       personMockObjectMetadataItem.id,
     );
-    expect(result.current.targetedRecordsRule).toEqual({
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
       mode: 'selection',
       selectedRecordIds: [recordId],
     });
-    expect(result.current.numberOfSelectedRecords).toBe(1);
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
+    expect(result.current.contextStoreCurrentViewType).toBe(
+      ContextStoreViewType.ShowPage,
+    );
 
-    expect(result.current.commandMenuNavigationMorphItemsByPage.size).toBe(1);
-    expect(
-      result.current.commandMenuNavigationMorphItemsByPage.get('mocked-uuid'),
-    ).toEqual([
+    const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
+      commandMenuNavigationMorphItemsByPageState.atom,
+    );
+    expect(commandMenuNavigationMorphItemsByPage.size).toBe(1);
+    expect(commandMenuNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
       {
         objectMetadataId: personMockObjectMetadataItem.id,
         recordId,
@@ -176,5 +183,37 @@ describe('useOpenRecordInCommandMenu', () => {
       pageId: 'mocked-uuid',
       resetNavigationStack: false,
     });
+  });
+
+  it('should open title cell in edit mode when isNewRecord is true', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInCommandMenu({
+        recordId: 'new-record-123',
+        objectNameSingular: 'person',
+        isNewRecord: true,
+      });
+    });
+
+    expect(mockOpenNewRecordTitleCell).toHaveBeenCalledWith({
+      recordId: 'new-record-123',
+      fieldName: getLabelIdentifierFieldMetadataItem(
+        personMockObjectMetadataItem,
+      )?.name,
+    });
+  });
+
+  it('should not open title cell when isNewRecord is false', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInCommandMenu({
+        recordId: 'record-123',
+        objectNameSingular: 'person',
+      });
+    });
+
+    expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
   });
 });

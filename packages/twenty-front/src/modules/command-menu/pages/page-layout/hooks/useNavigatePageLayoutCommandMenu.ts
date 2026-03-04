@@ -2,7 +2,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
 import { getPageLayoutIcon } from '@/command-menu/pages/page-layout/utils/getPageLayoutIcon';
 import { getPageLayoutPageTitle } from '@/command-menu/pages/page-layout/utils/getPageLayoutPageTitle';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 
@@ -17,8 +17,8 @@ type NavigatePageLayoutCommandMenuProps = {
 export const useNavigatePageLayoutCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
-  const navigatePageLayoutCommandMenu = useRecoilCallback(() => {
-    return ({
+  const navigatePageLayoutCommandMenu = useCallback(
+    ({
       commandMenuPage,
       pageTitle,
       pageIcon,
@@ -36,8 +36,9 @@ export const useNavigatePageLayoutCommandMenu = () => {
         focusTitleInput,
         resetNavigationStack,
       });
-    };
-  }, [navigateCommandMenu]);
+    },
+    [navigateCommandMenu],
+  );
 
   return {
     navigatePageLayoutCommandMenu,

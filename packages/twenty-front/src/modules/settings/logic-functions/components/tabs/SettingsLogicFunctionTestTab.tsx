@@ -1,21 +1,20 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import {
-  type LogicFunctionTestData,
-  logicFunctionTestDataFamilyState,
-} from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
-import styled from '@emotion/styled';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -33,10 +32,14 @@ export const SettingsLogicFunctionTestTab = ({
   isTesting?: boolean;
 }) => {
   const { t } = useLingui();
-  const [logicFunctionTestData, setLogicFunctionTestData] =
-    useRecoilState<LogicFunctionTestData>(
-      logicFunctionTestDataFamilyState(logicFunctionId),
-    );
+  const logicFunctionTestData = useAtomFamilyStateValue(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
+  const setLogicFunctionTestData = useSetAtomFamilyState(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
 
   const onChange = (newInput: string) => {
     setLogicFunctionTestData((prev) => ({

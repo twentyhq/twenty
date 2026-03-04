@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import {
   FilesFieldException,
@@ -35,12 +35,24 @@ export class FilesFieldService {
     filename,
     workspaceId,
     fieldMetadataId,
+    fieldMetadataUniversalIdentifier,
   }: {
     file: Buffer;
     filename: string;
     workspaceId: string;
-    fieldMetadataId: string;
-  }): Promise<FileWithSignedUrlDto> {
+    fieldMetadataId?: string;
+    fieldMetadataUniversalIdentifier?: string;
+  }): Promise<FileWithSignedUrlDTO> {
+    if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
+      throw new FilesFieldException(
+        'fieldMetadataId or fieldMetadataUniversalIdentifier must be provided',
+        FilesFieldExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`fieldMetadataId or fieldMetadataUniversalIdentifier must be provided`,
+        },
+      );
+    }
+
     const { mimeType, ext } = await extractFileInfo({
       file,
       filename,
@@ -54,7 +66,10 @@ export class FilesFieldService {
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
       select: ['applicationId', 'universalIdentifier'],
       where: {
-        id: fieldMetadataId,
+        ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+        ...(fieldMetadataUniversalIdentifier
+          ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+          : {}),
         workspaceId,
       },
     });

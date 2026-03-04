@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedStateV2';
+import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -16,7 +16,7 @@ export const useKeyboardShortcutMenu = () => {
   const store = useStore();
 
   const openKeyboardShortcutMenu = useCallback(() => {
-    store.set(isKeyboardShortcutMenuOpenedStateV2.atom, true);
+    store.set(isKeyboardShortcutMenuOpenedState.atom, true);
     pushFocusItemToFocusStack({
       focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
       component: {
@@ -32,11 +32,11 @@ export const useKeyboardShortcutMenu = () => {
 
   const closeKeyboardShortcutMenu = useCallback(() => {
     const isKeyboardShortcutMenuOpened = store.get(
-      isKeyboardShortcutMenuOpenedStateV2.atom,
+      isKeyboardShortcutMenuOpenedState.atom,
     );
 
     if (isKeyboardShortcutMenuOpened) {
-      store.set(isKeyboardShortcutMenuOpenedStateV2.atom, false);
+      store.set(isKeyboardShortcutMenuOpenedState.atom, false);
       removeFocusItemFromFocusStackById({
         focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
       });
@@ -45,7 +45,7 @@ export const useKeyboardShortcutMenu = () => {
 
   const toggleKeyboardShortcutMenu = useCallback(() => {
     const isKeyboardShortcutMenuOpened = store.get(
-      isKeyboardShortcutMenuOpenedStateV2.atom,
+      isKeyboardShortcutMenuOpenedState.atom,
     );
 
     if (isKeyboardShortcutMenuOpened === false) {

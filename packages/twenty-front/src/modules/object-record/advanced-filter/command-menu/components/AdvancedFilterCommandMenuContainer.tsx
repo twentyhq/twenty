@@ -8,21 +8,22 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledChildContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
 
@@ -41,7 +42,7 @@ export const AdvancedFilterCommandMenuContainer = ({
   VariablePicker,
   isWorkflowFindRecords,
 }: AdvancedFilterCommandMenuContainerProps) => {
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 

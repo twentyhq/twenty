@@ -1,17 +1,19 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRightDrawerContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSkeletonLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SkeletonTheme

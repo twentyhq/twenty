@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppTooltip, TooltipPosition } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyPastDateRelativeToNow,
@@ -18,8 +19,8 @@ const StyledEmailThreadMessageSender = styled.div`
 const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type EmailThreadMessageSenderProps = {
@@ -31,7 +32,7 @@ export const EmailThreadMessageSender = ({
   sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   return (

@@ -3,7 +3,7 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -14,7 +14,7 @@ import { useIcons } from 'twenty-ui/display';
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -50,7 +50,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         shortLabel: name,
         position: index,
         isPinned:
-          !isPageInEditMode &&
+          !contextStoreIsPageInEditMode &&
           activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
         shouldBeRegistered: () => true,

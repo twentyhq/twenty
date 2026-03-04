@@ -3,11 +3,11 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -28,12 +28,17 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
@@ -72,26 +77,17 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenuRouter,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      const setCurrentUserWorkspace = useSetRecoilState(
-        currentUserWorkspaceState,
+      jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+      jotaiStore.set(
+        currentWorkspaceMemberState.atom,
+        mockedWorkspaceMemberData,
       );
-      const setCurrentWorkspaceMember = useSetRecoilState(
-        currentWorkspaceMemberState,
+      jotaiStore.set(
+        currentUserWorkspaceState.atom,
+        mockedUserData.currentUserWorkspace,
       );
-      const setIsCommandMenuOpened = useSetRecoilState(
-        isCommandMenuOpenedState,
-      );
-      const setCommandMenuNavigationStack = useSetRecoilState(
-        commandMenuNavigationStackState,
-      );
-
-      setCurrentWorkspace(mockCurrentWorkspace);
-      setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-      setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
-
-      setIsCommandMenuOpened(true);
-      setCommandMenuNavigationStack([
+      jotaiStore.set(isCommandMenuOpenedState.atom, true);
+      jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
           page: CommandMenuPages.Root,
           pageTitle: 'Command Menu',
@@ -99,6 +95,25 @@ const meta: Meta<typeof CommandMenu> = {
           pageId: '1',
         },
       ]);
+
+      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const companyMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'company',
+      );
+      if (isDefined(companyMetadataItem)) {
+        jotaiStore.set(
+          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+          companyMetadataItem.id,
+        );
+        jotaiStore.set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+          ContextStoreViewType.Table,
+        );
+      }
 
       return <Story />;
     },
@@ -138,10 +153,8 @@ export const LimitedPermissions: Story = {
   },
   decorators: [
     (Story) => {
-      const setCurrentUserWorkspace = useSetRecoilState(
-        currentUserWorkspaceState,
-      );
-      setCurrentUserWorkspace(
+      jotaiStore.set(
+        currentUserWorkspaceState.atom,
         mockedLimitedPermissionsUserData.currentUserWorkspace,
       );
 

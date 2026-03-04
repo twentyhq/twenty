@@ -1,5 +1,6 @@
 import { type RulesLogic } from 'json-logic-js';
 
+// Legacy types - kept for temporary configuration fallback
 export type FieldsConfigurationFieldItem = {
   fieldMetadataId: string;
   position: number;
@@ -8,15 +9,9 @@ export type FieldsConfigurationFieldItem = {
   isVisible?: boolean;
 };
 
-export type FieldsConfigurationSection = {
+export type FieldsConfigurationGroup = {
   id: string;
   title: string;
   position: number;
   fields: FieldsConfigurationFieldItem[];
-};
-
-export type FieldsConfiguration = {
-  __typename: 'FieldsConfiguration';
-  configurationType: 'FIELDS';
-  sections: FieldsConfigurationSection[];
 };

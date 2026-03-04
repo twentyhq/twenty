@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -29,27 +30,28 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledSearchInput = styled.input`
   background: transparent;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 0;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: inherit;
   margin: 0;
   max-width: 100%;
   min-height: 19px;
   outline: none;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   text-decoration: none;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
+    color: ${themeCssVariables.font.color.light};
   }
 `;
 
@@ -76,11 +78,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       });
 
-    const selectedFieldMetadataItem = useRecoilComponentValue(
+    const selectedFieldMetadataItem = useAtomComponentSelectorValue(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 

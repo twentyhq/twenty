@@ -6,13 +6,14 @@ import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-r
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { useRecordPageLayoutId } from '@/page-layout/hooks/useRecordPageLayoutId';
+import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledShowPageBannerContainer = styled.div`
@@ -31,9 +32,9 @@ const StyledShowPageRightContainer = styled.div`
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
+  background: ${themeCssVariables.background.primary};
+  padding-bottom: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? themeCssVariables.spacing[16] : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({
@@ -43,14 +44,15 @@ export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier: TargetRecordIdentifier;
   isInRightDrawer: boolean;
 }) => {
-  const recordDeletedAt = useRecoilValue<string | null>(
-    recordStoreFamilySelector({
+  const recordDeletedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelector,
+    {
       recordId: targetRecordIdentifier.id,
       fieldName: 'deletedAt',
-    }),
-  );
+    },
+  ) as string | null;
 
-  const { pageLayoutId } = useRecordPageLayoutId({
+  const { pageLayoutId } = usePageLayoutIdForRecord({
     id: targetRecordIdentifier.id,
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });

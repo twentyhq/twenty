@@ -1,8 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -12,13 +14,21 @@ const getRelationFieldWidgetToInsert = (
   tabId: string,
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget' as const,
-  id: `dynamic-relation-widget-${field.id}-${field.label}`,
+  id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}${field.id}-${field.label}`,
   pageLayoutTabId: tabId,
   title: field.label,
   type: WidgetType.FIELD,
   objectMetadataId: null,
   gridPosition: {
     __typename: 'GridPosition' as const,
+    row: 0,
+    column: 0,
+    rowSpan: 1,
+    columnSpan: 12,
+  },
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
     row: 0,
     column: 0,
     rowSpan: 1,

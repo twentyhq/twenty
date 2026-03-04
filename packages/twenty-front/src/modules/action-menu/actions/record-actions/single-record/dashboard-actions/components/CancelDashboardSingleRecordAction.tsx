@@ -4,14 +4,14 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const CancelDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const pageLayoutId = selectedRecord?.pageLayoutId;
+  const pageLayoutId = recordStore?.pageLayoutId;
 
   const { closeCommandMenu } = useCommandMenu();
 

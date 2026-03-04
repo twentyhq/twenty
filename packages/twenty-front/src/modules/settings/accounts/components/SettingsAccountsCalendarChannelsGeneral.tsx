@@ -2,12 +2,13 @@ import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMont
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   type TimelineCalendarEvent,
@@ -16,12 +17,12 @@ import {
 const StyledGeneralContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAccountsCalendarChannelsGeneral = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const exampleStartDate = new Date();
   const exampleEndDate = min([

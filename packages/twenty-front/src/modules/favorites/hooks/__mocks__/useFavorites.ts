@@ -66,30 +66,30 @@ export const initialFavorites: Favorite[] = [
 
 export const sortedFavorites = [
   {
-    id: '1',
-    recordId: '1',
-    position: 0,
-    avatarType: 'rounded',
-    avatarUrl: '',
-    labelIdentifier: ' ',
-    link: '/object/person/1',
-    objectNameSingular: 'person',
-    forWorkspaceMemberId: '1',
-    favoriteFolderId: '1',
     __typename: 'Favorite',
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    favoriteFolderId: '1',
+    forWorkspaceMemberId: '1',
+    id: '1',
+    labelIdentifier: 'ABC Corp',
+    link: '/object/company/2',
+    objectNameSingular: 'company',
+    position: 0,
+    recordId: '2',
   },
   {
-    id: '2',
-    recordId: '3',
-    position: 1,
-    avatarType: 'rounded',
-    avatarUrl: '',
-    labelIdentifier: ' ',
-    link: '/object/person/3',
-    objectNameSingular: 'person',
-    forWorkspaceMemberId: '1',
-    favoriteFolderId: '1',
     __typename: 'Favorite',
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    favoriteFolderId: '1',
+    forWorkspaceMemberId: '1',
+    id: '2',
+    labelIdentifier: 'Company Test',
+    link: '/object/company/4',
+    objectNameSingular: 'company',
+    position: 1,
+    recordId: '4',
   },
   {
     __typename: 'Favorite',
@@ -109,23 +109,18 @@ export const sortedFavorites = [
 const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
-const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    computeReferences: false,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
+const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  computeReferences: false,
+  objectPermissionsByObjectMetadataId: {},
+});
 
-const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation(
-  {
-    objectMetadataItem: favoriteObjectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
-    objectPermissionsByObjectMetadataId: {},
-  },
-)
-
+const CREATE_ONE_FAVORITE_MUTATION = generateCreateOneRecordMutation({
+  objectMetadataItem: favoriteObjectMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectPermissionsByObjectMetadataId: {},
+});
 
 export const mocks = [
   {

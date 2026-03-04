@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Form, useParams } from 'react-router-dom';
@@ -13,11 +13,12 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath, type ConfigVariableValue } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
@@ -26,18 +27,18 @@ import {
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
 const StyledH3Title = styled(H3Title)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledRow = styled.div`
   display: flex;
   align-items: flex-end;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -54,7 +55,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { t } = useLingui();
   const [isEditing, setIsEditing] = useState(false);
   const { openModal } = useModal();
-  const isConfigVariablesInDbEnabled = useRecoilValue(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
 

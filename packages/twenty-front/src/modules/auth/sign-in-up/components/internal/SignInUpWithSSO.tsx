@@ -7,22 +7,25 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useTheme } from '@emotion/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
 export const SignInUpWithSSO = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
-  const signInUpStep = useRecoilValue(signInUpStepState);
-  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
     lastAuthenticatedMethodState,
   );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();

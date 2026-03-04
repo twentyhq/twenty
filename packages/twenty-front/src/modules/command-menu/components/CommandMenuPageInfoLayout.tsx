@@ -1,42 +1,43 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledPageInfoContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 export const StyledPageInfoIcon = styled.div<{ iconColor?: string }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ iconColor }) => iconColor};
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${({ iconColor }) => iconColor ?? ''};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledPageInfoTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
   min-width: 0;
 `;
 
 export const StyledPageInfoTitleContainer = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[1]};
   min-width: 0;
   max-width: 150px;
 `;
 
 export const StyledPageInfoLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
   flex-shrink: 0;
 `;

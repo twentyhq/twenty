@@ -14,6 +14,7 @@ jest.mock('@/object-record/utils/generateAggregateQuery');
 const fields = [
   {
     id: '20202020-fed9-4ce5-9502-02a8efaf46e1',
+    universalIdentifier: '20202020-fed9-4ce5-9502-02a8efaf46e1',
     name: 'amount',
     label: 'Amount',
     type: FieldMetadataType.NUMBER,
@@ -24,6 +25,7 @@ const fields = [
   } as FieldMetadataItem,
   {
     id: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
+    universalIdentifier: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
     name: 'name',
     label: 'Name',
     type: FieldMetadataType.TEXT,
@@ -38,6 +40,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   nameSingular: 'company',
   namePlural: 'companies',
   id: 'test-id',
+  universalIdentifier: 'test-id',
   labelSingular: 'Company',
   labelPlural: 'Companies',
   isCustom: false,

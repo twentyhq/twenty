@@ -5,16 +5,18 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButton = styled(Button)`
-  padding: ${({ theme }) => theme.spacing(0.5)};
+  padding: ${themeCssVariables.spacing['0.5']};
   min-width: unset;
   height: auto;
 `;
@@ -28,7 +30,7 @@ export const RecordCalendarAddNew = ({
 }: RecordCalendarAddNewProps) => {
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -40,11 +42,11 @@ export const RecordCalendarAddNew = ({
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const recordIndexCalendarFieldMetadataId = useRecoilValue(
+  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
 
@@ -60,10 +62,10 @@ export const RecordCalendarAddNew = ({
     : false;
 
   if (
-    hasAnySoftDeleteFilterOnView ||
-    !hasObjectUpdatePermissions ||
-    !calendarFieldMetadataItem ||
-    isCalendarFieldReadOnly
+    hasAnySoftDeleteFilterOnView === true ||
+    hasObjectUpdatePermissions === false ||
+    calendarFieldMetadataItem === undefined ||
+    isCalendarFieldReadOnly === true
   ) {
     return null;
   }

@@ -1,51 +1,22 @@
-import { Select } from '@/ui/input/components/Select';
-import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import {
-  H2Title,
-  IconCopy,
-  IconDatabase,
-  IconSitemap,
-} from 'twenty-ui/display';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-`;
-
-// TODO: Re-enable when MCP image is ready
-// const StyledImage = styled.img`
-//   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-//   height: 100%;
-//   object-fit: cover;
-//   width: 100%;
-// `;
-
-const StyledSchemaSelector = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
 `;
 
 const StyledCopyButton = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(3)};
-  right: ${({ theme }) => theme.spacing(3)};
+  top: ${themeCssVariables.spacing[3]};
+  right: ${themeCssVariables.spacing[3]};
   z-index: 1;
 `;
 
@@ -65,49 +36,21 @@ export const SettingsAIMCP = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const generateMcpContent = (pathSuffix: string, serverName: string) => {
-    return JSON.stringify(
-      {
-        mcpServers: {
-          [serverName]: {
-            type: 'streamable-http',
-            url: `${REACT_APP_SERVER_BASE_URL}${pathSuffix}`,
-            headers: {
-              Authorization: 'Bearer [API_KEY]',
-            },
+  const mcpConfig = JSON.stringify(
+    {
+      mcpServers: {
+        twenty: {
+          type: 'streamable-http',
+          url: `${REACT_APP_SERVER_BASE_URL}/mcp`,
+          headers: {
+            Authorization: 'Bearer [API_KEY]',
           },
         },
       },
-      null,
-      2,
-    );
-  };
-
-  const options = [
-    {
-      label: t`Core Schema`,
-      value: 'core-schema',
-      Icon: IconDatabase,
-      content: generateMcpContent('/mcp', 'twenty'),
     },
-    {
-      label: t`Metadata Schema`,
-      value: 'metadata-schema',
-      Icon: IconSitemap,
-      content: generateMcpContent('/mcp/metadata', 'twenty-metadata'),
-    },
-  ];
-  const [selectedSchemaValue, setSelectedSchemaValue] = useState(
-    options[0].value,
+    null,
+    2,
   );
-
-  const selectedOption =
-    options.find((option) => option.value === selectedSchemaValue) ||
-    options[0];
-
-  const onChange = (value: string) => {
-    setSelectedSchemaValue(value);
-  };
 
   return (
     <Section>
@@ -116,24 +59,13 @@ export const SettingsAIMCP = () => {
         description={t`Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor.`}
       />
       <StyledWrapper>
-        <StyledSchemaSelector>
-          <Select
-            dropdownId="mcp-schema-selector"
-            value={selectedSchemaValue}
-            options={options}
-            onChange={onChange}
-          />
-          <StyledLabel>
-            <Trans>Interact with your workspace data</Trans>
-          </StyledLabel>
-        </StyledSchemaSelector>
         <StyledEditorContainer style={{ position: 'relative' }}>
           <StyledCopyButton>
             <Button
               Icon={IconCopy}
               onClick={() => {
                 copyToClipboard(
-                  selectedOption.content,
+                  mcpConfig,
                   t`MCP Configuration copied to clipboard`,
                 );
               }}
@@ -141,7 +73,7 @@ export const SettingsAIMCP = () => {
             />
           </StyledCopyButton>
           <CodeEditor
-            value={selectedOption.content}
+            value={mcpConfig}
             language="application/json"
             options={{
               readOnly: true,

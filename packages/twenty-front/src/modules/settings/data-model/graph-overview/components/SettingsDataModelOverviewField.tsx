@@ -1,11 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { useRecoilValue } from 'recoil';
-
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
@@ -15,20 +16,20 @@ type ObjectFieldRowProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { getIcon } = useIcons();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;
 

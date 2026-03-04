@@ -1,11 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 export type SortedFieldByTableFamilyStateKey = {
   objectMetadataItemId: string;
 };
 
-export const settingsObjectFieldsFamilyState = createFamilyState<
+export const settingsObjectFieldsFamilyState = createAtomFamilyState<
   FieldMetadataItem[] | null,
   SortedFieldByTableFamilyStateKey
 >({

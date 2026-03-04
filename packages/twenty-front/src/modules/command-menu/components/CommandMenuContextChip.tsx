@@ -1,10 +1,11 @@
-import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
+import { type CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.button<{
   withText: boolean;
@@ -14,30 +15,31 @@ const StyledChip = styled.button<{
   all: unset;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[6]};
   /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
-    ${({ theme, withText }) => (withText ? theme.spacing(2) : theme.spacing(1))};
+    ${({ withText }) =>
+      withText ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
   font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  color: ${themeCssVariables.font.color.primary};
   cursor: ${({ onClick }) => (isDefined(onClick) ? 'pointer' : 'default')};
 
   &:hover {
-    background: ${({ onClick, theme }) =>
+    background: ${({ onClick }) =>
       isDefined(onClick)
-        ? theme.background.transparent.medium
-        : theme.background.transparent.light};
+        ? themeCssVariables.background.transparent.medium
+        : themeCssVariables.background.transparent.light};
   }
-  max-width: ${({ maxWidth }) => maxWidth};
+  max-width: ${({ maxWidth }) => maxWidth ?? ''};
 `;
 
 const StyledIconsContainer = styled.div`
@@ -46,7 +48,7 @@ const StyledIconsContainer = styled.div`
 `;
 
 const StyledEmptyText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export type CommandMenuContextChipProps = {

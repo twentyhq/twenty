@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -10,6 +10,7 @@ import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -23,6 +24,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
@@ -34,16 +36,16 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -59,14 +61,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
-  const apiKeyToken = useRecoilValue(apiKeyTokenFamilyState(apiKeyId));
+  const jotaiStore = useStore();
 
-  const setApiKeyTokenCallback = useRecoilCallback(
-    ({ set }) =>
-      (apiKeyId: string, token: string) => {
-        set(apiKeyTokenFamilyState(apiKeyId), token);
-      },
-    [],
+  const apiKeyToken = useAtomFamilyStateValue(apiKeyTokenFamilyState, apiKeyId);
+
+  const setApiKeyTokenCallback = useCallback(
+    (apiKeyId: string, token: string) => {
+      jotaiStore.set(apiKeyTokenFamilyState.atomFamily(apiKeyId), token);
+    },
+    [jotaiStore],
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();

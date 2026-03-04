@@ -12,12 +12,12 @@ import { beautifyExactDate } from '~/utils/date-utils';
 import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';
 import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useBillingWording = () => {
   const { t } = useLingui();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   assertIsDefinedOrThrow(currentWorkspace);
 

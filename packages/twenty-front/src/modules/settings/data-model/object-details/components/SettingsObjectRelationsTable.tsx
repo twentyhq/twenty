@@ -11,8 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -25,6 +25,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   SettingsObjectRelationItemTableRow,
@@ -33,8 +34,8 @@ import {
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -83,7 +84,7 @@ export const SettingsObjectRelationsTable = ({
   const [showInactive, setShowInactive] = useState(true);
   const [showSystemRelations, setShowSystemRelations] = useState(false);
 
-  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_RELATION_TABLE_METADATA;
 

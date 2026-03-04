@@ -1,24 +1,25 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldRow = styled.div`
   display: flex;
   align-items: stretch;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActionWrapper = styled.div`
@@ -38,7 +39,7 @@ const StyledActionButton = styled(Button)`
 `;
 
 export const EmailField = () => {
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const { canEdit } = useCanEditProfileField('email');
   const { updateEmail } = useUpdateEmail();
 

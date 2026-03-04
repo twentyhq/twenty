@@ -25,11 +25,11 @@ Când importați un fișier care conține un **identificator unic** ce se potriv
 | Lipsește din fișierul dvs.                | **Creează** o înregistrare nouă (cu ID generat automat) |
 
 <Warning>
-  **Câmpurile Multi-Select sunt suprascrise, nu îmbinate.**
+**Câmpurile Multi-Select sunt suprascrise, nu îmbinate.**
 
-  Dacă o înregistrare are selectate `Option A` și `Option B`, iar importați `["Option C"]`, înregistrarea va avea doar `Option C` după import. Importul înlocuiește toate selecțiile anterioare — nu le adaugă.
+Dacă o înregistrare are selectate `Option A` și `Option B`, iar importați `["Option C"]`, înregistrarea va avea doar `Option C` după import. Importul înlocuiește toate selecțiile anterioare — nu le adaugă.
 
-  Pentru a păstra valorile existente, includeți-le pe toate în import: ["Option A","Option B","Option C"]
+Pentru a păstra valorile existente, includeți-le pe toate în import: ["Option A","Option B","Option C"]
 </Warning>
 
 ## Pasul 1: Exportați datele curente
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Nu modificați valorile identificatorului unic.**
+**Nu modificați valorile identificatorului unic.**
 
-  Dacă modificați `john@acme.com` în `john.smith@acme.com`, Twenty va crea o înregistrare nouă în loc să o actualizeze pe cea existentă.
+Dacă modificați `john@acme.com` în `john.smith@acme.com`, Twenty va crea o înregistrare nouă în loc să o actualizeze pe cea existentă.
 </Warning>
 
 ## Pasul 3: Importați fișierul actualizat

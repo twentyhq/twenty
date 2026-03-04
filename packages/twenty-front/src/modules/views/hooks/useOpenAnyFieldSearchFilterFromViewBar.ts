@@ -2,24 +2,24 @@ import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/ob
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useOpenAnyFieldSearchFilterFromViewBar = () => {
-  const setAnyFieldFilterValue = useSetRecoilComponentState(
+  const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState =
-    useSetRecoilComponentState(
+  const setObjectFilterDropdownAnyFieldSearchIsSelected =
+    useSetAtomComponentState(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
     );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
@@ -48,7 +48,7 @@ export const useOpenAnyFieldSearchFilterFromViewBar = () => {
       setAnyFieldFilterValue(filterValue);
     }
 
-    setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState(true);
+    setObjectFilterDropdownAnyFieldSearchIsSelected(true);
   };
 
   return {

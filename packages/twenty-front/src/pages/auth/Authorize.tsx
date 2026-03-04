@@ -1,17 +1,20 @@
-import styled from '@emotion/styled';
+import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useQuery } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-
-type App = { id: string; name: string; logo: string };
 
 const StyledContainer = styled.div`
   display: flex;
@@ -26,82 +29,150 @@ const StyledAppsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: center;
 `;
 
 const StyledText = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-family: 'Inter';
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding: ${({ theme }) => theme.spacing(6)} 0px;
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding: ${themeCssVariables.spacing[6]} 0px;
 `;
 
 const StyledCardWrapper = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 400px;
-  padding: ${({ theme }) => theme.spacing(6)};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${themeCssVariables.spacing[6]};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  border-radius: ${themeCssVariables.border.radius.md};
 `;
 
 const StyledButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
 `;
+
+const StyledScopeList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 ${themeCssVariables.spacing[4]} 0;
+  width: 100%;
+`;
+
+const StyledScopeItem = styled.li`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const StyledErrorText = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+  text-align: center;
+  padding: ${themeCssVariables.spacing[2]} 0;
+  width: 100%;
+`;
+
 export const Authorize = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
-  //TODO: Replace with db call for registered third party apps
-  const [apps] = useState<App[]>([
-    {
-      id: 'chrome',
-      name: 'Chrome Extension',
-      logo: 'images/integrations/chrome-icon.svg',
-    },
-  ]);
-  const [app, setApp] = useState<App>();
+
+  const oauthScopeLabels: { [scope: string]: string | undefined } = {
+    api: t`Access workspace data`,
+    profile: t`Read your profile`,
+  };
+
   const clientId = searchParam.get('clientId');
   const codeChallenge = searchParam.get('codeChallenge');
   const redirectUrl = searchParam.get('redirectUrl');
 
-  useEffect(() => {
-    const app = apps.find((app) => app.id === clientId);
-    if (!isDefined(app)) navigate(AppPath.NotFound);
-    else setApp(app);
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const {
+    data,
+    loading,
+    error: queryError,
+  } = useQuery(FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID, {
+    variables: { clientId: clientId ?? '' },
+    skip: !isDefined(clientId),
+  });
 
+  const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
+  const [hasLogoError, setHasLogoError] = useState(false);
+  const [authorizeError, setAuthorizeError] = useState<string | null>(null);
+  const [isAuthorizing, setIsAuthorizing] = useState(false);
+
+  const shouldRedirectToNotFound =
+    !isDefined(clientId) || (!loading && !isDefined(applicationRegistration));
+
+  useEffect(() => {
+    if (shouldRedirectToNotFound) {
+      navigate(AppPath.NotFound);
+    }
+  }, [shouldRedirectToNotFound, navigate]);
+
   const handleAuthorize = async () => {
-    if (
-      isDefined(clientId) &&
-      isDefined(codeChallenge) &&
-      isDefined(redirectUrl)
-    ) {
+    if (isDefined(clientId) && isDefined(redirectUrl)) {
+      setIsAuthorizing(true);
+      setAuthorizeError(null);
+
       await authorizeApp({
         variables: {
           clientId,
-          codeChallenge,
+          codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
         },
-        onCompleted: (data) => {
-          redirect(data.authorizeApp.redirectUrl);
+        onCompleted: (responseData) => {
+          redirect(responseData.authorizeApp.redirectUrl);
+        },
+        onError: (error) => {
+          setIsAuthorizing(false);
+          setAuthorizeError(
+            error.message || t`Authorization failed. Please try again.`,
+          );
         },
       });
     }
   };
 
-  const appName = app?.name;
+  if (isDefined(queryError)) {
+    return (
+      <StyledContainer>
+        <StyledCardWrapper>
+          <StyledText>
+            <Trans>Something went wrong</Trans>
+          </StyledText>
+          <StyledErrorText>
+            {t`Unable to load application details. Please try again later.`}
+          </StyledErrorText>
+        </StyledCardWrapper>
+      </StyledContainer>
+    );
+  }
+
+  if (loading || !applicationRegistration) {
+    return null;
+  }
+
+  const appName = applicationRegistration.name;
+  const appLogoUrl = applicationRegistration.logoUrl;
+  const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
+
+  const showLogoImage = isNonEmptyString(appLogoUrl) && !hasLogoError;
 
   return (
     <StyledContainer>
@@ -119,18 +190,50 @@ export const Authorize = () => {
             height={60}
             width={60}
           />
-          <img src={app?.logo} alt="app-icon" height={40} width={40} />
+          {showLogoImage ? (
+            <img
+              src={appLogoUrl}
+              alt={appName}
+              height={40}
+              width={40}
+              style={{ borderRadius: '2px' }}
+              onError={() => setHasLogoError(true)}
+            />
+          ) : (
+            <Avatar
+              size="xl"
+              placeholder={appName}
+              placeholderColorSeed={appName}
+              type="squared"
+            />
+          )}
         </StyledAppsContainer>
         <StyledText>
           <Trans>{appName} wants to access your account</Trans>
         </StyledText>
+        {requestedScopes.length > 0 && (
+          <StyledScopeList>
+            {requestedScopes.map((scope) => (
+              <StyledScopeItem key={scope}>
+                {oauthScopeLabels[scope] ?? scope}
+              </StyledScopeItem>
+            ))}
+          </StyledScopeList>
+        )}
+        {authorizeError && <StyledErrorText>{authorizeError}</StyledErrorText>}
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
-            <MainButton title={t`Cancel`} variant="secondary" fullWidth />
+            <MainButton
+              title={t`Cancel`}
+              variant="secondary"
+              fullWidth
+              disabled={isAuthorizing}
+            />
           </UndecoratedLink>
           <MainButton
-            title={t`Authorize`}
+            title={isAuthorizing ? t`Authorizing...` : t`Authorize`}
             onClick={handleAuthorize}
+            disabled={isAuthorizing}
             fullWidth
           />
         </StyledButtonContainer>

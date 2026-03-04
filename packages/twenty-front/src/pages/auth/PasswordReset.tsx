@@ -13,21 +13,23 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ApolloError } from '@apollo/client';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
 import {
@@ -59,8 +61,8 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledContentContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   width: 200px;
 `;
 
@@ -76,19 +78,19 @@ const StyledFullWidthMotionDiv = styled(motion.div)`
 `;
 
 const StyledInputContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledMainButton = styled(MainButton)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const PasswordReset = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
-  const setCurrentUser = useSetRecoilState(currentUserState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
+  const setCurrentUser = useSetAtomState(currentUserState);
 
   const navigate = useNavigateApp();
   const { redirect } = useRedirect();
@@ -97,7 +99,7 @@ export const PasswordReset = () => {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const passwordResetToken = useParams().passwordResetToken;
 

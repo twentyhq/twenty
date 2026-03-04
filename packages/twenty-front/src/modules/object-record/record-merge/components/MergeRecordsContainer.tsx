@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
@@ -27,15 +28,15 @@ const StyledShowPageRightContainer = styled.div`
 `;
 
 const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  background: ${themeCssVariables.background.primary};
+  padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 
 type MergeRecordsContainerProps = {
@@ -52,7 +53,7 @@ export const MergeRecordsContainer = ({
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuPageComponentInstanceContext,
   );
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     instanceId,
   );

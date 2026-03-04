@@ -34,6 +34,10 @@ export { CommandBlock } from './command-block/components/CommandBlock';
 export type { IconProps } from './icon/components/Icon';
 export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
+export { IconBrandAnthropic } from './icon/components/IconBrandAnthropic';
+export { IconBrandGroq } from './icon/components/IconBrandGroq';
+export { IconBrandMistral } from './icon/components/IconBrandMistral';
+export { IconBrandXai } from './icon/components/IconBrandXai';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
 export { IconGoogle } from './icon/components/IconGoogle';
@@ -117,6 +121,7 @@ export {
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
+  IconBrandOpenai,
   IconBrandX,
   IconBriefcase,
   IconBroadcast,
@@ -161,6 +166,7 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumnInsertRight,
   IconColumns,
   IconCommand,
   IconComment,
@@ -270,6 +276,9 @@ export {
   IconH1,
   IconH2,
   IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
   IconHandClick,
   IconHandMove,
   IconHeadphones,
@@ -335,8 +344,8 @@ export {
   IconMoodSmile,
   IconMoon,
   IconMouse2,
-  IconNorthStar,
   IconNewSection,
+  IconNorthStar,
   IconNoteOff,
   IconNotes,
   IconNumber,
@@ -396,6 +405,7 @@ export {
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
+  IconSettingsBolt,
   IconShare,
   IconShield,
   IconSitemap,

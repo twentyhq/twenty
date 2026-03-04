@@ -1,8 +1,7 @@
-import { useRecoilValue } from 'recoil';
-
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 type CommandMenuTopBarInputFocusEffectProps = {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -11,7 +10,7 @@ type CommandMenuTopBarInputFocusEffectProps = {
 export const CommandMenuTopBarInputFocusEffect = ({
   inputRef,
 }: CommandMenuTopBarInputFocusEffectProps) => {
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
   useEffect(() => {
     if (

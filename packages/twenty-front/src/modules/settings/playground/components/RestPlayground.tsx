@@ -1,31 +1,38 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { lazy, Suspense } from 'react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext, lazy, Suspense } from 'react';
+import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   overflow-y: scroll;
   width: 100%;
 
   .scalar-api-reference {
-    --scalar-background-1: ${({ theme }) => theme.background.primary};
-    --scalar-background-2: ${({ theme }) => theme.background.secondary};
-    --scalar-background-3: ${({ theme }) => theme.background.tertiary};
-    --scalar-background-accent: ${({ theme }) =>
-      theme.background.transparent.lighter};
-    --scalar-border-color: ${({ theme }) => theme.border.color.medium};
-    --scalar-color-1: ${({ theme }) => theme.font.color.primary};
-    --scalar-color-2: ${({ theme }) => theme.font.color.secondary};
-    --scalar-color-3: ${({ theme }) => theme.font.color.tertiary};
+    --scalar-background-1: ${themeCssVariables.background.primary};
+    --scalar-background-2: ${themeCssVariables.background.secondary};
+    --scalar-background-3: ${themeCssVariables.background.tertiary};
+    --scalar-background-accent: ${themeCssVariables.background.transparent
+      .lighter};
+    --scalar-border-color: ${themeCssVariables.border.color.medium};
+    --scalar-color-1: ${themeCssVariables.font.color.primary};
+    --scalar-color-2: ${themeCssVariables.font.color.secondary};
+    --scalar-color-3: ${themeCssVariables.font.color.tertiary};
+  }
+
+  .scalar-app .text-pretty {
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
   }
 `;
 
@@ -44,8 +51,8 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const theme = useTheme();
-  const playgroundApiKey = useRecoilValue(playgroundApiKeyState);
+  const { theme } = useContext(ThemeContext);
+  const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
 
   if (!playgroundApiKey) {
     onError();

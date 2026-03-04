@@ -1,42 +1,35 @@
+import { CommandMenuContextChipIconWrapper } from '@/command-menu/components/CommandMenuContextChipIconWrapper';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext, useMemo } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-
-const StyledIconWrapper = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -46,17 +39,16 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useRecoilValue(
-    recordStoreIdentifiersFamilySelector({
+  const recordIdentifiers = useAtomFamilySelectorValue(
+    recordStoreIdentifiersFamilySelector,
+    {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
-    }),
+    },
   );
-  const records = useRecoilValue(
-    recordStoreRecordsSelector({
-      recordIds: allRecordIds,
-    }),
-  );
+  const records = useAtomFamilySelectorValue(recordStoreRecordsSelector, {
+    recordIds: allRecordIds,
+  });
 
   const contextChips = useMemo(() => {
     const filteredCommandMenuNavigationStack =
@@ -121,7 +113,7 @@ export const useCommandMenuContextChips = () => {
           Icons: isLastChip
             ? [<page.pageIcon size={theme.icon.size.sm} />]
             : [
-                <StyledIconWrapper>
+                <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
                     size={theme.icon.size.sm}
                     color={
@@ -131,7 +123,7 @@ export const useCommandMenuContextChips = () => {
                         : theme.font.color.tertiary
                     }
                   />
-                </StyledIconWrapper>,
+                </CommandMenuContextChipIconWrapper>,
               ],
           text: page.pageTitle,
           onClick: isLastChip

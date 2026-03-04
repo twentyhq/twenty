@@ -1,24 +1,26 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
 
 import { SettingsRoleApplicability } from '@/settings/roles/role-settings/components/SettingsRoleApplicability';
 import { SettingsRoleSettingsDeleteRoleConfirmationModal } from '@/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal';
 import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledInputContainer = styled.div`
@@ -37,8 +39,13 @@ export const SettingsRoleSettings = ({
   isEditable,
   isCreateMode,
 }: SettingsRoleSettingsProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const { openModal } = useModal();

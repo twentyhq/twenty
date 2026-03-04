@@ -8,15 +8,14 @@ import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionBut
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
@@ -31,6 +30,8 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -41,15 +42,15 @@ type WorkflowEditActionHttpRequestProps = {
 };
 
 const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTestTabContent = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 100%;
   min-height: 400px;
 `;
@@ -57,7 +58,7 @@ const StyledTestTabContent = styled.div`
 const StyledConfigurationTabContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 100%;
   flex: 1;
 `;
@@ -89,8 +90,8 @@ export const WorkflowEditActionHttpRequest = ({
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const activeTabId = useRecoilComponentValueV2(
+  const { theme } = useContext(ThemeContext);
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );

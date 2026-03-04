@@ -2,9 +2,10 @@ import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/rec
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderContainer = styled.div`
   display: flex;
@@ -21,12 +22,12 @@ const StyledHeaderContainer = styled.div`
   }
 
   & > *:not(:first-of-type) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+    border-left: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 
 export const RecordBoardHeader = () => {
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );

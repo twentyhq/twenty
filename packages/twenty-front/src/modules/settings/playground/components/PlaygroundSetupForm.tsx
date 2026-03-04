@@ -4,15 +4,16 @@ import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -29,15 +30,15 @@ const StyledForm = styled.form`
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
   align-items: end;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const [playgroundApiKey, setPlaygroundApiKey] = useRecoilState(
+  const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
     playgroundApiKeyState,
   );
 
@@ -58,7 +59,6 @@ export const PlaygroundSetupForm = () => {
 
   const validateApiKey = async (values: PlaygroundSetupFormValues) => {
     try {
-      // Validate by fetching the schema (but not storing it)
       const response = await fetch(
         `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${values.schema}`,
         {

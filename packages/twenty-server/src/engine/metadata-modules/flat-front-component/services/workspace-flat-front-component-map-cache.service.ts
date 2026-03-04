@@ -30,6 +30,7 @@ export class WorkspaceFlatFrontComponentMapCacheService extends WorkspaceCachePr
     const [frontComponents, applications] = await Promise.all([
       this.frontComponentRepository.find({
         where: { workspaceId },
+        withDeleted: true,
       }),
       this.applicationRepository.find({
         where: { workspaceId },

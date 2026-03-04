@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
@@ -10,7 +11,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -19,7 +20,7 @@ const StyledColumnCardsContainer = styled.div`
 `;
 
 const StyledNewButtonContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type RecordBoardColumnCardsContainerProps = {
@@ -33,12 +34,12 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const recordIds = useRecoilComponentFamilyValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
 
-  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValue(
+  const recordBoardShouldFetchMoreInColumn = useAtomComponentFamilyStateValue(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     recordBoardColumnId,
   );
@@ -49,7 +50,7 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {recordIds.map((recordId, index) => (
+      {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}
           recordId={recordId}
@@ -61,7 +62,7 @@ export const RecordBoardColumnCardsContainer = ({
       ) : null}
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
-        index={recordIds.length}
+        index={recordIndexRecordIdsByGroup.length}
         isDragDisabled={true}
       >
         {(draggableProvided) => (

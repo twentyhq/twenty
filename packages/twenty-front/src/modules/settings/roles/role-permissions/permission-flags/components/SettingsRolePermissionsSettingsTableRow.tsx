@@ -1,11 +1,14 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
@@ -13,25 +16,25 @@ const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
 `;
 
 const StyledName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledDescription = styled(StyledName)`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 const StyledPermissionCell = styled(TableCell)`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconContainer = styled.div`
@@ -52,9 +55,14 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
-  const theme = useTheme();
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const { theme } = useContext(ThemeContext);
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const isPermissionEnabled =

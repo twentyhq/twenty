@@ -1,10 +1,9 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import React from 'react';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -15,18 +14,20 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const StyledAssignedText = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledNameCell = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAvatarGroup = styled.div`
@@ -50,7 +51,7 @@ const StyledIconLockContainer = styled.div`
 
 const StyledTableRow = styled(TableRow)`
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
     cursor: pointer;
   }
 `;
@@ -60,12 +61,14 @@ type SettingsRolesTableRowProps = {
 };
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
 
   const enrichedWorkspaceMembers = role.workspaceMembers
     .map((workspaceMember) =>

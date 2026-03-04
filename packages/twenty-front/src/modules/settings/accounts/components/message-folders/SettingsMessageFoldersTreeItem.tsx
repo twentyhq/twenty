@@ -5,11 +5,12 @@ import { type MessageFolderTreeNode } from '@/settings/accounts/components/messa
 import { countNestedFolders } from '@/settings/accounts/components/message-folders/utils/countNestedFolders';
 import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName';
 import { isFolderTreePartiallySelected } from '@/settings/accounts/components/message-folders/utils/isFolderTreePartiallySelected';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsMessageFoldersTreeItemProps = {
   depth?: number;
@@ -35,7 +36,7 @@ const StyledCollapsibleWrapper = styled.div<{ isExpanded: boolean }>`
   display: grid;
   grid-template-rows: ${({ isExpanded }) => (isExpanded ? '1fr' : '0fr')};
   transition: grid-template-rows
-    ${({ theme }) => theme.animation.duration.fast}s ease-out;
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
 `;
 
 const StyledCollapsibleContent = styled.div`
@@ -44,17 +45,17 @@ const StyledCollapsibleContent = styled.div`
 
 const StyledTreeItemContent = styled.div<{ depth: number }>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
   height: 28px;
   padding-left: ${({ depth }) => depth * BREADCRUMB_WIDTH}px;
   transition: background-color
-    ${({ theme }) => theme.animation.duration.instant}s;
+    calc(${themeCssVariables.animation.duration.instant} * 1s);
   user-select: none;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
+    background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
@@ -62,23 +63,23 @@ const StyledFolderContent = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledFolderInfo = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
 `;
 
 const StyledFolderName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -88,14 +89,14 @@ const StyledRightSection = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   margin-left: auto;
 `;
 
 const StyledChildCount = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  min-width: ${({ theme }) => theme.spacing(3)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  min-width: ${themeCssVariables.spacing[3]};
   text-align: right;
 `;
 
@@ -103,16 +104,16 @@ const StyledExpandButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
   justify-content: center;
   padding: 0;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${themeCssVariables.spacing[4]};
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 

@@ -10,19 +10,25 @@ image: /images/user-guide/tasks/tasks_header.png
 Representa uma ação bem-sucedida ou concluída.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { Checkmark } from 'twenty-ui/display';
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return <Checkmark />;
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkmark } from 'twenty-ui/display';
 
-  <Tab title="Propriedades">
-    Estende `React.ComponentPropsWithoutRef<'div'>` e aceita todas as propriedades de um elemento `div` regular.
-  </Tab>
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+
+</Tab>
+
+<Tab title="Propriedades">
+
+Estende `React.ComponentPropsWithoutRef<'div'>` e aceita todas as propriedades de um elemento `div` regular.
+
+</Tab>
+
 </Tabs>
 
 ## Marca de Seleção Animada
@@ -30,29 +36,38 @@ Representa uma ação bem-sucedida ou concluída.
 Representa um ícone de marca de seleção com o recurso adicional de animação.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return (
-        <AnimatedCheckmark
-          isAnimating={true}
-          color="green"
-          duration={0.5}
-          size={30}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Uso">
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo     | Descrição                                    | Padrão       |
-    | ------------ | -------- | -------------------------------------------- | ------------ |
-    | isAnimating  | booleano | Controla se a marca de seleção está animando | falso        |
-    | cor          | string   | Cor da marca de seleção                      |              |
-    | duração      | número   | A duração da animação em segundos            | 0,5 segundos |
-    | tamanho      | número   | O tamanho da marca de seleção                | 28 pixels    |
-  </Tab>
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo     | Descrição                                    | Padrão       |
+| ------------ | -------- | -------------------------------------------- | ------------ |
+| isAnimating  | booleano | Controla se a marca de seleção está animando | falso        |
+| cor          | string   | Cor da marca de seleção                      |              |
+| duração      | número   | A duração da animação em segundos            | 0,5 segundos |
+| tamanho      | número   | O tamanho da marca de seleção                | 28 pixels    |
+
+
+
+</Tab>
+
 </Tabs>

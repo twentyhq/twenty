@@ -3,54 +3,56 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext, useState } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const CommandMenuPageLayoutInfoContent = ({
   pageLayoutId,
 }: {
   pageLayoutId: string;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
 
   const handleTitleInputOpen = () => {
-    setShouldFocusTitleInput(false);
+    setCommandMenuShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useRecoilComponentValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
-  const [openTabId] = useRecoilComponentState(
+  const [pageLayoutTabSettingsOpenTabId] = useAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -63,9 +65,9 @@ export const CommandMenuPageLayoutInfoContent = ({
 
   const headerInfo = usePageLayoutHeaderInfo({
     commandMenuPage,
-    draftPageLayout,
+    draftPageLayout: pageLayoutDraft,
     pageLayoutEditingWidgetId,
-    openTabId,
+    openTabId: pageLayoutTabSettingsOpenTabId,
     editedTitle,
   });
 
@@ -136,7 +138,7 @@ export const CommandMenuPageLayoutInfoContent = ({
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
-          shouldFocus={shouldFocusTitleInput}
+          shouldFocus={commandMenuShouldFocusTitleInput}
           onFocus={handleTitleInputOpen}
         />
       }

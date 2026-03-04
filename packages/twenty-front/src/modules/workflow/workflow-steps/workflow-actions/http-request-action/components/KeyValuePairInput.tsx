@@ -4,32 +4,28 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { AUTO_SET_HEADER_KEYS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/AutoSetHeaderKeys';
 import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isReadOnlyHeaderKey';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { css } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 
-  ${({ readonly, theme }) =>
+  grid-template-columns: ${({ readonly }) =>
     readonly
-      ? css`
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        `
-      : css`
-          grid-template-columns: repeat(2, minmax(0, 1fr)) ${theme.spacing(8)};
-        `};
+      ? 'repeat(2, minmax(0, 1fr))'
+      : `repeat(2, minmax(0, 1fr)) ${themeCssVariables.spacing[8]}`};
 `;
 export type KeyValuePair = {
   id: string;

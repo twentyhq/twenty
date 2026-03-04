@@ -1,14 +1,14 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddViewToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
-    navigationMenuItemsDraftStateV2,
+  const setNavigationMenuItemsDraft = useSetAtomState(
+    navigationMenuItemsDraftState,
   );
 
   const addViewToDraft = (
@@ -16,6 +16,7 @@ export const useAddViewToNavigationMenuDraft = () => {
     currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
+    color?: string | null,
   ): string => {
     const folderId = targetFolderId ?? null;
 
@@ -44,6 +45,7 @@ export const useAddViewToNavigationMenuDraft = () => {
       folderId: folderId ?? undefined,
       name: undefined,
       applicationId: undefined,
+      color,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

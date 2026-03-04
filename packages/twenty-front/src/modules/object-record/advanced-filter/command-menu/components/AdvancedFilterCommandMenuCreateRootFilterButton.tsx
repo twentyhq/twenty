@@ -5,12 +5,12 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
@@ -23,14 +23,15 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
+  const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const defaultFieldMetadataItem =
@@ -47,11 +48,10 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
 
-  const setHasInitializedCurrentRecordFilters =
-    useSetRecoilComponentFamilyState(
-      hasInitializedCurrentRecordFiltersComponentFamilyState,
-      {},
-    );
+  const setHasInitializedCurrentRecordFilters = useSetAtomComponentFamilyState(
+    hasInitializedCurrentRecordFiltersComponentFamilyState,
+    {},
+  );
 
   const addRootRecordFilterGroup = () => {
     const alreadyHasAdvancedFilterGroup = isDefined(rootRecordFilterGroup);

@@ -6,10 +6,10 @@ import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 type MainContextStoreProviderEffectProps = {
   viewId?: string;
@@ -33,13 +33,13 @@ export const MainContextStoreProviderEffect = ({
     useSetLastVisitedObjectMetadataId();
 
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
-    useRecoilComponentState(
+    useAtomComponentState(
       contextStoreCurrentViewIdComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
-    useRecoilComponentState(
+    useAtomComponentState(
       contextStoreCurrentViewTypeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
@@ -47,16 +47,14 @@ export const MainContextStoreProviderEffect = ({
   const [
     contextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentObjectMetadataItemId,
-  ] = useRecoilComponentState(
+  ] = useAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const view = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: viewId ?? '',
-    }),
-  );
+  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+    viewId: viewId ?? '',
+  });
 
   useEffect(() => {
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem?.id) {

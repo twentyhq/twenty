@@ -4,7 +4,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -31,7 +31,7 @@ export const ActionDropdownItem = ({
     SelectableListComponentInstanceContext,
   );
 
-  const isSelected = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     action.key,
     selectableListInstanceId,
@@ -40,7 +40,7 @@ export const ActionDropdownItem = ({
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <MenuItem
-        focused={isSelected}
+        focused={isSelectedItemId}
         key={action.key}
         LeftIcon={action.Icon}
         onClick={handleClick}

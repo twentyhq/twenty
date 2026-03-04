@@ -8,11 +8,11 @@ import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/Comman
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useSetRecoilState } from 'recoil';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type CommandMenuListProps = {
   commandGroups: ActionGroupConfig[];
@@ -28,10 +28,10 @@ const StyledInnerList = styled.div`
     100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
       ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px
   );
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  width: calc(100% - ${themeCssVariables.spacing[4]});
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(
@@ -47,9 +47,9 @@ const StyledCommandMenuList = styled.div`
 
 const StyledEmpty = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   height: 64px;
   justify-content: center;
   white-space: pre-wrap;
@@ -63,7 +63,7 @@ export const CommandMenuList = ({
   noResults = false,
   noResultsText,
 }: CommandMenuListProps) => {
-  const setHasUserSelectedCommand = useSetRecoilState(
+  const setHasUserSelectedCommand = useSetAtomState(
     hasUserSelectedCommandState,
   );
 

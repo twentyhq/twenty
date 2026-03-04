@@ -1,13 +1,15 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRecoilState } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { v4 } from 'uuid';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
   roleId: string;
@@ -19,7 +21,7 @@ const StyledActionsHeader = styled(TableHeader)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsRolePermissionsSettingsTableHeader = ({
@@ -27,8 +29,13 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   settingsPermissionsConfig,
   isEditable,
 }: SettingsRolePermissionsSettingsTableHeaderProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
     (permission) =>

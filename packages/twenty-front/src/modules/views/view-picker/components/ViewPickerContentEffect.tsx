@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
@@ -19,7 +20,6 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ViewVisibility,
@@ -27,13 +27,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const ViewPickerContentEffect = () => {
-  const setViewPickerSelectedIcon = useSetRecoilComponentState(
+  const setViewPickerSelectedIcon = useSetAtomComponentState(
     viewPickerSelectedIconComponentState,
   );
-  const setViewPickerInputName = useSetRecoilComponentState(
+  const setViewPickerInputName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
-  const setViewPickerVisibility = useSetRecoilComponentState(
+  const setViewPickerVisibility = useSetAtomComponentState(
     viewPickerVisibilityComponentState,
   );
   const { viewPickerMode } = useViewPickerMode();
@@ -41,36 +41,33 @@ export const ViewPickerContentEffect = () => {
   const [
     viewPickerMainGroupByFieldMetadataId,
     setViewPickerMainGroupByFieldMetadataId,
-  ] = useRecoilComponentState(
-    viewPickerMainGroupByFieldMetadataIdComponentState,
-  );
+  ] = useAtomComponentState(viewPickerMainGroupByFieldMetadataIdComponentState);
 
   const [
     viewPickerCalendarFieldMetadataId,
     setViewPickerCalendarFieldMetadataId,
-  ] = useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  ] = useAtomComponentState(viewPickerCalendarFieldMetadataIdComponentState);
 
-  const [viewPickerType, setViewPickerType] = useRecoilComponentState(
+  const [viewPickerType, setViewPickerType] = useAtomComponentState(
     viewPickerTypeComponentState,
   );
 
-  const viewPickerReferenceViewId = useRecoilComponentValue(
+  const viewPickerReferenceViewId = useAtomComponentStateValue(
     viewPickerReferenceViewIdComponentState,
   );
 
-  const viewPickerIsDirty = useRecoilComponentValue(
+  const viewPickerIsDirty = useAtomComponentStateValue(
     viewPickerIsDirtyComponentState,
   );
 
-  const viewPickerIsPersisting = useRecoilComponentValue(
+  const viewPickerIsPersisting = useAtomComponentStateValue(
     viewPickerIsPersistingComponentState,
   );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const viewsOnCurrentObject = useRecoilValue(
-    coreViewsFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
+    coreViewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   const referenceView = viewsOnCurrentObject.find(

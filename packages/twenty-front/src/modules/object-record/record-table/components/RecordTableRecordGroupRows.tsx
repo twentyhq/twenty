@@ -8,8 +8,8 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,16 +18,16 @@ export const RecordTableRecordGroupRows = () => {
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
 
-  const allRecordIds = useRecoilComponentValue(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
 
-  const isRecordGroupTableSectionToggled = useRecoilComponentFamilyValue(
+  const isRecordGroupTableSectionToggled = useAtomComponentFamilyStateValue(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
   );
@@ -47,7 +47,7 @@ export const RecordTableRecordGroupRows = () => {
 
   return (
     <>
-      {recordIdsByGroup.map((recordId, rowIndexInGroup) => {
+      {recordIndexRecordIdsByGroup.map((recordId, rowIndexInGroup) => {
         const rowIndex = rowIndexMap.get(recordId);
 
         if (!isDefined(rowIndex)) {

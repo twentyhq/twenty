@@ -1,37 +1,34 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewAnyFieldFilterToAnyFieldFilter = () => {
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const setAnyFieldFilterValue = useSetRecoilComponentState(
+  const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
   );
 
-  const applyCurrentViewAnyFieldFilterToAnyFieldFilter = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentView = snapshot
-          .getLoadable(
-            coreViewFromViewIdFamilySelector({
-              viewId: currentViewId ?? '',
-            }),
-          )
-          .getValue();
+  const store = useStore();
 
-        if (isDefined(currentView)) {
-          setAnyFieldFilterValue(currentView.anyFieldFilterValue ?? '');
-        }
-      },
-    [currentViewId, setAnyFieldFilterValue],
-  );
+  const applyCurrentViewAnyFieldFilterToAnyFieldFilter = useCallback(() => {
+    const currentView = store.get(
+      coreViewFromViewIdFamilySelector.selectorFamily({
+        viewId: contextStoreCurrentViewId ?? '',
+      }),
+    );
+
+    if (isDefined(currentView)) {
+      setAnyFieldFilterValue(currentView.anyFieldFilterValue ?? '');
+    }
+  }, [contextStoreCurrentViewId, setAnyFieldFilterValue, store]);
 
   return {
     applyCurrentViewAnyFieldFilterToAnyFieldFilter,

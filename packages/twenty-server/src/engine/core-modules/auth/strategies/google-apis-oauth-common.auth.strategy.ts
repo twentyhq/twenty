@@ -14,8 +14,11 @@ export abstract class GoogleAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,
   'google-apis',
 ) {
-  constructor(twentyConfigService: TwentyConfigService) {
-    const scopes = getGoogleApisOauthScopes();
+  constructor(
+    twentyConfigService: TwentyConfigService,
+    isDraftEmailEnabled = false,
+  ) {
+    const scopes = getGoogleApisOauthScopes(isDraftEmailEnabled);
 
     super({
       clientID: twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),

@@ -1,15 +1,14 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { selector } from 'recoil';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const favoriteViewsWithMinimalDataSelector = selector<
+export const favoriteViewsWithMinimalDataSelector = createAtomSelector<
   Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[]
 >({
   key: 'favoriteViewsWithMinimalDataSelector',
   get: ({ get }) => {
     const coreViews = get(coreViewsState);
-
     const views = coreViews.map(convertCoreViewToView);
     return views.map((view) => ({
       id: view.id,

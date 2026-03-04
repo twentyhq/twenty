@@ -10,17 +10,15 @@ import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/securi
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type ApolloError } from '@apollo/client';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
 import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
 
-const StyledLink = styled(Link, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
-})<{ isDisabled: boolean }>`
+const StyledLink = styled(Link)<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
   text-decoration: none;
 `;
@@ -28,11 +26,11 @@ const StyledLink = styled(Link, {
 export const SettingsSSOIdentitiesProvidersListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { t } = useLingui();
 
-  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
+  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useAtomState(
     SSOIdentitiesProvidersState,
   );
 

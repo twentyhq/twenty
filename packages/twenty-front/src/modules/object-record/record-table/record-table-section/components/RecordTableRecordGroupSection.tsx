@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useCallback } from 'react';
+import { styled } from '@linaria/react';
+import { useCallback, useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -23,10 +24,11 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import {
   filterOutByProperty,
   findByProperty,
@@ -44,13 +46,13 @@ const StyledTrContainer = styled.div`
   flex-direction: row;
 
   div:not(:first-of-type) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 
 const StyledChevronContainer = styled.div`
   border-right: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   text-align: center;
   vertical-align: middle;
@@ -75,7 +77,7 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   border-right: none;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   width: ${({ width }) => width}px;
   min-width: ${({ width }) => width}px;
@@ -104,9 +106,9 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
   width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
 
-  border-bottom: 1px solid ${({ theme }) => theme.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.background.primary};
 
   position: sticky;
   left: 0;
@@ -114,7 +116,7 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
 `;
 
 export const RecordTableRecordGroupSection = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
@@ -122,23 +124,24 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const recordGroup = useRecoilValue(
-    recordGroupDefinitionFamilyState(currentRecordGroupId),
+  const recordGroupDefinition = useAtomFamilyStateValue(
+    recordGroupDefinitionFamilyState,
+    currentRecordGroupId,
   );
 
   const recordIndexAggregateDisplayValueForGroupValue =
-    useRecoilComponentFamilyValue(
+    useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
-      { groupValue: recordGroup?.value ?? '' },
+      { groupValue: recordGroupDefinition?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateValue(
     recordIndexAggregateDisplayLabelComponentState,
   );
 
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -156,7 +159,7 @@ export const RecordTableRecordGroupSection = () => {
   const [
     isRecordGroupTableSectionToggled,
     setIsRecordGroupTableSectionToggled,
-  ] = useRecoilComponentFamilyState(
+  ] = useAtomComponentFamilyState(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
   );
@@ -185,7 +188,7 @@ export const RecordTableRecordGroupSection = () => {
     return null;
   }
 
-  if (!isDefined(recordGroup)) {
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
@@ -207,16 +210,16 @@ export const RecordTableRecordGroupSection = () => {
       >
         <StyledTag
           variant={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
               ? 'solid'
               : 'outline'
           }
           color={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroup.color
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+              ? recordGroupDefinition.color
               : 'transparent'
           }
-          text={recordGroup.title}
+          text={recordGroupDefinition.title}
           weight="medium"
         />
         <RecordBoardColumnHeaderAggregateDropdown

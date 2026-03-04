@@ -114,6 +114,7 @@ export class CreateAppCommand {
         includeExampleFrontComponent: false,
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
+        includeExampleSkill: false,
       };
     }
 
@@ -125,6 +126,7 @@ export class CreateAppCommand {
         includeExampleFrontComponent: true,
         includeExampleView: true,
         includeExampleNavigationMenuItem: true,
+        includeExampleSkill: true,
       };
     }
 
@@ -164,6 +166,11 @@ export class CreateAppCommand {
             value: 'navigationMenuItem',
             checked: true,
           },
+          {
+            name: 'Example skill (AI agent skill definition)',
+            value: 'skill',
+            checked: true,
+          },
         ],
       },
     ]);
@@ -189,6 +196,7 @@ export class CreateAppCommand {
       includeExampleView: includeView,
       includeExampleNavigationMenuItem:
         selectedExamples.includes('navigationMenuItem'),
+      includeExampleSkill: selectedExamples.includes('skill'),
     };
   }
 
@@ -225,9 +233,9 @@ export class CreateAppCommand {
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
-    console.log(chalk.gray(`  corepack enable  # if you don't use yarn@4`));
-    console.log(chalk.gray(`  yarn install     # if you don't use yarn@4`));
-    console.log(chalk.gray('  yarn auth:login  # Authenticate with Twenty'));
-    console.log(chalk.gray('  yarn app:dev     # Start dev mode'));
+    console.log(
+      chalk.gray('  yarn twenty auth:login  # Authenticate with Twenty'),
+    );
+    console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
   }
 }

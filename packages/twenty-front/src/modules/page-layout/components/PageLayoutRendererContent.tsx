@@ -1,5 +1,4 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,13 +18,14 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import styled from '@emotion/styled';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -43,7 +43,7 @@ const StyledTabsAndDashboardContainer = styled.div`
 `;
 
 const StyledPageLayoutTabList = styled(PageLayoutTabList)`
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
@@ -56,15 +56,15 @@ export const PageLayoutRendererContent = () => {
   const { isInRightDrawer, layoutType, targetRecordIdentifier } =
     useLayoutRenderingContext();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
@@ -80,7 +80,7 @@ export const PageLayoutRendererContent = () => {
     shouldEnableTabEditingFeatures(currentPageLayout.type)
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
-          setTabSettingsOpenTabId(newTabId);
+          setPageLayoutTabSettingsOpenTabId(newTabId);
           navigatePageLayoutCommandMenu({
             commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
             focusTitleInput: true,

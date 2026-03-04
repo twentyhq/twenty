@@ -3,39 +3,40 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNewButton = styled.button`
   align-items: center;
   align-self: baseline;
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${themeCssVariables.background.tertiary};
   }
 `;
 
 export const RecordBoardColumnNewRecordButton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 

@@ -13,7 +13,6 @@ A dropdown-based icon picker that allows users to select an icon from a list.
 <Tab title="Usage">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import React, { useState } from "react";
 import { IconPicker } from "@/ui/input/components/IconPicker";
 
@@ -26,14 +25,12 @@ export const MyComponent = () => {
    };
 
   return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
+    <IconPicker
+      disabled={false}
+      onChange={handleIconChange}
+      selectedIconKey={selectedIcon}
+      variant="primary"
+    />
   );
 };
 ```

@@ -2,8 +2,8 @@ import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/stat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordIndexFieldMetadataDerivedStates = (
@@ -19,7 +19,7 @@ export const useRecordIndexFieldMetadataDerivedStates = (
     ]),
   );
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
     recordIndexId,
   );
@@ -48,10 +48,11 @@ export const useRecordIndexFieldMetadataDerivedStates = (
       )
     : {};
 
-  const labelIdentifierFieldMetadataItem = useRecoilValue(
-    labelIdentifierFieldMetadataItemSelector({
+  const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
+    labelIdentifierFieldMetadataItemSelector,
+    {
       objectMetadataItemId: objectMetadataItem?.id ?? '',
-    }),
+    },
   );
 
   return {

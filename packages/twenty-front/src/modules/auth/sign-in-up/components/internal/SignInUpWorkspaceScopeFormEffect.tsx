@@ -7,8 +7,9 @@ import {
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -21,13 +22,13 @@ enum LoadingStatus {
 }
 
 export const SignInUpWorkspaceScopeFormEffect = () => {
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
-  const isRequestingCaptchaToken = useRecoilValue(
+  const isRequestingCaptchaToken = useAtomStateValue(
     isRequestingCaptchaTokenState,
   );
 
-  const captcha = useRecoilValue(captchaState);
+  const captcha = useAtomStateValue(captchaState);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
     LoadingStatus.Loading,
@@ -38,7 +39,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
 
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   useEffect(() => {
     if (!workspaceAuthProviders) {

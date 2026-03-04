@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -27,12 +28,12 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
-  height: calc(100% - ${({ theme }) => theme.spacing(10)});
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  height: calc(100% - ${themeCssVariables.spacing[10]});
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordIndexContainer = () => {
-  const [recordIndexViewType] = useRecoilState(recordIndexViewTypeState);
+  const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
 
   const {
     objectNamePlural,

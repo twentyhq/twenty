@@ -1,6 +1,5 @@
-import { useRecoilValue } from 'recoil';
-
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useObjectNameSingularFromPlural = ({
@@ -8,11 +7,12 @@ export const useObjectNameSingularFromPlural = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector({
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
       objectName: objectNamePlural,
       objectNameType: 'plural',
-    }),
+    },
   );
 
   if (!isDefined(objectMetadataItem)) {

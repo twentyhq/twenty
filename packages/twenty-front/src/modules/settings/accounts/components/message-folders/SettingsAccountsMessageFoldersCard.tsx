@@ -9,19 +9,20 @@ import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/m
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo, useState } from 'react';
 import { Label } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTreeList = styled.ul`
   list-style: none;
@@ -32,38 +33,38 @@ const StyledTreeList = styled.ul`
 const StyledFoldersContainer = styled.div`
   max-height: 400px;
   overflow-y: auto;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
 `;
 
 const StyledSectionHeader = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
   text-align: left;
 `;
 
 const StyledLabel = styled(Label)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.tertiary};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAccountsMessageFoldersCard = () => {
@@ -72,8 +73,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const settingsAccountsSelectedMessageChannel = useRecoilValueV2(
-    settingsAccountsSelectedMessageChannelStateV2,
+  const settingsAccountsSelectedMessageChannel = useAtomStateValue(
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const { updateMessageFoldersSyncStatus } =

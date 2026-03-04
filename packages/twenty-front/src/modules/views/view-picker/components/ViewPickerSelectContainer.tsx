@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSelectContainer = styled.div`
   display: flex;
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  margin: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.light};
+  width: calc(100% - ${themeCssVariables.spacing[2]});
+  margin: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.light};
   user-select: none;
 `;
 

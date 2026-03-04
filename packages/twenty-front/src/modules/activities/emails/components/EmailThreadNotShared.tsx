@@ -1,27 +1,29 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isCompact?: boolean }>`
   align-items: center;
   display: flex;
   flex: ${({ isCompact }) => (isCompact ? '0 0 auto' : '1 0 0')};
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: 20px;
   margin-left: auto;
   width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
-  min-width: ${({ theme }) => `${theme.spacing(21)}`};
-  padding: ${({ theme }) => theme.spacing(0, 1)};
+  min-width: ${themeCssVariables.spacing[21]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
 
   border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  background: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  background: ${themeCssVariables.background.transparent.lighter};
 
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.sm};
   flex: 1;
 `;
 
@@ -33,7 +35,7 @@ export const EmailThreadNotShared = ({
   visibility,
 }: EmailThreadNotSharedProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const containerId = 'email-thread-not-shared';
   const isCompact = visibility === MessageChannelVisibility.SUBJECT;
 

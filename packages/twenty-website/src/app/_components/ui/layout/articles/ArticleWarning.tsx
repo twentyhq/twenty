@@ -1,6 +1,6 @@
 'use client';
 import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconAlertCircle } from '@tabler/icons-react';
 
 const StyledContainer = styled.div`

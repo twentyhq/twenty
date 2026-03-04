@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
@@ -13,23 +13,26 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
 
-  color: ${({ theme }) => theme.font.color.tertiary};
-  border-right: ${({ theme }) => theme.border.color.light} !important;
+  color: ${themeCssVariables.font.color.tertiary};
+  border-right: ${themeCssVariables.border.color.light} !important;
 
   cursor: pointer;
 
@@ -41,7 +44,7 @@ const StyledPlusIconHeaderCell = styled.div<{
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   &:hover {
-    background: ${({ theme }) => theme.background.secondary};
+    background: ${themeCssVariables.background.secondary};
   }
 `;
 
@@ -59,35 +62,38 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordTableHeaderAddColumnButton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
-    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+    isRecordTableRowActive ||
+    (isRecordTableRowFocused && isRecordTableRowFocusActive);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
   const shouldDisplayBorderBottom =
-    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+    hasRecordGroups ||
+    !isFirstRowActiveOrFocused ||
+    isRecordTableScrolledVertically;
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 

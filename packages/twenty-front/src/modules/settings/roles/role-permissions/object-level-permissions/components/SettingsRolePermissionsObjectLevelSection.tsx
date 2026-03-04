@@ -5,29 +5,30 @@ import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/r
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelSectionProps = {
@@ -38,7 +39,7 @@ type SettingsRolePermissionsObjectLevelSectionProps = {
 };
 
 const StyledNoOverride = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export const SettingsRolePermissionsObjectLevelSection = ({
@@ -49,8 +50,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const { objectMetadataItemsThatCanHavePermission } =

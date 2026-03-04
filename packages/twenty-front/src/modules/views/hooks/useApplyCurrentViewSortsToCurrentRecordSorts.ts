@@ -1,23 +1,24 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const currentView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: contextStoreCurrentViewId ?? '',
+    },
   );
 
-  const setCurrentRecordSorts = useSetRecoilComponentState(
+  const setCurrentRecordSorts = useSetAtomComponentState(
     currentRecordSortsComponentState,
   );
 

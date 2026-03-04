@@ -1,16 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
-import { Gabarito } from 'next/font/google';
-
-import mq from '@/app/_components/ui/theme/mq';
-
-const gabarito = Gabarito({
-  weight: ['400', '500'],
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: false,
-});
+import { styled } from '@linaria/react';
 
 export const DesktopNav = styled.nav`
   display: flex;
@@ -26,7 +16,7 @@ export const DesktopNav = styled.nav`
   z-index: 4;
   transform-origin: 50% 50% 0px;
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
-  font-family: ${gabarito.style.fontFamily};
+  font-family: var(--font-gabarito);
 
   @media (max-width: 809px) {
     display: none;
@@ -54,9 +44,10 @@ export const LinkList = styled.div`
   display: flex;
   flex-direction: row;
   gap: 2px;
-  ${mq({
-    marginRight: ['auto', 'auto', '0'],
-  })}
+  margin-right: auto;
+  @media (min-width: 1200px) {
+    margin-right: 0;
+  }
 `;
 
 export const MobileLinkList = styled.div`
@@ -85,9 +76,10 @@ export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  ${mq({
-    width: ['auto', 'auto', '202px'],
-  })}
+  width: auto;
+  @media (min-width: 1200px) {
+    width: 202px;
+  }
 `;
 
 export const LogoAddon = styled.div`

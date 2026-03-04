@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import {
-  IconAddressBook,
-  IconCube,
+  Avatar,
+  IconBuildingSkyscraper,
   IconFolder,
   IconLink,
-  IconList,
+  IconTable,
 } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
@@ -15,8 +15,11 @@ import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/component
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useAddFolderToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
 import { useAddLinkToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type CommandMenuNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
@@ -30,6 +33,7 @@ export const CommandMenuNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: CommandMenuNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
 
@@ -46,7 +50,12 @@ export const CommandMenuNewSidebarItemMainMenu = ({
               <CommandMenuAddToNavDraggablePlaceholder index={0}>
                 <SelectableListItem itemId="object" onEnter={onSelectObject}>
                   <CommandMenuItem
-                    Icon={IconCube}
+                    Icon={() => (
+                      <NavigationMenuItemStyleIcon
+                        Icon={IconBuildingSkyscraper}
+                        color="blue"
+                      />
+                    )}
                     label={t`Object`}
                     id="object"
                     hasSubMenu={true}
@@ -57,7 +66,12 @@ export const CommandMenuNewSidebarItemMainMenu = ({
               <CommandMenuAddToNavDraggablePlaceholder index={1}>
                 <SelectableListItem itemId="view" onEnter={onSelectView}>
                   <CommandMenuItem
-                    Icon={IconList}
+                    Icon={() => (
+                      <NavigationMenuItemStyleIcon
+                        Icon={IconTable}
+                        color="gray"
+                      />
+                    )}
                     label={t`View`}
                     id="view"
                     hasSubMenu={true}
@@ -68,7 +82,13 @@ export const CommandMenuNewSidebarItemMainMenu = ({
               <CommandMenuAddToNavDraggablePlaceholder index={2}>
                 <SelectableListItem itemId="record" onEnter={onSelectRecord}>
                   <CommandMenuItem
-                    Icon={IconAddressBook}
+                    Icon={() => (
+                      <Avatar
+                        placeholder="L"
+                        type="rounded"
+                        backgroundColor={theme.color.green4}
+                      />
+                    )}
                     label={t`Record`}
                     id="record"
                     hasSubMenu={true}

@@ -1,7 +1,7 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  type FieldsConfiguration,
   type PageLayoutWidget as PageLayoutWidgetGenerated,
   type WidgetConfiguration,
 } from '~/generated-metadata/graphql';

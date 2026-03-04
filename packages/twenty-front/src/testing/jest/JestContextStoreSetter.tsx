@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -6,6 +6,8 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
@@ -14,7 +16,7 @@ import { type ContextStoreViewType } from '@/context-store/types/ContextStoreVie
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export type JestContextStoreSetterMocks = {
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
@@ -41,32 +43,45 @@ export const JestContextStoreSetter = ({
   contextStoreCurrentViewType,
   children,
 }: JestContextStoreSetterProps) => {
-  const setContextStoreTargetedRecordsRule = useSetRecoilComponentState(
+  const contextStoreInstanceContext = useContext(
+    ContextStoreComponentInstanceContext,
+  );
+  const instanceId =
+    contextStoreInstanceContext?.instanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID;
+
+  const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
+    instanceId,
   );
 
-  const setContextStoreCurrentObjectMetadataItemId = useSetRecoilComponentState(
+  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+    instanceId,
   );
 
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
+  const setContextStoreNumberOfSelectedRecords = useSetAtomComponentState(
     contextStoreNumberOfSelectedRecordsComponentState,
+    instanceId,
   );
 
-  const setcontextStoreFiltersComponentState = useSetRecoilComponentState(
+  const setContextStoreFilters = useSetAtomComponentState(
     contextStoreFiltersComponentState,
+    instanceId,
   );
 
-  const setContextStoreFilterGroupsComponentState = useSetRecoilComponentState(
+  const setContextStoreFilterGroups = useSetAtomComponentState(
     contextStoreFilterGroupsComponentState,
+    instanceId,
   );
 
-  const setContextStoreCurrentViewId = useSetRecoilComponentState(
+  const setContextStoreCurrentViewId = useSetAtomComponentState(
     contextStoreCurrentViewIdComponentState,
+    instanceId,
   );
 
-  const setContextStoreCurrentViewType = useSetRecoilComponentState(
+  const setContextStoreCurrentViewType = useSetAtomComponentState(
     contextStoreCurrentViewTypeComponentState,
+    instanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -81,8 +96,8 @@ export const JestContextStoreSetter = ({
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
-    setcontextStoreFiltersComponentState(contextStoreFilters);
-    setContextStoreFilterGroupsComponentState(contextStoreFilterGroups);
+    setContextStoreFilters(contextStoreFilters);
+    setContextStoreFilterGroups(contextStoreFilterGroups);
     setContextStoreCurrentViewType(contextStoreCurrentViewType ?? null);
     setIsLoaded(true);
   }, [
@@ -92,14 +107,14 @@ export const JestContextStoreSetter = ({
     contextStoreCurrentObjectMetadataId,
     setContextStoreNumberOfSelectedRecords,
     contextStoreNumberOfSelectedRecords,
-    setcontextStoreFiltersComponentState,
+    setContextStoreFilters,
     contextStoreFilters,
     objectMetadataItem,
     setContextStoreCurrentViewId,
     contextStoreCurrentViewId,
     setContextStoreCurrentViewType,
     contextStoreCurrentViewType,
-    setContextStoreFilterGroupsComponentState,
+    setContextStoreFilterGroups,
     contextStoreFilterGroups,
   ]);
 

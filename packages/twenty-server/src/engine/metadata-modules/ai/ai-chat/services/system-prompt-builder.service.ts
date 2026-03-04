@@ -246,6 +246,7 @@ ${skillsList}`;
     preloadedTools: string[],
   ): string {
     const preloadedSet = new Set(preloadedTools);
+    const hasWebSearch = preloadedSet.has('web_search');
 
     const toolsByCategory = new Map<string, ToolIndexEntry[]>();
 
@@ -259,6 +260,14 @@ ${skillsList}`;
 
     const sections: string[] = [];
 
+    const webSearchLine = hasWebSearch
+      ? `- \`web_search\` ✓: Search the web for real-time information (ALWAYS use this for current data, news, research)`
+      : `- Web search is automatically available — the model will search the web when needed. Do NOT call \`web_search\` as a tool.`;
+
+    const otherPreloadedTools = preloadedTools.filter(
+      (name) => name !== 'web_search',
+    );
+
     sections.push(`
 ## Available Tools
 
@@ -266,8 +275,8 @@ You have access to ${toolCatalog.length} tools plus native web search. Some are 
 To use any other tool, first call \`${LEARN_TOOLS_TOOL_NAME}\` to learn its schema, then call \`${EXECUTE_TOOL_TOOL_NAME}\` to run it.
 
 ### Pre-loaded Tools (ready to use now)
-- \`web_search\` ✓: Search the web for real-time information (ALWAYS use this for current data, news, research)
-${preloadedTools.length > 0 ? preloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n') : ''}
+${webSearchLine}
+${otherPreloadedTools.length > 0 ? otherPreloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n') : ''}
 
 ### Tool Catalog by Category`);
 
@@ -301,11 +310,14 @@ ${tools
   .join('\n')}`);
     }
 
+    const webSearchInstruction = hasWebSearch
+      ? `1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet\n`
+      : '';
+
     sections.push(`
 ### How to Use Tools
-1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet
-2. **Pre-loaded tools** (marked with ✓): Use directly
-3. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
+${webSearchInstruction}${hasWebSearch ? '2' : '1'}. **Pre-loaded tools** (marked with ✓): Use directly
+${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
 
     return sections.join('\n');
   }

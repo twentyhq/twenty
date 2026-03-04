@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -12,7 +12,6 @@ import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableH
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -24,6 +23,8 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   useActivateSkillMutation,
@@ -40,9 +41,9 @@ import {
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
@@ -51,14 +52,14 @@ const StyledSearchInput = styled(SettingsTextInput)`
 `;
 
 const StyledTableHeaderRow = styled(StyledSkillTableRow)`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooterContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsSkillsTable = () => {
@@ -67,7 +68,7 @@ export const SettingsSkillsTable = () => {
   const [deleteSkill] = useDeleteSkillMutation();
 
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);

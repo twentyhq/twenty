@@ -16,43 +16,11 @@ export const defineManifestTests = (appPath: string): void => {
 
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
-      const manifest: Manifest = await fs.readJSON(manifestPath);
-
-      expect(manifest.application).toEqual(EXPECTED_MANIFEST.application);
-      expect(manifest.objects).toEqual(EXPECTED_MANIFEST.objects);
-
-      expect(
-        normalizeManifestForComparison({
-          logicFunctions: manifest.logicFunctions,
-        }).logicFunctions,
-      ).toEqual(
-        normalizeManifestForComparison({
-          logicFunctions: EXPECTED_MANIFEST.logicFunctions,
-        }).logicFunctions,
+      const manifest: Manifest = normalizeManifestForComparison(
+        await fs.readJSON(manifestPath),
       );
 
-      for (const fn of manifest.logicFunctions) {
-        expect(fn.builtHandlerChecksum).toBeDefined();
-        expect(fn.builtHandlerChecksum).not.toBeNull();
-        expect(typeof fn.builtHandlerChecksum).toBe('string');
-      }
-
-      expect(
-        normalizeManifestForComparison({
-          frontComponents: manifest.frontComponents,
-        }).frontComponents,
-      ).toEqual(
-        normalizeManifestForComparison({
-          frontComponents: EXPECTED_MANIFEST.frontComponents,
-        }).frontComponents,
-      );
-
-      for (const component of manifest.frontComponents ?? []) {
-        expect(component.builtComponentChecksum).toBeDefined();
-        expect(component.builtComponentChecksum).not.toBeNull();
-        expect(typeof component.builtComponentChecksum).toBe('string');
-      }
-      expect(manifest.roles).toEqual(EXPECTED_MANIFEST.roles);
+      expect(manifest).toEqual(EXPECTED_MANIFEST);
     });
   });
 };

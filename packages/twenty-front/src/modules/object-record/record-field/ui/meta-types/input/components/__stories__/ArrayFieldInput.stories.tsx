@@ -31,7 +31,7 @@ const ArrayValueSetterEffect = ({ value }: { value: string[] }) => {
 const ArrayFieldValueGater = () => {
   const { fieldValue } = useArrayField();
 
-  return fieldValue && <ArrayFieldInput />;
+  return fieldValue ? <ArrayFieldInput /> : null;
 };
 
 type ArrayInputWithContextProps = {

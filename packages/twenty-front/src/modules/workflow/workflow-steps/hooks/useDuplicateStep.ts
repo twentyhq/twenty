@@ -1,4 +1,4 @@
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -10,10 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const useDuplicateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { duplicateWorkflowVersionStep } = useDuplicateWorkflowVersionStep();
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setWorkflowLastCreatedStepId = useSetRecoilComponentState(
+  const setWorkflowLastCreatedStepId = useSetAtomComponentState(
     workflowLastCreatedStepIdComponentState,
   );
 

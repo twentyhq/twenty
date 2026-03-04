@@ -4,6 +4,7 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="Perché non riesco ad attivare un flusso di lavoro?">
     È probabilmente un problema di permessi. Hai bisogno dell'accesso ai flussi di lavoro per crearli e attivarli.
 
@@ -27,7 +28,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
   <Accordion title="Qual è la differenza tra i trigger manuali Single, Global e Bulk?">
     | Tipo | Record richiesti | Esecuzioni del workflow |
     | ---- | ---------------- | ----------------------- |
-
     \| **Global** | Nessuno | Una volta, senza input di record |
     \| **Single** | Uno o più selezionati | Una volta per ogni record selezionato |
     \| **Bulk** | Uno o più selezionati | Una volta, con tutti i record come array |
@@ -61,7 +61,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Sì**, le diramazioni vengono eseguite in parallelo per impostazione predefinita.
 
     Se vuoi che venga eseguita solo una diramazione:
-
     * Aggiungi un'azione **Filtro** all'inizio di ogni diramazione
     * Imposta condizioni opposte (ad es., Diramazione A: stato = "Open", Diramazione B: stato ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Sì**. Dopo che le diramazioni parallele sono state completate, puoi aggiungere un passaggio a cui si colleghino entrambe.
 
     Nell'editor dei flussi di lavoro:
-
     1. Completa le azioni nelle diramazioni
     2. Aggiungi un nuovo passaggio dopo le diramazioni
     3. Trascina le connessioni dalla fine di ciascuna diramazione verso questo nuovo passaggio
@@ -84,7 +82,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Search Records restituisce un massimo di 200 record.**
 
     Se devi elaborarne di più:
-
     * Aggiungi filtri più specifici per ridurre i risultati
     * Usa flussi di lavoro pianificati per elaborare in lotti
     * Valuta di usare le API per operazioni in blocco
@@ -102,12 +99,10 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     Ogni azione produce dati di output che possono essere utilizzati nei passaggi successivi.
 
     **Per fare riferimento ai dati del passaggio precedente**:
-
     * Usa il selettore di variabili durante la configurazione di un campo
     * Oppure digita `{{stepName.fieldName}}` direttamente
 
     **Esempi**:
-
     * Dati del trigger: `{{trigger.object.email}}`
     * Risultati della ricerca: `{{searchRecords[0].name}}`
     * Output del codice: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     3. **Variabile sbagliata selezionata**: Assicurati di selezionare l'array stesso, non un singolo record
 
     **Configurazione corretta**:
-
     1. Search Records (restituisce un array)
     2. Filtro: length > 0
     3. Iterator: seleziona `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     Se il tuo codice supera questo limite, l'azione non riuscirà con un errore di timeout.
 
     **Suggerimenti per evitare timeout**:
-
     * Suddividi le operazioni grandi in parti più piccole usando Iterator
     * Evita elaborazioni pesanti; usa servizi esterni tramite HTTP Request per processi intensivi
     * Ottimizza il tuo codice per ridurre il tempo di esecuzione
@@ -149,12 +142,10 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     Le esecuzioni dei flussi di lavoro mostrano la cronologia di esecuzione e ti aiutano a eseguire il debug dei problemi.
 
     **Accesso alle esecuzioni**:
-
     * Nell'editor dei flussi di lavoro → pannello **Runs** a destra
     * Oppure vai a **Workflow Runs** nella barra laterale
 
     **Comprendere un'esecuzione**:
-
     * **Stato**: In esecuzione, Completato, Non riuscito, In attesa
     * **Passaggi**: Vedi quali passaggi sono stati eseguiti e il loro output
     * **Errori**: Fai clic sui passaggi non riusciti per vedere i messaggi di errore
@@ -171,13 +162,11 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     Se superi questo limite, i flussi di lavoro vengono contrassegnati immediatamente come non riusciti e non appariranno nell'elenco delle esecuzioni come previsto.
 
     **Scenari comuni che raggiungono questo limite**:
-
     * Selezionare più di 5.000 record con un trigger manuale Single
     * Più flussi di lavoro in esecuzione simultaneamente nel tuo spazio di lavoro
     * Trigger automatici ad alta frequenza (ad es., Record Updated su un oggetto molto attivo)
 
     **Soluzioni**:
-
     * Usa i trigger **Bulk** invece di Single per elaborare molti record in un'unica esecuzione
     * Scagliona nel tempo le operazioni in grandi batch
     * Usa filtri per ridurre la frequenza dei trigger
@@ -189,7 +178,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
 
     | Limite | Valore | Comportamento |
     | ------ | ------ | ------------- |
-
     \| **Soft limit** | 100 esecuzioni/minuto | Le esecuzioni vanno in coda con stato "Not Started", elaborate gradualmente |
     \| **Hard limit** | 5.000 esecuzioni/ora | Le esecuzioni falliscono immediatamente |
 
@@ -198,7 +186,6 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Limite hard (5.000/ora)**: Si applica all'intero spazio di lavoro. Se tutti i tuoi flussi di lavoro combinati superano 5.000 esecuzioni in un'ora, le esecuzioni aggiuntive falliranno immediatamente.
 
     **Suggerimenti per rimanere entro i limiti**:
-
     * Usa trigger Bulk con Iterator invece dei trigger Single per grandi batch
     * Combina automazioni correlate in un numero minore di flussi di lavoro
     * Usa flussi di lavoro pianificati per distribuire il carico nel tempo
@@ -208,13 +195,11 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **No, al momento non esiste una funzionalità di ritentativo automatico.**
 
     Se un'esecuzione di flusso di lavoro non riesce, dovrai:
-
     1. Rivedi l'errore in **Impostazioni → Flussi di lavoro → [Il tuo flusso di lavoro] → Runs**
     2. Risolvi il problema (dati, configurazione o servizio esterno)
     3. Attiva manualmente di nuovo il flusso di lavoro sui record interessati
 
     **Suggerimenti per ridurre gli errori**:
-
     * Aggiungi nodi **Filtro** per convalidare i dati prima delle azioni
     * Usa **Search Records** per verificare se esistono record correlati
     * Esegui test accurati con pochi record prima delle operazioni in blocco
@@ -226,14 +211,12 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Sì, se i tuoi flussi di lavoro sono attivati dalla creazione o dall'aggiornamento dei record.**
 
     Quando importi dati tramite CSV, ogni record creato o aggiornato può attivare flussi di lavoro. Una grande importazione (migliaia di record) potrebbe:
-
     * Raggiungere il limite di 5.000 esecuzioni/ora
     * Consumare una quantità significativa di crediti dei flussi di lavoro
     * Inviare email o notifiche inattese
     * Creare attività o record duplicati
 
     **Prima di un'importazione massiva**:
-
     1. Vai a **Impostazioni → Flussi di lavoro**
     2. Identifica i flussi di lavoro attivati dall'oggetto che stai importando
     3. **Disattivali** temporaneamente
@@ -251,4 +234,5 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
 
     Questo riorganizzerà automaticamente tutti i nodi in un layout pulito e ordinato.
   </Accordion>
+
 </AccordionGroup>

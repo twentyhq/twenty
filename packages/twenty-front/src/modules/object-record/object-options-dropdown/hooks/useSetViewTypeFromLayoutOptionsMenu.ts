@@ -12,13 +12,15 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
-  const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetAtomState(recordIndexViewTypeState);
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -27,136 +29,137 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
-  const setAndPersistViewType = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (viewType: ViewType) => {
-        const currentViewId = snapshot
-          .getLoadable(
-            contextStoreCurrentViewIdComponentState.atomFamily({
-              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-            }),
-          )
-          .getValue();
+  const store = useStore();
 
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
+  const setAndPersistViewType = useCallback(
+    async (viewType: ViewType) => {
+      const currentViewId = store.get(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      );
 
-        if (!isDefined(currentViewId)) {
-          throw new Error('No view id found');
+      const existingCoreViews = store.get(coreViewsState.atom);
+
+      if (!isDefined(currentViewId)) {
+        throw new Error('No view id found');
+      }
+
+      const currentCoreView = existingCoreViews.find(
+        (coreView) => coreView.id === currentViewId,
+      );
+
+      if (!isDefined(currentCoreView)) {
+        throw new Error('No current view found');
+      }
+
+      const currentView = convertCoreViewToView(currentCoreView);
+
+      const updateCurrentViewParams: Partial<GraphQLView> = {};
+      updateCurrentViewParams.type = viewType;
+
+      switch (viewType) {
+        case ViewType.Kanban: {
+          if (availableFieldsForGrouping.length === 0) {
+            throw new Error('No fields for kanban - should not happen');
+          }
+
+          const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
+          updateCurrentViewParams.mainGroupByFieldMetadataId =
+            mainGroupByFieldMetadataId;
+
+          if (shouldChangeIcon(currentView.icon, currentView.type)) {
+            updateCurrentViewParams.icon =
+              viewTypeIconMapping(viewType).displayName;
+          }
+
+          setRecordIndexViewType(viewType);
+          store.set(coreViewsState.atom, [
+            ...existingCoreViews.filter(
+              (coreView) => coreView.id !== currentView.id,
+            ),
+            {
+              ...currentCoreView,
+              type: convertViewTypeToCore(viewType),
+              mainGroupByFieldMetadataId,
+            },
+          ]);
+          await updateCurrentView(updateCurrentViewParams);
+          return;
         }
-
-        const currentCoreView = existingCoreViews.find(
-          (coreView) => coreView.id === currentViewId,
-        );
-
-        if (!isDefined(currentCoreView)) {
-          throw new Error('No current view found');
+        case ViewType.Table: {
+          if (shouldChangeIcon(currentView.icon, currentView.type)) {
+            updateCurrentViewParams.icon =
+              viewTypeIconMapping(viewType).displayName;
+          }
+          updateCurrentViewParams.mainGroupByFieldMetadataId = null;
+          await updateCurrentView(updateCurrentViewParams);
+          setRecordIndexViewType(viewType);
+          store.set(coreViewsState.atom, [
+            ...existingCoreViews.filter(
+              (coreView) => coreView.id !== currentView.id,
+            ),
+            {
+              ...currentCoreView,
+              mainGroupByFieldMetadataId: null,
+              type: convertViewTypeToCore(viewType),
+            },
+          ]);
+          return;
         }
-
-        const currentView = convertCoreViewToView(currentCoreView);
-
-        const updateCurrentViewParams: Partial<GraphQLView> = {};
-        updateCurrentViewParams.type = viewType;
-
-        switch (viewType) {
-          case ViewType.Kanban: {
-            if (availableFieldsForGrouping.length === 0) {
-              throw new Error('No fields for kanban - should not happen');
-            }
-
-            const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
-            updateCurrentViewParams.mainGroupByFieldMetadataId =
-              mainGroupByFieldMetadataId;
-
-            if (shouldChangeIcon(currentView.icon, currentView.type)) {
-              updateCurrentViewParams.icon =
-                viewTypeIconMapping(viewType).displayName;
-            }
-
-            setRecordIndexViewType(viewType);
-            set(coreViewsState, [
-              ...existingCoreViews.filter(
-                (coreView) => coreView.id !== currentView.id,
-              ),
-              {
-                ...currentCoreView,
-                type: convertViewTypeToCore(viewType),
-                mainGroupByFieldMetadataId,
-              },
-            ]);
-            await updateCurrentView(updateCurrentViewParams);
-            return;
+        case ViewType.Calendar: {
+          if (availableFieldsForCalendar.length === 0) {
+            throw new Error('No date fields for calendar');
           }
-          case ViewType.Table: {
-            if (shouldChangeIcon(currentView.icon, currentView.type)) {
-              updateCurrentViewParams.icon =
-                viewTypeIconMapping(viewType).displayName;
-            }
-            updateCurrentViewParams.mainGroupByFieldMetadataId = null;
-            await updateCurrentView(updateCurrentViewParams);
-            setRecordIndexViewType(viewType);
-            set(coreViewsState, [
-              ...existingCoreViews.filter(
-                (coreView) => coreView.id !== currentView.id,
-              ),
-              {
-                ...currentCoreView,
-                mainGroupByFieldMetadataId: null,
-                type: convertViewTypeToCore(viewType),
-              },
-            ]);
-            return;
+
+          const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+
+          setRecordIndexViewType(viewType);
+          store.set(coreViewsState.atom, [
+            ...existingCoreViews.filter(
+              (coreView) => coreView.id !== currentView.id,
+            ),
+            {
+              ...currentCoreView,
+              mainGroupByFieldMetadataId: null,
+              type: convertViewTypeToCore(viewType),
+              calendarLayout: ViewCalendarLayout.MONTH,
+              calendarFieldMetadataId,
+            },
+          ]);
+
+          loadRecordIndexStates(
+            {
+              ...currentView,
+              type: viewType,
+              calendarFieldMetadataId,
+              calendarLayout: ViewCalendarLayout.MONTH,
+            },
+            objectMetadataItem,
+          );
+
+          if (shouldChangeIcon(currentView.icon, currentView.type)) {
+            updateCurrentViewParams.icon =
+              viewTypeIconMapping(viewType).displayName;
           }
-          case ViewType.Calendar: {
-            if (availableFieldsForCalendar.length === 0) {
-              throw new Error('No date fields for calendar');
-            }
-
-            const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
-
-            setRecordIndexViewType(viewType);
-            set(coreViewsState, [
-              ...existingCoreViews.filter(
-                (coreView) => coreView.id !== currentView.id,
-              ),
-              {
-                ...currentCoreView,
-                mainGroupByFieldMetadataId: null,
-                type: convertViewTypeToCore(viewType),
-                calendarLayout: ViewCalendarLayout.MONTH,
-                calendarFieldMetadataId,
-              },
-            ]);
-
-            loadRecordIndexStates(
-              {
-                ...currentView,
-                type: viewType,
-                calendarFieldMetadataId,
-                calendarLayout: ViewCalendarLayout.MONTH,
-              },
-              objectMetadataItem,
-            );
-
-            if (shouldChangeIcon(currentView.icon, currentView.type)) {
-              updateCurrentViewParams.icon =
-                viewTypeIconMapping(viewType).displayName;
-            }
-            updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
-            updateCurrentViewParams.calendarFieldMetadataId =
-              calendarFieldMetadataId;
-            updateCurrentViewParams.mainGroupByFieldMetadataId = null;
-            return await updateCurrentView(updateCurrentViewParams);
-          }
-          default: {
-            return assertUnreachable(viewType);
-          }
+          updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
+          updateCurrentViewParams.calendarFieldMetadataId =
+            calendarFieldMetadataId;
+          updateCurrentViewParams.mainGroupByFieldMetadataId = null;
+          return await updateCurrentView(updateCurrentViewParams);
         }
-      },
+        case ViewType.FieldsWidget: {
+          return;
+        }
+        default: {
+          return assertUnreachable(viewType);
+        }
+      }
+    },
     [
       availableFieldsForGrouping,
       setRecordIndexViewType,
+      store,
       updateCurrentView,
       availableFieldsForCalendar,
       loadRecordIndexStates,

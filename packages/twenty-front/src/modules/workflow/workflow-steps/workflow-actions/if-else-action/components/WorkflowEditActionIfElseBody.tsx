@@ -1,6 +1,6 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -22,23 +22,24 @@ import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledBodyContainer = styled(WorkflowStepBody)`
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type WorkflowEditActionIfElseBodyProps = {
@@ -68,21 +69,21 @@ export const WorkflowEditActionIfElseBody = ({
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
-  const currentStepFilters = useRecoilComponentValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useRecoilComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
-  const setCurrentStepFilters = useSetRecoilComponentState(
+  const setCurrentStepFilters = useSetAtomComponentState(
     currentStepFiltersComponentState,
   );
-  const setCurrentStepFilterGroups = useSetRecoilComponentState(
+  const setCurrentStepFilterGroups = useSetAtomComponentState(
     currentStepFilterGroupsComponentState,
   );
 

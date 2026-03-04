@@ -82,12 +82,19 @@ describe('SimpleSecretEncryptionUtil', () => {
       expect(decrypted).toBe(specialSecret);
     });
 
-    it('should fail to decrypt with wrong purpose', async () => {
+    it('should not recover original secret with wrong purpose', async () => {
       const encrypted = await util.encryptSecret(testSecret, testPurpose);
 
-      await expect(
-        util.decryptSecret(encrypted, 'wrong-purpose'),
-      ).rejects.toThrow();
+      // AES-256-CBC may either throw (invalid padding) or produce garbage.
+      // Both outcomes are acceptable — the key property is that the original
+      // secret is never returned.
+      try {
+        const decrypted = await util.decryptSecret(encrypted, 'wrong-purpose');
+
+        expect(decrypted).not.toBe(testSecret);
+      } catch {
+        // Expected: wrong key produced invalid padding
+      }
     });
 
     it('should fail to decrypt malformed encrypted data', async () => {

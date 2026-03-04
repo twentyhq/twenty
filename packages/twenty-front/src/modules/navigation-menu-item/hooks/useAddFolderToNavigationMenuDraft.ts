@@ -1,14 +1,15 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddFolderToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
-    navigationMenuItemsDraftStateV2,
+  const setNavigationMenuItemsDraft = useSetAtomState(
+    navigationMenuItemsDraftState,
   );
 
   const addFolderToDraft = (
@@ -43,6 +44,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
       position,
       userWorkspaceId: undefined,
       name: name.trim(),
+      color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
       applicationId: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -5,8 +5,10 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { styled } from '@linaria/react';
+
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -32,16 +34,17 @@ import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { type PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 const StandardContent = ({
@@ -51,7 +54,7 @@ const StandardContent = ({
   title,
   onClickOnLogo,
 }: {
-  workspacePublicData: PublicWorkspaceDataOutput | null;
+  workspacePublicData: PublicWorkspaceData | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
   title: string;
@@ -80,17 +83,19 @@ const StandardContent = ({
 
 export const SignInUp = () => {
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
 

@@ -2,20 +2,22 @@ import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSet
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
   overflow: auto;
-  padding: ${({ theme }) => theme.spacing(6, 8, 8)};
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
+    ${themeCssVariables.spacing[8]};
   width: ${({ width }) => {
     if (isDefined(width)) {
       return width + 'px';
@@ -25,7 +27,7 @@ const StyledSettingsPageContainer = styled.div<{
     }
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
-  padding-bottom: ${({ theme }) => theme.spacing(20)};
+  padding-bottom: ${themeCssVariables.spacing[20]};
 `;
 
 export const SettingsPageContainer = ({

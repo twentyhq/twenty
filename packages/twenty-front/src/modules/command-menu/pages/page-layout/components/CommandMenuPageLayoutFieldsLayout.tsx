@@ -3,12 +3,16 @@ import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/co
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
-import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
-import styled from '@emotion/styled';
+import { FieldsWidgetGroupsDraftInitializationEffect } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupsDraftInitializationEffect';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldsConfiguration,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -20,33 +24,31 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
 `;
 
 export const CommandMenuPageLayoutFieldsLayout = () => {
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
-  const { pageLayoutId, objectNameSingular } =
+  const { pageLayoutId } =
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const defaultFieldsConfiguration =
-    useTemporaryFieldsConfiguration(objectNameSingular);
-  const [fieldsConfiguration, setFieldsConfiguration] =
-    useState<FieldsConfiguration>(defaultFieldsConfiguration);
+  const temporaryFieldsConfiguration = useTemporaryFieldsConfiguration();
 
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
 
-  const handleConfigurationChange = (
-    updatedConfiguration: FieldsConfiguration,
-  ) => {
-    // TODO: replace with a call to updatePageLayoutWidget
-    setFieldsConfiguration(updatedConfiguration);
-  };
+  const widgetConfiguration = widgetInEditMode.configuration;
+
+  const fieldsConfiguration: FieldsConfiguration =
+    isDefined(widgetConfiguration) &&
+    widgetConfiguration.configurationType === WidgetConfigurationType.FIELDS
+      ? (widgetConfiguration as FieldsConfiguration)
+      : temporaryFieldsConfiguration;
 
   return (
     <StyledOuterContainer>
@@ -55,9 +57,14 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
         onBackClick={goBackFromCommandMenu}
       />
       <StyledContainer>
+        <FieldsWidgetGroupsDraftInitializationEffect
+          viewId={fieldsConfiguration.viewId ?? null}
+          pageLayoutId={pageLayoutId}
+          widgetId={widgetInEditMode.id}
+        />
         <FieldsConfigurationEditor
-          configuration={fieldsConfiguration}
-          onChange={handleConfigurationChange}
+          pageLayoutId={pageLayoutId}
+          widgetId={widgetInEditMode.id}
         />
       </StyledContainer>
     </StyledOuterContainer>

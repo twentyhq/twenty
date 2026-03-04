@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
@@ -13,15 +13,17 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 const StyledTimelineItemContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 'auto';
   justify-content: space-between;
   overflow: hidden;
@@ -37,7 +39,7 @@ const StyledIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   height: 16px;
   width: 16px;
   margin: 5px;
@@ -55,7 +57,7 @@ const StyledVerticalLineContainer = styled.div`
 `;
 
 const StyledVerticalLine = styled.div`
-  background: ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.border.color.light};
   width: 2px;
   height: 100%;
 `;
@@ -65,7 +67,7 @@ const StyledSummary = styled.summary`
   display: flex;
   flex: 1;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
@@ -74,10 +76,10 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
-  margin-bottom: ${({ isMarginBottom, theme }) =>
-    isMarginBottom ? theme.spacing(3) : 0};
+  margin-bottom: ${({ isMarginBottom }) =>
+    isMarginBottom ? themeCssVariables.spacing[3] : '0'};
   min-height: 26px;
 `;
 
@@ -92,17 +94,17 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,
@@ -116,7 +118,7 @@ export const EventRow = ({
     return null;
   }
 
-  if (isUndefinedOrNull(recordFromStore)) {
+  if (isUndefinedOrNull(recordStore)) {
     return null;
   }
   if (isUndefinedOrNull(mainObjectMetadataItem)) {
@@ -125,7 +127,7 @@ export const EventRow = ({
 
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
-    record: recordFromStore,
+    record: recordStore,
     allowRequestsToTwentyIcons,
   });
 

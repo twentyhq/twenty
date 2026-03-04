@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -8,28 +8,32 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${themeCssVariables.spacing[1]};
+  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color
-    ${({ theme }) => theme.animation.duration.normal}s ease;
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
-    background-color: ${({ theme, disabled }) =>
-      disabled ? 'transparent' : theme.background.transparent.light};
+    background-color: ${({ disabled }) =>
+      disabled
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledCheckboxLabel = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type ModelConfiguration = {
@@ -56,8 +60,8 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const theme = useTheme();
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const { theme } = useContext(ThemeContext);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;
