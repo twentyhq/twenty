@@ -9,11 +9,13 @@ import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/marketpla
 import { MarketplaceResolver } from 'src/engine/core-modules/marketplace/resolvers/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/marketplace/services/marketplace.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
     ApplicationSyncModule,
+    PermissionsModule,
     TwentyConfigModule,
   ],
   providers: [
