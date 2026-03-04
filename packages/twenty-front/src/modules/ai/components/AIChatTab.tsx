@@ -20,13 +20,12 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -142,6 +141,7 @@ const StyledReadOnlyModelButton = styled(LightButton)`
 `;
 
 export const AIChatTab = () => {
+  console.log('Rendering AIChatTab');
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
 
@@ -149,17 +149,13 @@ export const AIChatTab = () => {
     agentChatMessageIdsComponentSelector,
   );
 
-  const hasMessages = agentChatMessageIds.length > 0;
+  const hasMessages = isNonEmptyArray(agentChatMessageIds);
 
   const { uploadFiles } = useAIChatFileUpload();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
-
   const { editor, handleSendAndClear } = useAIChatEditor();
-
-  const agentChatError = useAtomStateValue(agentChatErrorState);
 
   return (
     <StyledContainer
@@ -184,14 +180,9 @@ export const AIChatTab = () => {
               <AIChatErrorUnderMessageList />
             </StyledScrollWrapper>
           )}
-          {!hasMessages && !agentChatError && !agentChatIsLoading && (
-            <AIChatEmptyState editor={editor} />
-          )}
-          {!hasMessages && agentChatError && !agentChatIsLoading && (
-            <AIChatStandaloneError error={agentChatError} />
-          )}
-          {agentChatIsLoading && !hasMessages && <AIChatSkeletonLoader />}
-
+          <AIChatEmptyState editor={editor} />
+          <AIChatStandaloneError />
+          <AIChatSkeletonLoader />
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
             <StyledInputBox>

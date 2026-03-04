@@ -7,10 +7,10 @@ import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantM
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessagesComponentSelector } from '@/ai/states/agentChatMessageComponentSelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -142,9 +142,10 @@ const StyledFilesContainer = styled.div`
 `;
 
 export const AIChatMessage = ({ messageId }: { messageId: string }) => {
-  const agentChatMessage = useAtomComponentFamilyStateValue(
-    agentChatMessageComponentFamilyState,
-    messageId,
+  console.log(`Rendering AIChatMessage for messageId: ${messageId}`);
+  const agentChatMessage = useAtomComponentFamilySelectorValue(
+    agentChatMessagesComponentSelector,
+    { messageId },
   );
 
   const agentChatMessageIds = useAtomComponentSelectorValue(

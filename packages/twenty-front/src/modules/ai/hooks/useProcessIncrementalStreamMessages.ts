@@ -29,6 +29,10 @@ export const useProcessIncrementalStreamMessages = () => {
     (incrementalStreamMessages: ExtendedUIMessage[]) => {
       let updatedMessagesToProcess: ExtendedUIMessage[] = [];
 
+      // console.log({
+      //   incrementalStreamMessages,
+      // });
+
       store.set(
         atom(null, (get, batchSet) => {
           const existingAgentChatMessages = get(agentChatMessagesCallbackState);
@@ -37,6 +41,15 @@ export const useProcessIncrementalStreamMessages = () => {
             const alreadyExistingMessage = existingAgentChatMessages.find(
               (existingMessage) => existingMessage.id === updatedMessage.id,
             );
+
+            // console.log({
+            //   existingAgentChatMessages,
+            //   alreadyExistingMessage,
+            //   updatedMessage,
+            //   isDeeplyEqual: isDefined(alreadyExistingMessage)
+            //     ? isDeeplyEqual(alreadyExistingMessage, updatedMessage)
+            //     : 'N/A',
+            // });
 
             if (isDefined(alreadyExistingMessage)) {
               if (!isDeeplyEqual(alreadyExistingMessage, updatedMessage)) {

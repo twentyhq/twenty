@@ -1,4 +1,4 @@
-import { AgentChatDataLoading } from '@/ai/components/AgentChatDataLoading';
+import { AgentChatDataEffect } from '@/ai/components/AgentChatDataEffect';
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
 
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -21,7 +21,7 @@ export const AgentChatProvider = ({
       <AgentChatComponentInstanceContext.Provider
         value={{ instanceId: 'agentChatComponentInstance' }}
       >
-        <AgentChatDataLoading />
+        <AgentChatDataEffect />
         {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>

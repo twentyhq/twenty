@@ -1,8 +1,10 @@
-import { AgentChatMessagesEffect } from '@/ai/components/AgentChatMessagesEffect';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
+import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
+import { useProcessIncrementalStreamMessages } from '@/ai/hooks/useProcessIncrementalStreamMessages';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -11,11 +13,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useEffect } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
-export const AgentChatDataLoading = () => {
+export const AgentChatDataEffect = () => {
   const { uiMessages, isLoading } = useAgentChatData();
   const chatState = useAgentChat(uiMessages);
 
   const combinedIsLoading = chatState.isLoading || isLoading;
+  const isStreaming = chatState.status === 'streaming';
 
   const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);
   const setAgentChatMessages = useSetAtomComponentState(
@@ -44,7 +47,35 @@ export const AgentChatDataLoading = () => {
     }
   }, [agentChatUISessionStartTime, setAgentChatUISessionStartTime]);
 
-  return (
-    <AgentChatMessagesEffect incrementalStreamMessages={chatState.messages} />
-  );
+  const setAgentChatIsStreaming = useSetAtomState(agentChatIsStreamingState);
+
+  useEffect(() => {
+    setAgentChatIsStreaming(isStreaming);
+  }, [setAgentChatIsStreaming, isStreaming]);
+
+  const incrementalStreamMessages = chatState.messages;
+
+  const { scrollToBottom, isNearBottom } = useAgentChatScrollToBottom();
+
+  const { processIncrementalStreamMessages } =
+    useProcessIncrementalStreamMessages();
+
+  useEffect(() => {
+    if (incrementalStreamMessages.length === 0) {
+      return;
+    }
+
+    if (isNearBottom) {
+      scrollToBottom();
+    }
+
+    processIncrementalStreamMessages(incrementalStreamMessages);
+  }, [
+    incrementalStreamMessages,
+    scrollToBottom,
+    isNearBottom,
+    processIncrementalStreamMessages,
+  ]);
+
+  return null;
 };

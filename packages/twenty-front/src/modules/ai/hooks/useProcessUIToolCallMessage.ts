@@ -1,6 +1,5 @@
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
-import { type AgentChatMessageUIToolCallPart } from '@/ai/types/AgentChatMessageUIToolCallPart';
-import { isUIToolCallPart } from '@/ai/utils/isUIToolCallPart';
+import { extractUIToolCallParts } from '@/ai/utils/extractUIToolCallParts';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
@@ -26,9 +25,9 @@ export const useProcessUIToolCallMessage = () => {
   const processUIToolCallMessage = async (
     uiToolCallMessage: ExtendedUIMessage,
   ) => {
-    const uiToolCallMessageParts = uiToolCallMessage.parts.filter(
-      isUIToolCallPart,
-    ) as unknown as AgentChatMessageUIToolCallPart[];
+    const uiToolCallMessageParts = extractUIToolCallParts(
+      uiToolCallMessage.parts,
+    );
 
     const alreadyProcessedToolExecutionPartIds = store.get(
       processedToolExecutionPartIdsCallbackState,

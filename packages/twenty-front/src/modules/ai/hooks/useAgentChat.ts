@@ -9,7 +9,6 @@ import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTi
 import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -20,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -171,14 +170,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     },
   });
 
-  const setAgentChatIsStreaming = useSetAtomState(agentChatIsStreamingState);
-
   const isStreaming = status === 'streaming';
-
-  useEffect(() => {
-    setAgentChatIsStreaming(isStreaming);
-  }, [setAgentChatIsStreaming, isStreaming]);
-
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
   const handleSendMessage = useCallback(async () => {
@@ -187,6 +179,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     }
 
     const content = agentChatInput.trim();
+
     setAgentChatInput('');
 
     const browsingContext = getBrowsingContext();
@@ -203,6 +196,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         },
       },
     );
+
     setAgentChatUploadedFiles([]);
   }, [
     agentChatInput,
@@ -235,7 +229,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     handleSendMessage,
     handleStop: stop,
     isLoading,
-    isStreaming,
     error,
+    status,
   };
 };

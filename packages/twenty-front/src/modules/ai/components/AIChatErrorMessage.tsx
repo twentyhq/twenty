@@ -55,6 +55,7 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
   const handleRetryClick = () => {
     dispatchBrowserEvent(AGENT_CHAT_RETRY_EVENT_NAME);
   };
+
   const { theme } = useContext(ThemeContext);
 
   return (
