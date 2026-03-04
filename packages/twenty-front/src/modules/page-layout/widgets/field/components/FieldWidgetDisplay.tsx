@@ -29,7 +29,7 @@ type FieldWidgetDisplayProps = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetDisplay = ({
@@ -37,7 +37,7 @@ export const FieldWidgetDisplay = ({
   fieldMetadataItem,
   objectMetadataItem,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetDisplayProps) => {
   const widget = useCurrentWidget();
 
@@ -49,7 +49,7 @@ export const FieldWidgetDisplay = ({
     widgetId: widget.id,
     recordId,
     fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -68,7 +68,7 @@ export const FieldWidgetDisplay = ({
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <SidePanelProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <RecordFieldComponentInstanceContext.Provider
           value={{
             instanceId: getRecordFieldInputInstanceId({

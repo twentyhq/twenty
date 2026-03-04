@@ -53,7 +53,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const { isInRightDrawer, layoutType, targetRecordIdentifier } =
+  const { isInSidePanel, layoutType, targetRecordIdentifier } =
     useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
@@ -95,7 +95,7 @@ export const PageLayoutRendererContent = () => {
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
   });
 
@@ -103,7 +103,7 @@ export const PageLayoutRendererContent = () => {
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
@@ -132,7 +132,7 @@ export const PageLayoutRendererContent = () => {
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
           <StyledPageLayoutTabList
             tabs={sortedTabs}
-            behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
+            behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
             componentInstanceId={tabListInstanceId}
             onAddTab={handleAddTab}
             isReorderEnabled={canEnableTabEditing}

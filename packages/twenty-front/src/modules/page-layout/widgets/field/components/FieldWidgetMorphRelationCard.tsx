@@ -34,13 +34,13 @@ const StyledShowMoreButtonContainer = styled.div`
 type FieldWidgetMorphRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetMorphRelationCard = ({
   fieldDefinition,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetMorphRelationCardProps) => {
   const widget = useCurrentWidget();
 
@@ -54,7 +54,7 @@ export const FieldWidgetMorphRelationCard = ({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldDefinition.metadata.fieldName,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const handleItemClick = (id: string) =>
@@ -132,7 +132,7 @@ export const FieldWidgetMorphRelationCard = ({
   const hasMoreRecords = remainingCount > 0;
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
         <FieldContext.Provider
           value={{

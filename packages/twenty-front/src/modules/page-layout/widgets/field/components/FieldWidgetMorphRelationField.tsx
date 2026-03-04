@@ -21,13 +21,13 @@ const StyledRelationChipsContainer = styled.div`
 type FieldWidgetMorphRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetMorphRelationField = ({
   fieldDefinition,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetMorphRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
 
@@ -42,7 +42,7 @@ export const FieldWidgetMorphRelationField = ({
   }
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <StyledRelationChipsContainer>
           {recordsWithObjectNameSingular.map((morphItem, index) => (

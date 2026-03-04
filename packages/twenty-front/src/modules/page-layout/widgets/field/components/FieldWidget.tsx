@@ -43,7 +43,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   assertFieldWidgetOrThrow(widget);
 
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const { isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,
@@ -69,7 +69,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   if (isPrefetchLoading) {
     return (
-      <SidePanelProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <PropertyBoxSkeletonLoader />
         </StyledContainer>
@@ -79,7 +79,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (
-      <SidePanelProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
             // eslint-disable-next-line react/jsx-props-no-spreading
@@ -116,7 +116,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         <FieldWidgetMorphRelationCard
           fieldDefinition={fieldDefinition}
           recordId={targetRecord.id}
-          isInRightDrawer={isInRightDrawer}
+          isInSidePanel={isInSidePanel}
         />
       );
     }
@@ -125,7 +125,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       <FieldWidgetMorphRelationField
         fieldDefinition={fieldDefinition}
         recordId={targetRecord.id}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
       />
     );
   }
@@ -136,7 +136,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         <FieldWidgetRelationCard
           fieldDefinition={fieldDefinition}
           relationValue={record}
-          isInRightDrawer={isInRightDrawer}
+          isInSidePanel={isInSidePanel}
         />
       );
     }
@@ -145,7 +145,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       <FieldWidgetRelationField
         fieldDefinition={fieldDefinition}
         relationValue={record}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
       />
     );
   }
@@ -156,7 +156,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       fieldMetadataItem={fieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={targetRecord.id}
-      isInRightDrawer={isInRightDrawer}
+      isInSidePanel={isInSidePanel}
     />
   );
 };

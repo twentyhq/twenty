@@ -2,7 +2,7 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { type Decorator } from '@storybook/react-vite';
 
 export const RightDrawerDecorator: Decorator = (Story) => (
-  <SidePanelProvider value={{ isInRightDrawer: false }}>
+  <SidePanelProvider value={{ isInSidePanel: false }}>
     <Story />
   </SidePanelProvider>
 );

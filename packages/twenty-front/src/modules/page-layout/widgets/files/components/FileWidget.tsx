@@ -16,10 +16,10 @@ type FileWidgetProps = {
 };
 
 export const FileWidget = ({ widget: _widget }: FileWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <FilesCard />
       </StyledContainer>

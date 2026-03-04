@@ -47,7 +47,7 @@ const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
 
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetRecord);
 
@@ -59,7 +59,7 @@ export const TimelineCard = () => {
   }
 
   if (isTimelineActivitiesEmpty) {
-    const EmptyContainer = isInRightDrawer
+    const EmptyContainer = isInSidePanel
       ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
       : AnimatedPlaceholderEmptyContainer;
 

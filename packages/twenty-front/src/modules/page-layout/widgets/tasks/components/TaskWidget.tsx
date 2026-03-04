@@ -16,10 +16,10 @@ type TaskWidgetProps = {
 };
 
 export const TaskWidget = ({ widget: _widget }: TaskWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <TasksCard />
       </StyledContainer>

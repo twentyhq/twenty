@@ -29,20 +29,20 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
   flex: 1;
   overflow-y: auto;
   background: ${themeCssVariables.background.primary};
-  padding-bottom: ${({ isInRightDrawer }) =>
-    isInRightDrawer ? themeCssVariables.spacing[16] : 0};
+  padding-bottom: ${({ isInSidePanel }) =>
+    isInSidePanel ? themeCssVariables.spacing[16] : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
-  isInRightDrawer,
+  isInSidePanel,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 }) => {
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
@@ -78,7 +78,7 @@ export const PageLayoutRecordPageRenderer = ({
       )}
 
       <StyledShowPageRightContainer>
-        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+        <StyledContentContainer isInSidePanel={isInSidePanel}>
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
@@ -91,7 +91,7 @@ export const PageLayoutRecordPageRenderer = ({
                 CoreObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
-              isInRightDrawer,
+              isInSidePanel,
             }}
           >
             {isDefined(pageLayoutId) && (
@@ -100,7 +100,7 @@ export const PageLayoutRecordPageRenderer = ({
           </LayoutRenderingProvider>
         </StyledContentContainer>
 
-        {isInRightDrawer && (
+        {isInSidePanel && (
           <SidePanelFooter
             actions={[
               <RecordShowRightDrawerActionMenu />,

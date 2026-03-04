@@ -13,7 +13,7 @@ import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useAtomComponentState(workflowInsertStepIdsComponentState);
@@ -56,7 +56,7 @@ export const useStartNodeCreation = () => {
         return;
       }
 
-      if (!isInRightDrawer) {
+      if (!isInSidePanel) {
         setCommandMenuNavigationStack([]);
       }
 
@@ -66,7 +66,7 @@ export const useStartNodeCreation = () => {
       setWorkflowInsertStepIds,
       setWorkflowSelectedNode,
       workflowVisualizerWorkflowId,
-      isInRightDrawer,
+      isInSidePanel,
       openWorkflowCreateStepInCommandMenu,
       setCommandMenuNavigationStack,
     ],

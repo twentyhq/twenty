@@ -16,10 +16,10 @@ type NoteWidgetProps = {
 };
 
 export const NoteWidget = ({ widget: _widget }: NoteWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <NotesCard />
       </StyledContainer>

@@ -21,13 +21,13 @@ const StyledRelationChipsContainer = styled.div`
 type FieldWidgetRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetRelationField = ({
   fieldDefinition,
   relationValue,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
   const isOneToMany = fieldMetadata.relationType === 'ONE_TO_MANY';
@@ -44,7 +44,7 @@ export const FieldWidgetRelationField = ({
 
   if (isOneToMany) {
     return (
-      <SidePanelProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <StyledRelationChipsContainer>
             {relationValue.map((relatedRecord: any) => (
@@ -61,7 +61,7 @@ export const FieldWidgetRelationField = ({
   }
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <StyledRelationChipsContainer>
           <RecordChip

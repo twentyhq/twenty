@@ -85,7 +85,7 @@ export const UpdateMultipleRecordsContainer = ({
   };
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <StyledContentContainer>

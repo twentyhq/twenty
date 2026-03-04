@@ -97,7 +97,7 @@ export const WorkflowRunDiagramStepNode = ({
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const setCommandMenuNavigationStack = useSetAtomState(
     commandMenuNavigationStackState,
@@ -117,7 +117,7 @@ export const WorkflowRunDiagramStepNode = ({
       throw new Error('Workflow ID must be defined');
     }
 
-    if (!isInRightDrawer) {
+    if (!isInSidePanel) {
       setCommandMenuNavigationStack([]);
     }
 

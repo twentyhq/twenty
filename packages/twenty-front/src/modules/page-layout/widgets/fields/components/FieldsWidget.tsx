@@ -64,9 +64,9 @@ type FieldsWidgetProps = {
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
+  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-right-drawer' : ''}`;
 
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,
@@ -109,7 +109,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   if (!hasFieldsToDisplay) {
     return (
-      <SidePanelProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
             // eslint-disable-next-line react/jsx-props-no-spreading

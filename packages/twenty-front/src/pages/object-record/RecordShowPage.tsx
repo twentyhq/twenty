@@ -63,7 +63,7 @@ export const RecordShowPage = () => {
                     id: objectRecordId,
                     targetObjectNameSingular: objectNameSingular,
                   }}
-                  isInRightDrawer={false}
+                  isInSidePanel={false}
                 />
                 <RecordShowPageSSESubscribeEffect
                   objectNameSingular={objectNameSingular}

@@ -37,7 +37,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
     workflowSelectedNodeComponentState,
   );
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
@@ -57,7 +57,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
       );
     }
 
-    if (!isInRightDrawer) {
+    if (!isInSidePanel) {
       setCommandMenuNavigationStack([]);
     }
 

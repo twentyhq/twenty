@@ -16,10 +16,10 @@ type CalendarWidgetProps = {
 };
 
 export const CalendarWidget = ({ widget: _widget }: CalendarWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <CalendarEventsCard />
       </StyledContainer>

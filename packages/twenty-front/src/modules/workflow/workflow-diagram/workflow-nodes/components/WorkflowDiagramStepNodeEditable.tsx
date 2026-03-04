@@ -37,14 +37,14 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const setCommandMenuNavigationStack = useSetAtomState(
     commandMenuNavigationStackState,
   );
 
   const handleClick = () => {
-    if (!isInRightDrawer) {
+    if (!isInSidePanel) {
       setCommandMenuNavigationStack([]);
     }
 

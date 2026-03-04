@@ -86,7 +86,7 @@ export const CommandMenuRecordPage = () => {
                   id: objectRecordId,
                   targetObjectNameSingular: objectNameSingular,
                 }}
-                isInRightDrawer
+                isInSidePanel
               />
             </TimelineActivityContext.Provider>
           </StyledRightDrawerRecord>

@@ -52,7 +52,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const setCommandMenuNavigationStack = useSetAtomState(
     commandMenuNavigationStackState,
@@ -66,7 +66,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       throw new Error('Workflow ID and Version ID must be defined');
     }
 
-    if (!isInRightDrawer) {
+    if (!isInSidePanel) {
       setCommandMenuNavigationStack([]);
     }
 

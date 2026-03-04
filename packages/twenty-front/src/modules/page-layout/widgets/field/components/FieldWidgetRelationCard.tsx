@@ -32,13 +32,13 @@ const StyledShowMoreButtonContainer = styled.div`
 type FieldWidgetRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetRelationCard = ({
   fieldDefinition,
   relationValue,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetRelationCardProps) => {
   const widget = useCurrentWidget();
 
@@ -52,7 +52,7 @@ export const FieldWidgetRelationCard = ({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldDefinition.metadata.fieldName,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const handleItemClick = (recordId: string) =>
@@ -129,7 +129,7 @@ export const FieldWidgetRelationCard = ({
   const hasMoreRecords = remainingCount > 0;
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
         <FieldContext.Provider
           value={{

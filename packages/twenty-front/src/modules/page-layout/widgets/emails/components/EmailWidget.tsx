@@ -16,10 +16,10 @@ type EmailWidgetProps = {
 };
 
 export const EmailWidget = ({ widget: _widget }: EmailWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <EmailsCard />
       </StyledContainer>

@@ -13,13 +13,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 export const ActionMenuContextProviderDefault = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  isInRightDrawer: ActionMenuContextType['isInRightDrawer'];
+  isInSidePanel: ActionMenuContextType['isInSidePanel'];
   displayType: ActionMenuContextType['displayType'];
   actionMenuType: ActionMenuContextType['actionMenuType'];
   children: React.ReactNode;
@@ -56,7 +56,7 @@ export const ActionMenuContextProviderDefault = ({
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [

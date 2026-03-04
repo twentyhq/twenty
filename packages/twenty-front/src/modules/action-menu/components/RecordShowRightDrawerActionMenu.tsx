@@ -12,7 +12,7 @@ export const RecordShowRightDrawerActionMenu = () => {
     <>
       {contextStoreCurrentObjectMetadataItemId && (
         <ActionMenuContextProvider
-          isInRightDrawer={true}
+          isInSidePanel={true}
           displayType="dropdownItem"
           actionMenuType="command-menu-show-page-action-menu-dropdown"
         >

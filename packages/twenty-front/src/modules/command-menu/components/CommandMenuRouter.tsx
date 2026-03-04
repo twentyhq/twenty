@@ -47,7 +47,7 @@ export const CommandMenuRouter = () => {
         </motion.div>
         <StyledCommandMenuContent>
           <ActionMenuContextProvider
-            isInRightDrawer={true}
+            isInSidePanel={true}
             displayType="listItem"
             actionMenuType="command-menu"
           >

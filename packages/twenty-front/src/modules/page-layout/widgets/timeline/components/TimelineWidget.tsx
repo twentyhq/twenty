@@ -16,10 +16,10 @@ type TimelineWidgetProps = {
 };
 
 export const TimelineWidget = ({ widget: _widget }: TimelineWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <SidePanelProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <TimelineCard />
       </StyledContainer>

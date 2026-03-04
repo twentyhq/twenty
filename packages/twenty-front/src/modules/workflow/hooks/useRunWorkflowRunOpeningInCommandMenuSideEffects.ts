@@ -100,7 +100,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           ...steps,
           {
             stepId: stepToOpenByDefault.id,
-            isInRightDrawer: true,
+            isInSidePanel: true,
           },
         ],
       );

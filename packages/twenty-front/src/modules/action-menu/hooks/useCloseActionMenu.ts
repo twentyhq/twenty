@@ -15,7 +15,7 @@ export const useCloseActionMenu = ({
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
   closeSidePanelOnCommandMenuListActionExecution?: boolean;
 } = {}) => {
-  const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
+  const { actionMenuType, isInSidePanel } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -25,7 +25,7 @@ export const useCloseActionMenu = ({
     ActionMenuComponentInstanceContext,
   );
 
-  const dropdownId = isInRightDrawer
+  const dropdownId = isInSidePanel
     ? getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId)
     : getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 

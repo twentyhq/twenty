@@ -88,7 +88,7 @@ export const PageLayoutTabList = ({
   tabs,
   loading,
   behaveAsLinks,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -324,7 +324,7 @@ export const PageLayoutTabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
+        isInSidePanel={!!isInSidePanel}
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 

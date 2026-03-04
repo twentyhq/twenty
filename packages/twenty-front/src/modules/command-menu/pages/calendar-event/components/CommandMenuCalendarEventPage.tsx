@@ -59,7 +59,7 @@ export const CommandMenuCalendarEventPage = () => {
           targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }}
     >
       <CalendarEventDetailsEffect record={calendarEvent} />
