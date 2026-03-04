@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from '@/cli/utilities/build/common/conditional-availability/utils/transform-conditional-availability-expressions';
-import { type CommandMenuRenderingParameters } from 'twenty-shared/types';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 const MOCKS_DIR = path.join(__dirname, '__mocks__');
@@ -10,9 +10,9 @@ const MOCKS_DIR = path.join(__dirname, '__mocks__');
 const readMock = (filename: string): string =>
   fs.readFileSync(path.join(MOCKS_DIR, filename), 'utf8');
 
-const buildMockCommandMenuRenderingParameters = (
-  overrides: Partial<CommandMenuRenderingParameters> = {},
-): CommandMenuRenderingParameters => ({
+const buildMockCommandMenuContextApi = (
+  overrides: Partial<CommandMenuContextApi> = {},
+): CommandMenuContextApi => ({
   isShowPage: false,
   isInRightDrawer: false,
   isFavorite: false,
@@ -57,7 +57,7 @@ const extractConditionalAvailabilityExpressionFromTransformedSource = (
 
 const transformMockAndEvaluate = (
   filename: string,
-  context: CommandMenuRenderingParameters,
+  context: CommandMenuContextApi,
 ): boolean => {
   const source = readMock(filename);
 
@@ -183,7 +183,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
   describe('e2e: mock file -> transform -> evaluate', () => {
     describe('simple-boolean-front-component', () => {
       it('should evaluate isShowPage when true', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: true,
         });
 
@@ -196,7 +196,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should evaluate isShowPage when false', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: false,
         });
 
@@ -211,7 +211,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('permissions-check-front-component', () => {
       it('should allow when has permission and not in right drawer', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isInRightDrawer: false,
         });
 
@@ -224,7 +224,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny when in right drawer', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isInRightDrawer: true,
         });
 
@@ -239,7 +239,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('comparison-operator-front-component', () => {
       it('should allow when records are selected', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 3,
         });
 
@@ -252,7 +252,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny when no records are selected', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 0,
         });
 
@@ -267,7 +267,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('feature-flag-gated-front-component', () => {
       it('should allow when feature flag is enabled', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           featureFlags: { IS_AI_ENABLED: true },
         });
 
@@ -280,7 +280,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny when feature flag is disabled', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           featureFlags: { IS_AI_ENABLED: false },
         });
 
@@ -295,7 +295,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('complex-soft-delete-front-component', () => {
       it('should allow soft delete for local record with selection', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 2,
           selectedRecord: {
             id: 'rec-1',
@@ -315,7 +315,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny soft delete when record is remote', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 1,
           selectedRecord: {
             id: 'rec-1',
@@ -337,7 +337,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('parenthesized-expression-front-component', () => {
       it('should allow when favorite and not remote', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: false,
           isFavorite: true,
           isRemote: false,
@@ -352,7 +352,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny when remote even if show page', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: true,
           isFavorite: false,
           isRemote: true,
@@ -369,7 +369,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('custom-function-front-component', () => {
       it('should return false when deletedAt is null', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           selectedRecord: {
             id: 'rec-1',
             createdAt: '2024-01-01',
@@ -387,7 +387,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should return true when deletedAt is set', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           selectedRecord: {
             id: 'rec-1',
             createdAt: '2024-01-01',
@@ -407,7 +407,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('string-comparison-front-component', () => {
       it('should match when on show page and company name matches', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: true,
           selectedRecord: {
             id: 'rec-1',
@@ -427,7 +427,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should not match when company name differs', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: true,
           selectedRecord: {
             id: 'rec-1',
@@ -449,7 +449,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     describe('target-permissions-front-component', () => {
       it('should allow when on show page with write permission', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: true,
           targetObjectWritePermissions: { person: true },
         });
@@ -463,7 +463,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       });
 
       it('should deny when not on show page', () => {
-        const context = buildMockCommandMenuRenderingParameters({
+        const context = buildMockCommandMenuContextApi({
           isShowPage: false,
           targetObjectWritePermissions: { person: true },
         });

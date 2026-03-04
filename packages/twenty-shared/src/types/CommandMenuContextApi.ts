@@ -1,7 +1,7 @@
 import { type ObjectPermissions } from './ObjectPermissions';
 import { type ObjectRecord } from './ObjectRecord';
 
-export type CommandMenuRenderingParameters = {
+export type CommandMenuContextApi = {
   isShowPage: boolean;
   isInRightDrawer: boolean;
   isFavorite: boolean;

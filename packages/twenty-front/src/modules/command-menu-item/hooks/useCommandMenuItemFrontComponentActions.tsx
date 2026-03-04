@@ -11,7 +11,7 @@ import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMoun
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { type CommandMenuRenderingParameters } from 'twenty-shared/types';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
   isDefined,
@@ -43,7 +43,7 @@ type BuildActionFromItemParams = {
     pageIcon: IconComponent;
   }) => void;
   mountHeadlessFrontComponent: (frontComponentId: string) => void;
-  commandMenuRenderingParameters: CommandMenuRenderingParameters;
+  commandMenuContextApi: CommandMenuContextApi;
 };
 
 // TODO: we should remove this backward compatibility logic in the future
@@ -56,7 +56,7 @@ const buildActionFromItem = ({
   getIcon,
   openFrontComponentInCommandMenu,
   mountHeadlessFrontComponent,
-  commandMenuRenderingParameters,
+  commandMenuContextApi,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
@@ -88,7 +88,7 @@ const buildActionFromItem = ({
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
-        commandMenuRenderingParameters,
+        commandMenuContextApi,
       ),
     component: isHeadless ? (
       <HeadlessFrontComponentAction
@@ -102,7 +102,7 @@ const buildActionFromItem = ({
 };
 
 export const useCommandMenuItemFrontComponentActions = (
-  commandMenuRenderingParameters: CommandMenuRenderingParameters,
+  commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInCommandMenu } =
@@ -172,7 +172,7 @@ export const useCommandMenuItemFrontComponentActions = (
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
-      commandMenuRenderingParameters,
+      commandMenuContextApi,
     }),
   );
 
@@ -185,7 +185,7 @@ export const useCommandMenuItemFrontComponentActions = (
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
-      commandMenuRenderingParameters,
+      commandMenuContextApi,
     }),
   );
 

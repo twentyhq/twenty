@@ -5,7 +5,7 @@ import {
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
-import { useCommandMenuRenderingParameters } from '@/action-menu/hooks/useCommandMenuRenderingParameters';
+import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -51,10 +51,10 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
-  const commandMenuRenderingParameters = useCommandMenuRenderingParameters();
+  const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuRenderingParameters);
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
@@ -97,10 +97,10 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
-  const commandMenuRenderingParameters = useCommandMenuRenderingParameters();
+  const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuRenderingParameters);
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
