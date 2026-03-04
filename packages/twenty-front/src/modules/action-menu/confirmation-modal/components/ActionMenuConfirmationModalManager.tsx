@@ -19,17 +19,21 @@ export const ActionMenuConfirmationModalManager = () => {
     actionMenuConfirmationModalConfigState,
   );
 
+  const callerId =
+    actionMenuConfirmationModalConfig?.frontComponentId ??
+    actionMenuConfirmationModalConfig?.legacyCommandActionMenuId;
+
   const clearActionMenuConfirmationModal = () => {
     setActionMenuConfirmationModalConfig(null);
   };
 
   const handleConfirmClick = () => {
-    if (!actionMenuConfirmationModalConfig) {
+    if (!callerId) {
       return;
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
+      frontComponentId: callerId,
       result: 'confirm',
     });
 
@@ -37,12 +41,12 @@ export const ActionMenuConfirmationModalManager = () => {
   };
 
   const handleClose = () => {
-    if (!actionMenuConfirmationModalConfig) {
+    if (!callerId) {
       return;
     }
 
     dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: actionMenuConfirmationModalConfig.frontComponentId,
+      frontComponentId: callerId,
       result: 'cancel',
     });
 

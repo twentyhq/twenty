@@ -41,11 +41,11 @@ export const ActionConfirmationModal = ({
     closeSidePanelOnShowPageOptionsActionExecution,
     closeSidePanelOnCommandMenuListActionExecution,
   });
-  const frontComponentId = actionConfig
+  const legacyCommandActionMenuId = actionConfig
     ? `${actionMenuComponentInstanceId}:${actionMenuContext.actionMenuType}:${actionMenuContext.displayType}:${actionConfig.key}`
     : null;
 
-  if (!actionConfig || frontComponentId === null) {
+  if (!actionConfig || legacyCommandActionMenuId === null) {
     return null;
   }
 
@@ -55,7 +55,7 @@ export const ActionConfirmationModal = ({
         event as CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>
       ).detail;
 
-      if (detail.frontComponentId !== frontComponentId) {
+      if (detail.frontComponentId !== legacyCommandActionMenuId) {
         return;
       }
 
@@ -77,7 +77,7 @@ export const ActionConfirmationModal = ({
 
     try {
       openConfirmationModal({
-        frontComponentId,
+        legacyCommandActionMenuId,
         title,
         subtitle,
         confirmButtonText,
