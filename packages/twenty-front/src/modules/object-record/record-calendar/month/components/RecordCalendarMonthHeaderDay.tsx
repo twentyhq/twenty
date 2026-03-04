@@ -1,16 +1,17 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type RecordCalendarMonthHeaderDayProps = {
   label: string;
 };
 
 const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   height: 24px;
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(0, 1)};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
   width: calc(100% / 7);
 `;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { format } from 'date-fns';
 
 import { GithubIcon } from '@/app/_components/ui/icons/SvgIcons';

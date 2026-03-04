@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Gabarito } from 'next/font/google';
 
 import { Theme } from '@/app/_components/ui/theme/theme';

@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import chalk from 'chalk';
 
 export class AuthListCommand {
   private configService = new ConfigService();
@@ -21,18 +21,20 @@ export class AuthListCommand {
 
       console.log(chalk.blue('Available workspaces:\n'));
 
-      for (const workspace of availableWorkspaces) {
+      for (const workspaceName of availableWorkspaces) {
         const config =
-          await this.configService.getConfigForWorkspace(workspace);
+          await this.configService.getConfigForWorkspace(workspaceName);
         const hasCredentials = !!config.apiKey;
-        const isDefault = workspace === currentDefault;
+        const isDefault = workspaceName === currentDefault;
 
         const defaultIndicator = isDefault ? chalk.green(' (default)') : '';
         const credentialStatus = hasCredentials
           ? chalk.green('●')
           : chalk.gray('○');
 
-        console.log(`  ${credentialStatus} ${workspace}${defaultIndicator}`);
+        console.log(
+          `  ${credentialStatus} ${workspaceName}${defaultIndicator}`,
+        );
         console.log(chalk.gray(`      API URL: ${config.apiUrl}`));
       }
 

@@ -163,6 +163,8 @@ export class ClientService {
   private async writeBarrelIndex(outputDir: string): Promise<void> {
     const barrelContent = `export { CoreApiClient } from './core/index';
 export { MetadataApiClient } from './metadata/index';
+export * as CoreSchema from './core/schema';
+export * as MetadataSchema from './metadata/schema';
 `;
 
     await fs.writeFile(join(outputDir, 'index.ts'), barrelContent);

@@ -19,7 +19,6 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -33,6 +32,7 @@ import {
 } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
@@ -53,10 +53,14 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
 `;
 
-const StyledEventChip = styled(Chip)`
-  gap: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+const StyledEventChipWrapper = styled.span`
+  display: inline-flex;
+
+  & > [data-testid='chip'] {
+    gap: ${themeCssVariables.spacing[2]};
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledHeader = styled.header``;
@@ -67,7 +71,7 @@ const StyledTitle = styled.h2<{ canceled?: boolean }>`
   margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[0]}
     ${themeCssVariables.spacing[2]};
 
-  ${({ canceled }) => (canceled ? 'text-decoration: line-through' : '')}
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
 `;
 
 const StyledCreatedAt = styled.div`
@@ -83,7 +87,6 @@ const StyledFields = styled.div`
 
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${themeCssVariables.spacing[6]};
-  padding: 0;
   width: 100%;
 `;
 
@@ -199,14 +202,16 @@ export const CalendarEventDetails = ({
       value={{ scopeInstanceId: INPUT_ID_PREFIX }}
     >
       <StyledContainer>
-        <StyledEventChip
-          accent={ChipAccent.TextSecondary}
-          size={ChipSize.Large}
-          variant={ChipVariant.Highlighted}
-          clickable={false}
-          leftComponent={<AvatarOrIcon Icon={IconCalendarEvent} />}
-          label={t`Event`}
-        />
+        <StyledEventChipWrapper>
+          <Chip
+            accent={ChipAccent.TextSecondary}
+            size={ChipSize.Large}
+            variant={ChipVariant.Highlighted}
+            clickable={false}
+            leftComponent={<AvatarOrIcon Icon={IconCalendarEvent} />}
+            label={t`Event`}
+          />
+        </StyledEventChipWrapper>
         <StyledHeader>
           <StyledTitle canceled={calendarEvent.isCanceled}>
             {calendarEvent.title}

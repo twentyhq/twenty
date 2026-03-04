@@ -7,12 +7,15 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledInput = styled(TextInput)`
-  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+const StyledInputWrapper = styled.div`
+  & input {
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type FormUuidFieldInputProps = {
@@ -100,14 +103,16 @@ export const FormUuidFieldInput = ({
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            <StyledInput
-              instanceId={instanceId}
-              placeholder={placeholder ?? t`Enter a UUID`}
-              value={draftValue.value}
-              copyButton={false}
-              disabled={readonly}
-              onChange={handleChange}
-            />
+            <StyledInputWrapper>
+              <TextInput
+                instanceId={instanceId}
+                placeholder={placeholder ?? t`Enter a UUID`}
+                value={draftValue.value}
+                copyButton={false}
+                disabled={readonly}
+                onChange={handleChange}
+              />
+            </StyledInputWrapper>
           ) : (
             <VariableChipStandalone
               rawVariableName={draftValue.value}

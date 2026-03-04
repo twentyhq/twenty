@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TopBarProps = {
   className?: string;
@@ -10,9 +11,9 @@ type TopBarProps = {
 };
 
 const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  margin-left: ${themeCssVariables.spacing[3]};
 
   flex-direction: column;
 `;
@@ -21,13 +22,13 @@ const StyledTopBar = styled.div`
   align-items: center;
 
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-direction: row;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 39px;
   justify-content: space-between;
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${themeCssVariables.spacing[2]};
 
   z-index: 7;
 `;
@@ -38,8 +39,8 @@ const StyledLeftSection = styled.div`
 
 const StyledRightSection = styled.div`
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export const TopBar = ({

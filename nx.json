@@ -276,7 +276,7 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "style": "@emotion/styled",
+        "style": "@linaria/react",
         "linter": "eslint",
         "bundler": "vite",
         "compiler": "swc",
@@ -284,7 +284,7 @@
         "projectNameAndRootFormat": "derived"
       },
       "library": {
-        "style": "@emotion/styled",
+        "style": "@linaria/react",
         "linter": "eslint",
         "bundler": "vite",
         "compiler": "swc",
@@ -292,7 +292,7 @@
         "projectNameAndRootFormat": "derived"
       },
       "component": {
-        "style": "@emotion/styled"
+        "style": "@linaria/react"
       }
     }
   },

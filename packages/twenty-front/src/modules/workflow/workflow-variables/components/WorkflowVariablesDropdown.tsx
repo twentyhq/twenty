@@ -10,22 +10,23 @@ import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/cons
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
 )<{ transparentBackground?: boolean; disabled?: boolean }>`
-  background-color: ${({ theme, transparentBackground }) =>
+  background-color: ${({ transparentBackground }) =>
     transparentBackground
       ? 'transparent'
-      : theme.background.transparent.lighter};
+      : themeCssVariables.background.transparent.lighter};
 
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[2]};
   :hover {
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   }
@@ -50,7 +51,7 @@ export const WorkflowVariablesDropdown = ({
   multiline?: boolean;
   clickableComponent?: React.ReactNode;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
@@ -138,7 +139,7 @@ export const WorkflowVariablesDropdown = ({
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{
-        x: parseInt(theme.spacing(0.5), 10),
+        x: 2,
         y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
       }}
     />

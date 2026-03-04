@@ -20,6 +20,7 @@ type FormRawJsonFieldInputProps = {
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
   placeholder?: string;
+  className?: string;
 };
 
 export const FormRawJsonFieldInput = ({
@@ -31,6 +32,7 @@ export const FormRawJsonFieldInput = ({
   onBlur,
   readonly,
   VariablePicker,
+  className,
 }: FormRawJsonFieldInputProps) => {
   const instanceId = useId();
 
@@ -67,7 +69,7 @@ export const FormRawJsonFieldInput = ({
   }
 
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer className={className}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer multiline>

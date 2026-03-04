@@ -1,17 +1,19 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledColorIcon = styled.div<{
   textColorValue: string;
   backgroundColorValue: string;
 }>`
   background-color: ${({ backgroundColorValue }) => backgroundColorValue};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: ${themeCssVariables.border.radius.xs};
   color: ${({ textColorValue }) => textColorValue};
   font-size: 12px;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 16px;
   line-height: 16px;
   pointer-events: none;
@@ -28,7 +30,7 @@ export const DashboardColorIcon = ({
   textColor,
   backgroundColor,
 }: DashboardColorIconProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const getThemeColorForTextColor = (color: BlockNoteColor): string => {
     if (color === 'default') {
