@@ -2,10 +2,8 @@ import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION, ThemeContext } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 
 const StyledButton = styled.button<{
   variant?: 'blue' | 'red';
@@ -31,8 +29,6 @@ const StyledButton = styled.button<{
   cursor: pointer;
 `;
 
-const MotionIconChevronDown = motion.create(IconChevronDown);
-
 export const JsonArrow = ({
   isOpen,
   onClick,
@@ -42,10 +38,15 @@ export const JsonArrow = ({
   onClick: () => void;
   variant?: 'blue' | 'red';
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const { arrowButtonCollapsedLabel, arrowButtonExpandedLabel } =
     useJsonTreeContextOrThrow();
+
+  const iconColor =
+    variant === 'blue'
+      ? themeCssVariables.color.blue
+      : variant === 'red'
+        ? themeCssVariables.font.color.danger
+        : themeCssVariables.font.color.secondary;
 
   return (
     <StyledButton variant={variant} onClick={onClick}>
@@ -53,19 +54,13 @@ export const JsonArrow = ({
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>
 
-      <MotionIconChevronDown
-        size={theme.icon.size.md}
-        color={
-          variant === 'blue'
-            ? theme.color.blue
-            : variant === 'red'
-              ? theme.font.color.danger
-              : theme.font.color.secondary
-        }
+      <motion.div
         initial={false}
         animate={{ rotate: isOpen ? 0 : -90 }}
-        transition={{ duration: ANIMATION.duration.normal }}
-      />
+        transition={{ duration: 0.3 }}
+      >
+        <IconChevronDown size={16} color={iconColor} />
+      </motion.div>
     </StyledButton>
   );
 };

@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from '@ui/theme-constants';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 export type ProgressBarProps = {
   value: number;
@@ -26,18 +24,19 @@ const StyledBar = styled.div<StyledBarProps>`
   width: 100%;
 `;
 
-const StyledBarFillingBase = styled.div<{
+const StyledBarFilling = styled.div<{
   barColor?: string;
   withBorderRadius?: boolean;
+  value: number;
 }>`
   background-color: ${({ barColor }) =>
     barColor ?? themeCssVariables.font.color.primary};
   height: 100%;
   border-radius: ${({ withBorderRadius }) =>
     withBorderRadius ? themeCssVariables.border.radius.md : '0'};
+  transition: width 0.3s linear;
+  width: ${({ value }) => `${value}%`};
 `;
-
-const StyledBarFilling = motion.create(StyledBarFillingBase);
 
 export const ProgressBar = ({
   value,
@@ -45,24 +44,18 @@ export const ProgressBar = ({
   barColor,
   backgroundColor = 'none',
   withBorderRadius = false,
-}: ProgressBarProps) => {
-  const [initialValue] = useState(value);
-
-  return (
-    <StyledBar
-      className={className}
-      backgroundColor={backgroundColor}
+}: ProgressBarProps) => (
+  <StyledBar
+    className={className}
+    backgroundColor={backgroundColor}
+    withBorderRadius={withBorderRadius}
+    role="progressbar"
+    aria-valuenow={Math.ceil(value)}
+  >
+    <StyledBarFilling
+      barColor={barColor}
       withBorderRadius={withBorderRadius}
-      role="progressbar"
-      aria-valuenow={Math.ceil(value)}
-    >
-      <StyledBarFilling
-        initial={{ width: `${initialValue}%` }}
-        animate={{ width: `${value}%` }}
-        barColor={barColor}
-        transition={{ ease: 'linear' }}
-        withBorderRadius={withBorderRadius}
-      />
-    </StyledBar>
-  );
-};
+      value={Math.ceil(value)}
+    />
+  </StyledBar>
+);
