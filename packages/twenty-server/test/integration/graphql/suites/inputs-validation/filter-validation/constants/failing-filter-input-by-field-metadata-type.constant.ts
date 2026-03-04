@@ -63,7 +63,6 @@ export const failingFilterInputByFieldMetadataType: {
         },
       },
       restFilterInput: `${[joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')]}[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"`,
-      restErrorMessage: 'Data validation error.',
     },
   ],
   [FieldMetadataType.UUID]: [
