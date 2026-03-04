@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import {
   type Decorator,
   type Meta,
@@ -13,6 +12,7 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
