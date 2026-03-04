@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
 import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconNewSection } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
