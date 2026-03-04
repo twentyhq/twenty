@@ -10,7 +10,7 @@ export const validateIsEmptyArrayOperatorValueOrThrow = (
   value: unknown,
   fieldName: string,
 ): void => {
-  if (isBoolean(value)) {
+  if (!isBoolean(value)) {
     throw new CommonQueryRunnerException(
       `Filter operator "isEmptyArray" requires a boolean value for field ${fieldName}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
