@@ -33,7 +33,7 @@ export const NumberFieldInput = () => {
         return { success: false };
       }
 
-      const castedValue = castAsNumberOrNull(newValue);
+      const castedValue = castAsNumberOrNull(newValueEscaped);
 
       if (!isNull(castedValue)) {
         return { success: true, value: castedValue / 100 };
