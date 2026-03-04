@@ -5,6 +5,8 @@ import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/hooks/us
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -25,6 +27,7 @@ export const NavigationDrawerOpenedSection = () => {
     activeObjectMetadataItems.filter((item) => !item.isRemote);
 
   const loading = useIsPrefetchLoading();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
   const { workspaceNavigationMenuItemsObjectMetadataItems } =
@@ -60,8 +63,14 @@ export const NavigationDrawerOpenedSection = () => {
     objectMetadataItem.nameSingular as CoreObjectNameSingular,
   );
 
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
   const shouldDisplayObjectInOpenedSection =
     !isWorkflowObjectInSidebar &&
+    objectPermissions.showInSidebar &&
     !workspaceItemsToExclude
       .map((item) => item.id)
       .includes(objectMetadataItem.id);

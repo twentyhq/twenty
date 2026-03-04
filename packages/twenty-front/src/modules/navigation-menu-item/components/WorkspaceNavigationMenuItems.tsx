@@ -32,9 +32,11 @@ import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavi
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { CommandMenuPages } from 'twenty-shared/types';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -76,6 +78,11 @@ export const WorkspaceNavigationMenuItems = () => {
 
   const loading = useIsPrefetchLoading();
   const { t } = useLingui();
+  const hasLayoutsPermission = useHasPermissionFlag(
+    PermissionFlagType.LAYOUTS,
+  );
+  const canEditSidebar =
+    isNavigationMenuItemEditingEnabled && hasLayoutsPermission;
 
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -149,7 +156,7 @@ export const WorkspaceNavigationMenuItems = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        isNavigationMenuItemEditingEnabled ? (
+        canEditSidebar ? (
           <StyledRightIconsContainer>
             {isEditMode ? (
               <LightIconButton
@@ -170,9 +177,7 @@ export const WorkspaceNavigationMenuItems = () => {
         ) : undefined
       }
       onAddMenuItem={
-        isNavigationMenuItemEditingEnabled && isEditMode
-          ? handleAddMenuItem
-          : undefined
+        canEditSidebar && isEditMode ? handleAddMenuItem : undefined
       }
       isEditMode={isEditMode}
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
