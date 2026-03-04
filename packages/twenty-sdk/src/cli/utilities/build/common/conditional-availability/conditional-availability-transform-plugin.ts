@@ -1,17 +1,7 @@
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs/promises';
 
-import { toExprEval } from './to-expr-eval';
-
-const CONDITIONAL_AVAILABILITY_EXPRESSION_PATTERN =
-  /(conditionalAvailabilityExpression\s*:\s*)(?!['"`])([^,}]+)/g;
-
-const transformConditionalAvailabilityExpressions = (source: string): string =>
-  source.replace(
-    CONDITIONAL_AVAILABILITY_EXPRESSION_PATTERN,
-    (_, prefix: string, rawExpression: string) =>
-      prefix + JSON.stringify(toExprEval(rawExpression.trim())),
-  );
+import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from './utils/transform-conditional-availability-expressions';
 
 export const conditionalAvailabilityTransformPlugin: esbuild.Plugin = {
   name: 'conditional-availability-transform',
@@ -23,14 +13,15 @@ export const conditionalAvailabilityTransformPlugin: esbuild.Plugin = {
         return null;
       }
 
-      const transformed = transformConditionalAvailabilityExpressions(source);
+      const transformedSource =
+        transformConditionalAvailabilityExpressionsForEsBuildPlugin(source);
 
-      if (transformed === source) {
+      if (transformedSource === source) {
         return null;
       }
 
       return {
-        contents: transformed,
+        contents: transformedSource,
         loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts',
       };
     });

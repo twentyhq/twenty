@@ -18,6 +18,8 @@ export type FrontComponentConfig = Omit<
   | 'builtComponentPath'
   | 'builtComponentChecksum'
   | 'componentName'
+  | 'command'
 > & {
   component: FrontComponentType;
+  command?: FrontComponentCommandConfig;
 };
