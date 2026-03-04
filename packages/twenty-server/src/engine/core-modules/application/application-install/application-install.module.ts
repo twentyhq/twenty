@@ -6,6 +6,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
+import { ApplicationQueryResolver } from 'src/engine/core-modules/application/application.resolver';
 import { AppPackageResolverService } from 'src/engine/core-modules/application/application-install/app-package-resolver.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-install/application-manifest-migration.service';
@@ -49,6 +50,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     TwentyConfigModule,
   ],
   providers: [
+    ApplicationQueryResolver,
     ApplicationInstallResolver,
     ApplicationManifestMigrationService,
     ApplicationSyncService,
