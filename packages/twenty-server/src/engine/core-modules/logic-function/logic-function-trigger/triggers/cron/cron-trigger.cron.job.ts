@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -5,6 +6,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -22,6 +24,8 @@ export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
+  private readonly logger = new Logger(CronTriggerCronJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -29,6 +33,7 @@ export class CronTriggerCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -44,37 +49,48 @@ export class CronTriggerCronJob {
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const logicFunctionsWithCronTrigger =
-        await this.logicFunctionRepository.find({
-          where: {
-            workspaceId: activeWorkspace.id,
-            cronTriggerSettings: Not(IsNull()),
-          },
-          select: ['id', 'cronTriggerSettings', 'workspaceId'],
-        });
-
-      for (const logicFunction of logicFunctionsWithCronTrigger) {
-        const cronSettings = logicFunction.cronTriggerSettings;
-
-        if (!isDefined(cronSettings?.pattern)) {
-          continue;
-        }
-
-        if (!shouldRunNow(cronSettings.pattern, now)) {
-          continue;
-        }
-
-        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          [
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: logicFunction.workspaceId,
-              payload: {},
+      try {
+        const logicFunctionsWithCronTrigger =
+          await this.logicFunctionRepository.find({
+            where: {
+              workspaceId: activeWorkspace.id,
+              cronTriggerSettings: Not(IsNull()),
             },
-          ],
-          { retryLimit: 3 },
+            select: ['id', 'cronTriggerSettings', 'workspaceId'],
+          });
+
+        for (const logicFunction of logicFunctionsWithCronTrigger) {
+          const cronSettings = logicFunction.cronTriggerSettings;
+
+          if (!isDefined(cronSettings?.pattern)) {
+            continue;
+          }
+
+          if (!shouldRunNow(cronSettings.pattern, now)) {
+            continue;
+          }
+
+          await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+            LogicFunctionTriggerJob.name,
+            [
+              {
+                logicFunctionId: logicFunction.id,
+                workspaceId: logicFunction.workspaceId,
+                payload: {},
+              },
+            ],
+            { retryLimit: 3 },
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error processing workspace ${activeWorkspace.id}: ${error}`,
         );
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: activeWorkspace.id,
+          },
+        });
       }
     }
   }
