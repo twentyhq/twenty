@@ -10,7 +10,12 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
+import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledEditorSectionRoot = styled.div`
   display: flex;
@@ -112,25 +117,16 @@ const StyledReadOnlyModelButton = styled(LightButton)`
   }
 `;
 
-type AIChatEditorSectionProps = {
-  hasMessages: boolean;
-  isLoading: boolean;
-  error: Error | null | undefined;
-  isMobile: boolean;
-  smartModelLabel: string;
-  onSendMessage: () => void;
-};
+export const AIChatEditorSection = () => {
+  const isMobile = useIsMobile();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
+  const { isLoading, messages, error, handleSendMessage } =
+    useAgentChatContextOrThrow();
+  const hasMessages = messages.length > 0;
 
-export const AIChatEditorSection = ({
-  hasMessages,
-  isLoading,
-  error,
-  isMobile,
-  smartModelLabel,
-  onSendMessage,
-}: AIChatEditorSectionProps) => {
   const { editor, handleSendAndClear } = useAIChatEditor({
-    onSendMessage,
+    onSendMessage: handleSendMessage,
   });
 
   return (

@@ -10,11 +10,8 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -40,16 +37,12 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const isMobile = useIsMobile();
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const { isLoading, messages, isStreaming, error, handleSendMessage } =
-    useAgentChatContextOrThrow();
+  const { messages, isStreaming, error } = useAgentChatContextOrThrow();
   const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
   return (
     <StyledContainer
@@ -91,15 +84,7 @@ export const AIChatTab = () => {
                 )}
             </StyledScrollWrapper>
           )}
-          <AIChatEditorSection
-            key={draftKey}
-            hasMessages={hasMessages}
-            isLoading={isLoading}
-            error={error ?? null}
-            isMobile={isMobile}
-            smartModelLabel={smartModelLabel}
-            onSendMessage={handleSendMessage}
-          />
+          <AIChatEditorSection key={draftKey} />
         </>
       )}
     </StyledContainer>
