@@ -591,7 +591,7 @@ export class OAuthService {
       name: applicationRegistration.name,
       description: applicationRegistration.description,
       version: '0.0.0',
-      sourcePath: '',
+      sourcePath: 'oauth-install',
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });
