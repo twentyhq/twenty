@@ -88,10 +88,7 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
           objectMetadataItems,
           objectMetadataItem: targetObjectMetadataItem,
           cache: apolloCoreClient.cache,
-          record: {
-            ...cachedTargetRecord,
-            [targetGQLFieldName]: previousRecord,
-          },
+          record: previousRecordWithRelation,
           recordGqlFields: gqlFields,
           objectPermissionsByObjectMetadataId,
         });
