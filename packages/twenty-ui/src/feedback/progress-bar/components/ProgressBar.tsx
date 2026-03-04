@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
 import { themeCssVariables } from '@ui/theme-constants';
+import { motion } from 'framer-motion';
 
 export type ProgressBarProps = {
   value: number;
@@ -25,7 +25,6 @@ const StyledBar = styled.div<StyledBarProps>`
   width: 100%;
 `;
 
-// Width animation is handled by motion.div in JSX; this provides only color/shape styles.
 const StyledBarFilling = styled.div<{
   barColor?: string;
   withBorderRadius?: boolean;
