@@ -66,16 +66,15 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenSidePanel } =
-    useAddNewRecordAndOpenSidePanel({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular:
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
@@ -112,9 +111,7 @@ export const RelationManyToOneFieldInput = () => {
       emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onCreate={
-        isDefined(createNewRecordAndOpenSidePanel)
-          ? handleCreateNew
-          : undefined
+        isDefined(createNewRecordAndOpenSidePanel) ? handleCreateNew : undefined
       }
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={[

@@ -115,8 +115,8 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
     );
-    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
-    expect(commandMenuPageInfo).toEqual({
+    const sidePanelPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfo).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
@@ -140,10 +140,8 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
     );
-    const commandMenuPageInfoAfter = jotaiStore.get(
-      sidePanelPageInfoState.atom,
-    );
-    expect(commandMenuPageInfoAfter).toEqual({
+    const sidePanelPageInfoAfter = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfoAfter).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',

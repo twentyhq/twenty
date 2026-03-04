@@ -53,9 +53,7 @@ describe('useSidePanelUpdateNavigationMorphItemsByPage', () => {
     });
 
     expect(
-      jotaiStore
-        .get(sidePanelNavigationMorphItemsByPageState.atom)
-        .get(pageId),
+      jotaiStore.get(sidePanelNavigationMorphItemsByPageState.atom).get(pageId),
     ).toEqual([
       {
         objectMetadataId,
@@ -85,9 +83,7 @@ describe('useSidePanelUpdateNavigationMorphItemsByPage', () => {
     });
 
     expect(
-      jotaiStore
-        .get(sidePanelNavigationMorphItemsByPageState.atom)
-        .get(pageId),
+      jotaiStore.get(sidePanelNavigationMorphItemsByPageState.atom).get(pageId),
     ).toEqual([
       {
         objectMetadataId,

@@ -59,8 +59,8 @@ const StyledModalContainer = styled.div`
 const GAP_WIDTH = 8;
 
 export const CommandMenuSidePanelForDesktop = () => {
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
-  const isCommandMenuClosing = useAtomStateValue(isSidePanelClosingState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelClosing = useAtomStateValue(isSidePanelClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useAtomState(
     commandMenuWidthState,
   );
@@ -73,22 +73,22 @@ export const CommandMenuSidePanelForDesktop = () => {
   );
   const [isResizing, setIsResizing] = useState(false);
   const [shouldRenderContent, setShouldRenderContent] =
-    useState(isCommandMenuOpened);
+    useState(isSidePanelOpened);
 
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
 
-  const shouldShowContent = isCommandMenuOpened || shouldRenderContent;
+  const shouldShowContent = isSidePanelOpened || shouldRenderContent;
 
   const handleTransitionEnd = () => {
-    if (isCommandMenuOpened) {
+    if (isSidePanelOpened) {
       // Open animation completed - ensure content persists for close animation
       setShouldRenderContent(true);
     } else {
       // Close animation completed
       setShouldRenderContent(false);
-      if (isCommandMenuClosing) {
+      if (isSidePanelClosing) {
         commandMenuCloseAnimationCompleteCleanup();
       }
     }
@@ -130,13 +130,13 @@ export const CommandMenuSidePanelForDesktop = () => {
         currentWidth={commandMenuWidth}
         onWidthChange={handleWidthChange}
         onCollapse={handleCollapse}
-        gapWidth={isCommandMenuOpened ? GAP_WIDTH : 0}
+        gapWidth={isSidePanelOpened ? GAP_WIDTH : 0}
         cssVariableName={COMMAND_MENU_WIDTH_VAR}
         onResizeStart={handleResizeStart}
       />
 
       <StyledSidePanelWrapper
-        isOpen={isCommandMenuOpened}
+        isOpen={isSidePanelOpened}
         isResizing={isResizing}
         onTransitionEnd={handleTransitionEnd}
         data-command-menu-panel=""

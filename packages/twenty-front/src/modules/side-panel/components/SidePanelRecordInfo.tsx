@@ -27,13 +27,13 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 
 export const SidePanelRecordInfo = ({
-  commandMenuPageInstanceId,
+  sidePanelPageInstanceId,
 }: {
-  commandMenuPageInstanceId: string;
+  sidePanelPageInstanceId: string;
 }) => {
   const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
-    commandMenuPageInstanceId,
+    sidePanelPageInstanceId,
   );
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -41,7 +41,7 @@ export const SidePanelRecordInfo = ({
 
   const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
-    commandMenuPageInstanceId,
+    sidePanelPageInstanceId,
   );
 
   const { objectNameSingular, objectRecordId } = useRecordShowPage(

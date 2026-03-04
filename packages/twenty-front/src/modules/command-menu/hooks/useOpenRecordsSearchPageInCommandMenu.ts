@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 export const useOpenRecordsSearchPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
@@ -16,7 +16,7 @@ export const useOpenRecordsSearchPageInCommandMenu = () => {
       pageTitle: t`Search`,
       pageIcon: IconSearch,
       pageId: v4(),
-      resetNavigationStack: isCommandMenuOpened,
+      resetNavigationStack: isSidePanelOpened,
     });
   };
 

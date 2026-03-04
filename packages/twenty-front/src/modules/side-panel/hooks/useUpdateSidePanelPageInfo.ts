@@ -14,29 +14,28 @@ export const useUpdateSidePanelPageInfo = () => {
       pageTitle?: string;
       pageIcon?: IconComponent;
     }) => {
-      const commandMenuPageInfo = store.get(sidePanelPageInfoState.atom);
+      const sidePanelPageInfo = store.get(sidePanelPageInfoState.atom);
 
       const newSidePanelPageInfo = {
-        ...commandMenuPageInfo,
-        title: pageTitle ?? commandMenuPageInfo.title ?? '',
-        Icon: pageIcon ?? commandMenuPageInfo.Icon ?? IconDotsVertical,
+        ...sidePanelPageInfo,
+        title: pageTitle ?? sidePanelPageInfo.title ?? '',
+        Icon: pageIcon ?? sidePanelPageInfo.Icon ?? IconDotsVertical,
       };
 
       store.set(sidePanelPageInfoState.atom, newSidePanelPageInfo);
 
-      const commandMenuNavigationStack = store.get(
+      const sidePanelNavigationStack = store.get(
         sidePanelNavigationStackState.atom,
       );
 
-      const lastSidePanelNavigationStackItem =
-        commandMenuNavigationStack.at(-1);
+      const lastSidePanelNavigationStackItem = sidePanelNavigationStack.at(-1);
 
       if (!lastSidePanelNavigationStackItem) {
         return;
       }
 
       const newCommandMenuNavigationStack = [
-        ...commandMenuNavigationStack.slice(0, -1),
+        ...sidePanelNavigationStack.slice(0, -1),
         {
           page: lastSidePanelNavigationStackItem.page,
           pageTitle: newSidePanelPageInfo.title,

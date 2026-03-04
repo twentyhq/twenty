@@ -7,7 +7,7 @@ export const useSidePanelState = (): {
   sidePanelState: CommandMenuAnimationVariant;
 } => {
   const isMobile = useIsMobile();
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   if (isMobile) {
     return {
@@ -16,6 +16,6 @@ export const useSidePanelState = (): {
   }
 
   return {
-    sidePanelState: isCommandMenuOpened ? 'normal' : 'closed',
+    sidePanelState: isSidePanelOpened ? 'normal' : 'closed',
   };
 };

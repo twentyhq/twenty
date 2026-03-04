@@ -52,7 +52,7 @@ describe('useCreateWidgetFromClick', () => {
     expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
     expect(result.current.editingWidgetId).toBeNull();
     expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
-      commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });

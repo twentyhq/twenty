@@ -20,9 +20,7 @@ export const SidePanelNewSidebarItemPage = () => {
     case 'object':
       return <SidePanelNewSidebarItemObjectFlow onBack={handleBackToMain} />;
     case 'record':
-      return (
-        <SidePanelNewSidebarItemRecordSubView onBack={handleBackToMain} />
-      );
+      return <SidePanelNewSidebarItemRecordSubView onBack={handleBackToMain} />;
     default:
       return (
         <SidePanelNewSidebarItemMainMenu

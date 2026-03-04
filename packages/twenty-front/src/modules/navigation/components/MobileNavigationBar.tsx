@@ -28,7 +28,7 @@ type NavigationBarItemName = 'main' | 'search' | 'newAIChat';
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { closeCommandMenu } = useCommandMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const isSettingsPage = useIsSettingsPage();
@@ -48,7 +48,7 @@ export const MobileNavigationBar = () => {
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
-    : isCommandMenuOpened
+    : isSidePanelOpened
       ? 'search'
       : 'main';
 

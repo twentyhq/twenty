@@ -27,9 +27,7 @@ type SidePanelContainerProps = {
   children: React.ReactNode;
 };
 
-export const SidePanelContainer = ({
-  children,
-}: SidePanelContainerProps) => {
+export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,

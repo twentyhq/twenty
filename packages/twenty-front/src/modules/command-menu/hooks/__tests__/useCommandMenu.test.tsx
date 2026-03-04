@@ -90,15 +90,11 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.Root,
-    );
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
     expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
       'First Page',
     );
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
-      1,
-    );
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -109,9 +105,7 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
-      2,
-    );
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(2);
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -122,14 +116,10 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.Root,
-    );
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
     expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
       'Reset Page',
     );
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
-      1,
-    );
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
   });
 });

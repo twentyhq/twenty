@@ -136,16 +136,15 @@ export const RelationOneToManyFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenSidePanel } =
-    useAddNewRecordAndOpenSidePanel({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular:
-        relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular:
+      relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
@@ -267,8 +266,7 @@ export const RelationOneToManyFieldInput = () => {
         return;
       }
 
-      const newRecordId =
-        await createNewRecordAndOpenSidePanel?.(searchInput);
+      const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
       if (isDefined(newRecordId)) {
         updatePickerState(newRecordId, relationObjectMetadataItem.id, [

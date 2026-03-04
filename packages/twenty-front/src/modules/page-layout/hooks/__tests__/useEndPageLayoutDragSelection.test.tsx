@@ -102,7 +102,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.selectedCells.size).toBe(0);
 
     expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
-      commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });

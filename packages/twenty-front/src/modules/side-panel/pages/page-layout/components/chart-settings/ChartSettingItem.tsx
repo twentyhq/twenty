@@ -81,7 +81,7 @@ export const ChartSettingItem = ({
 
   const handleFilterClick = () => {
     navigatePageLayoutCommandMenu({
-      commandMenuPage: SidePanelPages.PageLayoutGraphFilter,
+      sidePanelPage: SidePanelPages.PageLayoutGraphFilter,
     });
   };
   if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {

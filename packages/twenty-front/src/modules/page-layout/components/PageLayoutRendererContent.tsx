@@ -82,7 +82,7 @@ export const PageLayoutRendererContent = () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setPageLayoutTabSettingsOpenTabId(newTabId);
           navigatePageLayoutCommandMenu({
-            commandMenuPage: SidePanelPages.PageLayoutTabSettings,
+            sidePanelPage: SidePanelPages.PageLayoutTabSettings,
             focusTitleInput: true,
           });
         }

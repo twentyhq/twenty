@@ -65,7 +65,7 @@ describe('useOpenAskAIPageInCommandMenu', () => {
     );
   });
 
-  it('should default resetNavigationStack to isCommandMenuOpened', () => {
+  it('should default resetNavigationStack to isSidePanelOpened', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {

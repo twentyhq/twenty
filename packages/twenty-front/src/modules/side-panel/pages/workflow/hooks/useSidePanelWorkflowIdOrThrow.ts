@@ -7,9 +7,7 @@ export const useSidePanelWorkflowIdOrThrow = () => {
     sidePanelWorkflowIdComponentState,
   );
   if (!isDefined(sidePanelWorkflowId)) {
-    throw new Error(
-      'Expected sidePanelWorkflowIdComponentState to be defined',
-    );
+    throw new Error('Expected sidePanelWorkflowIdComponentState to be defined');
   }
 
   return sidePanelWorkflowId;

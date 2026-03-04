@@ -95,9 +95,9 @@ export const SidePanelTopBar = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
-  const commandMenuNavigationStack = useAtomStateValue(
+  const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
 
@@ -128,10 +128,10 @@ export const SidePanelTopBar = () => {
     });
   };
 
-  const canGoBack = commandMenuNavigationStack.length > 1;
+  const canGoBack = sidePanelNavigationStack.length > 1;
 
   const shouldShowCloseButton =
-    !isMobile && commandMenuNavigationStack.length === 1;
+    !isMobile && sidePanelNavigationStack.length === 1;
 
   const shouldShowBackButton = canGoBack;
 
@@ -168,12 +168,12 @@ export const SidePanelTopBar = () => {
           )}
         </AnimatePresence>
         {lastChip &&
-          commandMenuPage !== SidePanelPages.Root &&
-          commandMenuPage !== SidePanelPages.SearchRecords && (
+          sidePanelPage !== SidePanelPages.Root &&
+          sidePanelPage !== SidePanelPages.SearchRecords && (
             <SidePanelPageInfo pageChip={lastChip} />
           )}
-        {(commandMenuPage === SidePanelPages.Root ||
-          commandMenuPage === SidePanelPages.SearchRecords) && (
+        {(sidePanelPage === SidePanelPages.Root ||
+          sidePanelPage === SidePanelPages.SearchRecords) && (
           <>
             <StyledInput
               data-testid={SIDE_PANEL_FOCUS_ID}

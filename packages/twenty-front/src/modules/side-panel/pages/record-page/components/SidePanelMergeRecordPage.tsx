@@ -12,29 +12,29 @@ const StyledSidePanelRecord = styled.div`
 `;
 
 export const SidePanelMergeRecordPage = () => {
-  const commandMenuPageInstanceId = useComponentInstanceStateContext(
+  const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
-    commandMenuPageInstanceId,
+    sidePanelPageInstanceId,
   );
 
-  if (!commandMenuPageInstanceId) {
+  if (!sidePanelPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
   }
 
   return (
     <RecordComponentInstanceContextsWrapper
-      componentInstanceId={`record-merge-${commandMenuPageInstanceId}`}
+      componentInstanceId={`record-merge-${sidePanelPageInstanceId}`}
     >
       <ContextStoreComponentInstanceContext.Provider
         value={{
-          instanceId: commandMenuPageInstanceId,
+          instanceId: sidePanelPageInstanceId,
         }}
       >
         <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: commandMenuPageInstanceId }}
+          value={{ instanceId: sidePanelPageInstanceId }}
         >
           <StyledSidePanelRecord>
             <MergeRecordsContainer

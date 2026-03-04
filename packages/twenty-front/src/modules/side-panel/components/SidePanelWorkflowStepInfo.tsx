@@ -28,27 +28,27 @@ import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 import { ThemeContext } from 'twenty-ui/theme';
 
 export const SidePanelWorkflowStepInfo = ({
-  commandMenuPageInstanceId,
+  sidePanelPageInstanceId,
 }: {
-  commandMenuPageInstanceId: string;
+  sidePanelPageInstanceId: string;
 }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
   const sidePanelWorkflowStepId = useAtomComponentStateValue(
     sidePanelWorkflowStepIdComponentState,
-    commandMenuPageInstanceId,
+    sidePanelPageInstanceId,
   );
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const isReadonly =
-    commandMenuPage === SidePanelPages.WorkflowStepView ||
-    commandMenuPage === SidePanelPages.WorkflowRunStepView;
+    sidePanelPage === SidePanelPages.WorkflowStepView ||
+    sidePanelPage === SidePanelPages.WorkflowRunStepView;
 
   const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
 
@@ -183,7 +183,7 @@ export const SidePanelWorkflowStepInfo = ({
       iconColor={headerIconColor}
       title={
         <TitleInput
-          instanceId={`workflow-step-title-${commandMenuPageInstanceId}`}
+          instanceId={`workflow-step-title-${sidePanelPageInstanceId}`}
           disabled={isReadonly}
           sizeVariant="sm"
           value={title}

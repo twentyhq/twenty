@@ -62,7 +62,7 @@ export const useVariableDropdown = ({
   const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -122,7 +122,7 @@ export const useVariableDropdown = ({
         };
       });
 
-      setCommandMenuNavigationStack([]);
+      setSidePanelNavigationStack([]);
 
       openWorkflowEditStepInCommandMenu(
         workflowVisualizerWorkflowId,

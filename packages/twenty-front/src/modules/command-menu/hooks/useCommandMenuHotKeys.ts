@@ -34,7 +34,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
@@ -99,7 +99,7 @@ export const useCommandMenuHotKeys = () => {
       }
 
       if (
-        commandMenuPage === SidePanelPages.Root &&
+        sidePanelPage === SidePanelPages.Root &&
         !(
           contextStoreTargetedRecordsRule.mode === 'selection' &&
           contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
@@ -107,13 +107,13 @@ export const useCommandMenuHotKeys = () => {
       ) {
         setGlobalCommandMenuContext();
       }
-      if (commandMenuPage !== SidePanelPages.Root) {
+      if (sidePanelPage !== SidePanelPages.Root) {
         goBackFromCommandMenu();
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [
-      commandMenuPage,
+      sidePanelPage,
       commandMenuSearch,
       contextStoreTargetedRecordsRule,
       goBackFromCommandMenu,

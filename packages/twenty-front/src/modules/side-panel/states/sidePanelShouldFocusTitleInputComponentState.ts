@@ -4,7 +4,7 @@ import { SidePanelPageComponentInstanceContext } from './contexts/SidePanelPageC
 
 export const sidePanelShouldFocusTitleInputComponentState =
   createAtomComponentState<boolean>({
-    key: 'commandMenuShouldFocusTitleInputComponentState',
+    key: 'sidePanelShouldFocusTitleInputComponentState',
     defaultValue: false,
     componentInstanceContext: SidePanelPageComponentInstanceContext,
   });

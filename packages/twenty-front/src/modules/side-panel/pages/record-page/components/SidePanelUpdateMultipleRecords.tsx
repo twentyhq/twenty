@@ -10,23 +10,23 @@ const StyledSidePanelRecord = styled.div`
 `;
 
 export const SidePanelUpdateMultipleRecords = () => {
-  const commandMenuPageInstanceId = useComponentInstanceStateContext(
+  const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  if (!commandMenuPageInstanceId) {
+  if (!sidePanelPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
   }
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
-    commandMenuPageInstanceId,
+    sidePanelPageInstanceId,
   );
 
   return (
     <StyledSidePanelRecord>
       <UpdateMultipleRecordsContainer
         objectNameSingular={objectMetadataItem.nameSingular}
-        contextStoreInstanceId={commandMenuPageInstanceId}
+        contextStoreInstanceId={sidePanelPageInstanceId}
       />
     </StyledSidePanelRecord>
   );

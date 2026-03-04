@@ -37,7 +37,7 @@ export const DashboardWidgetPlaceholder = () => {
       setIsPageLayoutInEditMode(true);
     }
     navigatePageLayoutCommandMenu({
-      commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   };

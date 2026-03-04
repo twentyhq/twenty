@@ -20,7 +20,7 @@ const StyledIconButton = styled(IconButton)`
 export const SidePanelTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
   const { createChatThread } = useCreateNewAIChatThread();
 
@@ -31,7 +31,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
   const isOnAskAIPage = [
     SidePanelPages.AskAI,
     SidePanelPages.ViewPreviousAIChats,
-  ].includes(commandMenuPage);
+  ].includes(sidePanelPage);
 
   if (!isOnAskAIPage) {
     return (

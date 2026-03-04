@@ -25,9 +25,9 @@ export const useCommandMenu = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
+    const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
-    if (isCommandMenuOpened) {
+    if (isSidePanelOpened) {
       store.set(addToNavPayloadRegistryState.atom, new Map());
       store.set(isSidePanelOpenedState.atom, false);
       store.set(isSidePanelClosingState.atom, true);
@@ -72,11 +72,11 @@ export const useCommandMenu = () => {
   }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
 
   const toggleCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
+    const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     store.set(commandMenuSearchState.atom, '');
 
-    if (isCommandMenuOpened) {
+    if (isSidePanelOpened) {
       closeCommandMenu();
     } else {
       openCommandMenu();

@@ -140,11 +140,11 @@ describe('useOpenRecordInCommandMenu', () => {
       ContextStoreViewType.ShowPage,
     );
 
-    const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
+    const sidePanelNavigationMorphItemsByPage = jotaiStore.get(
       sidePanelNavigationMorphItemsByPageState.atom,
     );
-    expect(commandMenuNavigationMorphItemsByPage.size).toBe(1);
-    expect(commandMenuNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
+    expect(sidePanelNavigationMorphItemsByPage.size).toBe(1);
+    expect(sidePanelNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
       {
         objectMetadataId: personMockObjectMetadataItem.id,
         recordId,

@@ -60,10 +60,10 @@ describe('useUpdateSidePanelPageInfo', () => {
       });
     });
 
-    const commandMenuNavigationStack = jotaiStore.get(
+    const sidePanelNavigationStack = jotaiStore.get(
       sidePanelNavigationStackState.atom,
     );
-    expect(commandMenuNavigationStack).toEqual([
+    expect(sidePanelNavigationStack).toEqual([
       {
         page: SidePanelPages.Root,
         pageTitle: 'New Title',
@@ -72,8 +72,8 @@ describe('useUpdateSidePanelPageInfo', () => {
       },
     ]);
 
-    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
-    expect(commandMenuPageInfo).toEqual({
+    const sidePanelPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfo).toEqual({
       title: 'New Title',
       Icon: IconArrowDown,
       instanceId: 'test-instance',
@@ -89,10 +89,10 @@ describe('useUpdateSidePanelPageInfo', () => {
       });
     });
 
-    const commandMenuNavigationStack = jotaiStore.get(
+    const sidePanelNavigationStack = jotaiStore.get(
       sidePanelNavigationStackState.atom,
     );
-    expect(commandMenuNavigationStack).toEqual([
+    expect(sidePanelNavigationStack).toEqual([
       {
         page: SidePanelPages.Root,
         pageTitle: 'New Title',
@@ -101,8 +101,8 @@ describe('useUpdateSidePanelPageInfo', () => {
       },
     ]);
 
-    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
-    expect(commandMenuPageInfo).toEqual({
+    const sidePanelPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfo).toEqual({
       title: 'New Title',
       Icon: IconDotsVertical,
       instanceId: 'test-instance',
@@ -118,10 +118,10 @@ describe('useUpdateSidePanelPageInfo', () => {
       });
     });
 
-    const commandMenuNavigationStack = jotaiStore.get(
+    const sidePanelNavigationStack = jotaiStore.get(
       sidePanelNavigationStackState.atom,
     );
-    expect(commandMenuNavigationStack).toEqual([
+    expect(sidePanelNavigationStack).toEqual([
       {
         page: SidePanelPages.Root,
         pageTitle: 'Initial Title',
@@ -130,8 +130,8 @@ describe('useUpdateSidePanelPageInfo', () => {
       },
     ]);
 
-    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
-    expect(commandMenuPageInfo).toEqual({
+    const sidePanelPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfo).toEqual({
       title: 'Initial Title',
       Icon: IconArrowDown,
       instanceId: 'test-instance',

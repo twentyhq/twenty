@@ -85,11 +85,11 @@ const renderHooks = () => {
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
-      const commandMenuWorkflowId = useAtomComponentStateValue(
+      const sidePanelWorkflowId = useAtomComponentStateValue(
         sidePanelWorkflowIdComponentState,
         'mocked-uuid',
       );
-      const commandMenuWorkflowVersionId = useAtomComponentStateValue(
+      const sidePanelWorkflowVersionId = useAtomComponentStateValue(
         sidePanelWorkflowVersionIdComponentState,
         'mocked-uuid',
       );
@@ -101,8 +101,8 @@ const renderHooks = () => {
         openWorkflowEditStepInCommandMenu,
         openWorkflowEditStepTypeInCommandMenu,
         openWorkflowViewStepInCommandMenu,
-        commandMenuWorkflowId,
-        commandMenuWorkflowVersionId,
+        sidePanelWorkflowId,
+        sidePanelWorkflowVersionId,
         viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
@@ -130,7 +130,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowTriggerTypeInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: SidePanelPages.WorkflowTriggerSelectType,
@@ -147,7 +147,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowCreateStepInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: SidePanelPages.WorkflowStepCreate,
@@ -164,7 +164,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowEditStepTypeInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: SidePanelPages.WorkflowStepEditType,
@@ -185,7 +185,7 @@ describe('useWorkflowCommandMenu', () => {
       );
     });
 
-    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: SidePanelPages.WorkflowStepEdit,
@@ -207,8 +207,8 @@ describe('useWorkflowCommandMenu', () => {
       });
     });
 
-    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
-    expect(result.current.commandMenuWorkflowVersionId).toBe(
+    expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowVersionId).toBe(
       'test-workflow-version-id',
     );
 

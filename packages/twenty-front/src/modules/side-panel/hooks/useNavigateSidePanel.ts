@@ -37,17 +37,17 @@ export const useNavigateSidePanel = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
+    const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
-    const isCommandMenuClosing = store.get(isSidePanelClosingState.atom);
+    const isSidePanelClosing = store.get(isSidePanelClosingState.atom);
 
-    if (isCommandMenuClosing) {
+    if (isSidePanelClosing) {
       commandMenuCloseAnimationCompleteCleanup({
         emitSidePanelCloseEvent: false,
       });
     }
 
-    if (isCommandMenuOpened) {
+    if (isSidePanelOpened) {
       return;
     }
 
@@ -108,9 +108,9 @@ export const useNavigateSidePanel = () => {
         );
       }
 
-      const isCommandMenuClosing = store.get(isSidePanelClosingState.atom);
+      const isSidePanelClosing = store.get(isSidePanelClosingState.atom);
 
-      const currentNavigationStack = isCommandMenuClosing
+      const currentNavigationStack = isSidePanelClosing
         ? []
         : store.get(sidePanelNavigationStackState.atom);
 

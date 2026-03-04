@@ -51,10 +51,10 @@ export const SidePanelWorkflowRunViewStepContent = () => {
 
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const commandMenuPageComponentInstance = useComponentInstanceStateContext(
+  const sidePanelPageComponentInstance = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   );
-  if (isNull(commandMenuPageComponentInstance)) {
+  if (isNull(sidePanelPageComponentInstance)) {
     throw new Error(
       'SidePanelPageComponentInstanceContext is not defined. This component should be used within SidePanelPageComponentInstanceContext.',
     );
@@ -62,7 +62,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    commandMenuPageComponentInstance.instanceId,
+    sidePanelPageComponentInstance.instanceId,
   );
 
   if (!isDefined(workflowRun) || !isDefined(workflowSelectedNode)) {
@@ -134,7 +134,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
             <StyledTabList
               tabs={tabs}
               behaveAsLinks={false}
-              componentInstanceId={commandMenuPageComponentInstance.instanceId}
+              componentInstanceId={sidePanelPageComponentInstance.instanceId}
             />
 
             {activeTabId === WorkflowRunTabId.OUTPUT ? (

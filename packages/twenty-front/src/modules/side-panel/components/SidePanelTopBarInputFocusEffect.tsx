@@ -10,16 +10,16 @@ type SidePanelTopBarInputFocusEffectProps = {
 export const SidePanelTopBarInputFocusEffect = ({
   inputRef,
 }: SidePanelTopBarInputFocusEffectProps) => {
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
   useEffect(() => {
     if (
-      commandMenuPage === SidePanelPages.Root ||
-      commandMenuPage === SidePanelPages.SearchRecords
+      sidePanelPage === SidePanelPages.Root ||
+      sidePanelPage === SidePanelPages.SearchRecords
     ) {
       inputRef.current?.focus();
     }
-  }, [commandMenuPage, inputRef]);
+  }, [sidePanelPage, inputRef]);
 
   return null;
 };

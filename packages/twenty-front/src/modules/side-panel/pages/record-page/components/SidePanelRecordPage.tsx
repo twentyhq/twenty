@@ -55,11 +55,11 @@ export const SidePanelRecordPage = () => {
     },
   );
 
-  const commandMenuPageInstanceId = useComponentInstanceStateContext(
+  const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  if (!commandMenuPageInstanceId) {
+  if (!sidePanelPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
   }
 
@@ -69,11 +69,11 @@ export const SidePanelRecordPage = () => {
     >
       <ContextStoreComponentInstanceContext.Provider
         value={{
-          instanceId: commandMenuPageInstanceId,
+          instanceId: sidePanelPageInstanceId,
         }}
       >
         <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: commandMenuPageInstanceId }}
+          value={{ instanceId: sidePanelPageInstanceId }}
         >
           <StyledSidePanelRecord hasDeletedRecordBanner={!!recordDeletedAt}>
             <TimelineActivityContext.Provider

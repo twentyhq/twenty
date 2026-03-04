@@ -258,7 +258,7 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes, edges };
   }, [workflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { isInSidePanel } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
@@ -288,12 +288,12 @@ export const WorkflowDiagramCanvasBase = ({
   const setFlowViewport = useCallback(
     ({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
+      isSidePanelOpened,
       workflowDiagram,
       isInSidePanel,
     }: {
       workflowDiagramFlowInitialized: boolean;
-      isCommandMenuOpened: boolean;
+      isSidePanelOpened: boolean;
       workflowDiagram: WorkflowDiagram | undefined;
       isInSidePanel: boolean;
     }) => {
@@ -322,7 +322,7 @@ export const WorkflowDiagramCanvasBase = ({
 
       const commandMenuWidth = store.get(commandMenuWidthState.atom);
 
-      if (!isInSidePanel && isCommandMenuOpened) {
+      if (!isInSidePanel && isSidePanelOpened) {
         adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
       } else if (!isInSidePanel && hasViewportBeenMoved) {
         adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
@@ -347,16 +347,16 @@ export const WorkflowDiagramCanvasBase = ({
   const handleSetFlowViewportOnChange = useCallback(
     ({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
+      isSidePanelOpened,
       isInSidePanel,
     }: {
       workflowDiagramFlowInitialized: boolean;
-      isCommandMenuOpened: boolean;
+      isSidePanelOpened: boolean;
       isInSidePanel: boolean;
     }) => {
       setFlowViewport({
         isInSidePanel,
-        isCommandMenuOpened,
+        isSidePanelOpened,
         workflowDiagramFlowInitialized,
         workflowDiagram: store.get(workflowDiagramCallbackState),
       });
@@ -367,12 +367,12 @@ export const WorkflowDiagramCanvasBase = ({
   useEffect(() => {
     handleSetFlowViewportOnChange({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
+      isSidePanelOpened,
       isInSidePanel,
     });
   }, [
     handleSetFlowViewportOnChange,
-    isCommandMenuOpened,
+    isSidePanelOpened,
     workflowDiagramFlowInitialized,
     isInSidePanel,
   ]);
@@ -410,14 +410,14 @@ export const WorkflowDiagramCanvasBase = ({
       }
 
       setFlowViewport({
-        isCommandMenuOpened,
+        isSidePanelOpened,
         workflowDiagramFlowInitialized,
         workflowDiagram: updatedWorkflowDiagram,
         isInSidePanel,
       });
     },
     [
-      isCommandMenuOpened,
+      isSidePanelOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
       workflowDiagramCallbackState,

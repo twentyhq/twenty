@@ -112,7 +112,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutCommandMenu({
-      commandMenuPage: SidePanelPages.PageLayoutGraphTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
       focusTitleInput: true,
     });
   };
@@ -133,7 +133,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutCommandMenu({
-      commandMenuPage: SidePanelPages.PageLayoutIframeSettings,
+      sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
       focusTitleInput: true,
     });
   };

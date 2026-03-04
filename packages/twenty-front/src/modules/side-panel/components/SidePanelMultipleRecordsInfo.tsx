@@ -8,16 +8,16 @@ import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
 type SidePanelMultipleRecordsInfoProps = {
-  commandMenuPageInstanceId: string;
+  sidePanelPageInstanceId: string;
 };
 
 export const SidePanelMultipleRecordsInfo = ({
-  commandMenuPageInstanceId,
+  sidePanelPageInstanceId,
 }: SidePanelMultipleRecordsInfoProps) => {
   const { theme } = useContext(ThemeContext);
 
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
-    instanceId: commandMenuPageInstanceId,
+    instanceId: sidePanelPageInstanceId,
     limit: 1,
   });
 

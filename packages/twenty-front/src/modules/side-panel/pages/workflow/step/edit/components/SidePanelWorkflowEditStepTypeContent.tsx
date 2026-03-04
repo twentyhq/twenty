@@ -33,7 +33,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
   const { closeRightClickMenu } = useCloseRightClickMenu();
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -66,7 +66,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
     closeRightClickMenu();
 
-    setCommandMenuNavigationStack([]);
+    setSidePanelNavigationStack([]);
 
     openWorkflowEditStepInCommandMenu(
       workflowVisualizerWorkflowId,

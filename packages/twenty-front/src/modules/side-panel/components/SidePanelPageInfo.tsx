@@ -75,7 +75,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
 
   if (isRecordPage && isDefined(pageChip.page?.pageId)) {
     return (
-      <SidePanelRecordInfo commandMenuPageInstanceId={pageChip.page.pageId} />
+      <SidePanelRecordInfo sidePanelPageInstanceId={pageChip.page.pageId} />
     );
   }
 
@@ -91,7 +91,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     return (
       <SidePanelWorkflowStepInfo
         key={pageChip.page.pageId}
-        commandMenuPageInstanceId={pageChip.page.pageId}
+        sidePanelPageInstanceId={pageChip.page.pageId}
       />
     );
   }
@@ -118,7 +118,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   if (isMultipleRecordsPage && isDefined(pageChip.page?.pageId)) {
     return (
       <SidePanelMultipleRecordsInfo
-        commandMenuPageInstanceId={pageChip.page.pageId}
+        sidePanelPageInstanceId={pageChip.page.pageId}
       />
     );
   }

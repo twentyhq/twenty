@@ -131,7 +131,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       setPageLayoutTabSettingsOpenTabId(newTabId);
 
       navigatePageLayoutCommandMenu({
-        commandMenuPage: SidePanelPages.PageLayoutTabSettings,
+        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         pageTitle: newTab.title,
         focusTitleInput: true,
       });

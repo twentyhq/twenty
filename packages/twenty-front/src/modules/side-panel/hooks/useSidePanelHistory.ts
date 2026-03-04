@@ -49,10 +49,7 @@ export const useSidePanelHistory = () => {
       if (isDefined(removedItem)) {
         const newMorphItems = new Map(currentMorphItems);
         newMorphItems.delete(removedItem.pageId);
-        store.set(
-          sidePanelNavigationMorphItemsByPageState.atom,
-          newMorphItems,
-        );
+        store.set(sidePanelNavigationMorphItemsByPageState.atom, newMorphItems);
 
         const morphItems = currentMorphItems.get(removedItem.pageId);
         if (isNonEmptyArray(morphItems)) {

@@ -55,7 +55,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
 
   const handleNavigateToLayout = () => {
     navigatePageLayoutCommandMenu({
-      commandMenuPage: SidePanelPages.PageLayoutFieldsLayout,
+      sidePanelPage: SidePanelPages.PageLayoutFieldsLayout,
     });
   };
 

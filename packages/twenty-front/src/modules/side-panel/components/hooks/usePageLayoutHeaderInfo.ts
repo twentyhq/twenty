@@ -27,7 +27,7 @@ type PageLayoutHeaderInfo = {
 };
 
 type UsePageLayoutHeaderInfoParams = {
-  commandMenuPage: SidePanelPages;
+  sidePanelPage: SidePanelPages;
   draftPageLayout: {
     tabs: PageLayoutTab[];
   };
@@ -37,7 +37,7 @@ type UsePageLayoutHeaderInfoParams = {
 };
 
 export const usePageLayoutHeaderInfo = ({
-  commandMenuPage,
+  sidePanelPage,
   draftPageLayout,
   pageLayoutEditingWidgetId,
   openTabId,
@@ -46,7 +46,7 @@ export const usePageLayoutHeaderInfo = ({
   const { theme } = useContext(ThemeContext);
   const iconColor = theme.font.color.tertiary;
 
-  switch (commandMenuPage) {
+  switch (sidePanelPage) {
     case SidePanelPages.PageLayoutTabSettings: {
       if (!isDefined(openTabId)) {
         return null;
@@ -130,7 +130,7 @@ export const usePageLayoutHeaderInfo = ({
       const graphTypeLabel = t(graphTypeInfo.label);
 
       const headerType =
-        commandMenuPage === SidePanelPages.PageLayoutGraphFilter
+        sidePanelPage === SidePanelPages.PageLayoutGraphFilter
           ? graphTypeLabel
           : t`Chart`;
 
@@ -145,7 +145,7 @@ export const usePageLayoutHeaderInfo = ({
         headerIconColor: iconColor,
         headerType,
         title,
-        isReadonly: commandMenuPage === SidePanelPages.PageLayoutGraphFilter,
+        isReadonly: sidePanelPage === SidePanelPages.PageLayoutGraphFilter,
         tab: undefined,
         widgetInEditMode,
       };

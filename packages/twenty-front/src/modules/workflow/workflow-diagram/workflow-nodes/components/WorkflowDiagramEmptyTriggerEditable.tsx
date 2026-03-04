@@ -35,7 +35,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
 
   const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -45,7 +45,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
 
   const handleClick = () => {
     if (!isInSidePanel) {
-      setCommandMenuNavigationStack([]);
+      setSidePanelNavigationStack([]);
     }
 
     resetWorkflowInsertStepIds();

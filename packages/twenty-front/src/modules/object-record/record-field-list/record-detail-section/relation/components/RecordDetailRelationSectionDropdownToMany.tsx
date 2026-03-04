@@ -118,15 +118,14 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
-  const { createNewRecordAndOpenSidePanel } =
-    useAddNewRecordAndOpenSidePanel({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const handleOpenRelationPickerDropdown = () => {
     setMultipleRecordPickerSearchableObjectMetadataItems([

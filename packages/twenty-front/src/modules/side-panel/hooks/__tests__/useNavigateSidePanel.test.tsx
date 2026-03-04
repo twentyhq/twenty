@@ -73,9 +73,7 @@ describe('useNavigateSidePanel', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.Root,
-    );
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
         page: SidePanelPages.Root,

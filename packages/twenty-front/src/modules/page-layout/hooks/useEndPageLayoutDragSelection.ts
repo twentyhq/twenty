@@ -50,7 +50,7 @@ export const useEndPageLayoutDragSelection = (
         store.set(pageLayoutEditingWidgetIdState, null);
 
         navigatePageLayoutCommandMenu({
-          commandMenuPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+          sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
           resetNavigationStack: true,
         });
       }

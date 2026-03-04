@@ -18,11 +18,11 @@ const StyledCommandMenuContent = styled.div`
 `;
 
 export const SidePanelRouter = () => {
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
-  const commandMenuPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
 
-  const commandMenuPageComponent = isDefined(commandMenuPage) ? (
-    SIDE_PANEL_PAGES_CONFIG.get(commandMenuPage)
+  const sidePanelPageComponent = isDefined(sidePanelPage) ? (
+    SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
   ) : (
     <></>
   );
@@ -32,7 +32,7 @@ export const SidePanelRouter = () => {
   return (
     <SidePanelContainer>
       <SidePanelPageComponentInstanceContext.Provider
-        value={{ instanceId: commandMenuPageInfo.instanceId }}
+        value={{ instanceId: sidePanelPageInfo.instanceId }}
       >
         <motion.div
           initial={{ opacity: 0 }}
@@ -51,7 +51,7 @@ export const SidePanelRouter = () => {
             displayType="listItem"
             actionMenuType="command-menu"
           >
-            {commandMenuPageComponent}
+            {sidePanelPageComponent}
           </ActionMenuContextProvider>
         </StyledCommandMenuContent>
       </SidePanelPageComponentInstanceContext.Provider>

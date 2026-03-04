@@ -18,10 +18,10 @@ export const useSetInitialWorkflowRunSidePanelTab = () => {
       workflowSelectedNode: string;
       stepExecutionStatus: WorkflowRunStepStatus;
     }) => {
-      const commandMenuPageInfo = store.get(sidePanelPageInfoState.atom);
+      const sidePanelPageInfo = store.get(sidePanelPageInfoState.atom);
 
       const activeTabId = activeTabIdComponentState.atomFamily({
-        instanceId: commandMenuPageInfo.instanceId,
+        instanceId: sidePanelPageInfo.instanceId,
       });
 
       const activeWorkflowRunSidePanelTab = store.get(

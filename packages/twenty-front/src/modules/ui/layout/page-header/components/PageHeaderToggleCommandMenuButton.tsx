@@ -40,9 +40,9 @@ const xPaths = {
 };
 
 const AnimatedIcon = ({
-  isCommandMenuOpened,
+  isSidePanelOpened,
 }: {
-  isCommandMenuOpened: boolean;
+  isSidePanelOpened: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
   return (
@@ -65,8 +65,8 @@ const AnimatedIcon = ({
         r="1"
         initial={{ opacity: 0 }}
         animate={{
-          scale: isCommandMenuOpened ? 0 : 1,
-          opacity: isCommandMenuOpened ? 0 : 1,
+          scale: isSidePanelOpened ? 0 : 1,
+          opacity: isSidePanelOpened ? 0 : 1,
         }}
         transition={{ duration: theme.animation.duration.fast }}
       />
@@ -78,13 +78,13 @@ const AnimatedIcon = ({
           d={path}
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{
-            pathLength: isCommandMenuOpened ? 1 : 0,
-            opacity: isCommandMenuOpened ? 1 : 0,
+            pathLength: isSidePanelOpened ? 1 : 0,
+            opacity: isSidePanelOpened ? 1 : 0,
           }}
           transition={{
             duration: theme.animation.duration.fast,
             ease: 'easeInOut',
-            delay: isCommandMenuOpened ? 0.1 : 0,
+            delay: isSidePanelOpened ? 0.1 : 0,
           }}
         />
       ))}
@@ -96,8 +96,8 @@ const AnimatedIcon = ({
         r="1"
         initial={{ opacity: 0 }}
         animate={{
-          scale: isCommandMenuOpened ? 0 : 1,
-          opacity: isCommandMenuOpened ? 0 : 1,
+          scale: isSidePanelOpened ? 0 : 1,
+          opacity: isSidePanelOpened ? 0 : 1,
         }}
         transition={{ duration: theme.animation.duration.fast }}
       />
@@ -109,8 +109,8 @@ const AnimatedIcon = ({
         r="1"
         initial={{ opacity: 0 }}
         animate={{
-          scale: isCommandMenuOpened ? 0 : 1,
-          opacity: isCommandMenuOpened ? 0 : 1,
+          scale: isSidePanelOpened ? 0 : 1,
+          opacity: isSidePanelOpened ? 0 : 1,
         }}
         transition={{ duration: theme.animation.duration.fast }}
       />
@@ -120,7 +120,7 @@ const AnimatedIcon = ({
 
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -128,9 +128,9 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const isMobile = useIsMobile();
 
   const alignWithCommandMenuTopBar =
-    isMobile && isNavigationMenuInEditMode && isCommandMenuOpened;
+    isMobile && isNavigationMenuInEditMode && isSidePanelOpened;
 
-  const ariaLabel = isCommandMenuOpened
+  const ariaLabel = isSidePanelOpened
     ? t`Close command menu`
     : t`Open command menu`;
 
@@ -140,9 +140,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
     <StyledButtonWrapper alignToTop={alignWithCommandMenuTopBar}>
       <div id="toggle-command-menu-button">
         <AnimatedButton
-          animatedSvg={
-            <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
-          }
+          animatedSvg={<AnimatedIcon isSidePanelOpened={isSidePanelOpened} />}
           dataClickOutsideId={PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-command-menu-button"
           size={isMobile ? 'medium' : 'small'}
@@ -152,7 +150,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
           ariaLabel={ariaLabel}
           onClick={toggleCommandMenu}
           animate={{
-            rotate: isCommandMenuOpened ? 90 : 0,
+            rotate: isSidePanelOpened ? 90 : 0,
           }}
           transition={{
             duration: theme.animation.duration.normal,

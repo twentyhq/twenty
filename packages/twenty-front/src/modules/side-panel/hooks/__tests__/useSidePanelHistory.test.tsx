@@ -104,9 +104,7 @@ describe('useSidePanelHistory', () => {
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.Root,
-    );
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
       title: undefined,
       instanceId: '',

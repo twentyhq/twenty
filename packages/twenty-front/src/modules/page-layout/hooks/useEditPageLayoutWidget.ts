@@ -26,7 +26,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
   const { closeCommandMenu } = useCommandMenu();
-  const setCommandMenuPage = useSetAtomState(sidePanelPageState);
+  const setSidePanelPage = useSetAtomState(sidePanelPageState);
 
   const handleEditWidget = useCallback(
     ({
@@ -40,7 +40,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.IFRAME) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: SidePanelPages.PageLayoutIframeSettings,
+          sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
         });
@@ -49,7 +49,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.GRAPH) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: SidePanelPages.PageLayoutGraphTypeSelect,
+          sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
         });
@@ -58,21 +58,21 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.FIELDS) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: SidePanelPages.PageLayoutFieldsSettings,
+          sidePanelPage: SidePanelPages.PageLayoutFieldsSettings,
           pageTitle: t`Edit Fields`,
           resetNavigationStack: true,
         });
         return;
       }
 
-      setCommandMenuPage(SidePanelPages.Root);
+      setSidePanelPage(SidePanelPages.Root);
       closeCommandMenu();
     },
     [
       setPageLayoutEditingWidgetId,
       navigatePageLayoutCommandMenu,
       closeCommandMenu,
-      setCommandMenuPage,
+      setSidePanelPage,
     ],
   );
 

@@ -54,7 +54,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -67,7 +67,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
     }
 
     if (!isInSidePanel) {
-      setCommandMenuNavigationStack([]);
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(id);

@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 
 export const useOpenAskAIPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const openAskAIPage = useCallback(
     ({
@@ -20,7 +20,7 @@ export const useOpenAskAIPageInCommandMenu = () => {
       const shouldReset =
         resetNavigationStack !== undefined
           ? resetNavigationStack
-          : isCommandMenuOpened;
+          : isSidePanelOpened;
 
       navigateCommandMenu({
         page: SidePanelPages.AskAI,
@@ -30,7 +30,7 @@ export const useOpenAskAIPageInCommandMenu = () => {
         resetNavigationStack: shouldReset,
       });
     },
-    [navigateCommandMenu, isCommandMenuOpened],
+    [navigateCommandMenu, isSidePanelOpened],
   );
 
   return {

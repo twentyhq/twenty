@@ -129,15 +129,14 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };
 
-  const { createNewRecordAndOpenSidePanel } =
-    useAddNewRecordAndOpenSidePanel({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 

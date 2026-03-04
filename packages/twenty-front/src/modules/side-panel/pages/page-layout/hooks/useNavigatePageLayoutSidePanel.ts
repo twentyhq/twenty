@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 
 type NavigatePageLayoutCommandMenuProps = {
-  commandMenuPage: PageLayoutSidePanelPage;
+  sidePanelPage: PageLayoutSidePanelPage;
   pageTitle?: string;
   pageIcon?: IconComponent;
   focusTitleInput?: boolean;
@@ -19,20 +19,20 @@ export const useNavigatePageLayoutSidePanel = () => {
 
   const navigatePageLayoutCommandMenu = useCallback(
     ({
-      commandMenuPage,
+      sidePanelPage,
       pageTitle,
       pageIcon,
       focusTitleInput = false,
       resetNavigationStack = false,
     }: NavigatePageLayoutCommandMenuProps) => {
       navigateCommandMenu({
-        page: commandMenuPage,
+        page: sidePanelPage,
         pageTitle: isDefined(pageTitle)
           ? pageTitle
-          : getPageLayoutPageTitle(commandMenuPage),
+          : getPageLayoutPageTitle(sidePanelPage),
         pageIcon: isDefined(pageIcon)
           ? pageIcon
-          : getPageLayoutIcon(commandMenuPage),
+          : getPageLayoutIcon(sidePanelPage),
         focusTitleInput,
         resetNavigationStack,
       });

@@ -10,12 +10,12 @@ export const useMergeRecordsSelectedRecords = () => {
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
+  const sidePanelNavigationMorphItemsByPage = useAtomStateValue(
     sidePanelNavigationMorphItemsByPageState,
   );
 
   const selectedRecordIds =
-    commandMenuNavigationMorphItemsByPage
+    sidePanelNavigationMorphItemsByPage
       .get(mergeRecordsPageInstanceId ?? '')
       ?.map((morphItem) => morphItem.recordId) ?? [];
 

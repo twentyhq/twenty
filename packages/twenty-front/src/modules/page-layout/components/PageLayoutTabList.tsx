@@ -244,7 +244,7 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
-        commandMenuPage: SidePanelPages.PageLayoutTabSettings,
+        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },

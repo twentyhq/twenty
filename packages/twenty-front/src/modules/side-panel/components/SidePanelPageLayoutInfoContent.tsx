@@ -27,19 +27,17 @@ export const SidePanelPageLayoutInfoContent = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
-  const commandMenuPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
 
-  const [
-    commandMenuShouldFocusTitleInput,
-    setCommandMenuShouldFocusTitleInput,
-  ] = useAtomComponentState(
-    sidePanelShouldFocusTitleInputComponentState,
-    commandMenuPageInfo.instanceId,
-  );
+  const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
+    useAtomComponentState(
+      sidePanelShouldFocusTitleInputComponentState,
+      sidePanelPageInfo.instanceId,
+    );
 
   const handleTitleInputOpen = () => {
-    setCommandMenuShouldFocusTitleInput(false);
+    setSidePanelShouldFocusTitleInput(false);
   };
 
   const pageLayoutDraft = useAtomComponentStateValue(
@@ -64,7 +62,7 @@ export const SidePanelPageLayoutInfoContent = ({
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
 
   const headerInfo = usePageLayoutHeaderInfo({
-    commandMenuPage,
+    sidePanelPage,
     draftPageLayout: pageLayoutDraft,
     pageLayoutEditingWidgetId,
     openTabId: pageLayoutTabSettingsOpenTabId,
@@ -104,7 +102,7 @@ export const SidePanelPageLayoutInfoContent = ({
     });
 
     if (
-      commandMenuPage === SidePanelPages.PageLayoutTabSettings &&
+      sidePanelPage === SidePanelPages.PageLayoutTabSettings &&
       isDefined(tab)
     ) {
       updatePageLayoutTab(tab.id, { title: finalTitle });
@@ -127,7 +125,7 @@ export const SidePanelPageLayoutInfoContent = ({
       iconColor={headerIconColor}
       title={
         <TitleInput
-          instanceId={`page-layout-title-${commandMenuPage}-${pageLayoutId}`}
+          instanceId={`page-layout-title-${sidePanelPage}-${pageLayoutId}`}
           disabled={isReadonly}
           sizeVariant="sm"
           value={title}
@@ -138,7 +136,7 @@ export const SidePanelPageLayoutInfoContent = ({
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
-          shouldFocus={commandMenuShouldFocusTitleInput}
+          shouldFocus={sidePanelShouldFocusTitleInput}
           onFocus={handleTitleInputOpen}
         />
       }

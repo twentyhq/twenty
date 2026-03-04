@@ -134,9 +134,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       result.current.commandMenuCloseAnimationCompleteCleanup();
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.Root,
-    );
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
       title: undefined,
       Icon: undefined,

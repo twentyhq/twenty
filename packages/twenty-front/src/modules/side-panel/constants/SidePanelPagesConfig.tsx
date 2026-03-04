@@ -26,61 +26,54 @@ import { SidePanelWorkflowViewStep } from '@/side-panel/pages/workflow/step/view
 import { SidePanelWorkflowSelectTriggerType } from '@/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerType';
 import { SidePanelPages } from 'twenty-shared/types';
 
-export const SIDE_PANEL_PAGES_CONFIG = new Map<
-  SidePanelPages,
-  React.ReactNode
->([
-  [SidePanelPages.Root, <CommandMenu />],
-  [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
-  [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
-  [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
-  [SidePanelPages.ViewEmailThread, <SidePanelMessageThreadPage />],
-  [SidePanelPages.ViewCalendarEvent, <SidePanelCalendarEventPage />],
-  [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
+export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
   [
-    SidePanelPages.WorkflowTriggerSelectType,
-    <SidePanelWorkflowSelectTriggerType />,
+    [SidePanelPages.Root, <CommandMenu />],
+    [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
+    [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
+    [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
+    [SidePanelPages.ViewEmailThread, <SidePanelMessageThreadPage />],
+    [SidePanelPages.ViewCalendarEvent, <SidePanelCalendarEventPage />],
+    [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
+    [
+      SidePanelPages.WorkflowTriggerSelectType,
+      <SidePanelWorkflowSelectTriggerType />,
+    ],
+    [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
+    [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
+    [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
+    [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
+    [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
+    [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
+    [SidePanelPages.AskAI, <SidePanelAskAIPage />],
+    [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
+    [
+      SidePanelPages.PageLayoutWidgetTypeSelect,
+      <SidePanelPageLayoutWidgetTypeSelect />,
+    ],
+    [
+      SidePanelPages.PageLayoutGraphTypeSelect,
+      <SidePanelPageLayoutChartSettings />,
+    ],
+    [SidePanelPages.PageLayoutGraphFilter, <SidePanelPageLayoutGraphFilter />],
+    [
+      SidePanelPages.PageLayoutIframeSettings,
+      <SidePanelPageLayoutIframeSettings />,
+    ],
+    [SidePanelPages.PageLayoutTabSettings, <SidePanelPageLayoutTabSettings />],
+    [
+      SidePanelPages.PageLayoutFieldsSettings,
+      <SidePanelPageLayoutFieldsSettings />,
+    ],
+    [
+      SidePanelPages.PageLayoutFieldsLayout,
+      <SidePanelPageLayoutFieldsLayout />,
+    ],
+    [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
+    [
+      SidePanelPages.NavigationMenuItemEdit,
+      <SidePanelNavigationMenuItemEditPage />,
+    ],
+    [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
   ],
-  [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
-  [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
-  [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
-  [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
-  [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
-  [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
-  [SidePanelPages.AskAI, <SidePanelAskAIPage />],
-  [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
-  [
-    SidePanelPages.PageLayoutWidgetTypeSelect,
-    <SidePanelPageLayoutWidgetTypeSelect />,
-  ],
-  [
-    SidePanelPages.PageLayoutGraphTypeSelect,
-    <SidePanelPageLayoutChartSettings />,
-  ],
-  [
-    SidePanelPages.PageLayoutGraphFilter,
-    <SidePanelPageLayoutGraphFilter />,
-  ],
-  [
-    SidePanelPages.PageLayoutIframeSettings,
-    <SidePanelPageLayoutIframeSettings />,
-  ],
-  [
-    SidePanelPages.PageLayoutTabSettings,
-    <SidePanelPageLayoutTabSettings />,
-  ],
-  [
-    SidePanelPages.PageLayoutFieldsSettings,
-    <SidePanelPageLayoutFieldsSettings />,
-  ],
-  [
-    SidePanelPages.PageLayoutFieldsLayout,
-    <SidePanelPageLayoutFieldsLayout />,
-  ],
-  [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
-  [
-    SidePanelPages.NavigationMenuItemEdit,
-    <SidePanelNavigationMenuItemEditPage />,
-  ],
-  [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
-]);
+);

@@ -37,9 +37,9 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
       store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
 
-      const isCommandMenuOpened = store.get(isSidePanelOpenedState.atom);
+      const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
-      if (isCommandMenuOpened) {
+      if (isSidePanelOpened) {
         store.set(
           contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,

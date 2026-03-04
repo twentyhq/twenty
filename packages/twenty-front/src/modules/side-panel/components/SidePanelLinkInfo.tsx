@@ -15,14 +15,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const SidePanelLinkInfo = () => {
   const { t } = useLingui();
-  const commandMenuPageInfo = useAtomStateValue(sidePanelPageInfoState);
-  const [
-    commandMenuShouldFocusTitleInput,
-    setCommandMenuShouldFocusTitleInput,
-  ] = useAtomComponentState(
-    sidePanelShouldFocusTitleInputComponentState,
-    commandMenuPageInfo.instanceId,
-  );
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
+    useAtomComponentState(
+      sidePanelShouldFocusTitleInputComponentState,
+      sidePanelPageInfo.instanceId,
+    );
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
@@ -78,8 +76,8 @@ export const SidePanelLinkInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={commandMenuShouldFocusTitleInput}
-          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
+          shouldFocus={sidePanelShouldFocusTitleInput}
+          onFocus={() => setSidePanelShouldFocusTitleInput(false)}
         />
       }
       label={t`Link`}

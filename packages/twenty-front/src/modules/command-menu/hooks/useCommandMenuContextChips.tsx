@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme';
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useAtomStateValue(
+  const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
 
@@ -29,12 +29,12 @@ export const useCommandMenuContextChips = () => {
 
   const { theme } = useContext(ThemeContext);
 
-  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
+  const sidePanelNavigationMorphItemsByPage = useAtomStateValue(
     sidePanelNavigationMorphItemsByPageState,
   );
 
   const allRecordIds = Array.from(
-    commandMenuNavigationMorphItemsByPage.entries(),
+    sidePanelNavigationMorphItemsByPage.entries(),
   ).flatMap(([, morphItems]) =>
     morphItems.map((morphItem) => morphItem.recordId),
   );
@@ -51,10 +51,9 @@ export const useCommandMenuContextChips = () => {
   });
 
   const contextChips = useMemo(() => {
-    const filteredCommandMenuNavigationStack =
-      commandMenuNavigationStack.filter(
-        (page) => page.page !== SidePanelPages.Root,
-      );
+    const filteredCommandMenuNavigationStack = sidePanelNavigationStack.filter(
+      (page) => page.page !== SidePanelPages.Root,
+    );
 
     return filteredCommandMenuNavigationStack
       .map((page, index) => {
@@ -65,7 +64,7 @@ export const useCommandMenuContextChips = () => {
 
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
-            commandMenuNavigationMorphItemsByPage.get(page.pageId)?.[0];
+            sidePanelNavigationMorphItemsByPage.get(page.pageId)?.[0];
 
           if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
             return null;
@@ -135,8 +134,8 @@ export const useCommandMenuContextChips = () => {
       })
       .filter(isDefined);
   }, [
-    commandMenuNavigationMorphItemsByPage,
-    commandMenuNavigationStack,
+    sidePanelNavigationMorphItemsByPage,
+    sidePanelNavigationStack,
     navigateCommandMenuHistory,
     objectMetadataItems,
     recordIdentifiers,

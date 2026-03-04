@@ -13,11 +13,11 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isCommandMenuOpened = useAtomStateValue(isSidePanelOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   return (
     <AnimatePresence>
-      {isCommandMenuOpened && (
+      {isSidePanelOpened && (
         <>
           {createPortal(
             <StyledCommandMenuMobileFullScreenContainer>

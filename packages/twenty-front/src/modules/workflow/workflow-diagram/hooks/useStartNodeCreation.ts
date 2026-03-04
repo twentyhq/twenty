@@ -28,7 +28,7 @@ export const useStartNodeCreation = () => {
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -57,7 +57,7 @@ export const useStartNodeCreation = () => {
       }
 
       if (!isInSidePanel) {
-        setCommandMenuNavigationStack([]);
+        setSidePanelNavigationStack([]);
       }
 
       openWorkflowCreateStepInCommandMenu(workflowVisualizerWorkflowId);
@@ -68,7 +68,7 @@ export const useStartNodeCreation = () => {
       workflowVisualizerWorkflowId,
       isInSidePanel,
       openWorkflowCreateStepInCommandMenu,
-      setCommandMenuNavigationStack,
+      setSidePanelNavigationStack,
     ],
   );
 

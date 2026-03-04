@@ -42,7 +42,7 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -61,8 +61,8 @@ export const NavigationMenuEditModeBar = () => {
     setSelectedNavigationMenuItemInEditMode(null);
     setIsNavigationMenuInEditMode(false);
     const isNavItemPageOpen =
-      commandMenuPage === SidePanelPages.NavigationMenuAddItem ||
-      commandMenuPage === SidePanelPages.NavigationMenuItemEdit;
+      sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
+      sidePanelPage === SidePanelPages.NavigationMenuItemEdit;
     if (isNavItemPageOpen) {
       closeCommandMenu();
     }

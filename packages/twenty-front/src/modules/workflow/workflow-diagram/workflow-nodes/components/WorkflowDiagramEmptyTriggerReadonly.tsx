@@ -41,7 +41,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const setCommandMenuNavigationStack = useSetAtomState(
+  const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
   );
 
@@ -58,7 +58,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
     }
 
     if (!isInSidePanel) {
-      setCommandMenuNavigationStack([]);
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(TRIGGER_STEP_ID);

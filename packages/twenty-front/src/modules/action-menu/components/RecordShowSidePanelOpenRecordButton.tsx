@@ -44,12 +44,12 @@ export const RecordShowSidePanelOpenRecordButton = ({
     | undefined;
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPageComponentInstance = useComponentInstanceStateContext(
+  const sidePanelPageComponentInstance = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   );
 
   const tabListComponentId = getShowPageTabListComponentId({
-    pageId: commandMenuPageComponentInstance?.instanceId,
+    pageId: sidePanelPageComponentInstance?.instanceId,
     targetObjectId: recordId,
   });
 
