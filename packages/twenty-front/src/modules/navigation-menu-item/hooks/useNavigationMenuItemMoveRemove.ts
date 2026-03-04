@@ -4,21 +4,7 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
-
-const swapPositionsInDraft = (
-  draft: NavigationMenuItem[],
-  itemA: NavigationMenuItem,
-  itemB: NavigationMenuItem,
-): NavigationMenuItem[] =>
-  draft.map((item) => {
-    if (item.id === itemA.id) {
-      return { ...item, position: itemB.position };
-    }
-    if (item.id === itemB.id) {
-      return { ...item, position: itemA.position };
-    }
-    return item;
-  });
+import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
 
 export const useNavigationMenuItemMoveRemove = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
@@ -44,8 +30,15 @@ export const useNavigationMenuItemMoveRemove = () => {
       );
       if (currentIndex <= 0) return draft;
 
-      const itemAbove = siblings[currentIndex - 1];
-      return swapPositionsInDraft(draft, currentItem, itemAbove);
+      const prev = siblings[currentIndex - 1];
+      const prevPrev = siblings[currentIndex - 2];
+      const newPosition = getPositionBetween(prevPrev?.position, prev.position);
+
+      return draft.map((item) =>
+        item.id === navigationMenuItemId
+          ? { ...item, position: newPosition }
+          : item,
+      );
     });
   };
 
@@ -70,8 +63,15 @@ export const useNavigationMenuItemMoveRemove = () => {
         return draft;
       }
 
-      const itemBelow = siblings[currentIndex + 1];
-      return swapPositionsInDraft(draft, currentItem, itemBelow);
+      const next = siblings[currentIndex + 1];
+      const nextNext = siblings[currentIndex + 2];
+      const newPosition = getPositionBetween(next.position, nextNext?.position);
+
+      return draft.map((item) =>
+        item.id === navigationMenuItemId
+          ? { ...item, position: newPosition }
+          : item,
+      );
     });
   };
 

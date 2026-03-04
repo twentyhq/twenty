@@ -12,8 +12,9 @@ export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
   resolveFolderId: (draftFolderId: string) => string,
 ): CreateNavigationMenuItemInput => {
-  const position = Math.max(0, Math.round(draftItem.position));
-  const input: CreateNavigationMenuItemInput = { position };
+  const input: CreateNavigationMenuItemInput = {
+    position: draftItem.position,
+  };
 
   if (isNavigationMenuItemFolder(draftItem)) {
     input.name = draftItem.name ?? undefined;

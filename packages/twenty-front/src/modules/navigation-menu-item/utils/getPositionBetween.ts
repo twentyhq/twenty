@@ -9,6 +9,9 @@ export const getPositionBetween = (
   if (isDefined(prevPosition) && !isDefined(nextPosition))
     return prevPosition + 1;
   if (isDefined(prevPosition) && isDefined(nextPosition)) {
+    if (prevPosition === nextPosition) {
+      return prevPosition - 1;
+    }
     return (prevPosition + nextPosition) / 2;
   }
   return 0;
