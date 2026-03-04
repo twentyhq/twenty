@@ -7,7 +7,6 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -23,13 +22,12 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type ApolloError } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   Avatar,
@@ -44,10 +42,7 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
-import {
-  type AvailableWorkspace,
-  useSignUpInNewWorkspaceMutation,
-} from '~/generated-metadata/graphql';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledDescription = styled.div`
@@ -97,25 +92,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     );
   };
 
-  const createWorkspace = () => {
-    signUpInNewWorkspaceMutation({
-      onCompleted: async (data) => {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
-          AppPath.Verify,
-          {
-            loginToken: data.signUpInNewWorkspace.loginToken.token,
-          },
-          '_blank',
-        );
-      },
-      onError: (error: ApolloError) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
-      },
-    });
-  };
 
   return (
     <DropdownContent>
