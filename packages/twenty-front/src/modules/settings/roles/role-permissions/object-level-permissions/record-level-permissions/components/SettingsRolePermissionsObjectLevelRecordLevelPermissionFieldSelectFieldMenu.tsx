@@ -5,6 +5,8 @@ import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { hasRelationToWorkspaceMember } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/hasRelationToWorkspaceMember';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
@@ -54,6 +56,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       objectMetadataItem.id,
     );
 
+    const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
     const filteredFieldMetadataItems = filterableFieldMetadataItems
       .filter(
         (fieldMetadataItem) =>
@@ -64,8 +68,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
             fieldMetadataItem.type,
           ) ||
             (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-                CoreObjectNameSingular.WorkspaceMember)),
+              (fieldMetadataItem.relation?.targetObjectMetadata
+                .nameSingular === CoreObjectNameSingular.WorkspaceMember ||
+                hasRelationToWorkspaceMember(
+                  fieldMetadataItem.relation?.targetObjectMetadata
+                    .nameSingular ?? '',
+                  activeObjectMetadataItems,
+                )))),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 

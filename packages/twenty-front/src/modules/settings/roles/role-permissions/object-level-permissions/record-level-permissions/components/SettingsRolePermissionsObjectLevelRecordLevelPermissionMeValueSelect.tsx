@@ -13,7 +13,9 @@ import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { hasRelationToWorkspaceMember } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/hasRelationToWorkspaceMember';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldType';
@@ -159,10 +161,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       closeDropdown();
     };
 
+    const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
     const isRelationToWorkspaceMember =
       selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
-      selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.WorkspaceMember;
+      (selectedFieldMetadataItem.relation?.targetObjectMetadata
+        .nameSingular === CoreObjectNameSingular.WorkspaceMember ||
+        hasRelationToWorkspaceMember(
+          selectedFieldMetadataItem.relation?.targetObjectMetadata
+            .nameSingular ?? '',
+          activeObjectMetadataItems,
+        ));
 
     const menuItems: Array<{
       id: string;
