@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 
-import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';

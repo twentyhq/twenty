@@ -10,6 +10,6 @@ export type HeadlessFrontComponentMountContext =
 export const mountedHeadlessFrontComponentMapsState = createAtomState<
   Map<string, HeadlessFrontComponentMountContext>
 >({
-  key: 'mountedHeadlessFrontComponentIdsState',
+  key: 'mountedHeadlessFrontComponentMapsState',
   defaultValue: new Map(),
 });

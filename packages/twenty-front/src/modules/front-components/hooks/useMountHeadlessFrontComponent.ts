@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 
 import {
   type HeadlessFrontComponentMountContext,
-  mountedHeadlessFrontComponentIdsState,
-} from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+  mountedHeadlessFrontComponentMapsState,
+} from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { useStore } from 'jotai';
 
 export const useMountHeadlessFrontComponent = () => {
@@ -13,7 +13,7 @@ export const useMountHeadlessFrontComponent = () => {
       frontComponentId: string,
       context?: HeadlessFrontComponentMountContext,
     ) => {
-      store.set(mountedHeadlessFrontComponentIdsState.atom, (previousMap) => {
+      store.set(mountedHeadlessFrontComponentMapsState.atom, (previousMap) => {
         const next = new Map(previousMap);
         next.set(frontComponentId, context ?? undefined);
         return next;

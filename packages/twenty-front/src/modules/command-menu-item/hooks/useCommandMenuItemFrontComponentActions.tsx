@@ -8,7 +8,6 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +16,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
+import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
   type CommandMenuItemFieldsFragment,
