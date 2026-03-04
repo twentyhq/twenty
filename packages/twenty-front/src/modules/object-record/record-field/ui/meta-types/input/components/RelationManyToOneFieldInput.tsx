@@ -4,7 +4,7 @@ import { useRelationField } from '@/object-record/record-field/ui/meta-types/hoo
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
@@ -66,8 +66,8 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
+  const { createNewRecordAndOpenSidePanel } =
+    useAddNewRecordAndOpenSidePanel({
       fieldMetadataItem,
       objectMetadataItem,
       relationObjectMetadataNameSingular:
@@ -92,7 +92,7 @@ export const RelationManyToOneFieldInput = () => {
   );
 
   const handleCreateNew = async (searchInput?: string) => {
-    const newRecordId = await createNewRecordAndOpenRightDrawer?.(searchInput);
+    const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
     if (isDefined(newRecordId)) {
       setSingleRecordPickerSelectedId(newRecordId);
@@ -112,7 +112,7 @@ export const RelationManyToOneFieldInput = () => {
       emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onCreate={
-        isDefined(createNewRecordAndOpenRightDrawer)
+        isDefined(createNewRecordAndOpenSidePanel)
           ? handleCreateNew
           : undefined
       }

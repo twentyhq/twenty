@@ -20,6 +20,6 @@ describe('generateFieldWidgetInstanceId', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toBe('widget-1-field-widget-record-1-name-right-drawer');
+    expect(result).toBe('widget-1-field-widget-record-1-name-side-panel');
   });
 });

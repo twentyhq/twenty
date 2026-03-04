@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useStore } from 'jotai';
 
-export const useSetInitialWorkflowRunRightDrawerTab = () => {
+export const useSetInitialWorkflowRunSidePanelTab = () => {
   const store = useStore();
-  const setInitialWorkflowRunRightDrawerTab = useCallback(
+  const setInitialWorkflowRunSidePanelTab = useCallback(
     ({
       workflowSelectedNode,
       stepExecutionStatus,
@@ -24,7 +24,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
         instanceId: commandMenuPageInfo.instanceId,
       });
 
-      const activeWorkflowRunRightDrawerTab = store.get(
+      const activeWorkflowRunSidePanelTab = store.get(
         activeTabId,
       ) as WorkflowRunTabId | null;
 
@@ -36,7 +36,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
         stepExecutionStatus,
       });
 
-      if (!isDefined(activeWorkflowRunRightDrawerTab)) {
+      if (!isDefined(activeWorkflowRunSidePanelTab)) {
         const defaultTabId = isOutputTabDisabled
           ? WorkflowRunTabId.NODE
           : WorkflowRunTabId.OUTPUT;
@@ -48,9 +48,9 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
 
       if (
         (isInputTabDisabled &&
-          activeWorkflowRunRightDrawerTab === WorkflowRunTabId.INPUT) ||
+          activeWorkflowRunSidePanelTab === WorkflowRunTabId.INPUT) ||
         (isOutputTabDisabled &&
-          activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
+          activeWorkflowRunSidePanelTab === WorkflowRunTabId.OUTPUT)
       ) {
         store.set(activeTabId, WorkflowRunTabId.NODE);
       }
@@ -59,6 +59,6 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
   );
 
   return {
-    setInitialWorkflowRunRightDrawerTab,
+    setInitialWorkflowRunSidePanelTab,
   };
 };

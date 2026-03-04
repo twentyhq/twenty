@@ -9,5 +9,5 @@ export const generateFieldWidgetInstanceId = ({
   fieldName: string;
   isInSidePanel: boolean;
 }): string => {
-  return `${widgetId}-field-widget-${recordId}-${fieldName}${isInSidePanel ? '-right-drawer' : ''}`;
+  return `${widgetId}-field-widget-${recordId}-${fieldName}${isInSidePanel ? '-side-panel' : ''}`;
 };

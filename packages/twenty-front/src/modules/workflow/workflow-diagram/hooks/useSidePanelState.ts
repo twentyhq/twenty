@@ -3,19 +3,19 @@ import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-export const useRightDrawerState = (): {
-  rightDrawerState: CommandMenuAnimationVariant;
+export const useSidePanelState = (): {
+  sidePanelState: CommandMenuAnimationVariant;
 } => {
   const isMobile = useIsMobile();
   const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   if (isMobile) {
     return {
-      rightDrawerState: 'fullScreen',
+      sidePanelState: 'fullScreen',
     };
   }
 
   return {
-    rightDrawerState: isCommandMenuOpened ? 'normal' : 'closed',
+    sidePanelState: isCommandMenuOpened ? 'normal' : 'closed',
   };
 };

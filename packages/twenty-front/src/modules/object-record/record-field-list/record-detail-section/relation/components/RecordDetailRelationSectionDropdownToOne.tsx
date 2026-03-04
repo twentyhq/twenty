@@ -5,7 +5,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
@@ -129,8 +129,8 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
+  const { createNewRecordAndOpenSidePanel } =
+    useAddNewRecordAndOpenSidePanel({
       fieldMetadataItem,
       objectMetadataItem,
       relationObjectMetadataNameSingular,
@@ -153,7 +153,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
   const handleCreateNew = (searchString?: string) => {
     closeDropdown(dropdownId);
 
-    createNewRecordAndOpenRightDrawer?.(searchString);
+    createNewRecordAndOpenSidePanel?.(searchString);
   };
 
   const shouldAllowCreateNew =

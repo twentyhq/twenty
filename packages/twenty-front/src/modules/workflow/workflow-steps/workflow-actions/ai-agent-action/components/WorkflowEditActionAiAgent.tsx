@@ -33,7 +33,7 @@ import {
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -272,7 +272,7 @@ export const WorkflowEditActionAiAgent = ({
   };
 
   return agentLoading ? (
-    <RightDrawerSkeletonLoader />
+    <SidePanelSkeletonLoader />
   ) : (
     <>
       <StyledTabList

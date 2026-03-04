@@ -38,7 +38,7 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
+const StyledSidePanelAnimatedPlaceholderEmptyContainer = styled(
   AnimatedPlaceholderEmptyContainer,
 )`
   height: auto;
@@ -60,7 +60,7 @@ export const TimelineCard = () => {
 
   if (isTimelineActivitiesEmpty) {
     const EmptyContainer = isInSidePanel
-      ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
+      ? StyledSidePanelAnimatedPlaceholderEmptyContainer
       : AnimatedPlaceholderEmptyContainer;
 
     return (

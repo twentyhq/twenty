@@ -5,7 +5,7 @@ import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-mu
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { styled } from '@linaria/react';
 
-const StyledRightDrawerRecord = styled.div`
+const StyledSidePanelRecord = styled.div`
   height: 100%;
 `;
 
@@ -23,11 +23,11 @@ export const CommandMenuUpdateMultipleRecords = () => {
   );
 
   return (
-    <StyledRightDrawerRecord>
+    <StyledSidePanelRecord>
       <UpdateMultipleRecordsContainer
         objectNameSingular={objectMetadataItem.nameSingular}
         contextStoreInstanceId={commandMenuPageInstanceId}
       />
-    </StyledRightDrawerRecord>
+    </StyledSidePanelRecord>
   );
 };

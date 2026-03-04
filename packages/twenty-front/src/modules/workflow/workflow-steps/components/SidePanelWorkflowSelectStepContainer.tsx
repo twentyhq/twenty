@@ -11,4 +11,4 @@ const StyledStepListContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[2]};
 `;
 
-export { StyledStepListContainer as RightDrawerStepListContainer };
+export { StyledStepListContainer as SidePanelStepListContainer };

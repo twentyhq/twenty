@@ -1,8 +1,8 @@
 import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
-import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
-import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
+import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
+import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
 import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
@@ -58,10 +58,10 @@ export const CommandMenuWorkflowSelectAction = ({
   };
 
   return (
-    <RightDrawerStepListContainer>
-      <RightDrawerWorkflowSelectStepTitle>
+    <SidePanelStepListContainer>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Data`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={RECORD_ACTIONS}
         onClick={handleActionClick}
@@ -69,9 +69,9 @@ export const CommandMenuWorkflowSelectAction = ({
 
       {isAiEnabled && (
         <>
-          <RightDrawerWorkflowSelectStepTitle>
+          <SidePanelWorkflowSelectStepTitle>
             {t`AI`}
-          </RightDrawerWorkflowSelectStepTitle>
+          </SidePanelWorkflowSelectStepTitle>
           <WorkflowActionMenuItems
             actions={AI_ACTIONS}
             onClick={handleActionClick}
@@ -79,25 +79,25 @@ export const CommandMenuWorkflowSelectAction = ({
         </>
       )}
 
-      <RightDrawerWorkflowSelectStepTitle>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Flow`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={FLOW_ACTIONS}
         onClick={handleActionClick}
       />
 
-      <RightDrawerWorkflowSelectStepTitle>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Core`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={coreActions}
         onClick={handleActionClick}
       />
 
-      <RightDrawerWorkflowSelectStepTitle>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Human Input`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={HUMAN_INPUT_ACTIONS}
         onClick={handleActionClick}
@@ -105,9 +105,9 @@ export const CommandMenuWorkflowSelectAction = ({
 
       {toolFunctions.length > 0 && (
         <>
-          <RightDrawerWorkflowSelectStepTitle>
+          <SidePanelWorkflowSelectStepTitle>
             {t`Applications`}
-          </RightDrawerWorkflowSelectStepTitle>
+          </SidePanelWorkflowSelectStepTitle>
           {toolFunctions.map((fn) => (
             <MenuItem
               key={fn.id}
@@ -127,6 +127,6 @@ export const CommandMenuWorkflowSelectAction = ({
           ))}
         </>
       )}
-    </RightDrawerStepListContainer>
+    </SidePanelStepListContainer>
   );
 };

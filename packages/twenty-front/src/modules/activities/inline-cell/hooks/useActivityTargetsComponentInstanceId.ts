@@ -6,6 +6,6 @@ export const useActivityTargetsComponentInstanceId = (
   const { isInSidePanel } = useIsInSidePanelOrThrow();
 
   return isInSidePanel
-    ? `${baseComponentInstanceId}-right-drawer`
+    ? `${baseComponentInstanceId}-side-panel`
     : baseComponentInstanceId;
 };

@@ -12,7 +12,7 @@ export const FieldsCard = ({ configuration }: FieldsCardProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-card-${targetRecord.id}${isInSidePanel ? '-right-drawer' : ''}`;
+  const instanceId = `fields-card-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>

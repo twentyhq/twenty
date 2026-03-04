@@ -14,7 +14,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-const StyledRightDrawerRecord = styled.div<{
+const StyledSidePanelRecord = styled.div<{
   hasDeletedRecordBanner: boolean;
 }>`
   height: ${({ hasDeletedRecordBanner }) => {
@@ -75,7 +75,7 @@ export const CommandMenuRecordPage = () => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: commandMenuPageInstanceId }}
         >
-          <StyledRightDrawerRecord hasDeletedRecordBanner={!!recordDeletedAt}>
+          <StyledSidePanelRecord hasDeletedRecordBanner={!!recordDeletedAt}>
             <TimelineActivityContext.Provider
               value={{
                 recordId: objectRecordId,
@@ -89,7 +89,7 @@ export const CommandMenuRecordPage = () => {
                 isInSidePanel
               />
             </TimelineActivityContext.Provider>
-          </StyledRightDrawerRecord>
+          </StyledSidePanelRecord>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>

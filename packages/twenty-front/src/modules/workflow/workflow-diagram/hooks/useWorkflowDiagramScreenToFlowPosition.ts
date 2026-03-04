@@ -13,14 +13,14 @@ export const useWorkflowDiagramScreenToFlowPosition = () => {
       return;
     }
 
-    const visibleRightDrawerWidth = Number(
+    const visibleSidePanelWidth = Number(
       THEME_COMMON.rightDrawerWidth.replace('px', ''),
     );
 
     const flowPosition = screenToFlowPosition(position);
 
     return {
-      x: flowPosition.x + visibleRightDrawerWidth / 2,
+      x: flowPosition.x + visibleSidePanelWidth / 2,
       y: flowPosition.y,
     };
   };

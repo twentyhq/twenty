@@ -5,7 +5,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRightDrawerContainer = styled.div`
+const StyledSidePanelContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -26,10 +26,10 @@ const StyledSkeletonLoader = () => {
   );
 };
 
-export const RightDrawerSkeletonLoader = () => {
+export const SidePanelSkeletonLoader = () => {
   return (
-    <StyledRightDrawerContainer>
+    <StyledSidePanelContainer>
       <StyledSkeletonLoader />
-    </StyledRightDrawerContainer>
+    </StyledSidePanelContainer>
   );
 };

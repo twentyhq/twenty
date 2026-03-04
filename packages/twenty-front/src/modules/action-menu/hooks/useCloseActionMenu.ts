@@ -1,7 +1,7 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -26,7 +26,7 @@ export const useCloseActionMenu = ({
   );
 
   const dropdownId = isInSidePanel
-    ? getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId)
+    ? getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId)
     : getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
   const closeActionMenu = () => {

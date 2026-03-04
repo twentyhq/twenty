@@ -4,7 +4,7 @@ import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/wor
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
+import { useSetInitialWorkflowRunSidePanelTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunSidePanelTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -21,8 +21,8 @@ import { useStore } from 'jotai';
 export const useWorkflowCommandMenu = () => {
   const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const { setInitialWorkflowRunRightDrawerTab } =
-    useSetInitialWorkflowRunRightDrawerTab();
+  const { setInitialWorkflowRunSidePanelTab } =
+    useSetInitialWorkflowRunSidePanelTab();
 
   const openWorkflowTriggerTypeInCommandMenu = useCallback(
     (workflowId: string) => {
@@ -235,12 +235,12 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
 
-      setInitialWorkflowRunRightDrawerTab({
+      setInitialWorkflowRunSidePanelTab({
         workflowSelectedNode,
         stepExecutionStatus,
       });
     },
-    [navigateCommandMenu, setInitialWorkflowRunRightDrawerTab, store],
+    [navigateCommandMenu, setInitialWorkflowRunSidePanelTab, store],
   );
 
   return {

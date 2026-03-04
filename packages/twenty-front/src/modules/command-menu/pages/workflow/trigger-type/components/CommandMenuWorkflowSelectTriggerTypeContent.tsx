@@ -8,8 +8,8 @@ import {
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
-import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
+import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
+import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
@@ -76,10 +76,10 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <RightDrawerStepListContainer>
-      <RightDrawerWorkflowSelectStepTitle>
+    <SidePanelStepListContainer>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Data`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
@@ -93,9 +93,9 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
         );
       })}
 
-      <RightDrawerWorkflowSelectStepTitle>
+      <SidePanelWorkflowSelectStepTitle>
         {t`Others`}
-      </RightDrawerWorkflowSelectStepTitle>
+      </SidePanelWorkflowSelectStepTitle>
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
@@ -108,6 +108,6 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
           />
         );
       })}
-    </RightDrawerStepListContainer>
+    </SidePanelStepListContainer>
   );
 };

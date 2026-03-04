@@ -3,7 +3,7 @@ import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuCont
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const RecordShowRightDrawerActionMenu = () => {
+export const RecordShowSidePanelActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );

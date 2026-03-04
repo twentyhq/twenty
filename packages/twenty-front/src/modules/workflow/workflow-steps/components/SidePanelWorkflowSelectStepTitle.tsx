@@ -11,4 +11,4 @@ const StyledSelectStepTitle = styled.span`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-export { StyledSelectStepTitle as RightDrawerWorkflowSelectStepTitle };
+export { StyledSelectStepTitle as SidePanelWorkflowSelectStepTitle };

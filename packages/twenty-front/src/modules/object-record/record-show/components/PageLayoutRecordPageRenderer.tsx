@@ -1,5 +1,5 @@
-import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
-import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
+import { RecordShowSidePanelActionMenu } from '@/action-menu/components/RecordShowSidePanelActionMenu';
+import { RecordShowSidePanelOpenRecordButton } from '@/action-menu/components/RecordShowSidePanelOpenRecordButton';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
@@ -103,8 +103,8 @@ export const PageLayoutRecordPageRenderer = ({
         {isInSidePanel && (
           <SidePanelFooter
             actions={[
-              <RecordShowRightDrawerActionMenu />,
-              <RecordShowRightDrawerOpenRecordButton
+              <RecordShowSidePanelActionMenu />,
+              <RecordShowSidePanelOpenRecordButton
                 objectNameSingular={
                   targetRecordIdentifier.targetObjectNameSingular
                 }

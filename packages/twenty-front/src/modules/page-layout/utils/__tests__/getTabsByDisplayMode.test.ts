@@ -429,7 +429,7 @@ describe('getTabsByDisplayMode', () => {
         isMobile: true,
         isInSidePanel: false,
       });
-      const resultOnlyRightDrawer = getTabsByDisplayMode({
+      const resultOnlySidePanel = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
@@ -437,7 +437,7 @@ describe('getTabsByDisplayMode', () => {
       });
 
       expect(resultBothTrue).toEqual(resultOnlyMobile);
-      expect(resultBothTrue).toEqual(resultOnlyRightDrawer);
+      expect(resultBothTrue).toEqual(resultOnlySidePanel);
       expect(resultBothTrue.tabsToRenderInTabList).toEqual(tabs);
       expect(resultBothTrue.pinnedLeftTab).toBeUndefined();
     });

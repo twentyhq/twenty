@@ -16,7 +16,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
@@ -136,8 +136,8 @@ export const RelationOneToManyFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
+  const { createNewRecordAndOpenSidePanel } =
+    useAddNewRecordAndOpenSidePanel({
       fieldMetadataItem,
       objectMetadataItem,
       relationObjectMetadataNameSingular:
@@ -268,7 +268,7 @@ export const RelationOneToManyFieldInput = () => {
       }
 
       const newRecordId =
-        await createNewRecordAndOpenRightDrawer?.(searchInput);
+        await createNewRecordAndOpenSidePanel?.(searchInput);
 
       if (isDefined(newRecordId)) {
         updatePickerState(newRecordId, relationObjectMetadataItem.id, [
@@ -277,7 +277,7 @@ export const RelationOneToManyFieldInput = () => {
       }
     },
     [
-      createNewRecordAndOpenRightDrawer,
+      createNewRecordAndOpenSidePanel,
       createTargetRecord,
       createJunctionRecord,
       fieldName,

@@ -66,7 +66,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-right-drawer' : ''}`;
+  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,

@@ -8,15 +8,15 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { getOperationName } from '@apollo/client/utilities';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-type useAddNewRecordAndOpenRightDrawerProps = {
+type useAddNewRecordAndOpenSidePanelProps = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataNameSingular: string;
@@ -25,14 +25,14 @@ type useAddNewRecordAndOpenRightDrawerProps = {
   recordId: string;
 };
 
-export const useAddNewRecordAndOpenRightDrawer = ({
+export const useAddNewRecordAndOpenSidePanel = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataNameSingular,
   relationObjectMetadataItem,
   relationFieldMetadataItem,
   recordId,
-}: useAddNewRecordAndOpenRightDrawerProps) => {
+}: useAddNewRecordAndOpenSidePanelProps) => {
   const setViewableRecordId = useSetAtomState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetAtomState(
     viewableRecordNameSingularState,
@@ -53,14 +53,14 @@ export const useAddNewRecordAndOpenRightDrawer = ({
     !isDefined(objectMetadataItem.nameSingular)
   ) {
     return {
-      createNewRecordAndOpenRightDrawer: undefined,
+      createNewRecordAndOpenSidePanel: undefined,
     };
   }
   const relationFieldMetadataItemRelationType =
     relationFieldMetadataItem.settings?.relationType;
 
   return {
-    createNewRecordAndOpenRightDrawer: async (searchInput?: string) => {
+    createNewRecordAndOpenSidePanel: async (searchInput?: string) => {
       const newRecordId = v4();
 
       const createRecordPayload = buildRecordLabelPayload({

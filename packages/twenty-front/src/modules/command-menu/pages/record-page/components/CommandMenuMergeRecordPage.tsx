@@ -7,7 +7,7 @@ import { MergeRecordsContainer } from '@/object-record/record-merge/components/M
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { styled } from '@linaria/react';
 
-const StyledRightDrawerRecord = styled.div`
+const StyledSidePanelRecord = styled.div`
   height: 100%;
 `;
 
@@ -36,11 +36,11 @@ export const CommandMenuMergeRecordPage = () => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: commandMenuPageInstanceId }}
         >
-          <StyledRightDrawerRecord>
+          <StyledSidePanelRecord>
             <MergeRecordsContainer
               objectNameSingular={objectMetadataItem.nameSingular}
             />
-          </StyledRightDrawerRecord>
+          </StyledSidePanelRecord>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>

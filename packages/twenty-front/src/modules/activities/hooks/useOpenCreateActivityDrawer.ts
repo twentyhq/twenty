@@ -1,7 +1,7 @@
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';

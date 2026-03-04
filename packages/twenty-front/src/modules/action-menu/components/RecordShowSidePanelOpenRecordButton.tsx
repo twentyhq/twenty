@@ -1,5 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
@@ -29,15 +29,15 @@ import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-type RecordShowRightDrawerOpenRecordButtonProps = {
+type RecordShowSidePanelOpenRecordButtonProps = {
   objectNameSingular: string;
   recordId: string;
 };
 
-export const RecordShowRightDrawerOpenRecordButton = ({
+export const RecordShowSidePanelOpenRecordButton = ({
   objectNameSingular,
   recordId,
-}: RecordShowRightDrawerOpenRecordButtonProps) => {
+}: RecordShowSidePanelOpenRecordButtonProps) => {
   const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId) as
     | ObjectRecord
     | null
@@ -110,7 +110,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     });
 
     closeDropdown(
-      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+      getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId),
     );
 
     closeCommandMenu();
