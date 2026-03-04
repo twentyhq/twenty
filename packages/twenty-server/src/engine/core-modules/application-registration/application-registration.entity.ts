@@ -45,7 +45,7 @@ export { AppRegistrationSourceType };
   },
 )
 @Index('IDX_APPLICATION_REGISTRATION_CREATED_BY_USER_ID', ['createdByUserId'])
-@Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['ownerWorkspaceId'])
 export class ApplicationRegistrationEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
