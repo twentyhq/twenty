@@ -72,11 +72,18 @@ export const isMatchingCurrencyFilter = ({
   value,
 }: {
   currencyFilter: CurrencyFilter;
-  value: {
-    amountMicros?: number | null;
-    currencyCode?: string | null;
-  };
+  value:
+    | {
+        amountMicros?: number | null;
+        currencyCode?: string | null;
+      }
+    | null
+    | undefined;
 }) => {
+  if (!isDefined(value)) {
+    return false;
+  }
+
   const shouldMatchCurrencyCodeFilter = isDefined(currencyFilter.currencyCode);
   const shouldMatchAmountMicrosFilter = isDefined(currencyFilter.amountMicros);
 
