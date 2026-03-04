@@ -1,0 +1,16 @@
+import { sidePanelWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/sidePanelWorkflowIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
+
+export const useSidePanelWorkflowIdOrThrow = () => {
+  const commandMenuWorkflowId = useAtomComponentStateValue(
+    sidePanelWorkflowIdComponentState,
+  );
+  if (!isDefined(commandMenuWorkflowId)) {
+    throw new Error(
+      'Expected sidePanelWorkflowIdComponentState to be defined',
+    );
+  }
+
+  return commandMenuWorkflowId;
+};

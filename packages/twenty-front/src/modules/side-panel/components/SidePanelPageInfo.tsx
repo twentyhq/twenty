@@ -1,0 +1,151 @@
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconColumnInsertRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
+
+import { SidePanelAskAIInfo } from '@/command-menu/components/SidePanelAskAIInfo';
+import { SidePanelFolderInfo } from '@/command-menu/components/SidePanelFolderInfo';
+import { SidePanelLinkInfo } from '@/command-menu/components/SidePanelLinkInfo';
+import { SidePanelMultipleRecordsInfo } from '@/command-menu/components/SidePanelMultipleRecordsInfo';
+import { SidePanelObjectViewRecordInfo } from '@/command-menu/components/SidePanelObjectViewRecordInfo';
+import { SidePanelPageInfoLayout } from '@/command-menu/components/SidePanelPageInfoLayout';
+import { SidePanelPageLayoutInfo } from '@/command-menu/components/SidePanelPageLayoutInfo';
+import { SidePanelRecordInfo } from '@/command-menu/components/SidePanelRecordInfo';
+import { SidePanelWorkflowStepInfo } from '@/command-menu/components/SidePanelWorkflowStepInfo';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SidePanelPages } from 'twenty-shared/types';
+
+import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
+
+const StyledPageTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
+type SidePanelPageInfoProps = {
+  pageChip: CommandMenuContextChipProps | undefined;
+};
+
+export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
+  const { theme } = useContext(ThemeContext);
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
+  );
+  const items = useWorkspaceSectionItems();
+
+  if (!isDefined(pageChip)) {
+    return null;
+  }
+
+  const isNavigationMenuItemEditPage =
+    pageChip.page?.page === SidePanelPages.NavigationMenuItemEdit;
+  const selectedNavItem = isNavigationMenuItemEditPage
+    ? items.find((item) => item.id === selectedNavigationMenuItemInEditMode)
+    : undefined;
+
+  if (isNavigationMenuItemEditPage && isDefined(selectedNavItem)) {
+    const itemType = selectedNavItem.itemType;
+
+    if (itemType === NavigationMenuItemType.FOLDER) {
+      return <SidePanelFolderInfo />;
+    }
+
+    if (itemType === NavigationMenuItemType.LINK) {
+      return <SidePanelLinkInfo />;
+    }
+
+    if (
+      itemType === NavigationMenuItemType.VIEW ||
+      itemType === NavigationMenuItemType.RECORD
+    ) {
+      return <SidePanelObjectViewRecordInfo />;
+    }
+  }
+
+  const isRecordPage = pageChip.page?.page === SidePanelPages.ViewRecord;
+
+  if (isRecordPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <SidePanelRecordInfo commandMenuPageInstanceId={pageChip.page.pageId} />
+    );
+  }
+
+  const isWorkflowStepPage = pageChip.page?.page
+    ? [
+        SidePanelPages.WorkflowStepEdit,
+        SidePanelPages.WorkflowStepView,
+        SidePanelPages.WorkflowRunStepView,
+      ].includes(pageChip.page?.page)
+    : false;
+
+  if (isWorkflowStepPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <SidePanelWorkflowStepInfo
+        key={pageChip.page.pageId}
+        commandMenuPageInstanceId={pageChip.page.pageId}
+      />
+    );
+  }
+
+  const isPageLayoutPage = pageChip.page?.page
+    ? [
+        SidePanelPages.PageLayoutWidgetTypeSelect,
+        SidePanelPages.PageLayoutGraphTypeSelect,
+        SidePanelPages.PageLayoutGraphFilter,
+        SidePanelPages.PageLayoutIframeSettings,
+        SidePanelPages.PageLayoutTabSettings,
+        SidePanelPages.PageLayoutFieldsSettings,
+        SidePanelPages.PageLayoutFieldsLayout,
+      ].includes(pageChip.page?.page)
+    : false;
+
+  if (isPageLayoutPage) {
+    return <SidePanelPageLayoutInfo />;
+  }
+
+  const isMultipleRecordsPage =
+    pageChip.page?.page === SidePanelPages.UpdateRecords;
+
+  if (isMultipleRecordsPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <SidePanelMultipleRecordsInfo
+        commandMenuPageInstanceId={pageChip.page.pageId}
+      />
+    );
+  }
+
+  const isAskAIPage = pageChip.page?.page === SidePanelPages.AskAI;
+
+  if (isAskAIPage) {
+    return <SidePanelAskAIInfo />;
+  }
+
+  if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {
+    return (
+      <SidePanelPageInfoLayout
+        icon={
+          <IconColumnInsertRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        }
+        title={<OverflowingTextWithTooltip text={pageChip.text ?? ''} />}
+      />
+    );
+  }
+
+  return (
+    <StyledPageTitle>
+      <OverflowingTextWithTooltip text={pageChip.text ?? ''} />
+    </StyledPageTitle>
+  );
+};

@@ -1,0 +1,140 @@
+import { useUpdateSidePanelPageInfo } from '@/command-menu/hooks/useUpdateSidePanelPageInfo';
+import { sidePanelNavigationStackState } from '@/command-menu/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/command-menu/states/sidePanelPageInfoState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { act } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
+
+const mockedPageInfo = {
+  title: 'Initial Title',
+  Icon: IconDotsVertical,
+  instanceId: 'test-instance',
+};
+
+const mockedNavigationStack = [
+  {
+    page: SidePanelPages.Root,
+    pageTitle: 'Initial Title',
+    pageIcon: IconDotsVertical,
+    pageId: 'test-page-id',
+  },
+];
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
+
+describe('useUpdateSidePanelPageInfo', () => {
+  beforeEach(() => {
+    jotaiStore.set(sidePanelNavigationStackState.atom, mockedNavigationStack);
+    jotaiStore.set(sidePanelPageInfoState.atom, mockedPageInfo);
+  });
+
+  const renderHooks = () => {
+    const { result } = renderHook(
+      () => {
+        const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
+
+        return {
+          updateSidePanelPageInfo,
+        };
+      },
+      { wrapper: Wrapper },
+    );
+
+    return {
+      result,
+    };
+  };
+
+  it('should update command menu page info with new title and icon', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.updateSidePanelPageInfo({
+        pageTitle: 'New Title',
+        pageIcon: IconArrowDown,
+      });
+    });
+
+    const commandMenuNavigationStack = jotaiStore.get(
+      sidePanelNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
+      {
+        page: SidePanelPages.Root,
+        pageTitle: 'New Title',
+        pageIcon: IconArrowDown,
+        pageId: 'test-page-id',
+      },
+    ]);
+
+    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
+      title: 'New Title',
+      Icon: IconArrowDown,
+      instanceId: 'test-instance',
+    });
+  });
+
+  it('should update command menu page info with new title', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.updateSidePanelPageInfo({
+        pageTitle: 'New Title',
+      });
+    });
+
+    const commandMenuNavigationStack = jotaiStore.get(
+      sidePanelNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
+      {
+        page: SidePanelPages.Root,
+        pageTitle: 'New Title',
+        pageIcon: IconDotsVertical,
+        pageId: 'test-page-id',
+      },
+    ]);
+
+    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
+      title: 'New Title',
+      Icon: IconDotsVertical,
+      instanceId: 'test-instance',
+    });
+  });
+
+  it('should update command menu page info with new icon', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.updateSidePanelPageInfo({
+        pageIcon: IconArrowDown,
+      });
+    });
+
+    const commandMenuNavigationStack = jotaiStore.get(
+      sidePanelNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
+      {
+        page: SidePanelPages.Root,
+        pageTitle: 'Initial Title',
+        pageIcon: IconArrowDown,
+        pageId: 'test-page-id',
+      },
+    ]);
+
+    const commandMenuPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
+      title: 'Initial Title',
+      Icon: IconArrowDown,
+      instanceId: 'test-instance',
+    });
+  });
+});
