@@ -6,7 +6,7 @@ exports[`View Sort deletion should fail when viewSortId does not exist 1`] = `
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View sort to delete not found",
+  "message": "View sort not found",
   "name": "NotFoundError",
 }
 `;
