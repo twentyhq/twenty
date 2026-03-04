@@ -40,12 +40,19 @@ export const useCreateNewAIChatThread = () => {
         variables: threadListVariables,
       });
       if (isDefined(existing) && isDefined(existing.chatThreads)) {
+        const newNode = {
+          __typename: 'AgentChatThread' as const,
+          ...newThread,
+          totalInputTokens: 0,
+          totalOutputTokens: 0,
+          contextWindowTokens: null,
+          conversationSize: 0,
+          totalInputCredits: 0,
+          totalOutputCredits: 0,
+        };
         const newEdge = {
           __typename: 'AgentChatThreadEdge' as const,
-          node: {
-            __typename: 'AgentChatThread' as const,
-            ...newThread,
-          },
+          node: newNode,
           cursor: newThread.id,
         };
         apolloClient.cache.writeQuery({
