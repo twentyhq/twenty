@@ -35,8 +35,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
