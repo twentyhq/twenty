@@ -104,16 +104,16 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      await this.applicationSyncService.synchronizeFromManifest({
+        workspaceId: params.workspaceId,
+        manifest: resolvedPackage.manifest,
+      });
+
       await this.updateApplicationSourceType(
         appRegistration.universalIdentifier,
         params.workspaceId,
         appRegistration.sourceType,
       );
-
-      await this.applicationSyncService.synchronizeFromManifest({
-        workspaceId: params.workspaceId,
-        manifest: resolvedPackage.manifest,
-      });
 
       await queryRunner.commitTransaction();
 

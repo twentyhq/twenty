@@ -5,7 +5,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, type Repository } from 'typeorm';
 
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -407,10 +406,7 @@ export class ApplicationService {
     data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,
   ): Promise<ApplicationEntity> {
-    const application = this.applicationRepository.create({
-      ...data,
-      sourceType: AppRegistrationSourceType.LOCAL,
-    });
+    const application = this.applicationRepository.create(data);
 
     if (queryRunner) {
       return queryRunner.manager.save(ApplicationEntity, application);
