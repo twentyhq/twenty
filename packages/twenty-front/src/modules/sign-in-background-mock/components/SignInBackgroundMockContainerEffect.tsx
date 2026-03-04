@@ -5,6 +5,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 
+import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
@@ -17,6 +18,13 @@ type SignInBackgroundMockContainerEffectProps = {
   recordTableId: string;
   viewId: string;
 };
+
+const MOCK_FIELD_DISPLAY_BY_NAME = new Map(
+  SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS.map((col) => [
+    (col.metadata as { fieldName?: string }).fieldName,
+    { size: col.size, position: col.position, isVisible: col.isVisible },
+  ]),
+);
 
 export const SignInBackgroundMockContainerEffect = ({
   objectNamePlural,
@@ -52,18 +60,24 @@ export const SignInBackgroundMockContainerEffect = ({
 
     setAvailableFieldDefinitions?.(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
-    const recordFields = SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS.filter(
-      (fieldDefinition) => fieldDefinition.fieldMetadataId !== '',
-    ).map(
-      (columnDefinitionMock) =>
-        ({
-          fieldMetadataItemId: columnDefinitionMock.fieldMetadataId,
-          id: columnDefinitionMock.fieldMetadataId,
-          isVisible: columnDefinitionMock.isVisible,
-          position: columnDefinitionMock.position,
-          size: columnDefinitionMock.size,
-        }) satisfies RecordField as RecordField,
-    );
+    const recordFields = objectMetadataItem.fields
+      .filter((field) =>
+        isActiveFieldMetadataItem({
+          objectNameSingular: objectMetadataItem.nameSingular,
+          fieldMetadata: field,
+        }),
+      )
+      .map((field, index) => {
+        const mockDisplay = MOCK_FIELD_DISPLAY_BY_NAME.get(field.name);
+
+        return {
+          fieldMetadataItemId: field.id,
+          id: field.id,
+          isVisible: mockDisplay?.isVisible ?? true,
+          position: mockDisplay?.position ?? index,
+          size: mockDisplay?.size ?? 100,
+        } satisfies RecordField as RecordField;
+      });
 
     setCurrentRecordFields(recordFields);
 
