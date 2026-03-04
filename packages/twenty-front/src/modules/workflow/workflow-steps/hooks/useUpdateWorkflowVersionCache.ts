@@ -41,6 +41,10 @@ export const useUpdateWorkflowVersionCache = () => {
       return;
     }
 
+    if (!isDefined(cachedRecord.steps) || !isDefined(cachedRecord.trigger)) {
+      return;
+    }
+
     const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
 
     const newCachedRecord = {
