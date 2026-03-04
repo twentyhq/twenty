@@ -745,25 +745,22 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ///
 
           // Views
-          // Child entities must be deleted before parent views to prevent
-          // DB CASCADE from removing them before the runner's optimistic
-          // cache processes those delete actions (causing lookup failures).
-          ...aggregatedOrchestratorActionsReport.viewFilter.delete,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewField.delete,
           ...aggregatedOrchestratorActionsReport.view.delete,
           ...aggregatedOrchestratorActionsReport.view.create,
           ...aggregatedOrchestratorActionsReport.view.update,
+          ...aggregatedOrchestratorActionsReport.viewField.delete,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewFieldGroup.create,
           ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
           ...aggregatedOrchestratorActionsReport.viewField.create,
           ...aggregatedOrchestratorActionsReport.viewField.update,
+          ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
           ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewFilter.delete,
           ...aggregatedOrchestratorActionsReport.viewFilter.create,
           ...aggregatedOrchestratorActionsReport.viewFilter.update,
+          ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
           ///
