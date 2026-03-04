@@ -57,19 +57,21 @@ app.get('/start-recording', async (req, res) => {
 });
 
 app.get('/recording/:recordingId', async (req, res) => {
-    const { recordingId } = req.params;
+    const parseResult = z.string().uuid().safeParse(req.params.recordingId);
 
     if (!RECALLAI_API_KEY) {
         return res.json({ status: 'error', message: 'RECALLAI_API_KEY is missing' });
     }
 
-    if (!z.string().uuid().safeParse(recordingId).success) {
+    if (!parseResult.success) {
         return res.status(400).json({ status: 'error', message: 'Invalid recording ID' });
     }
 
+    const validatedRecordingId = parseResult.data;
+
     try {
         const response = await axios.get(
-            `${RECALLAI_API_URL}/api/v1/recording/${recordingId}/`,
+            `${RECALLAI_API_URL}/api/v1/recording/${validatedRecordingId}/`,
             {
                 headers: { 'Authorization': `Token ${RECALLAI_API_KEY}` },
                 timeout: 10000,
