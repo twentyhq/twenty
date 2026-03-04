@@ -9,8 +9,7 @@ import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/m
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: ObjectMetadataItem;

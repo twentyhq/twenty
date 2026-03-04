@@ -1,27 +1,18 @@
+import { CommandMenuContextChipIconWrapper } from '@/command-menu/components/CommandMenuContextChipIconWrapper';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { styled } from '@linaria/react';
-import { useContext, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext, useMemo } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme';
-
-const StyledIconWrapper = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 export const useCommandMenuContextChips = () => {
   const commandMenuNavigationStack = useAtomStateValue(
@@ -122,7 +113,7 @@ export const useCommandMenuContextChips = () => {
           Icons: isLastChip
             ? [<page.pageIcon size={theme.icon.size.sm} />]
             : [
-                <StyledIconWrapper>
+                <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
                     size={theme.icon.size.sm}
                     color={
@@ -132,7 +123,7 @@ export const useCommandMenuContextChips = () => {
                         : theme.font.color.tertiary
                     }
                   />
-                </StyledIconWrapper>,
+                </CommandMenuContextChipIconWrapper>,
               ],
           text: page.pageTitle,
           onClick: isLastChip

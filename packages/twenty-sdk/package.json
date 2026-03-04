@@ -97,6 +97,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.3.8",
     "@prettier/sync": "^0.5.2",
     "@storybook/addon-vitest": "^10.2.13",

@@ -4,33 +4,33 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { withTheme, type Theme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
   background: inherit;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   overflow: hidden;
   height: 24px;
-  padding: ${({ theme }) => theme.spacing(0, 1.25)};
+  padding: ${themeCssVariables.spacing[0]} 5px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   :hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
-const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`);
+const StyledEmptyText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
 
 export const RecordTitleCellSingleTextDisplayMode = ({
   containerType,

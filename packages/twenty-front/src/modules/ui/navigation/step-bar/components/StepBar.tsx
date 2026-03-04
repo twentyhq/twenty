@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { Step, type StepProps } from './Step';
 
 const StyledContainer = styled.div`

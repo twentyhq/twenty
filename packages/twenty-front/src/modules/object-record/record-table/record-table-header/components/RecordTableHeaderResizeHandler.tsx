@@ -3,7 +3,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledResizeHandler = styled.div<{
@@ -13,26 +14,23 @@ const StyledResizeHandler = styled.div<{
   bottom: 0;
   cursor: col-resize;
   position: absolute;
-  ${({ position }) => (position === 'left' ? 'left: -1px;' : 'right: -1px;')}
+  left: ${({ position }) => (position === 'left' ? '-1px' : 'auto')};
+  right: ${({ position }) => (position === 'right' ? '-1px' : 'auto')};
   top: 0;
   width: 10px;
   z-index: 1;
 
-  ${({ isResizing, theme, position }) => {
-    if (isResizing === true) {
-      return `&:after {
-        background-color: ${theme.color.blue};
-        bottom: 0;
-        content: '';
-        display: block;
-        position: absolute;
-        ${position === 'left' ? 'left: -1px;' : 'right: -1px;'}
-
-        top: 0;
-        width: 2px;
-      }`;
-    }
-  }};
+  &:after {
+    background-color: ${themeCssVariables.color.blue};
+    bottom: 0;
+    content: '';
+    display: ${({ isResizing }) => (isResizing ? 'block' : 'none')};
+    left: ${({ position }) => (position === 'left' ? '-1px' : 'auto')};
+    position: absolute;
+    right: ${({ position }) => (position === 'right' ? '-1px' : 'auto')};
+    top: 0;
+    width: 2px;
+  }
 `;
 
 export const RecordTableHeaderResizeHandler = ({
