@@ -70,14 +70,9 @@ export const useAgentChatData = () => {
     onCompleted: (data) => {
       if (data.chatThreads.length > 0) {
         const firstThread = data.chatThreads[0];
-        const previousDraftKey = AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
         const newDraft =
           store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
-        setAgentChatDraftsByThreadId((prev) => ({
-          ...prev,
-          [previousDraftKey]: agentChatInput,
-        }));
         setCurrentAIChatThread(firstThread.id);
         setAgentChatInput(newDraft);
         setCurrentAIChatThreadTitle(firstThread.title ?? null);
