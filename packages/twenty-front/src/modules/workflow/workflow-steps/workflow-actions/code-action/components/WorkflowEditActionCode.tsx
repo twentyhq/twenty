@@ -391,6 +391,7 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowCodeEditor
+                componentInstanceId={`workflow-code-editor-${action.id}`}
                 value={formValues.sourceHandlerCode}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
