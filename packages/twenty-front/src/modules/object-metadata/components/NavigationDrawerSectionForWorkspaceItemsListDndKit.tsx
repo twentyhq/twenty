@@ -9,6 +9,7 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 import { WorkspaceOrphanDropTarget } from '@/object-metadata/components/WorkspaceOrphanDropTarget';
@@ -18,7 +19,7 @@ import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/componen
 const StyledList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  gap: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 const StyledListItemRow = styled.div`

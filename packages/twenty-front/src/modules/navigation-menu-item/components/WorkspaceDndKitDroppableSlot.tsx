@@ -1,16 +1,14 @@
 import { useDroppable } from '@dnd-kit/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
 
 const StyledSlotWrapper = styled.div<{ $empty: boolean }>`
   min-height: 0;
-  ${({ theme, $empty }) =>
-    $empty &&
-    `
-    min-height: ${theme.spacing(2)};
-  `}
+  ${({ $empty }) =>
+    $empty ? `min-height: ${themeCssVariables.spacing[2]};` : ''}
 `;
 
 const SLOT_COLLISION_PRIORITY = 1;

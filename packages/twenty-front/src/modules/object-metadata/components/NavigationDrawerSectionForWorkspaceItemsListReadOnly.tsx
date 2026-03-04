@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import type { FlatWorkspaceItem } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
@@ -8,7 +9,7 @@ import { WorkspaceSectionItemContent } from '@/object-metadata/components/Naviga
 const StyledList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  gap: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 type NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps = Pick<

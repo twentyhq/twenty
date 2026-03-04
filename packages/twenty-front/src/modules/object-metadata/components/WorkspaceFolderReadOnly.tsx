@@ -1,9 +1,10 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -12,11 +13,10 @@ import { useWorkspaceFolderOpenState } from '@/navigation-menu-item/hooks/useWor
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledFolderContainer = styled.div`
   border: 1px solid transparent;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
 `;
 
 const StyledFolderContent = styled.div`
@@ -47,7 +47,6 @@ export const WorkspaceFolderReadOnly = ({
   navigationMenuItems,
   isGroup,
 }: WorkspaceFolderReadOnlyProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const isMobile = useIsMobile();
@@ -74,15 +73,15 @@ export const WorkspaceFolderReadOnly = ({
           rightOptions={
             isOpen ? (
               <IconChevronDown
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={theme.font.color.tertiary}
+                size={themeCssVariables.icon.size.sm}
+                stroke={themeCssVariables.icon.stroke.sm}
+                color={themeCssVariables.font.color.tertiary}
               />
             ) : (
               <IconChevronRight
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={theme.font.color.tertiary}
+                size={themeCssVariables.icon.size.sm}
+                stroke={themeCssVariables.icon.stroke.sm}
+                color={themeCssVariables.font.color.tertiary}
               />
             )
           }
