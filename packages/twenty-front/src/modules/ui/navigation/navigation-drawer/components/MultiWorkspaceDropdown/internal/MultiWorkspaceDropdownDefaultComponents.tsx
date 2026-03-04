@@ -60,7 +60,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
   const isSupportChatConfigured =
