@@ -69,8 +69,12 @@ export const fetchMetadataFields = (
 
       const fieldsPart = selector?.fields
         ? `
-        fields: fieldsList {
-          ${fieldsSelection}
+        fields(paging: { first: 1000 }) {
+          edges {
+            node {
+              ${fieldsSelection}
+            }
+          }
         }
       `
         : '';
