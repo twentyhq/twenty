@@ -1,6 +1,11 @@
-import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalId';
+import { ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalResultBrowserEventName';
+import { ACTION_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/action-menu/confirmation-modal/constants/ActionMenuConfirmationModalId';
 import { actionMenuConfirmationModalConfigState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
-import { dispatchActionMenuConfirmationModalResultBrowserEvent } from '@/action-menu/confirmation-modal/utils/dispatchActionMenuConfirmationModalResultBrowserEvent';
+import {
+  type ActionMenuConfirmationModalResult,
+  type ActionMenuConfirmationModalResultBrowserEventDetail,
+} from '@/action-menu/confirmation-modal/types/ActionMenuConfirmationModalResultBrowserEventDetail';
+import { resolvePendingActionMenuConfirmationModalResult } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -13,7 +18,7 @@ export const ActionMenuConfirmationModalManager = () => {
   );
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    ACTION_MENU_CONFIRMATION_MODAL_ID,
+    ACTION_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
   );
   const setActionMenuConfirmationModalConfig = useSetAtomState(
     actionMenuConfirmationModalConfigState,
@@ -23,34 +28,31 @@ export const ActionMenuConfirmationModalManager = () => {
     actionMenuConfirmationModalConfig?.frontComponentId ??
     actionMenuConfirmationModalConfig?.legacyCommandActionMenuId;
 
-  const clearActionMenuConfirmationModal = () => {
+  const emitConfirmationResult = (
+    confirmationResult: ActionMenuConfirmationModalResult,
+  ) => {
+    if (!callerId) {
+      return;
+    }
+
+    resolvePendingActionMenuConfirmationModalResult({
+      callerId,
+      confirmationResult,
+    });
+
+    window.dispatchEvent(
+      new CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>(
+        ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+        {
+          detail: {
+            frontComponentId: callerId,
+            confirmationResult,
+          },
+        },
+      ),
+    );
+
     setActionMenuConfirmationModalConfig(null);
-  };
-
-  const handleConfirmClick = () => {
-    if (!callerId) {
-      return;
-    }
-
-    dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: callerId,
-      result: 'confirm',
-    });
-
-    clearActionMenuConfirmationModal();
-  };
-
-  const handleClose = () => {
-    if (!callerId) {
-      return;
-    }
-
-    dispatchActionMenuConfirmationModalResultBrowserEvent({
-      frontComponentId: callerId,
-      result: 'cancel',
-    });
-
-    clearActionMenuConfirmationModal();
   };
 
   if (!actionMenuConfirmationModalConfig || !isModalOpened) {
@@ -59,11 +61,11 @@ export const ActionMenuConfirmationModalManager = () => {
 
   return (
     <ConfirmationModal
-      modalId={ACTION_MENU_CONFIRMATION_MODAL_ID}
+      modalInstanceId={ACTION_MENU_CONFIRMATION_MODAL_INSTANCE_ID}
       title={actionMenuConfirmationModalConfig.title}
       subtitle={actionMenuConfirmationModalConfig.subtitle}
-      onConfirmClick={handleConfirmClick}
-      onClose={handleClose}
+      onConfirmClick={() => emitConfirmationResult('confirm')}
+      onClose={() => emitConfirmationResult('cancel')}
       confirmButtonText={actionMenuConfirmationModalConfig.confirmButtonText}
       confirmButtonAccent={
         actionMenuConfirmationModalConfig.confirmButtonAccent

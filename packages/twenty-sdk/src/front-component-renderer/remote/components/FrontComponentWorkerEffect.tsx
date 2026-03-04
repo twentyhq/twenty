@@ -12,7 +12,7 @@ const ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
 
 type ActionMenuConfirmationModalResultBrowserEventDetail = {
   frontComponentId: string;
-  result: ActionConfirmationModalResult;
+  confirmationResult: ActionConfirmationModalResult;
 };
 
 type FrontComponentWorkerEffectProps = {
@@ -81,7 +81,7 @@ export const FrontComponentWorkerEffect = ({
 
       thread.imports
         .onConfirmationModalResult(
-          actionMenuConfirmationModalResultBrowserEventDetail.result,
+          actionMenuConfirmationModalResultBrowserEventDetail.confirmationResult,
         )
         .catch((error: Error) => {
           setError(error);
