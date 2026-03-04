@@ -78,12 +78,18 @@ export class WorkflowCleanWorkflowRunsJob {
           DELETE FROM ${schemaName}."workflowRun"
           WHERE id IN (
             SELECT id FROM ${schemaName}."workflowRun"
-            WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
-              AND "createdAt" < NOW() - INTERVAL '${RUNS_TO_CLEAN_THRESHOLD_DAYS} days'
-            LIMIT ${batchSize}
+            WHERE status IN ($1, $2)
+              AND "createdAt" < NOW() - MAKE_INTERVAL(days => $3)
+            LIMIT $4
           )
           RETURNING id;
         `,
+        [
+          WorkflowRunStatus.COMPLETED,
+          WorkflowRunStatus.FAILED,
+          RUNS_TO_CLEAN_THRESHOLD_DAYS,
+          batchSize,
+        ],
       );
 
       // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]
@@ -114,17 +120,23 @@ export class WorkflowCleanWorkflowRunsJob {
                       ORDER BY "createdAt" DESC
                    ) AS rn
             FROM ${schemaName}."workflowRun"
-            WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
+            WHERE status IN ($1, $2)
           ),
           runs_to_delete AS (
             SELECT id FROM ranked_runs
-            WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
-            LIMIT ${batchSize}
+            WHERE rn > $3
+            LIMIT $4
           )
           DELETE FROM ${schemaName}."workflowRun"
           WHERE id IN (SELECT id FROM runs_to_delete)
           RETURNING id;
         `,
+        [
+          WorkflowRunStatus.COMPLETED,
+          WorkflowRunStatus.FAILED,
+          NUMBER_OF_WORKFLOW_RUNS_TO_KEEP,
+          batchSize,
+        ],
       );
 
       // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]

@@ -23,7 +23,7 @@ import {
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
-const WORKSPACE_BATCH_SIZE = 50;
+const WORKSPACE_BATCH_SIZE = 10;
 
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueCronJob {
