@@ -40,7 +40,6 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
@@ -50,6 +49,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
