@@ -76,7 +76,10 @@ export class AgentChatStreamingService {
       threadId: thread.id,
       uiMessage: {
         role: AgentMessageRole.USER,
-        parts: lastUserMessage?.parts ?? [],
+        parts:
+          lastUserMessage?.parts.filter(
+            (part) => part.type === 'text' || part.type === 'file',
+          ) ?? [],
       },
     });
 

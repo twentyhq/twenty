@@ -4,6 +4,6 @@ export const getAttachmentUrl = ({
   attachment,
 }: {
   attachment: AttachmentWithFile;
-}): string | undefined => {
-  return attachment.file[0]?.url;
+}): string => {
+  return attachment.file[0].url;
 };

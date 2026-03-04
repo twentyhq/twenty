@@ -98,7 +98,7 @@ export const AttachmentRow = ({
     attachment.file[0].extension,
   );
 
-  const fileUrl = attachment.file[0].url ?? '';
+  const fileUrl = attachment.file[0].url;
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,

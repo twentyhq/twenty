@@ -88,7 +88,10 @@ export class AgentMessagePartEntity {
   @Column({ type: 'uuid', nullable: true })
   fileId: string | null;
 
-  @ManyToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => FileEntity, {
+    onDelete: 'RESTRICT',
+    nullable: true,
+  })
   @JoinColumn({ name: 'fileId' })
   file: Relation<FileEntity> | null;
 

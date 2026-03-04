@@ -5,7 +5,7 @@ import { IconMapping } from '@/file/utils/fileIconMappings';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
@@ -16,7 +16,8 @@ import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'inherit')};
+  cursor: ${({ clickable }: { clickable: boolean }) =>
+    clickable ? 'pointer' : 'inherit'};
   display: inline-flex;
   min-width: 0;
 `;
@@ -81,19 +82,10 @@ export const AgentChatFilePreview = ({
   const hasRightDivider = isDefined(onRemove);
   const isClickable = isDefined(fileUrl) && isDefined(fileId);
 
-  const handleMouseDown = (event: React.MouseEvent): void => {
-    if (!isClickable) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    handleClick();
-  };
-
   return (
     <StyledClickableContainer
       clickable={isClickable}
-      onMouseDown={handleMouseDown}
+      onClick={isClickable ? handleClick : undefined}
     >
       <Chip
         label={fileName}

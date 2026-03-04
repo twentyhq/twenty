@@ -18,9 +18,11 @@ import {
   type AttachmentWithFile,
   filterAttachmentsWithFile,
 } from '@/activities/files/utils/filterAttachmentsWithFile';
+import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -139,10 +141,6 @@ export const AttachmentList = ({
 
   const attachmentsWithFile = filterAttachmentsWithFile(attachments);
 
-  const getAttachmentUrl = (attachment: AttachmentWithFile): string => {
-    return attachment.file[0].url ?? '';
-  };
-
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
   };
@@ -165,11 +163,9 @@ export const AttachmentList = ({
   };
 
   const handleDownload = () => {
-    if (!previewedAttachment) return;
-    downloadFile(
-      getAttachmentUrl(previewedAttachment),
-      previewedAttachment.name,
-    );
+    if (!isDefined(previewedAttachment)) return;
+    const attachmentUrl = getAttachmentUrl({ attachment: previewedAttachment });
+    downloadFile(attachmentUrl, previewedAttachment.name);
   };
 
   return (
@@ -252,7 +248,9 @@ export const AttachmentList = ({
                 >
                   <DocumentViewer
                     documentName={previewedAttachment.name}
-                    documentUrl={getAttachmentUrl(previewedAttachment)}
+                    documentUrl={getAttachmentUrl({
+                      attachment: previewedAttachment,
+                    })}
                   />
                 </Suspense>
               </ModalContent>
