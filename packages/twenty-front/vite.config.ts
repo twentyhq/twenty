@@ -15,6 +15,8 @@ import {
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
@@ -107,9 +109,9 @@ export default defineConfig(({ command, mode }) => {
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
       checker(checkers),
-      {
-        ...wyw({
-          include: ['**/*.{ts,tsx}'],
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
             '**/testing/mock-data/generated/**',
@@ -135,8 +137,7 @@ export default defineConfig(({ command, mode }) => {
             plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
         }),
-        enforce: 'pre',
-      },
+      ),
       visualizer({
         open: true,
         gzipSize: true,

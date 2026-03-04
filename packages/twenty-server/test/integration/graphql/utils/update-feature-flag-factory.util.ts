@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
-
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 export const updateFeatureFlagFactory = (
   workspaceId: string,

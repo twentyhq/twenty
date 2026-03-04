@@ -1,5 +1,5 @@
 import { type Company } from '@/companies/types/Company';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';

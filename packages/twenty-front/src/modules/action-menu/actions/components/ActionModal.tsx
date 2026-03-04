@@ -65,7 +65,7 @@ export const ActionModal = ({
       <ActionDisplay onClick={handleClick} />
       {isModalOpened && (
         <ConfirmationModal
-          modalId={modalId}
+          modalInstanceId={modalId}
           title={title}
           subtitle={subtitle}
           onConfirmClick={handleConfirmClick}

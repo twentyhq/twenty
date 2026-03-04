@@ -8,7 +8,7 @@ import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ActionViewType } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
 import {
   IconPlayerStop,

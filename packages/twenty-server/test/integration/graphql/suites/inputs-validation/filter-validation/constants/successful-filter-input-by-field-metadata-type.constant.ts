@@ -40,18 +40,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.manyToOneRelationFieldId === TEST_TARGET_OBJECT_RECORD_ID;
       },
     },
-    // TODO - fix this, should be returning or not be allowed
-    // {
-    //   gqlFilterInput: {
-    //     manyToOneRelationFieldId: {
-    //       eq: null,
-    //     },
-    //   },
-    //   restFilterInput: 'manyToOneRelationFieldId[eq]=null',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.manyToOneRelationField === null;
-    //   },
-    // },
     {
       gqlFilterInput: {
         manyToOneRelationFieldId: {
@@ -133,7 +121,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: {
         manyToOneRelationFieldId: { is: 'NOT_NULL' },
       },
-      restFilterInput: 'manyToOneRelationFieldId[is]:"NOT_NULL"',
+      restFilterInput: 'manyToOneRelationFieldId[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.manyToOneRelationFieldId);
       },
@@ -176,7 +164,6 @@ export const successfulFilterInputByFieldMetadataType: {
       },
       restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[gt]:"00000000-0000-4000-8000-000000000000"`,
       validateFilter: (record: Record<string, any>) => {
-        // Morph relation join column is a UUID stored as string
         return (
           record[joinColumnNameForManyToOneMorphRelationField1] >
           '00000000-0000-4000-8000-000000000000'
@@ -252,7 +239,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: {
         [joinColumnNameForManyToOneMorphRelationField1]: { is: 'NOT_NULL' },
       },
-      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[is]:"NOT_NULL"`,
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[is]:NOT_NULL`,
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record[joinColumnNameForManyToOneMorphRelationField1]);
       },
@@ -277,14 +264,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.uuidField === TEST_UUID_FIELD_VALUE;
       },
     },
-    // TODO - fix this, should be returning or not be allowed
-    // {
-    //   gqlFilterInput: { uuidField: { eq: null } },
-    //   restFilterInput: 'uuidField[eq]=null',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.uuidField === null;
-    //   },
-    // },
     {
       gqlFilterInput: {
         uuidField: { gt: '00000000-0000-4000-8000-000000000000' },
@@ -339,7 +318,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { uuidField: { is: 'NOT_NULL' } },
-      restFilterInput: 'uuidField[is]:"NOT_NULL"',
+      restFilterInput: 'uuidField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.uuidField);
       },
@@ -360,14 +339,13 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.textField === 'test';
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { textField: { eq: null } },
-    //   restFilterInput: 'textField[eq]:"null"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.textField === '';
-    //   },
-    // },
+    {
+      gqlFilterInput: { textField: { eq: null } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return record.textField === '';
+      },
+    },
     {
       gqlFilterInput: { textField: { gt: 'tess' } },
       restFilterInput: 'textField[gt]:"tess"',
@@ -403,29 +381,27 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.textField === 'test';
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { textField: { is: 'NULL' } },
-    //   restFilterInput: 'textField[is]:"NULL"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.textField === '';
-    //   },
-    // },
+    {
+      gqlFilterInput: { textField: { is: 'NULL' } },
+      restFilterInput: 'textField[is]:NULL',
+      validateFilter: (record: Record<string, any>) => {
+        return record.textField === '';
+      },
+    },
     {
       gqlFilterInput: { textField: { is: 'NOT_NULL' } },
-      restFilterInput: 'textField[is]:"NOT_NULL"',
+      restFilterInput: 'textField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.textField);
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { textField: { startsWith: 'tes' } },
-    //   restFilterInput: 'textField[startsWith]:"tes"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.textField.startsWith('tes');
-    //   },
-    // },
+    {
+      gqlFilterInput: { textField: { startsWith: 'tes' } },
+      restFilterInput: 'textField[startsWith]:"tes"',
+      validateFilter: (record: Record<string, any>) => {
+        return record.textField.startsWith('tes');
+      },
+    },
     {
       gqlFilterInput: { textField: { like: '%es%' } },
       restFilterInput: 'textField[like]:"%es%"',
@@ -440,21 +416,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.textField.toLowerCase().includes('es');
       },
     },
-    //TODO - regex, iregex not working ? to remove from gql schema ?
-    // {
-    //   gqlFilterInput: { textField: { regex: '^test$' } },
-    //   restFilterInput: 'textField[regex]:"^test$"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.textField.includes('test');
-    //   },
-    // },
-    // {
-    //   gqlFilterInput: { textField: { iregex: '^test$' } },
-    //   restFilterInput: 'textField[iregex]:"^test$"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.textField.toLowerCase().includes('test');
-    //   },
-    // },
   ],
   [FieldMetadataType.PHONES]: [
     {
@@ -470,7 +431,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: {
         phonesField: { primaryPhoneCallingCode: { is: 'NOT_NULL' } },
       },
-      restFilterInput: 'phonesField.primaryPhoneCallingCode[is]:"NOT_NULL"',
+      restFilterInput: 'phonesField.primaryPhoneCallingCode[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return record.phonesField.primaryPhoneCallingCode !== null;
       },
@@ -483,7 +444,7 @@ export const successfulFilterInputByFieldMetadataType: {
           },
         },
       },
-      restFilterInput: 'phonesField.additionalPhones[is]:"NOT_NULL"',
+      restFilterInput: 'phonesField.additionalPhones[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return record.phonesField.additionalPhones !== null;
       },
@@ -497,17 +458,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.phonesField.primaryPhoneCountryCode.includes('FR');
       },
     },
-    // TODO - should be allowed ? two conditions simultaneously
-    // {
-    //   gqlFilterInput: {
-    //     phonesField: {
-    //       primaryPhoneCountryCode: { is: 'NULL' },
-    //       primaryPhoneCallingCode: { is: 'NULL' },
-    //     },
-    //   },
-    //   restFilterInput:
-    //     'phonesField[primaryPhoneCountryCode][is]=NULL&phonesField[primaryPhoneCallingCode][is]=NULL',
-    // },
   ],
   [FieldMetadataType.EMAILS]: [
     {
@@ -523,21 +473,23 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: {
         emailsField: { additionalEmails: { is: 'NOT_NULL' } },
       },
-      restFilterInput: 'emailsField.additionalEmails[is]:"NOT_NULL"',
+      restFilterInput: 'emailsField.additionalEmails[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return record.emailsField.additionalEmails !== null;
       },
     },
   ],
   [FieldMetadataType.DATE_TIME]: [
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateTimeField: { eq: '2025-01-01T00:00:00Z' } },
-    //   restFilterInput: 'dateTimeField[eq]=2025-01-01T00:00:00Z',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateTimeField === '2025-01-01T00:00:00Z';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateTimeField: { eq: '2025-01-01T00:00:00Z' } },
+      restFilterInput: 'dateTimeField[eq]:"2025-01-01T00:00:00Z"',
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          new Date(record.dateTimeField).getTime() ===
+          new Date('2025-01-01T00:00:00Z').getTime()
+        );
+      },
+    },
     {
       gqlFilterInput: { dateTimeField: { gt: '2005-01-01T00:00:00Z' } },
       restFilterInput: 'dateTimeField[gt]:"2005-01-01T00:00:00Z"',
@@ -552,14 +504,16 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.dateTimeField >= '2005-01-01T00:00:00Z';
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateTimeField: { in: ['2025-01-01T00:00:00Z'] } },
-    //   restFilterInput: 'dateTimeField[in]=2025-01-01T00:00:00Z',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateTimeField === '2025-01-01T00:00:00Z';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateTimeField: { in: ['2025-01-01T00:00:00Z'] } },
+      restFilterInput: 'dateTimeField[in]:["2025-01-01T00:00:00Z"]',
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          new Date(record.dateTimeField).getTime() ===
+          new Date('2025-01-01T00:00:00Z').getTime()
+        );
+      },
+    },
     {
       gqlFilterInput: { dateTimeField: { lt: '2125-01-01T00:00:00Z' } },
       restFilterInput: 'dateTimeField[lt]:"2125-01-01T00:00:00Z"',
@@ -583,45 +537,27 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { dateTimeField: { is: 'NOT_NULL' } },
-      restFilterInput: 'dateTimeField[is]:"NOT_NULL"',
+      restFilterInput: 'dateTimeField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.dateTimeField);
       },
     },
-    // {
-    //   gqlFilterInput: { dateTimeField: { is: 'NULL' } },
-    //   // TODO - fix this ? not working
-    //   // restFilterInput: 'dateTimeField[is]:"NULL"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateTimeField === null;
-    //   },
-    // },
-    // TODO - fix this, should be returning or not be allowed
-    // {
-    //   gqlFilterInput: { dateTimeField: { eq: null } },
-    //   restFilterInput: 'dateTimeField[eq]=null',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateTimeField === null;
-    //   },
-    // },
-    // TODO - why float are allowed ?
-    // {
-    //   gqlFilterInput: { dateTimeField: { eq: 2 } },
-    //   restFilterInput: 'dateTimeField[eq]=2',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateTimeField === 2;
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateTimeField: { is: 'NULL' } },
+      restFilterInput: 'dateTimeField[is]:NULL',
+      validateFilter: (record: Record<string, any>) => {
+        return record.dateTimeField === null;
+      },
+    },
   ],
   [FieldMetadataType.DATE]: [
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateField: { eq: '2025-01-01' } },
-    //   restFilterInput: 'dateField[eq]=2025-01-01',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === '2025-01-01';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateField: { eq: '2025-01-01' } },
+      restFilterInput: 'dateField[eq]:"2025-01-01"',
+      validateFilter: (record: Record<string, any>) => {
+        return record.dateField === '2025-01-01';
+      },
+    },
     {
       gqlFilterInput: { dateField: { neq: '2005-01-01' } },
       restFilterInput: 'dateField[neq]:"2005-01-01"',
@@ -643,14 +579,13 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.dateField >= '2005-01-01';
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateField: { in: ['2025-01-01'] } },
-    //   restFilterInput: 'dateField[in]=2025-01-01',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === '2025-01-01';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateField: { in: ['2025-01-01'] } },
+      restFilterInput: 'dateField[in]:["2025-01-01"]',
+      validateFilter: (record: Record<string, any>) => {
+        return record.dateField === '2025-01-01';
+      },
+    },
     {
       gqlFilterInput: { dateField: { lt: '2125-01-01' } },
       restFilterInput: 'dateField[lt]:"2125-01-01"',
@@ -667,7 +602,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { dateField: { is: 'NOT_NULL' } },
-      restFilterInput: 'dateField[is]:"NOT_NULL"',
+      restFilterInput: 'dateField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.dateField);
       },
@@ -679,32 +614,15 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.dateField === null;
       },
     },
-    // TODO - fix this, should be returning or not be allowed
-    // {
-    //   gqlFilterInput: { dateField: { eq: null } },
-    //   restFilterInput: 'dateField[eq]=null',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === null;
-    //   },
-    // },
-    // TODO - why float are allowed ?
-    // {
-    //   gqlFilterInput: { dateField: { eq: 2 } },
-    //   restFilterInput: 'dateField[eq]=2',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === 2;
-    //   },
-    // },
   ],
   [FieldMetadataType.BOOLEAN]: [
-    // {
-    //   gqlFilterInput: { booleanField: { eq: true } },
-    //   // TODO - fix this ? not working
-    //   // restFilterInput: 'booleanField[eq]:"true"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.booleanField === true;
-    //   },
-    // },
+    {
+      gqlFilterInput: { booleanField: { eq: true } },
+      restFilterInput: 'booleanField[eq]:"true"',
+      validateFilter: (record: Record<string, any>) => {
+        return record.booleanField === true;
+      },
+    },
     {
       gqlFilterInput: { booleanField: { is: 'NULL' } },
       restFilterInput: 'booleanField[is]:NULL',
@@ -714,7 +632,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { booleanField: { is: 'NOT_NULL' } },
-      restFilterInput: 'booleanField[is]:"NOT_NULL"',
+      restFilterInput: 'booleanField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.booleanField);
       },
@@ -772,7 +690,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { numberField: { is: 'NOT_NULL' } },
-      restFilterInput: 'numberField[is]:"NOT_NULL"',
+      restFilterInput: 'numberField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.numberField);
       },
@@ -877,16 +795,11 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { ratingField: { is: 'NOT_NULL' } },
-      restFilterInput: 'ratingField[is]:"NOT_NULL"',
+      restFilterInput: 'ratingField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.ratingField);
       },
     },
-    // TODO - fix this, should be ok
-    // {
-    //   gqlFilterInput: { ratingField: { isEmptyArray: true } },
-    //   restFilterInput: 'ratingField[isEmptyArray]=true',
-    // },
   ],
   [FieldMetadataType.SELECT]: [
     {
@@ -936,14 +849,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return isDefined(record.multiSelectField);
       },
     },
-    //TODO - null and empty array should be equivalent
-    // {
-    //   gqlFilterInput: { multiSelectField: { isEmptyArray: true } },
-    //   restFilterInput: 'multiSelectField[isEmptyArray]=true',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.multiSelectField.length === 0;
-    //   },
-    // },
   ],
   [FieldMetadataType.ADDRESS]: [
     {
@@ -968,7 +873,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: {
         addressField: { addressStreet2: { is: 'NOT_NULL' } },
       },
-      restFilterInput: 'addressField.addressStreet2[is]:"NOT_NULL"',
+      restFilterInput: 'addressField.addressStreet2[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.addressField.addressStreet2);
       },
@@ -1020,7 +925,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { rawJsonField: { is: 'NOT_NULL' } },
-      restFilterInput: 'rawJsonField[is]:"NOT_NULL"',
+      restFilterInput: 'rawJsonField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.rawJsonField);
       },
@@ -1034,14 +939,13 @@ export const successfulFilterInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.ARRAY]: [
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: 'test' } },
-    //   // TODO - fix this ? not existing for rest
-    //   // restFilterInput: 'arrayField[containsIlike]:"test"',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return JSON.stringify(record.arrayField).includes('test');
-    //   },
-    // },
+    {
+      gqlFilterInput: { arrayField: { containsIlike: 'test' } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return JSON.stringify(record.arrayField).includes('test');
+      },
+    },
     {
       gqlFilterInput: { arrayField: { is: 'NULL' } },
       restFilterInput: 'arrayField[is]:NULL',
@@ -1052,14 +956,6 @@ export const successfulFilterInputByFieldMetadataType: {
         );
       },
     },
-    //TODO - null and empty array should be equivalent
-    // {
-    //   gqlFilterInput: { arrayField: { isEmptyArray: true } },
-    //   restFilterInput: 'arrayField[isEmptyArray]=true',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.arrayField.length === 0;
-    //   },
-    // },
   ],
   [FieldMetadataType.FILES]: [
     {
@@ -1071,7 +967,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { filesField: { is: 'NOT_NULL' } },
-      restFilterInput: 'filesField[is]:"NOT_NULL"',
+      restFilterInput: 'filesField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return Array.isArray(record.filesField) && record.filesField.length > 0;
       },

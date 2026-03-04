@@ -67,11 +67,11 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Dobré, explicitně definován samostatný typ (OwnProps) pro
+/* ✅ - Dobré, explicitně definován samostatný typ (OwnProps) pro 
  *     rekvizity komponenty
  *   - Tato metoda automaticky nezahrnuje rekvizitu children. Pokud
  *     ji chcete zahrnout, musíte ji specifikovat v OwnProps.
- */
+ */ 
 type EmailFieldProps = {
   value: string;
 };
@@ -96,7 +96,7 @@ const MyComponent = (props: OwnProps) => {
 ```tsx
 /* ✅ - Dobré, explicitně uvádí všechny rekvizity
  *    - Zvyšuje čitelnost a udržovatelnost
- */
+ */ 
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
 };
@@ -123,7 +123,7 @@ const value = process.env.MY_VALUE ?? 'default';
 ### Používejte volitelné zřetězení `?.`
 
 ```tsx
-// ❌ Špatné
+// ❌ Špatné 
 onClick && onClick();
 
 // ✅ Dobré
@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Používejte StyledComponents
 
-Styling komponenty s [Linaria styled](https://github.com/callstack/linaria).
+Stylujte komponenty pomocí [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Špatné
