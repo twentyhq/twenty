@@ -10,21 +10,21 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 export class EnterpriseFeaturesEnabledGuard implements CanActivate {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly enterpriseKeyService: EnterpriseKeyService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     try {
-      if (!this.enterpriseKeyService.isValid()) {
+      if (!this.enterprisePlanService.isValid()) {
         throw new AuthException(
-          'Enterprise license is not active',
+          'Enterprise validity token is not valid',
           AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE,
         );
       }

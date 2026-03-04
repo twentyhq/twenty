@@ -1,7 +1,6 @@
 import { verifyEnterpriseKey } from '@/shared/enterprise/enterprise-jwt';
 import {
-  getEnterprisePriceId,
-  getStripeClient,
+  getStripeClient
 } from '@/shared/enterprise/stripe-client';
 
 export const dynamic = 'force-dynamic';
@@ -42,30 +41,12 @@ export async function POST(request: Request) {
       ? `${frontendUrl}${returnUrl}`
       : frontendUrl;
 
-    if (ACTIVE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
       const session = await stripe.billingPortal.sessions.create({
         customer: customerId,
         return_url: fullReturnUrl,
       });
 
       return Response.json({ url: session.url });
-    }
-
-    const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
-    const priceId = getEnterprisePriceId(interval);
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      customer: customerId,
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${frontendUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: fullReturnUrl,
-      subscription_data: {
-        trial_period_days: 30,
-        metadata: { source: 'enterprise-self-hosted-resubscribe' },
-      },
-    });
-
-    return Response.json({ url: checkoutSession.url });
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : 'Unknown error';

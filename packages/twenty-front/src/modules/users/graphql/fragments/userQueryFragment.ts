@@ -61,7 +61,8 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       customDomain
       hasValidEnterpriseKey
-      hasActivatedAndValidEnterpriseKey
+      hasValidSignedEnterpriseKey
+      hasValidEnterpriseValidityToken
       workspaceCustomApplication {
         id
       }

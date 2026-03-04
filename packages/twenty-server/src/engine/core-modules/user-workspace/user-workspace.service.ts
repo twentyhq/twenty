@@ -18,7 +18,6 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
@@ -65,7 +64,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
-    private readonly enterpriseKeyService: EnterpriseKeyService,
     private readonly featureFlagService: FeatureFlagService,
   ) {
     super(userWorkspaceRepository);

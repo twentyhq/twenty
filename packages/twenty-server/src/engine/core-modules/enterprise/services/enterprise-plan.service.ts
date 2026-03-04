@@ -1,34 +1,45 @@
 /* @license Enterprise */
 
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import * as crypto from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
 
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ENTERPRISE_PUBLIC_KEY } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
+import { ENTERPRISE_VALIDITY_TOKEN_DEFAULT_EXPIRATION_MS } from 'src/engine/core-modules/enterprise/constants/enterprise-validity-token-default-expiration-days.constant';
 import {
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
 } from 'src/engine/core-modules/enterprise/types/enterprise-key-payload.type';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class EnterpriseKeyService implements OnModuleInit {
-  private readonly logger = new Logger(EnterpriseKeyService.name);
+export class EnterprisePlanService implements OnModuleInit {
+  private readonly logger = new Logger(EnterprisePlanService.name);
   private cachedValidityPayload: EnterpriseValidityPayload | null = null;
   private cachedKeyPayload: EnterpriseKeyPayload | null = null;
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+  ) {}
 
-  onModuleInit() {
-    this.refreshFromConfig();
-  }
-
-  refreshFromConfig(): void {
+  async onModuleInit() {
     this.refreshKeyPayload();
-    this.refreshValidityPayload();
+    await this.loadValidityTokenFromDb();
   }
 
   private refreshKeyPayload(): void {
@@ -42,51 +53,82 @@ export class EnterpriseKeyService implements OnModuleInit {
 
     const payload = this.verifyJwt<EnterpriseKeyPayload>(enterpriseKey);
 
-    if (payload) {
-      this.cachedKeyPayload = payload;
-    } else {
-      this.cachedKeyPayload = null;
+    this.cachedKeyPayload = payload;
+  }
+
+  private async loadValidityTokenFromDb(): Promise<void> {
+    try {
+      const validityToken = await this.appTokenRepository.findOne({
+        where: {
+          type: AppTokenType.EnterpriseValidityToken,
+          userId: IsNull(),
+          workspaceId: IsNull(),
+          revokedAt: IsNull(),
+        },
+        order: { createdAt: 'DESC' },
+      });
+
+      if (!validityToken?.value) {
+        this.cachedValidityPayload = null;
+
+        return;
+      }
+
+      const payload = this.verifyJwt<EnterpriseValidityPayload>(
+        validityToken.value,
+      );
+
+      if (payload && payload.status === 'valid') {
+        this.cachedValidityPayload = payload;
+      } else {
+        this.cachedValidityPayload = null;
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to load validity token from DB: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+      this.cachedValidityPayload = null;
     }
   }
 
-  private refreshValidityPayload(): void {
-    const validityToken = this.twentyConfigService.get(
-      'ENTERPRISE_VALIDITY_TOKEN',
+  private async saveNewValidityTokenToDb(token: string): Promise<void> {
+    await this.appTokenRepository.update(
+      {
+        type: AppTokenType.EnterpriseValidityToken,
+        userId: IsNull(),
+        workspaceId: IsNull(),
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
     );
 
-    if (!validityToken) {
-      this.cachedValidityPayload = null;
+    const payload = this.verifyJwt<EnterpriseValidityPayload>(token);
 
-      return;
-    }
-
-    const payload = this.verifyJwt<EnterpriseValidityPayload>(validityToken);
-
-    if (payload && payload.status === 'valid') {
-      this.cachedValidityPayload = payload;
-    } else {
-      this.cachedValidityPayload = null;
-    }
+    await this.appTokenRepository.save({
+      type: AppTokenType.EnterpriseValidityToken,
+      value: token,
+      userId: null,
+      workspaceId: null,
+      expiresAt: payload?.exp
+        ? new Date(payload.exp * 1000)
+        : new Date(
+            Date.now() + ENTERPRISE_VALIDITY_TOKEN_DEFAULT_EXPIRATION_MS,
+          ),
+    });
   }
 
-  isValid(): boolean {
-    const isActivatedAndValid = this.isActivatedAndValid();
-
-    if (isActivatedAndValid === true) {
-      return true;
-    }
-
-    // Backward compatibility: if no validity token exists but ENTERPRISE_KEY
-    // is set as a plain string (not a JWT), allow it with a deprecation warning
-    return this.checkLegacyKey();
-  }
-
-  isActivatedAndValid(): boolean {
+  hasValidSignedEnterpriseKey(): boolean {
     if (this.twentyConfigService.isBillingEnabled()) {
       return true;
     }
 
-    this.refreshValidityPayload();
+    return isDefined(this.cachedKeyPayload);
+  }
+
+  hasValidEnterpriseValidityToken(): boolean {
+    if (this.twentyConfigService.isBillingEnabled()) {
+      return true;
+    }
 
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
@@ -95,6 +137,24 @@ export class EnterpriseKeyService implements OnModuleInit {
     }
 
     return false;
+  }
+
+  hasValidEnterpriseKey(): boolean {
+    if (this.hasValidSignedEnterpriseKey()) {
+      return true;
+    }
+
+    return this.checkLegacyKey();
+  }
+
+  isValid(): boolean {
+    if (this.hasValidEnterpriseValidityToken()) {
+      return true;
+    }
+
+    return false;
+
+    // return this.checkLegacyKey(); // temporary
   }
 
   isValidEnterpriseKeyFormat(key: string): boolean {
@@ -108,12 +168,10 @@ export class EnterpriseKeyService implements OnModuleInit {
       return false;
     }
 
-    // If it's a valid JWT signed by us, it needs a validity token
     if (isDefined(this.cachedKeyPayload)) {
       return false;
     }
 
-    // Legacy plain-string key — allow with deprecation warning
     this.logger.warn(
       'Plain-text enterprise keys are deprecated and will stop working ' +
         'in a future version. Please obtain a signed key from twenty.com.',
@@ -122,7 +180,7 @@ export class EnterpriseKeyService implements OnModuleInit {
     return true;
   }
 
-  getLicenseInfo(): EnterpriseLicenseInfo {
+  async getLicenseInfo(): Promise<EnterpriseLicenseInfo> {
     if (this.twentyConfigService.isBillingEnabled()) {
       return {
         isValid: true,
@@ -132,11 +190,14 @@ export class EnterpriseKeyService implements OnModuleInit {
       };
     }
 
-    this.refreshFromConfig();
+    this.refreshKeyPayload();
+    await this.loadValidityTokenFromDb();
 
     if (isDefined(this.cachedValidityPayload)) {
+      const now = Math.floor(Date.now() / 1000);
+
       return {
-        isValid: this.cachedValidityPayload.exp > Math.floor(Date.now() / 1000),
+        isValid: this.cachedValidityPayload.exp > now,
         licensee: this.cachedKeyPayload?.licensee ?? null,
         expiresAt: new Date(this.cachedValidityPayload.exp * 1000),
         subscriptionId: this.cachedValidityPayload.sub,
@@ -160,14 +221,31 @@ export class EnterpriseKeyService implements OnModuleInit {
     };
   }
 
+  async setEnterpriseKey(enterpriseKey: string): Promise<void> {
+    try {
+      await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
+    } catch (error) {
+      if (
+        error instanceof ConfigVariableException &&
+        error.code === ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED
+      ) {
+        throw new ConfigVariableException(
+          'IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. ' +
+            'Please add ENTERPRISE_KEY to your .env file manually.',
+          ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED,
+        );
+      }
+
+      throw error;
+    }
+  }
+
   async refreshValidityToken(): Promise<boolean> {
     if (this.twentyConfigService.isBillingEnabled()) {
       return true;
     }
 
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    console.log('****enterpriseKey', enterpriseKey);
 
     if (!enterpriseKey) {
       this.logger.warn('No ENTERPRISE_KEY configured, skipping refresh');
@@ -213,12 +291,8 @@ export class EnterpriseKeyService implements OnModuleInit {
         return false;
       }
 
-      await this.twentyConfigService.set(
-        'ENTERPRISE_VALIDITY_TOKEN',
-        data.validityToken,
-      );
-
-      this.refreshValidityPayload();
+      await this.saveNewValidityTokenToDb(data.validityToken);
+      await this.loadValidityTokenFromDb();
 
       this.logger.log('Enterprise validity token refreshed successfully');
 
@@ -243,7 +317,6 @@ export class EnterpriseKeyService implements OnModuleInit {
       return false;
     }
 
-    // Only report seats for properly signed keys (not legacy plain-string keys)
     if (!isDefined(this.cachedKeyPayload)) {
       return false;
     }
@@ -298,7 +371,7 @@ export class EnterpriseKeyService implements OnModuleInit {
       return null;
     }
 
-    const licenseInfo = this.getLicenseInfo();
+    const licenseInfo = await this.getLicenseInfo();
     const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
     const statusUrl = `${apiUrl}/status`;
 
@@ -398,11 +471,6 @@ export class EnterpriseKeyService implements OnModuleInit {
     seatCount: number,
   ): Promise<string | null> {
     if (this.twentyConfigService.isBillingEnabled()) {
-      return null;
-    }
-
-    this.refreshKeyPayload();
-    if (isDefined(this.cachedKeyPayload)) {
       return null;
     }
 

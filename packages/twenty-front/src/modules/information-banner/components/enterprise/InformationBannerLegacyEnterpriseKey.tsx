@@ -23,7 +23,7 @@ export const InformationBannerLegacyEnterpriseKey = () => {
 
   const hasLegacyKey =
     currentWorkspace?.hasValidEnterpriseKey === true &&
-    currentWorkspace?.hasActivatedAndValidEnterpriseKey !== true;
+    currentWorkspace?.hasValidSignedEnterpriseKey !== true;
 
   if (!hasLegacyKey) {
     return null;

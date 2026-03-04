@@ -35,6 +35,23 @@ export async function POST(request: Request) {
 
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
+    const NON_UPDATABLE_STATUSES = [
+      'canceled',
+      'incomplete_expired',
+    ];
+
+    if (
+      NON_UPDATABLE_STATUSES.includes(subscription.status) ||
+      subscription.cancel_at_period_end
+    ) {
+      return Response.json({
+        success: false,
+        reason: 'Subscription is canceled or scheduled for cancellation',
+        seatCount: subscription.items.data[0]?.quantity ?? 0,
+        subscriptionId: payload.sub,
+      });
+    }
+
     if (!subscription.items.data[0]) {
       return new Response(
         JSON.stringify({ error: 'No subscription item found' }),
@@ -60,6 +77,7 @@ export async function POST(request: Request) {
       subscriptionId: payload.sub,
     });
   } catch (error: unknown) {
+    console.error(error);
     const message =
       error instanceof Error ? error.message : 'Unknown error';
 

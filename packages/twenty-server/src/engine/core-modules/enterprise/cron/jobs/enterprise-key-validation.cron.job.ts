@@ -7,7 +7,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ENTERPRISE_KEY_VALIDATION_CRON_PATTERN } from 'src/engine/core-modules/enterprise/constants/enterprise-key-validation-cron-pattern.constant';
-import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -19,7 +19,7 @@ export class EnterpriseKeyValidationCronJob {
   private readonly logger = new Logger(EnterpriseKeyValidationCronJob.name);
 
   constructor(
-    private readonly enterpriseKeyService: EnterpriseKeyService,
+    private readonly enterprisePlanService: EnterprisePlanService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -33,7 +33,7 @@ export class EnterpriseKeyValidationCronJob {
     this.logger.log('Starting enterprise key refresh and seat report...');
 
     const refreshSuccess =
-      await this.enterpriseKeyService.refreshValidityToken();
+      await this.enterprisePlanService.refreshValidityToken();
 
     if (refreshSuccess) {
       this.logger.log('Enterprise validity token refreshed successfully');
@@ -48,7 +48,7 @@ export class EnterpriseKeyValidationCronJob {
       const seatCount = await this.getActiveUserWorkspaceCount();
 
       const reportSuccess =
-        await this.enterpriseKeyService.reportSeats(seatCount);
+        await this.enterprisePlanService.reportSeats(seatCount);
 
       if (reportSuccess) {
         this.logger.log(`Reported ${seatCount} seats to enterprise API`);

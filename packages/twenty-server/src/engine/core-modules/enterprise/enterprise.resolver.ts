@@ -6,18 +6,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
+import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
-import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
+import {
+  EnterpriseException,
+  EnterpriseExceptionCode,
+} from 'src/engine/core-modules/enterprise/enterprise.exception';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
-import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -25,11 +25,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
   constructor(
-    private readonly enterpriseKeyService: EnterpriseKeyService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterprisePlanService: EnterprisePlanService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -50,9 +49,10 @@ export class EnterpriseResolver {
     NoPermissionGuard,
   )
   async enterprisePortalSession(
+    // for existing subscriptions
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
   ): Promise<string | null> {
-    return this.enterpriseKeyService.getPortalUrl(returnUrlPath ?? undefined);
+    return this.enterprisePlanService.getPortalUrl(returnUrlPath ?? undefined);
   }
 
   @Query(() => String, { nullable: true })
@@ -63,12 +63,13 @@ export class EnterpriseResolver {
     NoPermissionGuard,
   )
   async enterpriseCheckoutSession(
+    // for new subscriptions
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
   ): Promise<string | null> {
     const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
     const seatCount = await this.getActiveUserWorkspaceCount();
 
-    return this.enterpriseKeyService.getCheckoutUrl(interval, seatCount);
+    return this.enterprisePlanService.getCheckoutUrl(interval, seatCount);
   }
 
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
@@ -79,7 +80,18 @@ export class EnterpriseResolver {
     NoPermissionGuard,
   )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
-    return this.enterpriseKeyService.getSubscriptionStatus();
+    return this.enterprisePlanService.getSubscriptionStatus();
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    BillingDisabledGuard,
+    AdminPanelGuard,
+    NoPermissionGuard,
+  )
+  async refreshEnterpriseValidityToken(): Promise<boolean> {
+    return this.enterprisePlanService.refreshValidityToken();
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
@@ -94,25 +106,38 @@ export class EnterpriseResolver {
   ): Promise<EnterpriseLicenseInfoDTO> {
     try {
       if (
-        !this.enterpriseKeyService.isValidEnterpriseKeyFormat(enterpriseKey)
+        !this.enterprisePlanService.isValidEnterpriseKeyFormat(enterpriseKey)
       ) {
-        throw new WorkspaceException(
+        throw new EnterpriseException(
           'Invalid enterprise key',
-          WorkspaceExceptionCode.INVALID_ENTERPRISE_KEY,
+          EnterpriseExceptionCode.INVALID_ENTERPRISE_KEY,
         );
       }
 
-      await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
+      await this.enterprisePlanService.setEnterpriseKey(enterpriseKey);
 
-      await this.enterpriseKeyService.refreshValidityToken();
+      await this.enterprisePlanService.refreshValidityToken();
 
       const seatCount = await this.getActiveUserWorkspaceCount();
 
-      await this.enterpriseKeyService.reportSeats(seatCount);
+      await this.enterprisePlanService.reportSeats(seatCount);
 
-      return this.enterpriseKeyService.getLicenseInfo();
+      return await this.enterprisePlanService.getLicenseInfo();
     } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
+      if (error instanceof EnterpriseException) {
+        throw error;
+      }
+
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED
+      ) {
+        throw new EnterpriseException(
+          'IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on the server. Please add ENTERPRISE_KEY to your .env file manually.',
+          EnterpriseExceptionCode.CONFIG_VARIABLES_IN_DB_DISABLED,
+        );
+      }
 
       return {
         isValid: false,

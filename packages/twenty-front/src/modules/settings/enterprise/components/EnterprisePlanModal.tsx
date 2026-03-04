@@ -1,3 +1,5 @@
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,26 +16,27 @@ export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
 type BillingInterval = 'monthly' | 'yearly';
 
-const StyledTitle = styled.h2`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin: 0;
-  text-align: center;
-`;
+const MONTHLY_PRICE = 25;
+const YEARLY_PRICE = 19;
 
-const StyledSubtitle = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin: ${({ theme }) => theme.spacing(2)} 0 0;
-  text-align: center;
+const StyledSubscriptionContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  margin: ${({ theme }) => theme.spacing(8)} 0 ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 const StyledPriceContainer = styled.div`
   align-items: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
+    0 ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledPrice = styled.span`
@@ -49,17 +52,6 @@ const StyledPriceUnit = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledSubscriptionContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(6)} 0
-    ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
 const StyledBenefitsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
@@ -73,26 +65,13 @@ const StyledIntervalContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
   width: 100%;
-`;
-
-const StyledIntervalCardContent = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const StyledIntervalTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
-  display: flex;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
 `;
 
 export const EnterprisePlanModal = () => {
@@ -112,6 +91,12 @@ export const EnterprisePlanModal = () => {
     t`Custom objects`,
     t`API & Webhooks`,
   ];
+
+  const price = selectedInterval === 'monthly' ? MONTHLY_PRICE : YEARLY_PRICE;
+  const priceUnit =
+    selectedInterval === 'monthly'
+      ? t`seat / month`
+      : t`seat / month - billed yearly`;
 
   const handleContinue = async () => {
     setIsLoading(true);
@@ -144,25 +129,18 @@ export const EnterprisePlanModal = () => {
     <Modal
       modalId={ENTERPRISE_PLAN_MODAL_ID}
       size="small"
-      padding="large"
+      padding="none"
       isClosable
     >
       <Modal.Content isVerticalCentered>
-        <StyledTitle>{t`Get Enterprise`}</StyledTitle>
-        <StyledSubtitle>{t`Enjoy a 30-day free trial`}</StyledSubtitle>
-
-        <StyledPriceContainer>
-          <StyledPrice>
-            {selectedInterval === 'monthly' ? '$25' : '$19'}
-          </StyledPrice>
-          <StyledPriceUnit>
-            {selectedInterval === 'monthly'
-              ? t`seat / month`
-              : t`seat / month - billed yearly`}
-          </StyledPriceUnit>
-        </StyledPriceContainer>
+        <Title noMarginTop>{t`Get Enterprise`}</Title>
+        <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
         <StyledSubscriptionContainer>
+          <StyledPriceContainer>
+            <StyledPrice>{`$${price}`}</StyledPrice>
+            <StyledPriceUnit>{priceUnit}</StyledPriceUnit>
+          </StyledPriceContainer>
           <StyledBenefitsContainer>
             {benefits.map((benefit) => (
               <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
@@ -175,33 +153,27 @@ export const EnterprisePlanModal = () => {
             checked={selectedInterval === 'monthly'}
             handleChange={() => setSelectedInterval('monthly')}
           >
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>
-                {t`Monthly subscription`}
-              </StyledIntervalTitle>
-            </StyledIntervalCardContent>
+            <StyledIntervalTitle>
+              {t`Monthly subscription`}
+            </StyledIntervalTitle>
           </CardPicker>
           <CardPicker
             checked={selectedInterval === 'yearly'}
             handleChange={() => setSelectedInterval('yearly')}
           >
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>
-                {t`Yearly subscription`}
-              </StyledIntervalTitle>
-            </StyledIntervalCardContent>
+            <StyledIntervalTitle>
+              {t`Yearly subscription`}
+            </StyledIntervalTitle>
           </CardPicker>
         </StyledIntervalContainer>
 
-        <StyledButtonContainer>
-          <MainButton
-            title={t`Continue`}
-            onClick={handleContinue}
-            width={200}
-            Icon={() => isLoading && <Loader />}
-            disabled={isLoading}
-          />
-        </StyledButtonContainer>
+        <MainButton
+          title={t`Continue`}
+          onClick={handleContinue}
+          width={200}
+          Icon={() => isLoading && <Loader />}
+          disabled={isLoading}
+        />
       </Modal.Content>
     </Modal>
   );

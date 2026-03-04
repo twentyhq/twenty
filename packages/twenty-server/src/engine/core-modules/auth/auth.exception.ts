@@ -29,6 +29,7 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   GOOGLE_API_AUTH_DISABLED: 'GOOGLE_API_AUTH_DISABLED',
   MICROSOFT_API_AUTH_DISABLED: 'MICROSOFT_API_AUTH_DISABLED',
   MISSING_ENVIRONMENT_VARIABLE: 'MISSING_ENVIRONMENT_VARIABLE',
+  ENTERPRISE_VALIDITY_TOKEN_NOT_VALID: 'ENTERPRISE_VALIDITY_TOKEN_NOT_VALID',
   INVALID_JWT_TOKEN_TYPE: 'INVALID_JWT_TOKEN_TYPE',
   TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
     'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED',
@@ -80,6 +81,8 @@ const getAuthExceptionUserFriendlyMessage = (
       return msg`Two-factor authentication verification is required.`;
     case AuthExceptionCode.USER_ALREADY_EXISTS:
       return msg`A user with this email already exists.`;
+    case AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID:
+      return msg`Enterprise validity token is not valid.`;
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.CLIENT_NOT_FOUND:
