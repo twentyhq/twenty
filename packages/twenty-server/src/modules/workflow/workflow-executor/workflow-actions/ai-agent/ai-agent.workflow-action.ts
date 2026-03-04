@@ -7,10 +7,6 @@ import { type Repository } from 'typeorm';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
@@ -68,9 +64,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     if (agentId && !agent) {
-      throw new AgentException(
+      throw new WorkflowStepExecutorException(
         `Agent with id ${agentId} not found`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
