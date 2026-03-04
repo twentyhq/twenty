@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
@@ -13,8 +12,11 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ICON_SIZES,
+  ICON_STROKES,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {
@@ -59,7 +61,6 @@ export const SettingsDataModelFieldPreview = ({
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
-  const { theme } = useContext(ThemeContext);
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
       objectNameSingular: objectNameSingular,
@@ -114,10 +115,7 @@ export const SettingsDataModelFieldPreview = ({
           <StyledFieldPreview shrink={shrink}>
             {!!withFieldLabel && (
               <StyledFieldLabel>
-                <FieldIcon
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
+                <FieldIcon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
                 {fieldMetadataItem.label}:
               </StyledFieldLabel>
             )}

@@ -61,40 +61,8 @@ const StyledPaginationContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTableCell = styled(TableCell)`
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledExpandableTableRow = styled(TableRow)<{ isExpanded: boolean }>`
-  cursor: pointer;
-  background-color: ${({ isExpanded }) =>
-    isExpanded
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
-
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
-  }
-`;
-
 const StyledJobRowWrapper = styled.div`
   display: contents;
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  justify-content: center;
-  padding: 0;
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledHeaderCheckboxCell = styled(TableHeader)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButtonGroup = styled.div`
@@ -299,7 +267,10 @@ export const SettingsAdminQueueJobsTable = ({
         <>
           <Table>
             <TableRow gridAutoColumns="32px 2fr 1fr 2fr 32px">
-              <StyledHeaderCheckboxCell>
+              <TableHeader
+                align="center"
+                padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+              >
                 {jobs.length > 0 && (
                   <Checkbox
                     checked={allJobsSelected}
@@ -307,7 +278,7 @@ export const SettingsAdminQueueJobsTable = ({
                     onChange={handleToggleAll}
                   />
                 )}
-              </StyledHeaderCheckboxCell>
+              </TableHeader>
               <TableHeader>{t`Job Name`}</TableHeader>
               <TableHeader>{t`State`}</TableHeader>
               <TableHeader align="right">{t`Timestamp`}</TableHeader>
@@ -320,22 +291,34 @@ export const SettingsAdminQueueJobsTable = ({
 
                 return (
                   <StyledJobRowWrapper key={job.id}>
-                    <StyledExpandableTableRow
+                    <TableRow
                       gridAutoColumns="32px 2fr 1fr 2fr 32px"
                       onClick={() => handleRowClick(job.id)}
                       isExpanded={isExpanded}
+                      cursor="pointer"
+                      hoverBackgroundColor={
+                        themeCssVariables.background.transparent.light
+                      }
                     >
-                      <StyledCheckboxCell
+                      <TableCell
+                        align="center"
+                        padding={`0 0 0 ${themeCssVariables.spacing[1]}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleJob(e, job.id);
                         }}
                       >
                         <Checkbox checked={isSelected} />
-                      </StyledCheckboxCell>
-                      <StyledTableCell title={job.name}>
+                      </TableCell>
+                      <TableCell
+                        title={job.name}
+                        maxWidth="200px"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
                         {job.name}
-                      </StyledTableCell>
+                      </TableCell>
                       <TableCell>
                         <SettingsAdminJobStateBadge
                           state={job.state}
@@ -364,7 +347,7 @@ export const SettingsAdminQueueJobsTable = ({
                           onDelete={() => handleDeleteOne(job.id)}
                         />
                       </TableCell>
-                    </StyledExpandableTableRow>
+                    </TableRow>
                     <SettingsAdminJobDetailsExpandable
                       job={job}
                       isExpanded={isExpanded}

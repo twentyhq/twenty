@@ -7,7 +7,6 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ANIMATION } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
@@ -48,8 +47,6 @@ const StyledJsonListBase = styled.ul<{
   }
 `;
 
-const StyledJsonList = motion.create(StyledJsonListBase);
-
 export const JsonNestedNode = ({
   label,
   Icon,
@@ -78,45 +75,34 @@ export const JsonNestedNode = ({
   );
 
   const renderedChildren = (
-    <StyledJsonList
-      initial={{
-        height: 0,
-        opacity: 0,
-        overflowY: 'clip',
-      }}
-      animate={{
-        height: 'auto',
-        opacity: 1,
-        overflowY: 'clip',
-      }}
-      exit={{
-        height: 0,
-        opacity: 0,
-        overflowY: 'clip',
-      }}
-      transition={{ duration: ANIMATION.duration.normal }}
-      depth={depth}
+    <motion.div
+      initial={{ height: 0, opacity: 0, overflow: 'clip' }}
+      animate={{ height: 'auto', opacity: 1, overflow: 'clip' }}
+      exit={{ height: 0, opacity: 0, overflow: 'clip' }}
+      transition={{ duration: 0.3 }}
     >
-      {elements.length === 0 ? (
-        <JsonNodeValue valueAsString={emptyElementsText} />
-      ) : (
-        elements.map(({ id, label, value }) => {
-          const nextKeyPath = isNonEmptyString(keyPath)
-            ? `${keyPath}.${id}`
-            : String(id);
+      <StyledJsonListBase depth={depth}>
+        {elements.length === 0 ? (
+          <JsonNodeValue valueAsString={emptyElementsText} />
+        ) : (
+          elements.map(({ id, label, value }) => {
+            const nextKeyPath = isNonEmptyString(keyPath)
+              ? `${keyPath}.${id}`
+              : String(id);
 
-          return (
-            <JsonNode
-              key={id}
-              label={label}
-              value={value}
-              depth={depth + 1}
-              keyPath={nextKeyPath}
-            />
-          );
-        })
-      )}
-    </StyledJsonList>
+            return (
+              <JsonNode
+                key={id}
+                label={label}
+                value={value}
+                depth={depth + 1}
+                keyPath={nextKeyPath}
+              />
+            );
+          })
+        )}
+      </StyledJsonListBase>
+    </motion.div>
   );
 
   const handleArrowClick = () => {
