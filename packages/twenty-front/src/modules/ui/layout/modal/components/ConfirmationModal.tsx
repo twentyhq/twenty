@@ -4,13 +4,18 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, type ButtonAccent } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+  type ModalOverlay,
+} from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
@@ -25,14 +30,8 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
   AdditionalButtons?: React.ReactNode;
-  modalVariant?: ModalVariants;
+  overlay?: ModalOverlay;
 };
-
-const StyledConfirmationModal = styled(Modal)`
-  border-radius: ${themeCssVariables.spacing[1]};
-  width: calc(400px - ${themeCssVariables.spacing[32]});
-  height: auto;
-`;
 
 export const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;
@@ -73,7 +72,7 @@ export const ConfirmationModal = ({
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
-  modalVariant = 'primary',
+  overlay = 'dark',
 }: ConfirmationModalProps) => {
   const { i18n, t } = useLingui();
   const translatedConfirmButtonText =
@@ -113,7 +112,7 @@ export const ConfirmationModal = ({
   };
 
   return (
-    <StyledConfirmationModal
+    <ModalStatefulWrapper
       modalId={modalId}
       onClose={() => {
         onClose?.();
@@ -121,9 +120,12 @@ export const ConfirmationModal = ({
       onEnter={handleEnter}
       isClosable={true}
       padding="large"
-      modalVariant={modalVariant}
+      overlay={overlay}
       dataGloballyPreventClickOutside
       ignoreContainer
+      smallBorderRadius
+      narrowWidth
+      autoHeight
     >
       <StyledCenteredTitle>
         <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
@@ -167,6 +169,6 @@ export const ConfirmationModal = ({
         fullWidth
         dataTestId="confirmation-modal-confirm-button"
       />
-    </StyledConfirmationModal>
+    </ModalStatefulWrapper>
   );
 };

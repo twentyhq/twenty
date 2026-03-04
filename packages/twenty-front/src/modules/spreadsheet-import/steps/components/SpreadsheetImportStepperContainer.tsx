@@ -7,18 +7,21 @@ import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
-const StyledHeader = styled(Modal.Header)`
+const StyledHeader = styled.div`
+  align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  padding: 0px ${themeCssVariables.spacing[30]};
-  height: 60px;
+  display: flex;
+  flex-direction: row;
   flex-shrink: 0;
+  height: 60px;
+  overflow: hidden;
+  padding: 0px ${themeCssVariables.spacing[30]};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${themeCssVariables.spacing[4]};
     padding-right: ${themeCssVariables.spacing[4]};

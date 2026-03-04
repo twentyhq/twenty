@@ -1,19 +1,22 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const StyledFooter = styled(Modal.Footer)`
+const StyledFooter = styled.div`
+  align-items: center;
   border-top: 1px solid ${themeCssVariables.border.color.medium};
   box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: row;
   gap: 10px;
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[4]};
   height: auto;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 type StepNavigationButtonProps = {

@@ -1,0 +1,11 @@
+export { Modal } from './components/Modal';
+export type { ModalProps } from './components/Modal';
+export { ModalContent } from './components/ModalContent';
+export type { ModalContentProps } from './components/ModalContent';
+export { ModalFooter } from './components/ModalFooter';
+export type { ModalFooterProps } from './components/ModalFooter';
+export { ModalHeader } from './components/ModalHeader';
+export type { ModalHeaderProps } from './components/ModalHeader';
+export type { ModalOverlay } from './types/ModalOverlay';
+export type { ModalPadding } from './types/ModalPadding';
+export type { ModalSize } from './types/ModalSize';

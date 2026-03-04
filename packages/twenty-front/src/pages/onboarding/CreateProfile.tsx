@@ -18,7 +18,7 @@ import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/comp
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ApolloError } from '@apollo/client';
 import { i18n } from '@lingui/core';
@@ -172,7 +172,7 @@ export const CreateProfile = () => {
   });
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create profile</Trans>
       </Title>
@@ -251,6 +251,6 @@ export const CreateProfile = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </Modal.Content>
+    </ModalContent>
   );
 };

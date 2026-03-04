@@ -15,7 +15,7 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { PageFocusId } from '@/types/PageFocusId';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
@@ -116,7 +116,7 @@ export const SyncEmails = () => {
   });
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
         {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
@@ -175,6 +175,6 @@ export const SyncEmails = () => {
           {t`Continue without sync`}
         </ClickToActionLink>
       </StyledActionLinkContainer>
-    </Modal.Content>
+    </ModalContent>
   );
 };

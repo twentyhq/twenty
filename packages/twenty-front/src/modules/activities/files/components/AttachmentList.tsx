@@ -9,7 +9,8 @@ import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { ModalContent, ModalHeader } from 'twenty-ui/layout';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -102,20 +103,6 @@ const StyledHeader = styled.div`
 
 const StyledModalTitle = styled.span`
   color: ${themeCssVariables.font.color.primary};
-`;
-
-const StyledModalHeader = styled(Modal.Header)`
-  height: auto;
-  padding: 0;
-`;
-
-const StyledModalContent = styled(Modal.Content)`
-  padding: 0;
-`;
-
-const StyledModal = styled(Modal)`
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -231,14 +218,16 @@ export const AttachmentList = ({
       {previewedAttachment &&
         isAttachmentPreviewEnabled &&
         createPortal(
-          <StyledModal
+          <ModalStatefulWrapper
             modalId={PREVIEW_MODAL_ID}
             size="large"
             isClosable
             onClose={handleClosePreview}
             ignoreContainer
+            gap={2}
+            padding="small"
           >
-            <StyledModalHeader>
+            <ModalHeader noPadding autoHeight>
               <StyledHeader>
                 <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
                 <StyledButtonContainer>
@@ -256,11 +245,11 @@ export const AttachmentList = ({
                   />
                 </StyledButtonContainer>
               </StyledHeader>
-            </StyledModalHeader>
+            </ModalHeader>
             <ScrollWrapper
               componentInstanceId={`preview-modal-${previewedAttachment.id}`}
             >
-              <StyledModalContent>
+              <ModalContent noPadding>
                 <Suspense
                   fallback={
                     <StyledLoadingContainer>
@@ -275,9 +264,9 @@ export const AttachmentList = ({
                     documentUrl={getAttachmentUrl(previewedAttachment)}
                   />
                 </Suspense>
-              </StyledModalContent>
+              </ModalContent>
             </ScrollWrapper>
-          </StyledModal>,
+          </ModalStatefulWrapper>,
           document.body,
         )}
     </>
