@@ -16,9 +16,6 @@ export class AddAppRegistrationSourceFields1772267875870
       `ALTER TABLE "core"."applicationRegistration" ADD "tarballFileId" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration" ADD "registryUrl" text`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" ADD "latestAvailableVersion" text`,
     );
     await queryRunner.query(
@@ -38,9 +35,6 @@ export class AddAppRegistrationSourceFields1772267875870
     );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "latestAvailableVersion"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "registryUrl"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "tarballFileId"`,

@@ -126,10 +126,6 @@ export class ApplicationRegistrationEntity {
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
-  registryUrl: string | null;
-
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'text' })
   latestAvailableVersion: string | null;
 
   @Field(() => String, { nullable: true })

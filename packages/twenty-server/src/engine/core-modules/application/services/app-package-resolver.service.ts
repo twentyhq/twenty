@@ -83,9 +83,7 @@ export class AppPackageResolverService implements OnModuleInit {
     await fs.mkdir(workDir, { recursive: true });
 
     try {
-      const registryUrl =
-        appRegistration.registryUrl ??
-        this.twentyConfigService.get('APP_REGISTRY_URL');
+      const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
 
       const authToken = this.twentyConfigService.get('APP_REGISTRY_TOKEN');
 

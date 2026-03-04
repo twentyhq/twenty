@@ -35,9 +35,7 @@ export class AppUpgradeService {
       return null;
     }
 
-    const registryUrl =
-      appRegistration.registryUrl ??
-      this.twentyConfigService.get('APP_REGISTRY_URL');
+    const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
 
     try {
       const encodedPackage = encodeURIComponent(appRegistration.sourcePackage!);
