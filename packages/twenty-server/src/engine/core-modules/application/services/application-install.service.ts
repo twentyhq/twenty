@@ -6,7 +6,7 @@ import { join, relative } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { AppRegistrationSourceType } from 'src/engine/core-modules/application-registration/enums/app-registration-source-type.enum';
@@ -16,6 +16,7 @@ import {
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/services/app-package-resolver.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 const FILE_FOLDER_MAPPING: Record<string, FileFolder> = {
@@ -47,7 +48,7 @@ export class ApplicationInstallService {
     private readonly appPackageResolverService: AppPackageResolverService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
-    private readonly dataSource: DataSource,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async installApplication(params: {
@@ -67,37 +68,32 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const [lockKey1, lockKey2] = this.computeLockKeys(
-      params.workspaceId,
-      appRegistration.universalIdentifier,
+    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
+
+    return this.cacheLockService.withLock(
+      () =>
+        this.doInstallApplication(appRegistration, {
+          version: params.version,
+          workspaceId: params.workspaceId,
+        }),
+      lockKey,
+      { ttl: 60_000, ms: 500, maxRetries: 120 },
     );
+  }
 
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
+  private async doInstallApplication(
+    appRegistration: ApplicationRegistrationEntity,
+    params: { version?: string; workspaceId: string },
+  ): Promise<boolean> {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
-      // TODO: Consider moving this lock to Redis for better isolation.
-      // pg_advisory_xact_lock serializes at the DB level which is heavier
-      // than needed; a Redis-based distributed lock would be more targeted.
-      await queryRunner.query(`SELECT pg_advisory_xact_lock($1, $2)`, [
-        lockKey1,
-        lockKey2,
-      ]);
-
       resolvedPackage = await this.appPackageResolverService.resolvePackage(
         appRegistration,
         { targetVersion: params.version },
       );
 
-      // Safety fallback - resolvePackage returns null for LOCAL, but that
-      // case is handled above. This guard covers any future source types.
       if (!resolvedPackage) {
-        await queryRunner.commitTransaction();
-
         return true;
       }
 
@@ -118,24 +114,18 @@ export class ApplicationInstallService {
         appRegistration.sourceType,
       );
 
-      await queryRunner.commitTransaction();
-
       this.logger.log(
         `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
       throw error;
     } finally {
-      await queryRunner.release();
-
       if (resolvedPackage) {
         await this.appPackageResolverService.cleanupExtractedDir(
           resolvedPackage.extractedDir,
@@ -220,25 +210,5 @@ export class ApplicationInstallService {
       { universalIdentifier, workspaceId },
       { sourceType },
     );
-  }
-
-  private computeLockKeys(
-    workspaceId: string,
-    universalIdentifier: string,
-  ): [number, number] {
-    return [this.hashString(workspaceId), this.hashString(universalIdentifier)];
-  }
-
-  private hashString(input: string): number {
-    let hash = 0;
-
-    for (let i = 0; i < input.length; i++) {
-      const char = input.charCodeAt(i);
-
-      hash = (hash << 5) - hash + char;
-      hash |= 0;
-    }
-
-    return hash;
   }
 }

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application-registration/application-registration.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/resolvers/application-development.resolver';
@@ -36,6 +37,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     ]),
     ApplicationRegistrationModule,
     ApplicationModule,
+    CacheLockModule,
     ApplicationVariableEntityModule,
     TokenModule,
     WorkspaceMigrationModule,

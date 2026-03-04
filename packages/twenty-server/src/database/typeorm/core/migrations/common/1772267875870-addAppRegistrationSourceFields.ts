@@ -30,9 +30,18 @@ export class AddAppRegistrationSourceFields1772267875870
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" ADD "marketplaceDisplayData" jsonb`,
     );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration"
+        ADD CONSTRAINT "CHK_NPM_HAS_SOURCE_PACKAGE"
+        CHECK ("sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL)`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT IF EXISTS "CHK_NPM_HAS_SOURCE_PACKAGE"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "marketplaceDisplayData"`,
     );
