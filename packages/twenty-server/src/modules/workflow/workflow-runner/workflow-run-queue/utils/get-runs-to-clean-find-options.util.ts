@@ -1,6 +1,9 @@
-import { type FindOptionsWhere, LessThan } from 'typeorm';
+import { type FindOptionsWhere, In, LessThan } from 'typeorm';
 
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RUNS_TO_CLEAN_THRESHOLD_DAYS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/runs-to-clean-threshold';
 
 export const getRunsToCleanFindOptions =
@@ -10,6 +13,7 @@ export const getRunsToCleanFindOptions =
     ).toISOString();
 
     return {
+      status: In([WorkflowRunStatus.COMPLETED, WorkflowRunStatus.FAILED]),
       createdAt: LessThan(thresholdDate),
     };
   };

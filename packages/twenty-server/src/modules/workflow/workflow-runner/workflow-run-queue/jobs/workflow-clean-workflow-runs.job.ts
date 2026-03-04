@@ -78,13 +78,15 @@ export class WorkflowCleanWorkflowRunsJob {
           DELETE FROM ${schemaName}."workflowRun"
           WHERE id IN (
             SELECT id FROM ${schemaName}."workflowRun"
-            WHERE "createdAt" < NOW() - INTERVAL '${RUNS_TO_CLEAN_THRESHOLD_DAYS} days'
+            WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
+              AND "createdAt" < NOW() - INTERVAL '${RUNS_TO_CLEAN_THRESHOLD_DAYS} days'
             LIMIT ${batchSize}
           )
           RETURNING id;
         `,
       );
 
+      // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]
       deletedCount = result[0].length;
       totalDeleted += deletedCount;
     } while (deletedCount > 0);
@@ -125,6 +127,7 @@ export class WorkflowCleanWorkflowRunsJob {
         `,
       );
 
+      // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]
       deletedCount = result[0].length;
       totalDeleted += deletedCount;
     } while (deletedCount > 0);

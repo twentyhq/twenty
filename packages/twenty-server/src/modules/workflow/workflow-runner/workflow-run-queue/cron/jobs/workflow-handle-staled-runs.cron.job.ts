@@ -21,7 +21,7 @@ import {
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-handle-staled-runs.job';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 
-export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '* * * * *';
+export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '0 * * * *';
 
 const WORKSPACE_BATCH_SIZE = 50;
 
