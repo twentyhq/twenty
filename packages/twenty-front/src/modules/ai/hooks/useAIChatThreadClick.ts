@@ -40,15 +40,20 @@ export const useAIChatThreadClick = (
   const handleThreadClick = (thread: AgentChatThread) => {
     const previousDraftKey =
       currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-    const newDraft =
-      store.get(agentChatDraftsByThreadIdState.atom)[thread.id] ?? '';
+    const isSameThread = thread.id === currentAIChatThread;
 
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
       [previousDraftKey]: agentChatInput,
     }));
     setCurrentAIChatThread(thread.id);
-    setAgentChatInput(newDraft);
+
+    if (!isSameThread) {
+      const newDraft =
+        store.get(agentChatDraftsByThreadIdState.atom)[thread.id] ?? '';
+      setAgentChatInput(newDraft);
+    }
+
     setCurrentAIChatThreadTitle(thread.title ?? null);
 
     const hasUsageData =
