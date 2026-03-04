@@ -22,7 +22,7 @@ export class MarketplaceCatalogSyncCronCommand extends CommandRunner {
   async run(): Promise<void> {
     await this.messageQueueService.add(
       MarketplaceCatalogSyncCronJob.name,
-      undefined,
+      {},
     );
 
     await this.messageQueueService.addCron<undefined>({
