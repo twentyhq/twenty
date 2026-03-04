@@ -38,6 +38,9 @@ jobs:
             type=sha,prefix=,format=short
             type=raw,value=latest
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Extract APP_VERSION from upgrade command
         id: app_version
         run: |
