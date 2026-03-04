@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
@@ -23,13 +24,9 @@ import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
 
-type RelationManyToOneField = {
-  id: string;
-};
-
 type UpsertRecordFormData = {
   objectName: string;
-  [field: string]: RelationManyToOneField | JsonValue;
+  [field: string]: JsonValue;
 };
 
 type WorkflowEditActionUpsertRecordProps = {
@@ -167,15 +164,13 @@ export const WorkflowEditActionUpsertRecord = ({
       isFieldRelation(fieldDefinition) &&
       fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
 
-    const fieldValue = isFieldRelationManyToOne
-      ? {
-          id: updatedValue,
-        }
-      : updatedValue;
+    const key = isFieldRelationManyToOne
+      ? getForeignKeyNameFromRelationFieldName(fieldName as string)
+      : fieldName;
 
     const newFormData: UpsertRecordFormData = {
       ...formData,
-      [fieldName]: fieldValue,
+      [key]: updatedValue,
     };
 
     setFormData(newFormData);
@@ -279,25 +274,25 @@ export const WorkflowEditActionUpsertRecord = ({
             );
           }
 
+          const fieldName = fieldDefinition.metadata.fieldName;
+
           const isFieldRelationManyToOne =
             isFieldRelation(fieldDefinition) &&
             fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
 
           const currentValue = isFieldRelationManyToOne
-            ? (
-                formData[
-                  fieldDefinition.metadata.fieldName
-                ] as RelationManyToOneField
-              )?.id
-            : (formData[fieldDefinition.metadata.fieldName] as JsonValue);
+            ? (formData[
+                getForeignKeyNameFromRelationFieldName(fieldName)
+              ] as JsonValue)
+            : (formData[fieldName] as JsonValue);
 
           return (
             <FormFieldInput
-              key={fieldDefinition.metadata.fieldName}
+              key={fieldName}
               defaultValue={currentValue}
               field={fieldDefinition}
               onChange={(value) => {
-                handleFieldChange(fieldDefinition.metadata.fieldName, value);
+                handleFieldChange(fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}
