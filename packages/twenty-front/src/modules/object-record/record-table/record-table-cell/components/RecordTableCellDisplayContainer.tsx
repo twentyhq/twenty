@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { type Ref } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   align-items: center;
@@ -21,10 +21,10 @@ const StyledInnerContainer = styled.div`
   white-space: nowrap;
 `;
 
-const StyledEmptyPlaceholderField = withTheme(styled.div<{ theme: Theme }>`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledEmptyPlaceholderField = styled.div`
+  color: ${themeCssVariables.font.color.light};
   padding-left: 4px;
-`);
+`;
 
 export type EditableCellDisplayContainerProps = {
   focus?: boolean;

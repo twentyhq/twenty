@@ -1,5 +1,5 @@
 import { useBlockNoteEditor } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { createPortal } from 'react-dom';

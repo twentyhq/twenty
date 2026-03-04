@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -11,6 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, type ButtonAccent } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
   modalId: string;
@@ -28,15 +29,15 @@ export type ConfirmationModalProps = {
 };
 
 const StyledConfirmationModal = styled(Modal)`
-  border-radius: ${({ theme }) => theme.spacing(1)};
-  width: calc(400px - ${({ theme }) => theme.spacing(32)});
+  border-radius: ${themeCssVariables.spacing[1]};
+  width: calc(400px - ${themeCssVariables.spacing[32]});
   height: auto;
 `;
 
 export const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCenteredTitle = styled.div`
@@ -44,17 +45,17 @@ const StyledCenteredTitle = styled.div`
 `;
 
 const StyledSection = styled(Section)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
-  border-color: ${({ theme }) => theme.border.color.danger};
+  border-color: ${themeCssVariables.border.color.danger};
   box-shadow: none;
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.md};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   :hover {
-    background-color: ${({ theme }) => theme.color.red3};
+    background-color: ${themeCssVariables.color.red3};
   }
 `;
 

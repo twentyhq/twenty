@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
@@ -28,8 +29,8 @@ const StyledObjectIconWrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ $borderColor }) =>
-    $borderColor ? `border: 1px solid ${$borderColor};` : ''}
+  border: ${({ $borderColor }) =>
+    $borderColor ? `1px solid ${$borderColor}` : 'none'};
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
@@ -56,7 +57,7 @@ export const ObjectIconWithViewOverlay = ({
   ViewIcon,
   objectColor,
 }: ObjectIconWithViewOverlayProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const objectStyle = getNavigationMenuItemIconStyleFromColor(
     theme,
     objectColor,

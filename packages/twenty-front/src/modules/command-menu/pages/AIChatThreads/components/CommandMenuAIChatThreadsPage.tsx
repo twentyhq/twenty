@@ -1,5 +1,5 @@
 import { AIChatThreadsList } from '@/ai/components/AIChatThreadsList';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   height: 100%;

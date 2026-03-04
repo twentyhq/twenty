@@ -27,6 +27,7 @@ export const castAppTokenToWorkspaceInvitationUtil = (
   return {
     id: appToken.id,
     email: appToken.context.email,
+    roleId: appToken.context.roleId ?? null,
     expiresAt: appToken.expiresAt,
   };
 };

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { type VerifyCallback } from 'passport-google-oauth20';
+import {
+  type Profile as GoogleProfile,
+  type VerifyCallback,
+} from 'passport-google-oauth20';
+import { parseJson } from 'twenty-shared/utils';
 
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
-import { type GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { type APIsOAuthState } from 'src/engine/core-modules/auth/types/apis-oauth-state.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-export type GoogleAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-};
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauthCommonStrategy {
@@ -20,32 +21,27 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
   }
 
   async validate(
-    request: GoogleAPIsRequest,
+    request: APIsOAuthRequest,
     accessToken: string,
     refreshToken: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    profile: any,
+    profile: GoogleProfile,
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
+    const state = parseJson<APIsOAuthState>(request.query.state as string);
 
-    const state =
-      typeof request.query.state === 'string'
-        ? JSON.parse(request.query.state)
-        : undefined;
-
-    const user: GoogleAPIsRequest['user'] = {
-      emails,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos?.[0]?.value,
+    const user: APIsOAuthRequest['user'] = {
+      emails: emails ?? [],
+      firstName: name?.givenName,
+      lastName: name?.familyName,
+      picture: photos?.[0]?.value ?? null,
       accessToken,
       refreshToken,
-      transientToken: state.transientToken,
-      redirectLocation: state.redirectLocation,
-      calendarVisibility: state.calendarVisibility,
-      messageVisibility: state.messageVisibility,
-      skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
+      transientToken: state?.transientToken ?? '',
+      redirectLocation: state?.redirectLocation,
+      calendarVisibility: state?.calendarVisibility,
+      messageVisibility: state?.messageVisibility,
+      skipMessageChannelConfiguration: state?.skipMessageChannelConfiguration,
     };
 
     done(null, user);

@@ -1,42 +1,44 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.danger};
-  border: 1px solid ${({ theme }) => theme.border.color.danger};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.danger};
+  border: 1px solid ${themeCssVariables.border.color.danger};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledErrorIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.color.red};
+  color: ${themeCssVariables.color.red};
   display: flex;
 `;
 
 const StyledErrorContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing['0.5']};
   flex: 1;
 `;
 
 const StyledErrorTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
   word-break: break-word;
 `;
 
@@ -45,7 +47,7 @@ type AIChatErrorMessageProps = {
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
 
   return (

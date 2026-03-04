@@ -1,7 +1,8 @@
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
-import { useTheme } from '@emotion/react';
 import { BaseEdge, type EdgeProps } from '@xyflow/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowDiagramBlankEdgeProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -15,7 +16,7 @@ export const WorkflowDiagramBlankEdge = ({
   targetX,
   targetPosition,
 }: WorkflowDiagramBlankEdgeProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { segments } = getEdgePath({
     sourceX,

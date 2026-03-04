@@ -2,47 +2,23 @@ import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
 import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
+import { useContext, useMemo, type CSSProperties } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
-const StyledHandle = styled(Handle, {
-  shouldForwardProp: (prop) =>
-    prop !== 'disableHoverEffect' &&
-    prop !== 'selected' &&
-    prop !== 'hovered' &&
-    prop !== 'runStatus',
-})<{
-  type: HandleProps['type'];
-  disableHoverEffect?: boolean;
-  selected: boolean;
-  hovered?: boolean;
-  runStatus?: WorkflowRunStepStatus;
-}>`
+const StyledHandle = styled(Handle)`
   &.react-flow__handle {
-    opacity: ${({ type }) => (type === 'target' ? 0 : 1)};
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
-
-    ${({ theme, selected, hovered, disableHoverEffect, runStatus }) => {
-      if (!selected) {
-        return css`
-          background: ${theme.background.primary};
-          border-color: ${hovered && disableHoverEffect !== true
-            ? theme.font.color.light
-            : theme.border.color.strong};
-        `;
-      }
-
-      const colors = getWorkflowDiagramColors({ theme, runStatus });
-
-      return css`
-        background: ${colors.selected.background};
-        border-color: ${colors.selected.borderColor};
-      `;
-    }}
+    opacity: var(--handle-opacity, 1);
+    background: var(--handle-bg);
+    border-color: var(--handle-border-color);
+    transform: var(--handle-transform);
+    transform-origin: var(--handle-transform-origin);
 
     &::after {
       content: '';
@@ -50,8 +26,8 @@ const StyledHandle = styled(Handle, {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: calc(100% + ${({ theme }) => theme.spacing(4)});
-      height: calc(100% + ${({ theme }) => theme.spacing(4)});
+      width: calc(100% + ${themeCssVariables.spacing[4]});
+      height: calc(100% + ${themeCssVariables.spacing[4]});
     }
 
     transition:
@@ -60,55 +36,88 @@ const StyledHandle = styled(Handle, {
       border-color 0.1s;
     z-index: 1;
 
-    ${({ position }) => {
-      if (position === Position.Right) {
-        return css`
-          transform: translate(50%, -50%);
-          transform-origin: top right;
-        `;
-      }
-
-      return css`
-        transform: translate(-50%, 50%);
-        transform-origin: bottom left;
-      `;
-    }}
-
     &.connectionindicator {
       cursor: pointer;
     }
 
     &:hover {
-      ${({ disableHoverEffect, theme }) => {
-        if (disableHoverEffect === true) {
-          return undefined;
-        }
-
-        const colors = getWorkflowDiagramColors({ theme });
-
-        return css`
-          background: ${colors.selected.background} !important;
-          border-color: ${colors.selected.borderColor} !important;
-        `;
-      }}
-
-      ${({ disableHoverEffect, position }) => {
-        if (disableHoverEffect === true) {
-          return undefined;
-        }
-
-        if (position === Position.Right) {
-          return css`
-            transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(50%, -50%);
-          `;
-        }
-
-        return css`
-          transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
-        `;
-      }}
+      background: var(--handle-hover-bg, var(--handle-bg)) !important;
+      border-color: var(
+        --handle-hover-border-color,
+        var(--handle-border-color)
+      ) !important;
+      transform: var(--handle-hover-transform, var(--handle-transform));
     }
   }
 `;
 
-export { StyledHandle as WorkflowDiagramHandleSource };
+type WorkflowDiagramHandleSourceProps = {
+  id: string;
+  type: HandleProps['type'];
+  position: Position;
+  selected: boolean;
+  hovered?: boolean;
+  disableHoverEffect?: boolean;
+  runStatus?: WorkflowRunStepStatus;
+};
+
+export const WorkflowDiagramHandleSource = ({
+  id,
+  type,
+  position,
+  selected,
+  hovered,
+  disableHoverEffect,
+  runStatus,
+}: WorkflowDiagramHandleSourceProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  const dynamicStyles = useMemo(() => {
+    const isRight = position === Position.Right;
+    const transform = isRight ? 'translate(50%, -50%)' : 'translate(-50%, 50%)';
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    const transformOrigin = isRight ? 'top right' : 'bottom left';
+
+    let bg: string;
+    let borderColor: string;
+
+    if (selected) {
+      const colors = getWorkflowDiagramColors({ theme, runStatus });
+      bg = colors.selected.background;
+      borderColor = colors.selected.borderColor;
+    } else {
+      bg = theme.background.primary;
+      borderColor =
+        hovered && disableHoverEffect !== true
+          ? theme.font.color.light
+          : theme.border.color.strong;
+    }
+
+    const styles: Record<string, string> = {
+      '--handle-opacity': type === 'target' ? '0' : '1',
+      '--handle-bg': bg,
+      '--handle-border-color': borderColor,
+      '--handle-transform': transform,
+      '--handle-transform-origin': transformOrigin,
+    };
+
+    if (disableHoverEffect !== true) {
+      const hoverColors = getWorkflowDiagramColors({ theme });
+      styles['--handle-hover-bg'] = hoverColors.selected.background;
+      styles['--handle-hover-border-color'] = hoverColors.selected.borderColor;
+      styles['--handle-hover-transform'] =
+        `scale(${HANDLE_SCALE_ON_HOVER}) ${transform}`;
+    }
+
+    return styles as CSSProperties;
+  }, [position, selected, hovered, disableHoverEffect, runStatus, type, theme]);
+
+  return (
+    <StyledHandle
+      id={id}
+      type={type}
+      position={position}
+      style={dynamicStyles}
+    />
+  );
+};

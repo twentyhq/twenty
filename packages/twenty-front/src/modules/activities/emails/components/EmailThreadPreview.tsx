@@ -1,10 +1,12 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
-import { useTheme } from '@emotion/react';
 import { Avatar } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -23,39 +25,39 @@ const StyledParticipantsContainer = styled.div`
   display: flex;
 `;
 
-const StyledAvatar = styled(Avatar)`
-  margin-left: ${({ theme }) => theme.spacing(-1)};
+const StyledAvatarWrapper = styled.div`
+  margin-left: calc(-1 * ${themeCssVariables.spacing[1]});
 `;
 
 const StyledSenderNames = styled.span`
   display: flex;
-  margin: ${({ theme }) => theme.spacing(0, 1)};
+  margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledThreadCount = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSubjectAndBody = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   overflow: hidden;
 `;
 
 const StyledSubject = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const StyledBody = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -63,9 +65,9 @@ const StyledBody = styled.span`
 `;
 
 const StyledReceivedAt = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(0, 1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
 `;
 
 type EmailThreadPreviewProps = {
@@ -105,7 +107,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
@@ -121,24 +123,30 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
-            <StyledAvatar
-              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
-              placeholder={thread.lastTwoParticipants[0].displayName}
-              placeholderColorSeed={
-                thread.lastTwoParticipants[0].workspaceMemberId ||
-                thread.lastTwoParticipants[0].personId
-              }
-              type="rounded"
-            />
+            <StyledAvatarWrapper>
+              <Avatar
+                avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+                placeholder={thread.lastTwoParticipants[0].displayName}
+                placeholderColorSeed={
+                  thread.lastTwoParticipants[0].workspaceMemberId ||
+                  thread.lastTwoParticipants[0].personId
+                }
+                type="rounded"
+              />
+            </StyledAvatarWrapper>
           )}
           {finalDisplayedName && (
-            <StyledAvatar
-              avatarUrl={finalAvatarUrl}
-              placeholder={finalDisplayedName}
-              type="rounded"
-              color={isCountIcon ? theme.grayScale.gray11 : undefined}
-              backgroundColor={isCountIcon ? theme.grayScale.gray2 : undefined}
-            />
+            <StyledAvatarWrapper>
+              <Avatar
+                avatarUrl={finalAvatarUrl}
+                placeholder={finalDisplayedName}
+                type="rounded"
+                color={isCountIcon ? theme.grayScale.gray11 : undefined}
+                backgroundColor={
+                  isCountIcon ? theme.grayScale.gray2 : undefined
+                }
+              />
+            </StyledAvatarWrapper>
           )}
         </StyledParticipantsContainer>
 

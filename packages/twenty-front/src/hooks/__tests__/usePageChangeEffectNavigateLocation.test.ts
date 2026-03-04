@@ -52,9 +52,11 @@ jest.mocked(useDefaultHomePagePath).mockReturnValue({
 });
 
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
-jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
-  isOnAWorkspace: true,
-});
+const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
+  jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
+    isOnAWorkspace,
+  });
+};
 
 jest.mock('react-router-dom');
 const setupMockUseParams = (objectNamePlural?: string) => {
@@ -68,12 +70,14 @@ const setupMockState = (
   objectNamePlural?: string,
   verifyEmailRedirectPath?: string,
   calendarBookingPageId?: string | null,
+  returnToPath?: string,
 ) => {
   jest
     .mocked(useAtomStateValue)
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
-    .mockReturnValueOnce(verifyEmailRedirectPath);
+    .mockReturnValueOnce(verifyEmailRedirectPath)
+    .mockReturnValueOnce(returnToPath ?? '');
 };
 
 // prettier-ignore
@@ -83,9 +87,11 @@ const testCases: {
   isWorkspaceSuspended: boolean;
   onboardingStatus: OnboardingStatus | undefined;
   res: string | undefined;
+  isOnAWorkspace?: boolean;
   objectNamePluralFromParams?: string;
   objectNamePluralFromMetadata?: string;
   verifyEmailRedirectPath?: string;
+  returnToPath?: string;
 }[] = [
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -320,6 +326,15 @@ const testCases: {
   { loc: AppPath.NotFound, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
   { loc: AppPath.NotFound, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
   { loc: AppPath.NotFound, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+
+  // returnToPath: should redirect to saved path instead of defaultHomePagePath
+  { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/authorize?clientId=abc', res: '/authorize?clientId=abc' },
+  { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
+  { loc: AppPath.Index, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
+
+  // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
+  { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
+  { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
 ];
 
 describe('usePageChangeEffectNavigateLocation', () => {
@@ -330,17 +345,25 @@ describe('usePageChangeEffectNavigateLocation', () => {
       onboardingStatus,
       isWorkspaceSuspended,
       isLoggedIn,
+      isOnAWorkspace,
       objectNamePluralFromParams,
       objectNamePluralFromMetadata,
       verifyEmailRedirectPath,
+      returnToPath,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
       setupMockOnboardingStatus(onboardingStatus);
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLoggedIn);
+      setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseParams(objectNamePluralFromParams);
-      setupMockState(objectNamePluralFromMetadata, verifyEmailRedirectPath);
+      setupMockState(
+        objectNamePluralFromMetadata,
+        verifyEmailRedirectPath,
+        undefined,
+        returnToPath,
+      );
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
@@ -355,7 +378,10 @@ describe('usePageChangeEffectNavigateLocation', () => {
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
-            .length,
+            .length +
+          ['returnToPath:verify', 'returnToPath:signInUp', 'returnToPath:index']
+            .length +
+          ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length,
       );
     });
   });

@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
 
 import { IconCheck } from '@ui/display';
-import { themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {
@@ -39,7 +39,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   background: ${({ isKeySelected, focused }) =>
     isKeySelected || focused
       ? themeCssVariables.background.transparent.light
-      : ''};
+      : 'transparent'};
 
   transition: ${({ isHoverBackgroundDisabled, disabled }) =>
     disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
@@ -60,8 +60,17 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   }};
 
   &:hover {
-    background: ${({ accent, disabled, isHoverBackgroundDisabled }) => {
-      if (disabled === true) return '';
+    background: ${({
+      accent,
+      disabled,
+      isHoverBackgroundDisabled,
+      isKeySelected,
+      focused,
+    }) => {
+      if (disabled === true)
+        return isKeySelected || focused
+          ? themeCssVariables.background.transparent.light
+          : 'transparent';
       if (accent === 'danger')
         return themeCssVariables.background.transparent.danger;
       if (isHoverBackgroundDisabled === true) return 'transparent';
