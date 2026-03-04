@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import axiosRetry from 'axios-retry';
 import FileType from 'file-type';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -189,9 +188,10 @@ export class FileCorePictureService {
     imageUrl: string,
   ): Promise<{ buffer: Buffer; extension: string } | undefined> {
     try {
-      const httpClient = this.secureHttpClientService.getHttpClient();
-
-      axiosRetry(httpClient, { retries: 2, shouldResetTimeout: true });
+      const httpClient = this.secureHttpClientService.getHttpClient({
+        retries: 2,
+        shouldResetTimeout: true,
+      });
 
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 

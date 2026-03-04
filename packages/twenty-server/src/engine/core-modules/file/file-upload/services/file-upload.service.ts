@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import axiosRetry from 'axios-retry';
 import FileType from 'file-type';
 import sharp from 'sharp';
 import { FileFolder } from 'twenty-shared/types';
@@ -98,47 +97,48 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }) {
-    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
-
-    if (!imageData) {
-      return { name: '', mimeType: undefined, files: [] };
-    }
-
-    return await this.uploadImage({
-      file: imageData.buffer,
-      filename: `${v4()}.${imageData.extension}`,
-      mimeType: imageData.mimeType,
-      fileFolder,
-      workspaceId,
-    });
-  }
-
-  private async fetchImageBufferFromUrl(
-    imageUrl: string,
-  ): Promise<
-    { buffer: Buffer; extension: string; mimeType: string } | undefined
-  > {
     try {
-      const httpClient = this.secureHttpClientService.getHttpClient();
+      const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
-      axiosRetry(httpClient, { retries: 2, shouldResetTimeout: true });
-
-      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
-
-      const type = await FileType.fromBuffer(buffer);
-
-      if (!type || !type.ext || !type.mime || !type.mime.startsWith('image/')) {
-        return undefined;
+      if (!imageData) {
+        return { name: '', mimeType: undefined, files: [] };
       }
 
-      return { buffer, extension: type.ext, mimeType: type.mime };
+      return await this.uploadImage({
+        file: imageData.buffer,
+        filename: `${v4()}.${imageData.extension}`,
+        mimeType: imageData.mimeType,
+        fileFolder,
+        workspaceId,
+      });
     } catch (error) {
       this.logger.warn(
         `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
       );
 
-      return undefined;
+      return { name: '', mimeType: undefined, files: [] };
     }
+  }
+
+  private async fetchImageBufferFromUrl(imageUrl: string): Promise<{
+    buffer: Buffer;
+    extension: string;
+    mimeType: string;
+  } | null> {
+    const httpClient = this.secureHttpClientService.getHttpClient({
+      retries: 2,
+      shouldResetTimeout: true,
+    });
+
+    const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+
+    const type = await FileType.fromBuffer(buffer);
+
+    if (!type || !type.ext || !type.mime || !type.mime.startsWith('image/')) {
+      return null;
+    }
+
+    return { buffer, extension: type.ext, mimeType: type.mime };
   }
 
   async uploadImage({
