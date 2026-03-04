@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
+import * as fs from 'fs';
 import * as path from 'path';
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 import { defineConfig } from 'vite';
@@ -90,6 +91,18 @@ export default defineConfig(({ command }) => {
           },
         }),
       ),
+      {
+        name: 'copy-theme-css',
+        closeBundle() {
+          const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
+          for (const file of themeCssFiles) {
+            fs.copyFileSync(
+              path.resolve(__dirname, `src/theme-constants/${file}`),
+              path.resolve(__dirname, `dist/${file}`),
+            );
+          }
+        },
+      },
     ],
     build: {
       cssCodeSplit: false,
