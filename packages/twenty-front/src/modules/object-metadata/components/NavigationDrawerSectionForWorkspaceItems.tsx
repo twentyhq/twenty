@@ -116,13 +116,13 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
         objectMetadataItems,
         views,
       );
-      return (
-        isDefined(objectMetadataItem) &&
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords
+      if (!isDefined(objectMetadataItem)) return false;
+      const permissions = getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        objectMetadataItem.id,
       );
+
+      return permissions.canReadObjectRecords && permissions.showInSidebar;
     }
     return false;
   });

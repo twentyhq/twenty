@@ -103,13 +103,14 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   ];
 
   const objectMetadataItemsForNavigationItemsWithReadPermission =
-    objectMetadataItemsForNavigationItems.filter(
-      (objectMetadataItem) =>
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords,
-    );
+    objectMetadataItemsForNavigationItems.filter((objectMetadataItem) => {
+      const permissions = getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        objectMetadataItem.id,
+      );
+
+      return permissions.canReadObjectRecords && permissions.showInSidebar;
+    });
 
   return (
     objectMetadataItems.length > 0 && (
