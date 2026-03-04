@@ -14,6 +14,10 @@ import {
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export const fieldMetadataGraphqlApiExceptionHandler = (
   error: Error,
@@ -21,6 +25,18 @@ export const fieldMetadataGraphqlApiExceptionHandler = (
 ) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
     workspaceMigrationBuilderExceptionFormatter(error, i18n);
+  }
+
+  if (
+    error instanceof WorkspaceMigrationRunnerException &&
+    error.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED &&
+    error.errors?.metadata?.message?.includes(
+      'IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE',
+    )
+  ) {
+    throw new ConflictError(
+      new Error('A field with this name already exists on this object'),
+    );
   }
 
   if (error instanceof InvalidMetadataException) {
