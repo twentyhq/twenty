@@ -14,8 +14,10 @@ export type AttachmentWithFile = Omit<Attachment, 'file'> & {
   file: FieldFilesValueWithUrl;
 };
 
-const hasFile = (attachment: Attachment): attachment is AttachmentWithFiles => {
-  return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0]);
+const hasFileWithUrl = (
+  attachment: Attachment,
+): attachment is AttachmentWithFiles => {
+  return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0].url);
 };
 
 const normalizeAttachment = (
@@ -28,5 +30,5 @@ const normalizeAttachment = (
 export const filterAttachmentsWithFile = (
   attachments: Attachment[],
 ): AttachmentWithFile[] => {
-  return attachments.filter(hasFile).map(normalizeAttachment);
+  return attachments.filter(hasFileWithUrl).map(normalizeAttachment);
 };

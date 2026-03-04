@@ -4,8 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { isObject } from '@sniptt/guards';
-import { FileFolder, Sources } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -121,21 +120,6 @@ export class FileStorageService {
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.readFile({ filePath: onStoragePath });
-  }
-
-  async writeFolderLegacy(sources: Sources, folderPath: string): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      if (isObject(sources[key])) {
-        await this.writeFolderLegacy(sources[key], join(folderPath, key));
-        continue;
-      }
-      await this.writeFileLegacy({
-        file: sources[key],
-        name: key,
-        folder: folderPath,
-        mimeType: undefined,
-      });
-    }
   }
 
   downloadFile(

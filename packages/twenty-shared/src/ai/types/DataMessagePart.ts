@@ -15,12 +15,9 @@ export type ExtendedFileUIPart = {
   fileId: string;
 };
 
-export const isExtendedFileUIPart = (part: {
-  type: string;
-  fileId: string;
-  url: string;
-  mediaType: string;
-}): part is ExtendedFileUIPart => {
+export const isExtendedFileUIPart = (
+  part: Record<string, unknown>,
+): part is ExtendedFileUIPart => {
   return (
     part.type === 'file' &&
     isDefined(part.fileId) &&
