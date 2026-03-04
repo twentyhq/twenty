@@ -12,7 +12,6 @@ import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useCreateChatThreadMutation,
@@ -24,7 +23,6 @@ export const useAgentChatData = () => {
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
-  const agentChatInput = useAtomStateValue(agentChatInputState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
   const setCurrentAIChatThreadTitle = useSetAtomState(
@@ -53,7 +51,7 @@ export const useAgentChatData = () => {
       setIsCreatingChatThread(false);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
-        [previousDraftKey]: agentChatInput,
+        [previousDraftKey]: store.get(agentChatInputState.atom),
       }));
       setCurrentAIChatThread(newThreadId);
       setAgentChatInput(newDraft);
