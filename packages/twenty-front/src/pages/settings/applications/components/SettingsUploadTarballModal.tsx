@@ -70,9 +70,7 @@ export const SettingsUploadTarballModal = () => {
       modalId={UPLOAD_TARBALL_MODAL_ID}
       isClosable={true}
       padding="large"
-      modalVariant="primary"
       dataGloballyPreventClickOutside
-      ignoreContainer
     >
       <StyledAppModalTitle>
         <H1Title

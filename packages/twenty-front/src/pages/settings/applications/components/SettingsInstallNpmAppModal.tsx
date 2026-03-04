@@ -64,9 +64,7 @@ export const SettingsInstallNpmAppModal = () => {
       modalId={INSTALL_NPM_APP_MODAL_ID}
       isClosable={true}
       padding="large"
-      modalVariant="primary"
       dataGloballyPreventClickOutside
-      ignoreContainer
     >
       <StyledAppModalTitle>
         <H1Title
