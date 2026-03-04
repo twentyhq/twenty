@@ -41,7 +41,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   navigationMenuItem,
   isSelectedInEditMode = false,
   onEditModeClick,
-  onActiveItemClickWhenNotInEditMode,
+  onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
@@ -102,19 +102,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const shouldUseClickHandler = isNavigationMenuInEditMode
-    ? Boolean(onEditModeClick)
-    : isActive && Boolean(onActiveItemClickWhenNotInEditMode);
+  const handleClick = isNavigationMenuInEditMode ? onEditModeClick : undefined;
 
-  const handleClick = shouldUseClickHandler
-    ? isNavigationMenuInEditMode
-      ? onEditModeClick
-      : onActiveItemClickWhenNotInEditMode
-    : undefined;
-
-  const shouldNavigate =
-    !isNavigationMenuInEditMode &&
-    !(isActive && onActiveItemClickWhenNotInEditMode);
+  const shouldNavigate = !isNavigationMenuInEditMode;
 
   const isViewWithCustomName =
     isView &&
