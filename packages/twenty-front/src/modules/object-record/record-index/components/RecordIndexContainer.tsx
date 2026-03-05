@@ -15,6 +15,7 @@ import { RecordIndexCalendarContainer } from '@/object-record/record-index/compo
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordIndexContainer = () => {
