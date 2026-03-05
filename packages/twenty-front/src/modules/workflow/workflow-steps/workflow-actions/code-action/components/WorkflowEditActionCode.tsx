@@ -46,6 +46,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 
 const StyledCodeEditorContainer = styled.div`
@@ -368,6 +369,7 @@ export const WorkflowEditActionCode = ({
   return (
     !loading && (
       <>
+        <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
