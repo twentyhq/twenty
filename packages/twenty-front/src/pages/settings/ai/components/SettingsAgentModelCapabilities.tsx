@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
@@ -9,8 +7,8 @@ import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;

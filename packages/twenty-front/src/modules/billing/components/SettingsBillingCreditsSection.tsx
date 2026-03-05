@@ -14,7 +14,7 @@ import { formatToShortNumber } from 'twenty-shared/utils';
 import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const SettingsBillingCreditsSection = ({
@@ -24,6 +24,7 @@ export const SettingsBillingCreditsSection = ({
     CurrentWorkspace['currentBillingSubscription']
   >;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const subscriptionStatus = useSubscriptionStatus();
   const { formatNumber } = useNumberFormat();
 
@@ -59,8 +60,6 @@ export const SettingsBillingCreditsSection = ({
   const meteredBillingPrices = getCurrentMeteredPricesByInterval(
     currentBillingSubscription.interval,
   );
-
-  const { theme } = useContext(ThemeContext);
 
   return (
     <>

@@ -3,8 +3,9 @@ import {
   type OrchestratorStateBuiltFileInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { copy, ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import crypto from 'crypto';
-import * as fs from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import { join } from 'path';
 import {
   OUTPUT_DIR,
@@ -126,24 +127,24 @@ export class UploadFilesOrchestratorStep {
       GENERATED_DIR,
     );
 
-    if (!(await fs.pathExists(generatedDir))) {
+    if (!(await pathExists(generatedDir))) {
       return;
     }
 
     const outputDir = join(appPath, OUTPUT_DIR, API_CLIENT_DIR);
 
-    await fs.ensureDir(outputDir);
+    await ensureDir(outputDir);
 
     for (const fileName of API_CLIENT_FILES) {
       const absoluteSourcePath = join(generatedDir, fileName);
 
-      if (!(await fs.pathExists(absoluteSourcePath))) {
+      if (!(await pathExists(absoluteSourcePath))) {
         continue;
       }
 
-      await fs.copy(absoluteSourcePath, join(outputDir, fileName));
+      await copy(absoluteSourcePath, join(outputDir, fileName));
 
-      const content = await fs.readFile(absoluteSourcePath);
+      const content = await readFile(absoluteSourcePath);
       const checksum = crypto.createHash('md5').update(content).digest('hex');
 
       const builtPath = join(OUTPUT_DIR, API_CLIENT_DIR, fileName);

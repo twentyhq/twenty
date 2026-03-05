@@ -6,13 +6,12 @@ describe('filterAttachmentsToRestore', () => {
     const softDeletedAttachments = [
       {
         id: '1',
-        fullPath: 'https://exemple.com/test.txt',
+        file: [{ url: 'https://exemple.com/test.txt' }],
       },
     ] as Attachment[];
     const attachmentIdsToRestore = filterAttachmentsToRestore({
       attachmentPathsToRestore: [],
       softDeletedAttachments,
-      isFilesFieldMigrated: false,
     });
     expect(attachmentIdsToRestore).toEqual([]);
   });
@@ -23,7 +22,6 @@ describe('filterAttachmentsToRestore', () => {
         'https://exemple.com/files/attachment/test.txt',
       ],
       softDeletedAttachments: [],
-      isFilesFieldMigrated: false,
     });
     expect(attachmentIdsToRestore).toEqual([]);
   });
@@ -32,17 +30,16 @@ describe('filterAttachmentsToRestore', () => {
     const softDeletedAttachments = [
       {
         id: '1',
-        fullPath: 'https://exemple.com/files/images/test.txt',
+        file: [{ url: 'https://exemple.com/files/images/test.txt' }],
       },
       {
         id: '2',
-        fullPath: 'https://exemple.com/files/images/test2.txt',
+        file: [{ url: 'https://exemple.com/files/images/test2.txt' }],
       },
     ] as Attachment[];
     const attachmentIdsToRestore = filterAttachmentsToRestore({
       attachmentPathsToRestore: ['https://exemple.com/files/images/test.txt'],
       softDeletedAttachments,
-      isFilesFieldMigrated: false,
     });
     expect(attachmentIdsToRestore).toEqual(['1']);
   });

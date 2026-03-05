@@ -1,8 +1,16 @@
+import { appendFile, writeFile } from 'node:fs/promises';
+import { join } from 'path';
+
 import { ApiService } from '@/cli/utilities/api/api-service';
+import {
+  emptyDir,
+  ensureDir,
+  move,
+  pathExists,
+  remove,
+} from '@/cli/utilities/file/fs-utils';
 import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import { generate } from '@genql/cli';
-import * as fs from 'fs-extra';
-import { join } from 'path';
 import { DEFAULT_API_URL_NAME, GENERATED_DIR } from 'twenty-shared/application';
 
 type ClientWrapperOptions = {
@@ -94,8 +102,8 @@ export class ClientService {
       );
     }
 
-    await fs.ensureDir(tempPath);
-    await fs.emptyDir(tempPath);
+    await ensureDir(tempPath);
+    await emptyDir(tempPath);
 
     await Promise.all([
       generate({
@@ -116,7 +124,7 @@ export class ClientService {
     await this.injectClientWrapper(join(tempPath, 'core'), {
       apiClientName: 'CoreApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: false,
+      includeUploadFile: true,
     });
 
     await this.injectClientWrapper(join(tempPath, 'metadata'), {
@@ -127,8 +135,8 @@ export class ClientService {
 
     await this.writeBarrelIndex(tempPath);
 
-    await fs.remove(outputPath);
-    await fs.move(tempPath, outputPath);
+    await remove(outputPath);
+    await move(tempPath, outputPath);
   }
 
   async ensureGeneratedClientStub({
@@ -138,18 +146,18 @@ export class ClientService {
   }): Promise<void> {
     const outputPath = this.resolveGeneratedPath(appPath);
 
-    if (await fs.pathExists(join(outputPath, 'index.ts'))) {
+    if (await pathExists(join(outputPath, 'index.ts'))) {
       return;
     }
 
-    await fs.ensureDir(join(outputPath, 'core'));
-    await fs.ensureDir(join(outputPath, 'metadata'));
+    await ensureDir(join(outputPath, 'core'));
+    await ensureDir(join(outputPath, 'metadata'));
 
-    await fs.writeFile(
+    await writeFile(
       join(outputPath, 'core', 'index.ts'),
       'export class CoreApiClient {}\n',
     );
-    await fs.writeFile(
+    await writeFile(
       join(outputPath, 'metadata', 'index.ts'),
       'export class MetadataApiClient {}\n',
     );
@@ -167,7 +175,7 @@ export * as CoreSchema from './core/schema';
 export * as MetadataSchema from './metadata/schema';
 `;
 
-    await fs.writeFile(join(outputDir, 'index.ts'), barrelContent);
+    await writeFile(join(outputDir, 'index.ts'), barrelContent);
   }
 
   private async injectClientWrapper(
@@ -176,6 +184,6 @@ export * as MetadataSchema from './metadata/schema';
   ): Promise<void> {
     const clientContent = buildClientWrapperSource(options);
 
-    await fs.appendFile(join(output, 'index.ts'), clientContent);
+    await appendFile(join(output, 'index.ts'), clientContent);
   }
 }

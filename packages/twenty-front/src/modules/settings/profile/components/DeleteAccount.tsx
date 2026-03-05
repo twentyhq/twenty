@@ -86,7 +86,7 @@ export const DeleteAccount = () => {
           <ConfirmationModal
             confirmationValue={userEmail}
             confirmationPlaceholder={userEmail ?? ''}
-            modalId={LEAVE_WORKSPACE_MODAL_ID}
+            modalInstanceId={LEAVE_WORKSPACE_MODAL_ID}
             title={t`Leave workspace`}
             subtitle={
               <>
@@ -109,7 +109,7 @@ export const DeleteAccount = () => {
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalId={DELETE_ACCOUNT_MODAL_ID}
+        modalInstanceId={DELETE_ACCOUNT_MODAL_ID}
         title={t`Account Deletion`}
         subtitle={
           <>

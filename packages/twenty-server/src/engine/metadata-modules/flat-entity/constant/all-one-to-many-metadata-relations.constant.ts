@@ -37,6 +37,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   commandMenuItem: {},
   navigationMenuItem: {},
   fieldMetadata: {
+    viewSorts: {
+      flatEntityForeignKeyAggregator: 'viewSortIds',
+      metadataName: 'viewSort',
+      universalFlatEntityForeignKeyAggregator: 'viewSortUniversalIdentifiers',
+    },
     fieldPermissions: null,
     indexFieldMetadatas: null,
     viewFields: {
@@ -202,6 +207,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   frontComponent: {},
   webhook: {},
+  viewSort: {},
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

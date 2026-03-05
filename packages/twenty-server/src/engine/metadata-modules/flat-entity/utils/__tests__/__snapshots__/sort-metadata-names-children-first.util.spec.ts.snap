@@ -8,6 +8,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "viewFilter",
   "commandMenuItem",
   "pageLayoutWidget",
+  "viewSort",
   "index",
   "pageLayout",
   "roleTarget",

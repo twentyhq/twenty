@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
 import { AppDevCommand } from './app/app-dev';
+import { AppPackCommand } from './app/app-pack';
+import { AppPushCommand } from './app/app-push';
 import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
@@ -63,6 +65,8 @@ export const registerCommands = (program: Command): void => {
   // App commands
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
+  const packCommand = new AppPackCommand();
+  const pushCommand = new AppPushCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
@@ -110,6 +114,28 @@ export const registerCommands = (program: Command): void => {
       } catch {
         process.exit(1);
       }
+    });
+
+  program
+    .command('app:pack [appPath]')
+    .description('Build and pack the application into a .tgz tarball')
+    .action(async (appPath) => {
+      await packCommand.execute({ appPath: formatPath(appPath) });
+    });
+
+  program
+    .command('app:push [appPath]')
+    .description(
+      'Build, upload, and install a local application on a Twenty server (for air-gapped/dev deployments)',
+    )
+    .option('--server <url>', 'Twenty server URL')
+    .option('--token <token>', 'Auth token for the server')
+    .action(async (appPath, options) => {
+      await pushCommand.execute({
+        appPath: formatPath(appPath),
+        server: options.server,
+        token: options.token,
+      });
     });
 
   program

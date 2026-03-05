@@ -1,15 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  appendCopySuffix,
-  assertIsDefinedOrThrow,
-  isDefined,
-} from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -34,12 +28,9 @@ export class DashboardDuplicationService {
 
   async duplicateDashboard(
     dashboardId: string,
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
   ): Promise<DuplicatedDashboardDTO> {
-    const { workspace } = authContext;
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
+    const workspace = authContext.workspace;
     const workspaceId = workspace.id;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -106,7 +97,7 @@ export class DashboardDuplicationService {
           throw error;
         }
       },
-      authContext as WorkspaceAuthContext,
+      authContext,
     );
   }
 
@@ -114,7 +105,7 @@ export class DashboardDuplicationService {
     originalDashboard: DashboardWorkspaceEntity,
     newPageLayoutId: string,
     dashboardRepository: WorkspaceRepository<DashboardWorkspaceEntity>,
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
   ): Promise<DashboardWorkspaceEntity> {
     const newTitle = appendCopySuffix(originalDashboard.title ?? '');
 

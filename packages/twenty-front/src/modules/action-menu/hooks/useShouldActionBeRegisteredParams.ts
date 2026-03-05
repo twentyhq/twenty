@@ -1,4 +1,3 @@
-import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -13,19 +12,19 @@ import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hoo
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useStore } from 'jotai';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
@@ -86,7 +85,7 @@ export const useShouldActionBeRegisteredParams = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
@@ -136,10 +135,6 @@ export const useShouldActionBeRegisteredParams = ({
     [store],
   );
 
-  const forceRegisteredActionsByKey = useAtomStateValue(
-    forceRegisteredActionsByKeyState,
-  );
-
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -159,7 +154,7 @@ export const useShouldActionBeRegisteredParams = ({
     isFavorite,
     objectPermissions,
     isNoteOrTask,
-    isInRightDrawer,
+    isInSidePanel,
     hasAnySoftDeleteFilterOnView,
     isShowPage,
     isSelectAll,
@@ -169,7 +164,6 @@ export const useShouldActionBeRegisteredParams = ({
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
-    forceRegisteredActionsByKey,
     isFeatureFlagEnabled,
   };
 };

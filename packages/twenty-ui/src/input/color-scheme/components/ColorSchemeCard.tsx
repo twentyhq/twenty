@@ -1,8 +1,6 @@
 import { styled } from '@linaria/react';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { GRAY_SCALE_DARK, GRAY_SCALE_LIGHT } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
 import {
   AnimatePresence,
   type AnimationControls,
@@ -10,6 +8,9 @@ import {
   useAnimation,
 } from 'framer-motion';
 import React from 'react';
+import { GRAY_SCALE_DARK } from '@ui/theme/constants/GrayScaleDark';
+import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>

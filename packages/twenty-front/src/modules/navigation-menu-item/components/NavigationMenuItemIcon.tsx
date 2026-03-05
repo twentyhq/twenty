@@ -1,8 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
@@ -24,7 +23,6 @@ export const NavigationMenuItemIcon = ({
 }: {
   navigationMenuItem: ProcessedNavigationMenuItem;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
@@ -87,14 +85,14 @@ export const NavigationMenuItemIcon = ({
     !isRecord &&
     isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
-    ? getNavigationMenuItemIconStyleFromColor(theme, effectiveColor)
+    ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
     : null;
 
   const iconColorToUse = iconStyle
     ? iconStyle.iconColor
     : StandardIcon
       ? IconColor
-      : theme.font.color.secondary;
+      : themeCssVariables.font.color.secondary;
 
   const avatar = (
     <Avatar

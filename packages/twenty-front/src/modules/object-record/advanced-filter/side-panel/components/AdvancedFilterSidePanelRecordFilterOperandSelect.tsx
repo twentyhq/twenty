@@ -1,0 +1,63 @@
+import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+type AdvancedFilterSidePanelRecordFilterOperandSelectProps = {
+  recordFilterId: string;
+};
+
+export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
+  recordFilterId,
+}: AdvancedFilterSidePanelRecordFilterOperandSelectProps) => {
+  const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const filter = currentRecordFilters.find(
+    (recordFilter) => recordFilter.id === recordFilterId,
+  );
+
+  const isDisabled = !filter?.fieldMetadataId || readonly;
+
+  const filterType = filter?.type;
+
+  const operandsForFilterType = isDefined(filterType)
+    ? getRecordFilterOperands({
+        filterType,
+        subFieldName: filter?.subFieldName,
+      })
+    : [];
+
+  const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
+  const timeZoneAbbreviation = shouldUseUTCTimeZone ? 'UTC' : undefined;
+
+  if (isDisabled === true) {
+    return (
+      <SelectControl
+        selectedOption={{
+          label: filter?.operand
+            ? getOperandLabel(filter.operand, timeZoneAbbreviation)
+            : t`Select operand`,
+          value: null,
+        }}
+        isDisabled
+      />
+    );
+  }
+
+  return (
+    <AdvancedFilterRecordFilterOperandSelectContent
+      recordFilterId={recordFilterId}
+      filter={filter}
+      operandsForFilterType={operandsForFilterType}
+    />
+  );
+};

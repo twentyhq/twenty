@@ -1,6 +1,5 @@
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type ZeroLineProps = {
   isVertical: boolean;
   zeroPosition: number;

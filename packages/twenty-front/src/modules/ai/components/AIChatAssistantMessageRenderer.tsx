@@ -7,11 +7,10 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -28,8 +27,9 @@ const StyledLoadingIconContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLoadingIcon = styled(IconDotsVertical)`
+const StyledLoadingIconWrapper = styled.span`
   color: ${themeCssVariables.font.color.light};
+  display: flex;
   transform: rotate(90deg);
 `;
 
@@ -38,7 +38,9 @@ const InitialLoadingIndicator = () => {
 
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon size={theme.icon.size.xl} />
+      <StyledLoadingIconWrapper>
+        <IconDotsVertical size={theme.icon.size.xl} />
+      </StyledLoadingIconWrapper>
     </StyledLoadingIconContainer>
   );
 };

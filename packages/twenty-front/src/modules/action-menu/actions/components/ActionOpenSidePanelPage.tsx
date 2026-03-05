@@ -1,12 +1,12 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 
 export const ActionOpenSidePanelPage = ({
@@ -16,7 +16,7 @@ export const ActionOpenSidePanelPage = ({
   onClick,
   shouldResetSearchState = false,
 }: {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: MessageDescriptor;
   pageIcon: IconComponent;
   onClick?: () => void;
@@ -24,9 +24,9 @@ export const ActionOpenSidePanelPage = ({
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
-  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
+  const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
   if (!actionConfig) {
     return null;
@@ -35,14 +35,14 @@ export const ActionOpenSidePanelPage = ({
   const handleClick = () => {
     onClick?.();
 
-    navigateCommandMenu({
+    navigateSidePanel({
       page,
       pageTitle: t(pageTitle),
       pageIcon,
     });
 
     if (shouldResetSearchState) {
-      setCommandMenuSearch('');
+      setSidePanelSearch('');
     }
   };
 

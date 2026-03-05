@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -356,9 +355,7 @@ export class WorkflowTriggerWorkspaceService {
             case 'SINGLE_RECORD':
             case 'BULK_RECORDS': {
               availabilityType =
-                availability.type === 'SINGLE_RECORD'
-                  ? CommandMenuItemAvailabilityType.SINGLE_RECORD
-                  : CommandMenuItemAvailabilityType.BULK_RECORDS;
+                CommandMenuItemAvailabilityType.RECORD_SELECTION;
 
               const { objectIdByNameSingular } =
                 await this.workflowCommonWorkspaceService.getFlatEntityMaps(

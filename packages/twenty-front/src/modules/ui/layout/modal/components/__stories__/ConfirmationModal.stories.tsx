@@ -54,7 +54,7 @@ const confirmMock = fn();
 
 export const Default: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Pariatur labore.',
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
     confirmButtonText: 'Delete',
@@ -72,7 +72,7 @@ export const InputConfirmation: Story = {
 
 export const CloseOnEscape: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Escape Key Test',
     subtitle: 'This modal should close when pressing the Escape key.',
     confirmButtonText: 'Confirm',
@@ -95,7 +95,7 @@ export const CloseOnEscape: Story = {
 
 export const CloseOnClickOutside: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Click Outside Test',
     subtitle: 'This modal should close when clicking outside of it.',
     confirmButtonText: 'Confirm',
@@ -121,7 +121,7 @@ export const CloseOnClickOutside: Story = {
 
 export const ConfirmWithEnterKey: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Enter Key Test',
     subtitle: 'This modal should confirm when pressing the Enter key.',
     confirmButtonText: 'Confirm',
@@ -142,7 +142,7 @@ export const ConfirmWithEnterKey: Story = {
 
 export const CancelButtonClick: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Cancel Button Test',
     subtitle: 'Clicking the cancel button should close the modal',
     confirmButtonText: 'Confirm',
@@ -166,7 +166,7 @@ export const CancelButtonClick: Story = {
 
 export const ConfirmButtonClick: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Confirm Button Test',
     subtitle: 'Clicking the confirm button should trigger the confirm action',
     confirmButtonText: 'Confirm',

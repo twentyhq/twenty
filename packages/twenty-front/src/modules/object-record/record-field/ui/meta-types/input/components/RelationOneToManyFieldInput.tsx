@@ -8,7 +8,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
@@ -16,7 +16,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
@@ -136,16 +136,15 @@ export const RelationOneToManyFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular:
-        relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular:
+      relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
@@ -267,8 +266,7 @@ export const RelationOneToManyFieldInput = () => {
         return;
       }
 
-      const newRecordId =
-        await createNewRecordAndOpenRightDrawer?.(searchInput);
+      const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
       if (isDefined(newRecordId)) {
         updatePickerState(newRecordId, relationObjectMetadataItem.id, [
@@ -277,7 +275,7 @@ export const RelationOneToManyFieldInput = () => {
       }
     },
     [
-      createNewRecordAndOpenRightDrawer,
+      createNewRecordAndOpenSidePanel,
       createTargetRecord,
       createJunctionRecord,
       fieldName,

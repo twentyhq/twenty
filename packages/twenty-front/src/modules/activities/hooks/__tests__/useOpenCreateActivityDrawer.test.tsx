@@ -3,9 +3,9 @@ import { act, renderHook } from '@testing-library/react';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -23,11 +23,11 @@ jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
       : { createOneRecord: mockCreateOneNote },
 }));
 
-const mockOpenRecordInCommandMenu = jest.fn();
+const mockOpenRecordInSidePanel = jest.fn();
 
-jest.mock('@/command-menu/hooks/useOpenRecordInCommandMenu', () => ({
-  useOpenRecordInCommandMenu: () => ({
-    openRecordInCommandMenu: mockOpenRecordInCommandMenu,
+jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
+  useOpenRecordInSidePanel: () => ({
+    openRecordInSidePanel: mockOpenRecordInSidePanel,
   }),
 }));
 
@@ -46,7 +46,7 @@ describe('useOpenCreateActivityDrawer', () => {
     });
   });
 
-  it('should create a note and note target then open the record in the command menu', async () => {
+  it('should create a note and note target then open the record in the side panel', async () => {
     const { result } = renderHook(
       () =>
         useOpenCreateActivityDrawer({
@@ -69,7 +69,7 @@ describe('useOpenCreateActivityDrawer', () => {
       noteId: fakeNoteId,
     });
 
-    expect(mockOpenRecordInCommandMenu).toHaveBeenCalledWith({
+    expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
       recordId: fakeNoteId,
       objectNameSingular: CoreObjectNameSingular.Note,
       isNewRecord: true,

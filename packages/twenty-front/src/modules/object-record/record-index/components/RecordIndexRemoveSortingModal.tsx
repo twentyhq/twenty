@@ -26,7 +26,7 @@ export const RecordIndexRemoveSortingModal = () => {
 
   return (
     <ConfirmationModal
-      modalId={RECORD_INDEX_REMOVE_SORTING_MODAL_ID}
+      modalInstanceId={RECORD_INDEX_REMOVE_SORTING_MODAL_ID}
       title={t`Remove sorting?`}
       subtitle={t`This is required to enable manual row reordering.`}
       onConfirmClick={handleRemoveClick}

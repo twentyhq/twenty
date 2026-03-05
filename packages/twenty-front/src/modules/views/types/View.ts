@@ -1,5 +1,4 @@
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type ViewField } from '@/views/types/ViewField';
 import { type ViewFieldGroup } from '@/views/types/ViewFieldGroup';
 import { type ViewFilter } from '@/views/types/ViewFilter';
@@ -12,6 +11,7 @@ import {
   type ViewCalendarLayout,
   type ViewVisibility,
 } from '~/generated-metadata/graphql';
+import { type ViewSort } from '@/views/types/ViewSort';
 
 export type View = {
   id: string;
@@ -25,7 +25,7 @@ export type View = {
   viewGroups: ViewGroup[];
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
-  viewSorts: CoreViewSortEssential[];
+  viewSorts: ViewSort[];
   kanbanAggregateOperation: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId: string | null;
   mainGroupByFieldMetadataId?: string | null;

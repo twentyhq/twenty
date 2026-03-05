@@ -10,8 +10,9 @@ import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -39,7 +40,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
+import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -106,7 +107,7 @@ export const PageChangeEffect = () => {
     isAppEffectRedirectEnabledState,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
     useReturnToPath();
@@ -115,13 +116,21 @@ export const PageChangeEffect = () => {
     isMatchingLocation(location, appPath),
   );
 
-  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
-    const currentPage = store.get(commandMenuPageState.atom);
-    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+  const closeSidePanelUnlessNotRelevant = useCallback(() => {
+    const currentPage = store.get(sidePanelPageState.atom);
+
+    if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }
-    closeCommandMenu();
-  }, [closeCommandMenu, store]);
+
+    const sidePanelIsAiChat = currentPage === SidePanelPages.AskAI;
+
+    if (sidePanelIsAiChat) {
+      return;
+    }
+
+    closeSidePanelMenu();
+  }, [closeSidePanelMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
@@ -130,8 +139,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenuUnlessOnEditPage();
-  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
+    closeSidePanelUnlessNotRelevant();
+  }, [location.pathname, closeSidePanelUnlessNotRelevant]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -207,6 +216,24 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
+        const isNewRecord = location.state?.isNewRecord === true;
+
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
+        }
+
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+
+        if (isSidePanelOpen) {
+          return;
+        }
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.RecordShowPage,
@@ -220,18 +247,6 @@ export const PageChangeEffect = () => {
             },
           },
         });
-
-        const isNewRecord = location.state?.isNewRecord === true;
-
-        if (
-          isNewRecord &&
-          isDefined(location.state?.labelIdentifierFieldName)
-        ) {
-          openNewRecordTitleCell({
-            recordId: location.state.objectRecordId,
-            fieldName: location.state.labelIdentifierFieldName,
-          });
-        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -376,6 +391,7 @@ export const PageChangeEffect = () => {
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
     openNewRecordTitleCell,
+    store,
   ]);
 
   useEffect(() => {

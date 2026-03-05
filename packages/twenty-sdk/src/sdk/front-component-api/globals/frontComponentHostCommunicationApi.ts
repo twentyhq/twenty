@@ -1,6 +1,6 @@
 import {
   type AppPath,
-  type CommandMenuPages,
+  type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
 } from 'twenty-shared/types';
@@ -14,11 +14,22 @@ export type NavigateFunction = <T extends AppPath>(
 ) => Promise<void>;
 
 export type OpenSidePanelPageFunction = (params: {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: string;
   pageIcon?: string;
   shouldResetSearchState?: boolean;
 }) => Promise<void>;
+
+export type ActionConfirmationModalResult = 'confirm' | 'cancel';
+
+export type ActionConfirmationModalAccent = 'default' | 'blue' | 'danger';
+
+export type OpenActionConfirmationModalFunction = (params: {
+  title: string;
+  subtitle: string;
+  confirmButtonText?: string;
+  confirmButtonAccent?: ActionConfirmationModalAccent;
+}) => Promise<ActionConfirmationModalResult>;
 
 export type UnmountFrontComponentFunction = () => Promise<void>;
 
@@ -30,10 +41,15 @@ export type CloseSidePanelFunction = () => Promise<void>;
 
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
+export type OpenActionConfirmationModalHostFunction = (
+  params: Parameters<OpenActionConfirmationModalFunction>[0],
+) => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
+  openActionConfirmationModal?: OpenActionConfirmationModalFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;

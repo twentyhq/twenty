@@ -24,6 +24,7 @@ import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fi
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -463,7 +464,7 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps,
       parentObjectMetadataItem: objectMetadata,
       parentObjectRecords: allRecords,
-      authContext: streamData.authContext,
+      authContext: streamData.authContext as unknown as WorkspaceAuthContext,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       rolePermissionConfig,
       workspaceDataSource: globalWorkspaceDataSource,
@@ -498,11 +499,7 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       objectMetadata,
       roleId,
-      authContext: {
-        userWorkspaceId: subscriberAuthContext.userWorkspaceId,
-        workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-        workspaceMember,
-      },
+      workspaceMember,
     });
   }
 

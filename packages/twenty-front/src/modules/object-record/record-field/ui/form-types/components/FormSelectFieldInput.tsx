@@ -16,7 +16,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleOff } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -38,7 +38,6 @@ export const FormSelectFieldInput = ({
   readonly,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
-
   const instanceId = useId();
 
   const { removeFocusItemFromFocusStackById } =
@@ -145,7 +144,9 @@ export const FormSelectFieldInput = ({
             withSearchInput
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{
+              y: parseInt(theme.spacing[1], 10),
+            }}
           />
         ) : (
           <FormFieldInputInnerContainer

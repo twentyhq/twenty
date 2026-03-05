@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -20,13 +19,6 @@ import {
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
-
-const StyledDragDropPlaceholderCell = styled(
-  RecordTableDragAndDropPlaceholderCell,
-)`
-  left: 0;
-  position: sticky;
-`;
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -138,7 +130,7 @@ export const RecordTableActionRow = ({
 
   return (
     <StyledRecordTableDraggableTr onClick={onClick}>
-      <StyledDragDropPlaceholderCell />
+      <RecordTableDragAndDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
           stroke={theme.icon.stroke.sm}

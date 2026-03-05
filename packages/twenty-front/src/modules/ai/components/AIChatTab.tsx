@@ -7,20 +7,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
-import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
+import { AIChatTabMessageList } from '@/ai/components/AIChatTabMessageList';
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -100,16 +96,6 @@ const StyledEditorWrapper = styled.div`
   }
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[3]};
-  width: calc(100% - 24px);
-`;
-
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -129,29 +115,26 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledReadOnlyModelButton = styled(LightButton)`
-  cursor: default;
+const StyledReadOnlyModelButtonContainer = styled.div`
+  > * {
+    cursor: default;
 
-  &:hover,
-  &:active {
-    background: transparent;
+    &:hover,
+    &:active {
+      background: transparent;
+    }
   }
 `;
 
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
-  const { isLoading, messages, isStreaming, error, handleSendMessage } =
-    useAgentChatContextOrThrow();
-  const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
-  const { editor, handleSendAndClear } = useAIChatEditor({
-    onSendMessage: handleSendMessage,
-  });
+  const { editor, handleSendAndClear } = useAIChatEditor();
 
   return (
     <StyledContainer
@@ -166,41 +149,10 @@ export const AIChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          {hasMessages && (
-            <StyledScrollWrapper
-              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
-            >
-              {messages.map((message, index) => {
-                const isLastMessage = index === messages.length - 1;
-                const isLastMessageStreaming = isStreaming && isLastMessage;
-                const isLastAssistantMessage =
-                  isLastMessage && message.role === AgentMessageRole.ASSISTANT;
-                const shouldShowError = error && isLastAssistantMessage;
-
-                return (
-                  <AIChatMessage
-                    isLastMessageStreaming={isLastMessageStreaming}
-                    message={message}
-                    key={message.id}
-                    error={shouldShowError ? error : null}
-                  />
-                );
-              })}
-              {error &&
-                !isStreaming &&
-                messages.at(-1)?.role === AgentMessageRole.USER && (
-                  <AIChatStandaloneError error={error} />
-                )}
-            </StyledScrollWrapper>
-          )}
-          {!hasMessages && !error && !isLoading && (
-            <AIChatEmptyState editor={editor} />
-          )}
-          {!hasMessages && error && !isLoading && (
-            <AIChatStandaloneError error={error} />
-          )}
-          {isLoading && !hasMessages && <AIChatSkeletonLoader />}
-
+          <AIChatTabMessageList />
+          <AIChatEmptyState editor={editor} />
+          <AIChatStandaloneError />
+          <AIChatSkeletonLoader />
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
             <StyledInputBox>
@@ -210,13 +162,12 @@ export const AIChatTab = () => {
               <StyledButtonsContainer>
                 <StyledLeftButtonsContainer>
                   <AgentChatFileUploadButton />
-                  {hasMessages && <AIChatContextUsageButton />}
+                  <AIChatContextUsageButton />
                 </StyledLeftButtonsContainer>
                 <StyledRightButtonsContainer>
-                  <StyledReadOnlyModelButton
-                    accent="tertiary"
-                    title={smartModelLabel}
-                  />
+                  <StyledReadOnlyModelButtonContainer>
+                    <LightButton accent="tertiary" title={smartModelLabel} />
+                  </StyledReadOnlyModelButtonContainer>
                   <SendMessageButton onSend={handleSendAndClear} />
                 </StyledRightButtonsContainer>
               </StyledButtonsContainer>

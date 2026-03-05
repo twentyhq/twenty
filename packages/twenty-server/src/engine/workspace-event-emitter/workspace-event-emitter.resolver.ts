@@ -7,7 +7,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -97,7 +97,7 @@ export class WorkspaceEventEmitterResolver {
   async onEventSubscription(
     @Args('eventStreamId') eventStreamId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
@@ -163,7 +163,7 @@ export class WorkspaceEventEmitterResolver {
   async addQueryToEventStream(
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
@@ -207,7 +207,7 @@ export class WorkspaceEventEmitterResolver {
   async removeQueryFromEventStream(
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {

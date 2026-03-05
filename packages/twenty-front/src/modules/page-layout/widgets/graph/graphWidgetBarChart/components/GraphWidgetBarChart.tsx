@@ -1,4 +1,4 @@
-import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
@@ -23,11 +23,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;
@@ -84,8 +83,7 @@ export const GraphWidgetBarChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetBarChartProps) => {
-  const { theme } = useContext(ThemeContext);
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
 
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);

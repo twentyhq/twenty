@@ -8,9 +8,8 @@ import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 const StyledDraggableWrapper = styled.div`
   display: flex;
   cursor: grab;
@@ -30,7 +29,6 @@ export const PageLayoutTabRenderClone = ({
   activeTabId: string | null;
 }) => {
   const { theme } = useContext(ThemeContext);
-
   const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );

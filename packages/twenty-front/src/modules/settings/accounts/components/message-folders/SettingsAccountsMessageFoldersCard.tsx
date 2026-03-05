@@ -1,6 +1,6 @@
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
@@ -37,16 +37,9 @@ const StyledFoldersContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  padding-right: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
 `;
 
 const StyledSectionHeader = styled.div`
@@ -61,8 +54,10 @@ const StyledSectionHeader = styled.div`
   text-align: left;
 `;
 
-const StyledLabel = styled(Label)`
+const StyledLabelContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -165,23 +160,30 @@ export const SettingsAccountsMessageFoldersCard = () => {
   return (
     <Section>
       <Table>
-        <StyledSearchInput
-          placeholder={t`Search folders...`}
-          value={search}
-          onChange={setSearch}
-          instanceId={'message-folders-search'}
-        />
-        <StyledLabel>{t`Folders`}</StyledLabel>
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            placeholder={t`Search folders...`}
+            value={search}
+            onChange={setSearch}
+            instanceId={'message-folders-search'}
+          />
+        </StyledSearchInputContainer>
+        <StyledLabelContainer>
+          <Label>{t`Folders`}</Label>
+        </StyledLabelContainer>
 
         <StyledSectionHeader>
           <Label>{t`Toggle all folders`}</Label>
-          <StyledCheckboxCell>
+          <TableCell
+            align="right"
+            padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+          >
             <Checkbox
               checked={allFoldersToggled}
               onChange={() => handleToggleAllFolders(messageFolders)}
               size={CheckboxSize.Small}
             />
-          </StyledCheckboxCell>
+          </TableCell>
         </StyledSectionHeader>
 
         <StyledFoldersContainer>

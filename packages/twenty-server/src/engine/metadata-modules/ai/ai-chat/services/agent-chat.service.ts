@@ -43,15 +43,6 @@ export class AgentChatService {
     return this.threadRepository.save(thread);
   }
 
-  async getThreadsForUser(userWorkspaceId: string) {
-    return this.threadRepository.find({
-      where: {
-        userWorkspaceId,
-      },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async getThreadById(threadId: string, userWorkspaceId: string) {
     const thread = await this.threadRepository.findOne({
       where: {
@@ -134,7 +125,7 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
   }
 
