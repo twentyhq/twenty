@@ -41,10 +41,7 @@
 
     "typescript/no-redeclare": "error",
     "typescript/ban-ts-comment": "error",
-    "typescript/consistent-type-imports": ["error", {
-      "prefer": "type-imports",
-      "fixStyle": "inline-type-imports"
-    }],
+    "typescript/consistent-type-imports": "off",
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-empty-object-type": ["error", {
@@ -81,7 +78,7 @@
     {
       "files": ["**/constants/*.ts", "**/*.constants.ts"],
       "rules": {
-        "twenty/max-consts-per-file": ["error", { "max": 1 }]
+        "twenty/max-consts-per-file": "off"
       }
     }
   ]
