@@ -8,13 +8,12 @@ import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, Status } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
@@ -27,17 +26,8 @@ const StyledTableHeaderRowContainer = styled.div`
 
 const TABLE_GRID = '1fr 1fr 100px 100px 80px';
 
-const StyledClickableRow = styled(TableRow)`
-  cursor: pointer;
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
-
 export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const navigateSettings = useNavigateSettings();
 
   const { data } = useQuery(FIND_ALL_APPLICATION_REGISTRATIONS);
 
@@ -57,13 +47,6 @@ export const SettingsAdminApps = () => {
         registration.universalIdentifier.toLowerCase().includes(query),
     );
   }, [registrations, searchQuery]);
-
-  const handleRowClick = (registration: ApplicationRegistrationFragmentFragment) => {
-    navigateSettings(
-      SettingsPath.ApplicationRegistrationDetail,
-      { applicationRegistrationId: registration.id },
-    );
-  };
 
   return (
     <Section>
@@ -89,10 +72,13 @@ export const SettingsAdminApps = () => {
           </StyledTableHeaderRowContainer>
           <TableBody>
             {filtered.map((registration) => (
-              <StyledClickableRow
+              <TableRow
                 key={registration.id}
                 gridTemplateColumns={TABLE_GRID}
-                onClick={() => handleRowClick(registration)}
+                to={getSettingsPath(
+                  SettingsPath.ApplicationRegistrationDetail,
+                  { applicationRegistrationId: registration.id },
+                )}
               >
                 <TableCell>{registration.name}</TableCell>
                 <TableCell>
@@ -115,7 +101,7 @@ export const SettingsAdminApps = () => {
                     text={registration.isFeatured ? t`Yes` : t`No`}
                   />
                 </TableCell>
-              </StyledClickableRow>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
