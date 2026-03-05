@@ -30,10 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {

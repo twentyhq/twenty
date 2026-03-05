@@ -4,10 +4,7 @@ import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsItemTypeTagProps = {
   item: {

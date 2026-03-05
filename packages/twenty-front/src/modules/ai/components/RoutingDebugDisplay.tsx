@@ -333,13 +333,9 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
       <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
         <StyledTimingLabel>{t`Debug Info`}</StyledTimingLabel>
         {isExpanded ? (
-          <IconChevronUp
-            size={parseFloat(theme.icon.size.sm)}
-          />
+          <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
         ) : (
-          <IconChevronDown
-            size={parseFloat(theme.icon.size.sm)}
-          />
+          <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
         )}
       </StyledToggleButton>
 

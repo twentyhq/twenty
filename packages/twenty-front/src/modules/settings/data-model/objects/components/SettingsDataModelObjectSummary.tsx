@@ -9,10 +9,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;

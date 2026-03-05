@@ -5,10 +5,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { type IconComponent, IconTwentyStar } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;
@@ -83,9 +80,7 @@ export const SettingsObjectFieldDataType = ({
       onClick={onClick}
     >
       <StyledIconWrapper>
-        <Icon
-          size={parseFloat(theme.icon.size.sm)}
-        />
+        <Icon size={parseFloat(theme.icon.size.sm)} />
       </StyledIconWrapper>
       <StyledLabelContainer>
         {label} <StyledSpan>{labelDetail && `· ${labelDetail}`}</StyledSpan>

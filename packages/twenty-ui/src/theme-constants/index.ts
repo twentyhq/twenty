@@ -7,9 +7,7 @@
  *                              |___/
  */
 
-export type { ColorSchemeContextType } from './ColorSchemeProvider';
-export { ColorSchemeContext, ColorSchemeProvider } from './ColorSchemeProvider';
 export { MOBILE_VIEWPORT } from './constants';
 export { themeCssVariables } from './themeCssVariables';
-export type { ThemeContextType, ThemeType } from './ThemeProvider';
+export type { ThemeType, ThemeContextType } from './ThemeProvider';
 export { ThemeContext, ThemeProvider } from './ThemeProvider';

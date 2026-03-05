@@ -90,13 +90,9 @@ export const ViewPickerDropdown = () => {
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
             {currentView && CurrentViewIcon ? (
-              <CurrentViewIcon
-                size={parseFloat(theme.icon.size.md)}
-              />
+              <CurrentViewIcon size={parseFloat(theme.icon.size.md)} />
             ) : (
-              <IconList
-                size={parseFloat(theme.icon.size.md)}
-              />
+              <IconList size={parseFloat(theme.icon.size.md)} />
             )}
           </StyledIconContainer>
           <StyledViewName>
@@ -104,9 +100,7 @@ export const ViewPickerDropdown = () => {
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
-            <IconChevronDown
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }

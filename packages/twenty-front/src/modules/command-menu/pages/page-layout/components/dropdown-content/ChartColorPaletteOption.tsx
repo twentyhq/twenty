@@ -7,7 +7,8 @@ import { t } from '@lingui/core/macro';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
-import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorPaletteOptionProps = {
   selectedItemId: string | null;
   currentColor: string | null | undefined;

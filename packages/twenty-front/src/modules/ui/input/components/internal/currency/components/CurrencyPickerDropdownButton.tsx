@@ -9,10 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   color: ${({ color }) => color ?? 'none'};

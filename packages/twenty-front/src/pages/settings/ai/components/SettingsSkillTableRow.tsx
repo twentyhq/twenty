@@ -44,9 +44,7 @@ export const SettingsSkillTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          <Icon
-            size={parseFloat(theme.icon.size.md)}
-          />
+          <Icon size={parseFloat(theme.icon.size.md)} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />
       </TableCell>

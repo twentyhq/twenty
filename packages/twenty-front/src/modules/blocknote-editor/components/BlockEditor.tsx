@@ -12,10 +12,7 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
-import {
-  ColorSchemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -143,7 +140,7 @@ export const BlockEditor = ({
   onPaste,
   readonly,
 }: BlockEditorProps) => {
-  const { colorScheme } = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ThemeContext);
 
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);

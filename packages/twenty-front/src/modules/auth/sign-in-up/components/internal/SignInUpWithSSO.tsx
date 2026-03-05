@@ -50,11 +50,7 @@ export const SignInUpWithSSO = () => {
     <>
       <StyledSSOButtonContainer>
         <MainButton
-          Icon={() => (
-            <IconLock
-              size={parseFloat(theme.icon.size.md)}
-            />
-          )}
+          Icon={() => <IconLock size={parseFloat(theme.icon.size.md)} />}
           title={t`Single sign-on (SSO)`}
           onClick={signInWithSSO}
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}

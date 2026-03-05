@@ -52,9 +52,7 @@ const AddToNavigationDragHandleIcon = ({
       <Icon
         size={iconSize}
         stroke={iconStroke}
-        color={
-          iconColor ?? theme.grayScale.gray1
-        }
+        color={iconColor ?? theme.grayScale.gray1}
       />
     );
   }

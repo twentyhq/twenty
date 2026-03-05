@@ -1,5 +1,5 @@
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { type ThemeColor } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 type ConfigVariableSourceOption = {
   value: ConfigVariableSourceFilter;

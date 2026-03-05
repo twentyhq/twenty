@@ -1,4 +1,5 @@
-import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export const getColorFromTheme = (
   themeColor: ThemeColor,

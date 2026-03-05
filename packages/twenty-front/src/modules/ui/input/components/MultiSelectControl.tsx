@@ -54,17 +54,13 @@ export const MultiSelectControl = ({
     >
       {isDefined(fixedIcon) ? (
         React.createElement(fixedIcon, {
-          color: isDisabled
-            ? theme.font.color.light
-            : theme.font.color.primary,
+          color: isDisabled ? theme.font.color.light : theme.font.color.primary,
           size: parseFloat(theme.icon.size.md),
           stroke: parseFloat(theme.icon.stroke.sm),
         })
       ) : isDefined(firstSelectedOption?.Icon) ? (
         <firstSelectedOption.Icon
-          color={
-            isDisabled ? theme.font.color.light : theme.font.color.primary
-          }
+          color={isDisabled ? theme.font.color.light : theme.font.color.primary}
           size={parseFloat(theme.icon.size.md)}
           stroke={parseFloat(theme.icon.stroke.sm)}
         />
@@ -76,9 +72,7 @@ export const MultiSelectControl = ({
       )}
 
       <StyledIconChevronDownWrapper disabled={isDisabled}>
-        <IconChevronDown
-          size={parseFloat(theme.icon.size.md)}
-        />
+        <IconChevronDown size={parseFloat(theme.icon.size.md)} />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>
   );

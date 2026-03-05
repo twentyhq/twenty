@@ -22,10 +22,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (

@@ -19,9 +19,16 @@ describe('stringToThemeColor', () => {
 
 describe('stringToThemeColorP3String', () => {
   it('should return a resolved CSS variable value for a color', () => {
+    const mockTheme = {
+      color: new Proxy({} as Record<string, string>, {
+        get: (_, prop) => `mock-${String(prop)}`,
+      }),
+    } as any;
+
     const color = stringToThemeColorP3String({
       string: 'test',
       variant: 9,
+      theme: mockTheme,
     });
 
     expect(typeof color).toBe('string');

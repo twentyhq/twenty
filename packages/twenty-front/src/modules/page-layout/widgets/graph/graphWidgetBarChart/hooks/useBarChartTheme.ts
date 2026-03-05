@@ -7,10 +7,7 @@ export const useBarChartTheme = () => {
   const { theme } = useContext(ThemeContext);
 
   const tickFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
-  const legendFontSize = parseFontSizeToPx(
-    theme.font.size.sm,
-    tickFontSize,
-  );
+  const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);
 
   return {
     axis: {

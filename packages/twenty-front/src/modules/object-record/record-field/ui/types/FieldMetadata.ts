@@ -8,7 +8,7 @@ import {
   type FieldMetadataMultiItemSettings,
   type FileCategory,
 } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 

@@ -52,9 +52,7 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
   return (
     <StyledErrorContainer>
       <StyledErrorIcon>
-        <IconAlertCircle
-          size={parseFloat(theme.icon.size.md)}
-        />
+        <IconAlertCircle size={parseFloat(theme.icon.size.md)} />
       </StyledErrorIcon>
       <StyledErrorContent>
         <StyledErrorTitle>{t`Failed to get response`}</StyledErrorTitle>

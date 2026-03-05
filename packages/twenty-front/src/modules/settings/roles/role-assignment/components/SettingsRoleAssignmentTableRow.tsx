@@ -12,10 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -83,18 +80,10 @@ export const SettingsRoleAssignmentTableRow = ({
       }
       case 'agent': {
         const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
-        return (
-          <Icon
-            size={parseFloat(theme.icon.size.md)}
-          />
-        );
+        return <Icon size={parseFloat(theme.icon.size.md)} />;
       }
       case 'apiKey': {
-        return (
-          <IconKey
-            size={parseFloat(theme.icon.size.md)}
-          />
-        );
+        return <IconKey size={parseFloat(theme.icon.size.md)} />;
       }
     }
   };

@@ -16,10 +16,7 @@ import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`

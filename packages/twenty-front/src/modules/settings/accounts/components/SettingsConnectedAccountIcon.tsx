@@ -48,10 +48,7 @@ const ImapSmtpCaldavIcon = (
       style={props.style}
       size={props.size}
       stroke={props.stroke}
-      color={
-        props.color ||
-        theme.font.color.primary
-      }
+      color={props.color || theme.font.color.primary}
     />
   );
 };

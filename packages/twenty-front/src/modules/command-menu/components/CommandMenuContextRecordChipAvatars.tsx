@@ -43,10 +43,7 @@ export const CommandMenuContextRecordChipAvatars = ({
       withIconBackground={recordChipData.avatarType !== 'rounded'}
     >
       {Icon ? (
-        <Icon
-          color={IconColor}
-          size={parseFloat(theme.icon.size.sm)}
-        />
+        <Icon color={IconColor} size={parseFloat(theme.icon.size.sm)} />
       ) : (
         <Avatar
           avatarUrl={recordChipData.avatarUrl}

@@ -32,10 +32,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -422,9 +419,7 @@ export const WorkflowEditActionFormBuilder = ({
                 >
                   <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
-                      <IconPlus
-                        size={parseFloat(theme.icon.size.sm)}
-                      />
+                      <IconPlus size={parseFloat(theme.icon.size.sm)} />
                       {t`Add Field`}
                     </StyledAddFieldButtonContentContainer>
                   </StyledFieldContainer>

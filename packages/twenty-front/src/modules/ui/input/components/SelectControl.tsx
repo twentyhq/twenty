@@ -89,18 +89,14 @@ export const SelectControl = ({
     >
       {isDefined(selectedOption?.Icon) ? (
         <selectedOption.Icon
-          color={
-            isDisabled ? theme.font.color.light : theme.font.color.primary
-          }
+          color={isDisabled ? theme.font.color.light : theme.font.color.primary}
           size={parseFloat(theme.icon.size.md)}
           stroke={parseFloat(theme.icon.stroke.sm)}
         />
       ) : null}
       <OverflowingTextWithTooltip text={selectedOption.label} />
       <StyledIconChevronDownWrapper disabled={isDisabled}>
-        <IconChevronDown
-          size={parseFloat(theme.icon.size.md)}
-        />
+        <IconChevronDown size={parseFloat(theme.icon.size.md)} />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>
   );

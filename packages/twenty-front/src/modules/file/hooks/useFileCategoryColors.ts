@@ -3,7 +3,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ThemeColor, ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 export const useFileCategoryColors = (): Record<
   AttachmentFileCategory,
   string
@@ -36,12 +37,11 @@ export const useFileCategoryColors = (): Record<
       if (
         isDefined(category) &&
         isDefined(color) &&
-        isDefined(
-          (theme.color as unknown as Record<string, string>)[color],
-        )
+        isDefined((theme.color as unknown as Record<string, string>)[color])
       ) {
-        colorMap[category] =
-          (theme.color as unknown as Record<string, string>)[color];
+        colorMap[category] = (theme.color as unknown as Record<string, string>)[
+          color
+        ];
       }
     });
   }

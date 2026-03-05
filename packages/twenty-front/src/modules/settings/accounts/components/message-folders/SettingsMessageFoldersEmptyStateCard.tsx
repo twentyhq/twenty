@@ -21,9 +21,7 @@ export const SettingsMessageFoldersEmptyStateCard = () => {
   return (
     <Section>
       <StyledEmptyState>
-        <IconFolder
-          size={parseFloat(theme.icon.size.md)}
-        />
+        <IconFolder size={parseFloat(theme.icon.size.md)} />
         <div>{t`No folders found for this account`}</div>
       </StyledEmptyState>
     </Section>

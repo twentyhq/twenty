@@ -76,9 +76,7 @@ export const SettingsBillingCreditsSection = ({
           <ProgressBar
             value={displayedProgressBarValue}
             barColor={
-              progressBarValue > 100
-                ? theme.color.red8
-                : theme.color.blue
+              progressBarValue > 100 ? theme.color.red8 : theme.color.blue
             }
             backgroundColor={theme.background.tertiary}
             withBorderRadius={true}
@@ -86,10 +84,7 @@ export const SettingsBillingCreditsSection = ({
 
           {!isTrialing && (
             <>
-              <HorizontalSeparator
-                noMargin
-                color={theme.background.tertiary}
-              />
+              <HorizontalSeparator noMargin color={theme.background.tertiary} />
               <SettingsBillingLabelValueItem
                 label={t`Base Credits`}
                 value={formatNumber(grantedCredits, {
@@ -115,10 +110,7 @@ export const SettingsBillingCreditsSection = ({
                   })}
                 />
               )}
-              <HorizontalSeparator
-                noMargin
-                color={theme.background.tertiary}
-              />
+              <HorizontalSeparator noMargin color={theme.background.tertiary} />
               <SettingsBillingLabelValueItem
                 label={t`Extra Credits Used`}
                 value={`${formatToShortNumber(extraCreditsUsed)}`}

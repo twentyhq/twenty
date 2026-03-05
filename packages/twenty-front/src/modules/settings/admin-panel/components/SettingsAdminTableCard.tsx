@@ -6,10 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableItem = {
   Icon?: IconComponent;
@@ -57,9 +54,7 @@ export const SettingsAdminTableCard = ({
                 gap={themeCssVariables.spacing[2]}
               >
                 {item.Icon && (
-                  <item.Icon
-                    size={parseFloat(theme.icon.size.md)}
-                  />
+                  <item.Icon size={parseFloat(theme.icon.size.md)} />
                 )}
                 <span>{item.label}</span>
               </TableCell>

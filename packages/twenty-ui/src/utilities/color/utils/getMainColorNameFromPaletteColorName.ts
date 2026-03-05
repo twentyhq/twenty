@@ -1,4 +1,4 @@
-import { type ThemeColor } from '@ui/theme-constants';
+import { type ThemeColor } from '@ui/theme';
 
 export const getMainColorNameFromPaletteColorName = (
   paletteColorName: string,

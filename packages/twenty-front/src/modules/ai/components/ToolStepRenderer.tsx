@@ -192,9 +192,7 @@ export const ToolStepRenderer = ({
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
             <StyledIconTextContainer>
-              <ToolIcon
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <ToolIcon size={parseFloat(theme.icon.size.sm)} />
               {isStreaming ? (
                 <ShimmeringText>
                   <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
@@ -243,9 +241,7 @@ export const ToolStepRenderer = ({
       >
         <StyledLeftContent>
           <StyledIconTextContainer>
-            <ToolIcon
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <ToolIcon size={parseFloat(theme.icon.size.sm)} />
             <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
           </StyledIconTextContainer>
         </StyledLeftContent>
@@ -253,13 +249,9 @@ export const ToolStepRenderer = ({
           <StyledToolName>{toolName}</StyledToolName>
           {isExpandable &&
             (isExpanded ? (
-              <IconChevronUp
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
             ) : (
-              <IconChevronDown
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
             ))}
         </StyledRightContent>
       </StyledToggleButton>

@@ -37,9 +37,7 @@ export const FavoriteFolderPickerFooter = ({
           closeDropdown(dropdownId);
         }}
         text={t`Add folder`}
-        LeftIcon={() => (
-          <IconPlus size={parseFloat(theme.icon.size.md)} />
-        )}
+        LeftIcon={() => <IconPlus size={parseFloat(theme.icon.size.md)} />}
       />
     </DropdownMenuItemsContainer>
   );

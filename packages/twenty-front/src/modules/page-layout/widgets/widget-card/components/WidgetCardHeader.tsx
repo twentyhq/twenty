@@ -12,10 +12,7 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
   widgetId: string;

@@ -11,10 +11,7 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
@@ -74,9 +71,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
 
       <StyledRightContent>
         {selected && !isHovered && (
-          <StyledMenuItemIconCheck
-            size={parseFloat(theme.icon.size.md)}
-          />
+          <StyledMenuItemIconCheck size={parseFloat(theme.icon.size.md)} />
         )}
 
         {isHovered && showEditButton && (

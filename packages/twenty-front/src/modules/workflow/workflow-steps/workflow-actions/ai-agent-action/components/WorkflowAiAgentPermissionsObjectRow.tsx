@@ -34,15 +34,11 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
     >
       <StyledRowLeftContent>
         <StyledIconContainer>
-          <IconComponent
-            size={parseFloat(theme.icon.size.sm)}
-          />
+          <IconComponent size={parseFloat(theme.icon.size.sm)} />
         </StyledIconContainer>
         <StyledText>{objectMetadata.labelPlural}</StyledText>
       </StyledRowLeftContent>
-      <StyledIconChevronRight
-        size={parseFloat(theme.icon.size.sm)}
-      />
+      <StyledIconChevronRight size={parseFloat(theme.icon.size.sm)} />
     </StyledRow>
   );
 };

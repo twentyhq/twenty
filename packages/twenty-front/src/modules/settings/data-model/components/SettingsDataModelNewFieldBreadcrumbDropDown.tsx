@@ -12,10 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
@@ -90,9 +87,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron
-              size={parseFloat(theme.icon.size.md)}
-            />
+            <StyledDownChevron size={parseFloat(theme.icon.size.md)} />
             {isConfigureStep ? (
               <StyledButton variant="tertiary" title={t`2. Configure`} />
             ) : (

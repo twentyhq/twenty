@@ -23,10 +23,7 @@ import { motion } from 'framer-motion';
 import { useCallback, useContext, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};

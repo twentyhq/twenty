@@ -3,7 +3,7 @@ import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
-import { ColorSchemeContext } from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useContext, useEffect } from 'react';
 
@@ -38,7 +38,7 @@ interface AnimatedPlaceholderProps {
 }
 
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
-  const { colorScheme } = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ThemeContext);
 
   const x = useMotionValue(window.innerWidth / 2);
   const y = useMotionValue(window.innerHeight / 2);

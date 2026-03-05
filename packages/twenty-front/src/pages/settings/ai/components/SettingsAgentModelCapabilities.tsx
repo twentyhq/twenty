@@ -125,9 +125,7 @@ export const SettingsAgentModelCapabilities = ({
             }
           >
             <StyledCheckboxLabel>
-              <capability.Icon
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <capability.Icon size={parseFloat(theme.icon.size.sm)} />
               <span>{capability.label}</span>
             </StyledCheckboxLabel>
             <Checkbox

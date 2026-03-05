@@ -13,10 +13,7 @@ import { useContext, useMemo, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled(Table)`
   margin-top: ${themeCssVariables.spacing[3]};

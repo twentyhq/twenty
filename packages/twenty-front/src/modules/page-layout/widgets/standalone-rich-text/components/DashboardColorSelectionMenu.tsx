@@ -10,10 +10,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 
 const StyledColorMenuItem = styled.div`
@@ -76,9 +73,7 @@ export const DashboardColorSelectionMenu = ({
             </StyledColorName>
             {currentTextColor === colorName && (
               <StyledCheckIcon>
-                <IconCheck
-                  size={parseFloat(theme.icon.size.sm)}
-                />
+                <IconCheck size={parseFloat(theme.icon.size.sm)} />
               </StyledCheckIcon>
             )}
           </StyledColorMenuItem>
@@ -98,9 +93,7 @@ export const DashboardColorSelectionMenu = ({
             </StyledColorName>
             {currentBackgroundColor === colorName && (
               <StyledCheckIcon>
-                <IconCheck
-                  size={parseFloat(theme.icon.size.sm)}
-                />
+                <IconCheck size={parseFloat(theme.icon.size.sm)} />
               </StyledCheckIcon>
             )}
           </StyledColorMenuItem>

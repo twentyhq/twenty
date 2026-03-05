@@ -4,10 +4,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { IconChevronRight } from 'twenty-ui/display';
 import { StyledTableRow } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${themeCssVariables.font.color.primary};

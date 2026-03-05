@@ -242,9 +242,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
-          <IconMessageCirclePlus
-            size={parseFloat(theme.icon.size.md)}
-          />
+          <IconMessageCirclePlus size={parseFloat(theme.icon.size.md)} />
           {isExpanded && t`New chat`}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>

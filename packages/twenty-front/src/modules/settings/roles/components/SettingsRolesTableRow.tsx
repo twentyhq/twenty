@@ -128,13 +128,8 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableCell align="left">
         <StyledAssignedText>{role.workspaceMembers.length}</StyledAssignedText>
       </TableCell>
-      <TableCell
-        align="right"
-        color={theme.font.color.tertiary}
-      >
-        <IconChevronRight
-          size={parseFloat(theme.icon.size.md)}
-        />
+      <TableCell align="right" color={theme.font.color.tertiary}>
+        <IconChevronRight size={parseFloat(theme.icon.size.md)} />
       </TableCell>
     </StyledTableRow>
   );

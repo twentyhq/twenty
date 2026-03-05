@@ -10,13 +10,12 @@ import {
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

@@ -9,10 +9,7 @@ import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useContext } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  ColorSchemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type GraphQLPlaygroundProps = {
   onError(): void;
@@ -41,7 +38,7 @@ export const GraphQLPlayground = ({
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
 
-  const { colorScheme } = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ThemeContext);
 
   if (!playgroundApiKey) {
     onError();

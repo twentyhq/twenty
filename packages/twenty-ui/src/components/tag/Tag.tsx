@@ -3,11 +3,8 @@ import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ThemeColor,
-  ThemeContext,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { type ThemeColor } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { useContext } from 'react';
 
 const StyledTag = styled.h3<{

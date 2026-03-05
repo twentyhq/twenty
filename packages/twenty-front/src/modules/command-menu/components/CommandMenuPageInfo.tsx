@@ -22,10 +22,7 @@ import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useContext } from 'react';
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};

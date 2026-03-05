@@ -9,10 +9,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconTransform } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledCardLink = styled.a`
   text-decoration: none;
 `;

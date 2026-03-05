@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ danger }) =>

@@ -6,10 +6,7 @@ export const useLineChartTheme = () => {
   const { theme } = useContext(ThemeContext);
 
   const tickFontSize = 12;
-  const legendFontSize = parseFontSizeToPx(
-    theme.font.size.sm,
-    tickFontSize,
-  );
+  const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);
 
   return {
     axis: {

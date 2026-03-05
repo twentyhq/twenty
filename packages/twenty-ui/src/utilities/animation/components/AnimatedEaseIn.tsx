@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import { type AnimationDuration, ThemeContext } from '@ui/theme-constants';
+import { type AnimationDuration } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type AnimatedEaseInProps = Omit<
   React.ComponentProps<typeof motion.div>,

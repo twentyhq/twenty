@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-import { ColorSchemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
 
@@ -20,7 +20,7 @@ type FrontComponentRendererProps = {
 export const FrontComponentRenderer = ({
   frontComponentId,
 }: FrontComponentRendererProps) => {
-  const { colorScheme } = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(

@@ -8,10 +8,7 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { AnimatedCircleLoading } from 'twenty-ui/utilities';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 const StyledContainer = styled.div`
   display: flex;
@@ -82,9 +79,7 @@ export const WorkflowStepExecutionResult = ({
 
   const SuccessLeftNode = (
     <StyledOutput accent="success">
-      <IconSquareRoundedCheck
-        size={parseFloat(theme.icon.size.md)}
-      />
+      <IconSquareRoundedCheck size={parseFloat(theme.icon.size.md)} />
       <div>
         <div>{status.successMessage}</div>
         {status.additionalInfo && (
@@ -96,9 +91,7 @@ export const WorkflowStepExecutionResult = ({
 
   const ErrorLeftNode = (
     <StyledOutput accent="error">
-      <IconSquareRoundedX
-        size={parseFloat(theme.icon.size.md)}
-      />
+      <IconSquareRoundedX size={parseFloat(theme.icon.size.md)} />
       <div>
         <div>{status.errorMessage}</div>
         {status.additionalInfo && (
@@ -113,9 +106,7 @@ export const WorkflowStepExecutionResult = ({
   const PendingLeftNode = isTesting && (
     <StyledOutput>
       <AnimatedCircleLoading>
-        <IconLoader
-          size={parseFloat(theme.icon.size.md)}
-        />
+        <IconLoader size={parseFloat(theme.icon.size.md)} />
       </AnimatedCircleLoading>
       <StyledInfoContainer>{loadingMessage}</StyledInfoContainer>
     </StyledOutput>

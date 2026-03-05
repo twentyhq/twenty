@@ -15,12 +15,7 @@ export const SettingsDataModelOverviewRelationMarkers = () => {
           refY="3"
           fill="none"
         >
-          <circle
-            cx="3"
-            cy="3"
-            r="3"
-            fill={theme.color.gray}
-          />
+          <circle cx="3" cy="3" r="3" fill={theme.color.gray} />
         </marker>
       </defs>
     </svg>

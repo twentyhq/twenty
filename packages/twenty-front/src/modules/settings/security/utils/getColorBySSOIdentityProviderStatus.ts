@@ -1,5 +1,5 @@
 import { type SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
-import { type ThemeColor } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export const getColorBySSOIdentityProviderStatus: Record<
   SsoIdentityProviderStatus,

@@ -54,9 +54,7 @@ export const SettingsAdminConfigVariablesRow = ({
         variableName: variable.name,
       })}
     >
-      <StyledTruncatedCell
-        color={theme.font.color.primary}
-      >
+      <StyledTruncatedCell color={theme.font.color.primary}>
         <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
       <StyledTruncatedCell align="right">

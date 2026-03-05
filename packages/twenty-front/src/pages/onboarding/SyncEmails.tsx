@@ -132,11 +132,7 @@ export const SyncEmails = () => {
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
             width={200}
-            Icon={() => (
-              <IconGoogle
-                size={parseFloat(theme.icon.size.sm)}
-              />
-            )}
+            Icon={() => <IconGoogle size={parseFloat(theme.icon.size.sm)} />}
           />
         )}
         {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
@@ -146,11 +142,7 @@ export const SyncEmails = () => {
               handleButtonClick(ConnectedAccountProvider.MICROSOFT)
             }
             width={200}
-            Icon={() => (
-              <IconMicrosoft
-                size={parseFloat(theme.icon.size.sm)}
-              />
-            )}
+            Icon={() => <IconMicrosoft size={parseFloat(theme.icon.size.sm)} />}
           />
         )}
         {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && (

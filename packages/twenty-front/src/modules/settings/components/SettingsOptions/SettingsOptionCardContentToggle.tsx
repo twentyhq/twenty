@@ -14,10 +14,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -93,11 +90,7 @@ export const SettingsOptionCardContentToggle = ({
           onChange={onChange}
           disabled={disabled}
           toggleSize="small"
-          color={
-            advancedMode
-              ? theme.color.yellow
-              : theme.color.blue
-          }
+          color={advancedMode ? theme.color.yellow : theme.color.blue}
           centered={toggleCentered}
         />
       </StyledSettingsCardToggleContent>

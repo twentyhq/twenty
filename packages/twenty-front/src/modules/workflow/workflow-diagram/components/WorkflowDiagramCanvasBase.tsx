@@ -63,10 +63,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
   width: 100%;
@@ -627,10 +624,7 @@ export const WorkflowDiagramCanvasBase = ({
         connectionLineComponent={WorkflowDiagramConnection}
         connectionRadius={0}
       >
-        <Background
-          color={theme.border.color.medium}
-          size={2}
-        />
+        <Background color={theme.border.color.medium} size={2} />
 
         {children}
       </ReactFlow>

@@ -5,10 +5,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
@@ -43,11 +40,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
 
   return (
     <StyledRow>
-      {Icon && (
-        <Icon
-          size={parseFloat(theme.icon.size.md)}
-        />
-      )}
+      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

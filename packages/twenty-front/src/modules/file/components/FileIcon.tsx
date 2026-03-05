@@ -37,18 +37,14 @@ export const FileIcon = ({
     return (
       <AvatarOrIcon
         Icon={Icon}
-        IconBackgroundColor={
-          iconColors[fileCategory] ?? theme.color.gray
-        }
+        IconBackgroundColor={iconColors[fileCategory] ?? theme.color.gray}
       />
     );
   }
 
   return (
     <StyledIconContainer
-      background={
-        iconColors[fileCategory] ?? theme.color.gray
-      }
+      background={iconColors[fileCategory] ?? theme.color.gray}
     >
       {Icon && (
         <Icon

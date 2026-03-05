@@ -1,4 +1,4 @@
-import type { ThemeColor } from 'twenty-ui/theme-constants';
+import type { ThemeColor } from 'twenty-ui/theme';
 
 import { getColorFromTheme } from '@/navigation-menu-item/utils/get-color-from-theme.util';
 import { COLOR_SHADE_BORDER } from '@/navigation-menu-item/utils/NavigationMenuItemIconColorShadeBorder.constant';

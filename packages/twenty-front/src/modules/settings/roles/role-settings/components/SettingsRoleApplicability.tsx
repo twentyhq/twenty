@@ -6,10 +6,7 @@ import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
@@ -94,9 +91,7 @@ export const SettingsRoleApplicability = ({
             }
           >
             <StyledCheckboxLabel>
-              <option.Icon
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <option.Icon size={parseFloat(theme.icon.size.sm)} />
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox

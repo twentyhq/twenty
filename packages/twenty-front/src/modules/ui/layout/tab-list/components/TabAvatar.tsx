@@ -15,9 +15,7 @@ export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
       <tab.Icon
         size={parseFloat(theme.icon.size.md)}
         color={
-          tab.disabled
-            ? theme.font.color.tertiary
-            : theme.font.color.secondary
+          tab.disabled ? theme.font.color.tertiary : theme.font.color.secondary
         }
         stroke={parseFloat(theme.icon.stroke.md)}
       />

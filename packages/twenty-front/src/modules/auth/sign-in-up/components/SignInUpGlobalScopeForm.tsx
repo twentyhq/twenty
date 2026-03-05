@@ -200,9 +200,7 @@ export const SignInUpGlobalScopeForm = () => {
                       </StyledWorkspaceUrl>
                     </StyledWorkspaceTextContainer>
                     <StyledChevronIcon>
-                      <IconChevronRight
-                        size={parseFloat(theme.icon.size.md)}
-                      />
+                      <IconChevronRight size={parseFloat(theme.icon.size.md)} />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
                 </StyledWorkspaceItem>
@@ -211,17 +209,13 @@ export const SignInUpGlobalScopeForm = () => {
             <StyledWorkspaceItem onClick={() => createWorkspace()}>
               <StyledWorkspaceContent>
                 <StyledWorkspaceLogo>
-                  <IconPlus
-                    size={parseFloat(theme.icon.size.lg)}
-                  />
+                  <IconPlus size={parseFloat(theme.icon.size.lg)} />
                 </StyledWorkspaceLogo>
                 <StyledWorkspaceTextContainer>
                   <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
                 </StyledWorkspaceTextContainer>
                 <StyledChevronIcon>
-                  <IconChevronRight
-                    size={parseFloat(theme.icon.size.md)}
-                  />
+                  <IconChevronRight size={parseFloat(theme.icon.size.md)} />
                 </StyledChevronIcon>
               </StyledWorkspaceContent>
             </StyledWorkspaceItem>

@@ -14,10 +14,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
-import {
-  themeCssVariables,
-  ThemeContext,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
 )<{ transparentBackground?: boolean; disabled?: boolean }>`
@@ -117,9 +114,7 @@ export const WorkflowVariablesDropdown = ({
             isUnfolded={isDropdownOpen}
             transparentBackground
           >
-            <IconVariablePlus
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <IconVariablePlus size={parseFloat(theme.icon.size.sm)} />
           </StyledDropdownVariableButtonContainer>
         )
       }

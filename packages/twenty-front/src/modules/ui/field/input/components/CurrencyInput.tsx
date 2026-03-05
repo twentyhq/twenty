@@ -7,10 +7,7 @@ import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/cur
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;

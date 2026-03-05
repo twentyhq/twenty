@@ -19,10 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAdvancedTextFieldContainer = styled(FormFieldInputContainer)`
@@ -234,9 +231,7 @@ export const FormAdvancedTextFieldInput = ({
                     transparentBackground
                     onClick={handleEnterFullScreen}
                   >
-                    <IconMaximize
-                      size={parseFloat(theme.icon.size.md)}
-                    />
+                    <IconMaximize size={parseFloat(theme.icon.size.md)} />
                   </StyledFullScreenButtonContainer>
                 )}
               </StyledEditorActionButtonContainer>

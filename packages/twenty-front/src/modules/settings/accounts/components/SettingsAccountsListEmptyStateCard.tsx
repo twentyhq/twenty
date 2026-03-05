@@ -49,11 +49,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
     <StyledCardsContainer>
       {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
         <SettingsCard
-          Icon={
-            <IconGoogle
-              size={parseFloat(theme.icon.size.md)}
-            />
-          }
+          Icon={<IconGoogle size={parseFloat(theme.icon.size.md)} />}
           title={t`Connect with Google`}
           onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
         />
@@ -61,11 +57,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
 
       {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
         <SettingsCard
-          Icon={
-            <IconMicrosoft
-              size={parseFloat(theme.icon.size.md)}
-            />
-          }
+          Icon={<IconMicrosoft size={parseFloat(theme.icon.size.md)} />}
           title={t`Connect with Microsoft`}
           onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
         />
@@ -76,11 +68,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
           to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
         >
           <SettingsCard
-            Icon={
-              <IconAt
-                size={parseFloat(theme.icon.size.md)}
-              />
-            }
+            Icon={<IconAt size={parseFloat(theme.icon.size.md)} />}
             title={t`Connect Account`}
           />
         </UndecoratedLink>

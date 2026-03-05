@@ -113,10 +113,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
             data={metricsData}
             curve="monotoneX"
             enableArea={true}
-            colors={[
-              theme.color.blue,
-              theme.color.red,
-            ]}
+            colors={[theme.color.blue, theme.color.red]}
             theme={{
               text: {
                 fill: theme.font.color.light,

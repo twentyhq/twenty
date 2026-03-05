@@ -12,9 +12,7 @@ export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   );
   const IconToUse =
     StandardIcon || (favorite.Icon ? getIcon(favorite.Icon) : undefined);
-  const iconColorToUse = StandardIcon
-    ? IconColor
-    : theme.font.color.secondary;
+  const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary;
 
   return (
     <Avatar

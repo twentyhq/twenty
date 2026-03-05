@@ -6,10 +6,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
@@ -57,11 +54,7 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
         <Checkbox checked={!!isSelected} />
       </StyledCheckboxTableCell>
       <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            size={parseFloat(theme.icon.size.md)}
-          />
-        )}
+        {!!Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>

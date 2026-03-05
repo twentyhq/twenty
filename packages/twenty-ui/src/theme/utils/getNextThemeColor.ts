@@ -1,16 +1,16 @@
-import {
-  MAIN_COLOR_NAMES,
-  type ThemeColor,
-} from '@ui/theme/constants/MainColorNames';
+import { type ThemeColor } from '@ui/theme/constants/MainColorNames';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getNextThemeColor = (currentColor?: ThemeColor): ThemeColor => {
+export const getNextThemeColor = (
+  colorNames: ThemeColor[],
+  currentColor?: ThemeColor,
+): ThemeColor => {
   if (!isDefined(currentColor)) {
-    return MAIN_COLOR_NAMES[0];
+    return colorNames[0];
   }
-  const currentColorIndex = MAIN_COLOR_NAMES.findIndex(
+  const currentColorIndex = colorNames.findIndex(
     (color) => color === currentColor,
   );
-  const nextColorIndex = (currentColorIndex + 1) % MAIN_COLOR_NAMES.length;
-  return MAIN_COLOR_NAMES[nextColorIndex];
+  const nextColorIndex = (currentColorIndex + 1) % colorNames.length;
+  return colorNames[nextColorIndex];
 };

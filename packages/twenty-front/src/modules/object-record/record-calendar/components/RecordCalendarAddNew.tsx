@@ -12,10 +12,7 @@ import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButton = styled(Button)`
   padding: ${themeCssVariables.spacing['0.5']};
@@ -82,11 +79,7 @@ export const RecordCalendarAddNew = ({
         });
       }}
       variant="tertiary"
-      Icon={() => (
-        <IconPlus
-          size={parseFloat(theme.icon.size.sm)}
-        />
-      )}
+      Icon={() => <IconPlus size={parseFloat(theme.icon.size.sm)} />}
     />
   );
 };

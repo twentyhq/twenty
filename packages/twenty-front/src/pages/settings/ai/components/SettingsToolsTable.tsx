@@ -22,10 +22,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';

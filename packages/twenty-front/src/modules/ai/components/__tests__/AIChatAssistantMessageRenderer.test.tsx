@@ -42,12 +42,12 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
 
 const renderAssistantRenderer = (messageParts: ExtendedUIMessagePart[]) => {
   return render(
-    <ColorSchemeProvider colorScheme="light">
+    <ThemeProvider colorScheme="light">
       <AIChatAssistantMessageRenderer
         messageParts={messageParts}
         isLastMessageStreaming={false}
       />
-    </ColorSchemeProvider>,
+    </ThemeProvider>,
   );
 };
 

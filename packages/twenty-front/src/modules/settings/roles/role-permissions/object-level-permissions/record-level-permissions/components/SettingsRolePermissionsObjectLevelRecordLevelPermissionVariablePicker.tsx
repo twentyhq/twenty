@@ -74,9 +74,7 @@ export const createRecordLevelPermissionVariablePicker = (
             multiline={multiline}
             readonly={disabled}
           >
-            <IconVariablePlus
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <IconVariablePlus size={parseFloat(theme.icon.size.sm)} />
           </StyledRecordLevelPermissionPickerContainer>
         }
         dropdownComponents={

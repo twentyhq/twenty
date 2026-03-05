@@ -234,16 +234,12 @@ export const CodeExecutionDisplay = ({
     <StyledContainer>
       <StyledHeader status={status}>
         <StyledHeaderLeft>
-          <IconCode
-            size={parseFloat(theme.icon.size.md)}
-          />
+          <IconCode size={parseFloat(theme.icon.size.md)} />
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
           <StyledStatusBadge status={status}>
-            <StatusIcon
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <StatusIcon size={parseFloat(theme.icon.size.sm)} />
             {statusText}
           </StyledStatusBadge>
         </StyledHeaderRight>
@@ -252,9 +248,7 @@ export const CodeExecutionDisplay = ({
       <StyledSection>
         <StyledSectionHeader onClick={() => setIsCodeExpanded(!isCodeExpanded)}>
           <StyledSectionHeaderLeft>
-            <IconCode
-              size={parseFloat(theme.icon.size.sm)}
-            />
+            <IconCode size={parseFloat(theme.icon.size.sm)} />
             {t`Code`}
           </StyledSectionHeaderLeft>
           <StyledHeaderRight>
@@ -269,13 +263,9 @@ export const CodeExecutionDisplay = ({
               accent="tertiary"
             />
             {isCodeExpanded ? (
-              <IconChevronUp
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
             ) : (
-              <IconChevronDown
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
             )}
           </StyledHeaderRight>
         </StyledSectionHeader>
@@ -305,13 +295,9 @@ export const CodeExecutionDisplay = ({
           >
             <StyledSectionHeaderLeft>{t`Output`}</StyledSectionHeaderLeft>
             {isOutputExpanded ? (
-              <IconChevronUp
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
             ) : (
-              <IconChevronDown
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
             )}
           </StyledSectionHeader>
           <AnimatedExpandableContainer
@@ -333,19 +319,13 @@ export const CodeExecutionDisplay = ({
             onClick={() => setIsFilesExpanded(!isFilesExpanded)}
           >
             <StyledSectionHeaderLeft>
-              <IconFile
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconFile size={parseFloat(theme.icon.size.sm)} />
               {t`Generated Files`} ({files.length})
             </StyledSectionHeaderLeft>
             {isFilesExpanded ? (
-              <IconChevronUp
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
             ) : (
-              <IconChevronDown
-                size={parseFloat(theme.icon.size.sm)}
-              />
+              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
             )}
           </StyledSectionHeader>
           <AnimatedExpandableContainer
@@ -366,10 +346,7 @@ export const CodeExecutionDisplay = ({
                           loading="lazy"
                         />
                       ) : (
-                        <IconFile
-                          size={48}
-                          color={theme.font.color.tertiary}
-                        />
+                        <IconFile size={48} color={theme.font.color.tertiary} />
                       )}
                     </StyledFilePreview>
                     <StyledFileInfo>
@@ -383,9 +360,7 @@ export const CodeExecutionDisplay = ({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <IconDownload
-                          size={parseFloat(theme.icon.size.sm)}
-                        />
+                        <IconDownload size={parseFloat(theme.icon.size.sm)} />
                       </StyledDownloadLink>
                     </StyledFileInfo>
                   </StyledFileCard>

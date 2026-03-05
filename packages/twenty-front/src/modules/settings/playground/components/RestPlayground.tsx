@@ -7,11 +7,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  ColorSchemeContext,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -54,8 +50,7 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { colorScheme } = useContext(ColorSchemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
 
   if (!playgroundApiKey) {

@@ -3,7 +3,7 @@ import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecord
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { type ThemeColor } from 'twenty-ui/theme-constants';
+import { type ThemeColor } from 'twenty-ui/theme';
 import {
   type DomainRecord,
   type DomainValidRecords,

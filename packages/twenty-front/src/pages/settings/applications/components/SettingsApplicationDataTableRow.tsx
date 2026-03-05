@@ -14,10 +14,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 

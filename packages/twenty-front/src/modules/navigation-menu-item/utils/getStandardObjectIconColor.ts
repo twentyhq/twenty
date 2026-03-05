@@ -1,4 +1,4 @@
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme-constants';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultIconColor.constant';
 import { CoreObjectNameSingular } from 'twenty-shared/types';

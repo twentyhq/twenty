@@ -20,10 +20,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;

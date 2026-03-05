@@ -52,9 +52,7 @@ export const DropdownMenuInnerSelect = ({
       clickableComponent={
         <StyledDropdownMenuInnerSelectDropdownButton>
           <span>{selectedOption.label}</span>
-          <IconChevronDown
-            size={parseFloat(theme.icon.size.sm)}
-          />
+          <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
         </StyledDropdownMenuInnerSelectDropdownButton>
       }
       dropdownComponents={
