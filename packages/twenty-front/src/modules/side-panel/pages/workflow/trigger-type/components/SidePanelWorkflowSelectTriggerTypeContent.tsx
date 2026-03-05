@@ -1,4 +1,4 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -33,7 +33,7 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
   const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const flow = useFlowOrThrow();
 
   const handleTriggerTypeClick = ({
@@ -64,7 +64,7 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-      openWorkflowEditStepInCommandMenu(
+      openWorkflowEditStepInSidePanel(
         workflowId,
         defaultLabel,
         getIcon(icon),

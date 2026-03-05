@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -48,7 +48,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowViewStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const { isInSidePanel } = useContext(ActionMenuContext);
 
@@ -70,7 +70,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
     setWorkflowSelectedNode(id);
 
-    openWorkflowViewStepInCommandMenu({
+    openWorkflowViewStepInSidePanel({
       workflowId: workflowVisualizerWorkflowId,
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: data.name,

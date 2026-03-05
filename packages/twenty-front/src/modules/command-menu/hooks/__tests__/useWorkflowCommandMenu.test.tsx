@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
@@ -57,12 +57,12 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const {
-        openWorkflowTriggerTypeInCommandMenu,
-        openWorkflowCreateStepInCommandMenu,
-        openWorkflowEditStepInCommandMenu,
-        openWorkflowEditStepTypeInCommandMenu,
-        openWorkflowViewStepInCommandMenu,
-      } = useWorkflowCommandMenu();
+        openWorkflowTriggerTypeInSidePanel,
+        openWorkflowCreateStepInSidePanel,
+        openWorkflowEditStepInSidePanel,
+        openWorkflowEditStepTypeInSidePanel,
+        openWorkflowViewStepInSidePanel,
+      } = useSidePanelWorkflowNavigation();
 
       const viewableRecordNameSingular = useAtomComponentStateValue(
         viewableRecordNameSingularComponentState,
@@ -96,11 +96,11 @@ const renderHooks = () => {
       const { getIcon } = useIcons();
 
       return {
-        openWorkflowTriggerTypeInCommandMenu,
-        openWorkflowCreateStepInCommandMenu,
-        openWorkflowEditStepInCommandMenu,
-        openWorkflowEditStepTypeInCommandMenu,
-        openWorkflowViewStepInCommandMenu,
+        openWorkflowTriggerTypeInSidePanel,
+        openWorkflowCreateStepInSidePanel,
+        openWorkflowEditStepInSidePanel,
+        openWorkflowEditStepTypeInSidePanel,
+        openWorkflowViewStepInSidePanel,
         sidePanelWorkflowId,
         sidePanelWorkflowVersionId,
         viewableRecordNameSingular,
@@ -118,7 +118,7 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useWorkflowCommandMenu', () => {
+describe('useSidePanelWorkflowNavigation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -127,7 +127,7 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowTriggerTypeInCommandMenu('test-workflow-id');
+      result.current.openWorkflowTriggerTypeInSidePanel('test-workflow-id');
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
@@ -144,7 +144,7 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowCreateStepInCommandMenu('test-workflow-id');
+      result.current.openWorkflowCreateStepInSidePanel('test-workflow-id');
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
@@ -161,7 +161,7 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowEditStepTypeInCommandMenu('test-workflow-id');
+      result.current.openWorkflowEditStepTypeInSidePanel('test-workflow-id');
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
@@ -178,7 +178,7 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowEditStepInCommandMenu(
+      result.current.openWorkflowEditStepInSidePanel(
         'test-workflow-id',
         'Edit Step',
         IconSettingsAutomation,
@@ -199,7 +199,7 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowViewStepInCommandMenu({
+      result.current.openWorkflowViewStepInSidePanel({
         workflowId: 'test-workflow-id',
         workflowVersionId: 'test-workflow-version-id',
         icon: IconSettingsAutomation,

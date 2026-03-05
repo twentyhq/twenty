@@ -1,4 +1,4 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -46,7 +46,7 @@ export const useVariableDropdown = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -124,7 +124,7 @@ export const useVariableDropdown = ({
 
       setSidePanelNavigationStack([]);
 
-      openWorkflowEditStepInCommandMenu(
+      openWorkflowEditStepInSidePanel(
         workflowVisualizerWorkflowId,
         step.name,
         getIcon(step.icon),

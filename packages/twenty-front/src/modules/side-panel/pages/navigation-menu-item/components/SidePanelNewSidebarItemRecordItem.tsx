@@ -1,7 +1,7 @@
 import { Avatar } from 'twenty-ui/display';
 
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddRecordToNavigationMenuDraft';
@@ -29,7 +29,7 @@ export const SidePanelNewSidebarItemRecordItem = ({
   record,
   dragIndex,
 }: SidePanelNewSidebarItemRecordItemProps) => {
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
   const addMenuItemInsertionContext = useAtomStateValue(
@@ -64,7 +64,7 @@ export const SidePanelNewSidebarItemRecordItem = ({
       addMenuItemInsertionContext?.targetIndex,
     );
     setAddMenuItemInsertionContext(null);
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   return (

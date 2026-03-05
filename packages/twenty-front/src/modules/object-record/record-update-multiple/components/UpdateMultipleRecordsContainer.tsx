@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
@@ -43,7 +43,7 @@ export const UpdateMultipleRecordsContainer = ({
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>(
     {},
@@ -56,7 +56,7 @@ export const UpdateMultipleRecordsContainer = ({
         enqueueSuccessSnackBar({
           message: t`Successfully updated ${count} records`,
         });
-        closeCommandMenu();
+        closeSidePanelMenu();
       }
     } catch (error) {
       enqueueErrorSnackBar({
@@ -70,7 +70,7 @@ export const UpdateMultipleRecordsContainer = ({
 
   const handleCancel = () => {
     cancel();
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const hasChanges = Object.values(fieldUpdates).some(

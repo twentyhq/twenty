@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -8,7 +8,7 @@ import { IconSparkles } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export const useOpenAskAIPageInCommandMenu = () => {
-  const { navigateCommandMenu } = useCommandMenu();
+  const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const openAskAIPage = useCallback(
@@ -22,7 +22,7 @@ export const useOpenAskAIPageInCommandMenu = () => {
           ? resetNavigationStack
           : isSidePanelOpened;
 
-      navigateCommandMenu({
+      navigateSidePanelMenu({
         page: SidePanelPages.AskAI,
         pageTitle: t`Ask AI`,
         pageIcon: IconSparkles,
@@ -30,7 +30,7 @@ export const useOpenAskAIPageInCommandMenu = () => {
         resetNavigationStack: shouldReset,
       });
     },
-    [navigateCommandMenu, isSidePanelOpened],
+    [navigateSidePanelMenu, isSidePanelOpened],
   );
 
   return {

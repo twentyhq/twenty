@@ -10,12 +10,12 @@ import { IconSparkles } from 'twenty-ui/display';
 
 const navigateCommandMenuMock = jest.fn();
 
-jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
-  useCommandMenu: () => ({
-    navigateCommandMenu: navigateCommandMenuMock,
-    openCommandMenu: jest.fn(),
-    closeCommandMenu: jest.fn(),
-    toggleCommandMenu: jest.fn(),
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({
+    navigateSidePanelMenu: navigateCommandMenuMock,
+    openSidePanelMenu: jest.fn(),
+    closeSidePanelMenu: jest.fn(),
+    toggleSidePanelMenu: jest.fn(),
   }),
 }));
 

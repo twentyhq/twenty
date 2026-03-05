@@ -1,6 +1,6 @@
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import {
   SIDE_PANEL_WIDTH_VAR,
@@ -64,7 +64,7 @@ export const SidePanelForDesktop = () => {
   const [sidePanelWidth, setSidePanelWidth] = useAtomState(
     sidePanelWidthState,
   );
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
 
@@ -116,10 +116,10 @@ export const SidePanelForDesktop = () => {
   }, [setTableWidthResizeIsActive]);
 
   const handleCollapse = useCallback(() => {
-    closeCommandMenu();
+    closeSidePanelMenu();
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
-  }, [closeCommandMenu, setTableWidthResizeIsActive]);
+  }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
 
   return (
     <>

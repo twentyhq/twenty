@@ -3,7 +3,7 @@ import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SideP
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -35,7 +35,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [searchValue, setSearchValue] = useState('');
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
   const addMenuItemInsertionContext = useAtomStateValue(
@@ -86,7 +86,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
         : undefined,
     );
     setAddMenuItemInsertionContext(null);
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   return (

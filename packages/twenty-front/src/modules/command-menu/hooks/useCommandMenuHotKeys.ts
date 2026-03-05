@@ -1,6 +1,6 @@
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
@@ -20,7 +20,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleSidePanelMenu } = useSidePanelMenu();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
 
@@ -47,10 +47,10 @@ export const useCommandMenuHotKeys = () => {
     keys: ['ctrl+k', 'meta+k'],
     callback: () => {
       closeKeyboardShortcutMenu();
-      toggleCommandMenu();
+      toggleSidePanelMenu();
     },
     containsModifier: true,
-    dependencies: [closeKeyboardShortcutMenu, toggleCommandMenu],
+    dependencies: [closeKeyboardShortcutMenu, toggleSidePanelMenu],
   });
 
   useGlobalHotkeys({

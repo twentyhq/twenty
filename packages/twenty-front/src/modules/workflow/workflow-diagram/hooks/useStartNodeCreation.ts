@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -22,7 +22,7 @@ export const useStartNodeCreation = () => {
     workflowSelectedNodeComponentState,
   );
 
-  const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowCreateStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -60,14 +60,14 @@ export const useStartNodeCreation = () => {
         setSidePanelNavigationStack([]);
       }
 
-      openWorkflowCreateStepInCommandMenu(workflowVisualizerWorkflowId);
+      openWorkflowCreateStepInSidePanel(workflowVisualizerWorkflowId);
     },
     [
       setWorkflowInsertStepIds,
       setWorkflowSelectedNode,
       workflowVisualizerWorkflowId,
       isInSidePanel,
-      openWorkflowCreateStepInCommandMenu,
+      openWorkflowCreateStepInSidePanel,
       setSidePanelNavigationStack,
     ],
   );

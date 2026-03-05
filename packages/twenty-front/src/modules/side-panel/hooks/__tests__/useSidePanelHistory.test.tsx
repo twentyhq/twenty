@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -22,7 +22,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const commandMenu = useCommandMenu();
+      const commandMenu = useSidePanelMenu();
       const commandMenuHistory = useSidePanelHistory();
       const sidePanelCloseAnimationCompleteCleanup =
         useSidePanelCloseAnimationCompleteCleanup();
@@ -45,7 +45,7 @@ describe('useSidePanelHistory', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
+      result.current.commandMenu.navigateSidePanelMenu({
         page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
@@ -54,7 +54,7 @@ describe('useSidePanelHistory', () => {
     });
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
+      result.current.commandMenu.navigateSidePanelMenu({
         page: SidePanelPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
@@ -117,7 +117,7 @@ describe('useSidePanelHistory', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
+      result.current.commandMenu.navigateSidePanelMenu({
         page: SidePanelPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,

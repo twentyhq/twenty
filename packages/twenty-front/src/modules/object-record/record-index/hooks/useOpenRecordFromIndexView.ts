@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -41,7 +41,7 @@ export const useOpenRecordFromIndexView = () => {
     recordIndexId,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
@@ -81,7 +81,7 @@ export const useOpenRecordFromIndexView = () => {
           resetNavigationStack: true,
         });
       } else {
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(AppPath.RecordShowPage, {
           objectNameSingular,
           objectRecordId: recordId,
@@ -97,7 +97,7 @@ export const useOpenRecordFromIndexView = () => {
       navigate,
       openRecordInCommandMenu,
       isMobile,
-      closeCommandMenu,
+      closeSidePanelMenu,
       store,
     ],
   );

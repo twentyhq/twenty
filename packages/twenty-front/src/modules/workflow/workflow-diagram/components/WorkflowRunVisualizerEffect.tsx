@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -63,7 +63,7 @@ export const WorkflowRunVisualizerEffect = ({
       workflowRunDiagramAutomaticallyOpenedStepsComponentState,
     );
 
-  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
@@ -181,7 +181,7 @@ export const WorkflowRunVisualizerEffect = ({
         },
       ]);
 
-      openWorkflowRunViewStepInCommandMenu({
+      openWorkflowRunViewStepInSidePanel({
         workflowId: currentWorkflowVisualizerWorkflowId,
         workflowRunId,
         title: stepToOpenByDefault.data.name,
@@ -193,7 +193,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flow,
       getIcon,
-      openWorkflowRunViewStepInCommandMenu,
+      openWorkflowRunViewStepInSidePanel,
       workflowDiagram,
       workflowDiagramStatusState,
       workflowRunDiagramAutomaticallyOpenedStepsState,

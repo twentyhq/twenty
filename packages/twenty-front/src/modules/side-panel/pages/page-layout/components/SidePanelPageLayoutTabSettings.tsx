@@ -1,7 +1,7 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useDeletePageLayoutTab } from '@/page-layout/hooks/useDeletePageLayoutTab';
@@ -23,7 +23,7 @@ import {
 } from 'twenty-ui/display';
 
 export const SidePanelPageLayoutTabSettings = () => {
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const pageLayoutDraft = useAtomComponentStateValue(
@@ -58,7 +58,7 @@ export const SidePanelPageLayoutTabSettings = () => {
   const handleDelete = () => {
     deleteTab(tab.id);
     setPageLayoutTabSettingsOpenTabId(null);
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const selectableItemIds = [

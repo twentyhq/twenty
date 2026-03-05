@@ -1,7 +1,7 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
@@ -38,7 +38,7 @@ import {
 export const SidePanelPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
@@ -156,7 +156,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const handleCreateFrontComponentWidget = (frontComponent: FrontComponent) => {
@@ -177,7 +177,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const selectableItemIds = [

@@ -1,4 +1,4 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import {
   SidePanelWorkflowSelectAction,
   type WorkflowActionSelection,
@@ -31,7 +31,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
   const { updateStep } = useUpdateStep();
 
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { closeRightClickMenu } = useCloseRightClickMenu();
   const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,
@@ -68,7 +68,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInCommandMenu(
+    openWorkflowEditStepInSidePanel(
       workflowVisualizerWorkflowId,
       updatedStep.name,
       getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),

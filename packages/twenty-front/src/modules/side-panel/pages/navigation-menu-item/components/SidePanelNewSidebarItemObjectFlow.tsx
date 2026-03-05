@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
 import { SidePanelSystemObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -25,7 +25,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
   onBack,
 }: SidePanelNewSidebarItemObjectFlowProps) => {
   const { t } = useLingui();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const [objectSearchInput, setObjectSearchInput] = useState('');
   const [systemObjectSearchInput, setSystemObjectSearchInput] = useState('');
   const [isInSystemPicker, setIsInSystemPicker] = useState(false);
@@ -77,7 +77,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
       getStandardObjectIconColor(objectMetadataItem.nameSingular),
     );
     setAddMenuItemInsertionContext(null);
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const handleBackToObjectList = () => {

@@ -10,7 +10,7 @@ import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -106,7 +106,7 @@ export const PageChangeEffect = () => {
     isAppEffectRedirectEnabledState,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
     useReturnToPath();
@@ -120,8 +120,8 @@ export const PageChangeEffect = () => {
     if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }
-    closeCommandMenu();
-  }, [closeCommandMenu, store]);
+    closeSidePanelMenu();
+  }, [closeSidePanelMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 

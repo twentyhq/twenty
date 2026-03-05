@@ -6,7 +6,7 @@ import {
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
@@ -41,7 +41,7 @@ export const useFrontComponentExecutionContext = ({
     enqueueInfoSnackBar,
     enqueueWarningSnackBar,
   } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -117,7 +117,7 @@ export const useFrontComponentExecutionContext = ({
 
   const closeSidePanel: FrontComponentHostCommunicationApi['closeSidePanel'] =
     async () => {
-      closeCommandMenu();
+      closeSidePanelMenu();
     };
 
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =

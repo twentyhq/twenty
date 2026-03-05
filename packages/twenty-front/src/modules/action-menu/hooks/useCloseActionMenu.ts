@@ -2,7 +2,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
@@ -17,7 +17,7 @@ export const useCloseActionMenu = ({
 } = {}) => {
   const { actionMenuType, isInSidePanel } = useContext(ActionMenuContext);
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -37,7 +37,7 @@ export const useCloseActionMenu = ({
       ) {
         return;
       }
-      closeCommandMenu();
+      closeSidePanelMenu();
     }
 
     if (
@@ -52,7 +52,7 @@ export const useCloseActionMenu = ({
       isDefined(closeSidePanelOnShowPageOptionsActionExecution) &&
       closeSidePanelOnShowPageOptionsActionExecution
     ) {
-      closeCommandMenu();
+      closeSidePanelMenu();
     }
   };
 

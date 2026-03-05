@@ -30,9 +30,9 @@ jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
   }),
 }));
 
-jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
-  useCommandMenu: () => ({
-    closeCommandMenu: mockCloseCommandMenu,
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({
+    closeSidePanelMenu: mockCloseCommandMenu,
   }),
 }));
 

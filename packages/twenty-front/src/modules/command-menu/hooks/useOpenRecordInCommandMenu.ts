@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
@@ -30,7 +30,7 @@ export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
   const { getIcon } = useIcons();
 
-  const { navigateCommandMenu } = useCommandMenu();
+  const { navigateSidePanelMenu } = useSidePanelMenu();
   const { runWorkflowRunOpeningInCommandMenuSideEffects } =
     useRunWorkflowRunOpeningInCommandMenuSideEffects();
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
@@ -172,7 +172,7 @@ export const useOpenRecordInCommandMenu = () => {
 
       const objectLabelSingular = objectMetadataItem.labelSingular;
 
-      navigateCommandMenu({
+      navigateSidePanelMenu({
         page: SidePanelPages.ViewRecord,
         pageTitle: isNewRecord
           ? t`New ${objectLabelSingular}`
@@ -204,7 +204,7 @@ export const useOpenRecordInCommandMenu = () => {
     },
     [
       getIcon,
-      navigateCommandMenu,
+      navigateSidePanelMenu,
       openNewRecordTitleCell,
       runWorkflowRunOpeningInCommandMenuSideEffects,
       store,

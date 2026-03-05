@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsAllFolders';
 import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
@@ -45,7 +45,7 @@ type UseFolderPickerSelectionDataParams = {
 export const useFolderPickerSelectionData = ({
   onCloseSubView,
 }: UseFolderPickerSelectionDataParams) => {
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
@@ -95,7 +95,7 @@ export const useFolderPickerSelectionData = ({
     if (isDefined(selectedNavigationMenuItemInEditMode)) {
       moveToFolder(selectedNavigationMenuItemInEditMode, folderId);
       onCloseSubView();
-      closeCommandMenu();
+      closeSidePanelMenu();
     }
   };
 

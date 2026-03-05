@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -21,7 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   const { t } = useLingui();
 
-  const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowTriggerTypeInSidePanel } = useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -54,7 +54,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
       return;
     }
 
-    openWorkflowTriggerTypeInCommandMenu(workflowVisualizerWorkflowId);
+    openWorkflowTriggerTypeInSidePanel(workflowVisualizerWorkflowId);
   };
 
   return (

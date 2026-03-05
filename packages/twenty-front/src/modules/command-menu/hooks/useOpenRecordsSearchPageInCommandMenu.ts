@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -7,11 +7,11 @@ import { IconSearch } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export const useOpenRecordsSearchPageInCommandMenu = () => {
-  const { navigateCommandMenu } = useCommandMenu();
+  const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const openRecordsSearchPage = () => {
-    navigateCommandMenu({
+    navigateSidePanelMenu({
       page: SidePanelPages.SearchRecords,
       pageTitle: t`Search`,
       pageIcon: IconSearch,

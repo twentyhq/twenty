@@ -1,5 +1,5 @@
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -119,7 +119,7 @@ const AnimatedIcon = ({
 };
 
 export const PageHeaderToggleCommandMenuButton = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
@@ -148,7 +148,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
           accent="default"
           hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
-          onClick={toggleCommandMenu}
+          onClick={toggleSidePanelMenu}
           animate={{
             rotate: isSidePanelOpened ? 90 : 0,
           }}

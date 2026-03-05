@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -46,7 +46,7 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -100,7 +100,7 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(
           AppPath.RecordShowPage,
           {
@@ -165,7 +165,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
-      closeCommandMenu,
+      closeSidePanelMenu,
     ],
   );
 

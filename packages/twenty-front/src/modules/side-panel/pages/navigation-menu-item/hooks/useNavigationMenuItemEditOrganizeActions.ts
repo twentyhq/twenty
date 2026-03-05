@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconColumnInsertRight } from 'twenty-ui/display';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { type OrganizeActionsProps } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
@@ -47,7 +47,7 @@ const getAddMenuItemInsertionContext = (
 export const useNavigationMenuItemEditOrganizeActions =
   (): OrganizeActionsProps => {
     const { t } = useLingui();
-    const { closeCommandMenu } = useCommandMenu();
+    const { closeSidePanelMenu } = useSidePanelMenu();
     const { navigateSidePanel } = useNavigateSidePanel();
     const selectedNavigationMenuItemInEditMode = useAtomStateValue(
       selectedNavigationMenuItemInEditModeState,
@@ -103,7 +103,7 @@ export const useNavigationMenuItemEditOrganizeActions =
       if (isDefined(selectedNavigationMenuItemInEditMode)) {
         remove(selectedNavigationMenuItemInEditMode);
         setSelectedNavigationMenuItemInEditMode(null);
-        closeCommandMenu();
+        closeSidePanelMenu();
       }
     };
 

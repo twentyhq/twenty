@@ -1,7 +1,7 @@
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
@@ -54,7 +54,7 @@ export const CommandMenuOpenContainer = ({
 
   const { theme } = useContext(ThemeContext);
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
   const setIsSidePanelAnimating = useSetAtomState(isSidePanelAnimatingState);
@@ -68,10 +68,10 @@ export const CommandMenuOpenContainer = ({
       if (currentFocusId === SIDE_PANEL_FOCUS_ID) {
         event.stopImmediatePropagation();
         event.preventDefault();
-        closeCommandMenu();
+        closeSidePanelMenu();
       }
     },
-    [closeCommandMenu, store],
+    [closeSidePanelMenu, store],
   );
 
   useListenClickOutside({

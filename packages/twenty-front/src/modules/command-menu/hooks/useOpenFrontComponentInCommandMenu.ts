@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
 import { useStore } from 'jotai';
@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 export const useOpenFrontComponentInCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useCommandMenu();
+  const { navigateSidePanelMenu } = useSidePanelMenu();
 
   const openFrontComponentInCommandMenu = ({
     frontComponentId,
@@ -42,7 +42,7 @@ export const useOpenFrontComponentInCommandMenu = () => {
       recordContext ?? null,
     );
 
-    navigateCommandMenu({
+    navigateSidePanelMenu({
       page: SidePanelPages.ViewFrontComponent,
       pageTitle,
       pageIcon,

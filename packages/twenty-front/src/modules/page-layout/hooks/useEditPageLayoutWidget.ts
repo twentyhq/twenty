@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -25,7 +25,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   );
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const setSidePanelPage = useSetAtomState(sidePanelPageState);
 
   const handleEditWidget = useCallback(
@@ -66,12 +66,12 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
 
       setSidePanelPage(SidePanelPages.Root);
-      closeCommandMenu();
+      closeSidePanelMenu();
     },
     [
       setPageLayoutEditingWidgetId,
       navigatePageLayoutSidePanel,
-      closeCommandMenu,
+      closeSidePanelMenu,
       setSidePanelPage,
     ],
   );

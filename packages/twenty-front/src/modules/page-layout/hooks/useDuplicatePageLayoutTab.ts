@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -50,7 +50,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const duplicateTab = useCallback(
     (tabId: string): string => {
@@ -124,7 +124,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         tabs: [...prev.tabs, newTab],
       });
 
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       setActiveTabId(newTabId);
 
@@ -139,7 +139,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       return newTabId;
     },
     [
-      closeCommandMenu,
+      closeSidePanelMenu,
       navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,

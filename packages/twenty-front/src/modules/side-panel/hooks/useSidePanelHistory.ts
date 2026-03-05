@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -14,7 +14,7 @@ import { useStore } from 'jotai';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const goBackFromSidePanel = useCallback(() => {
     const currentNavigationStack = store.get(
@@ -25,7 +25,7 @@ export const useSidePanelHistory = () => {
     const lastNavigationStackItem = newNavigationStack.at(-1);
 
     if (!isDefined(lastNavigationStackItem)) {
-      closeCommandMenu();
+      closeSidePanelMenu();
       return;
     }
 
@@ -67,7 +67,7 @@ export const useSidePanelHistory = () => {
     }
 
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
-  }, [closeCommandMenu, store]);
+  }, [closeSidePanelMenu, store]);
 
   const navigateSidePanelHistory = useCallback(
     (pageIndex: number) => {

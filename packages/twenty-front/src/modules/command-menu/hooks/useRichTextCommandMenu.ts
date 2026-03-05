@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-page/states/viewableRichTextComponentState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
@@ -7,7 +7,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
 export const useRichTextCommandMenu = () => {
-  const { navigateCommandMenu, openCommandMenu } = useCommandMenu();
+  const { navigateSidePanelMenu, openSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
@@ -24,14 +24,14 @@ export const useRichTextCommandMenu = () => {
         activityObjectNameSingular,
       });
 
-      openCommandMenu();
-      navigateCommandMenu({
+      openSidePanelMenu();
+      navigateSidePanelMenu({
         page: SidePanelPages.EditRichText,
         pageTitle: t`Rich Text`,
         pageIcon: IconPencil,
       });
     },
-    [navigateCommandMenu, openCommandMenu, store],
+    [navigateSidePanelMenu, openSidePanelMenu, store],
   );
 
   const editRichText = useCallback(

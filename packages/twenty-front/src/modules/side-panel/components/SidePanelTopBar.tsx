@@ -5,7 +5,7 @@ import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePane
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
@@ -93,7 +93,7 @@ export const SidePanelTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
@@ -162,7 +162,7 @@ export const SidePanelTopBar = () => {
                 Icon={IconX}
                 size="small"
                 variant="tertiary"
-                onClick={closeCommandMenu}
+                onClick={closeSidePanelMenu}
               />
             </motion.div>
           )}

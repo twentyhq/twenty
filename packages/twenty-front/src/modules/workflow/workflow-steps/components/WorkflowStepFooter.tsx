@@ -1,4 +1,4 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -39,9 +39,9 @@ export const WorkflowStepFooter = ({
   const { closeDropdown } = useCloseDropdown();
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
-    openWorkflowEditStepTypeInCommandMenu,
-    openWorkflowTriggerTypeInCommandMenu,
-  } = useWorkflowCommandMenu();
+    openWorkflowEditStepTypeInSidePanel,
+    openWorkflowTriggerTypeInSidePanel,
+  } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
   const workflowAiAgentActionAgent = useAtomStateValue(
@@ -66,9 +66,9 @@ export const WorkflowStepFooter = ({
     closeDropdown(dropdownId);
 
     if (stepId === TRIGGER_STEP_ID) {
-      openWorkflowTriggerTypeInCommandMenu(workflowId);
+      openWorkflowTriggerTypeInSidePanel(workflowId);
     } else {
-      openWorkflowEditStepTypeInCommandMenu(workflowId);
+      openWorkflowEditStepTypeInSidePanel(workflowId);
     }
   };
 

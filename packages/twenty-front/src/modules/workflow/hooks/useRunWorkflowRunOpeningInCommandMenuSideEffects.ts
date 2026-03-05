@@ -1,4 +1,4 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -21,7 +21,7 @@ import { useStore } from 'jotai';
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
-  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { getIcon } = useIcons();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -104,7 +104,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           },
         ],
       );
-      openWorkflowRunViewStepInCommandMenu({
+      openWorkflowRunViewStepInSidePanel({
         workflowId: workflowRunRecord.workflowId,
         workflowRunId: workflowRunRecord.id,
         title: stepToOpenByDefault.data.name,
@@ -116,7 +116,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
     [
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
-      openWorkflowRunViewStepInCommandMenu,
+      openWorkflowRunViewStepInSidePanel,
       getIcon,
       store,
     ],
