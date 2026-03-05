@@ -16321,6 +16321,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@oxlint/plugins@npm:^1.51.0":
+  version: 1.51.0
+  resolution: "@oxlint/plugins@npm:1.51.0"
+  checksum: 10c0/5da1a0d2e5bb287e339135bcdff262f38f66d56cbed639938d3c0235a7ef3d37f8b0ff85e6c9b082ad702d84a03e7fd3826b30c2635fdea46609215cc9fa2edd
+  languageName: node
+  linkType: hard
+
 "@pandacss/is-valid-prop@npm:^1.4.2":
   version: 1.8.1
   resolution: "@pandacss/is-valid-prop@npm:1.8.1"
@@ -58175,6 +58182,7 @@ __metadata:
     "@nx/storybook": "npm:22.5.4"
     "@nx/vite": "npm:22.5.4"
     "@nx/web": "npm:22.5.4"
+    "@oxlint/plugins": "npm:^1.51.0"
     "@radix-ui/colors": "npm:^3.0.0"
     "@sentry/types": "npm:^8"
     "@sniptt/guards": "npm:^0.2.0"

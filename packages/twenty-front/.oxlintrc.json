@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "unicorn", "import"],
+  "jsPlugins": ["../twenty-oxlint-rules/dist/oxlint-plugin.mjs"],
   "categories": {
     "correctness": "off"
   },
@@ -91,6 +92,33 @@
       "allowNullableNumber": true,
       "allowNullableEnum": true,
       "allowAny": true
+    }],
+
+    "twenty/effect-components": "error",
+    "twenty/no-hardcoded-colors": "error",
+    "twenty/matching-state-variable": "error",
+    "twenty/sort-css-properties-alphabetically": "error",
+    "twenty/styled-components-prefixed-with-styled": "error",
+    "twenty/no-state-useref": "error",
+    "twenty/component-props-naming": "error",
+    "twenty/no-navigate-prefer-link": "error",
+    "twenty/no-jotai-store-in-selector": "error",
+    "twenty/no-direct-atom-family-in-selector": "error",
+    "twenty/enforce-module-boundaries": ["error", {
+      "depConstraints": [
+        {
+          "sourceTag": "scope:frontend",
+          "onlyDependOnLibsWithTags": ["scope:shared", "scope:frontend"]
+        }
+      ]
     }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/constants/*.ts", "**/*.constants.ts"],
+      "rules": {
+        "twenty/max-consts-per-file": ["error", { "max": 1 }]
+      }
+    }
+  ]
 }
