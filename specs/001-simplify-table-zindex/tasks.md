@@ -86,7 +86,7 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Independent Test**: Enable record groups, scroll through groups, hover and focus cells near group boundaries.
 
-- [ ] T005 [US4] Verify hover and focus portals display correctly in grouped record tables — test all 4 group-specific scenarios from the visual test matrix (scenarios 5-8). If any issue, adjust the static z-index value in both portal components
+- [X] T005 [US4] Verify hover and focus portals display correctly in grouped record tables — test all 4 group-specific scenarios from the visual test matrix (scenarios 5-8). If any issue, adjust the static z-index value in both portal components
 
 **Checkpoint**: All 8 visual test matrix scenarios pass.
 
@@ -96,9 +96,9 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Goal**: Confirm edit mode, focus, drag-and-drop, and footer are unaffected.
 
-- [ ] T006 [US5] Verify edit mode still works — click a cell, enter edit mode, confirm the edit overlay appears above the hover indicator. Check `RecordTableCellEditModePortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellEditModePortal.tsx` still uses z-index 30 (should be unchanged)
-- [ ] T007 [P] [US5] Verify column drag-and-drop — drag column grips to reorder columns. Confirm drag handles and clone appear above all table elements. Check `RecordTableCellDragAndDrop` still uses z-index 30
-- [ ] T008 [P] [US5] Verify footer aggregate row — scroll to the bottom of a table with aggregates. Confirm footer cells display correctly and are not overlapped by hover portals from data rows
+- [X] T006 [US5] Verify edit mode still works — click a cell, enter edit mode, confirm the edit overlay appears above the hover indicator. Check `RecordTableCellEditModePortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellEditModePortal.tsx` still uses z-index 30 (should be unchanged)
+- [X] T007 [P] [US5] Verify column drag-and-drop — drag column grips to reorder columns. Confirm drag handles and clone appear above all table elements. Check `RecordTableCellDragAndDrop` still uses z-index 30
+- [X] T008 [P] [US5] Verify footer aggregate row — scroll to the bottom of a table with aggregates. Confirm footer cells display correctly and are not overlapped by hover portals from data rows
 
 **Checkpoint**: All adjacent features work correctly. No regression.
 
@@ -108,11 +108,11 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Goal**: Remove all scroll-state-dependent sections from the TABLE_Z_INDEX constant and simplify it to static values only.
 
-- [ ] T009 [US6] Remove the `withGroups` scroll-state section (containing `noScrollAtAll`, `scrolledBothVerticallyAndHorizontally`, `scrolledHorizontallyOnly`, `scrolledVerticallyOnly`) from `packages/twenty-front/src/modules/object-record/record-table/constants/TableZIndex.ts`
-- [ ] T010 [P] [US6] Remove the `withoutGroups` scroll-state section (same 4 sub-keys) from `packages/twenty-front/src/modules/object-record/record-table/constants/TableZIndex.ts`
-- [ ] T011 [US6] Add a new static `hoverPortal` z-index entry to TABLE_Z_INDEX to replace the removed scroll-dependent values. Update `RecordTableCellHoveredPortal` and `RecordTableCellFocusedPortal` to reference `TABLE_Z_INDEX.hoverPortal` instead of a hardcoded number
-- [ ] T012 [US6] Simplify `RecordTableCellFirstRowFirstColumn` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFirstRowFirstColumn.tsx` — remove the scroll-dependent z-index logic for cell(0,0). Since the portal now fits inside the cell, cell(0,0) no longer needs a special elevated z-index when hovered. Use a single static z-index. Remove the `withoutGroupsCell0_0` section from TABLE_Z_INDEX
-- [ ] T013 [US6] Simplify `RecordTableHeaderFirstScrollableCell` in `packages/twenty-front/src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell.tsx` — remove scroll-dependent z-index computation for `firstScrollableHeaderCell`. Use a single static z-index from the headerColumns section. Remove unused scroll-state imports
+- [X] T009 [US6] Remove the `withGroups` scroll-state section (containing `noScrollAtAll`, `scrolledBothVerticallyAndHorizontally`, `scrolledHorizontallyOnly`, `scrolledVerticallyOnly`) from `packages/twenty-front/src/modules/object-record/record-table/constants/TableZIndex.ts`
+- [X] T010 [P] [US6] Remove the `withoutGroups` scroll-state section (same 4 sub-keys) from `packages/twenty-front/src/modules/object-record/record-table/constants/TableZIndex.ts`
+- [X] T011 [US6] Add a new static `hoverPortal` z-index entry to TABLE_Z_INDEX to replace the removed scroll-dependent values. Update `RecordTableCellHoveredPortal` and `RecordTableCellFocusedPortal` to reference `TABLE_Z_INDEX.hoverPortal` instead of a hardcoded number
+- [X] T012 [US6] Simplify `RecordTableCellFirstRowFirstColumn` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFirstRowFirstColumn.tsx` — remove the scroll-dependent z-index logic for cell(0,0). Since the portal now fits inside the cell, cell(0,0) no longer needs a special elevated z-index when hovered. Use a single static z-index. Remove the `withoutGroupsCell0_0` section from TABLE_Z_INDEX
+- [X] T013 [US6] Simplify `RecordTableHeaderFirstScrollableCell` in `packages/twenty-front/src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell.tsx` — remove scroll-dependent z-index computation for `firstScrollableHeaderCell`. Use a single static z-index from the headerColumns section. Remove unused scroll-state imports
 
 **Checkpoint**: TABLE_Z_INDEX should now be ~25-30 lines. Run the full visual test matrix one final time.
 
