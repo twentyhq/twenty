@@ -69,15 +69,17 @@ export const StyledIconContainer = styled.div`
 `;
 
 const StyledIconChevronRightWrapper = styled.div`
-  display: inline-flex;
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: inline-flex;
 `;
 
-export const StyledIconChevronRight = (
-  props: React.ComponentProps<typeof IconChevronRight>,
-) => (
+export const StyledIconChevronRight = ({
+  size,
+  color,
+  stroke,
+}: React.ComponentProps<typeof IconChevronRight>) => (
   <StyledIconChevronRightWrapper>
-    <IconChevronRight {...props} />
+    <IconChevronRight size={size} color={color} stroke={stroke} />
   </StyledIconChevronRightWrapper>
 );

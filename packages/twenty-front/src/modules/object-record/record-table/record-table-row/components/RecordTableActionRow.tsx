@@ -20,13 +20,6 @@ import {
 import { type IconComponent } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledDragDropPlaceholderCell = styled(
-  RecordTableDragAndDropPlaceholderCell,
-)`
-  left: 0;
-  position: sticky;
-`;
-
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   min-width: ${({ widthOfFields }) => widthOfFields}px;
@@ -137,7 +130,7 @@ export const RecordTableActionRow = ({
 
   return (
     <StyledRecordTableDraggableTr onClick={onClick}>
-      <StyledDragDropPlaceholderCell />
+      <RecordTableDragAndDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
           stroke={theme.icon.stroke.sm}

@@ -38,11 +38,11 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)`
-  height: auto;
-  padding-top: ${themeCssVariables.spacing[8]};
+const StyledRightDrawerPlaceholderWrapper = styled.div`
+  > * {
+    height: auto;
+    padding-top: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 export const TimelineCard = () => {
@@ -59,12 +59,8 @@ export const TimelineCard = () => {
   }
 
   if (isTimelineActivitiesEmpty) {
-    const EmptyContainer = isInRightDrawer
-      ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
-      : AnimatedPlaceholderEmptyContainer;
-
-    return (
-      <EmptyContainer
+    const placeholderContent = (
+      <AnimatedPlaceholderEmptyContainer
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
@@ -77,7 +73,15 @@ export const TimelineCard = () => {
             {t`There is no activity associated with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-      </EmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+
+    return isInRightDrawer ? (
+      <StyledRightDrawerPlaceholderWrapper>
+        {placeholderContent}
+      </StyledRightDrawerPlaceholderWrapper>
+    ) : (
+      placeholderContent
     );
   }
 

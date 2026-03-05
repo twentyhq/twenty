@@ -16,9 +16,7 @@ import {
   type AnimatedPlaceholderType,
 } from 'twenty-ui/layout';
 
-const StyledEmptyPlaceholderOuterContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)`
+const StyledEmptyPlaceholderOuterContainer = styled.div`
   align-items: flex-start;
 `;
 
