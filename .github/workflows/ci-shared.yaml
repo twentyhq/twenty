@@ -42,7 +42,7 @@ jobs:
       - name: Run ${{ matrix.task }} task
         uses: ./.github/actions/nx-affected
         with:
-          tag: scope:frontend
+          tag: scope:shared
           tasks: ${{ matrix.task }}
   ci-shared-status-check:
     if: always() && !cancelled()
