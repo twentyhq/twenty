@@ -3724,19 +3724,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clickhouse/client-common@npm:1.11.0":
-  version: 1.11.0
-  resolution: "@clickhouse/client-common@npm:1.11.0"
-  checksum: 10c0/84a74458acdf279bc4e844c235d0f658cb77f82e90f19fa285481c31f2f17210a5e801a61f080d6dfd100d970bc4e15a5692d2b7fd067502fbaad99d0dc51310
+"@clickhouse/client-common@npm:1.18.1":
+  version: 1.18.1
+  resolution: "@clickhouse/client-common@npm:1.18.1"
+  checksum: 10c0/2545bab6471c06d3e826ffb0fe0f5dc86e39ae08a7d3cb247a624fef83378f74e50028037d3afb40293c9fa55bdda4efe1d4555f4e0c4d83880ac7d19dd87490
   languageName: node
   linkType: hard
 
 "@clickhouse/client@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@clickhouse/client@npm:1.11.0"
+  version: 1.18.1
+  resolution: "@clickhouse/client@npm:1.18.1"
   dependencies:
-    "@clickhouse/client-common": "npm:1.11.0"
-  checksum: 10c0/8557de33dd9c88d2813d563f89b49e666dc2d8166c9131e9727f6935db8dc65428927b4b4ab20b1bc7646b9c38c1eb8d1e372ba483b0b2bb69d64ed89488dec2
+    "@clickhouse/client-common": "npm:1.18.1"
+  checksum: 10c0/707345c5db3548795f99790ecf06e0cb5ec32b29fbfa0446054d62fe261653023adcdc112aa88ecc0cde38a36b8b68713062312f3dd4b5f2bbfe6fc489204c04
   languageName: node
   linkType: hard
 
