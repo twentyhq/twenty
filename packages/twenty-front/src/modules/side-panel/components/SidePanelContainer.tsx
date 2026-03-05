@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -30,7 +30,7 @@ type SidePanelContainerProps = {
 export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    SIDE_PANEL_COMPONENT_INSTANCE_ID,
   );
   const isMobile = useIsMobile();
 
@@ -43,7 +43,7 @@ export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    SIDE_PANEL_COMPONENT_INSTANCE_ID,
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
@@ -54,10 +54,10 @@ export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
   return (
     <RecordComponentInstanceContextsWrapper componentInstanceId={recordIndexId}>
       <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+        value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
       >
         <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
         >
           <StyledSidePanelContainer isMobile={isMobile}>
             {children}

@@ -1,4 +1,4 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
@@ -40,7 +40,7 @@ export const useCommandMenuHotKeys = () => {
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    SIDE_PANEL_COMPONENT_INSTANCE_ID,
   );
 
   useGlobalHotkeys({

@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
@@ -37,7 +37,7 @@ jotaiStore.set(
 
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
-  componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',
@@ -62,32 +62,32 @@ describe('useSetGlobalCommandMenuContext', () => {
 
         const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreFilters = useAtomComponentStateValue(
           contextStoreFiltersComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreFilterGroups = useAtomComponentStateValue(
           contextStoreFilterGroupsComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
           contextStoreAnyFieldFilterValueComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreCurrentViewType = useAtomComponentStateValue(
           contextStoreCurrentViewTypeComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         return {
@@ -161,13 +161,13 @@ describe('useSetGlobalCommandMenuContext', () => {
         // eslint-disable-next-line twenty/matching-state-variable
         const previousTargetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
-          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
         );
 
         // eslint-disable-next-line twenty/matching-state-variable
         const previousNumberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
-          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
         );
 
         return {

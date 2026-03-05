@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
@@ -41,7 +41,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
 
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
-  componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     workflowMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',

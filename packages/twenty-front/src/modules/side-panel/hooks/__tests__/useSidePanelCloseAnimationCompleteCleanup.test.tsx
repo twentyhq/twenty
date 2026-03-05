@@ -2,9 +2,9 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
-import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -165,11 +165,11 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     );
     expect(mockResetContextStoreStates).toHaveBeenNthCalledWith(
       1,
-      COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      SIDE_PANEL_COMPONENT_INSTANCE_ID,
     );
     expect(mockResetContextStoreStates).toHaveBeenNthCalledWith(
       2,
-      COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+      SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
     );
   });
 });

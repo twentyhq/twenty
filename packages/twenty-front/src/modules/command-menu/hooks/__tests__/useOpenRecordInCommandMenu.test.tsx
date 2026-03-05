@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
@@ -46,7 +46,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
-  componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',

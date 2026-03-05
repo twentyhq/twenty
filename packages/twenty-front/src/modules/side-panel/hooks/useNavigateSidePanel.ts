@@ -1,4 +1,4 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
@@ -55,7 +55,7 @@ export const useNavigateSidePanel = () => {
       focusId: SIDE_PANEL_FOCUS_ID,
       component: {
         type: FocusComponentType.SIDE_PANEL,
-        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -64,7 +64,7 @@ export const useNavigateSidePanel = () => {
 
     copyContextStoreStates({
       instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      instanceIdToCopyTo: SIDE_PANEL_COMPONENT_INSTANCE_ID,
     });
 
     store.set(isSidePanelOpenedState.atom, true);

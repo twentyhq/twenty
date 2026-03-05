@@ -24,7 +24,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type CommandMenu } from '@/command-menu/components/CommandMenu';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -47,16 +47,16 @@ const openTimeout = 50;
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
     <RecordComponentInstanceContextsWrapper
-      componentInstanceId={COMMAND_MENU_COMPONENT_INSTANCE_ID}
+      componentInstanceId={SIDE_PANEL_COMPONENT_INSTANCE_ID}
     >
       <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+        value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
       >
         <ViewComponentInstanceContext.Provider
-          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
         >
           <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+            value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
           >
             <JestContextStoreSetter
               contextStoreCurrentObjectMetadataNameSingular="company"

@@ -1,7 +1,7 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
-import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -48,15 +48,15 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       const currentPage = store.get(sidePanelPageState.atom);
       const targetedRecordsRule = store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
         }),
       );
       const morphItemsByPage = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );
 
-      resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
-      resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
+      resetContextStoreStates(SIDE_PANEL_COMPONENT_INSTANCE_ID);
+      resetContextStoreStates(SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID);
 
       const isPageLayoutEditingPage =
         currentPage === SidePanelPages.PageLayoutWidgetTypeSelect ||
