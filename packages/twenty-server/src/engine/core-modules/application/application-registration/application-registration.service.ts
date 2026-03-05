@@ -19,7 +19,6 @@ import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type MarketplaceDisplayData } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-display-data.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
