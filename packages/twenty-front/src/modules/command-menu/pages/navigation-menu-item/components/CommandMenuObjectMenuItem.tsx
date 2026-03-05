@@ -74,6 +74,7 @@ export const CommandMenuObjectMenuItem = ({
             objectMetadataId: objectMetadataItem.id,
             defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
+            iconColor,
           }}
         />
       ) : (
