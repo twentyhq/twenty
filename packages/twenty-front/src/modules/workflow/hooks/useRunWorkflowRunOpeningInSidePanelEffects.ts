@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useStore } from 'jotai';
 
-export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
+export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
@@ -26,7 +26,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const runWorkflowRunOpeningInCommandMenuSideEffects = useCallback(
+  const runWorkflowRunOpeningInSidePanelEffects = useCallback(
     ({
       objectMetadataItem,
       recordId,
@@ -123,6 +123,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   );
 
   return {
-    runWorkflowRunOpeningInCommandMenuSideEffects,
+    runWorkflowRunOpeningInSidePanelEffects,
   };
 };

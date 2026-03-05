@@ -18,7 +18,7 @@ import { viewableRecordIdState } from '@/object-record/record-side-panel/states/
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 
-import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
+import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInSidePanelEffects';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -31,8 +31,8 @@ export const useOpenRecordInSidePanel = () => {
   const { getIcon } = useIcons();
 
   const { navigateSidePanelMenu } = useSidePanelMenu();
-  const { runWorkflowRunOpeningInCommandMenuSideEffects } =
-    useRunWorkflowRunOpeningInCommandMenuSideEffects();
+  const { runWorkflowRunOpeningInSidePanelEffects } =
+    useRunWorkflowRunOpeningInSidePanelEffects();
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   const openRecordInSidePanel = useCallback(
@@ -184,7 +184,7 @@ export const useOpenRecordInSidePanel = () => {
       });
 
       if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
-        runWorkflowRunOpeningInCommandMenuSideEffects({
+        runWorkflowRunOpeningInSidePanelEffects({
           objectMetadataItem,
           recordId,
         });
@@ -206,7 +206,7 @@ export const useOpenRecordInSidePanel = () => {
       getIcon,
       navigateSidePanelMenu,
       openNewRecordTitleCell,
-      runWorkflowRunOpeningInCommandMenuSideEffects,
+      runWorkflowRunOpeningInSidePanelEffects,
       store,
     ],
   );
