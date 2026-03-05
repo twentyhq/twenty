@@ -14,10 +14,8 @@ import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -34,7 +32,7 @@ import { getImageBufferFromUrl } from 'src/utils/image';
 @Command({
   name: 'upgrade:1-18:migrate-workspace-pictures',
   description:
-    'Migrate workspace logos and workspace member avatars to file records',
+    '[DEPRECATED] Migrate workspace logos and workspace member avatars to file records - this migration is now complete and no longer needed',
 })
 export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -42,7 +40,6 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
@@ -56,59 +53,10 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
 
   override async runOnWorkspace({
     workspaceId,
-    options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
-      workspaceId,
-    );
-
-    if (isMigrated) {
-      this.logger.log(
-        `Workspace pictures migration already completed for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Starting workspace pictures migration for workspace ${workspaceId}`,
-    );
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const fileRepository = this.coreDataSource.getRepository(FileEntity);
-
-    await this.migrateWorkspaceLogo({
-      workspaceId,
-      isDryRun,
-      workspaceCustomFlatApplication,
-      fileRepository,
-    });
-
-    await this.migrateWorkspaceMemberAvatars({
-      workspaceId,
-      isDryRun,
-      workspaceCustomFlatApplication,
-      fileRepository,
-    });
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_CORE_PICTURE_MIGRATED],
-        workspaceId,
-      );
-    }
-
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed workspace pictures migration for workspace ${workspaceId}`,
+      `[DEPRECATED] Workspace pictures migration is no longer needed for workspace ${workspaceId}. ` +
+        `The IS_CORE_PICTURE_MIGRATED feature flag has been removed as all workspaces are now migrated.`,
     );
   }
 
@@ -426,13 +374,6 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
         );
         throw error;
       }
-    }
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_CORE_PICTURE_MIGRATED],
-        workspaceId,
-      );
     }
   }
 }

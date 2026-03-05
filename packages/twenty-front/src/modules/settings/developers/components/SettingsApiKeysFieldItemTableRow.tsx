@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 
 import {
   formatExpiration,
@@ -8,7 +8,8 @@ import {
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -43,7 +44,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: SettingsApiKeysFieldItemTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   const gridColumns = '5fr 2fr 3fr 1fr';

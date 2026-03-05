@@ -30,6 +30,8 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     availabilityType: commandMenuItemManifest.availabilityType
       ? AVAILABILITY_TYPE_MAP[commandMenuItemManifest.availabilityType]
       : CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
     frontComponentUniversalIdentifier:
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:

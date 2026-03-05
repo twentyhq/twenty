@@ -7,10 +7,16 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.constant';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 const OLD_ROLE_ADMIN_UNIVERSAL_IDENTIFIER =
   '20202020-0001-0001-0001-000000000001';
@@ -513,6 +519,9 @@ export class FixInvalidStandardUniversalIdentifiersCommand extends ActiveOrSuspe
     private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -620,9 +629,49 @@ export class FixInvalidStandardUniversalIdentifiersCommand extends ActiveOrSuspe
         this.logger.log(
           `Updated ${totalUpdated} total universal identifiers in workspace ${workspaceId}`,
         );
+
+        await this.invalidateCaches(workspaceId);
       }
     } finally {
       await queryRunner.release();
     }
+  }
+
+  private async invalidateCaches(workspaceId: string): Promise<void> {
+    const modifiedMetadataNames = [
+      'fieldMetadata',
+      'index',
+      'role',
+      'agent',
+      'skill',
+    ] as const;
+
+    const cacheKeysToInvalidate: WorkspaceCacheKeyName[] = [
+      ...new Set(
+        modifiedMetadataNames
+          .flatMap((name) => [name, ...getMetadataRelatedMetadataNames(name)])
+          .map(getMetadataFlatEntityMapsKey),
+      ),
+      'ORMEntityMetadatas',
+      'rolesPermissions',
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+    ];
+
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      cacheKeysToInvalidate,
+    );
+
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
+
+    await this.workspaceCacheStorageService.flush(workspaceId);
+
+    this.logger.log(
+      `Cache invalidated and metadata version incremented for workspace ${workspaceId}`,
+    );
   }
 }

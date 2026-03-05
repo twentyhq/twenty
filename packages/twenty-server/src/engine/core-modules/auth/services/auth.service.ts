@@ -13,7 +13,7 @@ import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -124,6 +124,7 @@ export class AuthService {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         workspace,
+        invitation.context?.roleId,
       );
 
       return;

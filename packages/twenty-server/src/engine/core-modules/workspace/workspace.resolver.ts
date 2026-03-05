@@ -9,17 +9,14 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import assert from 'assert';
 
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FileFolder } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-
-import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -29,10 +26,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -74,7 +68,6 @@ import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -95,7 +88,6 @@ export class WorkspaceResolver {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly fileUrlService: FileUrlService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -154,39 +146,6 @@ export class WorkspaceResolver {
     @Parent() _workspace: WorkspaceEntity,
   ): Promise<string | null> {
     return 'auto';
-  }
-
-  @Mutation(() => SignedFileDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
-  async uploadWorkspaceLogoLegacy(
-    @AuthWorkspace() { id }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<SignedFileDTO> {
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-    const fileFolder = FileFolder.WorkspaceLogo;
-
-    const { files } = await this.fileUploadService.uploadImage({
-      file: buffer,
-      filename,
-      mimeType: mimetype,
-      fileFolder,
-      workspaceId: id,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload workspace logo');
-    }
-
-    await this.workspaceService.updateOne(id, {
-      logo: files[0].path,
-    });
-
-    return files[0];
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
@@ -331,35 +290,15 @@ export class WorkspaceResolver {
 
   @ResolveField(() => String)
   async logo(@Parent() workspace: WorkspaceEntity): Promise<string> {
-    if (
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
-        workspace.id,
-      )
-    ) {
-      if (!isDefined(workspace.logoFileId)) {
-        return '';
-      }
-
-      return this.fileUrlService.signFileByIdUrl({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-        fileFolder: FileFolder.CorePicture,
-      });
+    if (!isDefined(workspace.logoFileId)) {
+      return '';
     }
 
-    if (workspace.logo) {
-      try {
-        return this.fileService.signFileUrl({
-          url: workspace.logo,
-          workspaceId: workspace.id,
-        });
-      } catch {
-        return workspace.logo;
-      }
-    }
-
-    return workspace.logo ?? '';
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: workspace.logoFileId,
+      workspaceId: workspace.id,
+      fileFolder: FileFolder.CorePicture,
+    });
   }
 
   @ResolveField(() => [BillingEntitlementDTO])

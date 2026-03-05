@@ -1,11 +1,18 @@
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import styled from '@emotion/styled';
 
-const StyledWorkflowRunStepJsonContainer = styled(WorkflowStepBody)`
-  grid-template-rows: max-content;
-  gap: 0;
-  display: grid;
-  overflow: auto;
-`;
+const WorkflowRunStepJsonContainerInner = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <WorkflowStepBody
+    display="grid"
+    gridTemplateRows="max-content"
+    rowGap="0"
+    overflow="auto"
+  >
+    {children}
+  </WorkflowStepBody>
+);
 
-export { StyledWorkflowRunStepJsonContainer as WorkflowRunStepJsonContainer };
+export { WorkflowRunStepJsonContainerInner as WorkflowRunStepJsonContainer };

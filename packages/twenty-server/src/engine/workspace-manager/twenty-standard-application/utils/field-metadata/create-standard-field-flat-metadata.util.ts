@@ -110,6 +110,8 @@ export const createStandardFieldFlatMetadata = <
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    viewSortIds: [],
+    viewSortUniversalIdentifiers: [],
     universalSettings: settings ?? null,
   };
 };

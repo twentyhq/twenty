@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
@@ -11,10 +11,11 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  padding: ${({ theme }) => theme.spacing(4)};
+  border: 1px solid ${themeCssVariables.border.color.strong};
+  padding: ${themeCssVariables.spacing[4]};
   width: 720px;
 `;
 

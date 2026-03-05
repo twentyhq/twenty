@@ -74,6 +74,9 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
+  @Column({ nullable: true, type: 'varchar' })
+  conditionalAvailabilityExpression: string | null;
+
   @Column({ nullable: true, type: 'uuid' })
   availabilityObjectMetadataId: string | null;
 

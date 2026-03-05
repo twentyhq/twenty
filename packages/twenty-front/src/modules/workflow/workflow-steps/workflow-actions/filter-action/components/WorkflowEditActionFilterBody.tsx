@@ -11,26 +11,23 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/sta
 import { rootLevelStepFilterGroupComponentSelector } from '@/workflow/workflow-steps/filters/states/rootLevelStepFilterGroupComponentSelector';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledChildContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
   width: 100%;
-`;
-
-const StyledFilterBodyContainer = styled(WorkflowStepBody)`
-  gap: ${({ theme }) => theme.spacing(0)};
 `;
 
 type WorkflowEditActionFilterBodyProps = {
@@ -83,7 +80,7 @@ export const WorkflowEditActionFilterBody = ({
         onFilterSettingsUpdate,
       }}
     >
-      <StyledFilterBodyContainer>
+      <WorkflowStepBody rowGap={themeCssVariables.spacing[0]}>
         <InputLabel>{t`Conditions`}</InputLabel>
         {isDefined(rootStepFilterGroup) ? (
           <StyledContainer>
@@ -118,7 +115,7 @@ export const WorkflowEditActionFilterBody = ({
         ) : (
           <WorkflowStepFilterAddRootStepFilterButton />
         )}
-      </StyledFilterBodyContainer>
+      </WorkflowStepBody>
     </WorkflowStepFilterContext.Provider>
   );
 };

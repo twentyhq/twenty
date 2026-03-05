@@ -2,11 +2,11 @@ import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/command-menu/pages/p
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ChartColorGradientOptionProps = {
   colorOption: {
@@ -22,7 +22,7 @@ type ChartColorGradientOptionProps = {
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 export const ChartColorGradientOption = ({
@@ -32,8 +32,8 @@ export const ChartColorGradientOption = ({
   onSelectColor,
 }: ChartColorGradientOptionProps) => {
   const colorName = colorOption.colorName as ThemeColor;
-  const theme = useTheme();
-  const colorRegistry = createGraphColorRegistry(theme);
+
+  const colorRegistry = createGraphColorRegistry();
 
   const colorSamples = (
     <StyledColorSamplesContainer>

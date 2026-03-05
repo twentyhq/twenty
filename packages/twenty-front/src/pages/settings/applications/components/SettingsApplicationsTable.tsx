@@ -1,30 +1,33 @@
 import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { Table } from '@/ui/layout/table/components/Table';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   SettingsApplicationTableRow,
   StyledApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { useTheme } from '@emotion/react';
+import { useContext, useMemo, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useMemo, useState } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AppRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTableHeaderRow = styled(StyledApplicationTableRow)`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -35,7 +38,7 @@ export const SettingsApplicationsTable = ({
 }) => {
   const { t } = useLingui();
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -43,7 +46,7 @@ export const SettingsApplicationsTable = ({
     return applications.filter(
       (application) =>
         application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        application.description
+        (application.description ?? '')
           .toLowerCase()
           .includes(searchTerm.toLowerCase()),
     );
@@ -69,21 +72,37 @@ export const SettingsApplicationsTable = ({
           <TableHeader> {''}</TableHeader>
           <TableHeader />
         </StyledTableHeaderRow>
-        {filteredApplications.map((application) => (
-          <SettingsApplicationTableRow
-            key={application.id}
-            application={application}
-            action={
-              <IconChevronRight
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-            link={getSettingsPath(SettingsPath.ApplicationDetail, {
-              applicationId: application.id,
-            })}
-          />
-        ))}
+        {filteredApplications.map((application) => {
+          const isNpmApp =
+            application.applicationRegistration?.sourceType ===
+            AppRegistrationSourceType.NPM;
+
+          const latestVersion =
+            application.applicationRegistration?.latestAvailableVersion;
+
+          const hasUpdate =
+            isNpmApp &&
+            isDefined(latestVersion) &&
+            isDefined(application.version) &&
+            isNewerSemver(latestVersion, application.version);
+
+          return (
+            <SettingsApplicationTableRow
+              key={application.id}
+              application={application}
+              hasUpdate={hasUpdate}
+              action={
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              }
+              link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                applicationId: application.id,
+              })}
+            />
+          );
+        })}
       </StyledTable>
     </Section>
   );

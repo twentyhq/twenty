@@ -17,7 +17,6 @@ describe('getActivityAttachmentPathsToRestore', () => {
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newActivityBody,
       oldActivityAttachments,
-      false,
     );
     expect(attachmentPathsToRestore).toEqual([]);
   });
@@ -37,14 +36,13 @@ describe('getActivityAttachmentPathsToRestore', () => {
     const oldActivityAttachments = [
       {
         id: '1',
-        fullPath: 'https://example.com/files/images/test.txt',
+        file: [{ url: 'https://example.com/files/images/test.txt' }],
       },
     ] as Attachment[];
 
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newActivityBody,
       oldActivityAttachments,
-      false,
     );
     expect(attachmentPathsToRestore).toEqual([
       'https://example.com/files/images/test2.txt',

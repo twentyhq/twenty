@@ -486,6 +486,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 items: [],
                 initialLoopStepIds: [emptyNodeStep.id],
+                shouldContinueOnIterationFailure: true,
               },
             },
           },

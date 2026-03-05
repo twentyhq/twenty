@@ -1,8 +1,9 @@
 import { MobileBreadcrumb } from '@/ui/navigation/bread-crumb/components/MobileBreadcrumb';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Fragment, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type BreadcrumbProps = {
   className?: string;
@@ -11,14 +12,14 @@ export type BreadcrumbProps = {
 
 const StyledWrapper = styled.nav`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: grid;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   grid-auto-flow: column;
-  grid-column-gap: ${({ theme }) => theme.spacing(1)};
+  grid-column-gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   min-width: 0;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledLink = styled(Link)`
@@ -30,14 +31,14 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledDivider = styled.span`
-  width: ${({ theme }) => theme.spacing(2)};
+  width: ${themeCssVariables.spacing[2]};
 `;
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {

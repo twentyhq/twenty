@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Column } from 'typeorm';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 @ObjectType('FeatureFlag')
 export class FeatureFlagDTO {
