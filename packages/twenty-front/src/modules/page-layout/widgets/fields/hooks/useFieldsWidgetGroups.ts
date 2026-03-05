@@ -5,7 +5,7 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useGetViewById } from '@/views/hooks/useGetViewById';
+import { useViewById } from '@/views/hooks/useViewById';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -20,7 +20,7 @@ export const useFieldsWidgetGroups = ({
   objectNameSingular,
 }: UseFieldsWidgetGroupsParams) => {
   const { t } = useLingui();
-  const { view } = useGetViewById(viewId);
+  const { view } = useViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
