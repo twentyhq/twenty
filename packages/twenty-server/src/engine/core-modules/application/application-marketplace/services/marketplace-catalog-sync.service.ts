@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-catalog-index.constant';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/services/marketplace.service';
 import { getAdminWorkspaceId } from 'src/engine/core-modules/application/application-marketplace/utils/get-admin-workspace-id.util';
@@ -48,7 +48,7 @@ export class MarketplaceCatalogSyncService {
           description:
             entry.richDisplayData.aboutDescription ?? entry.description,
           author: entry.author,
-          sourceType: AppRegistrationSourceType.NPM,
+          sourceType: ApplicationRegistrationSourceType.NPM,
           sourcePackage: entry.sourcePackage,
           logoUrl: entry.logoUrl ?? null,
           websiteUrl: entry.websiteUrl ?? null,
@@ -84,7 +84,7 @@ export class MarketplaceCatalogSyncService {
           name: app.name,
           description: app.description,
           author: app.author,
-          sourceType: AppRegistrationSourceType.NPM,
+          sourceType: ApplicationRegistrationSourceType.NPM,
           sourcePackage: app.sourcePackage ?? app.name,
           logoUrl: null,
           websiteUrl: app.websiteUrl ?? null,

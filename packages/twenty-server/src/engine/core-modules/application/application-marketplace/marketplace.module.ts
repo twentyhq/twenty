@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/services/marketplace-catalog-sync.service';
@@ -17,6 +18,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   imports: [
     TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
     ApplicationInstallModule,
+    ApplicationUpgradeModule,
     FeatureFlagModule,
     PermissionsModule,
     TwentyConfigModule,

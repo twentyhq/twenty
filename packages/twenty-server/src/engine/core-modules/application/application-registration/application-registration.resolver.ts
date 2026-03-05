@@ -8,22 +8,22 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration/application-registration-variable.entity';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration/application-registration-variable.service';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import {
-  AppTarballUploadService,
+  ApplicationTarballService,
   MAX_TARBALL_UPLOAD_SIZE_BYTES,
-} from 'src/engine/core-modules/application/application-registration/services/app-tarball-upload.service';
+} from 'src/engine/core-modules/application/application-package/services/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
-import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration-variable.input';
+import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
-import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration-variable.input';
+import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -57,7 +57,7 @@ export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
-    private readonly appTarballUploadService: AppTarballUploadService,
+    private readonly applicationTarballService: ApplicationTarballService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -279,7 +279,7 @@ export class ApplicationRegistrationResolver {
       );
     }
 
-    return this.appTarballUploadService.uploadTarball({
+    return this.applicationTarballService.uploadTarball({
       tarballBuffer,
       universalIdentifier,
       ownerWorkspaceId: workspaceId,

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
@@ -12,7 +12,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 
 @Module({
   imports: [
-    ApplicationInstallModule,
+    ApplicationManifestModule,
     ApplicationRegistrationModule,
     ApplicationModule,
     FeatureFlagModule,

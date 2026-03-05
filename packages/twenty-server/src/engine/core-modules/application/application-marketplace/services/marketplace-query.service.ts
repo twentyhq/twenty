@@ -10,8 +10,8 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { assertValidNpmPackageName } from 'src/engine/core-modules/application/utils/assert-valid-npm-package-name.util';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -40,7 +40,7 @@ export class MarketplaceQueryService {
     }
 
     const registrations = await this.appRegistrationRepository.find({
-      where: { sourceType: AppRegistrationSourceType.NPM },
+      where: { sourceType: ApplicationRegistrationSourceType.NPM },
     });
 
     if (registrations.length === 0) {
@@ -105,7 +105,7 @@ export class MarketplaceQueryService {
       const registration = this.appRegistrationRepository.create({
         universalIdentifier: v4(),
         name: params.packageName,
-        sourceType: AppRegistrationSourceType.NPM,
+        sourceType: ApplicationRegistrationSourceType.NPM,
         sourcePackage: params.packageName,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],

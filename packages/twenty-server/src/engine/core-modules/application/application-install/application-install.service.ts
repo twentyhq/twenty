@@ -9,13 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  AppPackageFetcherService,
+  ApplicationPackageResolverService,
   type ResolvedPackage,
-} from 'src/engine/core-modules/application/application-install/app-package-fetcher.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+} from 'src/engine/core-modules/application/application-package/services/application-package-resolver.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/services/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
@@ -45,7 +45,7 @@ export class ApplicationInstallService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly appPackageFetcherService: AppPackageFetcherService,
+    private readonly applicationPackageResolverService: ApplicationPackageResolverService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
@@ -60,7 +60,7 @@ export class ApplicationInstallService {
       where: { id: params.appRegistrationId },
     });
 
-    if (appRegistration.sourceType === AppRegistrationSourceType.LOCAL) {
+    if (appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL) {
       this.logger.log(
         `Skipping install for LOCAL app ${appRegistration.universalIdentifier} (files synced by CLI watcher in dev mode)`,
       );
@@ -88,10 +88,11 @@ export class ApplicationInstallService {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
-      resolvedPackage = await this.appPackageFetcherService.resolvePackage(
-        appRegistration,
-        { targetVersion: params.version },
-      );
+      resolvedPackage =
+        await this.applicationPackageResolverService.resolvePackage(
+          appRegistration,
+          { targetVersion: params.version },
+        );
 
       if (!resolvedPackage) {
         return true;
@@ -128,7 +129,7 @@ export class ApplicationInstallService {
       throw error;
     } finally {
       if (resolvedPackage) {
-        await this.appPackageFetcherService.cleanupExtractedDir(
+        await this.applicationPackageResolverService.cleanupExtractedDir(
           resolvedPackage.cleanupDir,
         );
       }
@@ -205,7 +206,7 @@ export class ApplicationInstallService {
   private async updateApplicationSourceType(
     universalIdentifier: string,
     workspaceId: string,
-    sourceType: AppRegistrationSourceType,
+    sourceType: ApplicationRegistrationSourceType,
   ): Promise<void> {
     await this.applicationRepository.update(
       { universalIdentifier, workspaceId },
