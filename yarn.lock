@@ -3724,19 +3724,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clickhouse/client-common@npm:1.11.0":
-  version: 1.11.0
-  resolution: "@clickhouse/client-common@npm:1.11.0"
-  checksum: 10c0/84a74458acdf279bc4e844c235d0f658cb77f82e90f19fa285481c31f2f17210a5e801a61f080d6dfd100d970bc4e15a5692d2b7fd067502fbaad99d0dc51310
+"@clickhouse/client-common@npm:1.18.1":
+  version: 1.18.1
+  resolution: "@clickhouse/client-common@npm:1.18.1"
+  checksum: 10c0/2545bab6471c06d3e826ffb0fe0f5dc86e39ae08a7d3cb247a624fef83378f74e50028037d3afb40293c9fa55bdda4efe1d4555f4e0c4d83880ac7d19dd87490
   languageName: node
   linkType: hard
 
-"@clickhouse/client@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@clickhouse/client@npm:1.11.0"
+"@clickhouse/client@npm:^1.18.1":
+  version: 1.18.1
+  resolution: "@clickhouse/client@npm:1.18.1"
   dependencies:
-    "@clickhouse/client-common": "npm:1.11.0"
-  checksum: 10c0/8557de33dd9c88d2813d563f89b49e666dc2d8166c9131e9727f6935db8dc65428927b4b4ab20b1bc7646b9c38c1eb8d1e372ba483b0b2bb69d64ed89488dec2
+    "@clickhouse/client-common": "npm:1.18.1"
+  checksum: 10c0/707345c5db3548795f99790ecf06e0cb5ec32b29fbfa0446054d62fe261653023adcdc112aa88ecc0cde38a36b8b68713062312f3dd4b5f2bbfe6fc489204c04
   languageName: node
   linkType: hard
 
@@ -4058,12 +4058,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dagrejs/dagre@npm:^1.1.2":
+  version: 1.1.3
+  resolution: "@dagrejs/dagre@npm:1.1.3"
+  dependencies:
+    "@dagrejs/graphlib": "npm:2.2.2"
+  checksum: 10c0/c81e142ed55d23bda02968624bd96987eeb545dbc860b0dc22aafd606f8bd8b1b18914e2b986c46e3250a6cfcc2bc16a944bb8df301da9adffd738936679db44
+  languageName: node
+  linkType: hard
+
 "@dagrejs/dagre@npm:^1.1.8":
   version: 1.1.8
   resolution: "@dagrejs/dagre@npm:1.1.8"
   dependencies:
     "@dagrejs/graphlib": "npm:2.2.4"
   checksum: 10c0/3f4f99beb1c791c4c35fcab7a6891731a712931f076ae27b380afa4077e81a1f46341cd0ac8f21df29bf7b458e631b780e819846140a9e4f89e36faf907cdc66
+  languageName: node
+  linkType: hard
+
+"@dagrejs/graphlib@npm:2.2.2":
+  version: 2.2.2
+  resolution: "@dagrejs/graphlib@npm:2.2.2"
+  checksum: 10c0/2e79a4f5c6c402054b7ef42e786459645495934476170999f13867a55a00072636a23914772cce6bc03ce51eef70de589058860b8f034c1d70804fb61e01fcfc
   languageName: node
   linkType: hard
 
@@ -57512,7 +57528,8 @@ __metadata:
     "@azure/msal-node": "npm:^3.8.4"
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.47.1"
-    "@clickhouse/client": "npm:^1.11.0"
+    "@clickhouse/client": "npm:^1.18.1"
+    "@dagrejs/dagre": "npm:^1.1.2"
     "@e2b/code-interpreter": "npm:^1.0.4"
     "@envelop/core": "npm:4.0.3"
     "@envelop/on-resolve": "npm:4.1.0"
