@@ -7,6 +7,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -22,8 +23,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { type StringKeyOf } from 'type-fest';
@@ -117,6 +117,7 @@ export const SettingsDataModelObjectAboutForm = ({
   objectMetadataItem,
   conflictingObjectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
+  const { theme } = useContext(ThemeContext);
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
@@ -276,10 +277,8 @@ export const SettingsDataModelObjectAboutForm = ({
               <StyledConflictBanner>
                 <StyledBannerContent>
                   <IconInfoCircle
-                    color={resolveThemeVariable(themeCssVariables.color.blue)}
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
+                    color={theme.color.blue}
+                    size={parseFloat(theme.icon.size.md)}
                   />
                   <StyledBannerText>
                     {t`An object with this name already exists`}
@@ -361,12 +360,8 @@ export const SettingsDataModelObjectAboutForm = ({
                                 <>
                                   <IconInfoCircle
                                     id={infoCircleElementId + fieldName}
-                                    size={resolveThemeVariableAsNumber(
-                                      themeCssVariables.icon.size.md,
-                                    )}
-                                    color={resolveThemeVariable(
-                                      themeCssVariables.font.color.tertiary,
-                                    )}
+                                    size={parseFloat(theme.icon.size.md)}
+                                    color={theme.font.color.tertiary}
                                     style={{ outline: 'none' }}
                                   />
                                   <AppTooltip

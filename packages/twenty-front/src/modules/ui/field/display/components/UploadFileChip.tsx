@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconArrowUp } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -44,11 +45,13 @@ type UploadFileChipProps = {
 };
 
 export const UploadFileChip = ({ isLoading = true }: UploadFileChipProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer>
       <StyledIconBox>
         <IconArrowUp
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          size={parseFloat(theme.icon.size.sm)}
         />
       </StyledIconBox>
       {isLoading ? <Loader /> : <StyledStaticLoader />}

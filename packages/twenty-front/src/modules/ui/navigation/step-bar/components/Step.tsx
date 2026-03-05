@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatedCheckmark } from 'twenty-ui/display';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -85,39 +86,30 @@ export const Step = ({
   activeStep = 0,
 }: StepProps) => {
   const isMobile = useIsMobile();
+  const { theme } = useContext(ThemeContext);
 
   const variantsLine = {
     previous: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.font.color.primary,
-      ),
+      backgroundColor: theme.font.color.primary,
       transition: { duration: 0.5 },
     },
     next: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.border.color.medium,
-      ),
+      backgroundColor: theme.border.color.medium,
       transition: { duration: 0.5 },
     },
   };
 
   const variantsCircle = {
     current: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.background.invertedPrimary,
-      ),
+      backgroundColor: theme.background.invertedPrimary,
       transition: { duration: 0.5 },
     },
     previous: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.background.secondary,
-      ),
+      backgroundColor: theme.background.secondary,
       transition: { duration: 0.5 },
     },
     next: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.background.tertiary,
-      ),
+      backgroundColor: theme.background.tertiary,
       transition: { duration: 0.5 },
     },
   };
@@ -138,7 +130,7 @@ export const Step = ({
         {isInPreviousSteps && (
           <AnimatedCheckmark
             isAnimating={isInPreviousSteps}
-            color={resolveThemeVariable(themeCssVariables.grayScale.gray12)}
+            color={theme.grayScale.gray12}
           />
         )}
         {!isInPreviousSteps && (

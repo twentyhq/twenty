@@ -1,15 +1,15 @@
+import { useContext } from 'react';
+
 import IconMicrosoftOutlookRaw from '@assets/icons/microsoft-outlook.svg?react';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
+
 interface IconMicrosoftOutlookProps {
   size?: number | string;
 }
 
 export const IconMicrosoftOutlook = (props: IconMicrosoftOutlookProps) => {
-  const size =
-    props.size ?? resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg);
+  const { theme } = useContext(ThemeContext);
+  const size = props.size ?? parseFloat(theme.icon.size.lg);
 
   return <IconMicrosoftOutlookRaw height={size} width={size} />;
 };

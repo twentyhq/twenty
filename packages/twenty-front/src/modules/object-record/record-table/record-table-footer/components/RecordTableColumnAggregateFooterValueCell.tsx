@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -58,6 +58,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
   dropdownId: string;
   isFirstCell: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -97,9 +98,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
             {!hasAggregateOperationForViewField && (
               <StyledIcon
                 fontWeight="light"
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           </>

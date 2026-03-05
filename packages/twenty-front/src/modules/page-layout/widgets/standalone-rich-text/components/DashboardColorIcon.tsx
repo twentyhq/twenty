@@ -3,8 +3,9 @@ import { styled } from '@linaria/react';
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import {
   themeCssVariables,
-  resolveThemeVariable,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 const StyledColorIcon = styled.div<{
   textColorValue: string;
   backgroundColorValue: string;
@@ -30,14 +31,14 @@ export const DashboardColorIcon = ({
   textColor,
   backgroundColor,
 }: DashboardColorIconProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const getThemeColorForTextColor = (color: BlockNoteColor): string => {
     if (color === 'default') {
       return 'inherit';
     }
     return (
-      resolveThemeVariable(
-        (themeCssVariables.color as unknown as Record<string, string>)[color],
-      ) ?? 'inherit'
+      (theme.color as unknown as Record<string, string>)[color] ?? 'inherit'
     );
   };
 
@@ -50,15 +51,15 @@ export const DashboardColorIcon = ({
       Exclude<BlockNoteColor, 'default'>,
       string
     > = {
-      gray: resolveThemeVariable(themeCssVariables.color.gray3),
-      brown: resolveThemeVariable(themeCssVariables.color.brown3),
-      red: resolveThemeVariable(themeCssVariables.color.red3),
-      orange: resolveThemeVariable(themeCssVariables.color.orange3),
-      yellow: resolveThemeVariable(themeCssVariables.color.yellow3),
-      green: resolveThemeVariable(themeCssVariables.color.green3),
-      blue: resolveThemeVariable(themeCssVariables.color.blue3),
-      purple: resolveThemeVariable(themeCssVariables.color.purple3),
-      pink: resolveThemeVariable(themeCssVariables.color.pink3),
+      gray: theme.color.gray3,
+      brown: theme.color.brown3,
+      red: theme.color.red3,
+      orange: theme.color.orange3,
+      yellow: theme.color.yellow3,
+      green: theme.color.green3,
+      blue: theme.color.blue3,
+      purple: theme.color.purple3,
+      pink: theme.color.pink3,
     };
 
     return backgroundColorMap[color];

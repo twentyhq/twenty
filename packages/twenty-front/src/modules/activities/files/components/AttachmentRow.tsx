@@ -16,12 +16,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -83,6 +81,7 @@ export const AttachmentRow = ({
   attachment,
   onPreview,
 }: AttachmentRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(false);
 
   const hasDownloadPermission = useHasPermissionFlag(
@@ -201,11 +200,7 @@ export const AttachmentRow = ({
         </StyledLeftContent>
         <StyledRightContent>
           <StyledCalendarIconContainer>
-            <IconCalendar
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-            />
+            <IconCalendar size={parseFloat(theme.icon.size.md)} />
           </StyledCalendarIconContainer>
           {formatToHumanReadableDate(attachment.createdAt)}
           <AttachmentDropdown

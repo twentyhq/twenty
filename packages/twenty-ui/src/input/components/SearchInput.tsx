@@ -1,11 +1,8 @@
 import { styled } from '@linaria/react';
 import { IconFilter, IconSearch } from '@ui/display';
 import { IconButton } from '@ui/input/button/components/IconButton';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
-import { type ChangeEvent, type ReactNode, useState } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { type ChangeEvent, type ReactNode, useContext, useState } from 'react';
 
 export type SearchInputProps = {
   value: string;
@@ -83,6 +80,7 @@ export const SearchInput = ({
   disabled,
   className,
 }: SearchInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isFocused, setIsFocused] = useState(false);
 
   const filterButton = <IconButton Icon={IconFilter} variant="secondary" />;
@@ -91,9 +89,7 @@ export const SearchInput = ({
     <StyledWrapper className={className}>
       <StyledInputContainer>
         <StyledIconContainer isFocused={isFocused}>
-          <IconSearch
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <IconSearch size={parseFloat(theme.icon.size.md)} />
         </StyledIconContainer>
         <StyledInput
           value={value}

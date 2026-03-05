@@ -13,14 +13,14 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -67,6 +67,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
+  const { theme } = useContext(ThemeContext);
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -162,12 +163,8 @@ export const SettingsObjectNewFieldSelector = ({
                             key={key}
                             Icon={
                               <config.Icon
-                                size={resolveThemeVariableAsNumber(
-                                  themeCssVariables.icon.size.xl,
-                                )}
-                                stroke={resolveThemeVariableAsNumber(
-                                  themeCssVariables.icon.stroke.sm,
-                                )}
+                                size={parseFloat(theme.icon.size.xl)}
+                                stroke={parseFloat(theme.icon.stroke.sm)}
                               />
                             }
                             title={config.label}

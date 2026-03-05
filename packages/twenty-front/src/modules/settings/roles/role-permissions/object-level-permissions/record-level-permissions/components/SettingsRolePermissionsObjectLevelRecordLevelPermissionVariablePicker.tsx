@@ -2,10 +2,8 @@
 
 import { styled } from '@linaria/react';
 import { IconVariablePlus } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
@@ -66,6 +64,8 @@ export const createRecordLevelPermissionVariablePicker = (
     disabled,
     multiline,
   }) => {
+    const { theme } = useContext(ThemeContext);
+
     return (
       <Dropdown
         dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
@@ -75,9 +75,7 @@ export const createRecordLevelPermissionVariablePicker = (
             readonly={disabled}
           >
             <IconVariablePlus
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
+              size={parseFloat(theme.icon.size.sm)}
             />
           </StyledRecordLevelPermissionPickerContainer>
         }

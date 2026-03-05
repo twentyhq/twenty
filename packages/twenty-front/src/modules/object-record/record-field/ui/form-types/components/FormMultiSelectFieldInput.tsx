@@ -20,14 +20,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { isArray } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -93,6 +92,7 @@ export const FormMultiSelectFieldInput = ({
   hint,
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -229,12 +229,8 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder />
                 )}
                 <IconChevronDown
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  color={resolveThemeVariable(
-                    themeCssVariables.font.color.light,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  color={theme.font.color.light}
                 />
               </StyledDisplayModeReadonlyContainer>
             ) : (
@@ -253,12 +249,8 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
                 )}
                 <IconChevronDown
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  color={resolveThemeVariable(
-                    themeCssVariables.font.color.tertiary,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  color={theme.font.color.tertiary}
                 />
               </StyledDisplayModeContainer>
             )

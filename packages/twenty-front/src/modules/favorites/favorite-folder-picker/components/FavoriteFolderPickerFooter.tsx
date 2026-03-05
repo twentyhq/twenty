@@ -6,17 +6,16 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const FavoriteFolderPickerFooter = ({
   dropdownId,
 }: {
   dropdownId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const [, setIsFavoriteFolderCreating] = useAtomState(
     isFavoriteFolderCreatingState,
@@ -39,9 +38,7 @@ export const FavoriteFolderPickerFooter = ({
         }}
         text={t`Add folder`}
         LeftIcon={() => (
-          <IconPlus
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <IconPlus size={parseFloat(theme.icon.size.md)} />
         )}
       />
     </DropdownMenuItemsContainer>

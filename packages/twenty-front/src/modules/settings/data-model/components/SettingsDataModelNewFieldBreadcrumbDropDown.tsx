@@ -4,6 +4,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -12,7 +13,7 @@ import { IconChevronDown } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -53,6 +54,7 @@ const StyledButton = styled(Button)`
 `;
 
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
+  const { theme } = useContext(ThemeContext);
   const dropdownId = `settings-object-new-field-breadcrumb-dropdown`;
   const { closeDropdown } = useCloseDropdown();
   const navigate = useNavigateSettings();
@@ -89,9 +91,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         clickableComponent={
           <StyledButtonContainer>
             <StyledDownChevron
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
             {isConfigureStep ? (
               <StyledButton variant="tertiary" title={t`2. Configure`} />

@@ -4,8 +4,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useIcons } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -28,6 +29,7 @@ const StyledFieldName = styled.div`
 `;
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { getIcon } = useIcons();
 
@@ -43,7 +45,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
     <StyledRow>
       {Icon && (
         <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
       )}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Key } from 'ts-key-enum';
@@ -22,10 +22,7 @@ import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -56,6 +53,7 @@ const StyledProviderContainer = styled.div`
 `;
 
 export const SyncEmails = () => {
+  const { theme } = useContext(ThemeContext);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -136,9 +134,7 @@ export const SyncEmails = () => {
             width={200}
             Icon={() => (
               <IconGoogle
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           />
@@ -152,9 +148,7 @@ export const SyncEmails = () => {
             width={200}
             Icon={() => (
               <IconMicrosoft
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           />

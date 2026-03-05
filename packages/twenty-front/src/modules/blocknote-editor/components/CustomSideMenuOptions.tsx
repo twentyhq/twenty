@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
   color: ${({ Variant }) =>
@@ -29,11 +27,13 @@ export const CustomSideMenuOptions = ({
   Variant,
   text,
 }: CustomSideMenuOptionsProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer Variant={Variant}>
       <LeftIcon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.sm)}
       ></LeftIcon>
       <StyledTextContainer>{text}</StyledTextContainer>
     </StyledContainer>

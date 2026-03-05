@@ -8,15 +8,15 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 import {
+  ThemeContext,
   themeCssVariables,
-  resolveThemeVariable,
 } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
@@ -63,6 +63,7 @@ export const SettingsOptionCardContentToggle = ({
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
+  const { theme } = useContext(ThemeContext);
   const toggleId = useId();
 
   return (
@@ -94,8 +95,8 @@ export const SettingsOptionCardContentToggle = ({
           toggleSize="small"
           color={
             advancedMode
-              ? resolveThemeVariable(themeCssVariables.color.yellow)
-              : resolveThemeVariable(themeCssVariables.color.blue)
+              ? theme.color.yellow
+              : theme.color.blue
           }
           centered={toggleCentered}
         />

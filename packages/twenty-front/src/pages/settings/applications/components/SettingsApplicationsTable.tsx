@@ -9,12 +9,12 @@ import {
   SettingsApplicationTableRow,
   StyledApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -36,6 +36,7 @@ export const SettingsApplicationsTable = ({
 }: {
   applications: ApplicationWithoutRelation[];
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,12 +77,8 @@ export const SettingsApplicationsTable = ({
             application={application}
             action={
               <IconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.md)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             }
             link={getSettingsPath(SettingsPath.ApplicationDetail, {

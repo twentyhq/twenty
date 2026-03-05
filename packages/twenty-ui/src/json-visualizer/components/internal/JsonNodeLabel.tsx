@@ -1,11 +1,8 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;
@@ -56,16 +53,18 @@ export const JsonNodeLabel = ({
   Icon: IconComponent;
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledLabelContainer highlighting={highlighting}>
       <Icon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        size={parseFloat(theme.icon.size.md)}
         color={
           highlighting === 'blue'
-            ? resolveThemeVariable(themeCssVariables.color.blue)
+            ? theme.color.blue
             : highlighting === 'red'
-              ? resolveThemeVariable(themeCssVariables.font.color.danger)
-              : resolveThemeVariable(themeCssVariables.font.color.tertiary)
+              ? theme.font.color.danger
+              : theme.font.color.tertiary
         }
       />
 

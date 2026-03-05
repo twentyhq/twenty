@@ -25,7 +25,7 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -100,6 +100,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
+    const { theme } = useContext(ThemeContext);
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(
@@ -222,9 +223,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               aria-label={t`Reset to static value`}
             >
               <IconEraser
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             </StyledIconContainer>
           </StyledContainer>

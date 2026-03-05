@@ -11,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +27,7 @@ import {
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -85,6 +85,7 @@ export const WebhookEntitySelect = ({
   disabled = false,
   dropdownId = WEBHOOK_ENTITY_DROPDOWN_ID,
 }: WebhookEntitySelectProps) => {
+  const { theme } = useContext(ThemeContext);
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
@@ -170,7 +171,7 @@ export const WebhookEntitySelect = ({
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
           <StyledControlIconChevronDown
             disabled={disabled}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         </StyledControlContainer>
       }

@@ -2,14 +2,11 @@ import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -449,6 +446,7 @@ export const AnimatedButton = ({
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isDisabled = soon || disabled;
 
@@ -495,11 +493,7 @@ export const AnimatedButton = ({
       {Icon && (
         <StyledIconContainer>
           <motion.div animate={animate} transition={transition}>
-            <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-            />
+            <Icon size={parseFloat(theme.icon.size.sm)} />
           </motion.div>
         </StyledIconContainer>
       )}

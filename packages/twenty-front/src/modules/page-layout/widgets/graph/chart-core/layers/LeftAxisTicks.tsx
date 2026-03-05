@@ -1,7 +1,5 @@
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type LeftAxisTicksProps = {
   leftTickValues: (string | number)[];
   getLeftTickPosition: (value: string | number, index: number) => number;
@@ -17,6 +15,8 @@ export const LeftAxisTicks = ({
   tickPadding,
   tickFontSize,
 }: LeftAxisTicksProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <>
       {leftTickValues.map((value, index) => {
@@ -30,9 +30,7 @@ export const LeftAxisTicks = ({
               y={0}
               textAnchor="end"
               dominantBaseline="middle"
-              fill={resolveThemeVariable(
-                themeCssVariables.font.color.secondary,
-              )}
+              fill={theme.font.color.secondary}
               fontSize={tickFontSize}
             >
               {label}

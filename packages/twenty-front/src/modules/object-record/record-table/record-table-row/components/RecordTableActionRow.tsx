@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -110,6 +110,7 @@ export const RecordTableActionRow = ({
   text,
   onClick,
 }: RecordTableActionRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -141,11 +142,9 @@ export const RecordTableActionRow = ({
       <StyledDragDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
+          size={parseFloat(theme.icon.size.sm)}
+          color={theme.font.color.tertiary}
         />
       </StyledIconContainer>
       <StyledActionTextContainer width={firstColumnWidth}>

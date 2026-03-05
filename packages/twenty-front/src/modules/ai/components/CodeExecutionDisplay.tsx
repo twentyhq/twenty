@@ -1,6 +1,6 @@
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronDown,
@@ -15,11 +15,7 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -205,6 +201,7 @@ export const CodeExecutionDisplay = ({
   files = [],
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
@@ -238,16 +235,14 @@ export const CodeExecutionDisplay = ({
       <StyledHeader status={status}>
         <StyledHeaderLeft>
           <IconCode
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
           <StyledStatusBadge status={status}>
             <StatusIcon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
+              size={parseFloat(theme.icon.size.sm)}
             />
             {statusText}
           </StyledStatusBadge>
@@ -258,9 +253,7 @@ export const CodeExecutionDisplay = ({
         <StyledSectionHeader onClick={() => setIsCodeExpanded(!isCodeExpanded)}>
           <StyledSectionHeaderLeft>
             <IconCode
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
+              size={parseFloat(theme.icon.size.sm)}
             />
             {t`Code`}
           </StyledSectionHeaderLeft>
@@ -277,15 +270,11 @@ export const CodeExecutionDisplay = ({
             />
             {isCodeExpanded ? (
               <IconChevronUp
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             ) : (
               <IconChevronDown
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           </StyledHeaderRight>
@@ -317,15 +306,11 @@ export const CodeExecutionDisplay = ({
             <StyledSectionHeaderLeft>{t`Output`}</StyledSectionHeaderLeft>
             {isOutputExpanded ? (
               <IconChevronUp
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             ) : (
               <IconChevronDown
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           </StyledSectionHeader>
@@ -349,23 +334,17 @@ export const CodeExecutionDisplay = ({
           >
             <StyledSectionHeaderLeft>
               <IconFile
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
               {t`Generated Files`} ({files.length})
             </StyledSectionHeaderLeft>
             {isFilesExpanded ? (
               <IconChevronUp
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             ) : (
               <IconChevronDown
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             )}
           </StyledSectionHeader>
@@ -389,9 +368,7 @@ export const CodeExecutionDisplay = ({
                       ) : (
                         <IconFile
                           size={48}
-                          color={resolveThemeVariable(
-                            themeCssVariables.font.color.tertiary,
-                          )}
+                          color={theme.font.color.tertiary}
                         />
                       )}
                     </StyledFilePreview>
@@ -407,9 +384,7 @@ export const CodeExecutionDisplay = ({
                         rel="noopener noreferrer"
                       >
                         <IconDownload
-                          size={resolveThemeVariableAsNumber(
-                            themeCssVariables.icon.size.sm,
-                          )}
+                          size={parseFloat(theme.icon.size.sm)}
                         />
                       </StyledDownloadLink>
                     </StyledFileInfo>

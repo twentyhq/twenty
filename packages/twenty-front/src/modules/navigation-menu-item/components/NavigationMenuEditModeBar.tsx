@@ -12,13 +12,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -39,6 +36,7 @@ const StyledTitle = styled.span`
 `;
 
 export const NavigationMenuEditModeBar = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
@@ -106,7 +104,7 @@ export const NavigationMenuEditModeBar = () => {
     <StyledContainer>
       <StyledTitle>
         <IconPaint
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
         {t`Layout customization`}
       </StyledTitle>

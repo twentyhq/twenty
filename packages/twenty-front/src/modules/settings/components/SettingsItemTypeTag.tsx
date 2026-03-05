@@ -3,8 +3,9 @@ import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 import {
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -36,6 +37,8 @@ export const SettingsItemTypeTag = ({
       currentWorkspace?.workspaceCustomApplication?.id,
   });
 
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer className={className}>
       <Avatar
@@ -43,12 +46,8 @@ export const SettingsItemTypeTag = ({
         placeholderColorSeed={itemTagInfo.labelText}
         type="squared"
         size="xs"
-        color={resolveThemeVariable(
-          themeCssVariables.tag.text[itemTagInfo.labelColor],
-        )}
-        backgroundColor={resolveThemeVariable(
-          themeCssVariables.tag.background[itemTagInfo.labelColor],
-        )}
+        color={theme.tag.text[itemTagInfo.labelColor]}
+        backgroundColor={theme.tag.background[itemTagInfo.labelColor]}
       />
       {itemTagInfo.labelText}
     </StyledContainer>

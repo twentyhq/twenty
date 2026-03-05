@@ -7,6 +7,7 @@ import React, {
   type ChangeEvent,
   type FocusEventHandler,
   type InputHTMLAttributes,
+  useContext,
   useId,
   useRef,
   useState,
@@ -16,7 +17,7 @@ import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -285,6 +286,7 @@ const TextInputComponent = forwardRef<
     },
     ref,
   ) => {
+    const { theme } = useContext(ThemeContext);
     const inputRef = useRef<HTMLInputElement>(null);
     const combinedRef = useCombinedRefs(ref, inputRef);
 
@@ -328,11 +330,7 @@ const TextInputComponent = forwardRef<
           {!!LeftIcon && (
             <StyledLeftIconContainer sizeVariant={sizeVariant}>
               <StyledTrailingIcon isFocused={isFocused}>
-                <LeftIcon
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                />
+                <LeftIcon size={parseFloat(theme.icon.size.md)} />
               </StyledTrailingIcon>
             </StyledLeftIconContainer>
           )}
@@ -386,17 +384,9 @@ const TextInputComponent = forwardRef<
                 data-testid="reveal-password-button"
               >
                 {passwordVisible ? (
-                  <IconEyeOff
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                  />
+                  <IconEyeOff size={parseFloat(theme.icon.size.md)} />
                 ) : (
-                  <IconEye
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                  />
+                  <IconEye size={parseFloat(theme.icon.size.md)} />
                 )}
               </StyledTrailingIcon>
             )}
@@ -404,11 +394,7 @@ const TextInputComponent = forwardRef<
               <StyledTrailingIcon
                 onClick={onRightIconClick ? onRightIconClick : undefined}
               >
-                <RightIcon
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                />
+                <RightIcon size={parseFloat(theme.icon.size.md)} />
               </StyledTrailingIcon>
             )}
           </StyledTrailingIconContainer>

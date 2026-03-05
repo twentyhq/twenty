@@ -1,4 +1,4 @@
-import { resolveThemeVariable, themeCssVariables } from '@ui/theme-constants';
+import { type ThemeType } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,56 +31,46 @@ const convertColorToHex = (color: string): string => {
   return color;
 };
 
-export const getBaseCodeEditorTheme = (): editor.IStandaloneThemeData => {
+export const getBaseCodeEditorTheme = (
+  theme: ThemeType,
+): editor.IStandaloneThemeData => {
   return {
     base: 'vs',
     inherit: true,
     rules: [
       {
         token: '',
-        foreground: convertColorToHex(
-          resolveThemeVariable(themeCssVariables.code.text.gray),
-        ),
+        foreground: convertColorToHex(theme.code.text.gray),
         fontStyle: 'bold',
       },
       {
         token: 'keyword',
-        foreground: convertColorToHex(
-          resolveThemeVariable(themeCssVariables.code.text.sky),
-        ),
+        foreground: convertColorToHex(theme.code.text.sky),
       },
       {
         token: 'delimiter',
-        foreground: convertColorToHex(
-          resolveThemeVariable(themeCssVariables.code.text.gray),
-        ),
+        foreground: convertColorToHex(theme.code.text.gray),
       },
       {
         token: 'string',
-        foreground: convertColorToHex(
-          resolveThemeVariable(themeCssVariables.code.text.pink),
-        ),
+        foreground: convertColorToHex(theme.code.text.pink),
       },
       {
         token: 'comment',
-        foreground: convertColorToHex(
-          resolveThemeVariable(themeCssVariables.code.text.orange),
-        ),
+        foreground: convertColorToHex(theme.code.text.orange),
       },
     ],
     colors: {
       'editor.background': '#00000000',
-      'editorCursor.foreground': convertColorToHex(
-        resolveThemeVariable(themeCssVariables.font.color.primary),
-      ),
+      'editorCursor.foreground': convertColorToHex(theme.font.color.primary),
       'editorLineNumber.foreground': convertColorToHex(
-        resolveThemeVariable(themeCssVariables.font.color.extraLight),
+        theme.font.color.extraLight,
       ),
       'editorLineNumber.activeForeground': convertColorToHex(
-        resolveThemeVariable(themeCssVariables.font.color.light),
+        theme.font.color.light,
       ),
       'editor.lineHighlightBackground': convertColorToHex(
-        resolveThemeVariable(themeCssVariables.background.tertiary),
+        theme.background.tertiary,
       ),
     },
   };

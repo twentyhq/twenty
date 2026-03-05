@@ -6,14 +6,10 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
   align-items: center;
@@ -47,6 +43,7 @@ type TurnIntoBlockDropdownProps = {
 export const TurnIntoBlockDropdown = ({
   editor,
 }: TurnIntoBlockDropdownProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
   const { toggleDropdown } = useToggleDropdown();
@@ -80,14 +77,12 @@ export const TurnIntoBlockDropdown = ({
       dropdownId={dropdownId}
       clickableComponent={
         <StyledMenuItem>
-          <ActiveIcon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <ActiveIcon size={parseFloat(theme.icon.size.md)} />
           {activeTitle}
         </StyledMenuItem>
       }
       dropdownOffset={{
-        y: parseInt(resolveThemeVariable(themeCssVariables.spacing[1]), 10),
+        y: parseInt(theme.spacing[1], 10),
       }}
     />
   );

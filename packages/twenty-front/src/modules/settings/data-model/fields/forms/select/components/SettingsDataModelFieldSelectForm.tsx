@@ -30,7 +30,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -44,7 +44,7 @@ import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
@@ -161,6 +161,7 @@ export const SettingsDataModelFieldSelectForm = ({
   fieldType,
   disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
+  const { theme } = useContext(ThemeContext);
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
@@ -327,12 +328,8 @@ export const SettingsDataModelFieldSelectForm = ({
                         <StyledIconContainer>
                           <StyledIconPoint
                             size={12}
-                            color={resolveThemeVariable(
-                              themeCssVariables.color.yellow,
-                            )}
-                            fill={resolveThemeVariable(
-                              themeCssVariables.color.yellow,
-                            )}
+                            color={theme.color.yellow}
+                            fill={theme.color.yellow}
                           />
                         </StyledIconContainer>
                         <StyledApiKey>{t`API values`}</StyledApiKey>

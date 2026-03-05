@@ -8,8 +8,9 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconTransform } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 const StyledCardLink = styled.a`
@@ -17,6 +18,7 @@ const StyledCardLink = styled.a`
 `;
 
 export const SettingsUpdates = () => {
+  const { theme } = useContext(ThemeContext);
   return (
     <SubMenuTopBarContainer
       title={t`Updates`}
@@ -42,12 +44,8 @@ export const SettingsUpdates = () => {
             <SettingsCard
               Icon={
                 <IconTransform
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  stroke={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.stroke.sm,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  stroke={parseFloat(theme.icon.stroke.sm)}
                 />
               }
               title={t`Read changelog`}

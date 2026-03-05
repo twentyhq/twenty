@@ -23,16 +23,14 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import {
   Avatar,
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -136,6 +134,7 @@ const StyledForgotPasswordLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
+  const { theme } = useContext(ThemeContext);
   const authProviders = useAtomStateValue(authProvidersState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
@@ -202,9 +201,7 @@ export const SignInUpGlobalScopeForm = () => {
                     </StyledWorkspaceTextContainer>
                     <StyledChevronIcon>
                       <IconChevronRight
-                        size={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.size.md,
-                        )}
+                        size={parseFloat(theme.icon.size.md)}
                       />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
@@ -215,9 +212,7 @@ export const SignInUpGlobalScopeForm = () => {
               <StyledWorkspaceContent>
                 <StyledWorkspaceLogo>
                   <IconPlus
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.lg,
-                    )}
+                    size={parseFloat(theme.icon.size.lg)}
                   />
                 </StyledWorkspaceLogo>
                 <StyledWorkspaceTextContainer>
@@ -225,9 +220,7 @@ export const SignInUpGlobalScopeForm = () => {
                 </StyledWorkspaceTextContainer>
                 <StyledChevronIcon>
                   <IconChevronRight
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
+                    size={parseFloat(theme.icon.size.md)}
                   />
                 </StyledChevronIcon>
               </StyledWorkspaceContent>

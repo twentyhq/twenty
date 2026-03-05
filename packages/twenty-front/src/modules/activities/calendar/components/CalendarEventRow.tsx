@@ -14,11 +14,9 @@ import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalend
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useContext } from 'react';
 import { IconArrowRight } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -77,6 +75,7 @@ export const CalendarEventRow = ({
   calendarEvent,
   className,
 }: CalendarEventRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();
@@ -114,11 +113,7 @@ export const CalendarEventRow = ({
           {startTimeLabel}
           {endTimeLabel && (
             <>
-              <IconArrowRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
-              />
+              <IconArrowRight size={parseFloat(theme.icon.size.sm)} />
               {endTimeLabel}
             </>
           )}

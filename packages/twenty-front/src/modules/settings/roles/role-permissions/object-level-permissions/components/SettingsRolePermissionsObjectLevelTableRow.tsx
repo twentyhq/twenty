@@ -10,10 +10,8 @@ import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${themeCssVariables.font.color.primary};
@@ -44,6 +42,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   isEditable = true,
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(objectMetadataItem.icon);
@@ -67,14 +66,10 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         {!!Icon && (
           <Icon
             style={{
-              minWidth: resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              ),
+              minWidth: parseFloat(theme.icon.size.md),
             }}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         )}
         <StyledNameLabel title={objectLabelPlural}>

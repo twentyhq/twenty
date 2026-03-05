@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -39,6 +36,7 @@ type NavigationMenuItemBackButtonProps = {
 export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
+  const { theme } = useContext(ThemeContext);
   const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
@@ -52,9 +50,9 @@ export const NavigationMenuItemBackButton = ({
   return (
     <StyledBackButton onClick={handleClick}>
       <IconX
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.lg)}
-        color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.lg)}
+        color={theme.font.color.tertiary}
       />
       <span>{folderName}</span>
     </StyledBackButton>

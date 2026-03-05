@@ -13,11 +13,11 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
@@ -62,6 +62,7 @@ type ObjectOptionsDropdownMenuViewNameProps = {
 export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: ObjectOptionsDropdownMenuViewNameProps) => {
+  const { theme } = useContext(ThemeContext);
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useAtomComponentState(viewPickerSelectedIconComponentState);
 
@@ -122,12 +123,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
         <StyledMenuTitleContainer>
           <StyledMenuIconContainer>
             <MainIcon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.sm)}
             />
           </StyledMenuIconContainer>
           <StyledMainText>

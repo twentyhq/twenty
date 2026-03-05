@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import React, { useMemo } from 'react';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import React, { useContext, useMemo } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -293,6 +290,8 @@ export const IconButton = ({
   onClick,
   to,
 }: IconButtonProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const dynamicStyles = useMemo(() => {
     const styles = computeIconButtonDynamicStyles(
       variant,
@@ -327,11 +326,7 @@ export const IconButton = ({
       to={to}
       style={dynamicStyles}
     >
-      {Icon && (
-        <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        />
-      )}
+      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
     </StyledButton>
   );
 };

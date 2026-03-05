@@ -1,11 +1,9 @@
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import { calculateGraphLabelStyles } from '@/page-layout/widgets/graph/utils/calculateGraphLabelStyles';
 import { animated } from '@react-spring/web';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type GraphDataLabelProps = {
   label: GraphLabelData;
@@ -20,6 +18,8 @@ export const GraphDataLabel = ({
   offset,
   isVerticalLayout,
 }: GraphDataLabelProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const styles = calculateGraphLabelStyles(label, offset, isVerticalLayout);
 
   return (
@@ -30,9 +30,9 @@ export const GraphDataLabel = ({
       textAnchor={styles.textAnchor}
       dominantBaseline={styles.dominantBaseline}
       style={{
-        fill: resolveThemeVariable(themeCssVariables.font.color.light),
+        fill: theme.font.color.light,
         fontSize: 11,
-        fontWeight: resolveThemeVariable(themeCssVariables.font.weight.medium),
+        fontWeight: theme.font.weight.medium,
         transform: styles.transformOffset,
       }}
     >

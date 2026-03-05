@@ -13,10 +13,8 @@ import {
   IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;
@@ -45,7 +43,8 @@ export const usePageLayoutHeaderInfo = ({
   openTabId,
   editedTitle,
 }: UsePageLayoutHeaderInfoParams): PageLayoutHeaderInfo | null => {
-  const iconColor = resolveThemeVariable(themeCssVariables.font.color.tertiary);
+  const { theme } = useContext(ThemeContext);
+  const iconColor = theme.font.color.tertiary;
 
   switch (commandMenuPage) {
     case CommandMenuPages.PageLayoutTabSettings: {

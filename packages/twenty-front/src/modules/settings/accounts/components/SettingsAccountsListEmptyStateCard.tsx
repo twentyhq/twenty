@@ -12,10 +12,8 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -24,6 +22,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsListEmptyStateCard = () => {
+  const { theme } = useContext(ThemeContext);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const { t } = useLingui();
@@ -52,9 +51,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
         <SettingsCard
           Icon={
             <IconGoogle
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
           }
           title={t`Connect with Google`}
@@ -66,9 +63,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
         <SettingsCard
           Icon={
             <IconMicrosoft
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
           }
           title={t`Connect with Microsoft`}
@@ -83,9 +78,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
           <SettingsCard
             Icon={
               <IconAt
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
+                size={parseFloat(theme.icon.size.md)}
               />
             }
             title={t`Connect Account`}

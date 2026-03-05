@@ -12,7 +12,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
@@ -27,8 +27,7 @@ import {
 } from 'twenty-ui/display';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import {
@@ -296,6 +295,7 @@ export const NavigationDrawerItem = ({
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
 }: NavigationDrawerItemProps) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
@@ -382,21 +382,15 @@ export const NavigationDrawerItem = ({
               <StyledIcon>
                 <Icon
                   style={{
-                    minWidth: resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    ),
+                    minWidth: parseFloat(theme.icon.size.md),
                   }}
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  stroke={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.stroke.md,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  stroke={parseFloat(theme.icon.stroke.md)}
                   color={
                     showBreadcrumb &&
                     !isSettingsPage &&
                     !isNavigationDrawerExpanded
-                      ? resolveThemeVariable(themeCssVariables.font.color.light)
+                      ? theme.font.color.light
                       : 'currentColor'
                   }
                 />

@@ -7,12 +7,8 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { type ReactNode } from 'react';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -79,6 +75,8 @@ export const MenuItemSelect = ({
   contextualText,
   contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledMenuItemSelect
       onClick={onClick}
@@ -111,15 +109,13 @@ export const MenuItemSelect = ({
         )}
 
         {selected && needIconCheck && (
-          <IconCheck
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <IconCheck size={parseFloat(theme.icon.size.md)} />
         )}
 
         {hasSubMenu && (
           <IconChevronRight
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+            size={parseFloat(theme.icon.size.sm)}
+            color={theme.font.color.tertiary}
           />
         )}
       </StyledMenuItemRightContent>

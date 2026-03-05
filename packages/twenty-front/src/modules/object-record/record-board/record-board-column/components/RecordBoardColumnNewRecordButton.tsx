@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -31,6 +31,7 @@ const StyledNewButton = styled.button`
 `;
 
 export const RecordBoardColumnNewRecordButton = () => {
+  const { theme } = useContext(ThemeContext);
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -67,9 +68,7 @@ export const RecordBoardColumnNewRecordButton = () => {
         });
       }}
     >
-      <IconPlus
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-      />
+      <IconPlus size={parseFloat(theme.icon.size.md)} />
       {t`New`}
     </StyledNewButton>
   );

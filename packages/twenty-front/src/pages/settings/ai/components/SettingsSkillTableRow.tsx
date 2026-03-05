@@ -1,14 +1,11 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
 
@@ -29,6 +26,7 @@ export const SettingsSkillTableRow = ({
   action,
   link,
 }: SettingsSkillTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(skill.icon ?? 'IconSparkles');
 
@@ -47,7 +45,7 @@ export const SettingsSkillTableRow = ({
       >
         <StyledIconContainer>
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />

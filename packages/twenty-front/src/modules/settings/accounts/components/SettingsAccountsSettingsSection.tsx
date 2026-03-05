@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
@@ -9,7 +10,7 @@ import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -24,6 +25,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   return (
     <Section>
@@ -36,12 +38,8 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconMailCog
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.lg,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.lg)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             }
             title={t`Emails`}
@@ -52,12 +50,8 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconCalendarEvent
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.lg,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.lg)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             }
             title={t`Calendar`}

@@ -3,7 +3,7 @@
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
@@ -19,8 +19,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -60,6 +59,7 @@ const StyledButtonCopy = styled.div`
 `;
 
 export const SettingsSSOSAMLForm = () => {
+  const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
@@ -149,13 +149,9 @@ export const SettingsSSOSAMLForm = () => {
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.lg,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.blue)}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.lg)}
+              color={theme.color.blue}
             />
           )}
         </StyledUploadFileContainer>

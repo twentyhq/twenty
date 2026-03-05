@@ -2,11 +2,9 @@ import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWi
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useContext } from 'react';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;
@@ -52,6 +50,7 @@ export const PieChartCenterMetric = ({
   show,
   hasNoData = false,
 }: PieChartCenterMetricProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { centerMetricValue, centerMetricLabel } = usePieChartCenterMetricData({
@@ -70,9 +69,7 @@ export const PieChartCenterMetric = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: resolveThemeVariableAsNumber(
-              themeCssVariables.animation.duration.fast,
-            ),
+            duration: parseFloat(theme.animation.duration.fast),
             ease: 'easeInOut',
           }}
         >

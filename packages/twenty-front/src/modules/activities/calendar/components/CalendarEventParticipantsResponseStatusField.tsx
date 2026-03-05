@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -8,7 +8,7 @@ import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -67,22 +67,12 @@ export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus: 'Yes' | 'Maybe' | 'No';
   participants: CalendarEventParticipant[];
 }) => {
+  const { theme } = useContext(ThemeContext);
+
   const Icon = {
-    Yes: (
-      <IconCheck
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
-      />
-    ),
-    Maybe: (
-      <IconQuestionMark
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
-      />
-    ),
-    No: (
-      <IconX
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
-      />
-    ),
+    Yes: <IconCheck stroke={parseFloat(theme.icon.stroke.sm)} />,
+    Maybe: <IconQuestionMark stroke={parseFloat(theme.icon.stroke.sm)} />,
+    No: <IconX stroke={parseFloat(theme.icon.stroke.sm)} />,
   }[responseStatus];
 
   // We want to display external participants first

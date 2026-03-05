@@ -5,10 +5,8 @@ import {
   IconInbox,
   IconSend,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type SettingsAccountsMessageFolderIconProps = {
   folder: MessageFolder;
   isChildFolder?: boolean;
@@ -18,11 +16,13 @@ export const SettingsAccountsMessageFolderIcon = ({
   folder,
   isChildFolder = false,
 }: SettingsAccountsMessageFolderIconProps) => {
+  const { theme } = useContext(ThemeContext);
+
   if (folder.isSentFolder) {
     return (
       <IconSend
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.sm)}
       />
     );
   }
@@ -30,8 +30,8 @@ export const SettingsAccountsMessageFolderIcon = ({
   if (folder.name.toLowerCase().includes('inbox')) {
     return (
       <IconInbox
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.sm)}
       />
     );
   }
@@ -39,16 +39,16 @@ export const SettingsAccountsMessageFolderIcon = ({
   if (isChildFolder) {
     return (
       <IconFolderRoot
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.sm)}
       />
     );
   }
 
   return (
     <IconFolder
-      size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-      stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      size={parseFloat(theme.icon.size.md)}
+      stroke={parseFloat(theme.icon.stroke.sm)}
     />
   );
 };

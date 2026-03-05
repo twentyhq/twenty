@@ -1,11 +1,8 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBanner = styled(Banner)<{ allMatched: boolean }>`
   background: ${({ allMatched }) =>
@@ -65,15 +62,17 @@ export const UnmatchColumnBanner = ({
   buttonOnClick?: () => void;
   allMatched: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledBanner allMatched={allMatched}>
       <IconInfoCircle
         color={
           allMatched
-            ? resolveThemeVariable(themeCssVariables.color.blue)
-            : resolveThemeVariable(themeCssVariables.font.color.secondary)
+            ? theme.color.blue
+            : theme.font.color.secondary
         }
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        size={parseFloat(theme.icon.size.md)}
       />
       {isDefined(buttonOnClick) ? (
         <StyledClickableContainer onClick={buttonOnClick}>
@@ -83,9 +82,7 @@ export const UnmatchColumnBanner = ({
             allMatched={allMatched}
           >
             <IconChevronDown
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
           </StyledIconChevronDownWrapper>
         </StyledClickableContainer>

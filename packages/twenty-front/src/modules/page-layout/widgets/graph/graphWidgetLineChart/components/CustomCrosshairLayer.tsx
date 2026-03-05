@@ -3,12 +3,9 @@ import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/g
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
-import { type MouseEvent, useCallback, useMemo } from 'react';
+import { type MouseEvent, useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type SliceHoverData = {
   sliceX: number;
@@ -43,6 +40,8 @@ export const CustomCrosshairLayer = ({
   onSliceClick,
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const graphWidgetLineCrosshairX = useAtomComponentStateValue(
     graphWidgetLineCrosshairXComponentState,
   );
@@ -148,7 +147,7 @@ export const CustomCrosshairLayer = ({
           x2={graphWidgetLineCrosshairX}
           y1={0}
           y2={innerHeight}
-          stroke={resolveThemeVariable(themeCssVariables.font.color.primary)}
+          stroke={theme.font.color.primary}
           strokeWidth={LINE_CHART_CONSTANTS.CROSSHAIR_STROKE_WIDTH}
           strokeOpacity={LINE_CHART_CONSTANTS.CROSSHAIR_STROKE_OPACITY}
           strokeDasharray={LINE_CHART_CONSTANTS.CROSSHAIR_DASH_ARRAY}

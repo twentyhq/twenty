@@ -3,10 +3,8 @@ import {
   getBezierPath,
 } from '@xyflow/react';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 type WorkflowDiagramConnectionProps = ConnectionLineComponentProps;
 
@@ -16,6 +14,7 @@ export const WorkflowDiagramConnection = ({
   toX,
   toY,
 }: WorkflowDiagramConnectionProps) => {
+  const { theme } = useContext(ThemeContext);
   const [path] = getBezierPath({
     sourceX: fromX,
     sourceY: fromY + 4,
@@ -27,7 +26,7 @@ export const WorkflowDiagramConnection = ({
     <path
       d={path}
       fill="none"
-      stroke={resolveThemeVariable(themeCssVariables.color.blue)}
+      stroke={theme.color.blue}
       markerEnd={`url(#${EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd})`}
     />
   );

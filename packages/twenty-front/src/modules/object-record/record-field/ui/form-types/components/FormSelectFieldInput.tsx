@@ -11,15 +11,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleOff } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -40,6 +37,7 @@ export const FormSelectFieldInput = ({
   options,
   readonly,
 }: FormSelectFieldInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
 
   const { removeFocusItemFromFocusStackById } =
@@ -147,10 +145,7 @@ export const FormSelectFieldInput = ({
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             dropdownOffset={{
-              y: parseInt(
-                resolveThemeVariable(themeCssVariables.spacing[1]),
-                10,
-              ),
+              y: parseInt(theme.spacing[1], 10),
             }}
           />
         ) : (

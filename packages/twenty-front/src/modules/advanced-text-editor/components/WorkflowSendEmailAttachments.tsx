@@ -4,14 +4,11 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowAttachment[];
@@ -69,6 +66,7 @@ export const WorkflowSendEmailAttachments = ({
   label,
   onChange,
 }: WorkflowSendEmailAttachmentsProps) => {
+  const { theme } = useContext(ThemeContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { t } = useLingui();
@@ -141,11 +139,7 @@ export const WorkflowSendEmailAttachments = ({
           </StyledChipsContainer>
         ) : (
           <StyledUploadAreaLabel>
-            <IconUpload
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-            />
+            <IconUpload size={parseFloat(theme.icon.size.sm)} />
             <span>{t`Upload file`}</span>
           </StyledUploadAreaLabel>
         )}

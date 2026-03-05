@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { type HTMLMotionProps, motion } from 'framer-motion';
-import {
-  type AnimationDuration,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { type AnimationDuration, ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 type AnimatedRotateProps = Omit<
   HTMLMotionProps<'div'>,
@@ -25,13 +22,13 @@ export const AnimatedRotate = ({
   duration = 'fast',
   animateOnHover,
 }: AnimatedRotateProps): JSX.Element => {
+  const { theme } = useContext(ThemeContext);
+
   const initial = { opacity: 0, rotate: -90 };
   const animate = { opacity: 1, rotate: 0 };
   const exit = { opacity: 0, rotate: 90 };
   const transition = {
-    duration: resolveThemeVariableAsNumber(
-      themeCssVariables.animation.duration[duration],
-    ),
+    duration: parseFloat(theme.animation.duration[duration]),
   };
 
   return (
@@ -45,9 +42,7 @@ export const AnimatedRotate = ({
           ? {
               rotate: 45,
               transition: {
-                duration: resolveThemeVariableAsNumber(
-                  themeCssVariables.animation.duration.fast,
-                ),
+                duration: parseFloat(theme.animation.duration.fast),
               },
             }
           : {}

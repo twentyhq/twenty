@@ -1,8 +1,6 @@
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type AxisLabelProps = {
   label: string;
@@ -19,6 +17,8 @@ export const AxisLabel = ({
   fontSize,
   rotation,
 }: AxisLabelProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <text
       x={x}
@@ -27,9 +27,9 @@ export const AxisLabel = ({
       transform={
         isDefined(rotation) ? `rotate(${rotation}, ${x}, ${y})` : undefined
       }
-      fill={resolveThemeVariable(themeCssVariables.font.color.primary)}
+      fill={theme.font.color.primary}
       fontSize={fontSize}
-      fontWeight={resolveThemeVariable(themeCssVariables.font.weight.medium)}
+      fontWeight={theme.font.weight.medium}
     >
       {label}
     </text>

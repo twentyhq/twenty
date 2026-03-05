@@ -9,18 +9,14 @@ import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-sto
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
-  const iconSizeSm = resolveThemeVariableAsNumber(
-    themeCssVariables.icon.size.sm,
-  );
+  const { theme } = useContext(ThemeContext);
+  const iconSizeSm = parseFloat(theme.icon.size.sm);
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );

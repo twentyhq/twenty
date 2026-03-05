@@ -7,16 +7,13 @@ import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
   cursor: ${({ clickable }: { clickable: boolean }) =>
@@ -34,6 +31,7 @@ export const AgentChatFilePreview = ({
   onRemove?: () => void;
   isUploading?: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const iconColors: Record<AttachmentFileCategory, string> =
     useFileCategoryColors();
   const setFilePreview = useSetAtomState(filePreviewState);
@@ -76,7 +74,7 @@ export const AgentChatFilePreview = ({
   const rightComponent = onRemove ? (
     <AvatarOrIcon
       Icon={IconX}
-      IconColor={resolveThemeVariable(themeCssVariables.font.color.secondary)}
+      IconColor={theme.font.color.secondary}
       onClick={onRemove}
     />
   ) : undefined;

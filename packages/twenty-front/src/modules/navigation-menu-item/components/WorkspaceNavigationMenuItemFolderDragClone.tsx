@@ -3,11 +3,9 @@ import {
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
@@ -35,6 +33,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   navigationMenuItemFolderContentLength,
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
+  const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 
@@ -52,7 +51,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
       style={{
         ...draggableProvided.draggableProps.style,
         background: draggableSnapshot.isDragging
-          ? resolveThemeVariable(themeCssVariables.background.transparent.light)
+          ? theme.background.transparent.light
           : undefined,
       }}
     >

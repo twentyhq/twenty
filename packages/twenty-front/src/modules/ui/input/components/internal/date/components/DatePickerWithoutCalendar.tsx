@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy, type ComponentType } from 'react';
+import { Suspense, lazy, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -16,10 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -325,6 +322,7 @@ export const DatePickerWithoutCalendar = ({
   onChange,
   onClose,
 }: DatePickerWithoutCalendarProps) => {
+  const { theme } = useContext(ThemeContext);
   const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
@@ -400,12 +398,8 @@ export const DatePickerWithoutCalendar = ({
           fallback={
             <StyledDatePickerFallback>
               <SkeletonTheme
-                baseColor={resolveThemeVariable(
-                  themeCssVariables.background.tertiary,
-                )}
-                highlightColor={resolveThemeVariable(
-                  themeCssVariables.background.transparent.lighter,
-                )}
+                baseColor={theme.background.tertiary}
+                highlightColor={theme.background.transparent.lighter}
                 borderRadius={2}
               >
                 <Skeleton

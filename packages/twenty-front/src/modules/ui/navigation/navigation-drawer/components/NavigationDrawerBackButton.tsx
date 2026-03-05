@@ -7,13 +7,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -50,6 +47,7 @@ const StyledContainer = styled.div`
 export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
+  const { theme } = useContext(ThemeContext);
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
   const setIsNavigationDrawerExpanded = useSetAtomState(
@@ -78,11 +76,9 @@ export const NavigationDrawerBackButton = ({
       >
         <StyledIconAndButtonContainer>
           <IconX
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.lg,
-            )}
-            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.lg)}
+            color={theme.font.color.tertiary}
           />
           <span>{title}</span>
         </StyledIconAndButtonContainer>

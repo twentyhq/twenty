@@ -4,11 +4,8 @@ import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CommandMenuMultipleRecordsInfoProps = {
   commandMenuPageInstanceId: string;
@@ -17,6 +14,7 @@ type CommandMenuMultipleRecordsInfoProps = {
 export const CommandMenuMultipleRecordsInfo = ({
   commandMenuPageInstanceId,
 }: CommandMenuMultipleRecordsInfoProps) => {
+  const { theme } = useContext(ThemeContext);
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
     instanceId: commandMenuPageInstanceId,
     limit: 1,
@@ -29,13 +27,11 @@ export const CommandMenuMultipleRecordsInfo = ({
     <CommandMenuPageInfoLayout
       icon={
         <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
+          size={parseFloat(theme.icon.size.md)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
         />
       }
-      iconColor={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+      iconColor={theme.font.color.tertiary}
       title={getActionLabel(label)}
       label={t`${totalCount} selected`}
     />

@@ -12,7 +12,7 @@ import {
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ColorSchemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 
@@ -107,12 +107,12 @@ export const FrontComponentRenderer = ({
       )}
 
       {isDefined(receiver) && isExecutionContextInitialized && (
-        <ColorSchemeProvider colorScheme={colorScheme}>
+        <ThemeProvider colorScheme={colorScheme}>
           <RemoteRootRenderer
             receiver={receiver}
             components={componentRegistry}
           />
-        </ColorSchemeProvider>
+        </ThemeProvider>
       )}
     </>
   );

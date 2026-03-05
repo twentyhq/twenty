@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { useContext } from 'react';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from 'twenty-ui/layout';
 import {
+  ThemeContext,
   themeCssVariables,
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
@@ -55,6 +55,7 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
+  const { theme } = useContext(ThemeContext);
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
@@ -64,9 +65,7 @@ export const CalendarDayCardContent = ({
   const upcomingDayCardContentVariants = {
     upcoming: {},
     ended: {
-      backgroundColor: resolveThemeVariable(
-        themeCssVariables.background.primary,
-      ),
+      backgroundColor: theme.background.primary,
     },
   };
 
@@ -78,9 +77,7 @@ export const CalendarDayCardContent = ({
       variants={upcomingDayCardContentVariants}
       transition={{
         delay: Math.max(0, dayEndsIn),
-        duration: resolveThemeVariableAsNumber(
-          themeCssVariables.animation.duration.fast,
-        ),
+        duration: parseFloat(theme.animation.duration.fast),
       }}
     >
       <StyledDayContainer>

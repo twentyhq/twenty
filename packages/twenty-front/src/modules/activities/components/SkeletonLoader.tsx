@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   align-items: center;
@@ -44,12 +42,11 @@ export const SKELETON_LOADER_HEIGHT_SIZES = {
 };
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-      highlightColor={resolveThemeVariable(
-        themeCssVariables.background.transparent.lighter,
-      )}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={80}
     >
       <Skeleton width={24} height={height} />
@@ -62,16 +59,15 @@ export const SkeletonLoader = ({
 }: {
   withSubSections?: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
     id: `skeleton-item-${index}`,
   }));
 
   return (
     <SkeletonTheme
-      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-      highlightColor={resolveThemeVariable(
-        themeCssVariables.background.transparent.lighter,
-      )}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
       <StyledSkeletonContainer>

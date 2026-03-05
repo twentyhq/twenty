@@ -1,9 +1,7 @@
 import { type IconComponent } from '@ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
 
 export type MenuItemIconProps = {
   Icon: IconComponent | null | undefined;
@@ -14,14 +12,16 @@ export const MenuItemIcon = ({
   Icon,
   withContainer = false,
 }: MenuItemIconProps) => {
+  const { theme } = useContext(ThemeContext);
+
   if (!Icon) {
     return null;
   }
 
   const iconElement = (
     <Icon
-      size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-      stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      size={parseFloat(theme.icon.size.md)}
+      stroke={parseFloat(theme.icon.stroke.sm)}
     />
   );
 

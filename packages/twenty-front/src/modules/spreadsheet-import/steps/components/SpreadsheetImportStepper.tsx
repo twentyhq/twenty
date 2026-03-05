@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalContent } from 'twenty-ui/layout';
@@ -12,10 +12,7 @@ import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -26,6 +23,7 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
+  const { theme } = useContext(ThemeContext);
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
@@ -134,9 +132,7 @@ export const SpreadsheetImportStepper = ({
           <CircularProgressBar
             size={80}
             barWidth={8}
-            barColor={resolveThemeVariable(
-              themeCssVariables.font.color.primary,
-            )}
+            barColor={theme.font.color.primary}
           />
         </ModalContent>
       );

@@ -16,12 +16,11 @@ import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithSSO = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
@@ -53,9 +52,7 @@ export const SignInUpWithSSO = () => {
         <MainButton
           Icon={() => (
             <IconLock
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
           )}
           title={t`Single sign-on (SSO)`}

@@ -1,14 +1,11 @@
 import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -64,6 +61,7 @@ export const RoutingStatusDisplay = ({
 }: {
   data: DataMessagePart['routing-status'];
 }) => {
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const isLoading = data.state === 'loading';
   const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
@@ -77,9 +75,7 @@ export const RoutingStatusDisplay = ({
     return (
       <StyledContainer>
         <StyledIconTextContainer>
-          <IconCpu
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-          />
+          <IconCpu size={parseFloat(theme.icon.size.sm)} />
           <ShimmeringText>
             <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
           </ShimmeringText>
@@ -95,24 +91,14 @@ export const RoutingStatusDisplay = ({
         isExpandable={!!isExpandable}
       >
         <StyledIconTextContainer>
-          <IconCpu
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-          />
+          <IconCpu size={parseFloat(theme.icon.size.sm)} />
           <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
         </StyledIconTextContainer>
         {isExpandable &&
           (isExpanded ? (
-            <IconChevronUp
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-            />
+            <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
           ) : (
-            <IconChevronDown
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-            />
+            <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
           ))}
       </StyledToggleButton>
 

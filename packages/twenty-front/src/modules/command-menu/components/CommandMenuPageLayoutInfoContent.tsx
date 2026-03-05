@@ -13,20 +13,18 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const CommandMenuPageLayoutInfoContent = ({
   pageLayoutId,
 }: {
   pageLayoutId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
@@ -123,10 +121,8 @@ export const CommandMenuPageLayoutInfoContent = ({
       icon={
         isDefined(headerIcon) ? (
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         ) : undefined
       }

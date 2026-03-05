@@ -1,13 +1,10 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
@@ -139,6 +136,7 @@ export const ToolStepRenderer = ({
   toolPart: ToolUIPart;
   isStreaming: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -195,9 +193,7 @@ export const ToolStepRenderer = ({
           <StyledLeftContent>
             <StyledIconTextContainer>
               <ToolIcon
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
               {isStreaming ? (
                 <ShimmeringText>
@@ -248,9 +244,7 @@ export const ToolStepRenderer = ({
         <StyledLeftContent>
           <StyledIconTextContainer>
             <ToolIcon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
+              size={parseFloat(theme.icon.size.sm)}
             />
             <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
           </StyledIconTextContainer>
@@ -260,15 +254,11 @@ export const ToolStepRenderer = ({
           {isExpandable &&
             (isExpanded ? (
               <IconChevronUp
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             ) : (
               <IconChevronDown
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
             ))}
         </StyledRightContent>

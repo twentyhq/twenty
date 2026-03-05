@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { CardContent } from 'twenty-ui/layout';
 import { type IconComponent } from 'twenty-ui/display';
 import { Radio } from 'twenty-ui/input';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -57,14 +57,15 @@ export const SettingsRadioCard = ({
   isSelected,
   Icon,
 }: SettingsRadioCardProps) => {
+  const { theme } = useContext(ThemeContext);
   const onClick = () => handleSelect(value);
 
   return (
     <StyledRadioCardContent tabIndex={0} onClick={onClick}>
       {Icon && (
         <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
-          color={resolveThemeVariable(themeCssVariables.color.gray10)}
+          size={parseFloat(theme.icon.size.xl)}
+          color={theme.color.gray10}
         />
       )}
       <span>

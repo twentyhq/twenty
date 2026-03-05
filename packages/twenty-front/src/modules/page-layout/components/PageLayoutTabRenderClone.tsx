@@ -8,10 +8,8 @@ import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 const StyledDraggableWrapper = styled.div`
   display: flex;
   cursor: grab;
@@ -30,6 +28,7 @@ export const PageLayoutTabRenderClone = ({
   provided: DraggableProvided;
   activeTabId: string | null;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
@@ -84,10 +83,7 @@ export const PageLayoutTabRenderClone = ({
           style={{
             minWidth:
               GenericDropdownContentWidth.Medium -
-              resolveThemeVariableAsNumber(
-                themeCssVariables.spacingMultiplicator,
-              ) *
-                2,
+              parseFloat(theme.spacingMultiplicator) * 2,
           }}
         >
           <MenuItemSelectAvatar

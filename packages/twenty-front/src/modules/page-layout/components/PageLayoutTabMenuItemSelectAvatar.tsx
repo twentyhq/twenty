@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent, useState } from 'react';
+import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -12,8 +12,8 @@ import {
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
   themeCssVariables,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   display: flex;
@@ -50,6 +50,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -74,7 +75,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
       <StyledRightContent>
         {selected && !isHovered && (
           <StyledMenuItemIconCheck
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         )}
 

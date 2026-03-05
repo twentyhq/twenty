@@ -2,7 +2,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -14,11 +14,7 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -64,6 +60,7 @@ type SettingsRolesTableRowProps = {
 };
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 
@@ -88,22 +85,16 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableCell>
         <StyledNameCell>
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
           {role.label}
           {!role.isEditable && (
             <StyledIconLockContainer>
               <IconLock
-                color={resolveThemeVariable(themeCssVariables.font.color.light)}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                color={theme.font.color.light}
+                stroke={parseFloat(theme.icon.stroke.sm)}
+                size={parseFloat(theme.icon.size.sm)}
               />
             </StyledIconLockContainer>
           )}
@@ -139,10 +130,10 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       </TableCell>
       <TableCell
         align="right"
-        color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+        color={theme.font.color.tertiary}
       >
         <IconChevronRight
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
       </TableCell>
     </StyledTableRow>

@@ -1,13 +1,10 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
@@ -80,6 +77,7 @@ export const SelectControl = ({
   textAccent = 'default',
   hasRightElement,
 }: SelectControlProps) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledControlContainer
       disabled={isDisabled}
@@ -91,21 +89,17 @@ export const SelectControl = ({
     >
       {isDefined(selectedOption?.Icon) ? (
         <selectedOption.Icon
-          color={resolveThemeVariable(
-            isDisabled
-              ? themeCssVariables.font.color.light
-              : themeCssVariables.font.color.primary,
-          )}
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
+          color={
+            isDisabled ? theme.font.color.light : theme.font.color.primary
+          }
+          size={parseFloat(theme.icon.size.md)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
         />
       ) : null}
       <OverflowingTextWithTooltip text={selectedOption.label} />
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>

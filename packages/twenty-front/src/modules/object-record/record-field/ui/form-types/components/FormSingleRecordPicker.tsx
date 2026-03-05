@@ -17,12 +17,11 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useId } from 'react';
+import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -83,6 +82,8 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -189,10 +190,7 @@ export const FormSingleRecordPicker = ({
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
             dropdownOffset={{
-              y: parseInt(
-                resolveThemeVariable(themeCssVariables.spacing[1]),
-                10,
-              ),
+              y: parseInt(theme.spacing[1], 10),
             }}
             clickableComponent={
               <StyledFormSelectContainer
@@ -209,12 +207,8 @@ export const FormSingleRecordPicker = ({
                 />
                 <StyledIconButton>
                   <IconChevronDown
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                    color={resolveThemeVariable(
-                      themeCssVariables.font.color.light,
-                    )}
+                    size={parseFloat(theme.icon.size.md)}
+                    color={theme.font.color.light}
                   />
                 </StyledIconButton>
               </StyledFormSelectContainer>

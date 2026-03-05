@@ -3,17 +3,14 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTypeSelectContainer = styled.div`
@@ -54,6 +51,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }: {
   roleId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const navigate = useNavigateSettings();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
@@ -137,12 +135,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                   <SettingsCard
                     Icon={
                       <Icon
-                        size={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.size.lg,
-                        )}
-                        stroke={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.stroke.sm,
-                        )}
+                        size={parseFloat(theme.icon.size.lg)}
+                        stroke={parseFloat(theme.icon.stroke.sm)}
                       />
                     }
                     title={objectMetadataItem.labelPlural}
@@ -170,12 +164,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     key={objectMetadataItem.id}
                     Icon={
                       <Icon
-                        size={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.size.lg,
-                        )}
-                        stroke={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.stroke.sm,
-                        )}
+                        size={parseFloat(theme.icon.size.lg)}
+                        stroke={parseFloat(theme.icon.stroke.sm)}
                       />
                     }
                     title={objectMetadataItem.labelPlural}

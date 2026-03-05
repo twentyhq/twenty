@@ -3,7 +3,12 @@ import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
-import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+  useContext,
+  useMemo,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -16,8 +21,7 @@ import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -154,6 +158,7 @@ export const SnackBar = ({
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
   const { i18n, t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
       autoPlay: isUndefined(overrideProgressValue),
@@ -170,10 +175,8 @@ export const SnackBar = ({
     }
 
     const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
-    const color = resolveThemeVariable(
-      themeCssVariables.snackBar[variant].color,
-    );
-    const size = resolveThemeVariableAsNumber(themeCssVariables.icon.size.md);
+    const color = theme.snackBar[variant].color;
+    const size = parseFloat(theme.icon.size.md);
 
     switch (variant) {
       case SnackBarVariant.Error:
@@ -227,9 +230,7 @@ export const SnackBar = ({
       data-globally-prevent-click-outside
     >
       <StyledProgressBar
-        barColor={resolveThemeVariable(
-          themeCssVariables.snackBar[variant].backgroundColor,
-        )}
+        barColor={theme.snackBar[variant].backgroundColor}
         value={progressValue}
       />
       <StyledHeader>

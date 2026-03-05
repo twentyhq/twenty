@@ -1,24 +1,22 @@
+import { useContext } from 'react';
+
 import IllustrationIconLinkRaw from '@assets/icons/illustration-link.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconLinkProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconLink = (props: IllustrationIconLinkProps) => {
-  const size =
-    props.size ?? resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg);
+  const { theme } = useContext(ThemeContext);
+  const size = props.size ?? parseFloat(theme.icon.size.lg);
   return (
     <IllustrationIconWrapper>
       <IllustrationIconLinkRaw
         height={size}
         width={size}
-        fill={resolveThemeVariable(themeCssVariables.accent.accent3)}
-        color={resolveThemeVariable(themeCssVariables.accent.accent8)}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
       />
     </IllustrationIconWrapper>
   );

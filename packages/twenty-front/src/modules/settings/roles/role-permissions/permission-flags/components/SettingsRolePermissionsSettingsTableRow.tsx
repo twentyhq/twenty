@@ -6,9 +6,9 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/input';
+import { useContext } from 'react';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
@@ -57,6 +57,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -123,11 +124,9 @@ export const SettingsRolePermissionsSettingsTableRow = ({
       <StyledPermissionCell>
         <StyledIconContainer>
           <permission.Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            color={resolveThemeVariable(themeCssVariables.font.color.primary)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            color={theme.font.color.primary}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         </StyledIconContainer>
         <StyledName>{permission.name}</StyledName>

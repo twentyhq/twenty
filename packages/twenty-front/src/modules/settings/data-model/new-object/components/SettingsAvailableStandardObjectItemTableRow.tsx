@@ -5,8 +5,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -42,6 +43,7 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
   objectItem,
   onClick,
 }: SettingsAvailableStandardObjectItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
 
@@ -57,7 +59,7 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         )}
         {objectItem.labelPlural}

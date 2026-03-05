@@ -13,7 +13,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
@@ -60,6 +60,7 @@ export const SettingsRoleAssignmentTableRow = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
@@ -84,14 +85,14 @@ export const SettingsRoleAssignmentTableRow = ({
         const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
         return (
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         );
       }
       case 'apiKey': {
         return (
           <IconKey
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
         );
       }

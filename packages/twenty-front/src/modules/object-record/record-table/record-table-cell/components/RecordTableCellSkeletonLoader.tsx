@@ -1,10 +1,8 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
@@ -13,12 +11,11 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 const StyledRecordTableCellLoader = ({ width }: { width?: number }) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-      highlightColor={resolveThemeVariable(
-        themeCssVariables.background.transparent.lighter,
-      )}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
       <Skeleton

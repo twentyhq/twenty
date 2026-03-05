@@ -7,15 +7,9 @@
  *                              |___/
  */
 
-export type { AnimationDuration } from './AnimationDuration';
 export type { ColorSchemeContextType } from './ColorSchemeProvider';
 export { ColorSchemeContext, ColorSchemeProvider } from './ColorSchemeProvider';
 export { MOBILE_VIEWPORT } from './constants';
-export { getNextThemeColor } from './getNextThemeColor';
-export type { ThemeColor } from './MainColorNames';
-export { MAIN_COLOR_NAMES } from './MainColorNames';
-export {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-} from './resolveThemeVariable';
 export { themeCssVariables } from './themeCssVariables';
+export type { ThemeContextType, ThemeType } from './ThemeProvider';
+export { ThemeContext, ThemeProvider } from './ThemeProvider';

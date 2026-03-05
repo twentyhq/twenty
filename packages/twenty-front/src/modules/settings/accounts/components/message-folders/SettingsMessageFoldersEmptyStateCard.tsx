@@ -2,10 +2,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconFolder } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyState = styled.div`
   align-items: center;
@@ -18,11 +16,13 @@ const StyledEmptyState = styled.div`
 `;
 
 export const SettingsMessageFoldersEmptyStateCard = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <Section>
       <StyledEmptyState>
         <IconFolder
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
         <div>{t`No folders found for this account`}</div>
       </StyledEmptyState>

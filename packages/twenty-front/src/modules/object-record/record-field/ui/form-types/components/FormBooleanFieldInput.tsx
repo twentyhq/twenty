@@ -9,13 +9,10 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormBooleanFieldInputProps = {
   label?: string;
@@ -49,6 +46,7 @@ export const FormBooleanFieldInput = ({
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const instanceId = useId();
 
@@ -137,10 +135,7 @@ export const FormBooleanFieldInput = ({
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             dropdownOffset={{
-              y: parseInt(
-                resolveThemeVariable(themeCssVariables.spacing[1]),
-                10,
-              ),
+              y: parseInt(theme.spacing[1], 10),
             }}
           />
         ) : (

@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import DataGrid, { type DataGridProps } from 'react-data-grid';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import {
-  ColorSchemeContext,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 

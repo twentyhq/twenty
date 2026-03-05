@@ -8,12 +8,11 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const MultiWorkspaceDropdownClickableComponent = () => {
+  const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isNavigationDrawerExpanded = useAtomStateValue(
@@ -33,10 +32,8 @@ export const MultiWorkspaceDropdownClickableComponent = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledIconChevronDown
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
+          size={parseFloat(theme.icon.size.md)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
     </StyledContainer>

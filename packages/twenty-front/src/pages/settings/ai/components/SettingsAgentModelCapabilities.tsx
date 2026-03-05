@@ -7,10 +7,8 @@ import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -60,6 +58,7 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
+  const { theme } = useContext(ThemeContext);
   const aiModels = useAtomStateValue(aiModelsState);
 
   const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
@@ -127,9 +126,7 @@ export const SettingsAgentModelCapabilities = ({
           >
             <StyledCheckboxLabel>
               <capability.Icon
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
               <span>{capability.label}</span>
             </StyledCheckboxLabel>

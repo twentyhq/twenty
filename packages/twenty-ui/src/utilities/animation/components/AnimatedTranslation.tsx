@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 
 type AnimatedTranslationProps = {
   children: React.ReactNode;
 };
 
 export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <motion.div
       initial="hidden"
@@ -22,9 +22,7 @@ export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
           opacity: 1,
           y: 0,
           transition: {
-            duration: resolveThemeVariableAsNumber(
-              themeCssVariables.animation.duration.normal,
-            ),
+            duration: parseFloat(theme.animation.duration.normal),
             ease: 'easeInOut',
           },
         },

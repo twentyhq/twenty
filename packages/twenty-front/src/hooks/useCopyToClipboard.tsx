@@ -1,11 +1,10 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const useCopyToClipboard = () => {
+  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
@@ -30,9 +29,7 @@ export const useCopyToClipboard = () => {
         options: {
           icon: (
             <IconCopy
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
           ),
           duration: 2000,

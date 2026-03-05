@@ -10,7 +10,7 @@ import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-de
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -24,10 +24,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -91,6 +88,7 @@ export const SettingsObjectFieldItemTableRow = ({
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { fieldMetadataItem, objectMetadataItem } =
     settingsObjectDetailTableItem;
@@ -187,16 +185,10 @@ export const SettingsObjectFieldItemTableRow = ({
           {!!Icon && (
             <Icon
               style={{
-                minWidth: resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                ),
+                minWidth: parseFloat(theme.icon.size.md),
               }}
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.sm)}
             />
           )}
           <StyledNameContainer>
@@ -245,12 +237,8 @@ export const SettingsObjectFieldItemTableRow = ({
           mode === 'view' ? (
             <UndecoratedLink to={linkToNavigate}>
               <StyledIconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.md)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             </UndecoratedLink>
           ) : (

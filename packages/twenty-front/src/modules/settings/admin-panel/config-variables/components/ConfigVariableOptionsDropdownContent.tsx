@@ -12,10 +12,8 @@ import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
@@ -39,6 +37,7 @@ export const ConfigVariableOptionsDropdownContent = ({
   onGroupFilterChange,
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
+  const { theme } = useContext(ThemeContext);
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -73,21 +72,13 @@ export const ConfigVariableOptionsDropdownContent = ({
             LeftIcon={() =>
               showHiddenGroupVariables ? (
                 <IconEyeOff
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  stroke={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.stroke.sm,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  stroke={parseFloat(theme.icon.stroke.sm)}
                 />
               ) : (
                 <IconEye
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  stroke={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.stroke.sm,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  stroke={parseFloat(theme.icon.stroke.sm)}
                 />
               )
             }

@@ -4,10 +4,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
@@ -46,6 +44,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
   queueName,
   timeRange,
 }: SettingsAdminWorkerMetricsGraphProps) => {
+  const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const { loading, data } = useGetQueueMetricsQuery({
@@ -115,43 +114,35 @@ export const SettingsAdminWorkerMetricsGraph = ({
             curve="monotoneX"
             enableArea={true}
             colors={[
-              resolveThemeVariable(themeCssVariables.color.blue),
-              resolveThemeVariable(themeCssVariables.color.red),
+              theme.color.blue,
+              theme.color.red,
             ]}
             theme={{
               text: {
-                fill: resolveThemeVariable(themeCssVariables.font.color.light),
-                fontSize: resolveThemeVariable(themeCssVariables.font.size.sm),
-                fontFamily: resolveThemeVariable(themeCssVariables.font.family),
+                fill: theme.font.color.light,
+                fontSize: theme.font.size.sm,
+                fontFamily: theme.font.family,
               },
               axis: {
                 domain: {
                   line: {
-                    stroke: resolveThemeVariable(
-                      themeCssVariables.border.color.strong,
-                    ),
+                    stroke: theme.border.color.strong,
                   },
                 },
                 ticks: {
                   line: {
-                    stroke: resolveThemeVariable(
-                      themeCssVariables.border.color.strong,
-                    ),
+                    stroke: theme.border.color.strong,
                   },
                 },
               },
               grid: {
                 line: {
-                  stroke: resolveThemeVariable(
-                    themeCssVariables.border.color.medium,
-                  ),
+                  stroke: theme.border.color.medium,
                 },
               },
               crosshair: {
                 line: {
-                  stroke: resolveThemeVariable(
-                    themeCssVariables.font.color.primary,
-                  ),
+                  stroke: theme.font.color.primary,
                   strokeDasharray: '2 2',
                 },
               },
@@ -201,9 +192,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
                 itemDirection: 'left-to-right',
                 itemWidth: 100,
                 itemHeight: 20,
-                itemTextColor: resolveThemeVariable(
-                  themeCssVariables.font.color.secondary,
-                ),
+                itemTextColor: theme.font.color.secondary,
                 symbolSize: 4,
                 symbolShape: 'circle',
               },

@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { Card, CardContent } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledVisibilityCard = styled(Card)`
   color: ${themeCssVariables.font.color.light};
@@ -28,12 +26,12 @@ const StyledVisibilityCardContent = styled(CardContent)`
 `;
 
 export const CalendarEventNotSharedContent = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledVisibilityCard>
       <StyledVisibilityCardContent>
-        <IconLock
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-        />
+        <IconLock size={parseFloat(theme.icon.size.sm)} />
         <Trans>Not shared</Trans>
       </StyledVisibilityCardContent>
     </StyledVisibilityCard>

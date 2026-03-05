@@ -6,11 +6,8 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledAnimatedContainer = styled(motion.div)`
   align-items: center;
@@ -50,6 +47,7 @@ const StyledSkeletonTitleContainer = styled.div`
 `;
 
 export const LeftPanelSkeletonLoader = () => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   return (
     <StyledAnimatedContainer
@@ -59,20 +57,14 @@ export const LeftPanelSkeletonLoader = () => {
         opacity: isMobile ? 0 : 1,
       }}
       transition={{
-        duration: resolveThemeVariableAsNumber(
-          themeCssVariables.animation.duration.fast,
-        ),
+        duration: parseFloat(theme.animation.duration.fast),
       }}
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <SkeletonTheme
-            baseColor={resolveThemeVariable(
-              themeCssVariables.background.tertiary,
-            )}
-            highlightColor={resolveThemeVariable(
-              themeCssVariables.background.transparent.lighter,
-            )}
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >
             <Skeleton

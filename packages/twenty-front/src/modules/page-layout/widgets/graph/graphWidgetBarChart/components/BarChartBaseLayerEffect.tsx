@@ -7,13 +7,15 @@ import { computeBaselineBar } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { interpolateBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/interpolateBars';
 import { renderBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderBars';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { type RefObject, useCallback, useEffect, useState } from 'react';
-import { BarChartLayout } from '~/generated-metadata/graphql';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+  type RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { BarChartLayout } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartBaseLayerEffectProps = {
   bars: BarPosition[];
@@ -49,13 +51,13 @@ export const BarChartBaseLayerEffect = ({
   allowDataTransitions,
   canvasRef,
 }: BarChartBaseLayerEffectProps) => {
-  const borderRadius = parseInt(
-    resolveThemeVariable(themeCssVariables.border.radius.sm),
-  );
-  const gridColor = resolveThemeVariable(themeCssVariables.border.color.light);
+  const { theme } = useContext(ThemeContext);
+
+  const borderRadius = parseInt(theme.border.radius.sm);
+  const gridColor = theme.border.color.light;
   const isVertical = layout === BarChartLayout.VERTICAL;
   const durationMs =
-    resolveThemeVariableAsNumber(themeCssVariables.animation.duration.normal) *
+    parseFloat(theme.animation.duration.normal) *
     CHART_CORE_CONSTANTS.MILLISECONDS_PER_SECOND;
 
   const [dpr] = useState<number>(

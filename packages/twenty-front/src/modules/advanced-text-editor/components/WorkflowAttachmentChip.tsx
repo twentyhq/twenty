@@ -2,13 +2,11 @@ import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { AvatarOrIcon } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowAttachmentChipProps = {
   file: WorkflowAttachment;
@@ -66,7 +64,9 @@ export const WorkflowAttachmentChip = ({
   onRemove,
   readonly = false,
 }: WorkflowAttachmentChipProps) => {
+  const { theme } = useContext(ThemeContext);
   const iconColors = useFileCategoryColors();
+
   return (
     <StyledChip data-chip deletable={!readonly}>
       <AvatarOrIcon
@@ -78,10 +78,8 @@ export const WorkflowAttachmentChip = ({
       {!readonly && (
         <StyledDelete onClick={onRemove}>
           <IconX
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.sm)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         </StyledDelete>
       )}

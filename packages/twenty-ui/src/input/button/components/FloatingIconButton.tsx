@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
-import React from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
 export type FloatingIconButtonPosition =
@@ -119,6 +116,8 @@ export const FloatingIconButton = ({
   onClick,
   isActive,
 }: FloatingIconButtonProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledButton
       disabled={disabled}
@@ -131,11 +130,7 @@ export const FloatingIconButton = ({
       onClick={onClick}
       isActive={isActive}
     >
-      {Icon && (
-        <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        />
-      )}
+      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
     </StyledButton>
   );
 };

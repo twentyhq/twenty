@@ -30,8 +30,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import {
@@ -49,7 +48,7 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -108,6 +107,7 @@ type SkillFormValues = {
 const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
 
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
+  const { theme } = useContext(ThemeContext);
   const { skillId = '' } = useParams<{ skillId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
@@ -518,12 +518,8 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                             <>
                               <IconInfoCircle
                                 id="info-circle-id-skill-name"
-                                size={resolveThemeVariableAsNumber(
-                                  themeCssVariables.icon.size.md,
-                                )}
-                                color={resolveThemeVariable(
-                                  themeCssVariables.font.color.tertiary,
-                                )}
+                                size={parseFloat(theme.icon.size.md)}
+                                color={theme.font.color.tertiary}
                                 style={{ outline: 'none' }}
                               />
                               <AppTooltip

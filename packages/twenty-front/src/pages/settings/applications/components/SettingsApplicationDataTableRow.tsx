@@ -13,9 +13,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -41,6 +41,7 @@ export const SettingsApplicationDataTableRow = ({
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(row.icon);
@@ -56,12 +57,8 @@ export const SettingsApplicationDataTableRow = ({
         <StyledNameTableCell>
           {isDefined(Icon) && (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.sm)}
             />
           )}
           {row.labelPlural}
@@ -73,27 +70,15 @@ export const SettingsApplicationDataTableRow = ({
         <StyledActionTableCell>
           {hasFields && isExpanded ? (
             <IconChevronDown
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
-              color={resolveThemeVariable(
-                themeCssVariables.font.color.tertiary,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.sm)}
+              color={theme.font.color.tertiary}
             />
           ) : (
             <IconChevronRight
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
-              color={resolveThemeVariable(
-                themeCssVariables.font.color.tertiary,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              stroke={parseFloat(theme.icon.stroke.sm)}
+              color={theme.font.color.tertiary}
             />
           )}
         </StyledActionTableCell>
@@ -120,12 +105,8 @@ export const SettingsApplicationDataTableRow = ({
               <StyledFieldNameTableCell>
                 {isDefined(FieldIcon) && (
                   <FieldIcon
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                    stroke={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.stroke.sm,
-                    )}
+                    size={parseFloat(theme.icon.size.md)}
+                    stroke={parseFloat(theme.icon.stroke.sm)}
                   />
                 )}
                 {field.label}

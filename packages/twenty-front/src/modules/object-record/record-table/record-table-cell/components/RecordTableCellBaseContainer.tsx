@@ -6,10 +6,7 @@ import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-t
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledBaseContainer = styled.div<{
   fontColorMedium: string;
@@ -56,6 +53,7 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   } = useContext(FieldContext);
+  const { theme } = useContext(ThemeContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const { cellPosition } = useContext(RecordTableCellContext);
@@ -72,15 +70,9 @@ export const RecordTableCellBaseContainer = ({
   return (
     <StyledBaseContainer
       onClick={handleContainerClick}
-      backgroundColorSecondary={resolveThemeVariable(
-        themeCssVariables.background.secondary,
-      )}
-      fontColorSecondary={resolveThemeVariable(
-        themeCssVariables.font.color.secondary,
-      )}
-      fontColorMedium={resolveThemeVariable(
-        themeCssVariables.border.color.medium,
-      )}
+      backgroundColorSecondary={theme.background.secondary}
+      fontColorSecondary={theme.font.color.secondary}
+      fontColorMedium={theme.border.color.medium}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
       data-record-table-col={cellPosition.column}

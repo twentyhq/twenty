@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
-import { type ComponentProps, type MouseEvent } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';
@@ -108,6 +105,8 @@ export const LightIconButton = ({
   onClick,
   title,
 }: LightIconButtonProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledButton
       data-testid={testId}
@@ -125,8 +124,8 @@ export const LightIconButton = ({
         <Icon
           size={
             size === 'medium'
-              ? resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)
-              : resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)
+              ? parseFloat(theme.icon.size.md)
+              : parseFloat(theme.icon.size.sm)
           }
         />
       )}

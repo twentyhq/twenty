@@ -12,10 +12,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -70,6 +68,7 @@ const StyledCopySetupKeyLink = styled.button`
 `;
 
 export const SignInUpTwoFactorAuthenticationProvision = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);
@@ -103,9 +102,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
           {qrCode && (
             <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
               <IconCopy
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
               />
               <Trans>Copy Setup Key</Trans>
             </StyledCopySetupKeyLink>

@@ -8,11 +8,12 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -29,6 +30,7 @@ type RecordCalendarAddNewProps = {
 export const RecordCalendarAddNew = ({
   cardDate,
 }: RecordCalendarAddNewProps) => {
+  const { theme } = useContext(ThemeContext);
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -82,7 +84,7 @@ export const RecordCalendarAddNew = ({
       variant="tertiary"
       Icon={() => (
         <IconPlus
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          size={parseFloat(theme.icon.size.sm)}
         />
       )}
     />

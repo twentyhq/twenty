@@ -1,9 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
-import { type ReactNode } from 'react';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext, type ReactNode } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
@@ -32,6 +29,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
   onClick,
   children,
 }: RecordTableDraggableTrFirstRowOfGroupProps) => {
+  const { theme } = useContext(ThemeContext);
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   const isRecordTableScrolledVertically = useAtomComponentStateValue(
@@ -56,12 +54,10 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             style={{
               ...draggableProvided.draggableProps.style,
               background: draggableSnapshot.isDragging
-                ? resolveThemeVariable(
-                    themeCssVariables.background.transparent.light,
-                  )
+                ? theme.background.transparent.light
                 : undefined,
               borderColor: draggableSnapshot.isDragging
-                ? resolveThemeVariable(themeCssVariables.border.color.medium)
+                ? theme.border.color.medium
                 : 'transparent',
               opacity: isSecondaryDragged ? 0.3 : undefined,
             }}

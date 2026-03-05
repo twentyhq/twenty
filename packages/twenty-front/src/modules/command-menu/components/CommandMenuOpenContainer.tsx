@@ -20,12 +20,12 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useCallback, useRef } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
+  ThemeContext,
   themeCssVariables,
-  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -47,6 +47,7 @@ const StyledCommandMenu = motion.create(StyledCommandMenuBase);
 export const CommandMenuOpenContainer = ({
   children,
 }: React.PropsWithChildren) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
 
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
@@ -99,9 +100,7 @@ export const CommandMenuOpenContainer = ({
       exit="closed"
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
       transition={{
-        duration: resolveThemeVariableAsNumber(
-          themeCssVariables.animation.duration.normal,
-        ),
+        duration: parseFloat(theme.animation.duration.normal),
       }}
       onAnimationStart={() => setIsSidePanelAnimating(true)}
       onAnimationComplete={() => setIsSidePanelAnimating(false)}

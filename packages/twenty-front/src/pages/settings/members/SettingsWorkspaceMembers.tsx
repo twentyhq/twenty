@@ -3,7 +3,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 
@@ -50,7 +50,7 @@ import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDe
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -124,6 +124,7 @@ const StyledNoMembers = styled(TableCell)`
 `;
 
 export const SettingsWorkspaceMembers = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigateSettings = useNavigateSettings();
@@ -324,12 +325,8 @@ export const SettingsWorkspaceMembers = () => {
                       <StyledInvitationTableCell>
                         <StyledIconWrapper>
                           <IconMail
-                            size={resolveThemeVariableAsNumber(
-                              themeCssVariables.icon.size.md,
-                            )}
-                            stroke={resolveThemeVariableAsNumber(
-                              themeCssVariables.icon.stroke.sm,
-                            )}
+                            size={parseFloat(theme.icon.size.md)}
+                            stroke={parseFloat(theme.icon.stroke.sm)}
                           />
                         </StyledIconWrapper>
                         <StyledTextContainerWithEllipsis
@@ -469,9 +466,7 @@ export const SettingsWorkspaceMembers = () => {
                           {currentWorkspaceMember?.id !==
                             workspaceMember.id && (
                             <IconChevronRight
-                              size={resolveThemeVariableAsNumber(
-                                themeCssVariables.icon.size.sm,
-                              )}
+                              size={parseFloat(theme.icon.size.sm)}
                             />
                           )}
                         </StyledChevronWrapper>

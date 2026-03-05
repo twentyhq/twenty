@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 
@@ -13,11 +13,7 @@ import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
@@ -28,6 +24,7 @@ export const CurrencyDisplay = ({
   currencyValue,
   fieldDefinition,
 }: CurrencyDisplayProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
@@ -66,15 +63,9 @@ export const CurrencyDisplay = ({
               onMouseLeave={() => setShouldRenderTooltip(false)}
             >
               <CurrencyIcon
-                color={resolveThemeVariable(
-                  themeCssVariables.font.color.primary,
-                )}
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                color={theme.font.color.primary}
+                size={parseFloat(theme.icon.size.md)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             </span>{' '}
           </>

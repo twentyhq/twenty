@@ -9,9 +9,10 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -53,6 +54,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -94,9 +96,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         }}
       >
         {HeaderIcon && (
-          <HeaderIcon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <HeaderIcon size={parseFloat(theme.icon.size.md)} />
         )}
         {objectLabel}
         <span>{' / '}</span>

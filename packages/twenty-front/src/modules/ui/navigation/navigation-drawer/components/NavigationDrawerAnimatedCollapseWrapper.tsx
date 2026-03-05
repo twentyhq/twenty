@@ -7,10 +7,8 @@ import {
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledAnimatedContainerBase = styled.span`
   display: block;
 `;
@@ -22,6 +20,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -51,9 +50,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
       initial={false}
       animate={animate}
       transition={{
-        duration: resolveThemeVariableAsNumber(
-          themeCssVariables.animation.duration.normal,
-        ),
+        duration: parseFloat(theme.animation.duration.normal),
       }}
     >
       {children}

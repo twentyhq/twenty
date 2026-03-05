@@ -18,13 +18,12 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { useContext } from 'react';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const workflowId = useCommandMenuWorkflowIdOrThrow();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
@@ -88,7 +87,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
             key={action.defaultLabel}
             LeftIcon={() => (
               <Icon
-                color={resolveThemeVariable(themeCssVariables.color.blue)}
+                color={theme.color.blue}
                 size={16}
               />
             )}
@@ -109,7 +108,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
             key={action.defaultLabel}
             LeftIcon={() => (
               <Icon
-                color={resolveThemeVariable(themeCssVariables.color.purple)}
+                color={theme.color.purple}
                 size={16}
               />
             )}

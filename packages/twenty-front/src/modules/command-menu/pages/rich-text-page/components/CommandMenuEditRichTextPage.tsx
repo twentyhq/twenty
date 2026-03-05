@@ -2,13 +2,10 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -24,13 +21,12 @@ const StyledContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-      highlightColor={resolveThemeVariable(
-        themeCssVariables.background.transparent.lighter,
-      )}
-      borderRadius={resolveThemeVariable(themeCssVariables.border.radius.sm)}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={theme.border.radius.sm}
     >
       <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
     </SkeletonTheme>

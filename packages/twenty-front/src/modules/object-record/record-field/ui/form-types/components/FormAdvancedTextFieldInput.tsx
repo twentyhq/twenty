@@ -16,11 +16,11 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -112,6 +112,7 @@ export const FormAdvancedTextFieldInput = ({
   maxWidth,
   contentType = 'json',
 }: FormAdvancedTextFieldInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -234,9 +235,7 @@ export const FormAdvancedTextFieldInput = ({
                     onClick={handleEnterFullScreen}
                   >
                     <IconMaximize
-                      size={resolveThemeVariableAsNumber(
-                        themeCssVariables.icon.size.md,
-                      )}
+                      size={parseFloat(theme.icon.size.md)}
                     />
                   </StyledFullScreenButtonContainer>
                 )}

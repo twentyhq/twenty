@@ -5,6 +5,7 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
+  useContext,
 } from 'react';
 import {
   IconChevronRight,
@@ -18,11 +19,7 @@ import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
@@ -66,6 +63,7 @@ export const MenuItemWithOptionDropdown = ({
   hasSubMenu = false,
   dropdownPlacement = 'bottom-end',
 }: MenuItemWithOptionDropdownProps) => {
+  const { theme } = useContext(ThemeContext);
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -103,8 +101,8 @@ export const MenuItemWithOptionDropdown = ({
       </div>
       {hasSubMenu && (
         <IconChevronRight
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+          size={parseFloat(theme.icon.size.sm)}
+          color={theme.font.color.tertiary}
         />
       )}
     </StyledHoverableMenuItemBase>

@@ -1,16 +1,15 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ThemeColor,
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { type ThemeColor, ThemeContext } from 'twenty-ui/theme-constants';
 export const useFileCategoryColors = (): Record<
   AttachmentFileCategory,
   string
 > => {
+  const { theme } = useContext(ThemeContext);
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
@@ -20,14 +19,14 @@ export const useFileCategoryColors = (): Record<
   );
 
   const colorMap: Record<AttachmentFileCategory, string> = {
-    ARCHIVE: resolveThemeVariable(themeCssVariables.color.gray),
-    AUDIO: resolveThemeVariable(themeCssVariables.color.pink),
-    IMAGE: resolveThemeVariable(themeCssVariables.color.yellow),
-    PRESENTATION: resolveThemeVariable(themeCssVariables.color.orange),
-    SPREADSHEET: resolveThemeVariable(themeCssVariables.color.turquoise),
-    TEXT_DOCUMENT: resolveThemeVariable(themeCssVariables.color.blue),
-    VIDEO: resolveThemeVariable(themeCssVariables.color.purple),
-    OTHER: resolveThemeVariable(themeCssVariables.color.gray),
+    ARCHIVE: theme.color.gray,
+    AUDIO: theme.color.pink,
+    IMAGE: theme.color.yellow,
+    PRESENTATION: theme.color.orange,
+    SPREADSHEET: theme.color.turquoise,
+    TEXT_DOCUMENT: theme.color.blue,
+    VIDEO: theme.color.purple,
+    OTHER: theme.color.gray,
   };
 
   if (isDefined(fileCategoryField?.options)) {
@@ -38,12 +37,11 @@ export const useFileCategoryColors = (): Record<
         isDefined(category) &&
         isDefined(color) &&
         isDefined(
-          (themeCssVariables.color as unknown as Record<string, string>)[color],
+          (theme.color as unknown as Record<string, string>)[color],
         )
       ) {
-        colorMap[category] = resolveThemeVariable(
-          (themeCssVariables.color as unknown as Record<string, string>)[color],
-        );
+        colorMap[category] =
+          (theme.color as unknown as Record<string, string>)[color];
       }
     });
   }

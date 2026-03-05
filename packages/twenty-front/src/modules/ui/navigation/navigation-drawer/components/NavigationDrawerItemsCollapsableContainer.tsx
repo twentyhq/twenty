@@ -2,17 +2,13 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledAnimationGroupContainerBase = styled.div``;
 
 const StyledAnimationGroupContainer = motion.create(
@@ -28,6 +24,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
+  const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -43,11 +40,9 @@ export const NavigationDrawerItemsCollapsableContainer = ({
     if (isGroup) {
       animate = {
         width: 24,
-        backgroundColor: resolveThemeVariable(
-          themeCssVariables.background.transparent.lighter,
-        ),
-        border: `1px solid ${resolveThemeVariable(themeCssVariables.background.transparent.lighter)}`,
-        borderRadius: resolveThemeVariable(themeCssVariables.border.radius.sm),
+        backgroundColor: theme.background.transparent.lighter,
+        border: `1px solid ${theme.background.transparent.lighter}`,
+        borderRadius: theme.border.radius.sm,
       };
     }
   }
@@ -57,9 +52,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
       initial={false}
       animate={animate}
       transition={{
-        duration: resolveThemeVariableAsNumber(
-          themeCssVariables.animation.duration.normal,
-        ),
+        duration: parseFloat(theme.animation.duration.normal),
       }}
     >
       {children}

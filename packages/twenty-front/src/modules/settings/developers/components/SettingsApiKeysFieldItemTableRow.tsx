@@ -7,10 +7,10 @@ import {
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
@@ -47,6 +47,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: SettingsApiKeysFieldItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   const gridColumns = '5fr 2fr 3fr 1fr';
@@ -54,13 +55,13 @@ export const SettingsApiKeysFieldItemTableRow = ({
   return (
     <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
       <StyledTruncatedCell
-        color={resolveThemeVariable(themeCssVariables.font.color.primary)}
+        color={theme.font.color.primary}
       >
         <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
 
       <StyledTruncatedCell
-        color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+        color={theme.font.color.tertiary}
       >
         <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
       </StyledTruncatedCell>
@@ -68,8 +69,8 @@ export const SettingsApiKeysFieldItemTableRow = ({
       <StyledTruncatedCell
         color={
           isExpired(apiKey.expiresAt || null)
-            ? resolveThemeVariable(themeCssVariables.font.color.danger)
-            : resolveThemeVariable(themeCssVariables.font.color.tertiary)
+            ? theme.font.color.danger
+            : theme.font.color.tertiary
         }
       >
         <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
@@ -77,8 +78,8 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
       <TableCell align="right">
         <IconChevronRight
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+          size={parseFloat(theme.icon.size.md)}
+          color={theme.font.color.tertiary}
         />
       </TableCell>
     </StyledApisFieldTableRow>

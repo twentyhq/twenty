@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { ColorSchemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';

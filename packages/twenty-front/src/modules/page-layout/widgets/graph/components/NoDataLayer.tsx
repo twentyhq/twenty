@@ -1,8 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type NoDataLayerProps = {
   innerWidth: number;
@@ -15,6 +13,7 @@ export const NoDataLayer = ({
   innerHeight,
   hasNoData,
 }: NoDataLayerProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   if (!hasNoData) {
@@ -27,8 +26,8 @@ export const NoDataLayer = ({
       y={innerHeight / 2}
       textAnchor="middle"
       dominantBaseline="middle"
-      fill={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
-      fontSize={resolveThemeVariable(themeCssVariables.font.size.md)}
+      fill={theme.font.color.tertiary}
+      fontSize={theme.font.size.md}
     >
       {t`No data`}
     </text>

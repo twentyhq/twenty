@@ -65,7 +65,7 @@ import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
 import {
   themeCssVariables,
-  resolveThemeVariable,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -167,6 +167,7 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const store = useStore();
   const reactflow = useReactFlow();
 
@@ -627,7 +628,7 @@ export const WorkflowDiagramCanvasBase = ({
         connectionRadius={0}
       >
         <Background
-          color={resolveThemeVariable(themeCssVariables.border.color.medium)}
+          color={theme.border.color.medium}
           size={2}
         />
 

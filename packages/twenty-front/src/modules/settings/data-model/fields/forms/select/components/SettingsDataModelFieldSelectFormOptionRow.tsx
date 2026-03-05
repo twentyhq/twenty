@@ -7,6 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import {
   ColorSample,
@@ -25,8 +26,7 @@ import {
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import {
   MAIN_COLOR_NAMES,
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -116,6 +116,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   isNewRow,
   fieldIsNullable,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const colorLabels = useColorLabels();
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
@@ -133,13 +134,11 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
     <StyledRow className={className}>
       <StyledIconGripVertical
         style={{
-          minWidth: resolveThemeVariableAsNumber(
-            themeCssVariables.icon.size.md,
-          ),
+          minWidth: parseFloat(theme.icon.size.md),
         }}
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
-        color={resolveThemeVariable(themeCssVariables.font.color.extraLight)}
+        size={parseFloat(theme.icon.size.md)}
+        stroke={parseFloat(theme.icon.stroke.sm)}
+        color={theme.font.color.extraLight}
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInputContainer>

@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconUpload } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -50,6 +48,7 @@ export const DropZone = ({
   setIsDraggingFile,
   onUploadFiles,
 }: DropZoneProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { maxFileSize } = useSpreadsheetImportInternal();
 
@@ -85,10 +84,8 @@ export const DropZone = ({
             {...getInputProps()}
           />
           <StyledUploadIcon
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={parseFloat(theme.icon.size.lg)}
           />
           <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>

@@ -3,18 +3,14 @@ import {
   StyledControlContainer,
 } from '@/ui/input/components/SelectControl';
 import { styled } from '@linaria/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
@@ -46,6 +42,7 @@ export const MultiSelectControl = ({
   textAccent = 'default',
   hasRightElement,
 }: MultiSelectControlProps) => {
+  const { theme } = useContext(ThemeContext);
   const firstSelectedOption = selectedOptions?.[0];
   return (
     <StyledControlContainer
@@ -57,27 +54,19 @@ export const MultiSelectControl = ({
     >
       {isDefined(fixedIcon) ? (
         React.createElement(fixedIcon, {
-          color: resolveThemeVariable(
-            isDisabled
-              ? themeCssVariables.font.color.light
-              : themeCssVariables.font.color.primary,
-          ),
-          size: resolveThemeVariableAsNumber(themeCssVariables.icon.size.md),
-          stroke: resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          ),
+          color: isDisabled
+            ? theme.font.color.light
+            : theme.font.color.primary,
+          size: parseFloat(theme.icon.size.md),
+          stroke: parseFloat(theme.icon.stroke.sm),
         })
       ) : isDefined(firstSelectedOption?.Icon) ? (
         <firstSelectedOption.Icon
-          color={resolveThemeVariable(
-            isDisabled
-              ? themeCssVariables.font.color.light
-              : themeCssVariables.font.color.primary,
-          )}
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
+          color={
+            isDisabled ? theme.font.color.light : theme.font.color.primary
+          }
+          size={parseFloat(theme.icon.size.md)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
         />
       ) : null}
       {isDefined(fixedText) ? (
@@ -88,7 +77,7 @@ export const MultiSelectControl = ({
 
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>

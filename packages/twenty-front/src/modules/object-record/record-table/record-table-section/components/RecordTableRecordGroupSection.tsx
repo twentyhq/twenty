@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -118,6 +118,7 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
 `;
 
 export const RecordTableRecordGroupSection = () => {
+  const { theme } = useContext(ThemeContext);
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
@@ -202,9 +203,7 @@ export const RecordTableRecordGroupSection = () => {
           accent="secondary"
           animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{
-            duration: resolveThemeVariableAsNumber(
-              themeCssVariables.animation.duration.normal,
-            ),
+            duration: parseFloat(theme.animation.duration.normal),
           }}
         />
       </StyledChevronContainer>

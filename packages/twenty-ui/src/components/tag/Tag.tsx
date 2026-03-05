@@ -5,9 +5,10 @@ import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextW
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ThemeColor,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 const StyledTag = styled.h3<{
   color: TagColor;
@@ -92,6 +93,8 @@ export const Tag = ({
   preventShrink,
   preventPadding,
 }: TagProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledTag
       className={className}
@@ -105,10 +108,8 @@ export const Tag = ({
       {isDefined(Icon) ? (
         <StyledIconContainer>
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.sm)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         </StyledIconContainer>
       ) : (

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -21,7 +21,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
@@ -54,6 +54,7 @@ const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
 `;
 
 export const SettingsAIAgentsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const { data, loading } = useFindManyAgentsQuery();
 
   const { t } = useLingui();
@@ -144,12 +145,8 @@ export const SettingsAIAgentsTable = () => {
             agent={agent}
             action={
               <IconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.md)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             }
             link={getSettingsPath(SettingsPath.AIAgentDetail, {

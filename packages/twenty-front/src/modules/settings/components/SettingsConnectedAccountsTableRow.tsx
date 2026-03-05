@@ -4,10 +4,8 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -30,6 +28,7 @@ type SettingsConnectedAccountsTableRowProps = {
 export const SettingsConnectedAccountsTableRow = ({
   account,
 }: SettingsConnectedAccountsTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const IconComponent = SettingsConnectedAccountIcon({ account });
 
   return (
@@ -37,10 +36,8 @@ export const SettingsConnectedAccountsTableRow = ({
       <TableCell>
         <StyledNameCell>
           <IconComponent
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
           {account.handle}
         </StyledNameCell>

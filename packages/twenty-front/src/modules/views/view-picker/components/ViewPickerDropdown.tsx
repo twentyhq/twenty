@@ -21,9 +21,10 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -55,6 +56,7 @@ const StyledViewName = styled.span`
 `;
 
 export const ViewPickerDropdown = () => {
+  const { theme } = useContext(ThemeContext);
   const { currentView } = useGetCurrentViewOnly();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
@@ -89,15 +91,11 @@ export const ViewPickerDropdown = () => {
           <StyledIconContainer>
             {currentView && CurrentViewIcon ? (
               <CurrentViewIcon
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
+                size={parseFloat(theme.icon.size.md)}
               />
             ) : (
               <IconList
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
+                size={parseFloat(theme.icon.size.md)}
               />
             )}
           </StyledIconContainer>
@@ -107,9 +105,7 @@ export const ViewPickerDropdown = () => {
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
             <IconChevronDown
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
+              size={parseFloat(theme.icon.size.sm)}
             />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

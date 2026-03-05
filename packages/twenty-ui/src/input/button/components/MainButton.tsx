@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
-import React, { type FunctionComponent } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import React, { type FunctionComponent, useContext } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
 
@@ -107,16 +104,14 @@ export const MainButton = ({
   disabled,
   className,
 }: MainButtonProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledButton
       className={className}
       {...{ disabled, fullWidth, width, onClick, type, variant }}
     >
-      {Icon && (
-        <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-        />
-      )}
+      {Icon && <Icon size={parseFloat(theme.icon.size.sm)} />}
       {title}
     </StyledButton>
   );

@@ -6,10 +6,8 @@ import {
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
@@ -136,6 +134,8 @@ export const MenuPicker = ({
   tooltipDelay = TooltipDelay.noDelay,
   tooltipOffset = 5,
 }: MenuPickerProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <>
       <StyledMenuPicker
@@ -151,10 +151,8 @@ export const MenuPicker = ({
       >
         <StyledIconContainer>
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         </StyledIconContainer>
 

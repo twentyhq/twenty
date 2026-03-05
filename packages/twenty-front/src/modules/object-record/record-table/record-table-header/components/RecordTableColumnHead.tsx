@@ -6,10 +6,11 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
   MOBILE_VIEWPORT,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -51,6 +52,7 @@ type RecordTableColumnHeadProps = {
 export const RecordTableColumnHead = ({
   recordField,
 }: RecordTableColumnHeadProps) => {
+  const { theme } = useContext(ThemeContext);
   const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
     fieldMetadataItemByIdSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
@@ -76,9 +78,7 @@ export const RecordTableColumnHead = ({
   return (
     <StyledTitle hideTitle={shouldHideTitle}>
       <StyledIcon>
-        <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        />
+        <Icon size={parseFloat(theme.icon.size.md)} />
       </StyledIcon>
       <StyledText>
         {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}

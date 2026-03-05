@@ -5,12 +5,10 @@ import {
   IconHome,
   IconMessageCirclePlus,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
+
+import { useContext } from 'react';
 
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -122,6 +120,7 @@ const StyledNewChatButton = styled.div`
 `;
 
 export const MainNavigationDrawerTabsRow = () => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -167,9 +166,7 @@ export const MainNavigationDrawerTabsRow = () => {
   };
 
   const getTabIconColor = (isActive: boolean) =>
-    isActive
-      ? resolveThemeVariable(themeCssVariables.font.color.primary)
-      : resolveThemeVariable(themeCssVariables.font.color.tertiary);
+    isActive ? theme.font.color.primary : theme.font.color.tertiary;
 
   return (
     <StyledRow isExpanded={isExpanded}>
@@ -197,9 +194,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconHome
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
@@ -229,9 +224,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconComment
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.sm,
-                )}
+                size={parseFloat(theme.icon.size.sm)}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
@@ -250,7 +243,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onKeyDown={handleNewChatKeyDown}
         >
           <IconMessageCirclePlus
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            size={parseFloat(theme.icon.size.md)}
           />
           {isExpanded && t`New chat`}
         </StyledNewChatButton>

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
@@ -8,7 +8,7 @@ import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -83,6 +83,7 @@ export const CurrencyInput = ({
   onSelect,
   decimals,
 }: CurrencyInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef<HTMLInputElement>(null);
@@ -124,10 +125,8 @@ export const CurrencyInput = ({
       <StyledIcon>
         {Icon && (
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         )}
       </StyledIcon>

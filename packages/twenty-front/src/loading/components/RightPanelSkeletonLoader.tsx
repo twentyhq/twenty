@@ -1,10 +1,11 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import {
   MOBILE_VIEWPORT,
+  ThemeContext,
   themeCssVariables,
-  resolveThemeVariable,
 } from 'twenty-ui/theme-constants';
 
 const StyledMainContainer = styled.div`
@@ -52,13 +53,12 @@ const StyledRightPanelFlexContainer = styled.div`
 `;
 
 const StyledSkeletonHeaderLoader = () => {
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledHeaderContainer>
       <SkeletonTheme
-        baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-        highlightColor={resolveThemeVariable(
-          themeCssVariables.background.transparent.lighter,
-        )}
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
         borderRadius={4}
       >
         <Skeleton
@@ -71,12 +71,11 @@ const StyledSkeletonHeaderLoader = () => {
 };
 
 const StyledSkeletonAddLoader = () => {
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
-      highlightColor={resolveThemeVariable(
-        themeCssVariables.background.transparent.lighter,
-      )}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
       <Skeleton width={132} height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -11,10 +11,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 import { type MessageDescriptor } from '@lingui/core';
@@ -177,6 +174,7 @@ export const EventLogResultsTable = ({
   onLoadMore,
   selectedTable,
 }: EventLogResultsTableProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
@@ -268,12 +266,8 @@ export const EventLogResultsTable = ({
           </StyledHeaderRow>
         </StyledTable>
         <SkeletonTheme
-          baseColor={resolveThemeVariable(
-            themeCssVariables.background.tertiary,
-          )}
-          highlightColor={resolveThemeVariable(
-            themeCssVariables.background.transparent.lighter,
-          )}
+          baseColor={theme.background.tertiary}
+          highlightColor={theme.background.transparent.lighter}
           borderRadius={4}
         >
           <StyledSkeletonContainer>

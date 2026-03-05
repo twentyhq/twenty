@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconPoint } from 'twenty-ui/display';
 import {
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -37,14 +38,16 @@ export const AdvancedSettingsContentWrapperWithDot = ({
   hideDot = false,
   dotPosition = 'centered',
 }: AdvancedSettingsContentWrapperWithDotProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledWrapper>
       {!hideDot && (
         <StyledDotContainer dotPosition={dotPosition}>
           <StyledIconPoint
             size={12}
-            color={resolveThemeVariable(themeCssVariables.color.yellow)}
-            fill={resolveThemeVariable(themeCssVariables.color.yellow)}
+            color={theme.color.yellow}
+            fill={theme.color.yellow}
           />
         </StyledDotContainer>
       )}

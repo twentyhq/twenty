@@ -18,15 +18,12 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -82,6 +79,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const CommandMenuTopBar = () => {
+  const { theme } = useContext(ThemeContext);
   const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
     commandMenuSearchState,
   );
@@ -145,9 +143,7 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: resolveThemeVariableAsNumber(
-                  themeCssVariables.animation.duration.instant,
-                ),
+                duration: parseFloat(theme.animation.duration.instant),
               }}
             >
               <CommandMenuBackButton />
@@ -157,9 +153,7 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: resolveThemeVariableAsNumber(
-                  themeCssVariables.animation.duration.instant,
-                ),
+                duration: parseFloat(theme.animation.duration.instant),
               }}
             >
               <IconButton

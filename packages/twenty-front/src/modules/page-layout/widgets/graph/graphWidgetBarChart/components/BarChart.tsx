@@ -16,12 +16,9 @@ import {
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 type BarChartProps = {
   data: BarChartDatum[];
@@ -78,6 +75,8 @@ export const BarChart = ({
   allowDataTransitions,
   hasNoData = false,
 }: BarChartProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
@@ -234,10 +233,7 @@ export const BarChart = ({
         layout={layout}
         margins={margins}
         omitNullValues={omitNullValues}
-        offset={
-          resolveThemeVariableAsNumber(themeCssVariables.spacingMultiplicator) *
-          2
-        }
+        offset={parseFloat(theme.spacingMultiplicator) * 2}
         showGrid={showGrid}
         showValues={showTotalsValues}
         valueDomain={valueDomain}

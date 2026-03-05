@@ -8,10 +8,8 @@ import {
   StyledRowLeftContent,
   StyledText,
 } from './WorkflowAiAgentPermissionsStyles';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
   isEnabled: boolean;
@@ -29,6 +27,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const isClickable = !readonly && !isEnabled && Boolean(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
 
@@ -40,7 +39,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
       <StyledRowLeftContent>
         <StyledIconContainer>
           <permission.Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            size={parseFloat(theme.icon.size.sm)}
           />
         </StyledIconContainer>
         <StyledText>{permission.name}</StyledText>

@@ -1,15 +1,15 @@
+import { useContext } from 'react';
+
 import IconMicrosoftCalendarRaw from '@assets/icons/microsoft-calendar.svg?react';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
+
 interface IconMicrosoftCalendarProps {
   size?: number | string;
 }
 
 export const IconMicrosoftCalendar = (props: IconMicrosoftCalendarProps) => {
-  const size =
-    props.size ?? resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg);
+  const { theme } = useContext(ThemeContext);
+  const size = props.size ?? parseFloat(theme.icon.size.lg);
 
   return <IconMicrosoftCalendarRaw height={size} width={size} />;
 };

@@ -12,10 +12,8 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
@@ -59,6 +57,7 @@ export const SettingsObjectMetadataItemTableRow = ({
   link,
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { getIcon } = useIcons();
@@ -70,14 +69,10 @@ export const SettingsObjectMetadataItemTableRow = ({
         {!!Icon && (
           <Icon
             style={{
-              minWidth: resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              ),
+              minWidth: parseFloat(theme.icon.size.md),
             }}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         )}
         <StyledNameContainer>

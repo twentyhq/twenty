@@ -1,12 +1,9 @@
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconSparkles } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
@@ -75,6 +72,7 @@ export const AIChatThreadGroup = ({
   threads: AgentChatThread[];
   title: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { handleThreadClick } = useAIChatThreadClick();
 
@@ -93,10 +91,8 @@ export const AIChatThreadGroup = ({
           >
             <StyledSparkleIcon>
               <IconSparkles
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                color={resolveThemeVariable(themeCssVariables.color.blue)}
+                size={parseFloat(theme.icon.size.md)}
+                color={theme.color.blue}
               />
             </StyledSparkleIcon>
             <StyledThreadContent>

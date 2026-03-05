@@ -12,10 +12,8 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {
@@ -65,6 +63,7 @@ export const SettingsDataModelFieldPreview = ({
       objectNameSingular: objectNameSingular,
     });
 
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
@@ -115,12 +114,8 @@ export const SettingsDataModelFieldPreview = ({
             {!!withFieldLabel && (
               <StyledFieldLabel>
                 <FieldIcon
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.md,
-                  )}
-                  stroke={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.stroke.sm,
-                  )}
+                  size={parseFloat(theme.icon.size.md)}
+                  stroke={parseFloat(theme.icon.stroke.sm)}
                 />
                 {fieldMetadataItem.label}:
               </StyledFieldLabel>

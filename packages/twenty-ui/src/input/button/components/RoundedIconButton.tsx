@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 export type RoundedIconButtonSize = 'small' | 'medium';
 
@@ -45,6 +43,8 @@ export const RoundedIconButton = ({
   className,
   size = 'small',
 }: RoundedIconButtonProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledIconButton
       className={className}
@@ -52,9 +52,7 @@ export const RoundedIconButton = ({
       onClick={onClick}
       size={size}
     >
-      <Icon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-      />
+      <Icon size={parseFloat(theme.icon.size.md)} />
     </StyledIconButton>
   );
 };

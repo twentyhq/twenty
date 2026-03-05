@@ -1,10 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isCompact?: boolean }>`
@@ -35,6 +33,7 @@ type EmailThreadNotSharedProps = {
 export const EmailThreadNotShared = ({
   visibility,
 }: EmailThreadNotSharedProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const containerId = 'email-thread-not-shared';
   const isCompact = visibility === MessageChannelVisibility.SUBJECT;
@@ -43,7 +42,7 @@ export const EmailThreadNotShared = ({
     <>
       <StyledContainer id={containerId} isCompact={isCompact}>
         <IconLock
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          size={parseFloat(theme.icon.size.sm)}
         />
         {t`Not shared`}
       </StyledContainer>

@@ -29,11 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -69,6 +65,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onClose,
   pageLayoutType,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
+  const { theme } = useContext(ThemeContext);
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 
@@ -189,10 +186,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                 ? 'grabbing'
                                 : 'grab',
                               background: draggableSnapshot.isDragging
-                                ? resolveThemeVariable(
-                                    themeCssVariables.background.transparent
-                                      .light,
-                                  )
+                                ? theme.background.transparent.light
                                 : 'none',
                               width: 50,
                               overflow: 'visible',
@@ -202,10 +196,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                               style={{
                                 minWidth:
                                   GenericDropdownContentWidth.Medium -
-                                  resolveThemeVariableAsNumber(
-                                    themeCssVariables.spacingMultiplicator,
-                                  ) *
-                                    2,
+                                  parseFloat(theme.spacingMultiplicator) * 2,
                               }}
                             >
                               <PageLayoutTabMenuItemSelectAvatar

@@ -19,14 +19,14 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
@@ -48,6 +48,7 @@ export const SettingsObjectTable = ({
   objectMetadataItems: ObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
@@ -198,12 +199,8 @@ export const SettingsObjectTable = ({
               action={
                 isActive ? (
                   <StyledIconChevronRight
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                    stroke={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.stroke.sm,
-                    )}
+                    size={parseFloat(theme.icon.size.md)}
+                    stroke={parseFloat(theme.icon.stroke.sm)}
                   />
                 ) : (
                   <SettingsObjectInactiveMenuDropDown

@@ -11,10 +11,10 @@ import { t } from '@lingui/core/macro';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
   themeCssVariables,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
   onChange: (field: WorkflowFormActionField) => void;
@@ -65,13 +65,15 @@ export const WorkflowEditActionFormFieldSettings = ({
   onChange,
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledFormFieldSettingsContainer>
       <StyledSettingsHeader>
         <StyledTitleContainer>
           <IconSettingsAutomation
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            color={resolveThemeVariable(themeCssVariables.font.color.primary)}
+            size={parseFloat(theme.icon.size.md)}
+            color={theme.font.color.primary}
           />
           {t`Input settings`}
         </StyledTitleContainer>

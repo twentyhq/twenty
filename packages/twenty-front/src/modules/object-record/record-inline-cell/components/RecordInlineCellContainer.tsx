@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -75,6 +75,7 @@ export const StyledSkeletonDiv = styled.div`
 export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
+  const { theme } = useContext(ThemeContext);
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
@@ -115,9 +116,7 @@ export const RecordInlineCellContainer = () => {
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             </StyledIconContainer>
           )}

@@ -18,7 +18,7 @@ import { styled } from '@linaria/react';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -33,8 +33,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 import {
-  resolveThemeVariableAsNumber,
   themeCssVariables,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
 
 export type WorkflowEditActionFormBuilderProps = {
@@ -152,6 +152,7 @@ export const WorkflowEditActionFormBuilder = ({
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 
@@ -331,9 +332,7 @@ export const WorkflowEditActionFormBuilder = ({
                                 </StyledPlaceholderContainer>
                                 {field.type === 'RECORD' && (
                                   <IconChevronDown
-                                    size={resolveThemeVariableAsNumber(
-                                      themeCssVariables.icon.size.md,
-                                    )}
+                                    size={parseFloat(theme.icon.size.md)}
                                     color={
                                       themeCssVariables.font.color.tertiary
                                     }
@@ -424,9 +423,7 @@ export const WorkflowEditActionFormBuilder = ({
                   <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
                       <IconPlus
-                        size={resolveThemeVariableAsNumber(
-                          themeCssVariables.icon.size.sm,
-                        )}
+                        size={parseFloat(theme.icon.size.sm)}
                       />
                       {t`Add Field`}
                     </StyledAddFieldButtonContentContainer>

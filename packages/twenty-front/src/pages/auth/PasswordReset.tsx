@@ -21,7 +21,7 @@ import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
@@ -29,10 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
 import {
@@ -89,6 +86,7 @@ const StyledMainButton = styled(MainButton)`
 `;
 
 export const PasswordReset = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
@@ -223,20 +221,14 @@ export const PasswordReset = () => {
           <StyledContentContainer>
             {!email ? (
               <SkeletonTheme
-                baseColor={resolveThemeVariable(
-                  themeCssVariables.background.quaternary,
-                )}
-                highlightColor={resolveThemeVariable(
-                  themeCssVariables.background.secondary,
-                )}
+                baseColor={theme.background.quaternary}
+                highlightColor={theme.background.secondary}
               >
                 <Skeleton
                   height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                   count={2}
                   style={{
-                    marginBottom: resolveThemeVariable(
-                      themeCssVariables.spacing[2],
-                    ),
+                    marginBottom: themeCssVariables.spacing[2],
                   }}
                 />
               </SkeletonTheme>

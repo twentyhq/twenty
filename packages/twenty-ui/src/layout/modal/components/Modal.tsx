@@ -1,12 +1,9 @@
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 import { type ModalOverlay } from '../types/ModalOverlay';
 import { type ModalPadding } from '../types/ModalPadding';
@@ -130,6 +127,7 @@ export const Modal = ({
   onBackdropMouseDown,
   modalRef: externalRef,
 }: ModalProps) => {
+  const { theme } = useContext(ThemeContext);
   const internalRef = useRef<HTMLDivElement>(null);
   const resolvedRef = externalRef ?? internalRef;
 
@@ -160,9 +158,7 @@ export const Modal = ({
             overlay={overlay}
             variants={modalAnimation}
             transition={{
-              duration: resolveThemeVariableAsNumber(
-                themeCssVariables.animation.duration.normal,
-              ),
+              duration: parseFloat(theme.animation.duration.normal),
             }}
             isMobile={isMobile}
             gap={gap}

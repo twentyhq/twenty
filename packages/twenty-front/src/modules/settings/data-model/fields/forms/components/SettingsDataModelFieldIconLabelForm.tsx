@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -22,8 +23,7 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
@@ -97,6 +97,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
+  const { theme } = useContext(ThemeContext);
   const label = watch('label');
 
   const { t } = useLingui();
@@ -210,12 +211,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                               <>
                                 <IconInfoCircle
                                   id="info-circle-id-name"
-                                  size={resolveThemeVariableAsNumber(
-                                    themeCssVariables.icon.size.md,
-                                  )}
-                                  color={resolveThemeVariable(
-                                    themeCssVariables.font.color.tertiary,
-                                  )}
+                                  size={parseFloat(theme.icon.size.md)}
+                                  color={theme.font.color.tertiary}
                                   style={{ outline: 'none' }}
                                 />
                                 <AppTooltip

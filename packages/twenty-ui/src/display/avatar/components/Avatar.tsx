@@ -1,17 +1,14 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { useAtom } from 'jotai';
+import { useContext } from 'react';
 
 import { invalidAvatarUrlsAtomV2 } from '@ui/display/avatar/components/states/invalidAvatarUrlsAtomV2';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 import { type Nullable } from 'twenty-shared/types';
@@ -87,6 +84,8 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useAtom(
     invalidAvatarUrlsAtomV2,
   );
@@ -113,18 +112,20 @@ export const Avatar = ({
   };
 
   const fixedColor = isPlaceholderFirstCharEmpty
-    ? resolveThemeVariable(themeCssVariables.font.color.tertiary)
+    ? theme.font.color.tertiary
     : (color ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
         variant: 12,
+        theme,
       }));
   const fixedBackgroundColor = isPlaceholderFirstCharEmpty
-    ? resolveThemeVariable(themeCssVariables.background.transparent.light)
+    ? theme.background.transparent.light
     : (backgroundColor ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
         variant: 4,
+        theme,
       }));
 
   const showBackgroundColor = showPlaceholder;
@@ -140,14 +141,12 @@ export const Avatar = ({
       rounded={type === 'rounded'}
       type={type}
       onClick={onClick}
-      backgroundTransparentLight={resolveThemeVariable(
-        themeCssVariables.background.transparent.light,
-      )}
+      backgroundTransparentLight={theme.background.transparent.light}
     >
       {Icon ? (
         <Icon
           color={iconColor ? iconColor : 'currentColor'}
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
+          size={parseFloat(theme.icon.size.xl)}
         />
       ) : showPlaceholder ? (
         <StyledPlaceholderChar fontWeight={500}>

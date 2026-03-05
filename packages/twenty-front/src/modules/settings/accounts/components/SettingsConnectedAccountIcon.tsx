@@ -11,14 +11,13 @@ import {
   IconMicrosoft,
   IconSend,
 } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const ImapSmtpCaldavIcon = (
   props: IconComponentProps & { account: ConnectedAccount },
 ) => {
+  const { theme } = useContext(ThemeContext);
   const { account } = props;
 
   const hasImap = isDefined(account.connectionParameters?.IMAP);
@@ -51,7 +50,7 @@ const ImapSmtpCaldavIcon = (
       stroke={props.stroke}
       color={
         props.color ||
-        resolveThemeVariable(themeCssVariables.font.color.primary)
+        theme.font.color.primary
       }
     />
   );

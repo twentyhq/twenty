@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -21,10 +22,12 @@ const StyledContainer = styled.div`
 `;
 
 export const ForbiddenFieldDisplay = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer>
       <IconLock
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+        size={parseFloat(theme.icon.size.sm)}
       />
       <Trans>Not shared</Trans>
     </StyledContainer>

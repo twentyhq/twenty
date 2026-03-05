@@ -9,10 +9,8 @@ import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThin
 import { styled } from '@linaria/react';
 import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -35,10 +33,12 @@ const StyledLoadingIcon = styled(IconDotsVertical)`
 `;
 
 const InitialLoadingIndicator = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledLoadingIconContainer>
       <StyledLoadingIcon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
+        size={parseFloat(theme.icon.size.xl)}
       />
     </StyledLoadingIconContainer>
   );

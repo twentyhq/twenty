@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { type IconComponent, IconTwentyStar } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -68,6 +69,7 @@ export const SettingsObjectFieldDataType = ({
   labelDetail,
   onClick,
 }: SettingsObjectFieldDataTypeProps) => {
+  const { theme } = useContext(ThemeContext);
   const fieldTypeConfig = getSettingsFieldTypeConfig(value);
   const Icon: IconComponent =
     IconFromProps ?? fieldTypeConfig?.Icon ?? IconTwentyStar;
@@ -82,7 +84,7 @@ export const SettingsObjectFieldDataType = ({
     >
       <StyledIconWrapper>
         <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          size={parseFloat(theme.icon.size.sm)}
         />
       </StyledIconWrapper>
       <StyledLabelContainer>

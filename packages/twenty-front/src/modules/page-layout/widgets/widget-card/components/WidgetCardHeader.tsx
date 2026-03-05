@@ -4,7 +4,7 @@ import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   themeCssVariables,
-  resolveThemeVariableAsNumber,
+  ThemeContext,
 } from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
@@ -83,6 +83,7 @@ export const WidgetCardHeader = ({
   actions,
   className,
 }: WidgetCardHeaderProps) => {
+  const { theme } = useContext(ThemeContext);
   const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
     widgetId,
@@ -122,9 +123,7 @@ export const WidgetCardHeader = ({
                 animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{
-                  duration: resolveThemeVariableAsNumber(
-                    themeCssVariables.animation.duration.fast,
-                  ),
+                  duration: parseFloat(theme.animation.duration.fast),
                   ease: 'easeInOut',
                 }}
               >

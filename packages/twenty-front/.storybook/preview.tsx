@@ -13,7 +13,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
-import { ColorSchemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 // eslint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -62,13 +62,13 @@ const preview: Preview = {
     (Story) => {
       return (
         <I18nProvider i18n={i18n}>
-          <ColorSchemeProvider colorScheme="light">
+          <ThemeProvider colorScheme="light">
             <ClickOutsideListenerContext.Provider
               value={{ excludedClickOutsideId: undefined }}
             >
               <Story />
             </ClickOutsideListenerContext.Provider>
-          </ColorSchemeProvider>
+          </ThemeProvider>
         </I18nProvider>
       );
     },

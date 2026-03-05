@@ -3,11 +3,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   background: ${({ withIconBackground }) =>
     withIconBackground ? themeCssVariables.background.primary : 'unset'};
@@ -32,6 +30,7 @@ export const CommandMenuContextRecordChipAvatars = ({
   objectMetadataItem: ObjectMetadataItem;
   record: ObjectRecord;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { recordChipData } = useRecordChipData({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,
@@ -46,7 +45,7 @@ export const CommandMenuContextRecordChipAvatars = ({
       {Icon ? (
         <Icon
           color={IconColor}
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          size={parseFloat(theme.icon.size.sm)}
         />
       ) : (
         <Avatar

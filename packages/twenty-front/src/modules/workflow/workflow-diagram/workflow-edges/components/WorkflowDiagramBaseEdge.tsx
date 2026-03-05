@@ -1,10 +1,8 @@
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { BaseEdge } from '@xyflow/react';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 type WorkflowDiagramBaseEdgeProps = Pick<
   WorkflowDiagramEdgeComponentProps,
@@ -27,6 +25,7 @@ export const WorkflowDiagramBaseEdge = ({
   markerEnd,
   path,
 }: WorkflowDiagramBaseEdgeProps) => {
+  const { theme } = useContext(ThemeContext);
   const { isEdgeSelected, isEdgeHovered } = useEdgeState();
 
   const selected = isEdgeSelected({
@@ -44,10 +43,10 @@ export const WorkflowDiagramBaseEdge = ({
   });
 
   const stroke = selected
-    ? resolveThemeVariable(themeCssVariables.color.blue)
+    ? theme.color.blue
     : isHovered
-      ? resolveThemeVariable(themeCssVariables.font.color.light)
-      : resolveThemeVariable(themeCssVariables.border.color.strong);
+      ? theme.font.color.light
+      : theme.border.color.strong;
 
   return (
     <BaseEdge

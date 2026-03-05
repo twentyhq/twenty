@@ -7,13 +7,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const RecordIndexPageHeaderIcon = ({
   objectMetadataItem,
@@ -29,6 +27,7 @@ export const RecordIndexPageHeaderIcon = ({
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem?.id ?? '' },
   );
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
 
@@ -39,7 +38,7 @@ export const RecordIndexPageHeaderIcon = ({
   if (!isNavigationMenuItemEditingEnabled) {
     return (
       <ObjectIcon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        size={parseFloat(theme.icon.size.md)}
       />
     );
   }

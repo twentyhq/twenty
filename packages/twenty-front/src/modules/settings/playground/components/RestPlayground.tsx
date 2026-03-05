@@ -9,7 +9,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   ColorSchemeContext,
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -54,6 +54,7 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
+  const { theme } = useContext(ThemeContext);
   const { colorScheme } = useContext(ColorSchemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
 
@@ -67,12 +68,8 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
       <Suspense
         fallback={
           <SkeletonTheme
-            baseColor={resolveThemeVariable(
-              themeCssVariables.background.tertiary,
-            )}
-            highlightColor={resolveThemeVariable(
-              themeCssVariables.background.transparent.lighter,
-            )}
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >
             <Skeleton width="100%" height="100%" />

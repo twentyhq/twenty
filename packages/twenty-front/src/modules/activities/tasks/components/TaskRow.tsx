@@ -13,12 +13,10 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { useContext } from 'react';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -87,6 +85,7 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
+  const { theme } = useContext(ThemeContext);
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
@@ -131,11 +130,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
           <StyledDueDate
             isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
           >
-            <IconCalendar
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-            />
+            <IconCalendar size={parseFloat(theme.icon.size.md)} />
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}

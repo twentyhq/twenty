@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useContext, useState } from 'react';
 import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui/display';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -43,6 +43,7 @@ export const TableSection = ({
   isInitiallyExpanded = true,
   title,
 }: TableSectionProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const handleToggleSection = () =>
@@ -57,17 +58,13 @@ export const TableSection = ({
         <Label>{title}</Label>
         {isExpanded ? (
           <IconChevronUp
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         ) : (
           <IconChevronDown
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         )}
       </StyledSectionHeader>

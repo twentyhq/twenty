@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
@@ -23,7 +23,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -58,6 +58,7 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const SettingsToolsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const logicFunctions = useAtomStateValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
@@ -197,12 +198,8 @@ export const SettingsToolsTable = () => {
                   tool={tool}
                   action={
                     <IconChevronRight
-                      size={resolveThemeVariableAsNumber(
-                        themeCssVariables.icon.size.md,
-                      )}
-                      stroke={resolveThemeVariableAsNumber(
-                        themeCssVariables.icon.stroke.sm,
-                      )}
+                      size={parseFloat(theme.icon.size.md)}
+                      stroke={parseFloat(theme.icon.stroke.sm)}
                     />
                   }
                   link={getToolLink(tool)}

@@ -6,15 +6,12 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
+  useContext,
 } from 'react';
 
 import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -88,6 +85,7 @@ export const MenuItem = ({
   hotKeys,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
+  const { theme } = useContext(ThemeContext);
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -131,10 +129,8 @@ export const MenuItem = ({
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (
           <RightIcon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         )}
         {RightComponent}
@@ -142,16 +138,12 @@ export const MenuItem = ({
           <StyledSubMenuIcon
             animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
             transition={{
-              duration: resolveThemeVariableAsNumber(
-                themeCssVariables.animation.duration.normal,
-              ),
+              duration: parseFloat(theme.animation.duration.normal),
             }}
           >
             <IconChevronRight
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-              color={resolveThemeVariable(themeCssVariables.font.color.light)}
+              size={parseFloat(theme.icon.size.sm)}
+              color={theme.font.color.light}
             />
           </StyledSubMenuIcon>
         )}

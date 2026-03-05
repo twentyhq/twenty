@@ -19,8 +19,9 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -36,6 +37,7 @@ type ApplicationRegistration = {
 };
 
 export const SettingsApplicationsDeveloperTab = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const navigate = useNavigate();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -108,12 +110,8 @@ export const SettingsApplicationsDeveloperTab = () => {
             }}
             RowRightComponent={() => (
               <IconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
+                size={parseFloat(theme.icon.size.md)}
+                stroke={parseFloat(theme.icon.stroke.sm)}
               />
             )}
           />

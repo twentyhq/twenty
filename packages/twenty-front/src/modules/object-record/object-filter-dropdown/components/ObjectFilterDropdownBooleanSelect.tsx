@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import {
-  resolveThemeVariable,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -35,6 +36,7 @@ const StyledIconCheckContainer = styled.div`
 `;
 
 export const ObjectFilterDropdownBooleanSelect = () => {
+  const { theme } = useContext(ThemeContext);
   const options = [true, false];
 
   const { objectFilterDropdownFilterValue } =
@@ -72,9 +74,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
               {objectFilterDropdownFilterValue === option.toString() && (
                 <StyledIconCheckContainer>
                   <IconCheck
-                    color={resolveThemeVariable(
-                      themeCssVariables.grayScale.gray11,
-                    )}
+                    color={theme.grayScale.gray11}
                     size={16}
                   />
                 </StyledIconCheckContainer>

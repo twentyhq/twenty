@@ -18,10 +18,8 @@ import { useAddLinkToNavigationMenu } from '@/command-menu/pages/navigation-menu
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CommandMenuNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
@@ -34,6 +32,7 @@ export const CommandMenuNewSidebarItemMainMenu = ({
   onSelectView,
   onSelectRecord,
 }: CommandMenuNewSidebarItemMainMenuProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
@@ -87,9 +86,7 @@ export const CommandMenuNewSidebarItemMainMenu = ({
                       <Avatar
                         placeholder="L"
                         type="rounded"
-                        backgroundColor={resolveThemeVariable(
-                          themeCssVariables.color.green4,
-                        )}
+                        backgroundColor={theme.color.green4}
                       />
                     )}
                     label={t`Record`}

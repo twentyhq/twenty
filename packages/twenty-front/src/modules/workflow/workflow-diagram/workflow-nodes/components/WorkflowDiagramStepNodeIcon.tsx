@@ -2,17 +2,15 @@ import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/ty
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 export const WorkflowDiagramStepNodeIcon = ({
   data,
 }: {
   data: WorkflowDiagramStepNodeData;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(getWorkflowNodeIconKey(data));
 
@@ -22,10 +20,8 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DATABASE_EVENT': {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.blue)}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.blue}
             />
           );
         }
@@ -34,10 +30,8 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'WEBHOOK': {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.purple)}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.purple}
             />
           );
         }
@@ -53,33 +47,25 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DRAFT_EMAIL': {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.red)}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.red}
+              stroke={parseFloat(theme.icon.stroke.sm)}
             />
           );
         }
         case 'FORM': {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.orange)}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.orange}
             />
           );
         }
         case 'AI_AGENT': {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.pink)}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.pink}
             />
           );
         }
@@ -90,24 +76,16 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'ITERATOR':
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(themeCssVariables.color.green12)}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.color.green12}
             />
           );
         default: {
           return (
             <Icon
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              color={resolveThemeVariable(
-                themeCssVariables.font.color.tertiary,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
+              size={parseFloat(theme.icon.size.md)}
+              color={theme.font.color.tertiary}
+              stroke={parseFloat(theme.icon.stroke.sm)}
             />
           );
         }

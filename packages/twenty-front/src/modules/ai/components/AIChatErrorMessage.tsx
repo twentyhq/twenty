@@ -3,10 +3,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
@@ -48,13 +46,14 @@ type AIChatErrorMessageProps = {
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
+  const { theme } = useContext(ThemeContext);
   const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
 
   return (
     <StyledErrorContainer>
       <StyledErrorIcon>
         <IconAlertCircle
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          size={parseFloat(theme.icon.size.md)}
         />
       </StyledErrorIcon>
       <StyledErrorContent>

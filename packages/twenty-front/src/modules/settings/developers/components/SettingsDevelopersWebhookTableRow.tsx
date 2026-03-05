@@ -7,8 +7,9 @@ import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
+import { useContext } from 'react';
 import {
-  resolveThemeVariableAsNumber,
+  ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
@@ -42,6 +43,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   >;
   to: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
@@ -55,10 +57,8 @@ export const SettingsDevelopersWebhookTableRow = ({
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
+          size={parseFloat(theme.icon.size.md)}
+          stroke={parseFloat(theme.icon.stroke.sm)}
         />
       </StyledIconTableCell>
     </StyledApisFieldTableRow>

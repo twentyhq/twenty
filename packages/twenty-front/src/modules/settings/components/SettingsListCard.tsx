@@ -1,14 +1,11 @@
 import { styled } from '@linaria/react';
-import { type ComponentType } from 'react';
+import { type ComponentType, useContext } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/display';
 import { Card, CardFooter } from 'twenty-ui/layout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooter = styled(CardFooter)`
@@ -74,6 +71,8 @@ export const SettingsListCard = <
   to,
   rounded,
 }: SettingsListCardProps<ListItem>) => {
+  const { theme } = useContext(ThemeContext);
+
   if (isLoading === true) return <SettingsListSkeletonCard />;
 
   return (
@@ -95,9 +94,7 @@ export const SettingsListCard = <
         <StyledFooter divider={!!items.length}>
           <StyledButton onClick={onFooterButtonClick}>
             <IconPlus
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
+              size={parseFloat(theme.icon.size.md)}
             />
             {footerButtonLabel}
           </StyledButton>

@@ -2,12 +2,9 @@ import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/con
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { renderSliceHighlight } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderSliceHighlight';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useContext, useEffect, useState } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartHoverLayerEffectProps = {
   hoveredSlice: BarChartSlice | null;
@@ -26,6 +23,8 @@ export const BarChartHoverLayerEffect = ({
   layout,
   canvasRef,
 }: BarChartHoverLayerEffectProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const [dpr] = useState<number>(
     () =>
       (typeof window !== 'undefined' ? window.devicePixelRatio : undefined) ||
@@ -33,9 +32,7 @@ export const BarChartHoverLayerEffect = ({
   );
 
   const isVertical = layout === BarChartLayout.VERTICAL;
-  const highlightColor = resolveThemeVariable(
-    themeCssVariables.background.transparent.medium,
-  );
+  const highlightColor = theme.background.transparent.medium;
 
   useEffect(() => {
     const canvas = canvasRef.current;

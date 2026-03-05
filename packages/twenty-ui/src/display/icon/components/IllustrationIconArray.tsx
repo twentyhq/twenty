@@ -1,22 +1,20 @@
+import { useContext } from 'react';
+
 import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import {
-  resolveThemeVariable,
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconArray = (props: IllustrationIconArrayProps) => {
-  const size =
-    props.size ?? resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg);
+  const { theme } = useContext(ThemeContext);
+  const size = props.size ?? parseFloat(theme.icon.size.lg);
   return (
     <IllustrationIconWrapper>
       <IllustrationIconArrayRaw
-        fill={resolveThemeVariable(themeCssVariables.accent.accent3)}
-        color={resolveThemeVariable(themeCssVariables.accent.accent8)}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
         height={size}
         width={size}
       />

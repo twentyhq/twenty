@@ -18,22 +18,20 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
-import {
-  resolveThemeVariableAsNumber,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const CommandMenuWorkflowStepInfo = ({
   commandMenuPageInstanceId,
 }: {
   commandMenuPageInstanceId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
@@ -173,10 +171,8 @@ export const CommandMenuWorkflowStepInfo = ({
       icon={
         headerIcon ? (
           <Icon
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
+            size={parseFloat(theme.icon.size.md)}
+            stroke={parseFloat(theme.icon.stroke.sm)}
           />
         ) : undefined
       }
