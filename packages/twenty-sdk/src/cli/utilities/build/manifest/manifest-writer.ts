@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { ensureDir, writeJSON } from '@/cli/utilities/file/fs-utils';
+import { ensureDir, writeJson } from '@/cli/utilities/file/fs-utils';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 export const writeManifestToOutput = async (
@@ -11,7 +11,7 @@ export const writeManifestToOutput = async (
   await ensureDir(outputDir);
 
   const manifestPath = path.join(outputDir, 'manifest.json');
-  await writeJSON(manifestPath, manifest);
+  await writeJson(manifestPath, manifest);
 
   return manifestPath;
 };

@@ -5,4 +5,5 @@ export const kebabCase = (input: string): string =>
     .replace(/([a-zA-Z])(\d)/g, '$1-$2')
     .replace(/(\d)([a-zA-Z])/g, '$1-$2')
     .replace(/[\s_]+/g, '-')
+    .replace(/[^a-zA-Z0-9-]+/g, '-')
     .toLowerCase();

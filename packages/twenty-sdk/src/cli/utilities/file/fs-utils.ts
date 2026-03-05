@@ -44,9 +44,16 @@ export const emptyDir = async (dirPath: string): Promise<void> => {
 
   try {
     entries = await readdir(dirPath);
-  } catch {
-    await mkdir(dirPath, { recursive: true });
-    return;
+  } catch (error: unknown) {
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      error.code === 'ENOENT'
+    ) {
+      await mkdir(dirPath, { recursive: true });
+      return;
+    }
+    throw error;
   }
 
   await Promise.all(
@@ -82,7 +89,7 @@ export const readJson = async <T = unknown>(filePath: string): Promise<T> => {
   return JSON.parse(content) as T;
 };
 
-export const writeJSON = async (
+export const writeJson = async (
   filePath: string,
   data: unknown,
 ): Promise<void> => {

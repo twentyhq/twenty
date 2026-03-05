@@ -29,7 +29,7 @@ import { readFile, writeFile, mkdir, rm, cp } from 'node:fs/promises';
 import { createWriteStream, existsSync } from 'node:fs';
 
 // ✅ Import only custom helpers from fs-utils (no native re-exports)
-import { pathExists, ensureDir, emptyDir, copy, move, remove, readJson, writeJSON, ensureFile } from '@/cli/utilities/file/fs-utils';
+import { pathExists, ensureDir, emptyDir, copy, move, remove, readJson, writeJson, ensureFile } from '@/cli/utilities/file/fs-utils';
 
 // ❌ Don't use fs-extra (CJS-only, breaks ESM bundle)
 import * as fs from 'fs-extra';

@@ -88,7 +88,7 @@ const loadModule = async ({
   try {
     await writeFile(tempFile, code);
 
-    return require(tempFile) as Record<string, unknown>;
+    return appRequire(tempFile) as Record<string, unknown>;
   } finally {
     await remove(tempDir);
   }
