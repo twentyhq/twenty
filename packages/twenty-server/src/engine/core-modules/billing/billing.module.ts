@@ -27,6 +27,9 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
+import { BillingBudgetGuardService } from 'src/engine/core-modules/billing/services/billing-budget-guard.service';
+import { BillingEventWriterService } from 'src/engine/core-modules/billing/services/billing-event-writer.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
@@ -38,6 +41,7 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -52,6 +56,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AiBillingModule,
     AiModelsModule,
     WorkspaceDomainsModule,
+    ClickHouseModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,
       BillingSubscriptionItemEntity,
@@ -84,6 +89,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
+    BillingEventWriterService,
+    BillingBudgetGuardService,
+    BillingAnalyticsService,
     BillingPriceService,
     BillingCreditRolloverService,
     MeteredCreditService,
@@ -96,6 +104,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
+    BillingEventWriterService,
+    BillingBudgetGuardService,
+    BillingAnalyticsService,
     BillingCreditRolloverService,
     MeteredCreditService,
   ],

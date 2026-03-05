@@ -84,11 +84,17 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         authContext: executionContext.authContext,
       });
 
+    const userWorkspaceId =
+      executionContext.authContext.type === 'user'
+        ? executionContext.authContext.userWorkspaceId
+        : undefined;
+
     await this.aiBillingService.calculateAndBillUsage(
       agent?.modelId ?? DEFAULT_SMART_MODEL,
       { usage, cacheCreationTokens },
       workspaceId,
       agent?.id || null,
+      userWorkspaceId,
     );
 
     return {

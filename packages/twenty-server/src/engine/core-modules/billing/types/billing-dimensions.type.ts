@@ -3,7 +3,8 @@
 export type BillingExecutionType =
   | 'workflow_execution'
   | 'code_execution'
-  | 'ai_token';
+  | 'ai_token'
+  | 'app_invocation';
 
 export type BillingDimensions = {
   execution_type: BillingExecutionType;

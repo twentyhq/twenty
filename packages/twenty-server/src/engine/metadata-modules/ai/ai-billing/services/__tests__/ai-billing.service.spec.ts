@@ -332,6 +332,7 @@ describe('AIBillingService', () => {
         { usage: mockTokenUsage },
         'workspace-1',
         'agent-id-123',
+        'user-workspace-456',
       );
 
       expect(
@@ -347,6 +348,35 @@ describe('AIBillingService', () => {
               resource_id: 'agent-id-123',
               execution_context_1: 'gpt-4o',
             },
+            userWorkspaceId: 'user-workspace-456',
+          },
+        ],
+        'workspace-1',
+      );
+    });
+
+    it('should emit billing event without userWorkspaceId when not provided', () => {
+      service.calculateAndBillUsage(
+        'gpt-4o',
+        { usage: mockTokenUsage },
+        'workspace-1',
+        'agent-id-123',
+      );
+
+      expect(
+        mockWorkspaceEventEmitter.emitCustomBatchEvent,
+      ).toHaveBeenCalledWith(
+        BILLING_FEATURE_USED,
+        [
+          {
+            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
+            value: 7500,
+            dimensions: {
+              execution_type: 'ai_token',
+              resource_id: 'agent-id-123',
+              execution_context_1: 'gpt-4o',
+            },
+            userWorkspaceId: undefined,
           },
         ],
         'workspace-1',
