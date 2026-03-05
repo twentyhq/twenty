@@ -10,8 +10,8 @@ export const addressSchema = z.object({
   addressState: z.string().nullable(),
   addressPostcode: z.string().nullable(),
   addressCountry: z.string().nullable(),
-  addressLat: z.number().nullable(),
-  addressLng: z.number().nullable(),
+  addressLat: z.coerce.number().nullable(),
+  addressLng: z.coerce.number().nullable(),
 });
 
 export const isFieldAddressValue = (
