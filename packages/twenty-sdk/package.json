@@ -79,6 +79,7 @@
     "dotenv": "^16.4.0",
     "esbuild": "^0.25.0",
     "fast-glob": "^3.3.0",
+    "form-data": "^4.0.5",
     "fs-extra": "^11.2.0",
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",

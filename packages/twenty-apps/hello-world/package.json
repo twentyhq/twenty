@@ -1,6 +1,6 @@
 {
-  "name": "hello-world",
-  "version": "0.1.0",
+  "name": "@twentyhq/hello-world",
+  "version": "0.2.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
