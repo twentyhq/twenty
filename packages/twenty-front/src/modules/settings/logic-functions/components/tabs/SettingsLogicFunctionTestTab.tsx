@@ -36,7 +36,11 @@ export const SettingsLogicFunctionTestTab = ({
     });
 
   const onChange = (value: string) => {
-    updateLogicFunctionInput(JSON.parse(value));
+    try {
+      updateLogicFunctionInput(JSON.parse(value));
+    } catch {
+      // ignore invalid JSON while user is still typing
+    }
   };
 
   return (

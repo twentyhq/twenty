@@ -41,7 +41,7 @@ export const LogicFunctionTestInputInitEffect = ({
 
     const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
 
-    if (!isDefined(defaultInput) || typeof defaultInput !== 'object') {
+    if (!isDefined(defaultInput)) {
       return;
     }
 
