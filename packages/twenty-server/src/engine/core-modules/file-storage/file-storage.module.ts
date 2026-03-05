@@ -17,7 +17,7 @@ export class FileStorageModule {
         TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
       ],
       providers: [FileStorageDriverFactory, FileStorageService],
-      exports: [FileStorageService],
+      exports: [FileStorageDriverFactory, FileStorageService],
     };
   }
 }

@@ -1,6 +1,10 @@
 import process from 'process';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 import request from 'supertest';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -18,6 +22,7 @@ describe('Event Logs (integration)', () => {
       clickhouse_settings: {
         allow_experimental_json_type: 1,
       },
+      log: { level: ClickHouseLogLevel.OFF },
     });
 
     await seedTestData();

@@ -13,6 +13,10 @@ export enum ApplicationExceptionCode {
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
   INVALID_INPUT = 'INVALID_INPUT',
+  SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
+  PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
+  TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
+  UPGRADE_FAILED = 'UPGRADE_FAILED',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -35,6 +39,14 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`You do not have permission to perform this action.`;
     case ApplicationExceptionCode.INVALID_INPUT:
       return msg`Invalid input provided.`;
+    case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
+      return msg`Source channel mismatch.`;
+    case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
+      return msg`Unable to retrieve the application package.`;
+    case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
+      return msg`Failed to extract tarball.`;
+    case ApplicationExceptionCode.UPGRADE_FAILED:
+      return msg`Application upgrade failed.`;
     default:
       assertUnreachable(code);
   }
