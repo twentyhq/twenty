@@ -44,12 +44,35 @@ export class ApplicationRegistrationService {
     });
   }
 
+  async findAll(): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOneById(
     id: string,
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { id, ownerWorkspaceId },
+    });
+
+    if (!registration) {
+      throw new ApplicationRegistrationException(
+        `Application registration with id ${id} not found`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    return registration;
+  }
+
+  async findOneByIdGlobal(
+    id: string,
+  ): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: { id },
     });
 
     if (!registration) {

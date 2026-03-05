@@ -1,13 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
-
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-catalog-index.constant';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
-import { getAdminWorkspaceId } from 'src/engine/core-modules/application/application-marketplace/utils/get-admin-workspace-id.util';
 
 @Injectable()
 export class MarketplaceCatalogSyncService {
@@ -16,27 +12,16 @@ export class MarketplaceCatalogSyncService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceService: MarketplaceService,
-    private readonly dataSource: DataSource,
   ) {}
 
   async syncCatalog(): Promise<void> {
-    const adminWorkspaceId = await getAdminWorkspaceId(this.dataSource);
-
-    if (!isDefined(adminWorkspaceId)) {
-      this.logger.warn(
-        'No admin workspace found. Skipping marketplace catalog sync.',
-      );
-
-      return;
-    }
-
-    await this.syncCuratedApps(adminWorkspaceId);
-    await this.syncNpmApps(adminWorkspaceId);
+    await this.syncCuratedApps();
+    await this.syncNpmApps();
 
     this.logger.log('Marketplace catalog sync completed');
   }
 
-  private async syncCuratedApps(ownerWorkspaceId: string): Promise<void> {
+  private async syncCuratedApps(): Promise<void> {
     for (const entry of MARKETPLACE_CATALOG_INDEX) {
       try {
         await this.applicationRegistrationService.upsertFromCatalog({
@@ -54,7 +39,7 @@ export class MarketplaceCatalogSyncService {
           isListed: true,
           isFeatured: entry.isFeatured,
           marketplaceDisplayData: entry.richDisplayData,
-          ownerWorkspaceId,
+          ownerWorkspaceId: null,
         });
       } catch (error) {
         this.logger.error(
@@ -64,7 +49,7 @@ export class MarketplaceCatalogSyncService {
     }
   }
 
-  private async syncNpmApps(ownerWorkspaceId: string): Promise<void> {
+  private async syncNpmApps(): Promise<void> {
     const npmApps = await this.marketplaceService.fetchAppsFromNpmRegistry();
 
     const curatedIdentifiers = new Set(
@@ -91,7 +76,7 @@ export class MarketplaceCatalogSyncService {
           isListed: true,
           isFeatured: false,
           marketplaceDisplayData: null,
-          ownerWorkspaceId,
+          ownerWorkspaceId: null,
         });
       } catch (error) {
         this.logger.error(

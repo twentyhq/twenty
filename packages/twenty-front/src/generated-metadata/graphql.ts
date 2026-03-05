@@ -363,6 +363,7 @@ export type ApplicationRegistration = {
   oAuthClientId: Scalars['String'];
   oAuthRedirectUris: Array<Scalars['String']>;
   oAuthScopes: Array<Scalars['String']>;
+  ownerWorkspaceId?: Maybe<Scalars['UUID']>;
   sourcePackage?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
   termsUrl?: Maybe<Scalars['String']>;
@@ -3951,6 +3952,7 @@ export type Query = {
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findManyAgents: Array<Agent>;
+  findAllApplicationRegistrations: Array<ApplicationRegistration>;
   findManyApplicationRegistrations: Array<ApplicationRegistration>;
   findManyApplications: Array<Application>;
   findManyLogicFunctions: Array<LogicFunction>;
@@ -6575,7 +6577,11 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
-export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string };
+export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
+
+export type FindAllApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: Array<ApplicationRegistrationFragmentFragment> };
 
 export type DeleteApplicationRegistrationMutationVariables = Exact<{
   id: Scalars['String'];
@@ -6637,14 +6643,14 @@ export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', 
 export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string }> };
+export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<ApplicationRegistrationFragmentFragment> };
 
 export type FindOneApplicationRegistrationQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string } };
+export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: ApplicationRegistrationFragmentFragment };
 
 export type UninstallApplicationMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
@@ -7991,6 +7997,8 @@ export const ApplicationRegistrationFragmentFragmentDoc = gql`
   websiteUrl
   termsUrl
   isListed
+  isFeatured
+  ownerWorkspaceId
   createdAt
   updatedAt
 }
@@ -13773,6 +13781,24 @@ export function useFindOneApplicationRegistrationLazyQuery(baseOptions?: Apollo.
 export type FindOneApplicationRegistrationQueryHookResult = ReturnType<typeof useFindOneApplicationRegistrationQuery>;
 export type FindOneApplicationRegistrationLazyQueryHookResult = ReturnType<typeof useFindOneApplicationRegistrationLazyQuery>;
 export type FindOneApplicationRegistrationQueryResult = Apollo.QueryResult<FindOneApplicationRegistrationQuery, FindOneApplicationRegistrationQueryVariables>;
+export const FindAllApplicationRegistrationsDocument = gql`
+    query FindAllApplicationRegistrations {
+  findAllApplicationRegistrations {
+    ...ApplicationRegistrationFragment
+  }
+}
+    ${ApplicationRegistrationFragmentFragmentDoc}`;
+export function useFindAllApplicationRegistrationsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
+      }
+export function useFindAllApplicationRegistrationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
+        }
+export type FindAllApplicationRegistrationsQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsQuery>;
+export type FindAllApplicationRegistrationsLazyQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsLazyQuery>;
+export type FindAllApplicationRegistrationsQueryResult = Apollo.QueryResult<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;
 export const UninstallApplicationDocument = gql`
     mutation UninstallApplication($universalIdentifier: String!) {
   uninstallApplication(universalIdentifier: $universalIdentifier)

@@ -96,15 +96,15 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
 
-  // Represents ownership (who can edit), not visibility scoping.
-  // Marketplace registrations are readable by all workspaces but owned by the
-  // admin workspace when no developer has explicitly claimed them.
-  @Column({ name: 'workspaceId', nullable: false, type: 'uuid' })
-  ownerWorkspaceId: string;
+  // Ownership (who can edit). Null for catalog-synced marketplace apps that
+  // have no explicit owner — these are managed via the Admin Panel.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @Column({ name: 'workspaceId', nullable: true, type: 'uuid' })
+  ownerWorkspaceId: string | null;
 
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
+  workspace: Relation<WorkspaceEntity> | null;
 
   @Field(() => ApplicationRegistrationSourceType)
   @Column({

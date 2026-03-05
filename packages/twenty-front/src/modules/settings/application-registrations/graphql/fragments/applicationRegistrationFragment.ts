@@ -17,6 +17,8 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     websiteUrl
     termsUrl
     isListed
+    isFeatured
+    ownerWorkspaceId
     createdAt
     updatedAt
   }

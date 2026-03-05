@@ -9,9 +9,27 @@ export class AddIsListedToAppRegistration1772732588833
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" ADD "isListed" boolean NOT NULL DEFAULT false`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ALTER COLUMN "workspaceId" DROP NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT IF EXISTS "FK_applicationRegistration_workspaceId"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_applicationRegistration_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE SET NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT IF EXISTS "FK_applicationRegistration_workspaceId"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_applicationRegistration_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ALTER COLUMN "workspaceId" SET NOT NULL`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "isListed"`,
     );
