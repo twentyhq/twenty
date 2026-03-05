@@ -1539,6 +1539,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
       const filterValue = recordFilter.value.replace(/[^0-9]/g, '');
 
+      if (!isNonEmptyString(filterValue)) {
+        return;
+      }
+
       switch (subFieldName) {
         case 'additionalPhones': {
           switch (recordFilter.operand) {
