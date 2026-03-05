@@ -1,4 +1,5 @@
 export { CoreApiClient } from './generated/core/index';
+export { CoreSchema } from './generated/core/schema';
 export { MetadataApiClient } from './generated/metadata/index';
-export * as CoreSchema from './generated/core/schema';
-export * as MetadataSchema from './generated/metadata/schema';
+export { MetadataSchema } from './generated/metadata/schema';
+

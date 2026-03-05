@@ -1,2 +1,2 @@
 // Stub — overwritten by `npx nx run twenty-sdk:generate-metadata-client`
-export {};
+export type MetadataSchema = {};
