@@ -6,4 +6,5 @@ export type AgentManifest = SyncableEntityOptions & {
   icon?: string;
   description?: string;
   prompt: string;
+  modelId?: string;
 };
