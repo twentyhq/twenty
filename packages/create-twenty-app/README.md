@@ -43,7 +43,7 @@ yarn twenty auth:login
 yarn twenty entity:add
 
 # Start dev mode: watches, builds, and syncs local changes to your workspace
-# (also auto-generates typed API clients — CoreApiClient and MetadataApiClient — in node_modules/twenty-sdk/generated)
+# (also auto-generates typed CoreApiClient in node_modules/twenty-sdk/generated — MetadataApiClient ships pre-built with the SDK)
 yarn twenty app:dev
 
 # Watch your application's function logs

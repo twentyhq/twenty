@@ -1,6 +1,6 @@
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
 import { appGenerateClient, appUninstall } from 'twenty-sdk/cli';
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = process.cwd();
@@ -37,7 +37,9 @@ describe('App installation', () => {
 
     if (!generateResult.success) {
       throw new Error(
-        `Client generation failed: ${generateResult.error?.message ?? 'Unknown error'}`,
+        `Client generation failed: ${
+          generateResult.error?.message ?? 'Unknown error'
+        }`,
       );
     }
 
@@ -53,7 +55,9 @@ describe('App installation', () => {
 
     if (!uninstallResult.success) {
       console.warn(
-        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+        `App uninstall failed: ${
+          uninstallResult.error?.message ?? 'Unknown error'
+        }`,
       );
     }
   });
@@ -84,8 +88,7 @@ describe('App installation', () => {
 
     const installedApp = result.findManyApplications.find(
       (application: { universalIdentifier: string }) =>
-        application.universalIdentifier ===
-        APPLICATION_UNIVERSAL_IDENTIFIER,
+        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
     expect(installedApp).toBeDefined();

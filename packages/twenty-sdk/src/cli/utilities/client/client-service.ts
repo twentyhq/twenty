@@ -85,10 +85,7 @@ export class ClientService {
     const outputPath = this.resolveGeneratedPath(appPath);
     const tempPath = `${outputPath}.tmp`;
 
-    const [coreSchemaResponse, metadataSchemaResponse] = await Promise.all([
-      this.apiService.getSchema({ authToken }),
-      this.apiService.getMetadataSchema({ authToken }),
-    ]);
+    const coreSchemaResponse = await this.apiService.getSchema({ authToken });
 
     if (!coreSchemaResponse.success) {
       throw new Error(
@@ -96,30 +93,14 @@ export class ClientService {
       );
     }
 
-    if (!metadataSchemaResponse.success) {
-      throw new Error(
-        `Failed to introspect metadata schema: ${JSON.stringify(metadataSchemaResponse.error)}`,
-      );
-    }
-
     await ensureDir(tempPath);
     await emptyDir(tempPath);
 
-    await Promise.all([
-      generate({
-        schema: coreSchemaResponse.data,
-        output: join(tempPath, 'core'),
-        scalarTypes: COMMON_SCALAR_TYPES,
-      }),
-      generate({
-        schema: metadataSchemaResponse.data,
-        output: join(tempPath, 'metadata'),
-        scalarTypes: {
-          ...COMMON_SCALAR_TYPES,
-          Upload: 'File',
-        },
-      }),
-    ]);
+    await generate({
+      schema: coreSchemaResponse.data,
+      output: join(tempPath, 'core'),
+      scalarTypes: COMMON_SCALAR_TYPES,
+    });
 
     await this.injectClientWrapper(join(tempPath, 'core'), {
       apiClientName: 'CoreApiClient',
@@ -127,16 +108,43 @@ export class ClientService {
       includeUploadFile: true,
     });
 
-    await this.injectClientWrapper(join(tempPath, 'metadata'), {
-      apiClientName: 'MetadataApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
-      includeUploadFile: true,
-    });
-
     await this.writeBarrelIndex(tempPath);
 
     await remove(outputPath);
     await move(tempPath, outputPath);
+  }
+
+  async generateMetadataClient({
+    outputPath,
+  }: {
+    outputPath: string;
+  }): Promise<void> {
+    const metadataSchemaResponse =
+      await this.apiService.getMetadataSchema();
+
+    if (!metadataSchemaResponse.success) {
+      throw new Error(
+        `Failed to introspect metadata schema: ${JSON.stringify(metadataSchemaResponse.error)}`,
+      );
+    }
+
+    await ensureDir(outputPath);
+    await emptyDir(outputPath);
+
+    await generate({
+      schema: metadataSchemaResponse.data,
+      output: outputPath,
+      scalarTypes: {
+        ...COMMON_SCALAR_TYPES,
+        Upload: 'File',
+      },
+    });
+
+    await this.injectClientWrapper(outputPath, {
+      apiClientName: 'MetadataApiClient',
+      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
+      includeUploadFile: true,
+    });
   }
 
   async ensureGeneratedClientStub({
@@ -151,15 +159,10 @@ export class ClientService {
     }
 
     await ensureDir(join(outputPath, 'core'));
-    await ensureDir(join(outputPath, 'metadata'));
 
     await writeFile(
       join(outputPath, 'core', 'index.ts'),
       'export class CoreApiClient {}\n',
-    );
-    await writeFile(
-      join(outputPath, 'metadata', 'index.ts'),
-      'export class MetadataApiClient {}\n',
     );
     await this.writeBarrelIndex(outputPath);
   }
@@ -170,9 +173,9 @@ export class ClientService {
 
   private async writeBarrelIndex(outputDir: string): Promise<void> {
     const barrelContent = `export { CoreApiClient } from './core/index';
-export { MetadataApiClient } from './metadata/index';
+export { MetadataApiClient } from 'twenty-sdk/metadata';
 export * as CoreSchema from './core/schema';
-export * as MetadataSchema from './metadata/schema';
+export * as MetadataSchema from 'twenty-sdk/metadata';
 `;
 
     await writeFile(join(outputDir, 'index.ts'), barrelContent);

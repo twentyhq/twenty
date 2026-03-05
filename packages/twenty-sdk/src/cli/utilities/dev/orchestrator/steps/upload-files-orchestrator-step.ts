@@ -17,8 +17,6 @@ import { FileFolder } from 'twenty-shared/types';
 const API_CLIENT_FILES = [
   'core/types.ts',
   'core/schema.ts',
-  'metadata/types.ts',
-  'metadata/schema.ts',
 ];
 
 export type UploadFilesOrchestratorStepOutput = {

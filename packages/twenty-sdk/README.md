@@ -14,7 +14,7 @@
 
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
-- Two auto‑generated typed GraphQL clients: `CoreApiClient` (workspace data) and `MetadataApiClient` (workspace configuration & file uploads)
+- Typed GraphQL clients: `CoreApiClient` (auto-generated per app for workspace data) and `MetadataApiClient` (pre-built with the SDK for workspace configuration & file uploads)
 - Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 

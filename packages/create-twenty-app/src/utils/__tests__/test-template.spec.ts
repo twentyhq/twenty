@@ -50,7 +50,7 @@ describe('scaffoldIntegrationTest', () => {
         "import { appGenerateClient, appUninstall } from 'twenty-sdk/cli'",
       );
       expect(content).toContain(
-        "import { MetadataApiClient } from 'twenty-sdk/generated'",
+        "import { MetadataApiClient } from 'twenty-sdk/clients'",
       );
       expect(content).toContain(
         "import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config'",

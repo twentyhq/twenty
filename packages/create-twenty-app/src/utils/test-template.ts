@@ -128,8 +128,8 @@ const createIntegrationTest = async ({
   fileName: string;
 }) => {
   const content = `import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
-import { appGenerateClient, appUninstall } from 'twenty-sdk/cli';
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { appBuild, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = process.cwd();

@@ -45,7 +45,12 @@
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
-    "./generated": {
+    "./metadata": {
+      "types": "./dist/metadata-client/index.d.ts",
+      "import": "./dist/metadata.mjs",
+      "require": "./dist/metadata.cjs"
+    },
+    "./clients": {
       "types": "./generated/index.ts",
       "import": "./generated/index.ts",
       "require": "./generated/index.ts"
@@ -54,11 +59,6 @@
       "types": "./generated/core/index.ts",
       "import": "./generated/core/index.ts",
       "require": "./generated/core/index.ts"
-    },
-    "./generated/metadata": {
-      "types": "./generated/metadata/index.ts",
-      "import": "./generated/metadata/index.ts",
-      "require": "./generated/metadata/index.ts"
     }
   },
   "license": "AGPL-3.0",
@@ -127,14 +127,14 @@
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
       ],
-      "generated": [
+      "metadata": [
+        "dist/metadata-client/index.d.ts"
+      ],
+      "clients": [
         "generated/index.ts"
       ],
       "generated/core": [
         "generated/core/index.ts"
-      ],
-      "generated/metadata": [
-        "generated/metadata/index.ts"
       ]
     }
   }

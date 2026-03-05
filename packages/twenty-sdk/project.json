@@ -8,9 +8,17 @@
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "^production"],
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/dist"],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate-metadata-client"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -18,6 +26,21 @@
           "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
         ],
         "parallel": false
+      }
+    },
+    "generate-metadata-client": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/metadata-client/**/*",
+        "{projectRoot}/src/cli/utilities/client/twenty-client-template.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/src/metadata-client/generated/*"
+      ],
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "tsx scripts/metadata-client/generate-metadata-client.ts"
       }
     },
     "dev": {
