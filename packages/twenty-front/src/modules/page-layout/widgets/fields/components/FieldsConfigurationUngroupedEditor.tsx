@@ -7,10 +7,10 @@ import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
-  IconAdjustmentsHorizontal,
   IconEye,
   IconEyeOff,
   IconNewSection,
+  IconPlaylistAdd,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 
@@ -90,7 +90,7 @@ export const FieldsConfigurationUngroupedEditor = ({
             {provided.placeholder}
 
             <MenuItemDraggable
-              LeftIcon={IconAdjustmentsHorizontal}
+              LeftIcon={IconPlaylistAdd}
               text={t`New fields`}
               contextualText={t`Default position/visibility for fields created in the future`}
               gripMode="never"

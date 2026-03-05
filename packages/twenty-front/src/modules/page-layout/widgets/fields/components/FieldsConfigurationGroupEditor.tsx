@@ -17,13 +17,13 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import {
-  IconAdjustmentsHorizontal,
   IconEye,
   IconEyeOff,
   IconNewSection,
+  IconPlaylistAdd,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
@@ -234,7 +234,7 @@ export const FieldsConfigurationGroupEditor = ({
                 isInsideScrollableContainer
                 itemComponent={
                   <MenuItemDraggable
-                    LeftIcon={IconAdjustmentsHorizontal}
+                    LeftIcon={IconPlaylistAdd}
                     text={t`New fields`}
                     contextualText={t`Default position/visibility for fields created in the future`}
                     gripMode="onHover"
