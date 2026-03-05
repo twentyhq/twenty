@@ -143,73 +143,91 @@ export type Mutation = {
   updateWorkflowVersionStep: WorkflowAction;
 };
 
+
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
 };
+
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
 };
 
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
+
 
 export type MutationCreateWorkflowVersionEdgeArgs = {
   input: CreateWorkflowVersionEdgeInput;
 };
 
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
+
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
 };
 
+
 export type MutationDeleteWorkflowVersionEdgeArgs = {
   input: CreateWorkflowVersionEdgeInput;
 };
+
 
 export type MutationDeleteWorkflowVersionStepArgs = {
   input: DeleteWorkflowVersionStepInput;
 };
 
+
 export type MutationDismissReconnectAccountBannerArgs = {
   connectedAccountId: Scalars['UUID'];
 };
+
 
 export type MutationDuplicateWorkflowArgs = {
   input: DuplicateWorkflowInput;
 };
 
+
 export type MutationDuplicateWorkflowVersionStepArgs = {
   input: DuplicateWorkflowVersionStepInput;
 };
+
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
 
+
 export type MutationStopWorkflowRunArgs = {
   workflowRunId: Scalars['UUID'];
 };
+
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
 };
 
+
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
 };
+
 
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
 
+
 export type MutationUpdateWorkflowVersionPositionsArgs = {
   input: UpdateWorkflowVersionPositionsInput;
 };
+
 
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
@@ -236,11 +254,13 @@ export type Query = {
   search: SearchResultConnection;
 };
 
+
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 };
+
 
 export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
   opportunityId: Scalars['UUID'];
@@ -248,11 +268,13 @@ export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
   pageSize: Scalars['Int'];
 };
 
+
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
+
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
@@ -260,17 +282,20 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
+
 export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
   opportunityId: Scalars['UUID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 };
 
+
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
+
 
 export type QuerySearchArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -554,6 +579,7 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+
 export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromOpportunityIdQueryVariables = Exact<{
@@ -562,6 +588,7 @@ export type GetTimelineCalendarEventsFromOpportunityIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+
 export type GetTimelineCalendarEventsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromOpportunityId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
@@ -569,6 +596,7 @@ export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 }>;
+
 
 export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
@@ -584,6 +612,7 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+
 export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromOpportunityIdQueryVariables = Exact<{
@@ -592,6 +621,7 @@ export type GetTimelineThreadsFromOpportunityIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+
 export type GetTimelineThreadsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineThreadsFromOpportunityId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
@@ -599,6 +629,7 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 }>;
+
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
@@ -611,6 +642,7 @@ export type SearchQueryVariables = Exact<{
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
+
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
@@ -619,11 +651,13 @@ export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
 }>;
 
+
 export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
 
 export type ComputeStepOutputSchemaMutationVariables = Exact<{
   input: ComputeStepOutputSchemaInput;
 }>;
+
 
 export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
 
@@ -631,11 +665,13 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
   input: CreateDraftFromWorkflowVersionInput;
 }>;
 
+
 export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
 
 export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
   input: CreateWorkflowVersionEdgeInput;
 }>;
+
 
 export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
@@ -643,11 +679,13 @@ export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
 }>;
 
+
 export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
 }>;
+
 
 export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
 
@@ -655,11 +693,13 @@ export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
   input: CreateWorkflowVersionEdgeInput;
 }>;
 
+
 export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeleteWorkflowVersionStepMutationVariables = Exact<{
   input: DeleteWorkflowVersionStepInput;
 }>;
+
 
 export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
@@ -667,11 +707,13 @@ export type DuplicateWorkflowMutationVariables = Exact<{
   input: DuplicateWorkflowInput;
 }>;
 
+
 export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: any } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
 }>;
+
 
 export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
@@ -679,11 +721,13 @@ export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
 }>;
 
+
 export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
 
 export type StopWorkflowRunMutationVariables = Exact<{
   workflowRunId: Scalars['UUID'];
 }>;
+
 
 export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
 
@@ -691,11 +735,13 @@ export type UpdateWorkflowRunStepMutationVariables = Exact<{
   input: UpdateWorkflowRunStepInput;
 }>;
 
+
 export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type UpdateWorkflowVersionStepMutationVariables = Exact<{
   input: UpdateWorkflowVersionStepInput;
 }>;
+
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
@@ -703,17 +749,20 @@ export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
 }>;
 
+
 export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
 
 export type TestHttpRequestMutationVariables = Exact<{
   input: TestHttpRequestInput;
 }>;
 
+
 export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequest', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
 
 export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
   input: UpdateWorkflowVersionPositionsInput;
 }>;
+
 
 export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
 

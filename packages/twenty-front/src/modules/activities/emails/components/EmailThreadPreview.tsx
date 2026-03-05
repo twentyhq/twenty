@@ -138,14 +138,10 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                 placeholder={finalDisplayedName}
                 type="rounded"
                 color={
-                  isCountIcon
-                    ? themeCssVariables.grayScale.gray11
-                    : undefined
+                  isCountIcon ? themeCssVariables.grayScale.gray11 : undefined
                 }
                 backgroundColor={
-                  isCountIcon
-                    ? themeCssVariables.grayScale.gray2
-                    : undefined
+                  isCountIcon ? themeCssVariables.grayScale.gray2 : undefined
                 }
               />
             </StyledAvatarWrapper>
