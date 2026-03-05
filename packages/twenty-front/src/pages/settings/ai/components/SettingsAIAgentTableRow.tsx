@@ -17,21 +17,7 @@ export type SettingsAIAgentTableRowProps = {
   link?: string;
 };
 
-export const StyledAIAgentTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 120px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
-`;
+export const AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 120px 36px';
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
@@ -47,8 +33,17 @@ export const SettingsAIAgentTableRow = ({
   const Icon = getIcon(agent.icon || 'IconRobot');
 
   return (
-    <StyledAIAgentTableRow key={agent.id} to={link}>
-      <StyledNameTableCell>
+    <TableRow
+      gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      key={agent.id}
+      to={link}
+    >
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+        minWidth="0"
+        overflow="hidden"
+      >
         <StyledIconContainer>
           <Icon
             size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
@@ -58,11 +53,11 @@ export const SettingsAIAgentTableRow = ({
           />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={agent.label} />
-      </StyledNameTableCell>
+      </TableCell>
       <TableCell>
         <SettingsItemTypeTag item={agent} />
       </TableCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
-    </StyledAIAgentTableRow>
+      <TableCell align="right">{action}</TableCell>
+    </TableRow>
   );
 };

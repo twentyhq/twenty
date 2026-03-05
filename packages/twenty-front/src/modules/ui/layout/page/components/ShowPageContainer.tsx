@@ -19,7 +19,7 @@ const StyledInnerContainer = styled.div`
   height: 100%;
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapperContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border-radius: ${themeCssVariables.border.radius.md};
 `;
@@ -40,11 +40,13 @@ export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
 
   return isMobile ? (
     <StyledOuterContainer style={mobileStyle}>
-      <StyledScrollWrapper componentInstanceId="scroll-wrapper-show-page-container">
-        <StyledInnerContainer style={mobileStyle}>
-          {children}
-        </StyledInnerContainer>
-      </StyledScrollWrapper>
+      <StyledScrollWrapperContainer>
+        <ScrollWrapper componentInstanceId="scroll-wrapper-show-page-container">
+          <StyledInnerContainer style={mobileStyle}>
+            {children}
+          </StyledInnerContainer>
+        </ScrollWrapper>
+      </StyledScrollWrapperContainer>
     </StyledOuterContainer>
   ) : (
     <StyledOuterContainer>

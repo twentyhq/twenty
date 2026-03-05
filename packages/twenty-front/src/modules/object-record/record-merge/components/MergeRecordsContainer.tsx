@@ -27,9 +27,11 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledTabList = styled(TabList)`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[2]};
+const StyledTabListContainer = styled.div`
+  & > div {
+    background-color: ${themeCssVariables.background.secondary};
+    padding-left: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledContentContainer = styled.div`
@@ -65,11 +67,13 @@ export const MergeRecordsContainer = ({
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: instanceId }}
           >
-            <StyledTabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={instanceId}
-            />
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId={instanceId}
+              />
+            </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
           <StyledContentContainer>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (

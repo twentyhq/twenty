@@ -21,13 +21,17 @@ type SettingsDataModelFieldPreviewWidgetProps = {
   fullWidth?: boolean;
 };
 
-const StyledCard = styled(Card)`
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.primary};
+const StyledCardContainer = styled.div`
+  > div {
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
-const StyledCardContent = styled(CardContent)`
-  padding: ${themeCssVariables.spacing[2]};
+const StyledCardContentContainer = styled.div`
+  > div {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsDataModelFieldPreviewWidget = ({
@@ -43,27 +47,31 @@ export const SettingsDataModelFieldPreviewWidget = ({
   });
 
   return (
-    <StyledCard className={className} fullWidth>
-      <StyledCardContent>
-        <SettingsDataModelObjectPreview
-          objectMetadataItems={[objectMetadataItem]}
-          pluralizeLabel={pluralizeLabel}
-        />
-        <SettingsDataModelFieldPreview
-          objectNameSingular={objectNameSingular}
-          fieldMetadataItem={{
-            label: fieldMetadataItem.label,
-            icon: fieldMetadataItem.icon,
-            defaultValue: fieldMetadataItem.defaultValue,
-            options: fieldMetadataItem.options,
-            settings: fieldMetadataItem.settings,
-            type: fieldMetadataItem.type,
-            name: computeMetadataNameFromLabel(fieldMetadataItem.label),
-          }}
-          shrink={shrink}
-          withFieldLabel={withFieldLabel}
-        />
-      </StyledCardContent>
-    </StyledCard>
+    <StyledCardContainer className={className}>
+      <Card fullWidth>
+        <StyledCardContentContainer>
+          <CardContent>
+            <SettingsDataModelObjectPreview
+              objectMetadataItems={[objectMetadataItem]}
+              pluralizeLabel={pluralizeLabel}
+            />
+            <SettingsDataModelFieldPreview
+              objectNameSingular={objectNameSingular}
+              fieldMetadataItem={{
+                label: fieldMetadataItem.label,
+                icon: fieldMetadataItem.icon,
+                defaultValue: fieldMetadataItem.defaultValue,
+                options: fieldMetadataItem.options,
+                settings: fieldMetadataItem.settings,
+                type: fieldMetadataItem.type,
+                name: computeMetadataNameFromLabel(fieldMetadataItem.label),
+              }}
+              shrink={shrink}
+              withFieldLabel={withFieldLabel}
+            />
+          </CardContent>
+        </StyledCardContentContainer>
+      </Card>
+    </StyledCardContainer>
   );
 };

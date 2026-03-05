@@ -13,12 +13,16 @@ type SettingsDataModelPreviewFormCardProps = {
   disabled?: boolean;
 };
 
-const StyledPreviewContainer = styled(CardContent)`
-  background-color: ${themeCssVariables.background.transparent.lighter};
+const StyledPreviewContainer = styled.div`
+  > div {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
 `;
 
-const StyledFormContainer = styled(CardContent)`
-  padding: 0;
+const StyledFormContainer = styled.div`
+  > div {
+    padding: 0;
+  }
 `;
 
 export const SettingsDataModelPreviewFormCard = ({
@@ -27,12 +31,18 @@ export const SettingsDataModelPreviewFormCard = ({
   form,
 }: SettingsDataModelPreviewFormCardProps) => (
   <Card className={className} fullWidth rounded>
-    <StyledPreviewContainer divider={!!form}>
-      <StyledFormCardTitle>
-        <Trans>Preview</Trans>
-      </StyledFormCardTitle>
-      {preview}
+    <StyledPreviewContainer>
+      <CardContent divider={!!form}>
+        <StyledFormCardTitle>
+          <Trans>Preview</Trans>
+        </StyledFormCardTitle>
+        {preview}
+      </CardContent>
     </StyledPreviewContainer>
-    {!!form && <StyledFormContainer>{form}</StyledFormContainer>}
+    {!!form && (
+      <StyledFormContainer>
+        <CardContent>{form}</CardContent>
+      </StyledFormContainer>
+    )}
   </Card>
 );

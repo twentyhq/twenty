@@ -8,25 +8,11 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/display';
 import {
-  MOBILE_VIEWPORT,
   resolveThemeVariable,
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
-
-export const StyledApisFieldTableRow = styled(TableRow)`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
-  }
-`;
-
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
 
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
@@ -52,20 +38,32 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
-    <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
-      <StyledTruncatedCell
+    <TableRow gridAutoColumns={gridColumns} to={to}>
+      <TableCell
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
         color={resolveThemeVariable(themeCssVariables.font.color.primary)}
       >
         <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
-      <StyledTruncatedCell
+      <TableCell
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
         color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
       >
         <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
-      <StyledTruncatedCell
+      <TableCell
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
         color={
           isExpired(apiKey.expiresAt || null)
             ? resolveThemeVariable(themeCssVariables.font.color.danger)
@@ -73,7 +71,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
         }
       >
         <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
       <TableCell align="right">
         <IconChevronRight
@@ -81,6 +79,6 @@ export const SettingsApiKeysFieldItemTableRow = ({
           color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
         />
       </TableCell>
-    </StyledApisFieldTableRow>
+    </TableRow>
   );
 };

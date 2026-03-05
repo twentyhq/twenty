@@ -30,9 +30,8 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledIcon = styled(IconChevronDown)`
-  height: 16px;
-  width: 16px;
+const StyledIconContainer = styled.span`
+  display: flex;
 `;
 
 export const FieldWidgetShowMoreButton = ({
@@ -41,7 +40,9 @@ export const FieldWidgetShowMoreButton = ({
 }: FieldWidgetShowMoreButtonProps) => {
   return (
     <StyledButton data-testid="field-widget-show-more-button" onClick={onClick}>
-      <StyledIcon />
+      <StyledIconContainer>
+        <IconChevronDown size={16} />
+      </StyledIconContainer>
       {t`More (${remainingCount})`}
     </StyledButton>
   );

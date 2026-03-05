@@ -15,18 +15,25 @@ type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-const StyledTopCardContent = styled(CardContent)`
-  background-color: ${themeCssVariables.background.transparent.lighter};
+const StyledTopCardContentContainer = styled.div`
+  > div {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
 `;
 
-const StyledObjectSummaryCard = styled(Card)`
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.primary};
+const StyledObjectSummaryCardContainer = styled.div`
   max-width: 480px;
+
+  > div {
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
-const StyledObjectSummaryCardContent = styled(CardContent)`
-  padding: ${themeCssVariables.spacing[2]};
+const StyledObjectSummaryCardContentContainer = styled.div`
+  > div {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsDataModelObjectSettingsFormCard = ({
@@ -42,26 +49,32 @@ export const SettingsDataModelObjectSettingsFormCard = ({
 
   return (
     <Card fullWidth>
-      <StyledTopCardContent divider>
-        <SettingsDataModelCardTitle>
-          <Trans>Preview</Trans>
-        </SettingsDataModelCardTitle>
-        {labelIdentifierFieldMetadataItem ? (
-          <SettingsDataModelFieldPreviewWidget
-            objectNameSingular={objectMetadataItem.nameSingular}
-            fieldMetadataItem={labelIdentifierFieldMetadataItem}
-            withFieldLabel={false}
-          />
-        ) : (
-          <StyledObjectSummaryCard>
-            <StyledObjectSummaryCardContent>
-              <SettingsDataModelObjectPreview
-                objectMetadataItems={[objectMetadataItem]}
-              />
-            </StyledObjectSummaryCardContent>
-          </StyledObjectSummaryCard>
-        )}
-      </StyledTopCardContent>
+      <StyledTopCardContentContainer>
+        <CardContent divider>
+          <SettingsDataModelCardTitle>
+            <Trans>Preview</Trans>
+          </SettingsDataModelCardTitle>
+          {labelIdentifierFieldMetadataItem ? (
+            <SettingsDataModelFieldPreviewWidget
+              objectNameSingular={objectMetadataItem.nameSingular}
+              fieldMetadataItem={labelIdentifierFieldMetadataItem}
+              withFieldLabel={false}
+            />
+          ) : (
+            <StyledObjectSummaryCardContainer>
+              <Card>
+                <StyledObjectSummaryCardContentContainer>
+                  <CardContent>
+                    <SettingsDataModelObjectPreview
+                      objectMetadataItems={[objectMetadataItem]}
+                    />
+                  </CardContent>
+                </StyledObjectSummaryCardContentContainer>
+              </Card>
+            </StyledObjectSummaryCardContainer>
+          )}
+        </CardContent>
+      </StyledTopCardContentContainer>
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}

@@ -26,10 +26,12 @@ interface MatchColumnToFieldSelectProps {
   placeholder?: string;
 }
 
-const StyledMenuItem = styled(MenuItem)`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledMenuItemWrapper = styled.div`
+  > div {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.sm};
+  }
 `;
 export const MatchColumnToFieldSelect = ({
   onChange,
@@ -118,12 +120,14 @@ export const MatchColumnToFieldSelect = ({
       dropdownId={dropdownId}
       dropdownPlacement="bottom-start"
       clickableComponent={
-        <StyledMenuItem
-          LeftIcon={value?.Icon}
-          text={value?.label ?? placeholder ?? ''}
-          accent={value?.label ? 'default' : 'placeholder'}
-          RightIcon={IconChevronDown}
-        />
+        <StyledMenuItemWrapper>
+          <MenuItem
+            LeftIcon={value?.Icon}
+            text={value?.label ?? placeholder ?? ''}
+            accent={value?.label ? 'default' : 'placeholder'}
+            RightIcon={IconChevronDown}
+          />
+        </StyledMenuItemWrapper>
       }
       dropdownComponents={
         shouldShowNestedField ? (

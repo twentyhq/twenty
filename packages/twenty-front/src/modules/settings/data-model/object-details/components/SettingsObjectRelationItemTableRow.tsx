@@ -28,14 +28,8 @@ type SettingsObjectRelationItemTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const StyledObjectRelationTableRow = styled(TableRow)`
-  grid-template-columns: minmax(0, 1fr) 148px 148px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
+export const OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
   display: flex;
@@ -66,12 +60,7 @@ const StyledInactiveLabel = styled.span`
   }
 `;
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -82,16 +71,18 @@ const StyledRelationType = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLink = styled(Link)`
-  color: ${themeCssVariables.font.color.primary};
-  text-decoration: underline;
-  text-decoration-color: ${themeCssVariables.border.color.strong};
-  text-underline-offset: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const StyledLinkContainer = styled.span`
+  > a {
+    color: ${themeCssVariables.font.color.primary};
+    text-decoration: underline;
+    text-decoration-color: ${themeCssVariables.border.color.strong};
+    text-underline-offset: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-  &:hover {
+  > a:hover {
     color: ${themeCssVariables.color.blue};
     text-decoration-color: ${themeCssVariables.color.blue};
   }
@@ -159,9 +150,14 @@ export const SettingsObjectRelationItemTableRow = ({
       : fieldMetadataItem.label;
 
   return (
-    // eslint-disable-next-line twenty/no-navigate-prefer-link
-    <StyledObjectRelationTableRow onClick={navigateToFieldEdit}>
-      <StyledNameTableCell>
+    <TableRow
+      gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      to={linkToNavigate}
+    >
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+      >
         {!!Icon && (
           <Icon
             style={{
@@ -177,15 +173,17 @@ export const SettingsObjectRelationItemTableRow = ({
         )}
         <StyledNameContainer>
           {isRelatedObjectLinkable ? (
-            <StyledLink
-              to={getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural: relationObjectMetadataItem.namePlural,
-              })}
-              onClick={(event) => event.stopPropagation()}
-              title={targetObjectLabel}
-            >
-              {targetObjectLabel}
-            </StyledLink>
+            <StyledLinkContainer>
+              <Link
+                to={getSettingsPath(SettingsPath.ObjectDetail, {
+                  objectNamePlural: relationObjectMetadataItem.namePlural,
+                })}
+                onClick={(event) => event.stopPropagation()}
+                title={targetObjectLabel}
+              >
+                {targetObjectLabel}
+              </Link>
+            </StyledLinkContainer>
           ) : (
             <StyledNameLabel title={targetObjectLabel}>
               {targetObjectLabel}
@@ -195,7 +193,7 @@ export const SettingsObjectRelationItemTableRow = ({
             <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
           )}
         </StyledNameContainer>
-      </StyledNameTableCell>
+      </TableCell>
 
       <TableCell>
         <SettingsItemTypeTag
@@ -223,17 +221,22 @@ export const SettingsObjectRelationItemTableRow = ({
         </StyledRelationType>
       </TableCell>
 
-      <StyledIconTableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+      >
         {fieldMetadataItem.isActive ? (
           <UndecoratedLink to={linkToNavigate}>
-            <StyledIconChevronRight
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
-              )}
-              stroke={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.stroke.sm,
-              )}
-            />
+            <StyledIconChevronRightContainer>
+              <IconChevronRight
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
+              />
+            </StyledIconChevronRightContainer>
           </UndecoratedLink>
         ) : (
           <SettingsObjectFieldInactiveActionDropdown
@@ -252,7 +255,7 @@ export const SettingsObjectRelationItemTableRow = ({
             }
           />
         )}
-      </StyledIconTableCell>
-    </StyledObjectRelationTableRow>
+      </TableCell>
+    </TableRow>
   );
 };

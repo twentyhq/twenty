@@ -13,11 +13,13 @@ type BubbleMenuIconButtonProps = {
   isActive?: boolean;
 };
 
-const StyledBubbleMenuIconButton = styled(FloatingIconButton)`
-  border: none;
-  border-radius: ${themeCssVariables.spacing[1.5]};
-  width: ${themeCssVariables.spacing[6]};
-  height: ${themeCssVariables.spacing[6]};
+const StyledBubbleMenuIconButtonContainer = styled.div`
+  & > button {
+    border: none;
+    border-radius: ${themeCssVariables.spacing[1.5]};
+    width: ${themeCssVariables.spacing[6]};
+    height: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 export const BubbleMenuIconButton = ({
@@ -29,17 +31,18 @@ export const BubbleMenuIconButton = ({
   isActive,
 }: BubbleMenuIconButtonProps) => {
   return (
-    <StyledBubbleMenuIconButton
-      className={className}
-      Icon={Icon}
-      disabled={disabled}
-      focus={focus}
-      onClick={onClick}
-      isActive={isActive}
-      applyShadow={false}
-      applyBlur={false}
-      size="medium"
-      position="standalone"
-    />
+    <StyledBubbleMenuIconButtonContainer className={className}>
+      <FloatingIconButton
+        Icon={Icon}
+        disabled={disabled}
+        focus={focus}
+        onClick={onClick}
+        isActive={isActive}
+        applyShadow={false}
+        applyBlur={false}
+        size="medium"
+        position="standalone"
+      />
+    </StyledBubbleMenuIconButtonContainer>
   );
 };

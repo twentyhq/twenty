@@ -44,9 +44,11 @@ const StyledOTPContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledQRCode = styled(QRCode)`
-  height: 137px;
-  width: 137px;
+const StyledQRCodeSvgContainer = styled.div`
+  > svg {
+    height: 137px;
+    width: 137px;
+  }
 `;
 
 const StyledCopySetupKeyText = styled.div`
@@ -152,7 +154,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 ) : (
                   <>
                     <StyledQRCodeWrapper>
-                      <StyledQRCode value={qrCode} />
+                      <StyledQRCodeSvgContainer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSvgContainer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}

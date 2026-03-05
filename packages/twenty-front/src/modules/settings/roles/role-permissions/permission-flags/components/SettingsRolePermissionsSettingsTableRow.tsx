@@ -13,30 +13,12 @@ import {
 } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
-const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
-  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
-`;
-
 const StyledName = styled.span`
   color: ${themeCssVariables.font.color.primary};
 `;
 
-const StyledDescription = styled(StyledName)`
+const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
-`;
-
-const StyledPermissionCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconContainer = styled.div`
@@ -114,13 +96,13 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   };
 
   return (
-    <StyledTableRow
+    <TableRow
       key={permission.key}
       gridAutoColumns="3fr 4fr 24px"
       onClick={handleRowClick}
-      isDisabled={isDisabled}
+      cursor={isDisabled ? 'default' : 'pointer'}
     >
-      <StyledPermissionCell>
+      <TableCell gap={themeCssVariables.spacing[2]} style={{ flex: 1 }}>
         <StyledIconContainer>
           <permission.Icon
             size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
@@ -131,17 +113,21 @@ export const SettingsRolePermissionsSettingsTableRow = ({
           />
         </StyledIconContainer>
         <StyledName>{permission.name}</StyledName>
-      </StyledPermissionCell>
-      <StyledPermissionCell>
+      </TableCell>
+      <TableCell gap={themeCssVariables.spacing[2]} style={{ flex: 1 }}>
         <StyledDescription>{permission.description}</StyledDescription>
-      </StyledPermissionCell>
-      <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
+      </TableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Checkbox
           checked={isChecked}
           disabled={isDisabled}
           onChange={(event) => handleChange(event.target.checked)}
         />
-      </StyledCheckboxCell>
-    </StyledTableRow>
+      </TableCell>
+    </TableRow>
   );
 };

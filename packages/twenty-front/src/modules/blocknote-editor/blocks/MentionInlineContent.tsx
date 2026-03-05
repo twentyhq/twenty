@@ -11,16 +11,20 @@ import { Chip, ChipVariant } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledRecordChip = styled(RecordChip)`
-  height: auto;
-  margin: 0;
-  padding: 0 ${themeCssVariables.spacing[1]};
+const StyledRecordChipContainer = styled.span`
+  > * {
+    height: auto;
+    margin: 0;
+    padding: 0 ${themeCssVariables.spacing[1]};
+  }
 `;
 
-const StyledInlineMentionRecordChip = styled(MentionRecordChip)`
-  height: auto;
-  margin: 0;
-  padding: 0 ${themeCssVariables.spacing[1]};
+const StyledMentionRecordChipContainer = styled.span`
+  > * {
+    height: auto;
+    margin: 0;
+    padding: 0 ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const LegacyMentionRenderer = ({
@@ -69,11 +73,13 @@ const LegacyMentionRenderer = ({
   }
 
   return (
-    <StyledRecordChip
-      objectNameSingular={objectMetadataItem.nameSingular}
-      record={record}
-      forceDisableClick={false}
-    />
+    <StyledRecordChipContainer>
+      <RecordChip
+        objectNameSingular={objectMetadataItem.nameSingular}
+        record={record}
+        forceDisableClick={false}
+      />
+    </StyledRecordChipContainer>
   );
 };
 
@@ -112,12 +118,14 @@ export const MentionInlineContent = createReactInlineContentSpec(
       // New notes store objectNameSingular + label + imageUrl directly
       if (isNonEmptyString(objectNameSingular) && isNonEmptyString(label)) {
         return (
-          <StyledInlineMentionRecordChip
-            recordId={recordId}
-            objectNameSingular={objectNameSingular}
-            label={label}
-            imageUrl={imageUrl}
-          />
+          <StyledMentionRecordChipContainer>
+            <MentionRecordChip
+              recordId={recordId}
+              objectNameSingular={objectNameSingular}
+              label={label}
+              imageUrl={imageUrl}
+            />
+          </StyledMentionRecordChipContainer>
         );
       }
 

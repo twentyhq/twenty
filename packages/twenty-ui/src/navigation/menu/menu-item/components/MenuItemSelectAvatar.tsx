@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
 import {
+  StyledMenuItemBase,
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLabelLight,
@@ -13,7 +14,7 @@ import {
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from '@ui/theme-constants';
-import { StyledMenuItemSelect } from './MenuItemSelect';
+import { StyledMenuItemSelectWrapper } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
   avatar?: ReactNode;
@@ -49,37 +50,39 @@ export const MenuItemSelectAvatar = ({
   testId,
 }: MenuItemSelectAvatarProps) => {
   return (
-    <StyledMenuItemSelect
-      onClick={onClick}
-      className={className}
-      disabled={disabled}
-      focused={focused}
-      data-testid={testId}
-      role="option"
-      aria-selected={selected}
-      aria-disabled={disabled}
-    >
-      <StyledMenuItemLeftContent>
-        {avatar}
-        <StyledTextContainer>
-          <StyledMenuItemLabel>
-            <OverflowingTextWithTooltip text={text} />
-          </StyledMenuItemLabel>
-          {contextualText && (
-            <>
-              <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
-              <StyledMenuItemLabelLight>
-                <OverflowingTextWithTooltip text={contextualText} />
-              </StyledMenuItemLabelLight>
-            </>
-          )}
-        </StyledTextContainer>
-      </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        />
-      )}
-    </StyledMenuItemSelect>
+    <StyledMenuItemSelectWrapper disabled={disabled} focused={focused}>
+      <StyledMenuItemBase
+        onClick={onClick}
+        className={className}
+        disabled={disabled}
+        focused={focused}
+        data-testid={testId}
+        role="option"
+        aria-selected={selected}
+        aria-disabled={disabled}
+      >
+        <StyledMenuItemLeftContent>
+          {avatar}
+          <StyledTextContainer>
+            <StyledMenuItemLabel>
+              <OverflowingTextWithTooltip text={text} />
+            </StyledMenuItemLabel>
+            {contextualText && (
+              <>
+                <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
+                <StyledMenuItemLabelLight>
+                  <OverflowingTextWithTooltip text={contextualText} />
+                </StyledMenuItemLabelLight>
+              </>
+            )}
+          </StyledTextContainer>
+        </StyledMenuItemLeftContent>
+        {selected && (
+          <StyledMenuItemIconCheck
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
+        )}
+      </StyledMenuItemBase>
+    </StyledMenuItemSelectWrapper>
   );
 };

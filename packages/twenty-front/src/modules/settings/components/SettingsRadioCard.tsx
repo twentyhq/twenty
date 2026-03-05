@@ -8,22 +8,25 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledRadioCardContent = styled(CardContent)`
-  display: flex;
-  align-items: center;
-  padding: ${themeCssVariables.spacing[2]};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledRadioCardContentContainer = styled.div`
   flex-grow: 1;
-  gap: ${themeCssVariables.spacing[2]};
-  cursor: pointer;
 
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
+  > div {
+    display: flex;
+    align-items: center;
+    padding: ${themeCssVariables.spacing[2]};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    gap: ${themeCssVariables.spacing[2]};
+    cursor: pointer;
+
+    &:hover {
+      background: ${themeCssVariables.background.transparent.lighter};
+    }
   }
 `;
 
-const StyledRadio = styled(Radio)`
+const StyledRadioContainer = styled.div`
   margin-left: auto;
   padding: ${themeCssVariables.spacing[1]};
 `;
@@ -60,18 +63,22 @@ export const SettingsRadioCard = ({
   const onClick = () => handleSelect(value);
 
   return (
-    <StyledRadioCardContent tabIndex={0} onClick={onClick}>
-      {Icon && (
-        <Icon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
-          color={resolveThemeVariable(themeCssVariables.color.gray10)}
-        />
-      )}
-      <span>
-        {title && <StyledTitle>{title}</StyledTitle>}
-        {description && <StyledDescription>{description}</StyledDescription>}
-      </span>
-      <StyledRadio value={value} checked={isSelected} />
-    </StyledRadioCardContent>
+    <StyledRadioCardContentContainer>
+      <CardContent tabIndex={0} onClick={onClick}>
+        {Icon && (
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
+            color={resolveThemeVariable(themeCssVariables.color.gray10)}
+          />
+        )}
+        <span>
+          {title && <StyledTitle>{title}</StyledTitle>}
+          {description && <StyledDescription>{description}</StyledDescription>}
+        </span>
+        <StyledRadioContainer>
+          <Radio value={value} checked={isSelected} />
+        </StyledRadioContainer>
+      </CardContent>
+    </StyledRadioCardContentContainer>
   );
 };

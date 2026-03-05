@@ -2,6 +2,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
+
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
 import {
@@ -14,19 +15,6 @@ import { type ConfigVariable } from '~/generated-metadata/graphql';
 type SettingsAdminConfigVariablesRowProps = {
   variable: ConfigVariable;
 };
-
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
-
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
-  }
-`;
 
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
@@ -49,26 +37,37 @@ export const SettingsAdminConfigVariablesRow = ({
           : variable.value;
 
   return (
-    <StyledTableRow
+    <TableRow
       gridAutoColumns="5fr 3fr 1fr"
       to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
         variableName: variable.name,
       })}
+      hoverBackgroundColor={themeCssVariables.background.transparent.light}
     >
-      <StyledTruncatedCell
+      <TableCell
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
         color={resolveThemeVariable(themeCssVariables.font.color.primary)}
       >
         <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
-      <StyledTruncatedCell align="right">
+      </TableCell>
+      <TableCell
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
+        align="right"
+      >
         <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
       <TableCell align="right">
         <IconChevronRight
           size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
           color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
         />
       </TableCell>
-    </StyledTableRow>
+    </TableRow>
   );
 };

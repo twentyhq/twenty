@@ -28,8 +28,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
-const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
-  font-weight: ${themeCssVariables.font.weight.regular};
+const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
+  > div {
+    font-weight: ${themeCssVariables.font.weight.regular};
+  }
 `;
 
 export const ViewPickerListContent = () => {
@@ -198,13 +200,15 @@ export const ViewPickerListContent = () => {
         </>
       )}
       <DropdownMenuSeparator />
-      <StyledBoldDropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          onClick={handleAddViewButtonClick}
-          LeftIcon={IconPlus}
-          text={t`Add view`}
-        />
-      </StyledBoldDropdownMenuItemsContainer>
+      <StyledBoldDropdownMenuItemsContainerWrapper>
+        <DropdownMenuItemsContainer scrollable={false}>
+          <MenuItem
+            onClick={handleAddViewButtonClick}
+            LeftIcon={IconPlus}
+            text={t`Add view`}
+          />
+        </DropdownMenuItemsContainer>
+      </StyledBoldDropdownMenuItemsContainerWrapper>
     </DropdownContent>
   );
 };

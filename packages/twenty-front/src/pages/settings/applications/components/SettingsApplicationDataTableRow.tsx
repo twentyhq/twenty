@@ -1,9 +1,5 @@
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
-import {
-  StyledActionTableCell,
-  StyledNameTableCell,
-} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -28,10 +24,6 @@ const StyledFieldDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
 `;
 
-const StyledFieldNameTableCell = styled(StyledNameTableCell)`
-  color: ${themeCssVariables.font.color.secondary};
-`;
-
 export const SettingsApplicationDataTableRow = ({
   row,
   isExpanded,
@@ -53,7 +45,10 @@ export const SettingsApplicationDataTableRow = ({
         onClick={hasFields ? onToggle : undefined}
         to={hasFields ? undefined : row.link}
       >
-        <StyledNameTableCell>
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
           {isDefined(Icon) && (
             <Icon
               size={resolveThemeVariableAsNumber(
@@ -65,12 +60,15 @@ export const SettingsApplicationDataTableRow = ({
             />
           )}
           {row.labelPlural}
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsItemTypeTag item={row.tagItem} />
         </TableCell>
         <TableCell align="right">{row.fieldsCount}</TableCell>
-        <StyledActionTableCell>
+        <TableCell
+          align="center"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        >
           {hasFields && isExpanded ? (
             <IconChevronDown
               size={resolveThemeVariableAsNumber(
@@ -96,7 +94,7 @@ export const SettingsApplicationDataTableRow = ({
               )}
             />
           )}
-        </StyledActionTableCell>
+        </TableCell>
       </TableRow>
       {hasFields && isExpanded && (
         <>
@@ -117,7 +115,10 @@ export const SettingsApplicationDataTableRow = ({
               key={field.key}
               gridAutoColumns={FIELD_SUB_ROW_GRID_COLUMNS}
             >
-              <StyledFieldNameTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.secondary}
+                gap={themeCssVariables.spacing[2]}
+              >
                 {isDefined(FieldIcon) && (
                   <FieldIcon
                     size={resolveThemeVariableAsNumber(
@@ -129,7 +130,7 @@ export const SettingsApplicationDataTableRow = ({
                   />
                 )}
                 {field.label}
-              </StyledFieldNameTableCell>
+              </TableCell>
               <TableCell>
                 <SettingsObjectFieldDataType
                   value={field.type as SettingsFieldType}

@@ -40,9 +40,11 @@ const StyledTrendIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledH1Title = styled(H1Title)`
-  font-size: ${themeCssVariables.font.size.xxl};
-  margin: 0;
+const StyledH1TitleContainer = styled.div`
+  > * {
+    font-size: ${themeCssVariables.font.size.xxl};
+    margin: 0;
+  }
 `;
 
 export const GraphWidgetAggregateChart = ({
@@ -59,10 +61,9 @@ export const GraphWidgetAggregateChart = ({
 
   return (
     <StyledContainer>
-      <StyledH1Title
-        title={displayValue}
-        fontColor={H1TitleFontColor.Primary}
-      />
+      <StyledH1TitleContainer>
+        <H1Title title={displayValue} fontColor={H1TitleFontColor.Primary} />
+      </StyledH1TitleContainer>
       {isDefined(trendPercentage) && (
         <StyledTrendIconContainer>
           <StyledTrendPercentageValue>

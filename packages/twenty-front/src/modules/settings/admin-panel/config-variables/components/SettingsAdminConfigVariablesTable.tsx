@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ConfigVariable } from '~/generated-metadata/graphql';
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -26,14 +26,16 @@ export const SettingsAdminConfigVariablesTable = ({
         <TableHeader align="right">{t`Value`}</TableHeader>
         <TableHeader align="right"></TableHeader>
       </TableRow>
-      <StyledTableBody>
-        {variables.map((variable) => (
-          <SettingsAdminConfigVariablesRow
-            key={variable.name}
-            variable={variable}
-          />
-        ))}
-      </StyledTableBody>
+      <StyledTableBodyContainer>
+        <TableBody>
+          {variables.map((variable) => (
+            <SettingsAdminConfigVariablesRow
+              key={variable.name}
+              variable={variable}
+            />
+          ))}
+        </TableBody>
+      </StyledTableBodyContainer>
     </Table>
   );
 };

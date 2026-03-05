@@ -42,11 +42,11 @@ const StyledTabsAndDashboardContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledPageLayoutTabList = styled(PageLayoutTabList)`
+const StyledPageLayoutTabListContainer = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapperContainer = styled.div`
   flex: 1;
 `;
 
@@ -130,27 +130,31 @@ export const PageLayoutRendererContent = () => {
           }
         />
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
-          <StyledPageLayoutTabList
-            tabs={sortedTabs}
-            behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
-            componentInstanceId={tabListInstanceId}
-            onAddTab={handleAddTab}
-            isReorderEnabled={canEnableTabEditing}
-            onReorder={canEnableTabEditing ? reorderTabs : undefined}
-            pageLayoutType={currentPageLayout.type}
-          />
+          <StyledPageLayoutTabListContainer>
+            <PageLayoutTabList
+              tabs={sortedTabs}
+              behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
+              componentInstanceId={tabListInstanceId}
+              onAddTab={handleAddTab}
+              isReorderEnabled={canEnableTabEditing}
+              onReorder={canEnableTabEditing ? reorderTabs : undefined}
+              pageLayoutType={currentPageLayout.type}
+            />
+          </StyledPageLayoutTabListContainer>
         )}
 
-        <StyledScrollWrapper
-          componentInstanceId={getScrollWrapperInstanceIdFromPageLayoutId(
-            currentPageLayout.id,
-          )}
-          defaultEnableXScroll={false}
-        >
-          {isDefined(activeTabId) && (
-            <PageLayoutMainContent tabId={activeTabId} />
-          )}
-        </StyledScrollWrapper>
+        <StyledScrollWrapperContainer>
+          <ScrollWrapper
+            componentInstanceId={getScrollWrapperInstanceIdFromPageLayoutId(
+              currentPageLayout.id,
+            )}
+            defaultEnableXScroll={false}
+          >
+            {isDefined(activeTabId) && (
+              <PageLayoutMainContent tabId={activeTabId} />
+            )}
+          </ScrollWrapper>
+        </StyledScrollWrapperContainer>
       </StyledTabsAndDashboardContainer>
     </StyledContainer>
   );

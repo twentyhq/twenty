@@ -7,7 +7,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { Avatar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAvatar = styled(Avatar)`
+const StyledAvatarContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[1]};
 `;
 
@@ -67,12 +67,14 @@ export const ParticipantChip = ({
         />
       ) : (
         <StyledChip>
-          <StyledAvatar
-            avatarUrl={avatarUrl}
-            type="rounded"
-            placeholder={displayName}
-            size="sm"
-          />
+          <StyledAvatarContainer>
+            <Avatar
+              avatarUrl={avatarUrl}
+              type="rounded"
+              placeholder={displayName}
+              size="sm"
+            />
+          </StyledAvatarContainer>
           <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
         </StyledChip>
       )}

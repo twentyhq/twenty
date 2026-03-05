@@ -21,14 +21,18 @@ export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   pluralizeLabel?: boolean;
 };
 
-const StyledCard = styled(Card)`
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.primary};
+const StyledCardContainer = styled.div`
   margin: auto;
+  > div {
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
-const StyledCardContent = styled(CardContent)`
-  padding: ${themeCssVariables.spacing[2]};
+const StyledCardContentContainer = styled.div`
+  > div {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsDataModelRelationFieldPreviewSubWidget = ({
@@ -49,21 +53,25 @@ export const SettingsDataModelRelationFieldPreviewSubWidget = ({
     .filter(isDefined);
 
   return (
-    <StyledCard className={className} fullWidth>
-      <StyledCardContent>
-        <SettingsDataModelObjectPreview
-          objectMetadataItems={targetObjectMetadataItems}
-          pluralizeLabel={pluralizeLabel}
-        />
-        <SettingsDataModelRelationFieldPreview
-          fieldMetadataItem={fieldMetadataItem}
-          relationTargetObjectNameSingular={
-            fieldPreviewTargetObjectNameSingular
-          }
-          shrink={shrink}
-          withFieldLabel={withFieldLabel}
-        />
-      </StyledCardContent>
-    </StyledCard>
+    <StyledCardContainer className={className}>
+      <Card fullWidth>
+        <StyledCardContentContainer>
+          <CardContent>
+            <SettingsDataModelObjectPreview
+              objectMetadataItems={targetObjectMetadataItems}
+              pluralizeLabel={pluralizeLabel}
+            />
+            <SettingsDataModelRelationFieldPreview
+              fieldMetadataItem={fieldMetadataItem}
+              relationTargetObjectNameSingular={
+                fieldPreviewTargetObjectNameSingular
+              }
+              shrink={shrink}
+              withFieldLabel={withFieldLabel}
+            />
+          </CardContent>
+        </StyledCardContentContainer>
+      </Card>
+    </StyledCardContainer>
   );
 };

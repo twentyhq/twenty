@@ -16,10 +16,12 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledButton = styled(Button)`
-  padding: ${themeCssVariables.spacing['0.5']};
-  min-width: unset;
-  height: auto;
+const StyledButtonContainer = styled.div`
+  & > button {
+    padding: ${themeCssVariables.spacing['0.5']};
+    min-width: unset;
+    height: auto;
+  }
 `;
 
 type RecordCalendarAddNewProps = {
@@ -70,21 +72,23 @@ export const RecordCalendarAddNew = ({
   }
 
   return (
-    <StyledButton
-      onClick={async () => {
-        await createNewIndexRecord({
-          [calendarFieldMetadataItem.name]: cardDate
-            .toZonedDateTime(userTimezone)
-            .toInstant()
-            .toString(),
-        });
-      }}
-      variant="tertiary"
-      Icon={() => (
-        <IconPlus
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-        />
-      )}
-    />
+    <StyledButtonContainer>
+      <Button
+        onClick={async () => {
+          await createNewIndexRecord({
+            [calendarFieldMetadataItem.name]: cardDate
+              .toZonedDateTime(userTimezone)
+              .toInstant()
+              .toString(),
+          });
+        }}
+        variant="tertiary"
+        Icon={() => (
+          <IconPlus
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
+        )}
+      />
+    </StyledButtonContainer>
   );
 };

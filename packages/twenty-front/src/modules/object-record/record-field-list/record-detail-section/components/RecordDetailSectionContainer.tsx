@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRecordDetailSectionContainer = styled(Section)`
+const StyledRecordDetailSectionContainer = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
@@ -36,12 +36,14 @@ const StyledTitleLabel = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledLink = styled(Link)`
-  color: ${themeCssVariables.font.color.light};
-  text-decoration: none;
-  font-size: ${themeCssVariables.font.size.sm};
+const StyledLinkContainer = styled.span`
+  > a {
+    color: ${themeCssVariables.font.color.light};
+    text-decoration: none;
+    font-size: ${themeCssVariables.font.size.sm};
+  }
 
-  :hover {
+  > a:hover {
     color: ${themeCssVariables.font.color.secondary};
   }
 `;
@@ -68,21 +70,27 @@ export const RecordDetailSectionContainer = ({
   const [isHovered, setIsHovered] = useState(false);
   return (
     <StyledRecordDetailSectionContainer>
-      <StyledHeader
-        areRecordsAvailable={areRecordsAvailable}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        data-testid={dataTestId}
-      >
-        <StyledTitle>
-          <StyledTitleLabel>{title}</StyledTitleLabel>
-          {link && <StyledLink to={link.to}>{link.label}</StyledLink>}
-        </StyledTitle>
-        {hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
-          ? null
-          : rightAdornment}
-      </StyledHeader>
-      {children}
+      <Section>
+        <StyledHeader
+          areRecordsAvailable={areRecordsAvailable}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          data-testid={dataTestId}
+        >
+          <StyledTitle>
+            <StyledTitleLabel>{title}</StyledTitleLabel>
+            {link && (
+              <StyledLinkContainer>
+                <Link to={link.to}>{link.label}</Link>
+              </StyledLinkContainer>
+            )}
+          </StyledTitle>
+          {hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
+            ? null
+            : rightAdornment}
+        </StyledHeader>
+        {children}
+      </Section>
     </StyledRecordDetailSectionContainer>
   );
 };

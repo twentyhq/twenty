@@ -16,13 +16,6 @@ const StyledNameCell = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-    cursor: pointer;
-  }
-`;
-
 type SettingsConnectedAccountsTableRowProps = {
   account: ConnectedAccount;
 };
@@ -33,7 +26,12 @@ export const SettingsConnectedAccountsTableRow = ({
   const IconComponent = SettingsConnectedAccountIcon({ account });
 
   return (
-    <StyledTableRow key={account.id} gridAutoColumns="332px 1fr">
+    <TableRow
+      key={account.id}
+      gridAutoColumns="332px 1fr"
+      hoverBackgroundColor={themeCssVariables.background.transparent.light}
+      cursor="pointer"
+    >
       <TableCell>
         <StyledNameCell>
           <IconComponent
@@ -48,6 +46,6 @@ export const SettingsConnectedAccountsTableRow = ({
       <TableCell align="right">
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       </TableCell>
-    </StyledTableRow>
+    </TableRow>
   );
 };

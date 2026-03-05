@@ -34,7 +34,7 @@ const StyledSection = styled.div<{ isExpanded: boolean }>`
     opacity calc(${themeCssVariables.animation.duration.normal} * 1s);
 `;
 
-const StyledSectionContent = styled(TableBody)`
+const StyledSectionContentContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -72,7 +72,9 @@ export const TableSection = ({
         )}
       </StyledSectionHeader>
       <StyledSection isExpanded={isExpanded}>
-        <StyledSectionContent>{children}</StyledSectionContent>
+        <StyledSectionContentContainer>
+          <TableBody>{children}</TableBody>
+        </StyledSectionContentContainer>
       </StyledSection>
     </>
   );

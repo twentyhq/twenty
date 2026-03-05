@@ -1,4 +1,5 @@
 import {
+  StyledMenuItemBase,
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
@@ -14,7 +15,7 @@ import {
   DEFAULT_COLOR_LABELS,
   type ColorLabels,
 } from '../constants/DefaultColorLabels';
-import { StyledMenuItemSelect } from './MenuItemSelect';
+import { StyledMenuItemSelectWrapper } from './MenuItemSelect';
 
 type MenuItemSelectColorProps = {
   selected: boolean;
@@ -38,21 +39,23 @@ export const MenuItemSelectColor = ({
   colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
   return (
-    <StyledMenuItemSelect
-      onClick={onClick}
-      className={className}
-      disabled={disabled}
-      focused={focused}
-    >
-      <StyledMenuItemLeftContent>
-        <ColorSample colorName={color} variant={variant} />
-        <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
-      </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        />
-      )}
-    </StyledMenuItemSelect>
+    <StyledMenuItemSelectWrapper disabled={disabled} focused={focused}>
+      <StyledMenuItemBase
+        onClick={onClick}
+        className={className}
+        disabled={disabled}
+        focused={focused}
+      >
+        <StyledMenuItemLeftContent>
+          <ColorSample colorName={color} variant={variant} />
+          <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
+        </StyledMenuItemLeftContent>
+        {selected && (
+          <StyledMenuItemIconCheck
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
+        )}
+      </StyledMenuItemBase>
+    </StyledMenuItemSelectWrapper>
   );
 };

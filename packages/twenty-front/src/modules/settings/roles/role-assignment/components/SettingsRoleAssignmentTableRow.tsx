@@ -41,10 +41,6 @@ const StyledNameContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTableCell = styled(TableCell)`
-  overflow: hidden;
-`;
-
 export type RoleTarget =
   | { type: 'member'; data: PartialWorkspaceMember }
   | { type: 'agent'; data: Agent }
@@ -129,17 +125,17 @@ export const SettingsRoleAssignmentTableRow = ({
 
   return (
     <TableRow gridAutoColumns="2fr 4fr">
-      <StyledTableCell>
+      <TableCell overflow="hidden">
         <StyledNameContainer>
           <StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
           <StyledNameCell>
             <OverflowingTextWithTooltip text={renderName()} />
           </StyledNameCell>
         </StyledNameContainer>
-      </StyledTableCell>
-      <StyledTableCell>
+      </TableCell>
+      <TableCell overflow="hidden">
         <OverflowingTextWithTooltip text={renderSecondaryInfo()} />
-      </StyledTableCell>
+      </TableCell>
     </TableRow>
   );
 };

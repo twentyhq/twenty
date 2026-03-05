@@ -5,9 +5,11 @@ import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+const StyledSettingsAdminTableCardContainer = styled.div`
+  > div {
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsAdminHealthAccountSyncCountersTable = ({
@@ -47,13 +49,15 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
   return (
     <Section>
       <H2Title title={title} description={description} />
-      <StyledSettingsAdminTableCard
-        items={items}
-        rounded
-        gridAutoColumns="1fr 1fr"
-        labelAlign="left"
-        valueAlign="right"
-      />
+      <StyledSettingsAdminTableCardContainer>
+        <SettingsAdminTableCard
+          items={items}
+          rounded
+          gridAutoColumns="1fr 1fr"
+          labelAlign="left"
+          valueAlign="right"
+        />
+      </StyledSettingsAdminTableCardContainer>
     </Section>
   );
 };

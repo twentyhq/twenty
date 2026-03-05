@@ -2,7 +2,11 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
+import { Label } from 'twenty-ui/display';
+import {
+  StyledLabelContainer,
+  StyledList,
+} from './WorkflowAiAgentPermissionsStyles';
 type WorkflowAiAgentPermissionsCrudListProps = {
   permissions: Array<{
     key: SettingsRoleObjectPermissionKey;
@@ -26,7 +30,9 @@ export const WorkflowAiAgentPermissionsCrudList = ({
 }: WorkflowAiAgentPermissionsCrudListProps) => {
   return (
     <div>
-      <StyledLabel>{t`CRUD`}</StyledLabel>
+      <StyledLabelContainer>
+        <Label>{t`CRUD`}</Label>
+      </StyledLabelContainer>
       <StyledList>
         {permissions.map((permission) => {
           const isEnabled = Boolean(objectPermissions?.[permission.key]);

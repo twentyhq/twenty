@@ -22,9 +22,10 @@ const StyledContainer = styled.div`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-// TODO: refactor
-const StyledRecordTableTd = styled(RecordTableCellStyleWrapper)`
-  border-left: 1px solid transparent;
+const StyledRecordTableTdContainer = styled.div`
+  > * {
+    border-left: 1px solid transparent;
+  }
 `;
 
 export const RecordTableCellCheckbox = () => {
@@ -43,14 +44,16 @@ export const RecordTableCellCheckbox = () => {
   );
 
   return (
-    <StyledRecordTableTd
-      isSelected={isSelected}
-      hasRightBorder={false}
-      widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
-    >
-      <StyledContainer onClick={handleClick} data-select-disable>
-        <Checkbox hoverable checked={isSelected} />
-      </StyledContainer>
-    </StyledRecordTableTd>
+    <StyledRecordTableTdContainer>
+      <RecordTableCellStyleWrapper
+        isSelected={isSelected}
+        hasRightBorder={false}
+        widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
+      >
+        <StyledContainer onClick={handleClick} data-select-disable>
+          <Checkbox hoverable checked={isSelected} />
+        </StyledContainer>
+      </RecordTableCellStyleWrapper>
+    </StyledRecordTableTdContainer>
   );
 };

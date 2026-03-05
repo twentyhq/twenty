@@ -51,7 +51,7 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
       : ''}
 `;
 
-const StyledH1Title = styled(H1Title)`
+const StyledH1TitleContainer = styled.div`
   left: 50%;
   position: absolute;
   top: 50%;
@@ -135,10 +135,12 @@ export const GraphWidgetGaugeChart = ({
           layers={['bars', renderValueEndLine]}
         />
         {showValue && (
-          <StyledH1Title
-            title={formattedValue}
-            fontColor={H1TitleFontColor.Primary}
-          />
+          <StyledH1TitleContainer>
+            <H1Title
+              title={formattedValue}
+              fontColor={H1TitleFontColor.Primary}
+            />
+          </StyledH1TitleContainer>
         )}
       </StyledChartContainer>
       <GraphWidgetLegend

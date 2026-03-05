@@ -35,9 +35,11 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
-const StyledTabList = styled(TabList)`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[2]};
+const StyledTabListContainer = styled.div`
+  & > div {
+    background-color: ${themeCssVariables.background.secondary};
+    padding-left: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type TabId = WorkflowRunTabIdType;
@@ -131,11 +133,15 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
           />
         ) : (
           <>
-            <StyledTabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={commandMenuPageComponentInstance.instanceId}
-            />
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId={
+                  commandMenuPageComponentInstance.instanceId
+                }
+              />
+            </StyledTabListContainer>
 
             {activeTabId === WorkflowRunTabId.OUTPUT ? (
               <WorkflowRunStepOutputDetail

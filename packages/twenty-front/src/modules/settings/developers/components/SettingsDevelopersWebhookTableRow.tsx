@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+
+export const WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 28px';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import {
   IconChevronRight,
@@ -13,22 +15,7 @@ import {
 } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 28px;
-`;
-
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
-  padding-left: 0;
-`;
-
-const StyledUrlTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  overflow: hidden;
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -43,8 +30,11 @@ export const SettingsDevelopersWebhookTableRow = ({
   to: string;
 }) => {
   return (
-    <StyledApisFieldTableRow to={to}>
-      <StyledUrlTableCell>
+    <TableRow
+      gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      to={to}
+    >
+      <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip
           text={
             isValidUrl(webhook.targetUrl)
@@ -52,15 +42,20 @@ export const SettingsDevelopersWebhookTableRow = ({
               : webhook.targetUrl
           }
         />
-      </StyledUrlTableCell>
-      <StyledIconTableCell>
-        <StyledIconChevronRight
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
-        />
-      </StyledIconTableCell>
-    </StyledApisFieldTableRow>
+      </TableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 0`}
+      >
+        <StyledIconChevronRightContainer>
+          <IconChevronRight
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
+        </StyledIconChevronRightContainer>
+      </TableCell>
+    </TableRow>
   );
 };

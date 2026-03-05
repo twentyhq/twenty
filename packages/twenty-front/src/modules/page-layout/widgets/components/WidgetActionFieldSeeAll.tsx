@@ -26,9 +26,11 @@ import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledLink = styled(Link)`
-  display: flex;
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    display: flex;
+    text-decoration: none;
+  }
 `;
 
 const StyledSeeAllButtonWrapper = styled.div<{ isMobile: boolean }>`
@@ -131,11 +133,13 @@ export const WidgetActionFieldSeeAll = () => {
   return (
     <>
       <div id={tooltipId}>
-        <StyledLink to={filterLinkHref} data-testid="widget-see-all-link">
-          <StyledSeeAllButtonWrapper isMobile={isMobile}>
-            <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
-          </StyledSeeAllButtonWrapper>
-        </StyledLink>
+        <StyledLinkContainer data-testid="widget-see-all-link">
+          <Link to={filterLinkHref}>
+            <StyledSeeAllButtonWrapper isMobile={isMobile}>
+              <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
+            </StyledSeeAllButtonWrapper>
+          </Link>
+        </StyledLinkContainer>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}

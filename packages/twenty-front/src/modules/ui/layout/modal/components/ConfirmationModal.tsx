@@ -33,7 +33,7 @@ export type ConfirmationModalProps = {
   overlay?: ModalOverlay;
 };
 
-export const StyledCenteredButton = styled(Button)`
+export const StyledCenteredButtonContainer = styled.div`
   box-sizing: border-box;
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -42,19 +42,8 @@ const StyledCenteredTitle = styled.div`
   text-align: center;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
-`;
-
-export const StyledConfirmationButton = styled(StyledCenteredButton)`
-  border-color: ${themeCssVariables.border.color.danger};
-  box-shadow: none;
-  color: ${themeCssVariables.color.red};
-  font-size: ${themeCssVariables.font.size.md};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  :hover {
-    background-color: ${themeCssVariables.color.red3};
-  }
 `;
 
 const defaultConfirmButtonText = msg`Confirm`;
@@ -129,12 +118,14 @@ export const ConfirmationModal = ({
       <StyledCenteredTitle>
         <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
       </StyledCenteredTitle>
-      <StyledSection
-        alignment={SectionAlignment.Center}
-        fontColor={SectionFontColor.Primary}
-      >
-        {subtitle}
-      </StyledSection>
+      <StyledSectionContainer>
+        <Section
+          alignment={SectionAlignment.Center}
+          fontColor={SectionFontColor.Primary}
+        >
+          {subtitle}
+        </Section>
+      </StyledSectionContainer>
       {confirmationValue && (
         <Section>
           <SettingsTextInput
@@ -149,27 +140,31 @@ export const ConfirmationModal = ({
           />
         </Section>
       )}
-      <StyledCenteredButton
-        onClick={handleCancelClick}
-        variant="secondary"
-        title={t`Cancel`}
-        fullWidth
-        justify="center"
-        dataTestId="confirmation-modal-cancel-button"
-      />
+      <StyledCenteredButtonContainer>
+        <Button
+          onClick={handleCancelClick}
+          variant="secondary"
+          title={t`Cancel`}
+          fullWidth
+          justify="center"
+          dataTestId="confirmation-modal-cancel-button"
+        />
+      </StyledCenteredButtonContainer>
 
       {AdditionalButtons}
 
-      <StyledCenteredButton
-        onClick={handleConfirmClick}
-        variant="secondary"
-        accent={confirmButtonAccent}
-        title={translatedConfirmButtonText}
-        disabled={!isValidValue || loading}
-        fullWidth
-        justify="center"
-        dataTestId="confirmation-modal-confirm-button"
-      />
+      <StyledCenteredButtonContainer>
+        <Button
+          onClick={handleConfirmClick}
+          variant="secondary"
+          accent={confirmButtonAccent}
+          title={translatedConfirmButtonText}
+          disabled={!isValidValue || loading}
+          fullWidth
+          justify="center"
+          dataTestId="confirmation-modal-confirm-button"
+        />
+      </StyledCenteredButtonContainer>
     </ModalStatefulWrapper>
   );
 };

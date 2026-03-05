@@ -5,11 +5,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import {
-  StyledActionTableCell,
-  StyledNameTableCell,
-  StyledObjectTableRow,
-} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { StyledObjectTableRowContainer } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
 import {
@@ -65,42 +62,54 @@ export const SettingsObjectMetadataItemTableRow = ({
   const Icon = getIcon(objectMetadataItem.icon);
 
   return (
-    <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
-      <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            style={{
-              minWidth: resolveThemeVariableAsNumber(
+    <StyledObjectTableRowContainer>
+      <TableRow to={link}>
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
+          {!!Icon && (
+            <Icon
+              style={{
+                minWidth: resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                ),
+              }}
+              size={resolveThemeVariableAsNumber(
                 themeCssVariables.icon.size.md,
-              ),
-            }}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
-          />
-        )}
-        <StyledNameContainer>
-          <StyledNameLabel title={objectMetadataItem.labelPlural}>
-            {objectMetadataItem.labelPlural}
-          </StyledNameLabel>
-          {!objectMetadataItem.isActive && (
-            <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
+            />
           )}
-        </StyledNameContainer>
-      </StyledNameTableCell>
-      <TableCell>
-        <SettingsItemTypeTag item={objectMetadataItem} />
-      </TableCell>
-      <TableCell align="right">
-        {
-          objectMetadataItem.fields.filter(
-            (field) => !isHiddenSystemField(field),
-          ).length
-        }
-      </TableCell>
-      <TableCell align="right">{totalObjectCount}</TableCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
-    </StyledObjectTableRow>
+          <StyledNameContainer>
+            <StyledNameLabel title={objectMetadataItem.labelPlural}>
+              {objectMetadataItem.labelPlural}
+            </StyledNameLabel>
+            {!objectMetadataItem.isActive && (
+              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+            )}
+          </StyledNameContainer>
+        </TableCell>
+        <TableCell>
+          <SettingsItemTypeTag item={objectMetadataItem} />
+        </TableCell>
+        <TableCell align="right">
+          {
+            objectMetadataItem.fields.filter(
+              (field) => !isHiddenSystemField(field),
+            ).length
+          }
+        </TableCell>
+        <TableCell align="right">{totalObjectCount}</TableCell>
+        <TableCell
+          align="center"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        >
+          {action}
+        </TableCell>
+      </TableRow>
+    </StyledObjectTableRowContainer>
   );
 };

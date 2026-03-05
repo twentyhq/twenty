@@ -41,49 +41,42 @@ const StyledCustomPhoneInputContainer = styled.div<{
       : 'none'};
   border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
   height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
-`;
 
-const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  background-color: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.font.family};
-  font-size: inherit;
-  font-weight: inherit;
-  outline: none;
-  padding: 0;
-
-  &::placeholder,
-  &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
-    font-family: ${themeCssVariables.font.family};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
-  height: 100%;
-
-  .PhoneInputInput {
-    background: none;
+  > .PhoneInput {
+    background-color: transparent;
     border: none;
     color: ${themeCssVariables.font.color.primary};
-    margin-left: ${themeCssVariables.spacing[2]};
+    font-family: ${themeCssVariables.font.family};
+    font-size: inherit;
+    font-weight: inherit;
+    outline: none;
+    padding: 0;
+    height: 100%;
+    width: calc(100% - ${themeCssVariables.spacing[8]});
 
-    &::placeholder,
-    &::-webkit-input-placeholder {
-      color: ${themeCssVariables.font.color.light};
-      font-family: ${themeCssVariables.font.family};
-      font-weight: ${themeCssVariables.font.weight.medium};
+    .PhoneInputInput {
+      background: none;
+      border: none;
+      color: ${themeCssVariables.font.color.primary};
+      margin-left: ${themeCssVariables.spacing[2]};
+
+      &::placeholder,
+      &::-webkit-input-placeholder {
+        color: ${themeCssVariables.font.color.light};
+        font-family: ${themeCssVariables.font.family};
+        font-weight: ${themeCssVariables.font.weight.medium};
+      }
+
+      :focus {
+        outline: none;
+      }
     }
 
-    :focus {
-      outline: none;
+    svg {
+      border-radius: ${themeCssVariables.border.radius.xs};
+      height: 12px;
     }
   }
-
-  & svg {
-    border-radius: ${themeCssVariables.border.radius.xs};
-    height: 12px;
-  }
-  width: calc(100% - ${themeCssVariables.spacing[8]});
 `;
 
 export const PhonesFieldInput = () => {
@@ -219,7 +212,7 @@ export const PhonesFieldInput = () => {
             hasItem={!!phones.length}
             hasError={hasError}
           >
-            <StyledCustomPhoneInput
+            <ReactPhoneNumberInput
               autoFocus={autoFocus}
               placeholder={placeholder}
               value={value as E164Number}

@@ -4,6 +4,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
@@ -36,7 +37,7 @@ export type ApplicationDataTableRow = {
 
 const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 
-const StyledEmptyHeader = styled(TableHeader)`
+const emptyHeaderClassName = css`
   min-width: 0;
 `;
 
@@ -129,7 +130,7 @@ export const SettingsApplicationDataTable = ({
             <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>{t`App`}</TableHeader>
             <TableHeader align="right">{t`Fields`}</TableHeader>
-            <StyledEmptyHeader />
+            <TableHeader className={emptyHeaderClassName} />
           </TableRow>
           {shouldDisplayObjects && (
             <TableSection title={t`Objects`}>

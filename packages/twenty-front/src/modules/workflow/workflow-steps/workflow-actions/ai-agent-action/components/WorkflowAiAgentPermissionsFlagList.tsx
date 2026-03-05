@@ -1,7 +1,11 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 import { WorkflowAiAgentPermissionsFlagRow } from './WorkflowAiAgentPermissionsFlagRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
+import { Label } from 'twenty-ui/display';
+import {
+  StyledLabelContainer,
+  StyledList,
+} from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsFlagListProps = {
   title: string;
@@ -30,7 +34,9 @@ export const WorkflowAiAgentPermissionsFlagList = ({
 
   return (
     <div>
-      <StyledLabel>{title}</StyledLabel>
+      <StyledLabelContainer>
+        <Label>{title}</Label>
+      </StyledLabelContainer>
       <StyledList>
         {permissions.map((permission) => {
           const isEnabled = enabledPermissionFlagKeys.includes(permission.key);

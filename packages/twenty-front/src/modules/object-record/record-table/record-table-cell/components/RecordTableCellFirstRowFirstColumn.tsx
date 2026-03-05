@@ -15,7 +15,7 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
+const StyledRecordTableTdContainer = styled.div<{ zIndex: number }>`
   z-index: ${({ zIndex }) => zIndex};
 `;
 
@@ -71,22 +71,25 @@ export const RecordTableCellFirstRowFirstColumn = ({
   const fontColor = resolveThemeVariable(themeCssVariables.font.color.primary);
 
   return (
-    <StyledRecordTableTd
-      isDragging={isDragging}
-      backgroundColor={tdBackgroundColor}
-      borderColor={borderColor}
-      fontColor={fontColor}
-      hasRightBorder={hasRightBorder}
-      hasBottomBorder={hasBottomBorder}
+    <StyledRecordTableTdContainer
       zIndex={zIndex}
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...dragHandleProps}
       className={cx(
         'table-cell-0-0',
         getRecordTableColumnFieldWidthClassName(0),
       )}
     >
-      {children}
-    </StyledRecordTableTd>
+      <StyledCell
+        isDragging={isDragging}
+        backgroundColor={tdBackgroundColor}
+        borderColor={borderColor}
+        fontColor={fontColor}
+        hasRightBorder={hasRightBorder}
+        hasBottomBorder={hasBottomBorder}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...dragHandleProps}
+      >
+        {children}
+      </StyledCell>
+    </StyledRecordTableTdContainer>
   );
 };

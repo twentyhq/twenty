@@ -10,15 +10,17 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledRow = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[3]};
-  min-height: ${themeCssVariables.spacing[6]};
+const StyledRowContainer = styled.div`
+  > div {
+    align-items: center;
+    display: flex;
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.medium};
+    gap: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]};
+    padding-left: ${themeCssVariables.spacing[3]};
+    min-height: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const StyledRightContainer = styled.div`
@@ -47,9 +49,11 @@ const StyledDescription = styled.span`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLink = styled(Link)`
-  color: ${themeCssVariables.font.color.secondary};
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    color: ${themeCssVariables.font.color.secondary};
+    text-decoration: none;
+  }
 `;
 
 type SettingsListItemCardContentProps = {
@@ -74,36 +78,48 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const content = (
-    <StyledRow
-      onClick={onClick}
-      divider={divider}
-      isClickable={!!onClick || !!to}
-      hasHoverHighlight={!!to}
-    >
-      {!!LeftIcon && (
-        <LeftIcon
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          color={LeftIconColor ?? 'currentColor'}
-        />
-      )}
-      <StyledContent>
-        <StyledLabel>{label}</StyledLabel>
-        {!!description && <StyledDescription>{description}</StyledDescription>}
-      </StyledContent>
-      <StyledRightContainer>
-        {rightComponent}
-        {!!to && (
-          <IconChevronRight
+    <StyledRowContainer>
+      <CardContent
+        onClick={onClick}
+        divider={divider}
+        isClickable={!!onClick || !!to}
+        hasHoverHighlight={!!to}
+      >
+        {!!LeftIcon && (
+          <LeftIcon
             size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
+            color={LeftIconColor ?? 'currentColor'}
           />
         )}
-      </StyledRightContainer>
-    </StyledRow>
+        <StyledContent>
+          <StyledLabel>{label}</StyledLabel>
+          {!!description && (
+            <StyledDescription>{description}</StyledDescription>
+          )}
+        </StyledContent>
+        <StyledRightContainer>
+          {rightComponent}
+          {!!to && (
+            <IconChevronRight
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(
+                themeCssVariables.font.color.tertiary,
+              )}
+            />
+          )}
+        </StyledRightContainer>
+      </CardContent>
+    </StyledRowContainer>
   );
 
   if (isDefined(to)) {
-    return <StyledLink to={to}>{content}</StyledLink>;
+    return (
+      <StyledLinkContainer>
+        <Link to={to}>{content}</Link>
+      </StyledLinkContainer>
+    );
   }
 
   return content;

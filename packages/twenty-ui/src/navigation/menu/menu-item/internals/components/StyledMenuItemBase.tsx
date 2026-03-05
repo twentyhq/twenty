@@ -93,8 +93,14 @@ export const StyledMenuItemLabel = styled.div`
   white-space: nowrap;
 `;
 
-export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+export const StyledMenuItemLabelLight = styled.div`
   color: ${themeCssVariables.font.color.light};
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 export const StyledNoIconFiller = styled.div`
@@ -202,8 +208,13 @@ export const StyledMenuItemContextualText = styled.div`
   overflow: hidden;
 `;
 
-export const StyledRightMenuItemContextualText = styled(
-  StyledMenuItemContextualText,
-)`
+export const StyledRightMenuItemContextualText = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: ${themeCssVariables.spacing[1]};
+  flex-shrink: 1;
+  overflow: hidden;
   text-align: right;
 `;

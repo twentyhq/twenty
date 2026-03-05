@@ -31,13 +31,15 @@ const StyledScrollableContainer = styled.div`
   }
 `;
 
-const StyledValueContainer = styled(StyledScrollableContainer)`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  justify-content: flex-end;
-  padding: 0 8px;
+const StyledValueContainerWrapper = styled.div`
+  > div {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    height: ${RECORD_TABLE_ROW_HEIGHT}px;
+    justify-content: flex-end;
+    padding: 0 8px;
+  }
 `;
 
 const StyledValue = styled.div`
@@ -60,16 +62,18 @@ export const RecordTableColumnAggregateFooterValue = ({
   return (
     <>
       {isDefined(aggregateValue) || isLoading ? (
-        <StyledValueContainer>
-          {isLoading ? (
-            <></>
-          ) : (
-            <>
-              <OverflowingTextWithTooltip text={aggregateLabel} />
-              <StyledValue>{aggregateValue}</StyledValue>
-            </>
-          )}
-        </StyledValueContainer>
+        <StyledValueContainerWrapper>
+          <StyledScrollableContainer>
+            {isLoading ? (
+              <></>
+            ) : (
+              <>
+                <OverflowingTextWithTooltip text={aggregateLabel} />
+                <StyledValue>{aggregateValue}</StyledValue>
+              </>
+            )}
+          </StyledScrollableContainer>
+        </StyledValueContainerWrapper>
       ) : (
         <StyledText id={sanitizedId}>
           <Trans>Calculate</Trans>

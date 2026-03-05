@@ -29,17 +29,20 @@ const StyledLoadingIconContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLoadingIcon = styled(IconDotsVertical)`
+const StyledLoadingIconWrapper = styled.span`
   color: ${themeCssVariables.font.color.light};
   transform: rotate(90deg);
+  display: flex;
 `;
 
 const InitialLoadingIndicator = () => {
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
-      />
+      <StyledLoadingIconWrapper>
+        <IconDotsVertical
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
+        />
+      </StyledLoadingIconWrapper>
     </StyledLoadingIconContainer>
   );
 };

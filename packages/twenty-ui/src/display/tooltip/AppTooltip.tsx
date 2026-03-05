@@ -16,25 +16,27 @@ export enum TooltipDelay {
   longDelay = '1000ms',
 }
 
-const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
-  backdrop-filter: ${themeCssVariables.blur.strong};
-  background-color: ${themeCssVariables.color.transparent.gray11};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledAppTooltipContainer = styled.div<{ width?: string }>`
+  .react-tooltip {
+    backdrop-filter: ${themeCssVariables.blur.strong};
+    background-color: ${themeCssVariables.color.transparent.gray11};
+    border-radius: ${themeCssVariables.border.radius.sm};
 
-  box-shadow: ${themeCssVariables.boxShadow.light};
-  color: ${themeCssVariables.grayScale.gray1};
+    box-shadow: ${themeCssVariables.boxShadow.light};
+    color: ${themeCssVariables.grayScale.gray1};
 
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.regular};
 
-  max-width: ${({ width }) => width || '40%'};
-  overflow: visible;
+    max-width: ${({ width }) => width || '40%'};
+    overflow: visible;
 
-  padding: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]};
 
-  word-break: break-word;
+    word-break: break-word;
 
-  z-index: ${themeCssVariables.lastLayerZIndex};
+    z-index: ${themeCssVariables.lastLayerZIndex};
+  }
 `;
 
 export type AppTooltipProps = {
@@ -82,23 +84,24 @@ export const AppTooltip = ({
   };
 
   return (
-    <StyledAppTooltip
-      {...{
-        anchorSelect,
-        className,
-        content,
-        delayShow: getDelayInMis(delay),
-        delayHide: 20,
-        hidden,
-        noArrow,
-        offset,
-        place,
-        positionStrategy,
-        children,
-        clickable,
-        width,
-        isOpen,
-      }}
-    />
+    <StyledAppTooltipContainer width={width}>
+      <Tooltip
+        {...{
+          anchorSelect,
+          className,
+          content,
+          delayShow: getDelayInMis(delay),
+          delayHide: 20,
+          hidden,
+          noArrow,
+          offset,
+          place,
+          positionStrategy,
+          children,
+          clickable,
+          isOpen,
+        }}
+      />
+    </StyledAppTooltipContainer>
   );
 };

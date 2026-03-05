@@ -14,16 +14,18 @@ import {
   ColorSchemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
-const StyledCoverImageContainer = styled(Card)`
-  align-items: center;
-  background-size: cover;
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  min-height: 153px;
-  justify-content: center;
-  position: relative;
+const StyledCoverImageContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};
+  > div {
+    align-items: center;
+    background-size: cover;
+    border-radius: ${themeCssVariables.border.radius.md};
+    box-sizing: border-box;
+    display: flex;
+    min-height: 153px;
+    justify-content: center;
+    position: relative;
+  }
 `;
 
 const StyledButtonContainer = styled.div`
@@ -34,22 +36,24 @@ export const SettingsObjectCoverImage = () => {
 
   const { t } = useLingui();
   return (
-    <StyledCoverImageContainer
-      style={{
-        backgroundImage:
-          colorScheme === 'light'
-            ? `url('${LightCoverImage.toString()}')`
-            : `url('${DarkCoverImage.toString()}')`,
-      }}
-    >
-      <StyledButtonContainer>
-        <FloatingButton
-          Icon={IconEye}
-          title={t`Visualize`}
-          size="small"
-          to={getSettingsPath(SettingsPath.ObjectOverview)}
-        />
-      </StyledButtonContainer>
+    <StyledCoverImageContainer>
+      <Card
+        style={{
+          backgroundImage:
+            colorScheme === 'light'
+              ? `url('${LightCoverImage.toString()}')`
+              : `url('${DarkCoverImage.toString()}')`,
+        }}
+      >
+        <StyledButtonContainer>
+          <FloatingButton
+            Icon={IconEye}
+            title={t`Visualize`}
+            size="small"
+            to={getSettingsPath(SettingsPath.ObjectOverview)}
+          />
+        </StyledButtonContainer>
+      </Card>
     </StyledCoverImageContainer>
   );
 };

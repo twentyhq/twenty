@@ -100,14 +100,17 @@ const StyledEditorWrapper = styled.div`
   }
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapperContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
-  padding: ${themeCssVariables.spacing[3]};
-  width: calc(100% - 24px) !important;
+
+  > div {
+    gap: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[3]};
+    width: calc(100% - 24px) !important;
+  }
 `;
 
 const StyledButtonsContainer = styled.div`
@@ -129,12 +132,14 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledReadOnlyModelButton = styled(LightButton)`
-  cursor: default;
+const StyledReadOnlyModelButtonContainer = styled.div`
+  & > button {
+    cursor: default;
 
-  &:hover,
-  &:active {
-    background: transparent;
+    &:hover,
+    &:active {
+      background: transparent;
+    }
   }
 `;
 
@@ -167,31 +172,32 @@ export const AIChatTab = () => {
       {!isDraggingFile && (
         <>
           {hasMessages && (
-            <StyledScrollWrapper
-              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
-            >
-              {messages.map((message, index) => {
-                const isLastMessage = index === messages.length - 1;
-                const isLastMessageStreaming = isStreaming && isLastMessage;
-                const isLastAssistantMessage =
-                  isLastMessage && message.role === AgentMessageRole.ASSISTANT;
-                const shouldShowError = error && isLastAssistantMessage;
+            <StyledScrollWrapperContainer>
+              <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
+                {messages.map((message, index) => {
+                  const isLastMessage = index === messages.length - 1;
+                  const isLastMessageStreaming = isStreaming && isLastMessage;
+                  const isLastAssistantMessage =
+                    isLastMessage &&
+                    message.role === AgentMessageRole.ASSISTANT;
+                  const shouldShowError = error && isLastAssistantMessage;
 
-                return (
-                  <AIChatMessage
-                    isLastMessageStreaming={isLastMessageStreaming}
-                    message={message}
-                    key={message.id}
-                    error={shouldShowError ? error : null}
-                  />
-                );
-              })}
-              {error &&
-                !isStreaming &&
-                messages.at(-1)?.role === AgentMessageRole.USER && (
-                  <AIChatStandaloneError error={error} />
-                )}
-            </StyledScrollWrapper>
+                  return (
+                    <AIChatMessage
+                      isLastMessageStreaming={isLastMessageStreaming}
+                      message={message}
+                      key={message.id}
+                      error={shouldShowError ? error : null}
+                    />
+                  );
+                })}
+                {error &&
+                  !isStreaming &&
+                  messages.at(-1)?.role === AgentMessageRole.USER && (
+                    <AIChatStandaloneError error={error} />
+                  )}
+              </ScrollWrapper>
+            </StyledScrollWrapperContainer>
           )}
           {!hasMessages && !error && !isLoading && (
             <AIChatEmptyState editor={editor} />
@@ -213,10 +219,9 @@ export const AIChatTab = () => {
                   {hasMessages && <AIChatContextUsageButton />}
                 </StyledLeftButtonsContainer>
                 <StyledRightButtonsContainer>
-                  <StyledReadOnlyModelButton
-                    accent="tertiary"
-                    title={smartModelLabel}
-                  />
+                  <StyledReadOnlyModelButtonContainer>
+                    <LightButton accent="tertiary" title={smartModelLabel} />
+                  </StyledReadOnlyModelButtonContainer>
                   <SendMessageButton onSend={handleSendAndClear} />
                 </StyledRightButtonsContainer>
               </StyledButtonsContainer>

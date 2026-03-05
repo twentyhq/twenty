@@ -13,7 +13,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledIconButton = styled(IconButton)`
+const StyledIconButtonContainer = styled.span`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
@@ -35,22 +35,26 @@ export const CommandMenuTopBarRightCornerIcon = () => {
 
   if (!isOnAskAIPage) {
     return (
-      <StyledIconButton
-        onClick={() => openAskAIPage({ resetNavigationStack: false })}
-        Icon={IconSparkles}
-        variant="tertiary"
-        size="small"
-      />
+      <StyledIconButtonContainer>
+        <IconButton
+          onClick={() => openAskAIPage({ resetNavigationStack: false })}
+          Icon={IconSparkles}
+          variant="tertiary"
+          size="small"
+        />
+      </StyledIconButtonContainer>
     );
   }
 
   return (
-    <StyledIconButton
-      Icon={IconEdit}
-      size="small"
-      variant="tertiary"
-      onClick={() => createChatThread()}
-      ariaLabel={t`New conversation`}
-    />
+    <StyledIconButtonContainer>
+      <IconButton
+        Icon={IconEdit}
+        size="small"
+        variant="tertiary"
+        onClick={() => createChatThread()}
+        ariaLabel={t`New conversation`}
+      />
+    </StyledIconButtonContainer>
   );
 };

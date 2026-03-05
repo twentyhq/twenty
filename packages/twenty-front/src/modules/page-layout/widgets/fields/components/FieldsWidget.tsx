@@ -40,7 +40,12 @@ const StyledPropertyBox = styled.div`
   padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledInlineFieldsPropertyBox = styled(StyledPropertyBox)`
+const StyledInlineFieldsPropertyBox = styled.div`
+  align-self: stretch;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   padding-bottom: 0;
   padding-top: 0;
 `;

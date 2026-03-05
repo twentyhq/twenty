@@ -20,27 +20,27 @@ const StyledCardContainer = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 300px;
   }
-`;
 
-const StyledCard = styled(Card)`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  padding: ${themeCssVariables.spacing[2]};
-  flex-direction: column;
-  align-items: flex-start;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
-  align-self: stretch;
+  > div {
+    background: ${themeCssVariables.background.secondary};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.md};
+    box-sizing: border-box;
+    display: flex;
+    padding: ${themeCssVariables.spacing[2]};
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${themeCssVariables.spacing[2]};
+    justify-content: center;
+    align-self: stretch;
+  }
 `;
 
 export const EventCard = ({ children, isOpen }: EventCardProps) => {
   return (
     isOpen && (
       <StyledCardContainer>
-        <StyledCard fullWidth>{children}</StyledCard>
+        <Card fullWidth>{children}</Card>
       </StyledCardContainer>
     )
   );

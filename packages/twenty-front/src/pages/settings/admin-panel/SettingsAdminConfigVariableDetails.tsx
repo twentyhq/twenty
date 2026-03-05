@@ -24,14 +24,16 @@ import {
   useGetDatabaseConfigVariableQuery,
 } from '~/generated-metadata/graphql';
 
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
+const StyledFormContainer = styled.div`
+  > form {
+    display: flex;
+    flex-direction: column;
+    gap: ${themeCssVariables.spacing[4]};
+    width: 100%;
+  }
 `;
 
-const StyledH3Title = styled(H3Title)`
+const StyledH3TitleWrapper = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -143,54 +145,57 @@ export const SettingsAdminConfigVariableDetails = () => {
         ]}
       >
         <SettingsPageContainer>
-          <StyledH3Title
-            title={variable.name}
-            description={variable.description}
-          />
+          <StyledH3TitleWrapper>
+            <H3Title title={variable.name} description={variable.description} />
+          </StyledH3TitleWrapper>
 
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
-            <StyledRow>
-              <ConfigVariableValueInput
-                variable={variable}
-                value={watch('value')}
-                onChange={(value) => setValue('value', value)}
-                disabled={isEnvOnly || !isEditing}
-              />
-
-              {!isEditing ? (
-                <Button
-                  Icon={IconPencil}
-                  variant="primary"
-                  onClick={handleEditClick}
-                  type="button"
-                  disabled={isEnvOnly || !isConfigVariablesInDbEnabled}
+          <StyledFormContainer>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <StyledRow>
+                <ConfigVariableValueInput
+                  variable={variable}
+                  value={watch('value')}
+                  onChange={(value) => setValue('value', value)}
+                  disabled={isEnvOnly || !isEditing}
                 />
-              ) : (
-                <StyledButtonContainer>
-                  <Button
-                    Icon={IconCheck}
-                    variant="secondary"
-                    position="left"
-                    type="submit"
-                    disabled={isSubmitting || !isValueValid || !hasValueChanged}
-                  />
-                  <Button
-                    Icon={IconX}
-                    variant="secondary"
-                    position="right"
-                    onClick={handleXButtonClick}
-                    type="button"
-                    disabled={isSubmitting}
-                  />
-                </StyledButtonContainer>
-              )}
-            </StyledRow>
 
-            <ConfigVariableHelpText
-              variable={variable}
-              hasValueChanged={hasValueChanged}
-            />
-          </StyledForm>
+                {!isEditing ? (
+                  <Button
+                    Icon={IconPencil}
+                    variant="primary"
+                    onClick={handleEditClick}
+                    type="button"
+                    disabled={isEnvOnly || !isConfigVariablesInDbEnabled}
+                  />
+                ) : (
+                  <StyledButtonContainer>
+                    <Button
+                      Icon={IconCheck}
+                      variant="secondary"
+                      position="left"
+                      type="submit"
+                      disabled={
+                        isSubmitting || !isValueValid || !hasValueChanged
+                      }
+                    />
+                    <Button
+                      Icon={IconX}
+                      variant="secondary"
+                      position="right"
+                      onClick={handleXButtonClick}
+                      type="button"
+                      disabled={isSubmitting}
+                    />
+                  </StyledButtonContainer>
+                )}
+              </StyledRow>
+
+              <ConfigVariableHelpText
+                variable={variable}
+                hasValueChanged={hasValueChanged}
+              />
+            </Form>
+          </StyledFormContainer>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
 

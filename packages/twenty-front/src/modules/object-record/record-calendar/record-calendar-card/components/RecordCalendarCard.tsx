@@ -24,8 +24,10 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordCard = styled(RecordCard)`
-  width: calc(100% - 2px);
+const StyledRecordCardWrapper = styled.div`
+  > div {
+    width: calc(100% - 2px);
+  }
 `;
 
 type RecordCalendarCardProps = {
@@ -84,18 +86,20 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
         value={{ scopeInstanceId: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX }}
       >
         <StyledContainer onContextMenu={handleContextMenuOpen}>
-          <StyledRecordCard
-            data-selected={isRecordCalendarCardSelected}
-            data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
-          >
-            <RecordCalendarCardHeader recordId={recordId} />
-            <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
-              <RecordCalendarCardBody
-                recordId={recordId}
-                isRecordReadOnly={false}
-              />
-            </AnimatedEaseInOut>
-          </StyledRecordCard>
+          <StyledRecordCardWrapper>
+            <RecordCard
+              data-selected={isRecordCalendarCardSelected}
+              data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
+            >
+              <RecordCalendarCardHeader recordId={recordId} />
+              <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
+                <RecordCalendarCardBody
+                  recordId={recordId}
+                  isRecordReadOnly={false}
+                />
+              </AnimatedEaseInOut>
+            </RecordCard>
+          </StyledRecordCardWrapper>
           <RecordCalendarCardCellHoveredPortal recordId={recordId} />
           <RecordCalendarCardCellEditModePortal recordId={recordId} />
         </StyledContainer>

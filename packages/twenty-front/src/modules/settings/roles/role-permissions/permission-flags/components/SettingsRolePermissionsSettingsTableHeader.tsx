@@ -1,6 +1,6 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
@@ -17,7 +17,7 @@ type SettingsRolePermissionsSettingsTableHeaderProps = {
   isEditable: boolean;
 };
 
-const StyledActionsHeader = styled(TableHeader)`
+const actionsHeaderClassName = css`
   align-items: center;
   display: flex;
   justify-content: flex-end;
@@ -55,7 +55,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
     <TableRow gridAutoColumns="3fr 4fr 24px">
       <TableHeader>{t`Name`}</TableHeader>
       <TableHeader>{t`Description`}</TableHeader>
-      <StyledActionsHeader aria-label={t`Actions`}>
+      <TableHeader className={actionsHeaderClassName} aria-label={t`Actions`}>
         <Checkbox
           checked={allSettingsPermissionsEnabled}
           indeterminate={
@@ -78,7 +78,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
             });
           }}
         />
-      </StyledActionsHeader>
+      </TableHeader>
     </TableRow>
   );
 };

@@ -30,12 +30,13 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDownChevron = styled(IconChevronDown)`
+const StyledDownChevronContainer = styled.span`
   color: ${themeCssVariables.font.color.primary};
   position: absolute;
   right: ${themeCssVariables.spacing['1.5']};
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
 `;
 
 const StyledMenuItemWrapper = styled.div<{ disabled?: boolean }>`
@@ -47,9 +48,11 @@ const StyledSpan = styled.span`
   margin-left: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButton = styled(Button)`
-  color: ${themeCssVariables.font.color.primary};
-  padding-right: ${themeCssVariables.spacing[6]};
+const StyledBreadcrumbButtonContainer = styled.div`
+  & > button {
+    color: ${themeCssVariables.font.color.primary};
+    padding-right: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
@@ -88,16 +91,20 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.md,
+            <StyledDownChevronContainer>
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
+            </StyledDownChevronContainer>
+            <StyledBreadcrumbButtonContainer>
+              {isConfigureStep ? (
+                <Button variant="tertiary" title={t`2. Configure`} />
+              ) : (
+                <Button variant="tertiary" title={t`1. Type`} />
               )}
-            />
-            {isConfigureStep ? (
-              <StyledButton variant="tertiary" title={t`2. Configure`} />
-            ) : (
-              <StyledButton variant="tertiary" title={t`1. Type`} />
-            )}
+            </StyledBreadcrumbButtonContainer>
           </StyledButtonContainer>
         }
         dropdownComponents={

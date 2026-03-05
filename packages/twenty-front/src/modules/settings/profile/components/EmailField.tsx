@@ -31,11 +31,13 @@ const StyledActionWrapper = styled.div`
   }
 `;
 
-const StyledActionButton = styled(Button)`
-  height: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+const StyledActionButtonContainer = styled.div`
+  & > button {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const EmailField = () => {
@@ -96,34 +98,40 @@ export const EmailField = () => {
         />
         {isEditing ? (
           <StyledActionWrapper key="editing">
-            <StyledActionButton
-              Icon={IconCheck}
-              variant="secondary"
-              position="left"
-              size="small"
-              onClick={handleSave}
-              disabled={isSaveDisabled}
-              type="button"
-            />
-            <StyledActionButton
-              Icon={IconX}
-              variant="secondary"
-              position="right"
-              size="small"
-              onClick={handleCancelEditing}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconCheck}
+                variant="secondary"
+                position="left"
+                size="small"
+                onClick={handleSave}
+                disabled={isSaveDisabled}
+                type="button"
+              />
+            </StyledActionButtonContainer>
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconX}
+                variant="secondary"
+                position="right"
+                size="small"
+                onClick={handleCancelEditing}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         ) : (
           <StyledActionWrapper key="view">
-            <StyledActionButton
-              Icon={IconPencil}
-              variant="secondary"
-              size="small"
-              onClick={handleStartEditing}
-              disabled={!canEdit}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconPencil}
+                variant="secondary"
+                size="small"
+                onClick={handleStartEditing}
+                disabled={!canEdit}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         )}
       </StyledFieldRow>

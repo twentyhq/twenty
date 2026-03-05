@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { IconChevronDown } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledContainer = styled.div<{
@@ -30,7 +29,7 @@ export const StyledLabel = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-export const StyledIconChevronDown = styled(IconChevronDown)<{
+export const StyledIconChevronDownContainer = styled.span<{
   disabled?: boolean;
 }>`
   align-items: center;

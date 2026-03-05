@@ -24,9 +24,11 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
-const StyledPropertyBox = styled(PropertyBox)`
-  height: ${themeCssVariables.spacing[6]};
-  width: 100%;
+const StyledPropertyBoxWrapper = styled.div`
+  > div {
+    height: ${themeCssVariables.spacing[6]};
+    width: 100%;
+  }
 `;
 
 const StyledIconContainer = styled.div`
@@ -100,19 +102,21 @@ export const CalendarEventParticipantsResponseStatusField = ({
   ));
 
   return (
-    <StyledPropertyBox>
-      <StyledInlineCellBaseContainer>
-        <StyledLabelAndIconContainer>
-          <StyledIconContainer>{Icon}</StyledIconContainer>
+    <StyledPropertyBoxWrapper>
+      <PropertyBox>
+        <StyledInlineCellBaseContainer>
+          <StyledLabelAndIconContainer>
+            <StyledIconContainer>{Icon}</StyledIconContainer>
 
-          <StyledLabelContainer width={72}>
-            <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
-          </StyledLabelContainer>
-        </StyledLabelAndIconContainer>
-        <StyledDiv ref={participantsContainerRef}>
-          <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
-        </StyledDiv>
-      </StyledInlineCellBaseContainer>
-    </StyledPropertyBox>
+            <StyledLabelContainer width={72}>
+              <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
+            </StyledLabelContainer>
+          </StyledLabelAndIconContainer>
+          <StyledDiv ref={participantsContainerRef}>
+            <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
+          </StyledDiv>
+        </StyledInlineCellBaseContainer>
+      </PropertyBox>
+    </StyledPropertyBoxWrapper>
   );
 };

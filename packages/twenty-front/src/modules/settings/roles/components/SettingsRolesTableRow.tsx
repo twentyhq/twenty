@@ -52,13 +52,6 @@ const StyledIconLockContainer = styled.div`
   justify-content: flex-end;
 `;
 
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-    cursor: pointer;
-  }
-`;
-
 type SettingsRolesTableRowProps = {
   role: RoleWithPartialMembers;
 };
@@ -80,10 +73,12 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
     .filter(isDefined);
 
   return (
-    <StyledTableRow
+    <TableRow
       key={role.id}
       gridAutoColumns="332px 3fr 2fr 1fr"
       to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
+      hoverBackgroundColor={themeCssVariables.background.transparent.light}
+      cursor="pointer"
     >
       <TableCell>
         <StyledNameCell>
@@ -145,6 +140,6 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
           size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
         />
       </TableCell>
-    </StyledTableRow>
+    </TableRow>
   );
 };

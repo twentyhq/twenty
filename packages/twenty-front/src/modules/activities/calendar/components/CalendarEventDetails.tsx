@@ -85,9 +85,11 @@ const StyledFields = styled.div`
   width: 100%;
 `;
 
-const StyledPropertyBox = styled(PropertyBox)`
-  height: ${themeCssVariables.spacing[6]};
-  width: 100%;
+const StyledPropertyBoxWrapper = styled.div`
+  > div {
+    height: ${themeCssVariables.spacing[6]};
+    width: 100%;
+  }
 `;
 
 export const CalendarEventDetails = ({
@@ -165,35 +167,37 @@ export const CalendarEventDetails = ({
     });
 
     return (
-      <StyledPropertyBox key={fieldMetadataItem.id}>
-        <FieldContext.Provider
-          value={{
-            recordId: calendarEvent.id,
-            isLabelIdentifier: false,
-            fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-              field: fieldMetadataItem,
-              objectMetadataItem,
-              showLabel: true,
-              labelWidth: 72,
-            }),
-            useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
-            maxWidth: 300,
-            isRecordFieldReadOnly: isReadOnly,
-          }}
-        >
-          <RecordFieldComponentInstanceContext.Provider
+      <StyledPropertyBoxWrapper key={fieldMetadataItem.id}>
+        <PropertyBox>
+          <FieldContext.Provider
             value={{
-              instanceId: getRecordFieldInputInstanceId({
-                recordId: calendarEvent.id,
-                fieldName: fieldMetadataItem.name,
-                prefix: INPUT_ID_PREFIX,
+              recordId: calendarEvent.id,
+              isLabelIdentifier: false,
+              fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+                field: fieldMetadataItem,
+                objectMetadataItem,
+                showLabel: true,
+                labelWidth: 72,
               }),
+              useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
+              maxWidth: 300,
+              isRecordFieldReadOnly: isReadOnly,
             }}
           >
-            <RecordInlineCell />
-          </RecordFieldComponentInstanceContext.Provider>
-        </FieldContext.Provider>
-      </StyledPropertyBox>
+            <RecordFieldComponentInstanceContext.Provider
+              value={{
+                instanceId: getRecordFieldInputInstanceId({
+                  recordId: calendarEvent.id,
+                  fieldName: fieldMetadataItem.name,
+                  prefix: INPUT_ID_PREFIX,
+                }),
+              }}
+            >
+              <RecordInlineCell />
+            </RecordFieldComponentInstanceContext.Provider>
+          </FieldContext.Provider>
+        </PropertyBox>
+      </StyledPropertyBoxWrapper>
     );
   };
 

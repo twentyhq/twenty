@@ -63,7 +63,7 @@ const StyledControlLabel = styled.span`
   white-space: nowrap;
 `;
 
-const StyledControlIconChevronDown = styled(IconChevronDown)<{
+const StyledControlIconChevronDownContainer = styled.span<{
   disabled?: boolean;
 }>`
   color: ${({ disabled }) =>
@@ -168,10 +168,13 @@ export const WebhookEntitySelect = ({
       clickableComponent={
         <StyledControlContainer disabled={disabled}>
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
-          <StyledControlIconChevronDown
-            disabled={disabled}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
+          <StyledControlIconChevronDownContainer disabled={disabled}>
+            <IconChevronDown
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          </StyledControlIconChevronDownContainer>
         </StyledControlContainer>
       }
       dropdownComponents={

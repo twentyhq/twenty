@@ -9,9 +9,11 @@ type SettingsAccountsMessageFolderIconProps = {
   value?: MessageFolderImportPolicy;
 };
 
-const StyledCardMedia = styled(SettingsAccountsCardMedia)`
-  align-items: stretch;
-  flex-direction: column;
+const StyledCardMediaContainer = styled.div`
+  > div {
+    align-items: stretch;
+    flex-direction: column;
+  }
 `;
 
 const StyledFolderRow = styled.div`
@@ -48,27 +50,29 @@ export const SettingsAccountsMessageFolderIcon = ({
     value === MessageFolderImportPolicy.SELECTED_FOLDERS;
 
   return (
-    <StyledCardMedia className={className}>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon />
-        <StyledFolderLabel />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon />
-        <StyledFolderLabel />
-      </StyledFolderRow>
-    </StyledCardMedia>
+    <StyledCardMediaContainer className={className}>
+      <SettingsAccountsCardMedia>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon />
+          <StyledFolderLabel />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon />
+          <StyledFolderLabel />
+        </StyledFolderRow>
+      </SettingsAccountsCardMedia>
+    </StyledCardMediaContainer>
   );
 };

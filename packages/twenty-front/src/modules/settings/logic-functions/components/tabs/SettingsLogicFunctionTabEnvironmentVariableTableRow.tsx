@@ -5,7 +5,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
@@ -20,13 +19,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import type { ApplicationVariable } from '~/generated-metadata/graphql';
 
-const StyledEditModeTableRow = styled(TableRow)`
-  grid-template-columns: 180px auto 56px;
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 180px 300px 32px;
-`;
+const EDIT_MODE_GRID_TEMPLATE_COLUMNS = '180px auto 56px';
+const VIEW_MODE_GRID_TEMPLATE_COLUMNS = '180px 300px 32px';
 
 export const SettingsLogicFunctionTabEnvironmentVariableTableRow = ({
   envVariable,
@@ -45,7 +39,7 @@ export const SettingsLogicFunctionTabEnvironmentVariableTableRow = ({
   const { closeDropdown } = useCloseDropdown();
 
   return editMode ? (
-    <StyledEditModeTableRow>
+    <TableRow gridTemplateColumns={EDIT_MODE_GRID_TEMPLATE_COLUMNS}>
       <TableCell>
         <TextInput
           autoFocus
@@ -91,9 +85,12 @@ export const SettingsLogicFunctionTabEnvironmentVariableTableRow = ({
           }}
         />
       </TableCell>
-    </StyledEditModeTableRow>
+    </TableRow>
   ) : (
-    <StyledTableRow onClick={() => setEditMode(true)}>
+    <TableRow
+      gridTemplateColumns={VIEW_MODE_GRID_TEMPLATE_COLUMNS}
+      onClick={() => setEditMode(true)}
+    >
       <TableCell>
         <OverflowingTextWithTooltip text={envVariable.key} />
       </TableCell>
@@ -134,6 +131,6 @@ export const SettingsLogicFunctionTabEnvironmentVariableTableRow = ({
           }
         />
       </TableCell>
-    </StyledTableRow>
+    </TableRow>
   );
 };

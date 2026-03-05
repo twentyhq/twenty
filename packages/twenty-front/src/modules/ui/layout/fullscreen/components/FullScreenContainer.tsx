@@ -29,8 +29,10 @@ const StyledMainContainer = styled.div`
     ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPageHeader = styled(PageHeader)`
-  padding-left: ${themeCssVariables.spacing[3]};
+const StyledPageHeaderContainer = styled.div`
+  > * {
+    padding-left: ${themeCssVariables.spacing[3]};
+  }
 `;
 
 export const FullScreenContainer = ({
@@ -42,11 +44,13 @@ export const FullScreenContainer = ({
 
   return (
     <StyledFullScreen>
-      <StyledPageHeader
-        title={<Breadcrumb links={links} />}
-        hasClosePageButton={!isMobile}
-        onClosePage={exitFullScreen}
-      />
+      <StyledPageHeaderContainer>
+        <PageHeader
+          title={<Breadcrumb links={links} />}
+          hasClosePageButton={!isMobile}
+          onClosePage={exitFullScreen}
+        />
+      </StyledPageHeaderContainer>
       <StyledMainContainer>{children}</StyledMainContainer>
     </StyledFullScreen>
   );

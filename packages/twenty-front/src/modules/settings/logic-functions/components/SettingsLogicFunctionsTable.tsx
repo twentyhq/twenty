@@ -11,11 +11,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 164px 1fr 96px 32px;
-`;
+export const LOGIC_FUNCTIONS_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  '164px 1fr 96px 32px';
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -34,24 +33,28 @@ export const SettingsLogicFunctionsTable = ({
 
   return (
     <Table>
-      <StyledTableRow>
+      <TableRow
+        gridTemplateColumns={LOGIC_FUNCTIONS_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      >
         <TableHeader>{t`Name`}</TableHeader>
         <TableHeader></TableHeader>
         <TableHeader>{t`Runtime`}</TableHeader>
         <TableHeader></TableHeader>
-      </StyledTableRow>
-      <StyledTableBody>
-        {logicFunctions.map((logicFunction: LogicFunction) => (
-          <SettingsLogicFunctionsFieldItemTableRow
-            key={logicFunction.id}
-            logicFunction={logicFunction}
-            to={getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-              applicationId,
-              logicFunctionId: logicFunction.id,
-            })}
-          />
-        ))}
-      </StyledTableBody>
+      </TableRow>
+      <StyledTableBodyContainer>
+        <TableBody>
+          {logicFunctions.map((logicFunction: LogicFunction) => (
+            <SettingsLogicFunctionsFieldItemTableRow
+              key={logicFunction.id}
+              logicFunction={logicFunction}
+              to={getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
+                applicationId,
+                logicFunctionId: logicFunction.id,
+              })}
+            />
+          ))}
+        </TableBody>
+      </StyledTableBodyContainer>
     </Table>
   );
 };

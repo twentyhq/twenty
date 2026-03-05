@@ -78,11 +78,10 @@ const StyledRow = styled.div`
   padding: ${themeCssVariables.spacing['1.5']} 0;
 `;
 
-const StyledColorSample = styled(ColorSample)`
+const StyledColorSampleContainer = styled.div`
   cursor: pointer;
   margin-top: ${themeCssVariables.spacing[1]};
   margin-bottom: ${themeCssVariables.spacing[1]};
-
   margin-right: 14px;
   margin-left: 14px;
 `;
@@ -96,11 +95,12 @@ const StyledOptionInputContainer = styled.div`
   }
 `;
 
-const StyledIconGripVertical = styled(IconGripVertical)`
+const StyledIconGripVerticalContainer = styled.span`
+  display: flex;
   margin-right: 3px;
 `;
 
-const StyledLightIconButton = styled(LightIconButton)`
+const StyledLightIconButtonContainer = styled.div`
   margin-left: ${themeCssVariables.spacing[2]};
 `;
 
@@ -131,16 +131,20 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   return (
     <StyledRow className={className}>
-      <StyledIconGripVertical
-        style={{
-          minWidth: resolveThemeVariableAsNumber(
-            themeCssVariables.icon.size.md,
-          ),
-        }}
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
-        color={resolveThemeVariable(themeCssVariables.font.color.extraLight)}
-      />
+      <StyledIconGripVerticalContainer>
+        <IconGripVertical
+          style={{
+            minWidth: resolveThemeVariableAsNumber(
+              themeCssVariables.icon.size.md,
+            ),
+          }}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
+          color={resolveThemeVariable(themeCssVariables.font.color.extraLight)}
+        />
+      </StyledIconGripVerticalContainer>
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInputContainer>
           <SettingsTextInput
@@ -160,7 +164,11 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       <Dropdown
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
-        clickableComponent={<StyledColorSample colorName={option.color} />}
+        clickableComponent={
+          <StyledColorSampleContainer>
+            <ColorSample colorName={option.color} />
+          </StyledColorSampleContainer>
+        }
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
@@ -207,11 +215,13 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
         clickableComponent={
-          <StyledLightIconButton
-            accent="tertiary"
-            Icon={IconDotsVertical}
-            disabled={shouldForbidRemoveAsDefault}
-          />
+          <StyledLightIconButtonContainer>
+            <LightIconButton
+              accent="tertiary"
+              Icon={IconDotsVertical}
+              disabled={shouldForbidRemoveAsDefault}
+            />
+          </StyledLightIconButtonContainer>
         }
         dropdownComponents={
           shouldForbidRemoveAsDefault ? null : (

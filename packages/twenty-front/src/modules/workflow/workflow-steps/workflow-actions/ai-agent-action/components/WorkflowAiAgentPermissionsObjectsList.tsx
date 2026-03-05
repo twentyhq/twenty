@@ -1,6 +1,10 @@
 import { t } from '@lingui/core/macro';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
+import { Label } from 'twenty-ui/display';
+import {
+  StyledLabelContainer,
+  StyledList,
+} from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
   objects: Array<{
@@ -19,7 +23,9 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
 }: WorkflowAiAgentPermissionsObjectsListProps) => {
   return (
     <div>
-      <StyledLabel>{t`Objects`}</StyledLabel>
+      <StyledLabelContainer>
+        <Label>{t`Objects`}</Label>
+      </StyledLabelContainer>
       <StyledList>
         {objects.map((objectMetadata) => (
           <WorkflowAiAgentPermissionsObjectRow

@@ -6,8 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 import { Tag } from 'twenty-ui/components';
 
-const StyledMenuItem = styled(MenuItem)`
-  width: calc(100% - 2 * var(--horizontal-padding));
+const StyledMenuItemWrapper = styled.div`
+  > div {
+    width: calc(100% - 2 * var(--horizontal-padding));
+  }
 `;
 
 type RecordIndexPageKanbanAddMenuItemProps = {
@@ -29,28 +31,30 @@ export const RecordIndexPageKanbanAddMenuItem = ({
   }
 
   return (
-    <StyledMenuItem
-      text={
-        <Tag
-          variant={
-            recordGroupDefinition.type === RecordGroupDefinitionType.Value
-              ? 'solid'
-              : 'outline'
-          }
-          color={
-            recordGroupDefinition.type === RecordGroupDefinitionType.Value
-              ? recordGroupDefinition.color
-              : 'transparent'
-          }
-          text={recordGroupDefinition.title}
-          weight={
-            recordGroupDefinition.type === RecordGroupDefinitionType.Value
-              ? 'regular'
-              : 'medium'
-          }
-        />
-      }
-      onClick={() => onItemClick(recordGroupDefinition)}
-    />
+    <StyledMenuItemWrapper>
+      <MenuItem
+        text={
+          <Tag
+            variant={
+              recordGroupDefinition.type === RecordGroupDefinitionType.Value
+                ? 'solid'
+                : 'outline'
+            }
+            color={
+              recordGroupDefinition.type === RecordGroupDefinitionType.Value
+                ? recordGroupDefinition.color
+                : 'transparent'
+            }
+            text={recordGroupDefinition.title}
+            weight={
+              recordGroupDefinition.type === RecordGroupDefinitionType.Value
+                ? 'regular'
+                : 'medium'
+            }
+          />
+        }
+        onClick={() => onItemClick(recordGroupDefinition)}
+      />
+    </StyledMenuItemWrapper>
   );
 };

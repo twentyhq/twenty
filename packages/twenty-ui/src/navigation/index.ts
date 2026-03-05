@@ -37,7 +37,7 @@ export { MenuItemMultiSelectTag } from './menu/menu-item/components/MenuItemMult
 export type { MenuItemNavigateProps } from './menu/menu-item/components/MenuItemNavigate';
 export { MenuItemNavigate } from './menu/menu-item/components/MenuItemNavigate';
 export {
-  StyledMenuItemSelect,
+  StyledMenuItemSelectWrapper,
   MenuItemSelect,
 } from './menu/menu-item/components/MenuItemSelect';
 export { MenuItemSelectAvatar } from './menu/menu-item/components/MenuItemSelectAvatar';

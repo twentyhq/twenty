@@ -5,7 +5,11 @@ import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
+import { Label } from 'twenty-ui/display';
+import {
+  StyledLabelContainer,
+  StyledList,
+} from './WorkflowAiAgentPermissionsStyles';
 
 const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
   Record<SettingsRoleObjectPermissionKey, number>
@@ -95,7 +99,9 @@ export const WorkflowAiAgentPermissionList = ({
 
   return (
     <div>
-      <StyledLabel>{t`CRUD`}</StyledLabel>
+      <StyledLabelContainer>
+        <Label>{t`CRUD`}</Label>
+      </StyledLabelContainer>
       <StyledList>
         {filteredPermissions.map((permission) => (
           <WorkflowAiAgentPermissionsPermissionRow

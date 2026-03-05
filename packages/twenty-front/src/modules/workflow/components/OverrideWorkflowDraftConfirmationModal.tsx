@@ -1,7 +1,8 @@
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
+import { Button } from 'twenty-ui/input';
 import {
   ConfirmationModal,
-  StyledCenteredButton,
+  StyledCenteredButtonContainer,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
@@ -47,18 +48,20 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         onConfirmClick={handleOverrideDraft}
         confirmButtonText={t`Override Draft`}
         AdditionalButtons={
-          <StyledCenteredButton
-            to={getAppPath(AppPath.RecordShowPage, {
-              objectNameSingular: CoreObjectNameSingular.Workflow,
-              objectRecordId: workflowId,
-            })}
-            onClick={() => {
-              closeModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
-            }}
-            variant="secondary"
-            title={t`Go to Draft`}
-            fullWidth
-          />
+          <StyledCenteredButtonContainer>
+            <Button
+              to={getAppPath(AppPath.RecordShowPage, {
+                objectNameSingular: CoreObjectNameSingular.Workflow,
+                objectRecordId: workflowId,
+              })}
+              onClick={() => {
+                closeModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
+              }}
+              variant="secondary"
+              title={t`Go to Draft`}
+              fullWidth
+            />
+          </StyledCenteredButtonContainer>
         }
       />
     </>

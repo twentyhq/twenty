@@ -30,8 +30,10 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledNavigationButton = styled(Button)`
-  padding: ${themeCssVariables.spacing[1]};
+const StyledNavigationButtonContainer = styled.div`
+  & > button {
+    padding: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const StyledLeftSection = styled.div`
@@ -120,24 +122,28 @@ export const RecordCalendarTopBar = () => {
       </StyledLeftSection>
 
       <StyledNavigationSection>
-        <StyledNavigationButton
-          size="small"
-          variant="tertiary"
-          Icon={IconChevronLeft}
-          onClick={handlePreviousMonth}
-        />
+        <StyledNavigationButtonContainer>
+          <Button
+            size="small"
+            variant="tertiary"
+            Icon={IconChevronLeft}
+            onClick={handlePreviousMonth}
+          />
+        </StyledNavigationButtonContainer>
         <Button
           size="small"
           variant="tertiary"
           title={t`Today`}
           onClick={handleTodayClick}
         />
-        <StyledNavigationButton
-          size="small"
-          variant="tertiary"
-          Icon={IconChevronRight}
-          onClick={handleNextMonth}
-        />
+        <StyledNavigationButtonContainer>
+          <Button
+            size="small"
+            variant="tertiary"
+            Icon={IconChevronRight}
+            onClick={handleNextMonth}
+          />
+        </StyledNavigationButtonContainer>
       </StyledNavigationSection>
     </StyledContainer>
   );

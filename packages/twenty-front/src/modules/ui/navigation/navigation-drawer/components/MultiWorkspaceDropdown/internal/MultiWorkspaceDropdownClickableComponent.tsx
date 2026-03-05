@@ -2,13 +2,13 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import {
   StyledContainer,
-  StyledIconChevronDown,
+  StyledIconChevronDownContainer,
   StyledLabel,
 } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { Avatar } from 'twenty-ui/display';
+import { Avatar, IconChevronDown } from 'twenty-ui/display';
 import {
   resolveThemeVariableAsNumber,
   themeCssVariables,
@@ -32,12 +32,14 @@ export const MultiWorkspaceDropdownClickableComponent = () => {
         <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
       </NavigationDrawerAnimatedCollapseWrapper>
       <NavigationDrawerAnimatedCollapseWrapper>
-        <StyledIconChevronDown
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          stroke={resolveThemeVariableAsNumber(
-            themeCssVariables.icon.stroke.sm,
-          )}
-        />
+        <StyledIconChevronDownContainer>
+          <IconChevronDown
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
+        </StyledIconChevronDownContainer>
       </NavigationDrawerAnimatedCollapseWrapper>
     </StyledContainer>
   );

@@ -14,18 +14,9 @@ import { Tag } from 'twenty-ui/components';
 import { type LogicFunction } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledRouteTriggerTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 120px 120px;
-`;
+export const ROUTE_TRIGGER_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 120px 120px';
 
-const StyledTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledRouteTriggerTableHeaderRow = styled(StyledRouteTriggerTableRow)`
+const StyledTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -119,26 +110,53 @@ export const SettingsLogicFunctionTriggersTab = ({
             description={t`Triggers the function with Http request`}
           />
           <Table>
-            <StyledRouteTriggerTableHeaderRow>
-              <TableHeader>{t`Path`}</TableHeader>
-              <TableHeader>{t`Method`}</TableHeader>
-              <TableHeader>{t`Auth Required`}</TableHeader>
-            </StyledRouteTriggerTableHeaderRow>
-            <StyledRouteTriggerTableRow>
-              <StyledTableCell>
+            <StyledTableHeaderRowWrapper>
+              <TableRow
+                gridTemplateColumns={
+                  ROUTE_TRIGGER_TABLE_ROW_GRID_TEMPLATE_COLUMNS
+                }
+              >
+                <TableHeader>{t`Path`}</TableHeader>
+                <TableHeader>{t`Method`}</TableHeader>
+                <TableHeader>{t`Auth Required`}</TableHeader>
+              </TableRow>
+            </StyledTableHeaderRowWrapper>
+            <TableRow
+              gridTemplateColumns={
+                ROUTE_TRIGGER_TABLE_ROW_GRID_TEMPLATE_COLUMNS
+              }
+            >
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                minWidth="0"
+                overflow="hidden"
+              >
                 <OverflowingTextWithTooltip
                   text={`${REACT_APP_SERVER_BASE_URL}/s${routeTrigger.path}`}
                 />
-              </StyledTableCell>
-              <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
-              <StyledTableCell>
+              </TableCell>
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                minWidth="0"
+                overflow="hidden"
+              >
+                {routeTrigger.httpMethod}
+              </TableCell>
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                minWidth="0"
+                overflow="hidden"
+              >
                 <Tag
                   text={routeTrigger.isAuthRequired ? t`True` : t`False`}
                   color={routeTrigger.isAuthRequired ? 'green' : 'orange'}
                   weight="medium"
                 />
-              </StyledTableCell>
-            </StyledRouteTriggerTableRow>
+              </TableCell>
+            </TableRow>
           </Table>
         </Section>
       )}

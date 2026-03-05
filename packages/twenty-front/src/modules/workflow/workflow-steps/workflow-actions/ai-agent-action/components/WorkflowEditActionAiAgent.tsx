@@ -50,9 +50,11 @@ type WorkflowEditActionAiAgentProps = {
       };
 };
 
-const StyledTabList = styled(TabList)`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[2]};
+const StyledTabListContainer = styled.div`
+  & > div {
+    background-color: ${themeCssVariables.background.secondary};
+    padding-left: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const WorkflowEditActionAiAgent = ({
@@ -270,11 +272,13 @@ export const WorkflowEditActionAiAgent = ({
     <RightDrawerSkeletonLoader />
   ) : (
     <>
-      <StyledTabList
-        tabs={tabs}
-        componentInstanceId={componentInstanceId}
-        behaveAsLinks={false}
-      />
+      <StyledTabListContainer>
+        <TabList
+          tabs={tabs}
+          componentInstanceId={componentInstanceId}
+          behaveAsLinks={false}
+        />
+      </StyledTabListContainer>
       {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
         <WorkflowStepBody paddingBlock="0" paddingInline="0">
           <WorkflowAiAgentPermissionsTab

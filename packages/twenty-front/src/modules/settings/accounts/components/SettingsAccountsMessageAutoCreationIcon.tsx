@@ -9,8 +9,10 @@ type SettingsAccountsMessageAutoCreationIconProps = {
   isReceivedActive?: boolean;
 };
 
-const StyledIconContainer = styled(SettingsAccountsCardMedia)`
-  align-items: stretch;
+const StyledIconContainerWrapper = styled.div`
+  > div {
+    align-items: stretch;
+  }
 `;
 
 const StyledDirectionSkeleton = styled.div<{ isActive?: boolean }>`
@@ -27,8 +29,10 @@ export const SettingsAccountsMessageAutoCreationIcon = ({
   isSentActive,
   isReceivedActive,
 }: SettingsAccountsMessageAutoCreationIconProps) => (
-  <StyledIconContainer className={className}>
-    <StyledDirectionSkeleton isActive={isSentActive} />
-    <StyledDirectionSkeleton isActive={isReceivedActive} />
-  </StyledIconContainer>
+  <StyledIconContainerWrapper className={className}>
+    <SettingsAccountsCardMedia>
+      <StyledDirectionSkeleton isActive={isSentActive} />
+      <StyledDirectionSkeleton isActive={isReceivedActive} />
+    </SettingsAccountsCardMedia>
+  </StyledIconContainerWrapper>
 );

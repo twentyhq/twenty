@@ -42,9 +42,11 @@ type WorkflowEditActionHttpRequestProps = {
   };
 };
 
-const StyledTabList = styled(TabList)`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[2]};
+const StyledTabListContainer = styled.div`
+  & > div {
+    background-color: ${themeCssVariables.background.secondary};
+    padding-left: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTestTabContent = styled.div`
@@ -64,23 +66,29 @@ const StyledConfigurationTabContent = styled.div`
   flex: 1;
 `;
 
-const StyledFullHeightFormRawJsonFieldInput = styled(FormRawJsonFieldInput)`
+const StyledFullHeightFormRawJsonFieldInputWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
 
-  & > div:last-child {
+  > div {
     flex: 1;
     display: flex;
     flex-direction: column;
 
-    & > div {
+    > div:last-child {
       flex: 1;
-      max-height: none !important;
-      height: 100%;
+      display: flex;
+      flex-direction: column;
 
-      & > div {
+      > div {
+        flex: 1;
+        max-height: none !important;
         height: 100%;
+
+        > div {
+          height: 100%;
+        }
       }
     }
   }
@@ -130,11 +138,13 @@ export const WorkflowEditActionHttpRequest = ({
 
   return (
     <>
-      <StyledTabList
-        tabs={tabs}
-        behaveAsLinks={false}
-        componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
-      />
+      <StyledTabListContainer>
+        <TabList
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
+        />
+      </StyledTabListContainer>
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
           <StyledConfigurationTabContent>
@@ -183,14 +193,16 @@ export const WorkflowEditActionHttpRequest = ({
               />
             )}
 
-            <StyledFullHeightFormRawJsonFieldInput
-              label={t`Expected Response Body`}
-              placeholder={JSON_RESPONSE_PLACEHOLDER}
-              defaultValue={outputSchema}
-              onChange={handleOutputSchemaChange}
-              readonly={actionOptions.readonly}
-              error={error}
-            />
+            <StyledFullHeightFormRawJsonFieldInputWrapper>
+              <FormRawJsonFieldInput
+                label={t`Expected Response Body`}
+                placeholder={JSON_RESPONSE_PLACEHOLDER}
+                defaultValue={outputSchema}
+                onChange={handleOutputSchemaChange}
+                readonly={actionOptions.readonly}
+                error={error}
+              />
+            </StyledFullHeightFormRawJsonFieldInputWrapper>
           </StyledConfigurationTabContent>
         )}
         {activeTabId === WorkflowHttpRequestTabId.TEST && (

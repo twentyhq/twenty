@@ -31,8 +31,9 @@ import Skeleton from 'react-loading-skeleton';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import {
   SettingsAIAgentTableRow,
-  StyledAIAgentTableRow,
+  AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsAIAgentTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
@@ -41,15 +42,15 @@ const StyledSearchAndFilterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
+const StyledTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -80,13 +81,15 @@ export const SettingsAIAgentsTable = () => {
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="settings-ai-agents-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search an agent...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="settings-ai-agents-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search an agent...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-ai-agents-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -118,46 +121,52 @@ export const SettingsAIAgentsTable = () => {
         />
       </StyledSearchAndFilterContainer>
 
-      <StyledTable>
-        <StyledTableHeaderRow>
-          {SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
-            (settingsAIAgentTableMetadataField) => (
-              <SortableTableHeader
-                key={settingsAIAgentTableMetadataField.fieldName}
-                fieldName={settingsAIAgentTableMetadataField.fieldName}
-                label={t(settingsAIAgentTableMetadataField.fieldLabel)}
-                tableId={SETTINGS_AI_AGENT_TABLE_METADATA.tableId}
-                align={settingsAIAgentTableMetadataField.align}
-                initialSort={SETTINGS_AI_AGENT_TABLE_METADATA.initialSort}
-              />
-            ),
-          )}
-          <TableHeader />
-        </StyledTableHeaderRow>
-        {loading &&
-          Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton height={32} borderRadius={4} key={index} />
+      <StyledTableContainer>
+        <Table>
+          <StyledTableHeaderRowWrapper>
+            <TableRow
+              gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              {SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
+                (settingsAIAgentTableMetadataField) => (
+                  <SortableTableHeader
+                    key={settingsAIAgentTableMetadataField.fieldName}
+                    fieldName={settingsAIAgentTableMetadataField.fieldName}
+                    label={t(settingsAIAgentTableMetadataField.fieldLabel)}
+                    tableId={SETTINGS_AI_AGENT_TABLE_METADATA.tableId}
+                    align={settingsAIAgentTableMetadataField.align}
+                    initialSort={SETTINGS_AI_AGENT_TABLE_METADATA.initialSort}
+                  />
+                ),
+              )}
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowWrapper>
+          {loading &&
+            Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton height={32} borderRadius={4} key={index} />
+            ))}
+          {filteredAgents.map((agent) => (
+            <SettingsAIAgentTableRow
+              key={agent.id}
+              agent={agent}
+              action={
+                <IconChevronRight
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.sm,
+                  )}
+                />
+              }
+              link={getSettingsPath(SettingsPath.AIAgentDetail, {
+                agentId: agent.id,
+              })}
+            />
           ))}
-        {filteredAgents.map((agent) => (
-          <SettingsAIAgentTableRow
-            key={agent.id}
-            agent={agent}
-            action={
-              <IconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
-              />
-            }
-            link={getSettingsPath(SettingsPath.AIAgentDetail, {
-              agentId: agent.id,
-            })}
-          />
-        ))}
-      </StyledTable>
+        </Table>
+      </StyledTableContainer>
     </>
   );
 };

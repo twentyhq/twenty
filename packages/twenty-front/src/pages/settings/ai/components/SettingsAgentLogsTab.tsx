@@ -25,37 +25,14 @@ import {
   useGetAgentTurnsQuery,
 } from '~/generated-metadata/graphql';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
+const AGENT_LOGS_GRID_TEMPLATE_COLUMNS = '140px 80px 1fr 40px';
+
+const StyledTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
-`;
-
-const StyledScoreCell = styled(TableCell)`
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDateCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledInputCell = styled(TableCell)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledActionCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsAgentLogsTabProps = {
@@ -164,17 +141,21 @@ export const SettingsAgentLogsTab = ({
 
   if (loading) {
     return (
-      <StyledTable>
-        <StyledTableHeaderRow>
-          <TableHeader>{t`Date`}</TableHeader>
-          <TableHeader>{t`Score`}</TableHeader>
-          <TableHeader>{t`Input`}</TableHeader>
-          <TableHeader />
-        </StyledTableHeaderRow>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton height={48} borderRadius={4} key={index} />
-        ))}
-      </StyledTable>
+      <StyledTableContainer>
+        <Table>
+          <StyledTableHeaderRowWrapper>
+            <TableRow gridTemplateColumns={AGENT_LOGS_GRID_TEMPLATE_COLUMNS}>
+              <TableHeader>{t`Date`}</TableHeader>
+              <TableHeader>{t`Score`}</TableHeader>
+              <TableHeader>{t`Input`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowWrapper>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton height={48} borderRadius={4} key={index} />
+          ))}
+        </Table>
+      </StyledTableContainer>
     );
   }
 
@@ -195,28 +176,33 @@ export const SettingsAgentLogsTab = ({
   }
 
   return (
-    <StyledTable>
-      <StyledTableHeaderRow>
-        <TableHeader>{t`Date`}</TableHeader>
-        <TableHeader>{t`Score`}</TableHeader>
-        <TableHeader>{t`Input`}</TableHeader>
-        <TableHeader />
-      </StyledTableHeaderRow>
+    <Table>
+      <StyledTableHeaderRowWrapper>
+        <TableRow gridTemplateColumns={AGENT_LOGS_GRID_TEMPLATE_COLUMNS}>
+          <TableHeader>{t`Date`}</TableHeader>
+          <TableHeader>{t`Score`}</TableHeader>
+          <TableHeader>{t`Input`}</TableHeader>
+          <TableHeader />
+        </TableRow>
+      </StyledTableHeaderRowWrapper>
       {turns.map((turn: any) => {
         const latestEvaluation = getLatestEvaluation(turn.evaluations);
         const userInput = getUserMessageInput(turn.messages);
 
         return (
-          <StyledTableRow key={turn.id}>
-            <StyledDateCell>
+          <TableRow
+            gridTemplateColumns={AGENT_LOGS_GRID_TEMPLATE_COLUMNS}
+            key={turn.id}
+          >
+            <TableCell color={themeCssVariables.font.color.tertiary}>
               {new Date(turn.createdAt).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
               })}
-            </StyledDateCell>
-            <StyledScoreCell>
+            </TableCell>
+            <TableCell gap={themeCssVariables.spacing[2]}>
               {latestEvaluation ? (
                 <Status
                   color={getScoreColor(latestEvaluation.score)}
@@ -234,9 +220,15 @@ export const SettingsAgentLogsTab = ({
                   title={t`Evaluate`}
                 />
               )}
-            </StyledScoreCell>
-            <StyledInputCell>{userInput || t`No input`}</StyledInputCell>
-            <StyledActionCell>
+            </TableCell>
+            <TableCell
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {userInput || t`No input`}
+            </TableCell>
+            <TableCell align="right">
               {latestEvaluation && (
                 <UndecoratedLink
                   to={getSettingsPath(SettingsPath.AIAgentTurnDetail)
@@ -250,10 +242,10 @@ export const SettingsAgentLogsTab = ({
                   />
                 </UndecoratedLink>
               )}
-            </StyledActionCell>
-          </StyledTableRow>
+            </TableCell>
+          </TableRow>
         );
       })}
-    </StyledTable>
+    </Table>
   );
 };

@@ -22,8 +22,10 @@ const StyledFullScreenOverlay = styled.div`
   z-index: ${RootStackingContextZIndices.RootModal};
 `;
 
-const StyledFullScreenHeader = styled(PageHeader)`
-  padding-left: ${themeCssVariables.spacing[3]};
+const StyledFullScreenHeaderContainer = styled.div`
+  > * {
+    padding-left: ${themeCssVariables.spacing[3]};
+  }
 `;
 
 const StyledFullScreenContent = styled.div`
@@ -59,11 +61,13 @@ export const FullScreenModal = forwardRef<HTMLDivElement, FullScreenModalProps>(
         data-globally-prevent-click-outside="true"
         tabIndex={-1}
       >
-        <StyledFullScreenHeader
-          title={<Breadcrumb links={links} />}
-          hasClosePageButton={hasClosePageButton}
-          onClosePage={onClose}
-        />
+        <StyledFullScreenHeaderContainer>
+          <PageHeader
+            title={<Breadcrumb links={links} />}
+            hasClosePageButton={hasClosePageButton}
+            onClosePage={onClose}
+          />
+        </StyledFullScreenHeaderContainer>
         <StyledFullScreenContent>{children}</StyledFullScreenContent>
       </StyledFullScreenOverlay>
     );

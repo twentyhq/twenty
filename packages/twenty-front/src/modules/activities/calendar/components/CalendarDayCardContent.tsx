@@ -15,12 +15,14 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+const StyledCardContentContainer = styled.div`
+  > div {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: ${themeCssVariables.spacing[3]};
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  }
 `;
 
 const StyledDayContainer = styled.div`
@@ -46,7 +48,7 @@ const StyledEvents = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledEventRow = styled(CalendarEventRow)`
+const StyledEventRowWrapper = styled.div`
   flex: 1 0 auto;
 `;
 
@@ -70,30 +72,31 @@ export const CalendarDayCardContent = ({
   };
 
   return (
-    <StyledCardContent
-      divider={divider}
-      initial="upcoming"
-      animate="ended"
-      variants={upcomingDayCardContentVariants}
-      transition={{
-        delay: Math.max(0, dayEndsIn),
-        duration: resolveThemeVariable(
-          themeCssVariables.animation.duration.fast,
-        ),
-      }}
-    >
-      <StyledDayContainer>
-        <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
-        <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
-      </StyledDayContainer>
-      <StyledEvents>
-        {calendarEvents.map((calendarEvent) => (
-          <StyledEventRow
-            key={calendarEvent.id}
-            calendarEvent={calendarEvent}
-          />
-        ))}
-      </StyledEvents>
-    </StyledCardContent>
+    <StyledCardContentContainer>
+      <CardContent
+        divider={divider}
+        initial="upcoming"
+        animate="ended"
+        variants={upcomingDayCardContentVariants}
+        transition={{
+          delay: Math.max(0, dayEndsIn),
+          duration: resolveThemeVariable(
+            themeCssVariables.animation.duration.fast,
+          ),
+        }}
+      >
+        <StyledDayContainer>
+          <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
+          <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
+        </StyledDayContainer>
+        <StyledEvents>
+          {calendarEvents.map((calendarEvent) => (
+            <StyledEventRowWrapper key={calendarEvent.id}>
+              <CalendarEventRow calendarEvent={calendarEvent} />
+            </StyledEventRowWrapper>
+          ))}
+        </StyledEvents>
+      </CardContent>
+    </StyledCardContentContainer>
   );
 };

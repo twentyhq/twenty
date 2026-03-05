@@ -33,8 +33,10 @@ import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
-  column-gap: ${themeCssVariables.spacing[2]};
+const StyledNodeLabelWithCounterPartWrapper = styled.div`
+  > div {
+    column-gap: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledStatusIconsContainer = styled.div`
@@ -144,49 +146,53 @@ export const WorkflowRunDiagramStepNode = ({
         </WorkflowNodeIconContainer>
 
         <WorkflowNodeRightPart>
-          <StyledNodeLabelWithCounterPart>
-            <WorkflowNodeLabel runStatus={data.runStatus} selected={selected}>
-              {capitalize(data.nodeType)}
-            </WorkflowNodeLabel>
+          <StyledNodeLabelWithCounterPartWrapper>
+            <WorkflowNodeLabelWithCounterPart>
+              <WorkflowNodeLabel runStatus={data.runStatus} selected={selected}>
+                {capitalize(data.nodeType)}
+              </WorkflowNodeLabel>
 
-            <StyledRightPartContainer>
-              {iterationCount > 0 && (
-                <StyledIterationCounter runStatus={data.runStatus}>
-                  {iterationCount}
-                </StyledIterationCounter>
-              )}
+              <StyledRightPartContainer>
+                {iterationCount > 0 && (
+                  <StyledIterationCounter runStatus={data.runStatus}>
+                    {iterationCount}
+                  </StyledIterationCounter>
+                )}
 
-              {(data.runStatus === StepStatus.SUCCESS ||
-                data.runStatus === StepStatus.STOPPED) && (
-                <StyledStatusIconsContainer>
-                  <StyledColorIcon
-                    color={themeCssVariables.tag.background.turquoise}
-                  >
-                    <IconCheck
-                      color={themeCssVariables.tag.text.turquoise}
-                      size={14}
-                    />
-                  </StyledColorIcon>
-                </StyledStatusIconsContainer>
-              )}
+                {(data.runStatus === StepStatus.SUCCESS ||
+                  data.runStatus === StepStatus.STOPPED) && (
+                  <StyledStatusIconsContainer>
+                    <StyledColorIcon
+                      color={themeCssVariables.tag.background.turquoise}
+                    >
+                      <IconCheck
+                        color={themeCssVariables.tag.text.turquoise}
+                        size={14}
+                      />
+                    </StyledColorIcon>
+                  </StyledStatusIconsContainer>
+                )}
 
-              {(data.runStatus === StepStatus.FAILED ||
-                data.runStatus === StepStatus.FAILED_SAFELY) && (
-                <StyledStatusIconsContainer>
-                  <StyledColorIcon color={themeCssVariables.tag.background.red}>
-                    <IconX color={themeCssVariables.tag.text.red} size={14} />
-                  </StyledColorIcon>
-                </StyledStatusIconsContainer>
-              )}
+                {(data.runStatus === StepStatus.FAILED ||
+                  data.runStatus === StepStatus.FAILED_SAFELY) && (
+                  <StyledStatusIconsContainer>
+                    <StyledColorIcon
+                      color={themeCssVariables.tag.background.red}
+                    >
+                      <IconX color={themeCssVariables.tag.text.red} size={14} />
+                    </StyledColorIcon>
+                  </StyledStatusIconsContainer>
+                )}
 
-              {(data.runStatus === StepStatus.RUNNING ||
-                data.runStatus === StepStatus.PENDING) && (
-                <StyledStatusIconsContainer>
-                  <Loader color="yellow" />
-                </StyledStatusIconsContainer>
-              )}
-            </StyledRightPartContainer>
-          </StyledNodeLabelWithCounterPart>
+                {(data.runStatus === StepStatus.RUNNING ||
+                  data.runStatus === StepStatus.PENDING) && (
+                  <StyledStatusIconsContainer>
+                    <Loader color="yellow" />
+                  </StyledStatusIconsContainer>
+                )}
+              </StyledRightPartContainer>
+            </WorkflowNodeLabelWithCounterPart>
+          </StyledNodeLabelWithCounterPartWrapper>
 
           <WorkflowNodeTitle runStatus={data.runStatus} selected={selected}>
             {data.name}

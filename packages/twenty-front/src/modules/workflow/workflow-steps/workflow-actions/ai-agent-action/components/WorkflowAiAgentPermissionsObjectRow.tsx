@@ -1,6 +1,6 @@
-import { useIcons } from 'twenty-ui/display';
+import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import {
-  StyledIconChevronRight,
+  StyledIconChevronRightContainer,
   StyledIconContainer,
   StyledRow,
   StyledRowLeftContent,
@@ -41,9 +41,11 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
         </StyledIconContainer>
         <StyledText>{objectMetadata.labelPlural}</StyledText>
       </StyledRowLeftContent>
-      <StyledIconChevronRight
-        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-      />
+      <StyledIconChevronRightContainer>
+        <IconChevronRight
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+        />
+      </StyledIconChevronRightContainer>
     </StyledRow>
   );
 };

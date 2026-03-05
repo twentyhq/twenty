@@ -5,7 +5,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { StyledObjectTableRowContainer } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -33,7 +34,7 @@ import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -172,21 +173,23 @@ export const SettingsObjectTable = ({
       )}
 
       <Table>
-        <StyledObjectTableRow>
-          {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
-            (settingsObjectsTableMetadataField) => (
-              <SortableTableHeader
-                key={settingsObjectsTableMetadataField.fieldName}
-                fieldName={settingsObjectsTableMetadataField.fieldName}
-                label={t(settingsObjectsTableMetadataField.fieldLabel)}
-                tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
-                align={settingsObjectsTableMetadataField.align}
-                initialSort={GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort}
-              />
-            ),
-          )}
-          <TableHeader></TableHeader>
-        </StyledObjectTableRow>
+        <StyledObjectTableRowContainer>
+          <TableRow>
+            {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+              (settingsObjectsTableMetadataField) => (
+                <SortableTableHeader
+                  key={settingsObjectsTableMetadataField.fieldName}
+                  fieldName={settingsObjectsTableMetadataField.fieldName}
+                  label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                  tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                  align={settingsObjectsTableMetadataField.align}
+                  initialSort={GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort}
+                />
+              ),
+            )}
+            <TableHeader></TableHeader>
+          </TableRow>
+        </StyledObjectTableRowContainer>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 
@@ -197,14 +200,16 @@ export const SettingsObjectTable = ({
               totalObjectCount={objectSettingsItem.totalObjectCount}
               action={
                 isActive ? (
-                  <StyledIconChevronRight
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                    stroke={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.stroke.sm,
-                    )}
-                  />
+                  <StyledIconChevronRightContainer>
+                    <IconChevronRight
+                      size={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.size.md,
+                      )}
+                      stroke={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.stroke.sm,
+                      )}
+                    />
+                  </StyledIconChevronRightContainer>
                 ) : (
                   <SettingsObjectInactiveMenuDropDown
                     isCustomObject={

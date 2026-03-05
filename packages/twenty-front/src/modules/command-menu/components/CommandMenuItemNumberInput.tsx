@@ -25,7 +25,7 @@ type CommandMenuItemNumberInputProps = {
   placeholder?: string;
 };
 
-const StyledRightAlignedTextInput = styled(TextInput)`
+const StyledRightAlignedTextInputContainer = styled.div`
   input {
     text-align: right;
   }
@@ -132,18 +132,20 @@ export const CommandMenuItemNumberInput = ({
       Icon={Icon}
       onClick={focusInput}
       RightComponent={
-        <StyledRightAlignedTextInput
-          ref={inputRef}
-          value={draftValue}
-          sizeVariant="sm"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          error={hasError ? ' ' : undefined}
-          noErrorHelper
-          textClickOutsideId={focusId}
-        />
+        <StyledRightAlignedTextInputContainer>
+          <TextInput
+            ref={inputRef}
+            value={draftValue}
+            sizeVariant="sm"
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            error={hasError ? ' ' : undefined}
+            noErrorHelper
+            textClickOutsideId={focusId}
+          />
+        </StyledRightAlignedTextInputContainer>
       }
     />
   );

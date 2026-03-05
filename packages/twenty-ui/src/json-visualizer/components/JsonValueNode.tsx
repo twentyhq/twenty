@@ -6,8 +6,10 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { themeCssVariables } from '@ui/theme-constants';
 
-const StyledListItem = styled(JsonListItem)`
-  column-gap: ${themeCssVariables.spacing[2]};
+const StyledListItemWrapper = styled.div`
+  > li {
+    column-gap: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type JsonValueNodeProps = {
@@ -26,19 +28,21 @@ type JsonValueNodeProps = {
 
 export const JsonValueNode = (props: JsonValueNodeProps) => {
   return (
-    <StyledListItem>
-      {props.label && (
-        <JsonNodeLabel
-          label={props.label}
-          Icon={props.Icon}
+    <StyledListItemWrapper>
+      <JsonListItem>
+        {props.label && (
+          <JsonNodeLabel
+            label={props.label}
+            Icon={props.Icon}
+            highlighting={props.highlighting}
+          />
+        )}
+
+        <JsonNodeValue
+          valueAsString={props.valueAsString}
           highlighting={props.highlighting}
         />
-      )}
-
-      <JsonNodeValue
-        valueAsString={props.valueAsString}
-        highlighting={props.highlighting}
-      />
-    </StyledListItem>
+      </JsonListItem>
+    </StyledListItemWrapper>
   );
 };

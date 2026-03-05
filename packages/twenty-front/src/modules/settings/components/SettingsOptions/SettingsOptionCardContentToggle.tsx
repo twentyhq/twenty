@@ -19,17 +19,19 @@ import {
   resolveThemeVariable,
 } from 'twenty-ui/theme-constants';
 
-const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
+const StyledSettingsCardToggleContentWrapper = styled.div<{
+  disabled?: boolean;
+}>`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   position: relative;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  &:hover {
+  &:hover > * {
     background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
-const StyledSettingsCardToggleButton = styled(Toggle)`
+const StyledSettingsCardToggleButtonContainer = styled.div`
   flex-shrink: 0;
   margin-left: auto;
 `;
@@ -67,39 +69,43 @@ export const SettingsOptionCardContentToggle = ({
 
   return (
     <>
-      <StyledSettingsCardToggleContent disabled={disabled}>
-        {Icon && (
-          <StyledSettingsCardIcon>
-            <SettingsOptionIconCustomizer Icon={Icon} />
-          </StyledSettingsCardIcon>
-        )}
-        <StyledSettingsCardTextContainer>
-          <StyledSettingsCardTitle>
-            <label htmlFor={toggleId}>
-              {title}
-              <StyledSettingsCardToggleCover />
-            </label>
-          </StyledSettingsCardTitle>
-          {description && (
-            <StyledSettingsCardDescription>
-              <OverflowingTextWithTooltip text={description} />
-            </StyledSettingsCardDescription>
+      <StyledSettingsCardToggleContentWrapper disabled={disabled}>
+        <StyledSettingsCardContent>
+          {Icon && (
+            <StyledSettingsCardIcon>
+              <SettingsOptionIconCustomizer Icon={Icon} />
+            </StyledSettingsCardIcon>
           )}
-        </StyledSettingsCardTextContainer>
-        <StyledSettingsCardToggleButton
-          id={toggleId}
-          value={checked}
-          onChange={onChange}
-          disabled={disabled}
-          toggleSize="small"
-          color={
-            advancedMode
-              ? resolveThemeVariable(themeCssVariables.color.yellow)
-              : resolveThemeVariable(themeCssVariables.color.blue)
-          }
-          centered={toggleCentered}
-        />
-      </StyledSettingsCardToggleContent>
+          <StyledSettingsCardTextContainer>
+            <StyledSettingsCardTitle>
+              <label htmlFor={toggleId}>
+                {title}
+                <StyledSettingsCardToggleCover />
+              </label>
+            </StyledSettingsCardTitle>
+            {description && (
+              <StyledSettingsCardDescription>
+                <OverflowingTextWithTooltip text={description} />
+              </StyledSettingsCardDescription>
+            )}
+          </StyledSettingsCardTextContainer>
+          <StyledSettingsCardToggleButtonContainer>
+            <Toggle
+              id={toggleId}
+              value={checked}
+              onChange={onChange}
+              disabled={disabled}
+              toggleSize="small"
+              color={
+                advancedMode
+                  ? resolveThemeVariable(themeCssVariables.color.yellow)
+                  : resolveThemeVariable(themeCssVariables.color.blue)
+              }
+              centered={toggleCentered}
+            />
+          </StyledSettingsCardToggleButtonContainer>
+        </StyledSettingsCardContent>
+      </StyledSettingsCardToggleContentWrapper>
       {divider && <Separator />}
     </>
   );

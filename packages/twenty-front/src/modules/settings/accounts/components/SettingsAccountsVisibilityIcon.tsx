@@ -12,8 +12,10 @@ type SettingsAccountsVisibilityIconProps = {
   body?: VisibilityElementState;
 };
 
-const StyledCardMedia = styled(SettingsAccountsCardMedia)`
-  align-items: stretch;
+const StyledCardMediaContainer = styled.div`
+  > div {
+    align-items: stretch;
+  }
 `;
 
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
@@ -25,13 +27,24 @@ const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
   height: 3px;
 `;
 
-const StyledMetadataSkeleton = styled(StyledSubjectSkeleton)`
+const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
+  background-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.accent.accent4060
+      : themeCssVariables.background.quaternary};
+  border-radius: 1px;
+  height: 3px;
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledBodySkeleton = styled(StyledSubjectSkeleton)`
+const StyledBodySkeleton = styled.div<{ isActive?: boolean }>`
+  background-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.accent.accent4060
+      : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.xs};
   flex: 1 0 auto;
+  height: 3px;
 `;
 
 export const SettingsAccountsVisibilityIcon = ({
@@ -40,9 +53,13 @@ export const SettingsAccountsVisibilityIcon = ({
   subject,
   body,
 }: SettingsAccountsVisibilityIconProps) => (
-  <StyledCardMedia className={className}>
-    {!!metadata && <StyledMetadataSkeleton isActive={metadata === 'active'} />}
-    {!!subject && <StyledSubjectSkeleton isActive={subject === 'active'} />}
-    {!!body && <StyledBodySkeleton isActive={body === 'active'} />}
-  </StyledCardMedia>
+  <StyledCardMediaContainer className={className}>
+    <SettingsAccountsCardMedia>
+      {!!metadata && (
+        <StyledMetadataSkeleton isActive={metadata === 'active'} />
+      )}
+      {!!subject && <StyledSubjectSkeleton isActive={subject === 'active'} />}
+      {!!body && <StyledBodySkeleton isActive={body === 'active'} />}
+    </SettingsAccountsCardMedia>
+  </StyledCardMediaContainer>
 );

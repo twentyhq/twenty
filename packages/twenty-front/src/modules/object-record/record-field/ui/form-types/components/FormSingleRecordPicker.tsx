@@ -26,22 +26,23 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
+const StyledFormSelectContainerWrapper = styled.div<{
   readonly?: boolean;
 }>`
-  align-items: center;
-  height: 32px;
-  justify-content: space-between;
-  padding-right: ${themeCssVariables.spacing[2]};
+  > div {
+    align-items: center;
+    height: 32px;
+    justify-content: space-between;
+    padding-right: ${themeCssVariables.spacing[2]};
+    cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
-
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${({ readonly }) =>
-      readonly
-        ? 'transparent'
-        : themeCssVariables.background.transparent.light};
+    &:hover,
+    &[data-open='true'] {
+      background-color: ${({ readonly }) =>
+        readonly
+          ? 'transparent'
+          : themeCssVariables.background.transparent.light};
+    }
   }
 `;
 
@@ -168,19 +169,20 @@ export const FormSingleRecordPicker = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         {disabled ? (
-          <StyledFormSelectContainer
-            formFieldInputInstanceId={componentId}
-            hasRightElement={false}
-            readonly
-          >
-            <FormSingleRecordFieldChip
-              draftValue={draftValue}
-              selectedRecord={selectedRecord}
-              objectNameSingular={objectNameSingulars[0]}
-              onRemove={handleUnlinkVariable}
-              disabled={disabled}
-            />
-          </StyledFormSelectContainer>
+          <StyledFormSelectContainerWrapper readonly>
+            <FormFieldInputInnerContainer
+              formFieldInputInstanceId={componentId}
+              hasRightElement={false}
+            >
+              <FormSingleRecordFieldChip
+                draftValue={draftValue}
+                selectedRecord={selectedRecord}
+                objectNameSingular={objectNameSingulars[0]}
+                onRemove={handleUnlinkVariable}
+                disabled={disabled}
+              />
+            </FormFieldInputInnerContainer>
+          </StyledFormSelectContainerWrapper>
         ) : (
           <Dropdown
             dropdownId={dropdownId}
@@ -195,29 +197,31 @@ export const FormSingleRecordPicker = ({
               ),
             }}
             clickableComponent={
-              <StyledFormSelectContainer
-                formFieldInputInstanceId={componentId}
-                hasRightElement={isDefined(VariablePicker) && !disabled}
-                preventFocusStackUpdate={true}
-              >
-                <FormSingleRecordFieldChip
-                  draftValue={draftValue}
-                  selectedRecord={selectedRecord}
-                  objectNameSingular={objectNameSingulars[0]}
-                  onRemove={handleUnlinkVariable}
-                  disabled={disabled}
-                />
-                <StyledIconButton>
-                  <IconChevronDown
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.md,
-                    )}
-                    color={resolveThemeVariable(
-                      themeCssVariables.font.color.light,
-                    )}
+              <StyledFormSelectContainerWrapper>
+                <FormFieldInputInnerContainer
+                  formFieldInputInstanceId={componentId}
+                  hasRightElement={isDefined(VariablePicker) && !disabled}
+                  preventFocusStackUpdate={true}
+                >
+                  <FormSingleRecordFieldChip
+                    draftValue={draftValue}
+                    selectedRecord={selectedRecord}
+                    objectNameSingular={objectNameSingulars[0]}
+                    onRemove={handleUnlinkVariable}
+                    disabled={disabled}
                   />
-                </StyledIconButton>
-              </StyledFormSelectContainer>
+                  <StyledIconButton>
+                    <IconChevronDown
+                      size={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.size.md,
+                      )}
+                      color={resolveThemeVariable(
+                        themeCssVariables.font.color.light,
+                      )}
+                    />
+                  </StyledIconButton>
+                </FormFieldInputInnerContainer>
+              </StyledFormSelectContainerWrapper>
             }
             dropdownComponents={
               <SingleRecordPicker

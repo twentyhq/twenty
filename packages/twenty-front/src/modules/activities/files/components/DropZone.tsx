@@ -36,9 +36,10 @@ const StyledUploadDragSubTitle = styled.div`
   line-height: ${themeCssVariables.text.lineHeight.md};
 `;
 
-const StyledUploadIcon = styled(IconUpload)`
+const StyledUploadIconContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   margin-bottom: ${themeCssVariables.spacing[3]};
+  display: flex;
 `;
 
 type DropZoneProps = {
@@ -84,12 +85,16 @@ export const DropZone = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...getInputProps()}
           />
-          <StyledUploadIcon
-            stroke={resolveThemeVariableAsNumber(
-              themeCssVariables.icon.stroke.sm,
-            )}
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg)}
-          />
+          <StyledUploadIconContainer>
+            <IconUpload
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.lg,
+              )}
+            />
+          </StyledUploadIconContainer>
           <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>
             {t`Drag and Drop Here`}

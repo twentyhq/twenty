@@ -3,6 +3,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, Status } from 'twenty-ui/display';
@@ -28,7 +29,7 @@ type SettingsDnsRecordsTableProps = {
   records: DnsRecord[];
 };
 
-const StyledTableRow = styled(TableRow)`
+const dnsRecordTableRowClassName = css`
   & > * {
     min-width: 0;
     max-width: 100%;
@@ -36,7 +37,8 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-const StyledTableCell = styled(TableCell)`
+const StyledMonospaceCell = styled.div`
+  display: contents;
   font-family: monospace;
 `;
 
@@ -69,7 +71,10 @@ export const SettingsDnsRecordsTable = ({
 
   return (
     <Table>
-      <StyledTableRow gridAutoColumns={gridAutoColumns}>
+      <TableRow
+        gridAutoColumns={gridAutoColumns}
+        className={dnsRecordTableRowClassName}
+      >
         <TableHeader align="center">{t`Type`}</TableHeader>
         <TableHeader align="center">{t`Key`}</TableHeader>
         <TableHeader align="center">{t`Value`}</TableHeader>
@@ -80,42 +85,58 @@ export const SettingsDnsRecordsTable = ({
         {hasStatusRecords && (
           <TableHeader align="center">{t`Status`}</TableHeader>
         )}
-      </StyledTableRow>
+      </TableRow>
 
       {records.map((record) => (
-        <StyledTableRow key={record.value} gridAutoColumns={gridAutoColumns}>
+        <TableRow
+          key={record.value}
+          gridAutoColumns={gridAutoColumns}
+          className={dnsRecordTableRowClassName}
+        >
           <TableCell>{record.type}</TableCell>
-          <StyledTableCell
+          <TableCell
             onClick={() => {
               copyToClipboard(record.key || '');
             }}
           >
-            <OverflowingTextWithTooltip text={record.key} />
-          </StyledTableCell>
+            <StyledMonospaceCell>
+              <OverflowingTextWithTooltip text={record.key} />
+            </StyledMonospaceCell>
+          </TableCell>
 
-          <StyledTableCell
+          <TableCell
             onClick={() => {
               copyToClipboard(record.value);
             }}
           >
-            <OverflowingTextWithTooltip text={record.value} />
-          </StyledTableCell>
+            <StyledMonospaceCell>
+              <OverflowingTextWithTooltip text={record.value} />
+            </StyledMonospaceCell>
+          </TableCell>
 
           {hasPriorityRecords && (
-            <StyledTableCell>{record.priority}</StyledTableCell>
+            <TableCell>
+              <StyledMonospaceCell>{record.priority}</StyledMonospaceCell>
+            </TableCell>
           )}
-          {hasTtlRecords && <StyledTableCell>{record.ttl}</StyledTableCell>}
+          {hasTtlRecords && (
+            <TableCell>
+              <StyledMonospaceCell>{record.ttl}</StyledMonospaceCell>
+            </TableCell>
+          )}
           {hasStatusRecords && (
-            <StyledTableCell>
-              {'status' in record ? (
-                <Status
-                  color={record.statusColor}
-                  text={capitalize(record.status)}
-                />
-              ) : null}
-            </StyledTableCell>
+            <TableCell>
+              <StyledMonospaceCell>
+                {'status' in record ? (
+                  <Status
+                    color={record.statusColor}
+                    text={capitalize(record.status)}
+                  />
+                ) : null}
+              </StyledMonospaceCell>
+            </TableCell>
           )}
-        </StyledTableRow>
+        </TableRow>
       ))}
     </Table>
   );

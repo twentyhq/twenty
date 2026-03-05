@@ -7,8 +7,9 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { styled } from '@linaria/react';
 import {
   SettingsApplicationTableRow,
-  StyledApplicationTableRow,
+  APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMemo, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { Section } from 'twenty-ui/layout';
@@ -18,15 +19,15 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(StyledApplicationTableRow)`
+const StyledTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -56,40 +57,48 @@ export const SettingsApplicationsTable = ({
         title={t`Installed applications`}
         description={t`List installed applications. Use filter to search for a specific application`}
       />
-      <StyledSearchInput
-        instanceId="env-var-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search an application`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
-      <StyledTable>
-        <StyledTableHeaderRow>
-          <TableHeader> {t`Name`}</TableHeader>
-          <TableHeader> {t`Description`}</TableHeader>
-          <TableHeader> {''}</TableHeader>
-          <TableHeader />
-        </StyledTableHeaderRow>
-        {filteredApplications.map((application) => (
-          <SettingsApplicationTableRow
-            key={application.id}
-            application={application}
-            action={
-              <IconChevronRight
-                size={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.size.md,
-                )}
-                stroke={resolveThemeVariableAsNumber(
-                  themeCssVariables.icon.stroke.sm,
-                )}
-              />
-            }
-            link={getSettingsPath(SettingsPath.ApplicationDetail, {
-              applicationId: application.id,
-            })}
-          />
-        ))}
-      </StyledTable>
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="env-var-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an application`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
+      <StyledTableContainer>
+        <Table>
+          <StyledTableHeaderRowWrapper>
+            <TableRow
+              gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              <TableHeader> {t`Name`}</TableHeader>
+              <TableHeader> {t`Description`}</TableHeader>
+              <TableHeader> {''}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowWrapper>
+          {filteredApplications.map((application) => (
+            <SettingsApplicationTableRow
+              key={application.id}
+              application={application}
+              action={
+                <IconChevronRight
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.sm,
+                  )}
+                />
+              }
+              link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                applicationId: application.id,
+              })}
+            />
+          ))}
+        </Table>
+      </StyledTableContainer>
     </Section>
   );
 };

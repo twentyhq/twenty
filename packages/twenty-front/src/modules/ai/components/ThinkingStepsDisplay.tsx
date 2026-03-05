@@ -140,7 +140,7 @@ const StyledReasoningText = styled.p`
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIcon = styled(ThinkingOrbitLoaderIcon)`
+const StyledOrbitLoaderIconWrapper = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -214,9 +214,11 @@ const StyledToolDetailsContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledToolTabList = styled(TabList)`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[1]};
+const StyledToolTabListContainer = styled.div`
+  & > div {
+    background-color: ${themeCssVariables.background.secondary};
+    padding-left: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const StyledToolDetailsContent = styled.div`
@@ -334,11 +336,13 @@ const ThinkingToolStepRow = ({
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
               <StyledToolDetailsContent>
-                <StyledToolTabList
-                  tabs={toolTabs}
-                  behaveAsLinks={false}
-                  componentInstanceId={toolTabListComponentInstanceId}
-                />
+                <StyledToolTabListContainer>
+                  <TabList
+                    tabs={toolTabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={toolTabListComponentInstanceId}
+                  />
+                </StyledToolTabListContainer>
                 <StyledToolJsonContent>
                   <StyledJsonTreeContainer>
                     <JsonTree
@@ -388,7 +392,13 @@ const ThinkingStepRow = ({
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? <StyledOrbitLoaderIcon /> : <IconCpu size={14} />}
+        {isActive ? (
+          <StyledOrbitLoaderIconWrapper>
+            <ThinkingOrbitLoaderIcon />
+          </StyledOrbitLoaderIconWrapper>
+        ) : (
+          <IconCpu size={14} />
+        )}
       </StyledIconContainer>
       <StyledRowLabelContainer>
         <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>

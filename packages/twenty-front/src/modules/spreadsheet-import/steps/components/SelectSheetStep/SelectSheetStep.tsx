@@ -15,16 +15,16 @@ import { Radio, RadioGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 
-const StyledHeading = styled(Heading)`
+const StyledHeadingContainer = styled.div`
   display: flex;
 `;
 
-const StyledRadioContainer = styled.div`
+const StyledRadioListContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledRadio = styled(Radio)`
+const StyledRadioItemContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
@@ -104,18 +104,18 @@ export const SelectSheetStep = ({
   return (
     <>
       <ModalContent isVerticallyCentered isHorizontallyCentered gap={8}>
-        <StyledHeading title={t`Select the sheet to use`} />
-        <StyledRadioContainer>
+        <StyledHeadingContainer>
+          <Heading title={t`Select the sheet to use`} />
+        </StyledHeadingContainer>
+        <StyledRadioListContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
-              <StyledRadio
-                value={sheetName}
-                key={sheetName}
-                label={sheetName}
-              />
+              <StyledRadioItemContainer key={sheetName}>
+                <Radio value={sheetName} label={sheetName} />
+              </StyledRadioItemContainer>
             ))}
           </RadioGroup>
-        </StyledRadioContainer>
+        </StyledRadioListContainer>
       </ModalContent>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}

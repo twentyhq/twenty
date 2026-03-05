@@ -82,25 +82,15 @@ const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
   },
 ];
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapperContainer = styled.div`
   height: 100%;
 `;
 
-const StyledTable = styled(Table)`
-  border-collapse: collapse;
+const StyledTableContainer = styled.div`
   min-width: 100%;
-  table-layout: fixed;
 `;
 
-const StyledHeaderRow = styled(TableRow)`
-  display: grid;
-`;
-
-const StyledDataRow = styled(TableRow)`
-  display: grid;
-`;
-
-const StyledResizableHeader = styled(TableHeader)<{ isResizing?: boolean }>`
+const StyledResizableHeader = styled.div<{ isResizing?: boolean }>`
   position: relative;
   user-select: ${({ isResizing }) => (isResizing ? 'none' : 'auto')};
 `;
@@ -120,16 +110,10 @@ const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   }
 `;
 
-const StyledTableCell = styled(TableCell)`
+const StyledTableCellContent = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  & > * {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 `;
 
 const StyledEmptyState = styled.div`
@@ -257,32 +241,36 @@ export const EventLogResultsTable = ({
 
   if (isInitialLoading) {
     return (
-      <StyledScrollWrapper
-        componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
-      >
-        <StyledTable>
-          <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
-            {baseColumns.map((column) => (
-              <TableHeader key={column.id}>{t(column.label)}</TableHeader>
-            ))}
-          </StyledHeaderRow>
-        </StyledTable>
-        <SkeletonTheme
-          baseColor={resolveThemeVariable(
-            themeCssVariables.background.tertiary,
-          )}
-          highlightColor={resolveThemeVariable(
-            themeCssVariables.background.transparent.lighter,
-          )}
-          borderRadius={4}
+      <StyledScrollWrapperContainer>
+        <ScrollWrapper
+          componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
         >
-          <StyledSkeletonContainer>
-            {Array.from({ length: SKELETON_ROW_COUNT }).map((_, index) => (
-              <Skeleton height={40} key={index} style={{ marginBottom: 4 }} />
-            ))}
-          </StyledSkeletonContainer>
-        </SkeletonTheme>
-      </StyledScrollWrapper>
+          <StyledTableContainer>
+            <Table>
+              <TableRow gridTemplateColumns={gridTemplateColumns}>
+                {baseColumns.map((column) => (
+                  <TableHeader key={column.id}>{t(column.label)}</TableHeader>
+                ))}
+              </TableRow>
+            </Table>
+          </StyledTableContainer>
+          <SkeletonTheme
+            baseColor={resolveThemeVariable(
+              themeCssVariables.background.tertiary,
+            )}
+            highlightColor={resolveThemeVariable(
+              themeCssVariables.background.transparent.lighter,
+            )}
+            borderRadius={4}
+          >
+            <StyledSkeletonContainer>
+              {Array.from({ length: SKELETON_ROW_COUNT }).map((_, index) => (
+                <Skeleton height={40} key={index} style={{ marginBottom: 4 }} />
+              ))}
+            </StyledSkeletonContainer>
+          </SkeletonTheme>
+        </ScrollWrapper>
+      </StyledScrollWrapperContainer>
     );
   }
 
@@ -295,54 +283,86 @@ export const EventLogResultsTable = ({
   }
 
   return (
-    <StyledScrollWrapper
-      componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
-    >
-      <StyledTable>
-        <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
-          {baseColumns.map((column) => (
-            <StyledResizableHeader
-              key={column.id}
-              isResizing={resizingColumn === column.id}
-            >
-              {t(column.label)}
-              <StyledResizeHandle
+    <StyledScrollWrapperContainer>
+      <ScrollWrapper componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}>
+        <Table>
+          <TableRow gridTemplateColumns={gridTemplateColumns}>
+            {baseColumns.map((column) => (
+              <StyledResizableHeader
+                key={column.id}
                 isResizing={resizingColumn === column.id}
-                onPointerDown={(event) => handleResizeStart(column.id, event)}
-              />
-            </StyledResizableHeader>
+              >
+                <TableHeader>{t(column.label)}</TableHeader>
+                <StyledResizeHandle
+                  isResizing={resizingColumn === column.id}
+                  onPointerDown={(event) => handleResizeStart(column.id, event)}
+                />
+              </StyledResizableHeader>
+            ))}
+          </TableRow>
+          {records.map((record, index) => (
+            <TableRow
+              key={`${record.timestamp}-${record.event}-${index}`}
+              gridTemplateColumns={gridTemplateColumns}
+            >
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {record.event}
+              </TableCell>
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {beautifyPastDateRelativeToNow(record.timestamp)}
+              </TableCell>
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {record.userId ?? '-'}
+              </TableCell>
+              {showObjectEventColumns && (
+                <>
+                  <TableCell
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {record.recordId ?? '-'}
+                  </TableCell>
+                  <TableCell
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {record.objectMetadataId ?? '-'}
+                  </TableCell>
+                </>
+              )}
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                <StyledTableCellContent>
+                  <EventLogJsonCell value={record.properties} />
+                </StyledTableCellContent>
+              </TableCell>
+            </TableRow>
           ))}
-        </StyledHeaderRow>
-        {records.map((record, index) => (
-          <StyledDataRow
-            key={`${record.timestamp}-${record.event}-${index}`}
-            gridTemplateColumns={gridTemplateColumns}
-          >
-            <StyledTableCell>{record.event}</StyledTableCell>
-            <StyledTableCell>
-              {beautifyPastDateRelativeToNow(record.timestamp)}
-            </StyledTableCell>
-            <StyledTableCell>{record.userId ?? '-'}</StyledTableCell>
-            {showObjectEventColumns && (
-              <>
-                <StyledTableCell>{record.recordId ?? '-'}</StyledTableCell>
-                <StyledTableCell>
-                  {record.objectMetadataId ?? '-'}
-                </StyledTableCell>
-              </>
-            )}
-            <StyledTableCell>
-              <EventLogJsonCell value={record.properties} />
-            </StyledTableCell>
-          </StyledDataRow>
-        ))}
-      </StyledTable>
-      <StyledIntersectionObserver ref={fetchMoreRef} />
-      {loading && records.length > 0 && (
-        <StyledLoadingMore>
-          <Trans>Loading more...</Trans>
-        </StyledLoadingMore>
-      )}
-    </StyledScrollWrapper>
+        </Table>
+        <StyledIntersectionObserver ref={fetchMoreRef} />
+        {loading && records.length > 0 && (
+          <StyledLoadingMore>
+            <Trans>Loading more...</Trans>
+          </StyledLoadingMore>
+        )}
+      </ScrollWrapper>
+    </StyledScrollWrapperContainer>
   );
 };

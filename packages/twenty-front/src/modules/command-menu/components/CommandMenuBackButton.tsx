@@ -19,7 +19,7 @@ const StyledNavigationIcon = styled.div`
   justify-content: center;
 `;
 
-const StyledIconChevronLeft = styled(IconChevronLeft)`
+const StyledIconButtonContainer = styled.span`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
@@ -52,12 +52,14 @@ export const CommandMenuBackButton = () => {
     <Dropdown
       clickableComponent={
         <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
-          <IconButton
-            Icon={StyledIconChevronLeft}
-            size="small"
-            variant="tertiary"
-            onClick={goBackFromCommandMenu}
-          />
+          <StyledIconButtonContainer>
+            <IconButton
+              Icon={IconChevronLeft}
+              size="small"
+              variant="tertiary"
+              onClick={goBackFromCommandMenu}
+            />
+          </StyledIconButtonContainer>
         </StyledNavigationIcon>
       }
       dropdownComponents={

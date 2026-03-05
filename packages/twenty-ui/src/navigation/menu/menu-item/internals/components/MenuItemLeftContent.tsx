@@ -31,7 +31,7 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
-const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
+const StyledMenuItemLabelRightWrapper = styled.div`
   margin-left: auto;
 `;
 
@@ -125,15 +125,17 @@ export const MenuItemLeftContent = ({
         )}
       </StyledMenuItemLabel>
       {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabelRight>
-          <StyledRightMenuItemContextualText>
-            {isString(contextualText) ? (
-              <OverflowingTextWithTooltip text={contextualText} />
-            ) : (
-              contextualText
-            )}
-          </StyledRightMenuItemContextualText>
-        </StyledMenuItemLabelRight>
+        <StyledMenuItemLabelRightWrapper>
+          <StyledMenuItemLabel>
+            <StyledRightMenuItemContextualText>
+              {isString(contextualText) ? (
+                <OverflowingTextWithTooltip text={contextualText} />
+              ) : (
+                contextualText
+              )}
+            </StyledRightMenuItemContextualText>
+          </StyledMenuItemLabel>
+        </StyledMenuItemLabelRightWrapper>
       )}
     </StyledMenuItemLeftContent>
   );

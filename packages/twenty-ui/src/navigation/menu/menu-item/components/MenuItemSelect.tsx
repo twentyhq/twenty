@@ -21,33 +21,35 @@ import {
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
+export const StyledMenuItemSelectWrapper = styled.div<{
   disabled?: boolean;
   focused?: boolean;
 }>`
-  background: ${({ disabled, focused }) => {
-    if (disabled === true) {
-      return 'inherit';
-    }
-    if (focused === true) {
-      return themeCssVariables.background.transparent.light;
-    }
-    return '';
-  }};
+  > div {
+    background: ${({ disabled, focused }) => {
+      if (disabled === true) {
+        return 'inherit';
+      }
+      if (focused === true) {
+        return themeCssVariables.background.transparent.light;
+      }
+      return '';
+    }};
 
-  &:hover {
-    background: ${({ disabled }) =>
+    &:hover {
+      background: ${({ disabled }) =>
+        disabled === true
+          ? 'inherit'
+          : themeCssVariables.background.transparent.light};
+    }
+
+    color: ${({ disabled }) =>
       disabled === true
-        ? 'inherit'
-        : themeCssVariables.background.transparent.light};
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.font.color.secondary};
+
+    cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
   }
-
-  color: ${({ disabled }) =>
-    disabled === true
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.font.color.secondary};
-
-  cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;
 
 type MenuItemSelectProps = {
@@ -80,49 +82,57 @@ export const MenuItemSelect = ({
   contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
   return (
-    <StyledMenuItemSelect
-      onClick={onClick}
-      className={className}
-      disabled={disabled}
-      focused={focused}
-      role="option"
-      aria-selected={selected}
-      aria-disabled={disabled}
-    >
-      <MenuItemLeftContent
-        LeftIcon={LeftIcon}
-        text={text}
-        contextualText={
-          contextualTextPosition === 'left' ? contextualText : null
-        }
-        withIconContainer={withIconContainer}
-      />
-      <StyledMenuItemRightContent>
-        {contextualTextPosition === 'right' && (
-          <StyledMenuItemLabel>
-            {isString(contextualText) ? (
-              <StyledRightMenuItemContextualText>
-                <OverflowingTextWithTooltip text={contextualText} />
-              </StyledRightMenuItemContextualText>
-            ) : (
-              contextualText
-            )}
-          </StyledMenuItemLabel>
-        )}
+    <StyledMenuItemSelectWrapper disabled={disabled} focused={focused}>
+      <StyledMenuItemBase
+        onClick={onClick}
+        className={className}
+        disabled={disabled}
+        focused={focused}
+        role="option"
+        aria-selected={selected}
+        aria-disabled={disabled}
+      >
+        <MenuItemLeftContent
+          LeftIcon={LeftIcon}
+          text={text}
+          contextualText={
+            contextualTextPosition === 'left' ? contextualText : null
+          }
+          withIconContainer={withIconContainer}
+        />
+        <StyledMenuItemRightContent>
+          {contextualTextPosition === 'right' && (
+            <StyledMenuItemLabel>
+              {isString(contextualText) ? (
+                <StyledRightMenuItemContextualText>
+                  <OverflowingTextWithTooltip text={contextualText} />
+                </StyledRightMenuItemContextualText>
+              ) : (
+                contextualText
+              )}
+            </StyledMenuItemLabel>
+          )}
 
-        {selected && needIconCheck && (
-          <IconCheck
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
-          />
-        )}
+          {selected && needIconCheck && (
+            <IconCheck
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          )}
 
-        {hasSubMenu && (
-          <IconChevronRight
-            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
-          />
-        )}
-      </StyledMenuItemRightContent>
-    </StyledMenuItemSelect>
+          {hasSubMenu && (
+            <IconChevronRight
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+              color={resolveThemeVariable(
+                themeCssVariables.font.color.tertiary,
+              )}
+            />
+          )}
+        </StyledMenuItemRightContent>
+      </StyledMenuItemBase>
+    </StyledMenuItemSelectWrapper>
   );
 };

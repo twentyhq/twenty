@@ -84,7 +84,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledMainButton = styled(MainButton)`
+const StyledMainButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -293,13 +293,15 @@ export const PasswordReset = () => {
                   />
                 </StyledFullWidthMotionDiv>
 
-                <StyledMainButton
-                  variant="secondary"
-                  title={passwordActionLabel}
-                  type="submit"
-                  fullWidth
-                  disabled={isUpdatingPassword}
-                />
+                <StyledMainButtonContainer>
+                  <MainButton
+                    variant="secondary"
+                    title={passwordActionLabel}
+                    type="submit"
+                    fullWidth
+                    disabled={isUpdatingPassword}
+                  />
+                </StyledMainButtonContainer>
               </StyledForm>
             )}
           </StyledContentContainer>

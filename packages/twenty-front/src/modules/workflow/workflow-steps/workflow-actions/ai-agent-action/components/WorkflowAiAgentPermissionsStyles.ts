@@ -1,12 +1,11 @@
 import { styled } from '@linaria/react';
-import { IconChevronRight, Label } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledText = styled.div`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
-export const StyledLabel = styled(Label)`
+export const StyledLabelContainer = styled.div`
   margin: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
     ${themeCssVariables.spacing[0]};
 `;
@@ -61,6 +60,6 @@ export const StyledIconContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-export const StyledIconChevronRight = styled(IconChevronRight)`
+export const StyledIconChevronRightContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;

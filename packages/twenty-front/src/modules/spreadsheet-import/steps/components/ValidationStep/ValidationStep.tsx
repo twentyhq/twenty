@@ -56,8 +56,10 @@ const StyledToolbar = styled.div`
   box-shadow: ${themeCssVariables.boxShadow.strong};
 `;
 
-const StyledButton = styled(Button)`
-  height: 24px;
+const StyledButtonContainer = styled.div`
+  & > button {
+    height: 24px;
+  }
 `;
 
 const StyledErrorToggle = styled.div`
@@ -323,13 +325,15 @@ export const ValidationStep = ({
                 <Trans>Show only rows with errors</Trans>
               </StyledErrorToggleDescription>
             </StyledErrorToggle>
-            <StyledButton
-              Icon={IconTrash}
-              title={t`Remove`}
-              accent="default"
-              onClick={deleteSelectedRows}
-              disabled={selectedRows.size === 0}
-            />
+            <StyledButtonContainer>
+              <Button
+                Icon={IconTrash}
+                title={t`Remove`}
+                accent="default"
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+              />
+            </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>
       </ModalContent>

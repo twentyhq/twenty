@@ -3,8 +3,9 @@ import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filt
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
 import {
   SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow,
-  StyledObjectFieldTableRow,
+  OBJECT_FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type OrderBy } from 'twenty-shared/types';
@@ -28,7 +29,7 @@ import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
   'settings-role-permissions-object-level-object-field-permission';
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -99,15 +100,21 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         title={t`Fields Permissions`}
         description={t`Ability to interact with this object's fields.`}
       />
-      <StyledSearchInput
-        instanceId="object-field-table-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search a field...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="object-field-table-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search a field...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
       <Table>
-        <StyledObjectFieldTableRow>
+        <TableRow
+          gridTemplateColumns={
+            OBJECT_FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS
+          }
+        >
           <SortableTableHeader
             fieldName="label"
             label={t`Name`}
@@ -132,7 +139,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
               </TableHeader>
             )}
           </>
-        </StyledObjectFieldTableRow>
+        </TableRow>
         <SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
