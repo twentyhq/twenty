@@ -13,7 +13,7 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabListComponentId';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
-import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
+import { useResetWorkflowAiAgentPermissionsStateOnSidePanelClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnSidePanelClose';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { styled } from '@linaria/react';
@@ -33,7 +33,7 @@ import {
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -73,7 +73,7 @@ export const WorkflowEditActionAiAgent = ({
       },
     },
   );
-  useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose();
+  useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
   const [updateAgent] = useUpdateOneAgentMutation();
   const aiModelOptions = useAiModelOptions();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
@@ -267,7 +267,7 @@ export const WorkflowEditActionAiAgent = ({
   };
 
   return agentLoading ? (
-    <RightDrawerSkeletonLoader />
+    <SidePanelSkeletonLoader />
   ) : (
     <>
       <StyledTabListContainer>

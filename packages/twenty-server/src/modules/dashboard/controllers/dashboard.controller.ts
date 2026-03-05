@@ -1,7 +1,9 @@
 import { Controller, Param, Post, UseFilters, UseGuards } from '@nestjs/common';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import {
+  AuthContext,
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -26,7 +28,7 @@ export class DashboardController {
   async duplicate(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<DuplicatedDashboardDTO> {

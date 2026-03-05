@@ -1,4 +1,4 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -22,7 +22,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -53,7 +53,7 @@ const StyledScrollWrapperContainer = styled.div`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const { isInRightDrawer, layoutType, targetRecordIdentifier } =
+  const { isInSidePanel, layoutType, targetRecordIdentifier } =
     useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
@@ -67,7 +67,7 @@ export const PageLayoutRendererContent = () => {
   const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const isMobile = useIsMobile();
 
@@ -81,8 +81,8 @@ export const PageLayoutRendererContent = () => {
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setPageLayoutTabSettingsOpenTabId(newTabId);
-          navigatePageLayoutCommandMenu({
-            commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+          navigatePageLayoutSidePanel({
+            sidePanelPage: SidePanelPages.PageLayoutTabSettings,
             focusTitleInput: true,
           });
         }
@@ -95,7 +95,7 @@ export const PageLayoutRendererContent = () => {
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
   });
 
@@ -103,7 +103,7 @@ export const PageLayoutRendererContent = () => {
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
@@ -133,7 +133,7 @@ export const PageLayoutRendererContent = () => {
           <StyledPageLayoutTabListContainer>
             <PageLayoutTabList
               tabs={sortedTabs}
-              behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
+              behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}
               isReorderEnabled={canEnableTabEditing}

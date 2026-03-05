@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { type Agent, useGetRolesQuery } from '~/generated-metadata/graphql';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -149,7 +149,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   if (isAgentLoading || rolesLoading) {
-    return <RightDrawerSkeletonLoader />;
+    return <SidePanelSkeletonLoader />;
   }
 
   if (!isDefined(workflowAiAgentActionAgent)) {

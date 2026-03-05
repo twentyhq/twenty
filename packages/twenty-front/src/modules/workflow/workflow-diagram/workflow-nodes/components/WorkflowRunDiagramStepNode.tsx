@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -97,12 +97,13 @@ export const WorkflowRunDiagramStepNode = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowRunViewStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -119,13 +120,13 @@ export const WorkflowRunDiagramStepNode = ({
       throw new Error('Workflow ID must be defined');
     }
 
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(id);
 
-    openWorkflowRunViewStepInCommandMenu({
+    openWorkflowRunViewStepInSidePanel({
       workflowId: workflowVisualizerWorkflowId,
       workflowRunId,
       title: data.name,

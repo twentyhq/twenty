@@ -38,7 +38,7 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightDrawerPlaceholderWrapper = styled.div`
+const StyledSidePanelPlaceholderWrapper = styled.div`
   > * {
     height: auto;
     padding-top: ${themeCssVariables.spacing[8]};
@@ -47,7 +47,7 @@ const StyledRightDrawerPlaceholderWrapper = styled.div`
 
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetRecord);
 
@@ -76,10 +76,10 @@ export const TimelineCard = () => {
       </AnimatedPlaceholderEmptyContainer>
     );
 
-    return isInRightDrawer ? (
-      <StyledRightDrawerPlaceholderWrapper>
+    return isInSidePanel ? (
+      <StyledSidePanelPlaceholderWrapper>
         {placeholderContent}
-      </StyledRightDrawerPlaceholderWrapper>
+      </StyledSidePanelPlaceholderWrapper>
     ) : (
       placeholderContent
     );

@@ -98,7 +98,7 @@ export const themeCssVariables = {
     checkboxColumnWidth: 'var(--t-table-checkbox-column-width)',
     horizontalCellPadding: 'var(--t-table-horizontal-cell-padding)',
   },
-  rightDrawerWidth: 'var(--t-right-drawer-width)',
+  sidePanelWidth: 'var(--t-side-panel-width)',
   clickableElementBackgroundTransition:
     'var(--t-clickable-element-background-transition)',
   lastLayerZIndex: 'var(--t-last-layer-z-index)',
