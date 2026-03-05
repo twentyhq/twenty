@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   AgentActorContextService,
   type UserContext,
@@ -137,8 +137,7 @@ export class SystemPromptBuilderService {
     contextString?: string,
     storedFiles?: Array<{
       filename: string;
-      storagePath: string;
-      url: string;
+      fileId: string;
     }>,
     workspaceInstructions?: string,
     userContext?: UserContext,
@@ -198,12 +197,12 @@ ${parts.join('\n')}`;
   }
 
   buildUploadedFilesSection(
-    storedFiles: Array<{ filename: string; storagePath: string; url: string }>,
+    storedFiles: Array<{ filename: string; fileId: string }>,
   ): string {
     const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
 
     const filesJson = JSON.stringify(
-      storedFiles.map((f) => ({ filename: f.filename, url: f.url })),
+      storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
     );
 
     return `
@@ -213,7 +212,7 @@ The user has uploaded the following files:
 ${fileList}
 
 **IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
-When calling code_interpreter, include the files parameter with these values:
+When calling code_interpreter, include the files parameter with these values (use fileId to reference uploaded files):
 \`\`\`json
 ${filesJson}
 \`\`\`

@@ -18,8 +18,8 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -175,8 +175,7 @@ export class ChatExecutionService {
 
     let storedFiles: Array<{
       filename: string;
-      storagePath: string;
-      url: string;
+      fileId: string;
     }> = [];
 
     if (extractedFiles.length > 0) {
@@ -372,13 +371,10 @@ export class ChatExecutionService {
   private async storeExtractedFiles(
     files: ExtractedFile[],
     _workspaceId: string,
-  ): Promise<Array<{ filename: string; storagePath: string; url: string }>> {
-    // Files are already uploaded and have URLs, just return them with their info
-    // The code interpreter tool will download them when needed
+  ): Promise<Array<{ filename: string; fileId: string }>> {
     return files.map((file) => ({
       filename: file.filename,
-      storagePath: file.filename,
-      url: file.url,
+      fileId: file.fileId,
     }));
   }
 }

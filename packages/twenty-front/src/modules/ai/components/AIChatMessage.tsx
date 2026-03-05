@@ -7,7 +7,7 @@ import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantM
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isExtendedFileUIPart, type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -151,7 +151,7 @@ export const AIChatMessage = ({
   const showError =
     isDefined(error) && message.role === AgentMessageRole.ASSISTANT;
 
-  const fileParts = message.parts.filter((part) => part.type === 'file');
+  const fileParts = message.parts.filter(isExtendedFileUIPart);
 
   return (
     <StyledMessageBubble key={message.id} isUser={isUser}>

@@ -215,6 +215,8 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
     },
     {
       './style.css': './dist/style.css',
+      './theme-light.css': './dist/theme-light.css',
+      './theme-dark.css': './dist/theme-dark.css',
     },
   );
 };

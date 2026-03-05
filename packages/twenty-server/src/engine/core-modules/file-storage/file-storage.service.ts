@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { mkdir, readdir, readFile, stat } from 'fs/promises';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { isObject } from '@sniptt/guards';
-import { FileFolder, Sources } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -43,23 +41,6 @@ export class FileStorageService {
       fileFolder,
       resourcePath,
     ).replace(/\/+/g, '/');
-  }
-
-  writeFileLegacy(params: {
-    file: string | Buffer | Uint8Array;
-    name: string;
-    folder: string;
-    mimeType: string | undefined;
-  }): Promise<void> {
-    const { file, name, folder, mimeType } = params;
-
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.writeFile({
-      filePath: `${folder}/${name}`,
-      sourceFile: file,
-      mimeType,
-    });
   }
 
   async writeFile({
@@ -133,68 +114,12 @@ export class FileStorageService {
     });
   }
 
-  readFileLegacy(params: { filePath: string }): Promise<Readable> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.readFile(params);
-  }
-
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.readFile({ filePath: onStoragePath });
-  }
-
-  async writeFolderLegacy(sources: Sources, folderPath: string): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      if (isObject(sources[key])) {
-        await this.writeFolderLegacy(sources[key], join(folderPath, key));
-        continue;
-      }
-      await this.writeFileLegacy({
-        file: sources[key],
-        name: key,
-        folder: folderPath,
-        mimeType: undefined,
-      });
-    }
-  }
-
-  async readFolderLegacy(
-    folderPath: string,
-    localTempPath?: string,
-  ): Promise<Sources> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const tempDir = localTempPath || `/tmp/twenty-read-folder-${Date.now()}`;
-
-    await mkdir(tempDir, { recursive: true });
-
-    await driver.downloadFolder({
-      onStoragePath: folderPath,
-      localPath: tempDir,
-    });
-
-    return this.readLocalFolderToSources(tempDir);
-  }
-
-  private async readLocalFolderToSources(localPath: string): Promise<Sources> {
-    const sources: Sources = {};
-    const entries = await readdir(localPath);
-
-    for (const entry of entries) {
-      const entryPath = join(localPath, entry);
-      const stats = await stat(entryPath);
-
-      if (stats.isFile()) {
-        sources[entry] = await readFile(entryPath, 'utf8');
-      } else {
-        sources[entry] = await this.readLocalFolderToSources(entryPath);
-      }
-    }
-
-    return sources;
   }
 
   downloadFile(
