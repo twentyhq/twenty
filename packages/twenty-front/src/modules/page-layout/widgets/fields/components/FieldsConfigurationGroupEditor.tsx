@@ -28,25 +28,6 @@ const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
   width: 100%;
 `;
 
-const StyledGroupHeaderRow = styled.div`
-  align-items: center;
-  display: flex;
-  position: relative;
-  width: 100%;
-`;
-
-const StyledMenuItemDraggableWrapper = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const StyledDropdownContainer = styled.div`
-  position: absolute;
-  right: ${themeCssVariables.spacing[1]};
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-`;
 type FieldsConfigurationGroupEditorProps = {
   group: FieldsWidgetGroup;
   index: number;

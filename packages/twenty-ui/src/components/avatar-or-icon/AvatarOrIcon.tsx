@@ -67,10 +67,7 @@ export const AvatarOrIcon = ({
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
-      <StyledAvatarOrIconWrapper
-        isClickable={isClickable}
-        onClick={onClick}
-      >
+      <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
         <StyledIconWithBackgroundContainer
           backgroundColor={
             IconBackgroundColor ?? theme.background.invertedSecondary
@@ -87,10 +84,7 @@ export const AvatarOrIcon = ({
   }
 
   return (
-    <StyledAvatarOrIconWrapper
-      isClickable={isClickable}
-      onClick={onClick}
-    >
+    <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
       <Icon
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}
