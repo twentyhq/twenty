@@ -12,7 +12,7 @@ import {
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ThemeType, ThemeContextProvider } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 
@@ -23,7 +23,7 @@ type FrontComponentContentProps = {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
-  theme: ThemeType;
+  colorScheme: 'light' | 'dark';
 };
 
 export const FrontComponentRenderer = ({
@@ -33,7 +33,7 @@ export const FrontComponentRenderer = ({
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
-  theme,
+  colorScheme,
 }: FrontComponentContentProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<ThreadWebWorker<
@@ -109,12 +109,12 @@ export const FrontComponentRenderer = ({
       )}
 
       {isDefined(receiver) && isExecutionContextInitialized && (
-        <ThemeContextProvider theme={theme}>
+        <ThemeProvider colorScheme={colorScheme}>
           <RemoteRootRenderer
             receiver={receiver}
             components={componentRegistry}
           />
-        </ThemeContextProvider>
+        </ThemeProvider>
       )}
     </>
   );

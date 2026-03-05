@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import IconMicrosoftRaw from '@assets/icons/microsoft.svg?react';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 interface IconMicrosoftProps {
   size?: number | string;

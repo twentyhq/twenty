@@ -33,6 +33,7 @@ const makeDraft = (tabs: DraftPageLayout['tabs']): DraftPageLayout =>
 const makeTab = (
   id: string,
   widgets: PageLayoutWidget[],
+  layoutMode?: PageLayoutTabLayoutMode,
 ): DraftPageLayout['tabs'][number] =>
   ({
     id,
@@ -40,6 +41,7 @@ const makeTab = (
     position: 0,
     pageLayoutId: 'layout-1',
     applicationId: 'app-1',
+    layoutMode,
     widgets,
   }) as DraftPageLayout['tabs'][number];
 
@@ -139,7 +141,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
   });
 
-  it('should produce VERTICAL_LIST position with index from widget.position', () => {
+  it('should produce VERTICAL_LIST position with index from widget.position when tab is VERTICAL_LIST', () => {
     const widget = makeWidget({
       id: 'w1',
       position: {
@@ -148,7 +150,9 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
         index: 3,
       },
     });
-    const draft = makeDraft([makeTab('tab-1', [widget])]);
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.VERTICAL_LIST),
+    ]);
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
@@ -158,15 +162,20 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should fall back to array index for VERTICAL_LIST when position typename is missing', () => {
+  it('should fall back to array index for VERTICAL_LIST when widget position typename does not match', () => {
     const widget = makeWidget({
       id: 'w1',
       position: {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        __typename: 'PageLayoutWidgetCanvasPosition',
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
       } as PageLayoutWidget['position'],
     });
     const draft = makeDraft([
-      makeTab('tab-1', [makeWidget({ id: 'w0' }), widget]),
+      makeTab(
+        'tab-1',
+        [makeWidget({ id: 'w0' }), widget],
+        PageLayoutTabLayoutMode.VERTICAL_LIST,
+      ),
     ]);
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
@@ -177,15 +186,13 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should produce CANVAS position without grid fields', () => {
+  it('should produce CANVAS position when tab is CANVAS', () => {
     const widget = makeWidget({
       id: 'w1',
-      position: {
-        __typename: 'PageLayoutWidgetCanvasPosition',
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
-      },
     });
-    const draft = makeDraft([makeTab('tab-1', [widget])]);
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.CANVAS),
+    ]);
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
@@ -194,7 +201,27 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should produce GRID position from gridPosition when position is null', () => {
+  it('should produce CANVAS position regardless of widget position data', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 5,
+      },
+    });
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.CANVAS),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    });
+  });
+
+  it('should produce GRID position from gridPosition when tab layoutMode is undefined', () => {
     const widget = makeWidget({
       id: 'w1',
       position: null,
@@ -210,6 +237,93 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
       column: 2,
       rowSpan: 3,
       columnSpan: 4,
+    });
+  });
+
+  it('should produce GRID position when tab layoutMode is explicitly GRID', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      gridPosition: { row: 5, column: 6, rowSpan: 7, columnSpan: 8 },
+    });
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.GRID),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 5,
+      column: 6,
+      rowSpan: 7,
+      columnSpan: 8,
+    });
+  });
+
+  it('should use tab layoutMode over widget position layoutMode when they differ', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetCanvasPosition',
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      },
+      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
+    });
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.GRID),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 1,
+      column: 2,
+      rowSpan: 3,
+      columnSpan: 4,
+    });
+  });
+
+  it('should handle mixed tab layout modes in the same draft', () => {
+    const verticalWidget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+      },
+    });
+    const canvasWidget = makeWidget({ id: 'w2' });
+    const gridWidget = makeWidget({
+      id: 'w3',
+      gridPosition: { row: 1, column: 0, rowSpan: 2, columnSpan: 6 },
+    });
+
+    const draft = makeDraft([
+      makeTab(
+        'tab-vl',
+        [verticalWidget],
+        PageLayoutTabLayoutMode.VERTICAL_LIST,
+      ),
+      makeTab('tab-canvas', [canvasWidget], PageLayoutTabLayoutMode.CANVAS),
+      makeTab('tab-grid', [gridWidget], PageLayoutTabLayoutMode.GRID),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+    });
+    expect(result.tabs[1].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    });
+    expect(result.tabs[2].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 1,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 6,
     });
   });
 });

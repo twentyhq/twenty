@@ -18,9 +18,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { type MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
-
 type BarChartProps = {
   data: BarChartDatum[];
   indexBy: string;
@@ -77,6 +76,7 @@ export const BarChart = ({
   hasNoData = false,
 }: BarChartProps) => {
   const { theme } = useContext(ThemeContext);
+
   const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );

@@ -22,12 +22,12 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { type CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -37,7 +37,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -47,16 +47,16 @@ const openTimeout = 50;
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
     <RecordComponentInstanceContextsWrapper
-      componentInstanceId={COMMAND_MENU_COMPONENT_INSTANCE_ID}
+      componentInstanceId={SIDE_PANEL_COMPONENT_INSTANCE_ID}
     >
       <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+        value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
       >
         <ViewComponentInstanceContext.Provider
-          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
         >
           <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+            value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
           >
             <JestContextStoreSetter
               contextStoreCurrentObjectMetadataNameSingular="company"
@@ -72,9 +72,9 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof CommandMenu> = {
+const meta: Meta<typeof SidePanelRootPage> = {
   title: 'Modules/CommandMenu/CommandMenu',
-  component: CommandMenuRouter,
+  component: SidePanelRouter,
   decorators: [
     (Story) => {
       jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
@@ -86,10 +86,10 @@ const meta: Meta<typeof CommandMenu> = {
         currentUserWorkspaceState.atom,
         mockedUserData.currentUserWorkspace,
       );
-      jotaiStore.set(isCommandMenuOpenedState.atom, true);
-      jotaiStore.set(commandMenuNavigationStackState.atom, [
+      jotaiStore.set(isSidePanelOpenedState.atom, true);
+      jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
-          page: CommandMenuPages.Root,
+          page: SidePanelPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
           pageId: '1',
@@ -128,7 +128,7 @@ const meta: Meta<typeof CommandMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CommandMenu>;
+type Story = StoryObj<typeof SidePanelRootPage>;
 
 export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {

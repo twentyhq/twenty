@@ -1,8 +1,9 @@
-import IllustrationIconMapRaw from '@assets/icons/illustration-map.svg?react';
 import { useContext } from 'react';
+
+import IllustrationIconMapRaw from '@assets/icons/illustration-map.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconMapProps = Pick<IconComponentProps, 'size'>;
 

@@ -14,6 +14,7 @@ import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -56,6 +57,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
     canBillMeteredProduct: jest.fn().mockReturnValue(true),
   };
 
+  const mockExceptionHandlerService = {
+    captureExceptions: jest.fn(),
+  };
+
   const mockMessageQueueService = {
     add: jest.fn(),
   };
@@ -83,6 +88,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: BillingService,
           useValue: mockBillingService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: mockExceptionHandlerService,
         },
         {
           provide: `MESSAGE_QUEUE_${MessageQueue.workflowQueue}`,

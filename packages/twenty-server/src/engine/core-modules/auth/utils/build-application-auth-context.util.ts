@@ -1,9 +1,9 @@
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 type ApplicationAuthContextInput = {
-  workspace: NonNullable<AuthContext['workspace']>;
-  application: NonNullable<AuthContext['application']>;
+  workspace: NonNullable<RawAuthContext['workspace']>;
+  application: NonNullable<RawAuthContext['application']>;
   workspaceMetadataVersion?: string;
 };
 

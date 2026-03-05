@@ -20,8 +20,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -81,6 +80,7 @@ export const FormSingleRecordPicker = ({
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
   const { theme } = useContext(ThemeContext);
+
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -186,7 +186,9 @@ export const FormSingleRecordPicker = ({
             clickableComponentWidth="100%"
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{
+              y: parseInt(theme.spacing[1], 10),
+            }}
             clickableComponent={
               <StyledFormSelectContainer
                 formFieldInputInstanceId={componentId}

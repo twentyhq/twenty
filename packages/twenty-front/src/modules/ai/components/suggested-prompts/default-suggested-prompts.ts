@@ -2,6 +2,7 @@ import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   type IconComponent,
+  IconJetpack,
   IconLayoutDashboard,
   IconPlus,
   IconSettingsAutomation,
@@ -15,6 +16,14 @@ export type SuggestedPrompt = {
 };
 
 export const DEFAULT_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+  {
+    id: 'demo-workspace',
+    label: msg`Setup a tailor-made workspace`,
+    Icon: IconJetpack,
+    prefillPrompts: [
+      msg`Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created.`,
+    ],
+  },
   {
     id: 'dashboard',
     label: msg`Create a dashboard`,

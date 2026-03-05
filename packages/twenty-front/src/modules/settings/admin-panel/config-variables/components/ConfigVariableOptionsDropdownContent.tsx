@@ -10,11 +10,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
@@ -39,7 +38,6 @@ export const ConfigVariableOptionsDropdownContent = ({
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
   const { theme } = useContext(ThemeContext);
-
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );

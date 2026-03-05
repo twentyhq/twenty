@@ -6,7 +6,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -54,7 +54,7 @@ export const RecordIndexActionMenuDropdown = () => {
     dropdownId,
   );
 
-  const { openCommandMenu } = useCommandMenu();
+  const { openSidePanelMenu } = useSidePanelMenu();
 
   const selectedItemIdArray = [
     ...recordIndexActions.map((action) => action.key),
@@ -95,14 +95,14 @@ export const RecordIndexActionMenuDropdown = () => {
                   key="more-actions"
                   onEnter={() => {
                     closeDropdown(dropdownId);
-                    openCommandMenu();
+                    openSidePanelMenu();
                   }}
                 >
                   <MenuItem
                     LeftIcon={IconLayoutSidebarRightExpand}
                     onClick={() => {
                       closeDropdown(dropdownId);
-                      openCommandMenu();
+                      openSidePanelMenu();
                     }}
                     focused={selectedItemId === 'more-actions'}
                     text={t`More actions`}

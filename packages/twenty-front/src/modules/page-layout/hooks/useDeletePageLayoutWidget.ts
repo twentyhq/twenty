@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -26,13 +26,13 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
   const deletePageLayoutWidget = useCallback(
     (widgetId: string) => {
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       const pageLayoutDraft = store.get(pageLayoutDraftState);
       const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
@@ -57,7 +57,7 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
     },
     [
-      closeCommandMenu,
+      closeSidePanelMenu,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       store,
