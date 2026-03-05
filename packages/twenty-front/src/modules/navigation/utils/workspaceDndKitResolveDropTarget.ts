@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
-import { parseDropTargetIdToDestination } from '@/navigation-menu-item/utils/parseDropTargetIdToDestination';
 
+import type { DroppableData } from '@/navigation/utils/workspaceDndKitDroppableData';
 import { getDestinationFromSortableTarget } from '@/navigation/utils/workspaceDndKitGetDestinationFromSortableTarget';
 import type { ResolvedDropTarget } from '@/navigation/utils/workspaceDndKitResolvedDropTarget';
 
@@ -11,8 +11,19 @@ type GetNavItemById = (
   id: string | undefined,
 ) => NavigationMenuItem | undefined;
 
+const isDroppableData = (data: unknown): data is DroppableData =>
+  typeof data === 'object' &&
+  data !== null &&
+  typeof (data as DroppableData).droppableId === 'string' &&
+  typeof (data as DroppableData).index === 'number';
+
 export const resolveDropTarget = (
-  target: { id?: unknown; group?: unknown; index?: unknown } | null,
+  target: {
+    id?: unknown;
+    group?: unknown;
+    index?: unknown;
+    data?: unknown;
+  } | null,
   getNavItemById: GetNavItemById,
 ): ResolvedDropTarget | null => {
   if (target === null || target === undefined) {
@@ -24,14 +35,14 @@ export const resolveDropTarget = (
       getNavItemById,
     );
   }
-  if (typeof target.id === 'string') {
-    const parsed = parseDropTargetIdToDestination(target.id);
-    if (isDefined(parsed) && isWorkspaceDroppableId(parsed.droppableId)) {
+  if (isDroppableData(target.data)) {
+    const { droppableId, index } = target.data;
+    if (isWorkspaceDroppableId(droppableId)) {
       return {
-        destination: parsed,
-        effectiveDropTargetId: target.id,
+        destination: { droppableId, index },
+        effectiveDropTargetId: String(target.id),
         isTargetFolder: false,
-        dropTargetId: target.id,
+        dropTargetId: String(target.id),
       };
     }
   }

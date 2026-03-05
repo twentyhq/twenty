@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
+import type { DroppableData } from '@/navigation/utils/workspaceDndKitDroppableData';
 
 const StyledSlotWrapper = styled.div<{ $empty: boolean }>`
   min-height: 0;
@@ -31,10 +32,12 @@ export const WorkspaceDndKitDroppableSlot = ({
   collisionPriority = SLOT_COLLISION_PRIORITY,
 }: WorkspaceDndKitDroppableSlotProps) => {
   const id = getDndKitDropTargetId(droppableId, index);
+  const data: DroppableData = { droppableId, index };
   const { ref } = useDroppable({
     id,
     disabled,
     collisionPriority,
+    data,
   });
 
   const isEmpty =
