@@ -698,7 +698,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           }
         case RecordFilterOperand.IS: {
           if (!isSubFieldFilter) {
-            const [firstPart, ...rest] = recordFilter.value.split(' ');
+            const parts = recordFilter.value.split(' ').map((p) => p.trim()).filter(isNonEmptyString);
+            const [firstPart, ...rest] = parts;
             const lastPart = rest.join(' ');
             return {
               or: [
@@ -742,7 +743,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case RecordFilterOperand.IS_NOT: {
           if (!isSubFieldFilter) {
-            const [firstPart, ...rest] = recordFilter.value.split(' ');
+            const parts = recordFilter.value.split(' ').map((p) => p.trim()).filter(isNonEmptyString);
+            const [firstPart, ...rest] = parts;
             const lastPart = rest.join(' ');
             return {
               and: [
@@ -1430,6 +1432,35 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
 
         switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                primaryPhoneNumber: {
+                  eq: filterValue,
+                },
+              } as PhonesFilter,
+            };
+          case RecordFilterOperand.IS_NOT:
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      primaryPhoneNumber: {
+                        eq: filterValue,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    primaryPhoneNumber: {
+                      is: 'NULL',
+                    },
+                  } as PhonesFilter,
+                },
+              ],
+            };
           case RecordFilterOperand.CONTAINS:
             return {
               or: [
@@ -1506,7 +1537,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
-      const filterValue = recordFilter.value;
+      const filterValue = recordFilter.value.replace(/[^0-9]/g, '');
 
       switch (subFieldName) {
         case 'additionalPhones': {
