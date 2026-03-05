@@ -10,7 +10,7 @@ export const TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP = gql`
       targetWorkspaceSubdomain: $targetWorkspaceSubdomain
     ) {
       id
-      ownerWorkspaceId
+      name
     }
   }
 `;
