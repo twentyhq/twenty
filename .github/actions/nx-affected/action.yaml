@@ -15,6 +15,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Fetch main branch for diff
+      shell: bash
+      run: git fetch origin main --depth=1
     - name: Get last successful commit
       uses: nrwl/nx-set-shas@v4
     - name: Run affected command
