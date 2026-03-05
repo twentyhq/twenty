@@ -79,6 +79,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
       payload={payload}
       isHovered={showDragAffordance}
       disabled={disabled}
+      disableDrag={disableDrag}
     />
   );
 

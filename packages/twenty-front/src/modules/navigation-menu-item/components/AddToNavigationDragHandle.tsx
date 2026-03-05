@@ -15,9 +15,11 @@ import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/ad
 const StyledIconSlot = styled.div<{
   $hasFixedSize: boolean;
   $disabled?: boolean;
+  $disableDrag?: boolean;
 }>`
   align-items: center;
-  cursor: grab;
+  cursor: ${({ $disabled, $disableDrag }) =>
+    $disabled || $disableDrag ? 'default' : 'grab'};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -28,7 +30,8 @@ const StyledIconSlot = styled.div<{
   opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
   &:active {
-    cursor: grabbing;
+    cursor: ${({ $disabled, $disableDrag }) =>
+      $disabled || $disableDrag ? 'default' : 'grabbing'};
   }
 `;
 
@@ -69,6 +72,7 @@ type AddToNavigationDragHandleProps = {
   payload: AddToNavigationDragPayload;
   isHovered: boolean;
   disabled?: boolean;
+  disableDrag?: boolean;
 };
 
 export const AddToNavigationDragHandle = ({
@@ -77,6 +81,7 @@ export const AddToNavigationDragHandle = ({
   payload,
   isHovered,
   disabled = false,
+  disableDrag = false,
 }: AddToNavigationDragHandleProps) => {
   const { theme } = useContext(ThemeContext);
   const effectiveColor =
@@ -97,6 +102,7 @@ export const AddToNavigationDragHandle = ({
     <StyledIconSlot
       $hasFixedSize={hasBackgroundColor || showCustomContentWithoutWrapper}
       $disabled={disabled}
+      $disableDrag={disableDrag}
     >
       {isHovered ? (
         <IconGripVertical
