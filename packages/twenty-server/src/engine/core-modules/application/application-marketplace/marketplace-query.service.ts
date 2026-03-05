@@ -1,17 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -28,8 +26,7 @@ export class MarketplaceQueryService {
   private hasSyncBeenEnqueued = false;
 
   constructor(
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -39,9 +36,10 @@ export class MarketplaceQueryService {
       return this.cachedApps;
     }
 
-    const registrations = await this.appRegistrationRepository.find({
-      where: { sourceType: ApplicationRegistrationSourceType.NPM },
-    });
+    const registrations =
+      await this.applicationRegistrationService.findManyBySourceType(
+        ApplicationRegistrationSourceType.NPM,
+      );
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
@@ -69,9 +67,10 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.appRegistrationRepository.findOne({
-      where: { universalIdentifier },
-    });
+    const registration =
+      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+        universalIdentifier,
+      );
 
     if (!isDefined(registration)) {
       throw new ApplicationRegistrationException(
@@ -89,45 +88,13 @@ export class MarketplaceQueryService {
   }): Promise<ApplicationRegistrationEntity> {
     assertValidNpmPackageName(params.packageName);
 
-    const existing = await this.appRegistrationRepository.findOne({
-      where: { sourcePackage: params.packageName },
-    });
-
-    if (isDefined(existing)) {
-      return existing;
-    }
-
     this.logger.log(
-      `Creating new registration for npm package "${params.packageName}"`,
+      `Finding or creating registration for npm package "${params.packageName}"`,
     );
 
-    try {
-      const registration = this.appRegistrationRepository.create({
-        universalIdentifier: v4(),
-        name: params.packageName,
-        sourceType: ApplicationRegistrationSourceType.NPM,
-        sourcePackage: params.packageName,
-        oAuthClientId: v4(),
-        oAuthRedirectUris: [],
-        oAuthScopes: [],
-        ownerWorkspaceId: params.ownerWorkspaceId,
-      });
-
-      return await this.appRegistrationRepository.save(registration);
-    } catch {
-      const concurrentlyCreated = await this.appRegistrationRepository.findOne({
-        where: { sourcePackage: params.packageName },
-      });
-
-      if (isDefined(concurrentlyCreated)) {
-        return concurrentlyCreated;
-      }
-
-      throw new ApplicationRegistrationException(
-        `Failed to create registration for package "${params.packageName}"`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
+    return this.applicationRegistrationService.findOrCreateForNpmPackage(
+      params,
+    );
   }
 
   toMarketplaceAppDTO(

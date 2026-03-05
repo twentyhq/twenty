@@ -23,9 +23,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
     ApplicationVersionCheckCronJob,
     ApplicationVersionCheckCronCommand,
   ],
-  exports: [
-    ApplicationUpgradeService,
-    ApplicationVersionCheckCronCommand,
-  ],
+  exports: [ApplicationUpgradeService, ApplicationVersionCheckCronCommand],
 })
 export class ApplicationUpgradeModule {}

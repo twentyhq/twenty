@@ -15,13 +15,14 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import {
   ApplicationTarballService,
   MAX_TARBALL_UPLOAD_SIZE_BYTES,
-} from 'src/engine/core-modules/application/application-package/services/application-tarball.service';
+} from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
+import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import {
@@ -262,6 +263,23 @@ export class ApplicationRegistrationResolver {
   )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationEntity)
+  async registerNpmPackage(
+    @Args('packageName') packageName: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.findOrCreateForNpmPackage({
+      packageName,
+      ownerWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @Mutation(() => ApplicationRegistrationEntity)
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,
@@ -283,6 +301,28 @@ export class ApplicationRegistrationResolver {
       tarballBuffer,
       universalIdentifier,
       ownerWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @Mutation(() => ApplicationRegistrationEntity)
+  async transferApplicationRegistrationOwnership(
+    @Args()
+    {
+      applicationRegistrationId,
+      targetWorkspaceSubdomain,
+    }: TransferApplicationRegistrationOwnershipInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.transferOwnership({
+      applicationRegistrationId,
+      targetWorkspaceSubdomain,
+      currentOwnerWorkspaceId: workspaceId,
     });
   }
 }

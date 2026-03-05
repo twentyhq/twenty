@@ -1,6 +1,7 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { DELETE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/deleteApplicationRegistration';
 import { ROTATE_APPLICATION_REGISTRATION_CLIENT_SECRET } from '@/settings/application-registrations/graphql/mutations/rotateApplicationRegistrationClientSecret';
+import { TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP } from '@/settings/application-registrations/graphql/mutations/transferApplicationRegistrationOwnership';
 import { UPDATE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistration';
 import { UPDATE_APPLICATION_REGISTRATION_VARIABLE } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistrationVariable';
 import { FIND_APPLICATION_REGISTRATION_STATS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationStats';
@@ -16,6 +17,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
 import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -26,6 +28,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUrl } from 'twenty-shared/utils';
 import {
   H2Title,
+  IconArrowRight,
   IconChartBar,
   IconCheck,
   IconDownload,
@@ -41,12 +44,15 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 const ROTATE_SECRET_MODAL_ID = 'rotate-application-registration-secret-modal';
+const TRANSFER_OWNERSHIP_MODAL_ID =
+  'transfer-application-registration-ownership-modal';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -123,11 +129,14 @@ export const SettingsApplicationRegistrationDetails = () => {
     applicationRegistrationId,
   );
 
+  const [isInstalling, setIsInstalling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formRedirectUris, setFormRedirectUris] = useState<string[]>([]);
   const [newRedirectUri, setNewRedirectUri] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
   const [rotatedSecret, setRotatedSecret] = useState<string | null>(null);
+  const [transferSubdomain, setTransferSubdomain] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {},
@@ -176,6 +185,19 @@ export const SettingsApplicationRegistrationDetails = () => {
       refetchQueries: [FIND_APPLICATION_REGISTRATION_VARIABLES],
     },
   );
+  const [transferOwnership] = useMutation(
+    TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP,
+    {
+      refetchQueries: [
+        FIND_ONE_APPLICATION_REGISTRATION,
+        FIND_MANY_APPLICATION_REGISTRATIONS,
+      ],
+    },
+  );
+
+  const { install } = useInstallMarketplaceApp();
+  const { data: applicationsData, refetch: refetchApplications } =
+    useFindManyApplicationsQuery();
 
   const registration = data?.findOneApplicationRegistration;
   const variables: ServerVariable[] =
@@ -184,6 +206,64 @@ export const SettingsApplicationRegistrationDetails = () => {
   if (loading || !registration) {
     return null;
   }
+
+  const isInstalledOnWorkspace = (
+    applicationsData?.findManyApplications ?? []
+  ).some(
+    (application) =>
+      application.universalIdentifier === registration.universalIdentifier,
+  );
+
+  const handleInstallOnWorkspace = async () => {
+    setIsInstalling(true);
+    try {
+      const success = await install({
+        universalIdentifier: registration.universalIdentifier,
+      });
+
+      if (success) {
+        await refetchApplications();
+        enqueueSuccessSnackBar({
+          message: t`App installed on this workspace`,
+        });
+      }
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error installing app`,
+      });
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
+  const handleTransferOwnership = async () => {
+    const trimmed = transferSubdomain.trim();
+
+    if (!isNonEmptyString(trimmed)) {
+      return;
+    }
+
+    setIsTransferring(true);
+    try {
+      await transferOwnership({
+        variables: {
+          applicationRegistrationId,
+          targetWorkspaceSubdomain: trimmed,
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Ownership transferred successfully`,
+      });
+      setTransferSubdomain('');
+      navigate(SettingsPath.Applications);
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to transfer ownership. Check that the subdomain is correct.`,
+      });
+    } finally {
+      setIsTransferring(false);
+    }
+  };
 
   const markDirty = () => setHasChanges(true);
 
@@ -449,6 +529,25 @@ export const SettingsApplicationRegistrationDetails = () => {
 
           <Section>
             <H2Title
+              title={t`Installation`}
+              description={t`Install this app on the current workspace`}
+            />
+            <Button
+              Icon={isInstalledOnWorkspace ? IconCheck : IconDownload}
+              title={
+                isInstalledOnWorkspace
+                  ? t`Installed`
+                  : t`Install on this workspace`
+              }
+              variant="secondary"
+              accent="blue"
+              disabled={isInstalledOnWorkspace || isInstalling}
+              onClick={handleInstallOnWorkspace}
+            />
+          </Section>
+
+          <Section>
+            <H2Title
               title={t`OAuth Credentials`}
               description={t`Credentials and scopes for OAuth authorization flows`}
             />
@@ -570,6 +669,32 @@ export const SettingsApplicationRegistrationDetails = () => {
 
           <Section>
             <H2Title
+              title={t`Transfer Ownership`}
+              description={t`Transfer this app registration to another workspace`}
+            />
+            <StyledInputContainer>
+              <SettingsTextInput
+                instanceId="transfer-ownership-subdomain"
+                value={transferSubdomain}
+                onChange={setTransferSubdomain}
+                placeholder={t`Target workspace subdomain`}
+                fullWidth
+              />
+              <Button
+                Icon={IconArrowRight}
+                title={t`Transfer`}
+                variant="secondary"
+                size="medium"
+                disabled={
+                  !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+                }
+                onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+              />
+            </StyledInputContainer>
+          </Section>
+
+          <Section>
+            <H2Title
               title={t`Danger zone`}
               description={
                 hasActiveInstalls
@@ -621,6 +746,23 @@ export const SettingsApplicationRegistrationDetails = () => {
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
         loading={isLoading}
+      />
+
+      <ConfirmationModal
+        confirmationPlaceholder={confirmationValue}
+        confirmationValue={confirmationValue}
+        modalInstanceId={TRANSFER_OWNERSHIP_MODAL_ID}
+        title={t`Transfer ownership`}
+        subtitle={
+          <Trans>
+            This will transfer ownership of this app registration to workspace
+            {` "${transferSubdomain}"`}. You will lose access to manage it.
+            Please type {`"${confirmationValue}"`} to confirm.
+          </Trans>
+        }
+        onConfirmClick={handleTransferOwnership}
+        confirmButtonText={t`Transfer`}
+        loading={isTransferring}
       />
     </>
   );

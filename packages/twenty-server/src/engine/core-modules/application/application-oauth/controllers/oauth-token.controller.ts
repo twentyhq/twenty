@@ -13,12 +13,12 @@ import {
 
 import { type Request, type Response } from 'express';
 
-import { OAuthIntrospectInput } from 'src/engine/core-modules/application/application-registration/dtos/oauth-introspect.input';
-import { OAuthRevokeInput } from 'src/engine/core-modules/application/application-registration/dtos/oauth-revoke.input';
-import { OAuthTokenInput } from 'src/engine/core-modules/application/application-registration/dtos/oauth-token.input';
-import { OAuthService } from 'src/engine/core-modules/application/application-registration/oauth.service';
-import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-registration/types/oauth-error-response.type';
-import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-registration/types/oauth-token-response.type';
+import { OAuthIntrospectInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-introspect.input';
+import { OAuthRevokeInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-revoke.input';
+import { OAuthTokenInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-token.input';
+import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
+import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
+import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';

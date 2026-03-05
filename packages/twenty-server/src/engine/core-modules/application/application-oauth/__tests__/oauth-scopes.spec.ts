@@ -2,7 +2,7 @@ import {
   ALL_OAUTH_SCOPES,
   OAUTH_SCOPE_DESCRIPTIONS,
   OAUTH_SCOPES,
-} from 'src/engine/core-modules/application/application-registration/constants/oauth-scopes';
+} from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 
 describe('OAuth Scopes', () => {
   it('should have all scopes defined', () => {

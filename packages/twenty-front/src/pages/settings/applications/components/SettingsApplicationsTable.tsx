@@ -16,7 +16,7 @@ import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AppRegistrationSourceType } from '~/generated-metadata/graphql';
+import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled(Table)`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -75,7 +75,7 @@ export const SettingsApplicationsTable = ({
         {filteredApplications.map((application) => {
           const isNpmApp =
             application.applicationRegistration?.sourceType ===
-            AppRegistrationSourceType.NPM;
+            ApplicationRegistrationSourceType.NPM;
 
           const latestVersion =
             application.applicationRegistration?.latestAvailableVersion;

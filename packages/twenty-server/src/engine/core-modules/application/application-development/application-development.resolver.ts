@@ -15,22 +15,18 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
-import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
-import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
-import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/dtos/workspace-migration.dto';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/services/application-sync.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
+import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
+import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
+import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -63,7 +59,6 @@ export class ApplicationDevelopmentResolver {
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationSyncService: ApplicationSyncService,
-    private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly fileStorageService: FileStorageService,
@@ -119,19 +114,6 @@ export class ApplicationDevelopmentResolver {
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
     };
-  }
-
-  @Mutation(() => ApplicationDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async createOneApplication(
-    @Args('input') input: CreateApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return await this.applicationService.create({
-      ...input,
-      sourceType: ApplicationRegistrationSourceType.LOCAL,
-      workspaceId,
-    });
   }
 
   @Mutation(() => FileDTO)

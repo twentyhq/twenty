@@ -7,6 +7,7 @@ import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
+import { ApplicationOAuthModule } from 'src/engine/core-modules/application/application-oauth/application-oauth.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
@@ -92,6 +93,7 @@ import { FileModule } from './file/file.module';
     RowLevelPermissionModule,
     OpenApiModule,
     ApplicationRegistrationModule,
+    ApplicationOAuthModule,
     ApplicationModule,
     ApplicationInstallModule,
     ApplicationDevelopmentModule,

@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
+import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useApolloClient } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useInstallNpmApp } from '~/modules/marketplace/hooks/useInstallNpmApp';
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
+import { useRegisterNpmPackage } from '~/modules/marketplace/hooks/useRegisterNpmPackage';
 import {
   StyledAppModal,
   StyledAppModalButton,
@@ -16,7 +17,7 @@ import {
   StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
-export const INSTALL_NPM_APP_MODAL_ID = 'install-npm-app-modal';
+export const REGISTER_NPM_APP_MODAL_ID = 'register-npm-app-modal';
 
 const StyledInputGroup = styled.div`
   display: flex;
@@ -24,51 +25,49 @@ const StyledInputGroup = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-export const SettingsInstallNpmAppModal = () => {
+export const SettingsRegisterNpmAppModal = () => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { install, isInstalling } = useInstallNpmApp();
-  const { refetch } = useFindManyApplicationsQuery();
+  const { register, isRegistering } = useRegisterNpmPackage();
+  const apolloClient = useApolloClient();
 
   const [packageName, setPackageName] = useState('');
-  const [version, setVersion] = useState('');
 
   const isValid = packageName.trim().length > 0;
 
-  const handleInstall = async () => {
+  const handleRegister = async () => {
     if (!isValid) {
       return;
     }
 
-    const success = await install({
+    const success = await register({
       packageName: packageName.trim(),
-      version: version.trim() || undefined,
     });
 
     if (success) {
-      await refetch();
-      closeModal(INSTALL_NPM_APP_MODAL_ID);
+      await apolloClient.refetchQueries({
+        include: [FIND_MANY_APPLICATION_REGISTRATIONS],
+      });
+      closeModal(REGISTER_NPM_APP_MODAL_ID);
       setPackageName('');
-      setVersion('');
     }
   };
 
   const handleCancel = () => {
-    closeModal(INSTALL_NPM_APP_MODAL_ID);
+    closeModal(REGISTER_NPM_APP_MODAL_ID);
     setPackageName('');
-    setVersion('');
   };
 
   return (
     <StyledAppModal
-      modalId={INSTALL_NPM_APP_MODAL_ID}
+      modalId={REGISTER_NPM_APP_MODAL_ID}
       isClosable={true}
       padding="large"
       dataGloballyPreventClickOutside
     >
       <StyledAppModalTitle>
         <H1Title
-          title={t`Install from npm`}
+          title={t`Register from npm`}
           fontColor={H1TitleFontColor.Primary}
         />
       </StyledAppModalTitle>
@@ -76,7 +75,7 @@ export const SettingsInstallNpmAppModal = () => {
         alignment={SectionAlignment.Center}
         fontColor={SectionFontColor.Primary}
       >
-        {t`Enter the npm package name of the application you want to install.`}
+        {t`Enter the npm package name to register as an application.`}
       </StyledAppModalSection>
 
       <Section>
@@ -91,15 +90,6 @@ export const SettingsInstallNpmAppModal = () => {
             label={t`Package name`}
             autoFocusOnMount
           />
-          <SettingsTextInput
-            instanceId="npm-version-input"
-            value={version}
-            onChange={setVersion}
-            placeholder={t`latest`}
-            fullWidth
-            disableHotkeys
-            label={t`Version (optional)`}
-          />
         </StyledInputGroup>
       </Section>
 
@@ -110,11 +100,11 @@ export const SettingsInstallNpmAppModal = () => {
         fullWidth
       />
       <StyledAppModalButton
-        onClick={handleInstall}
+        onClick={handleRegister}
         variant="secondary"
         accent="blue"
-        title={t`Install`}
-        disabled={!isValid || isInstalling}
+        title={t`Register`}
+        disabled={!isValid || isRegistering}
         fullWidth
       />
     </StyledAppModal>

@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
+import { DataSource } from 'typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-catalog-index.constant';
-import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/services/marketplace.service';
+import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { getAdminWorkspaceId } from 'src/engine/core-modules/application/application-marketplace/utils/get-admin-workspace-id.util';
 
 @Injectable()
@@ -16,14 +14,13 @@ export class MarketplaceCatalogSyncService {
   private readonly logger = new Logger(MarketplaceCatalogSyncService.name);
 
   constructor(
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async syncCatalog(): Promise<void> {
-    const dataSource = this.appRegistrationRepository.manager.connection;
-    const adminWorkspaceId = await getAdminWorkspaceId(dataSource);
+    const adminWorkspaceId = await getAdminWorkspaceId(this.dataSource);
 
     if (!isDefined(adminWorkspaceId)) {
       this.logger.warn(
@@ -42,7 +39,7 @@ export class MarketplaceCatalogSyncService {
   private async syncCuratedApps(ownerWorkspaceId: string): Promise<void> {
     for (const entry of MARKETPLACE_CATALOG_INDEX) {
       try {
-        await this.upsertRegistration({
+        await this.applicationRegistrationService.upsertFromCatalog({
           universalIdentifier: entry.universalIdentifier,
           name: entry.name,
           description:
@@ -79,7 +76,7 @@ export class MarketplaceCatalogSyncService {
       }
 
       try {
-        await this.upsertRegistration({
+        await this.applicationRegistrationService.upsertFromCatalog({
           universalIdentifier: app.id,
           name: app.name,
           description: app.description,
@@ -100,72 +97,5 @@ export class MarketplaceCatalogSyncService {
         );
       }
     }
-  }
-
-  // Lookup by universalIdentifier only (matches the unique constraint).
-  // ownerWorkspaceId is only set on insert.
-  private async upsertRegistration(
-    params: Pick<
-      ApplicationRegistrationEntity,
-      | 'universalIdentifier'
-      | 'name'
-      | 'description'
-      | 'author'
-      | 'sourceType'
-      | 'sourcePackage'
-      | 'logoUrl'
-      | 'websiteUrl'
-      | 'termsUrl'
-      | 'latestAvailableVersion'
-      | 'isFeatured'
-      | 'marketplaceDisplayData'
-      | 'ownerWorkspaceId'
-    >,
-  ): Promise<void> {
-    const existing = await this.appRegistrationRepository.findOne({
-      where: {
-        universalIdentifier: params.universalIdentifier,
-      },
-    });
-
-    if (isDefined(existing)) {
-      await this.appRegistrationRepository.save({
-        ...existing,
-        name: params.name,
-        description: params.description,
-        author: params.author,
-        sourceType: params.sourceType,
-        sourcePackage: params.sourcePackage,
-        logoUrl: params.logoUrl,
-        websiteUrl: params.websiteUrl,
-        termsUrl: params.termsUrl,
-        latestAvailableVersion: params.latestAvailableVersion,
-        isFeatured: params.isFeatured,
-        marketplaceDisplayData: params.marketplaceDisplayData,
-      });
-
-      return;
-    }
-
-    const registration = this.appRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      description: params.description,
-      author: params.author,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      logoUrl: params.logoUrl,
-      websiteUrl: params.websiteUrl,
-      termsUrl: params.termsUrl,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isFeatured: params.isFeatured,
-      marketplaceDisplayData: params.marketplaceDisplayData,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
-
-    await this.appRegistrationRepository.save(registration);
   }
 }

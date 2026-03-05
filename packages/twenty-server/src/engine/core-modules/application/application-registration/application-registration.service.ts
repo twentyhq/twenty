@@ -13,12 +13,15 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-registration/constants/oauth-scopes';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type MarketplaceDisplayData } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-display-data.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -30,6 +33,8 @@ export class ApplicationRegistrationService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async findMany(
@@ -235,6 +240,119 @@ export class ApplicationRegistrationService {
     return bcrypt.compare(clientSecret, registration.oAuthClientSecretHash);
   }
 
+  async upsertFromCatalog(
+    params: Pick<
+      ApplicationRegistrationEntity,
+      | 'universalIdentifier'
+      | 'name'
+      | 'description'
+      | 'author'
+      | 'sourceType'
+      | 'sourcePackage'
+      | 'logoUrl'
+      | 'websiteUrl'
+      | 'termsUrl'
+      | 'latestAvailableVersion'
+      | 'isFeatured'
+      | 'marketplaceDisplayData'
+      | 'ownerWorkspaceId'
+    >,
+  ): Promise<void> {
+    const existing = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
+
+    if (isDefined(existing)) {
+      await this.applicationRegistrationRepository.save({
+        ...existing,
+        name: params.name,
+        description: params.description,
+        author: params.author,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        logoUrl: params.logoUrl,
+        websiteUrl: params.websiteUrl,
+        termsUrl: params.termsUrl,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isFeatured: params.isFeatured,
+        marketplaceDisplayData: params.marketplaceDisplayData,
+      });
+
+      return;
+    }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      description: params.description,
+      author: params.author,
+      sourceType: params.sourceType,
+      sourcePackage: params.sourcePackage,
+      logoUrl: params.logoUrl,
+      websiteUrl: params.websiteUrl,
+      termsUrl: params.termsUrl,
+      latestAvailableVersion: params.latestAvailableVersion,
+      isFeatured: params.isFeatured,
+      marketplaceDisplayData: params.marketplaceDisplayData,
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: params.ownerWorkspaceId,
+    });
+
+    await this.applicationRegistrationRepository.save(registration);
+  }
+
+  async findOrCreateForNpmPackage(params: {
+    packageName: string;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const existing = await this.applicationRegistrationRepository.findOne({
+      where: { sourcePackage: params.packageName },
+    });
+
+    if (isDefined(existing)) {
+      return existing;
+    }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: v4(),
+      name: params.packageName,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: params.packageName,
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: params.ownerWorkspaceId,
+    });
+
+    try {
+      return await this.applicationRegistrationRepository.save(registration);
+    } catch {
+      const concurrentlyCreated =
+        await this.applicationRegistrationRepository.findOne({
+          where: { sourcePackage: params.packageName },
+        });
+
+      if (isDefined(concurrentlyCreated)) {
+        return concurrentlyCreated;
+      }
+
+      throw new ApplicationRegistrationException(
+        `Failed to create registration for package "${params.packageName}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+  }
+
+  async findManyBySourceType(
+    sourceType: ApplicationRegistrationSourceType,
+  ): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      where: { sourceType },
+    });
+  }
+
   async getStats(
     applicationRegistrationId: string,
     ownerWorkspaceId: string,
@@ -267,6 +385,43 @@ export class ApplicationRegistrationService {
       mostInstalledVersion,
       versionDistribution,
     };
+  }
+
+  async transferOwnership(params: {
+    applicationRegistrationId: string;
+    targetWorkspaceSubdomain: string;
+    currentOwnerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.findOneById(
+      params.applicationRegistrationId,
+      params.currentOwnerWorkspaceId,
+    );
+
+    const targetWorkspace = await this.workspaceRepository.findOne({
+      where: { subdomain: params.targetWorkspaceSubdomain },
+    });
+
+    if (!isDefined(targetWorkspace)) {
+      throw new ApplicationRegistrationException(
+        `No workspace found with subdomain "${params.targetWorkspaceSubdomain}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    if (targetWorkspace.id === params.currentOwnerWorkspaceId) {
+      throw new ApplicationRegistrationException(
+        'Cannot transfer ownership to the same workspace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await this.applicationRegistrationRepository.update(registration.id, {
+      ownerWorkspaceId: targetWorkspace.id,
+    });
+
+    return this.applicationRegistrationRepository.findOneOrFail({
+      where: { id: registration.id },
+    });
   }
 
   private async generateClientSecret(): Promise<{

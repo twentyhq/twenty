@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 
+import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useApolloClient } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useUploadAppTarball } from '~/modules/marketplace/hooks/useUploadAppTarball';
-import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import {
   StyledAppModal,
   StyledAppModalButton,
@@ -26,8 +26,7 @@ export const SettingsUploadTarballModal = () => {
   const { t } = useLingui();
   const { closeModal } = useModal();
   const { upload, isUploading } = useUploadAppTarball();
-  const { install } = useInstallMarketplaceApp();
-  const { refetch } = useFindManyApplicationsQuery();
+  const apolloClient = useApolloClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSelectFile = () => {
@@ -47,14 +46,10 @@ export const SettingsUploadTarballModal = () => {
       const uploadResult = await upload(file);
 
       if (uploadResult.success) {
-        const installResult = await install({
-          universalIdentifier: uploadResult.universalIdentifier,
+        await apolloClient.refetchQueries({
+          include: [FIND_MANY_APPLICATION_REGISTRATIONS],
         });
-
-        if (installResult) {
-          await refetch();
-          closeModal(UPLOAD_TARBALL_MODAL_ID);
-        }
+        closeModal(UPLOAD_TARBALL_MODAL_ID);
       }
     } finally {
       if (isDefined(fileInputRef.current)) {
@@ -84,7 +79,7 @@ export const SettingsUploadTarballModal = () => {
         alignment={SectionAlignment.Center}
         fontColor={SectionFontColor.Primary}
       >
-        {t`Select a .tar.gz application package to upload and install.`}
+        {t`Select a .tar.gz application package to register.`}
       </StyledAppModalSection>
 
       <StyledFileInput

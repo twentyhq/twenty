@@ -46,7 +46,7 @@ export class WorkspaceMigrationInput {
 }
 
 @ArgsType()
-export class InstallApplicationInput {
+export class RunWorkspaceMigrationInput {
   @Field(() => WorkspaceMigrationInput)
   @ValidateNested()
   @Type(() => WorkspaceMigrationInput)

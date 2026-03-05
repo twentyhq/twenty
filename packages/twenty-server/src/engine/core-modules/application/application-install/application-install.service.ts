@@ -14,8 +14,8 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import {
   ApplicationPackageFetcherService,
   type ResolvedPackage,
-} from 'src/engine/core-modules/application/application-package/services/application-package-fetcher.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/services/application-sync.service';
+} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
