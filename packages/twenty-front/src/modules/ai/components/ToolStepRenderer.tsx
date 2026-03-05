@@ -160,7 +160,12 @@ export const ToolStepRenderer = ({
         stdout?: string;
         stderr?: string;
         exitCode?: number;
-        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+        files?: Array<{
+          fileId: string;
+          filename: string;
+          url: string;
+          mimeType?: string;
+        }>;
       };
     } | null;
 

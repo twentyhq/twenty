@@ -3,14 +3,13 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource, In, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,7 +46,7 @@ type SendEmailStep = {
 @Command({
   name: 'upgrade:1-18:migrate-workflow-send-email-attachments',
   description:
-    'Migrate workflow send email attachments to FileFolder.Workflow and update payload paths',
+    '[DEPRECATED] Migrate workflow send email attachments - this migration is now complete and no longer needed',
 })
 export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(
@@ -59,7 +58,6 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
     @InjectDataSource()
@@ -70,14 +68,21 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
 
   override async runOnWorkspace({
     workspaceId,
-    options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
-      workspaceId,
+    this.logger.log(
+      `[DEPRECATED] Workflow send email attachments migration is no longer needed for workspace ${workspaceId}. ` +
+        `The IS_OTHER_FILE_MIGRATED feature flag has been removed as all workspaces are now migrated.`,
     );
+  }
+
+  private _deprecatedMigrationLogic = async ({
+    workspaceId,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    isDryRun: boolean;
+  }) => {
+    const isMigrated = false;
 
     if (isMigrated) {
       this.logger.log(
@@ -199,15 +204,8 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
       }
     }
 
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_OTHER_FILE_MIGRATED],
-        workspaceId,
-      );
-    }
-
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Completed workflow send email attachments migration for workspace ${workspaceId}`,
     );
-  }
+  };
 }

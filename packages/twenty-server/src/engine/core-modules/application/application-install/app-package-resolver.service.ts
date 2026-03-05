@@ -20,7 +20,7 @@ import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/constan
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -41,7 +41,7 @@ export class AppPackageResolverService implements OnModuleInit {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileStorageService: FileStorageService,
+    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -136,7 +136,8 @@ export class AppPackageResolverService implements OnModuleInit {
 
     try {
       const storagePath = join('app-tarball', appRegistration.id, 'app.tar.gz');
-      const tarballStream = await this.fileStorageService.readFileLegacy({
+      const driver = this.fileStorageDriverFactory.getCurrentDriver();
+      const tarballStream = await driver.readFile({
         filePath: storagePath,
       });
       const tarballBuffer = await streamToBuffer(tarballStream);

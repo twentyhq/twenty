@@ -18,7 +18,7 @@ import {
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
 import { readJsonFile } from 'src/engine/core-modules/application/utils/read-json-file.util';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 
 export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -29,7 +29,7 @@ export class AppTarballUploadService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    private readonly fileStorageService: FileStorageService,
+    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
   ) {}
 
   async uploadTarball(params: {
@@ -111,10 +111,11 @@ export class AppTarballUploadService {
 
       const storagePath = join('app-tarball', appRegistration.id);
 
-      await this.fileStorageService.writeFileLegacy({
-        file: params.tarballBuffer,
-        name: 'app.tar.gz',
-        folder: storagePath,
+      const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+      await driver.writeFile({
+        filePath: join(storagePath, 'app.tar.gz'),
+        sourceFile: params.tarballBuffer,
         mimeType: 'application/gzip',
       });
 
