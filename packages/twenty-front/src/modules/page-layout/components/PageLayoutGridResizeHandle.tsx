@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { forwardRef, useContext } from 'react';
+import { forwardRef } from 'react';
 import {
   IconRadiusBottomLeft,
   IconRadiusBottomRight,
@@ -7,9 +7,10 @@ import {
   IconRadiusTopRight,
 } from 'twenty-ui/display';
 import { ResizeHandle } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';
@@ -162,8 +163,6 @@ export const PageLayoutGridResizeHandle = forwardRef<
     },
     ref,
   ) => {
-    const { theme } = useContext(ThemeContext);
-
     return (
       <StyledResizeHandleWrapper
         ref={ref}
@@ -193,32 +192,48 @@ export const PageLayoutGridResizeHandle = forwardRef<
         {widgetHandleAxis === 'ne' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="ne">
             <IconRadiusTopRight
-              size={theme.icon.size.lg}
-              stroke={theme.icon.stroke.lg}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.lg,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.lg,
+              )}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'nw' && (
           <StyledCornerIconWrapper cursor="nwse-resize" position="nw">
             <IconRadiusTopLeft
-              size={theme.icon.size.lg}
-              stroke={theme.icon.stroke.lg}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.lg,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.lg,
+              )}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'se' && (
           <StyledCornerIconWrapper cursor="nwse-resize" position="se">
             <IconRadiusBottomRight
-              size={theme.icon.size.lg}
-              stroke={theme.icon.stroke.lg}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.lg,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.lg,
+              )}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'sw' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="sw">
             <IconRadiusBottomLeft
-              size={theme.icon.size.lg}
-              stroke={theme.icon.stroke.lg}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.lg,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.lg,
+              )}
             />
           </StyledCornerIconWrapper>
         )}

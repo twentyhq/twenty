@@ -7,11 +7,12 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -34,11 +35,11 @@ const StyledLoadingIcon = styled(IconDotsVertical)`
 `;
 
 const InitialLoadingIndicator = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon size={theme.icon.size.xl} />
+      <StyledLoadingIcon
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.xl)}
+      />
     </StyledLoadingIconContainer>
   );
 };

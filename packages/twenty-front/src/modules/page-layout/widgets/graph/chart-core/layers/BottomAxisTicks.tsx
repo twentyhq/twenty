@@ -1,6 +1,7 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type BottomAxisTicksProps = {
   bottomTickValues: (string | number)[];
   getBottomTickPosition: (value: string | number, index: number) => number;
@@ -20,8 +21,6 @@ export const BottomAxisTicks = ({
   tickPadding,
   tickFontSize,
 }: BottomAxisTicksProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <>
       {bottomTickValues.map((value, index) => {
@@ -39,7 +38,9 @@ export const BottomAxisTicks = ({
                   ? `rotate(${bottomAxisTickRotation}, 0, ${tickPadding + tickFontSize / 2})`
                   : undefined
               }
-              fill={theme.font.color.secondary}
+              fill={resolveThemeVariable(
+                themeCssVariables.font.color.secondary,
+              )}
               fontSize={tickFontSize}
             >
               {label}

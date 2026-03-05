@@ -4,9 +4,12 @@ import { type AnimationDurations } from '@ui/layout/animated-expandable-containe
 import { type AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
 import { type AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
 import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
-import { ThemeContext } from '@ui/theme';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactNode, useContext, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type AnimatedExpandableContainerProps = {
@@ -28,15 +31,18 @@ export const AnimatedExpandableContainer = ({
   containAnimation = true,
   initial = true,
 }: AnimatedExpandableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
   const contentRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<AnimationSize>(0);
+
+  const normalDuration = resolveThemeVariableAsNumber(
+    themeCssVariables.animation.duration.normal,
+  );
 
   const actualDurations: AnimationDurationObject =
     animationDurations === 'default'
       ? {
-          opacity: theme.animation.duration.normal,
-          size: theme.animation.duration.normal,
+          opacity: normalDuration,
+          size: normalDuration,
         }
       : animationDurations;
 

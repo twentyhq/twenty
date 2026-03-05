@@ -10,11 +10,13 @@ import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-le
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
@@ -54,7 +56,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     roleId,
     isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
-    const { theme } = useContext(ThemeContext);
     const { getIcon } = useIcons();
     const Icon = getIcon(fieldMetadataItem.icon);
 
@@ -161,9 +162,17 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         <StyledNameTableCell>
           {!!Icon && (
             <Icon
-              style={{ minWidth: theme.icon.size.md }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
+              style={{
+                minWidth: resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                ),
+              }}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
             />
           )}
           <StyledNameLabel title={fieldMetadataItem.label}>

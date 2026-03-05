@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -97,7 +99,6 @@ export const RecordInlineCellContainer = () => {
     onMouseLeave?.();
   };
 
-  const { theme } = useContext(ThemeContext);
   const labelId = `label-${getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,
@@ -113,7 +114,11 @@ export const RecordInlineCellContainer = () => {
         <StyledLabelAndIconContainer id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
-              <IconLabel stroke={theme.icon.stroke.sm} />
+              <IconLabel
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
+              />
             </StyledIconContainer>
           )}
           {showLabel && (

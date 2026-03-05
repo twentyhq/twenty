@@ -17,11 +17,14 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useContext, useId } from 'react';
+import { useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -80,7 +83,6 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
-  const { theme } = useContext(ThemeContext);
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -186,7 +188,12 @@ export const FormSingleRecordPicker = ({
             clickableComponentWidth="100%"
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{
+              y: parseInt(
+                resolveThemeVariable(themeCssVariables.spacing[1]),
+                10,
+              ),
+            }}
             clickableComponent={
               <StyledFormSelectContainer
                 formFieldInputInstanceId={componentId}
@@ -202,8 +209,12 @@ export const FormSingleRecordPicker = ({
                 />
                 <StyledIconButton>
                   <IconChevronDown
-                    size={theme.icon.size.md}
-                    color={theme.font.color.light}
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    )}
+                    color={resolveThemeVariable(
+                      themeCssVariables.font.color.light,
+                    )}
                   />
                 </StyledIconButton>
               </StyledFormSelectContainer>

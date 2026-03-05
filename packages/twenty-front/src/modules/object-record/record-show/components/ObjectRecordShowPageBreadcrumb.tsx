@@ -9,10 +9,11 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -81,9 +82,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectNameSingular,
     objectRecordId,
   );
-
-  const { theme } = useContext(ThemeContext);
-
   if (loading) {
     return null;
   }
@@ -95,7 +93,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
           navigateToIndexView();
         }}
       >
-        {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
+        {HeaderIcon && (
+          <HeaderIcon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
+        )}
         {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>

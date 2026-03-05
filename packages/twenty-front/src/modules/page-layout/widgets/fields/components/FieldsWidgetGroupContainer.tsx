@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -37,7 +39,6 @@ export const FieldsWidgetGroupContainer = ({
   title,
 }: FieldsWidgetGroupContainerProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { theme } = useContext(ThemeContext);
 
   const handleToggleGroup = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -48,8 +49,10 @@ export const FieldsWidgetGroupContainer = ({
         <StyledTitleLabel>{title}</StyledTitleLabel>
         <StyledChevronWrapper isExpanded={isExpanded}>
           <IconChevronDown
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
           />
         </StyledChevronWrapper>
       </StyledHeader>

@@ -8,14 +8,16 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -61,7 +63,6 @@ export const SettingsOptionCardContentToggle = ({
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
-  const { theme } = useContext(ThemeContext);
   const toggleId = useId();
 
   return (
@@ -91,7 +92,11 @@ export const SettingsOptionCardContentToggle = ({
           onChange={onChange}
           disabled={disabled}
           toggleSize="small"
-          color={advancedMode ? theme.color.yellow : theme.color.blue}
+          color={
+            advancedMode
+              ? resolveThemeVariable(themeCssVariables.color.yellow)
+              : resolveThemeVariable(themeCssVariables.color.blue)
+          }
           centered={toggleCentered}
         />
       </StyledSettingsCardToggleContent>

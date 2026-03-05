@@ -1,12 +1,14 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAIAgentTableRowProps = {
@@ -41,7 +43,6 @@ export const SettingsAIAgentTableRow = ({
   agent,
   link,
 }: SettingsAIAgentTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(agent.icon || 'IconRobot');
 
@@ -49,7 +50,12 @@ export const SettingsAIAgentTableRow = ({
     <StyledAIAgentTableRow key={agent.id} to={link}>
       <StyledNameTableCell>
         <StyledIconContainer>
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>

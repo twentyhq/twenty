@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { styled } from '@linaria/react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { resolveThemeVariable, themeCssVariables } from '@ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -21,11 +20,12 @@ export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'> & {
 };
 
 export const Checkmark = ({ className }: CheckmarkProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledContainer className={className}>
-      <IconCheck color={theme.grayScale.gray1} size={14} />
+      <IconCheck
+        color={resolveThemeVariable(themeCssVariables.grayScale.gray1)}
+        size={14}
+      />
     </StyledContainer>
   );
 };

@@ -1,12 +1,14 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
@@ -114,7 +116,6 @@ const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
 
 export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
   const agentChatUsage = useAtomStateValue(agentChatUsageState);
 
@@ -165,19 +166,26 @@ export const AIChatContextUsageButton = () => {
               value={percentage}
               barColor={
                 percentage > 80
-                  ? theme.color.red
+                  ? resolveThemeVariable(themeCssVariables.color.red)
                   : percentage > 60
-                    ? theme.color.orange
-                    : theme.color.blue
+                    ? resolveThemeVariable(themeCssVariables.color.orange)
+                    : resolveThemeVariable(themeCssVariables.color.blue)
               }
-              backgroundColor={theme.background.tertiary}
+              backgroundColor={resolveThemeVariable(
+                themeCssVariables.background.tertiary,
+              )}
               withBorderRadius
             />
           </StyledSection>
 
           {isDefined(lastMessage) && (
             <>
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
+              <HorizontalSeparator
+                noMargin
+                color={resolveThemeVariable(
+                  themeCssVariables.background.tertiary,
+                )}
+              />
               <StyledSection>
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
                 <SettingsBillingLabelValueItem
@@ -196,7 +204,10 @@ export const AIChatContextUsageButton = () => {
             </>
           )}
 
-          <HorizontalSeparator noMargin color={theme.background.tertiary} />
+          <HorizontalSeparator
+            noMargin
+            color={resolveThemeVariable(themeCssVariables.background.tertiary)}
+          />
           <StyledSection>
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
             <SettingsBillingLabelValueItem

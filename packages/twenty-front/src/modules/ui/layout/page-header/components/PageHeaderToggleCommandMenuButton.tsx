@@ -12,10 +12,11 @@ import { motion } from 'framer-motion';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
   display: ${({ alignToTop }) => (alignToTop ? 'flex' : 'block')};
@@ -44,16 +45,17 @@ const AnimatedIcon = ({
 }: {
   isCommandMenuOpened: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={theme.icon.size.sm}
-      height={theme.icon.size.sm}
+      width={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+      height={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={theme.icon.stroke.md}
+      strokeWidth={resolveThemeVariableAsNumber(
+        themeCssVariables.icon.stroke.md,
+      )}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -68,7 +70,11 @@ const AnimatedIcon = ({
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: resolveThemeVariable(
+            themeCssVariables.animation.duration.fast,
+          ),
+        }}
       />
 
       {/* X lines expanding from center */}
@@ -82,7 +88,9 @@ const AnimatedIcon = ({
             opacity: isCommandMenuOpened ? 1 : 0,
           }}
           transition={{
-            duration: theme.animation.duration.fast,
+            duration: resolveThemeVariable(
+              themeCssVariables.animation.duration.fast,
+            ),
             ease: 'easeInOut',
             delay: isCommandMenuOpened ? 0.1 : 0,
           }}
@@ -99,7 +107,11 @@ const AnimatedIcon = ({
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: resolveThemeVariable(
+            themeCssVariables.animation.duration.fast,
+          ),
+        }}
       />
 
       {/* Bottom dot */}
@@ -112,7 +124,11 @@ const AnimatedIcon = ({
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: resolveThemeVariable(
+            themeCssVariables.animation.duration.fast,
+          ),
+        }}
       />
     </svg>
   );
@@ -133,9 +149,6 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const ariaLabel = isCommandMenuOpened
     ? t`Close command menu`
     : t`Open command menu`;
-
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledButtonWrapper alignToTop={alignWithCommandMenuTopBar}>
       <div id="toggle-command-menu-button">
@@ -155,7 +168,9 @@ export const PageHeaderToggleCommandMenuButton = () => {
             rotate: isCommandMenuOpened ? 90 : 0,
           }}
           transition={{
-            duration: theme.animation.duration.normal,
+            duration: resolveThemeVariable(
+              themeCssVariables.animation.duration.normal,
+            ),
             ease: 'easeInOut',
           }}
         />

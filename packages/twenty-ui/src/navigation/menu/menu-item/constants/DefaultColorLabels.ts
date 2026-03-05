@@ -1,4 +1,4 @@
-import { type ThemeColor } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme-constants';
 
 export type ColorLabels = Record<ThemeColor, string>;
 

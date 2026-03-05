@@ -9,10 +9,10 @@ import { IconPlus, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
@@ -108,8 +108,6 @@ export const WorkflowOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: WorkflowOutputSchemaBuilderProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const addField = () => {
     const newField: OutputSchemaField = {
       id: v4(),
@@ -213,7 +211,9 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButton onClick={addField}>
-          <IconPlus size={theme.icon.size.sm} />
+          <IconPlus
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
           {t`Add Output Field`}
         </StyledAddFieldButton>
       )}

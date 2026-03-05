@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ danger }) =>
@@ -76,7 +77,6 @@ export const BaseChip = ({
   danger = false,
   leftIcon,
 }: BaseChipProps) => {
-  const { theme } = useContext(ThemeContext);
   const isDeletable = onRemove !== undefined;
 
   return (
@@ -93,7 +93,12 @@ export const BaseChip = ({
           aria-label={removeAriaLabel}
           danger={danger}
         >
-          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+          <IconX
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
         </StyledDelete>
       )}
     </StyledChip>

@@ -13,15 +13,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   IconChevronLeft,
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -149,8 +151,6 @@ export const GraphWidgetLegend = ({
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
 
-  const { theme } = useContext(ThemeContext);
-
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -242,7 +242,9 @@ export const GraphWidgetLegend = ({
           animate="visible"
           exit="exit"
           transition={{
-            duration: theme.animation.duration.normal,
+            duration: resolveThemeVariableAsNumber(
+              themeCssVariables.animation.duration.normal,
+            ),
             ease: 'easeInOut',
           }}
         >
@@ -300,7 +302,9 @@ export const GraphWidgetLegend = ({
                   animate="center"
                   exit="exit"
                   transition={{
-                    duration: theme.animation.duration.normal,
+                    duration: resolveThemeVariableAsNumber(
+                      themeCssVariables.animation.duration.normal,
+                    ),
                     ease: 'easeInOut',
                   }}
                   centered={!needsPagination}

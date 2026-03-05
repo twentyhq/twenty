@@ -1,9 +1,8 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 export const WorkflowDiagramConnector = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +13,7 @@ export const WorkflowDiagramConnector = () => {
     >
       <path
         d="M1 0V28V56"
-        stroke={theme.border.color.strong}
+        stroke={resolveThemeVariable(themeCssVariables.border.color.strong)}
         strokeDasharray="3 3"
       />
     </svg>

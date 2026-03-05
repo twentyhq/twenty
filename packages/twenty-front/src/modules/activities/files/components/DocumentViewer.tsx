@@ -9,12 +9,14 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const MS_OFFICE_EXTENSIONS = [
@@ -201,7 +203,6 @@ export const DocumentViewer = ({
   documentExtension,
 }: DocumentViewerProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | undefined>(
     undefined,
   );
@@ -319,8 +320,10 @@ export const DocumentViewer = ({
         pluginRenderers={DocViewerRenderers}
         style={{
           height: '100%',
-          color: theme.font.color.primary,
-          backgroundColor: theme.background.primary,
+          color: resolveThemeVariable(themeCssVariables.font.color.primary),
+          backgroundColor: resolveThemeVariable(
+            themeCssVariables.background.primary,
+          ),
         }}
         config={{
           header: {
@@ -335,12 +338,20 @@ export const DocumentViewer = ({
           },
         }}
         theme={{
-          primary: theme.background.primary,
-          secondary: theme.background.secondary,
-          tertiary: theme.background.tertiary,
-          textPrimary: theme.font.color.primary,
-          textSecondary: theme.font.color.secondary,
-          textTertiary: theme.font.color.tertiary,
+          primary: resolveThemeVariable(themeCssVariables.background.primary),
+          secondary: resolveThemeVariable(
+            themeCssVariables.background.secondary,
+          ),
+          tertiary: resolveThemeVariable(themeCssVariables.background.tertiary),
+          textPrimary: resolveThemeVariable(
+            themeCssVariables.font.color.primary,
+          ),
+          textSecondary: resolveThemeVariable(
+            themeCssVariables.font.color.secondary,
+          ),
+          textTertiary: resolveThemeVariable(
+            themeCssVariables.font.color.tertiary,
+          ),
           disableThemeScrollbar: true,
         }}
       />

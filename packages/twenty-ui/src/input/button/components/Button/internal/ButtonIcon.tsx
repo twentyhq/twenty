@@ -2,7 +2,10 @@ import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
-import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 
 const StyledIcon = styled.div<{
   isLoading: boolean;
@@ -50,7 +53,9 @@ export const ButtonIcon = ({
     )}
     {Icon && (
       <StyledIcon isLoading={!!isLoading}>
-        <Icon size={ICON_SIZES.sm} />
+        <Icon
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+        />
       </StyledIcon>
     )}
   </StyledIconWrapper>

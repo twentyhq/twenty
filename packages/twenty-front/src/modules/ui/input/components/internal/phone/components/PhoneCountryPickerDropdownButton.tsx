@@ -2,7 +2,7 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { type Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { styled } from '@linaria/react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
 
@@ -13,8 +13,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -75,8 +77,6 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -108,7 +108,11 @@ export const PhoneCountryPickerDropdownButton = ({
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
             <StyledCheveronIconContainer>
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             </StyledCheveronIconContainer>
           </StyledIconContainer>
         </StyledDropdownButtonContainer>

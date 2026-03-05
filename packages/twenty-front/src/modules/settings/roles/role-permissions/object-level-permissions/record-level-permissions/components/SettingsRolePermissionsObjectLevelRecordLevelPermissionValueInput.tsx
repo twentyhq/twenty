@@ -24,8 +24,10 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -98,8 +100,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
-    const { theme } = useContext(ThemeContext);
-
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(
@@ -221,7 +221,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               onClick={handleResetToStaticValue}
               aria-label={t`Reset to static value`}
             >
-              <IconEraser size={theme.icon.size.sm} />
+              <IconEraser
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             </StyledIconContainer>
           </StyledContainer>
           <AppTooltip

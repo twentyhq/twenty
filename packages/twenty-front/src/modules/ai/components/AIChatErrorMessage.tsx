@@ -1,11 +1,12 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
@@ -47,13 +48,14 @@ type AIChatErrorMessageProps = {
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
-  const { theme } = useContext(ThemeContext);
   const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
 
   return (
     <StyledErrorContainer>
       <StyledErrorIcon>
-        <IconAlertCircle size={theme.icon.size.md} />
+        <IconAlertCircle
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
       </StyledErrorIcon>
       <StyledErrorContent>
         <StyledErrorTitle>{t`Failed to get response`}</StyledErrorTitle>

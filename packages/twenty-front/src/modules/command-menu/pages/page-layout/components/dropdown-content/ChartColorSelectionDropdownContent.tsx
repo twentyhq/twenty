@@ -17,7 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme-constants';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ColorOption = {

@@ -3,9 +3,6 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -15,6 +12,10 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
+import {
+  ColorSchemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -142,8 +143,9 @@ export const BlockEditor = ({
   onPaste,
   readonly,
 }: BlockEditorProps) => {
-  const { theme } = useContext(ThemeContext);
-  const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+  const { colorScheme } = useContext(ColorSchemeContext);
+
+  const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
 
   const handleFocus = () => {

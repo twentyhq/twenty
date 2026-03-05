@@ -1,4 +1,8 @@
-import { THEME_COMMON } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
+
 export const COMMAND_MENU_ANIMATION_VARIANTS = {
   fullScreen: {
     x: '0%',
@@ -9,14 +13,14 @@ export const COMMAND_MENU_ANIMATION_VARIANTS = {
   },
   normal: {
     x: '0%',
-    width: THEME_COMMON.rightDrawerWidth,
+    width: resolveThemeVariable(themeCssVariables.rightDrawerWidth),
     height: '100%',
     bottom: '0',
     top: '0',
   },
   closed: {
     x: '100%',
-    width: THEME_COMMON.rightDrawerWidth,
+    width: resolveThemeVariable(themeCssVariables.rightDrawerWidth),
     height: '100%',
     bottom: '0',
     top: 'auto',

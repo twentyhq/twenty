@@ -1,8 +1,10 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -13,13 +15,13 @@ const StyledContainer = styled.div`
 `;
 
 export const WidgetSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledContainer>
       <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
+        baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+        highlightColor={resolveThemeVariable(
+          themeCssVariables.background.transparent.lighter,
+        )}
         borderRadius={4}
       >
         <Skeleton

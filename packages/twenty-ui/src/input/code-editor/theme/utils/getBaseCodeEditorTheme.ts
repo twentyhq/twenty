@@ -1,4 +1,4 @@
-import { type ThemeType } from '@ui/theme';
+import { resolveThemeVariable, themeCssVariables } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,42 +31,56 @@ const convertColorToHex = (color: string): string => {
   return color;
 };
 
-export const getBaseCodeEditorTheme = ({
-  theme,
-}: {
-  theme: ThemeType;
-}): editor.IStandaloneThemeData => {
+export const getBaseCodeEditorTheme = (): editor.IStandaloneThemeData => {
   return {
     base: 'vs',
     inherit: true,
     rules: [
       {
         token: '',
-        foreground: convertColorToHex(theme.code.text.gray),
+        foreground: convertColorToHex(
+          resolveThemeVariable(themeCssVariables.code.text.gray),
+        ),
         fontStyle: 'bold',
       },
-      { token: 'keyword', foreground: convertColorToHex(theme.code.text.sky) },
+      {
+        token: 'keyword',
+        foreground: convertColorToHex(
+          resolveThemeVariable(themeCssVariables.code.text.sky),
+        ),
+      },
       {
         token: 'delimiter',
-        foreground: convertColorToHex(theme.code.text.gray),
+        foreground: convertColorToHex(
+          resolveThemeVariable(themeCssVariables.code.text.gray),
+        ),
       },
-      { token: 'string', foreground: convertColorToHex(theme.code.text.pink) },
+      {
+        token: 'string',
+        foreground: convertColorToHex(
+          resolveThemeVariable(themeCssVariables.code.text.pink),
+        ),
+      },
       {
         token: 'comment',
-        foreground: convertColorToHex(theme.code.text.orange),
+        foreground: convertColorToHex(
+          resolveThemeVariable(themeCssVariables.code.text.orange),
+        ),
       },
     ],
     colors: {
       'editor.background': '#00000000',
-      'editorCursor.foreground': convertColorToHex(theme.font.color.primary),
+      'editorCursor.foreground': convertColorToHex(
+        resolveThemeVariable(themeCssVariables.font.color.primary),
+      ),
       'editorLineNumber.foreground': convertColorToHex(
-        theme.font.color.extraLight,
+        resolveThemeVariable(themeCssVariables.font.color.extraLight),
       ),
       'editorLineNumber.activeForeground': convertColorToHex(
-        theme.font.color.light,
+        resolveThemeVariable(themeCssVariables.font.color.light),
       ),
       'editor.lineHighlightBackground': convertColorToHex(
-        theme.background.tertiary,
+        resolveThemeVariable(themeCssVariables.background.tertiary),
       ),
     },
   };

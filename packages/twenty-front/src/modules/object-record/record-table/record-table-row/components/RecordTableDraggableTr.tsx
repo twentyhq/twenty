@@ -1,6 +1,9 @@
 import { Draggable } from '@hello-pangea/dnd';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { type ReactNode } from 'react';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
@@ -26,8 +29,6 @@ export const RecordTableDraggableTr = ({
   onClick,
   children,
 }: RecordTableDraggableTrProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   return (
@@ -49,10 +50,12 @@ export const RecordTableDraggableTr = ({
             style={{
               ...draggableProvided.draggableProps.style,
               background: draggableSnapshot.isDragging
-                ? theme.background.transparent.light
+                ? resolveThemeVariable(
+                    themeCssVariables.background.transparent.light,
+                  )
                 : undefined,
               borderColor: draggableSnapshot.isDragging
-                ? `${theme.border.color.medium}`
+                ? resolveThemeVariable(themeCssVariables.border.color.medium)
                 : 'transparent',
               opacity: isSecondaryDragged ? 0.3 : undefined,
             }}

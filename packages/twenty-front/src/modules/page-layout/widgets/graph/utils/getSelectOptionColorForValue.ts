@@ -1,6 +1,6 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme-constants';
 
 export const getSelectOptionColorForValue = ({
   rawValue,

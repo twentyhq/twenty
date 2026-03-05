@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
@@ -10,15 +9,17 @@ import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/sta
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const RecordIndexPageHeaderIcon = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
@@ -36,7 +37,11 @@ export const RecordIndexPageHeaderIcon = ({
   }
 
   if (!isNavigationMenuItemEditingEnabled) {
-    return <ObjectIcon size={theme.icon.size.md} />;
+    return (
+      <ObjectIcon
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+      />
+    );
   }
 
   const navItem = isDefined(coreIndexViewId)

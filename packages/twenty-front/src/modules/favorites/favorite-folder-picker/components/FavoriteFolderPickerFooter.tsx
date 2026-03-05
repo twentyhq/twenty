@@ -5,12 +5,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 export const FavoriteFolderPickerFooter = ({
   dropdownId,
 }: {
@@ -24,7 +25,6 @@ export const FavoriteFolderPickerFooter = ({
     isNavigationDrawerExpandedState,
   );
   const { openNavigationSection } = useNavigationSection('Favorites');
-  const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
 
   return (
@@ -38,7 +38,11 @@ export const FavoriteFolderPickerFooter = ({
           closeDropdown(dropdownId);
         }}
         text={t`Add folder`}
-        LeftIcon={() => <IconPlus size={theme.icon.size.md} />}
+        LeftIcon={() => (
+          <IconPlus
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
+        )}
       />
     </DropdownMenuItemsContainer>
   );

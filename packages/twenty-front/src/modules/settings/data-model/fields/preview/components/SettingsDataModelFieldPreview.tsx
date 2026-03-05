@@ -13,8 +13,7 @@ import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
 import {
-  ICON_SIZES,
-  ICON_STROKES,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -115,7 +114,14 @@ export const SettingsDataModelFieldPreview = ({
           <StyledFieldPreview shrink={shrink}>
             {!!withFieldLabel && (
               <StyledFieldLabel>
-                <FieldIcon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+                <FieldIcon
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.sm,
+                  )}
+                />
                 {fieldMetadataItem.label}:
               </StyledFieldLabel>
             )}

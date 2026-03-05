@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -29,7 +29,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
@@ -44,8 +47,6 @@ const StyledContentContainer = styled.div`
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const { objectNamePlural = '' } = useParams();
 
   const { findObjectMetadataItemByNamePlural } =
@@ -113,8 +114,8 @@ export const SettingsObjectDetailPage = () => {
       pill: (
         <IconPoint
           size={12}
-          color={theme.color.yellow}
-          fill={theme.color.yellow}
+          color={resolveThemeVariable(themeCssVariables.color.yellow)}
+          fill={resolveThemeVariable(themeCssVariables.color.yellow)}
         />
       ),
     },

@@ -5,7 +5,10 @@ import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
 
@@ -43,7 +46,9 @@ export const SettingsSkillTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          <Icon size={ICON_SIZES.md} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />
       </TableCell>

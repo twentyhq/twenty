@@ -1,15 +1,17 @@
 import { styled } from '@linaria/react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -23,7 +25,6 @@ const StyledCardsContainer = styled.div`
 
 export const SettingsAccountsSettingsSection = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   return (
     <Section>
       <H2Title
@@ -35,8 +36,12 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconMailCog
-                size={theme.icon.size.lg}
-                stroke={theme.icon.stroke.sm}
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.lg,
+                )}
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
               />
             }
             title={t`Emails`}
@@ -47,8 +52,12 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconCalendarEvent
-                size={theme.icon.size.lg}
-                stroke={theme.icon.stroke.sm}
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.lg,
+                )}
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
               />
             }
             title={t`Calendar`}

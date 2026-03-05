@@ -8,7 +8,7 @@ import {
   type FieldMetadataMultiItemSettings,
   type PartialFieldMetadataItemOption,
 } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme-constants';
 import { type Field } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = PartialFieldMetadataItemOption & {

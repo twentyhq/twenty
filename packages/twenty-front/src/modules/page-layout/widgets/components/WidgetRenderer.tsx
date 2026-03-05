@@ -25,7 +25,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { styled } from '@linaria/react';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import {
@@ -33,7 +33,11 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -46,7 +50,6 @@ type WidgetRendererProps = {
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  const { theme } = useContext(ThemeContext);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
@@ -190,8 +193,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           ) : (
             <StyledNoAccessContainer>
               <IconLock
-                color={theme.font.color.tertiary}
-                stroke={theme.icon.stroke.sm}
+                color={resolveThemeVariable(
+                  themeCssVariables.font.color.tertiary,
+                )}
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
               />
             </StyledNoAccessContainer>
           )}

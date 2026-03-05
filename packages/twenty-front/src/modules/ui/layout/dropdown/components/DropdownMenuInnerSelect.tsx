@@ -7,9 +7,10 @@ import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
@@ -45,8 +46,6 @@ export const DropdownMenuInnerSelect = ({
   dropdownId,
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { closeDropdown } = useCloseDropdown();
 
   return (
@@ -54,7 +53,9 @@ export const DropdownMenuInnerSelect = ({
       clickableComponent={
         <StyledDropdownMenuInnerSelectDropdownButton>
           <span>{selectedOption.label}</span>
-          <IconChevronDown size={theme.icon.size.sm} />
+          <IconChevronDown
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         </StyledDropdownMenuInnerSelectDropdownButton>
       }
       dropdownComponents={

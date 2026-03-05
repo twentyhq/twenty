@@ -6,13 +6,14 @@ import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${themeCssVariables.font.color.primary};
@@ -44,7 +45,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
 
   const Icon = getIcon(objectMetadataItem.icon);
 
@@ -66,9 +66,15 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{
+              minWidth: resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              ),
+            }}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
           />
         )}
         <StyledNameLabel title={objectLabelPlural}>

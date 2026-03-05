@@ -19,14 +19,16 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -47,8 +49,6 @@ export const SettingsObjectTable = ({
   withSearchBar?: boolean;
 }) => {
   const { t } = useLingui();
-
-  const { theme } = useContext(ThemeContext);
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
@@ -198,8 +198,12 @@ export const SettingsObjectTable = ({
               action={
                 isActive ? (
                   <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    )}
+                    stroke={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.stroke.sm,
+                    )}
                   />
                 ) : (
                   <SettingsObjectInactiveMenuDropDown

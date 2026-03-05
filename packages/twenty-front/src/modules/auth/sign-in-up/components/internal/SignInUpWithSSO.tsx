@@ -11,16 +11,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const SignInUpWithSSO = () => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
@@ -50,7 +51,13 @@ export const SignInUpWithSSO = () => {
     <>
       <StyledSSOButtonContainer>
         <MainButton
-          Icon={() => <IconLock size={theme.icon.size.md} />}
+          Icon={() => (
+            <IconLock
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          )}
           title={t`Single sign-on (SSO)`}
           onClick={signInWithSSO}
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}

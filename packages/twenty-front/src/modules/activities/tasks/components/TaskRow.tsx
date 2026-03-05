@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -16,8 +15,10 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -86,7 +87,6 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
-  const { theme } = useContext(ThemeContext);
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
@@ -131,7 +131,11 @@ export const TaskRow = ({ task }: { task: Task }) => {
           <StyledDueDate
             isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
           >
-            <IconCalendar size={theme.icon.size.md} />
+            <IconCalendar
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}

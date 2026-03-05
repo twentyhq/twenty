@@ -12,7 +12,6 @@ import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/uti
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -22,8 +21,11 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
@@ -94,8 +96,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
     formState: { errors },
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
-
-  const { theme } = useContext(ThemeContext);
 
   const label = watch('label');
 
@@ -210,8 +210,12 @@ export const SettingsDataModelFieldIconLabelForm = ({
                               <>
                                 <IconInfoCircle
                                   id="info-circle-id-name"
-                                  size={theme.icon.size.md}
-                                  color={theme.font.color.tertiary}
+                                  size={resolveThemeVariableAsNumber(
+                                    themeCssVariables.icon.size.md,
+                                  )}
+                                  color={resolveThemeVariable(
+                                    themeCssVariables.font.color.tertiary,
+                                  )}
                                   style={{ outline: 'none' }}
                                 />
                                 <AppTooltip

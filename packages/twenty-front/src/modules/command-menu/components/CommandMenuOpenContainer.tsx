@@ -20,12 +20,13 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
@@ -51,9 +52,6 @@ export const CommandMenuOpenContainer = ({
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
     : 'normal';
-
-  const { theme } = useContext(ThemeContext);
-
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
@@ -100,7 +98,11 @@ export const CommandMenuOpenContainer = ({
       initial="closed"
       exit="closed"
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: resolveThemeVariable(
+          themeCssVariables.animation.duration.normal,
+        ),
+      }}
       onAnimationStart={() => setIsSidePanelAnimating(true)}
       onAnimationComplete={() => setIsSidePanelAnimating(false)}
     >

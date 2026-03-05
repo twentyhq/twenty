@@ -29,7 +29,11 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -65,7 +69,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onClose,
   pageLayoutType,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
-  const { theme } = useContext(ThemeContext);
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 
@@ -186,7 +189,10 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                 ? 'grabbing'
                                 : 'grab',
                               background: draggableSnapshot.isDragging
-                                ? theme.background.transparent.light
+                                ? resolveThemeVariable(
+                                    themeCssVariables.background.transparent
+                                      .light,
+                                  )
                                 : 'none',
                               width: 50,
                               overflow: 'visible',
@@ -196,7 +202,10 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                               style={{
                                 minWidth:
                                   GenericDropdownContentWidth.Medium -
-                                  theme.spacingMultiplicator * 2,
+                                  resolveThemeVariableAsNumber(
+                                    themeCssVariables.spacingMultiplicator,
+                                  ) *
+                                    2,
                               }}
                             >
                               <PageLayoutTabMenuItemSelectAvatar

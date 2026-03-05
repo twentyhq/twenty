@@ -6,9 +6,12 @@ import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import {
+  ColorSchemeContext,
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -51,7 +54,7 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme } = useContext(ColorSchemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
 
   if (!playgroundApiKey) {
@@ -64,8 +67,12 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
       <Suspense
         fallback={
           <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
+            baseColor={resolveThemeVariable(
+              themeCssVariables.background.tertiary,
+            )}
+            highlightColor={resolveThemeVariable(
+              themeCssVariables.background.transparent.lighter,
+            )}
             borderRadius={4}
           >
             <Skeleton width="100%" height="100%" />
@@ -85,7 +92,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
             },
             baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
+            forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
             hideClientButton: true,
             hideDarkModeToggle: true,
             hideModels: schema === 'metadata',

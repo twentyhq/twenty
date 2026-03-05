@@ -2,15 +2,17 @@ import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/ty
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const WorkflowDiagramStepNodeIcon = ({
   data,
 }: {
   data: WorkflowDiagramStepNodeData;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(getWorkflowNodeIconKey(data));
 
@@ -18,12 +20,26 @@ export const WorkflowDiagramStepNodeIcon = ({
     case 'trigger': {
       switch (data.triggerType) {
         case 'DATABASE_EVENT': {
-          return <Icon size={theme.icon.size.md} color={theme.color.blue} />;
+          return (
+            <Icon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.blue)}
+            />
+          );
         }
         case 'MANUAL':
         case 'CRON':
         case 'WEBHOOK': {
-          return <Icon size={theme.icon.size.md} color={theme.color.purple} />;
+          return (
+            <Icon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.purple)}
+            />
+          );
         }
       }
 
@@ -37,30 +53,61 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DRAFT_EMAIL': {
           return (
             <Icon
-              size={theme.icon.size.md}
-              color={theme.color.red}
-              stroke={theme.icon.stroke.sm}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.red)}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
             />
           );
         }
         case 'FORM': {
-          return <Icon size={theme.icon.size.md} color={theme.color.orange} />;
+          return (
+            <Icon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.orange)}
+            />
+          );
         }
         case 'AI_AGENT': {
-          return <Icon size={theme.icon.size.md} color={theme.color.pink} />;
+          return (
+            <Icon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.pink)}
+            />
+          );
         }
         case 'EMPTY':
           return null;
         case 'DELAY':
         case 'FILTER':
         case 'ITERATOR':
-          return <Icon size={theme.icon.size.md} color={theme.color.green12} />;
+          return (
+            <Icon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.green12)}
+            />
+          );
         default: {
           return (
             <Icon
-              size={theme.icon.size.md}
-              color={theme.font.color.tertiary}
-              stroke={theme.icon.stroke.sm}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(
+                themeCssVariables.font.color.tertiary,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
             />
           );
         }

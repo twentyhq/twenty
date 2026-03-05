@@ -9,8 +9,11 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
-import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { type ReactNode } from 'react';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
   z-index: ${({ zIndex }) => zIndex};
@@ -31,8 +34,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
-  const { theme } = useContext(ThemeContext);
-
   const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
@@ -60,12 +61,14 @@ export const RecordTableCellFirstRowFirstColumn = ({
       : TABLE_Z_INDEX.withoutGroupsCell0_0.cell0_0Normal;
 
   const tdBackgroundColor = isSelected
-    ? theme.accent.quaternary
-    : theme.background.primary;
+    ? resolveThemeVariable(themeCssVariables.accent.quaternary)
+    : resolveThemeVariable(themeCssVariables.background.primary);
 
-  const borderColor = theme.border.color.light;
+  const borderColor = resolveThemeVariable(
+    themeCssVariables.border.color.light,
+  );
 
-  const fontColor = theme.font.color.primary;
+  const fontColor = resolveThemeVariable(themeCssVariables.font.color.primary);
 
   return (
     <StyledRecordTableTd

@@ -7,8 +7,7 @@ import {
   type IconComponent,
 } from '@ui/display';
 import {
-  ICON_SIZES,
-  ICON_STROKES,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -151,7 +150,12 @@ export const MenuPicker = ({
         aria-label={label}
       >
         <StyledIconContainer>
-          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
         </StyledIconContainer>
 
         {isDefined(label) && showLabel && (

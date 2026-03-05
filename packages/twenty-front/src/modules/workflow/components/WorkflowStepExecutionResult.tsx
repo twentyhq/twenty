@@ -8,10 +8,10 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { AnimatedCircleLoading } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -77,11 +77,11 @@ export const WorkflowStepExecutionResult = ({
   loadingMessage = t`Processing...`,
   idleMessage = t`Output`,
 }: WorkflowStepExecutionResultProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const SuccessLeftNode = (
     <StyledOutput accent="success">
-      <IconSquareRoundedCheck size={theme.icon.size.md} />
+      <IconSquareRoundedCheck
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+      />
       <div>
         <div>{status.successMessage}</div>
         {status.additionalInfo && (
@@ -93,7 +93,9 @@ export const WorkflowStepExecutionResult = ({
 
   const ErrorLeftNode = (
     <StyledOutput accent="error">
-      <IconSquareRoundedX size={theme.icon.size.md} />
+      <IconSquareRoundedX
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+      />
       <div>
         <div>{status.errorMessage}</div>
         {status.additionalInfo && (
@@ -108,7 +110,9 @@ export const WorkflowStepExecutionResult = ({
   const PendingLeftNode = isTesting && (
     <StyledOutput>
       <AnimatedCircleLoading>
-        <IconLoader size={theme.icon.size.md} />
+        <IconLoader
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
       </AnimatedCircleLoading>
       <StyledInfoContainer>{loadingMessage}</StyledInfoContainer>
     </StyledOutput>

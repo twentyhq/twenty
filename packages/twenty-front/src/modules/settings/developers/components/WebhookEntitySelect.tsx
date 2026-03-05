@@ -11,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,8 +26,10 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -83,7 +85,6 @@ export const WebhookEntitySelect = ({
   disabled = false,
   dropdownId = WEBHOOK_ENTITY_DROPDOWN_ID,
 }: WebhookEntitySelectProps) => {
-  const { theme } = useContext(ThemeContext);
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
@@ -169,7 +170,7 @@ export const WebhookEntitySelect = ({
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
           <StyledControlIconChevronDown
             disabled={disabled}
-            size={theme.icon.size.md}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
           />
         </StyledControlContainer>
       }

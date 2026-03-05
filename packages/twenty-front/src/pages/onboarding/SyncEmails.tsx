@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Key } from 'ts-key-enum';
@@ -22,8 +22,10 @@ import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -54,7 +56,6 @@ const StyledProviderContainer = styled.div`
 `;
 
 export const SyncEmails = () => {
-  const { theme } = useContext(ThemeContext);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -133,7 +134,13 @@ export const SyncEmails = () => {
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
             width={200}
-            Icon={() => <IconGoogle size={theme.icon.size.sm} />}
+            Icon={() => (
+              <IconGoogle
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
+            )}
           />
         )}
         {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
@@ -143,7 +150,13 @@ export const SyncEmails = () => {
               handleButtonClick(ConnectedAccountProvider.MICROSOFT)
             }
             width={200}
-            Icon={() => <IconMicrosoft size={theme.icon.size.sm} />}
+            Icon={() => (
+              <IconMicrosoft
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
+            )}
           />
         )}
         {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && (

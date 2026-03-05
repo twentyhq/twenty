@@ -1,6 +1,6 @@
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronDown,
@@ -15,8 +15,11 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -203,7 +206,6 @@ export const CodeExecutionDisplay = ({
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [isOutputExpanded, setIsOutputExpanded] = useState(true);
@@ -235,12 +237,18 @@ export const CodeExecutionDisplay = ({
     <StyledContainer>
       <StyledHeader status={status}>
         <StyledHeaderLeft>
-          <IconCode size={theme.icon.size.md} />
+          <IconCode
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
           <StyledStatusBadge status={status}>
-            <StatusIcon size={theme.icon.size.sm} />
+            <StatusIcon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
             {statusText}
           </StyledStatusBadge>
         </StyledHeaderRight>
@@ -249,7 +257,11 @@ export const CodeExecutionDisplay = ({
       <StyledSection>
         <StyledSectionHeader onClick={() => setIsCodeExpanded(!isCodeExpanded)}>
           <StyledSectionHeaderLeft>
-            <IconCode size={theme.icon.size.sm} />
+            <IconCode
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
             {t`Code`}
           </StyledSectionHeaderLeft>
           <StyledHeaderRight>
@@ -264,9 +276,17 @@ export const CodeExecutionDisplay = ({
               accent="tertiary"
             />
             {isCodeExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
+              <IconChevronUp
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             )}
           </StyledHeaderRight>
         </StyledSectionHeader>
@@ -296,9 +316,17 @@ export const CodeExecutionDisplay = ({
           >
             <StyledSectionHeaderLeft>{t`Output`}</StyledSectionHeaderLeft>
             {isOutputExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
+              <IconChevronUp
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             )}
           </StyledSectionHeader>
           <AnimatedExpandableContainer
@@ -320,13 +348,25 @@ export const CodeExecutionDisplay = ({
             onClick={() => setIsFilesExpanded(!isFilesExpanded)}
           >
             <StyledSectionHeaderLeft>
-              <IconFile size={theme.icon.size.sm} />
+              <IconFile
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               {t`Generated Files`} ({files.length})
             </StyledSectionHeaderLeft>
             {isFilesExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
+              <IconChevronUp
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             )}
           </StyledSectionHeader>
           <AnimatedExpandableContainer
@@ -347,7 +387,12 @@ export const CodeExecutionDisplay = ({
                           loading="lazy"
                         />
                       ) : (
-                        <IconFile size={48} color={theme.font.color.tertiary} />
+                        <IconFile
+                          size={48}
+                          color={resolveThemeVariable(
+                            themeCssVariables.font.color.tertiary,
+                          )}
+                        />
                       )}
                     </StyledFilePreview>
                     <StyledFileInfo>
@@ -361,7 +406,11 @@ export const CodeExecutionDisplay = ({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <IconDownload size={theme.icon.size.sm} />
+                        <IconDownload
+                          size={resolveThemeVariableAsNumber(
+                            themeCssVariables.icon.size.sm,
+                          )}
+                        />
                       </StyledDownloadLink>
                     </StyledFileInfo>
                   </StyledFileCard>

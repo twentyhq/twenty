@@ -1,6 +1,9 @@
-import { useContext } from 'react';
-import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+  type AnimationDuration,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 
 type AnimatedFadeOutProps = {
   isOpen: boolean;
@@ -17,7 +20,6 @@ export const AnimatedFadeOut = ({
   marginBottom,
   marginTop,
 }: AnimatedFadeOutProps) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,7 +31,9 @@ export const AnimatedFadeOut = ({
           }}
           exit={{ opacity: 0, height: 0, marginBottom: 0, marginTop: 0 }}
           transition={{
-            duration: theme.animation.duration[duration],
+            duration: resolveThemeVariableAsNumber(
+              themeCssVariables.animation.duration[duration],
+            ),
             ease: 'easeOut',
           }}
         >

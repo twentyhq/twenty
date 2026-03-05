@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy, type ComponentType, useContext } from 'react';
+import { Suspense, lazy, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -26,8 +26,10 @@ import {
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import { MenuItemLeftContent } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -361,8 +363,6 @@ export const DatePicker = ({
 
   const { userTimezone } = useUserTimezone();
 
-  const { theme } = useContext(ThemeContext);
-
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -457,8 +457,12 @@ export const DatePicker = ({
           fallback={
             <StyledDatePickerFallback>
               <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
+                baseColor={resolveThemeVariable(
+                  themeCssVariables.background.tertiary,
+                )}
+                highlightColor={resolveThemeVariable(
+                  themeCssVariables.background.transparent.lighter,
+                )}
                 borderRadius={2}
               >
                 <Skeleton

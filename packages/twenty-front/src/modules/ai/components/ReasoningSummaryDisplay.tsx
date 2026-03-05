@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';
@@ -67,7 +69,6 @@ export const ReasoningSummaryDisplay = ({
   content: string;
   isThinking?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasContent = content.trim().length > 0;
@@ -82,7 +83,11 @@ export const ReasoningSummaryDisplay = ({
         <>
           <ShimmeringText>
             <StyledIconContainer>
-              <IconBrain size={theme.icon.size.sm} />
+              <IconBrain
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               <StyledThinkingText>{t`Thinking...`}</StyledThinkingText>
             </StyledIconContainer>
           </ShimmeringText>
@@ -96,13 +101,25 @@ export const ReasoningSummaryDisplay = ({
         <>
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
             <StyledIconContainer>
-              <IconBrain size={theme.icon.size.sm} />
+              <IconBrain
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               <span>{t`Finished thinking`}</span>
             </StyledIconContainer>
             {isExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
+              <IconChevronUp
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             )}
           </StyledToggleButton>
 

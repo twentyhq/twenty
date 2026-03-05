@@ -1,4 +1,4 @@
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import {
   StyledMenuItemIconCheck,
@@ -9,8 +9,10 @@ import {
 
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -46,8 +48,6 @@ export const MenuItemSelectAvatar = ({
   focused,
   testId,
 }: MenuItemSelectAvatarProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledMenuItemSelect
       onClick={onClick}
@@ -75,7 +75,11 @@ export const MenuItemSelectAvatar = ({
           )}
         </StyledTextContainer>
       </StyledMenuItemLeftContent>
-      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
+      {selected && (
+        <StyledMenuItemIconCheck
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
+      )}
     </StyledMenuItemSelect>
   );
 };

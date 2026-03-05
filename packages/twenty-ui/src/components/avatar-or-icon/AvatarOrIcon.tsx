@@ -2,9 +2,12 @@ import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { type Nullable } from '@ui/utilities';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledIconWithBackgroundContainer = styled.div<{
@@ -49,7 +52,6 @@ export const AvatarOrIcon = ({
   IconBackgroundColor,
   onClick,
 }: AvatarOrIconProps) => {
-  const { theme } = useContext(ThemeContext);
   if (!isDefined(Icon)) {
     return (
       <Avatar
@@ -70,13 +72,16 @@ export const AvatarOrIcon = ({
       <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
         <StyledIconWithBackgroundContainer
           backgroundColor={
-            IconBackgroundColor ?? theme.background.invertedSecondary
+            IconBackgroundColor ??
+            resolveThemeVariable(themeCssVariables.background.invertedSecondary)
           }
         >
           <Icon
-            color={theme.font.color.inverted}
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
+            color={resolveThemeVariable(themeCssVariables.font.color.inverted)}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
           />
         </StyledIconWithBackgroundContainer>
       </StyledAvatarOrIconWrapper>
@@ -86,8 +91,8 @@ export const AvatarOrIcon = ({
   return (
     <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
       <Icon
-        size={theme.icon.size.sm}
-        stroke={theme.icon.stroke.sm}
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
         color={IconColor || 'currentColor'}
       />
     </StyledAvatarOrIconWrapper>

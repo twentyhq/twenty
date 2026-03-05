@@ -12,11 +12,13 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -37,7 +39,6 @@ const StyledTitle = styled.span`
 `;
 
 export const NavigationMenuEditModeBar = () => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
@@ -104,7 +105,9 @@ export const NavigationMenuEditModeBar = () => {
   return (
     <StyledContainer>
       <StyledTitle>
-        <IconPaint size={theme.icon.size.md} />
+        <IconPaint
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
         {t`Layout customization`}
       </StyledTitle>
       <SaveAndCancelButtons

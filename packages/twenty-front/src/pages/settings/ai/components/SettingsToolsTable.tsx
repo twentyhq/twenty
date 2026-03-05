@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
@@ -22,8 +22,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
@@ -61,7 +63,6 @@ export const SettingsToolsTable = () => {
   const { createLogicFunction } = usePersistLogicFunction();
 
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [customSearchTerm, setCustomSearchTerm] = useState('');
@@ -196,8 +197,12 @@ export const SettingsToolsTable = () => {
                   tool={tool}
                   action={
                     <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
+                      size={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.size.md,
+                      )}
+                      stroke={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.stroke.sm,
+                      )}
                     />
                   }
                   link={getToolLink(tool)}

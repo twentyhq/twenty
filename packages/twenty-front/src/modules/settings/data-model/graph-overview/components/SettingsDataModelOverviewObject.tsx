@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { type Node, type NodeProps } from '@xyflow/react';
 import { Link } from 'react-router-dom';
@@ -15,8 +15,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
@@ -102,7 +104,6 @@ const StyledObjectLink = styled(Link)`
 export const SettingsDataModelOverviewObject = ({
   data: objectMetadataItem,
 }: SettingsDataModelOverviewObjectProps) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
@@ -129,7 +130,13 @@ export const SettingsDataModelOverviewObject = ({
               objectNamePlural: objectMetadataItem.namePlural,
             })}
           >
-            {Icon && <Icon size={theme.icon.size.md} />}
+            {Icon && (
+              <Icon
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
+            )}
             {objectMetadataItem.labelPlural}
           </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
@@ -151,9 +158,17 @@ export const SettingsDataModelOverviewObject = ({
               onClick={() => setOtherFieldsExpanded(!otherFieldsExpanded)}
             >
               {otherFieldsExpanded ? (
-                <IconChevronUp size={theme.icon.size.md} />
+                <IconChevronUp
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                />
               ) : (
-                <IconChevronDown size={theme.icon.size.md} />
+                <IconChevronDown
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                />
               )}
               <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
             </StyledCardRowOther>

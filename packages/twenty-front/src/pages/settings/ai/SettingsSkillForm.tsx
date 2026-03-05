@@ -29,8 +29,11 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   useActivateSkillMutation,
   useCreateSkillMutation,
@@ -46,7 +49,7 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -109,7 +112,6 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { theme } = useContext(ThemeContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
@@ -516,8 +518,12 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                             <>
                               <IconInfoCircle
                                 id="info-circle-id-skill-name"
-                                size={theme.icon.size.md}
-                                color={theme.font.color.tertiary}
+                                size={resolveThemeVariableAsNumber(
+                                  themeCssVariables.icon.size.md,
+                                )}
+                                color={resolveThemeVariable(
+                                  themeCssVariables.font.color.tertiary,
+                                )}
                                 style={{ outline: 'none' }}
                               />
                               <AppTooltip

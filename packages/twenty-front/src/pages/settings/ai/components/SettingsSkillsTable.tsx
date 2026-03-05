@@ -25,8 +25,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import {
-  ICON_SIZES,
-  ICON_STROKES,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -190,8 +189,12 @@ export const SettingsSkillsTable = () => {
                 action={
                   skill.isActive ? (
                     <IconChevronRight
-                      size={ICON_SIZES.md}
-                      stroke={ICON_STROKES.sm}
+                      size={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.size.md,
+                      )}
+                      stroke={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.stroke.sm,
+                      )}
                     />
                   ) : (
                     <SettingsSkillInactiveMenuDropDown

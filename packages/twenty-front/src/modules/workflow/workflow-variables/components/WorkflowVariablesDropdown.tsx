@@ -11,12 +11,14 @@ import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/cons
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
 )<{ transparentBackground?: boolean; disabled?: boolean }>`
@@ -51,8 +53,6 @@ export const WorkflowVariablesDropdown = ({
   multiline?: boolean;
   clickableComponent?: React.ReactNode;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -100,8 +100,8 @@ export const WorkflowVariablesDropdown = ({
         transparentBackground
       >
         <IconVariablePlus
-          size={theme.icon.size.sm}
-          color={theme.font.color.light}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          color={resolveThemeVariable(themeCssVariables.font.color.light)}
         />
       </StyledDropdownVariableButtonContainer>
     );
@@ -117,7 +117,11 @@ export const WorkflowVariablesDropdown = ({
             isUnfolded={isDropdownOpen}
             transparentBackground
           >
-            <IconVariablePlus size={theme.icon.size.sm} />
+            <IconVariablePlus
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
           </StyledDropdownVariableButtonContainer>
         )
       }
@@ -140,7 +144,10 @@ export const WorkflowVariablesDropdown = ({
       dropdownPlacement="bottom-end"
       dropdownOffset={{
         x: 2,
-        y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
+        y: parseInt(
+          resolveThemeVariable(themeCssVariables.spacing[multiline ? 11 : 1]),
+          10,
+        ),
       }}
     />
   );

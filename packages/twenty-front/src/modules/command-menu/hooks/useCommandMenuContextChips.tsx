@@ -9,10 +9,14 @@ import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-sto
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
   const commandMenuNavigationStack = useAtomStateValue(
@@ -26,8 +30,6 @@ export const useCommandMenuContextChips = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
-
-  const { theme } = useContext(ThemeContext);
 
   const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
@@ -111,16 +113,26 @@ export const useCommandMenuContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [<page.pageIcon size={theme.icon.size.sm} />]
+            ? [
+                <page.pageIcon
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.sm,
+                  )}
+                />,
+              ]
             : [
                 <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
-                    size={theme.icon.size.sm}
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.sm,
+                    )}
                     color={
                       isDefined(page.pageIconColor) &&
                       page.pageIconColor !== 'currentColor'
                         ? page.pageIconColor
-                        : theme.font.color.tertiary
+                        : resolveThemeVariable(
+                            themeCssVariables.font.color.tertiary,
+                          )
                     }
                   />
                 </CommandMenuContextChipIconWrapper>,
@@ -141,8 +153,6 @@ export const useCommandMenuContextChips = () => {
     objectMetadataItems,
     recordIdentifiers,
     records,
-    theme.font.color.tertiary,
-    theme.icon.size.sm,
   ]);
 
   return {

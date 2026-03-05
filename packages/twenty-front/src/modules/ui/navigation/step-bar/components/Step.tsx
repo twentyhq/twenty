@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { motion } from 'framer-motion';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatedCheckmark } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
@@ -82,31 +84,40 @@ export const Step = ({
   children,
   activeStep = 0,
 }: StepProps) => {
-  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
 
   const variantsLine = {
     previous: {
-      backgroundColor: theme.font.color.primary,
+      backgroundColor: resolveThemeVariable(
+        themeCssVariables.font.color.primary,
+      ),
       transition: { duration: 0.5 },
     },
     next: {
-      backgroundColor: theme.border.color.medium,
+      backgroundColor: resolveThemeVariable(
+        themeCssVariables.border.color.medium,
+      ),
       transition: { duration: 0.5 },
     },
   };
 
   const variantsCircle = {
     current: {
-      backgroundColor: theme.background.invertedPrimary,
+      backgroundColor: resolveThemeVariable(
+        themeCssVariables.background.invertedPrimary,
+      ),
       transition: { duration: 0.5 },
     },
     previous: {
-      backgroundColor: theme.background.secondary,
+      backgroundColor: resolveThemeVariable(
+        themeCssVariables.background.secondary,
+      ),
       transition: { duration: 0.5 },
     },
     next: {
-      backgroundColor: theme.background.tertiary,
+      backgroundColor: resolveThemeVariable(
+        themeCssVariables.background.tertiary,
+      ),
       transition: { duration: 0.5 },
     },
   };
@@ -127,7 +138,7 @@ export const Step = ({
         {isInPreviousSteps && (
           <AnimatedCheckmark
             isAnimating={isInPreviousSteps}
-            color={theme.grayScale.gray12}
+            color={resolveThemeVariable(themeCssVariables.grayScale.gray12)}
           />
         )}
         {!isInPreviousSteps && (

@@ -1,7 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { type ChangeEvent, type ReactNode, useContext, useRef } from 'react';
+import { type ChangeEvent, type ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -11,8 +11,10 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -96,11 +98,12 @@ const StyledSubSkeleton = styled.div`
 `;
 
 const StyledShowPageSummaryCardSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+      highlightColor={resolveThemeVariable(
+        themeCssVariables.background.transparent.lighter,
+      )}
       borderRadius={4}
     >
       <Skeleton width={40} height={SKELETON_LOADER_HEIGHT_SIZES.standard.xl} />

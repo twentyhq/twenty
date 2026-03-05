@@ -5,15 +5,16 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
@@ -58,7 +59,6 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const location = useLocation();
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const { theme } = useContext(ThemeContext);
 
   const fieldType = searchParams.get('fieldType') as SettingsFieldType;
   const isConfigureStep = location.pathname.includes('/configure');
@@ -88,7 +88,11 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron size={theme.icon.size.md} />
+            <StyledDownChevron
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
             {isConfigureStep ? (
               <StyledButton variant="tertiary" title={t`2. Configure`} />
             ) : (

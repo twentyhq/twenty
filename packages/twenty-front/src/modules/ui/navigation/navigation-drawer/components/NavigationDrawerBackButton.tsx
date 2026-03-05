@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -10,8 +9,11 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconX } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -48,7 +50,6 @@ const StyledContainer = styled.div`
 export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
-  const { theme } = useContext(ThemeContext);
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
   const setIsNavigationDrawerExpanded = useSetAtomState(
@@ -77,9 +78,11 @@ export const NavigationDrawerBackButton = ({
       >
         <StyledIconAndButtonContainer>
           <IconX
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.lg}
-            color={theme.font.color.tertiary}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.lg,
+            )}
+            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
           />
           <span>{title}</span>
         </StyledIconAndButtonContainer>

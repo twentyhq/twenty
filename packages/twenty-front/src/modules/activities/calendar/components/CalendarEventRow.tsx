@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -16,8 +15,10 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import { IconArrowRight } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -76,7 +77,6 @@ export const CalendarEventRow = ({
   calendarEvent,
   className,
 }: CalendarEventRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();
@@ -114,7 +114,11 @@ export const CalendarEventRow = ({
           {startTimeLabel}
           {endTimeLabel && (
             <>
-              <IconArrowRight size={theme.icon.size.sm} />
+              <IconArrowRight
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               {endTimeLabel}
             </>
           )}

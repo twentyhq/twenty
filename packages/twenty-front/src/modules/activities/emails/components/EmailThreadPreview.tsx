@@ -1,12 +1,13 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { Avatar } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -107,8 +108,6 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
-  const { theme } = useContext(ThemeContext);
-
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
       <StyledHeading unread={!thread.read}>
@@ -141,9 +140,15 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                 avatarUrl={finalAvatarUrl}
                 placeholder={finalDisplayedName}
                 type="rounded"
-                color={isCountIcon ? theme.grayScale.gray11 : undefined}
+                color={
+                  isCountIcon
+                    ? resolveThemeVariable(themeCssVariables.grayScale.gray11)
+                    : undefined
+                }
                 backgroundColor={
-                  isCountIcon ? theme.grayScale.gray2 : undefined
+                  isCountIcon
+                    ? resolveThemeVariable(themeCssVariables.grayScale.gray2)
+                    : undefined
                 }
               />
             </StyledAvatarWrapper>

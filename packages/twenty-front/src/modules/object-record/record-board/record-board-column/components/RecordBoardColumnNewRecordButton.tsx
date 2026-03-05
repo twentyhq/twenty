@@ -8,8 +8,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -29,8 +31,6 @@ const StyledNewButton = styled.button`
 `;
 
 export const RecordBoardColumnNewRecordButton = () => {
-  const { theme } = useContext(ThemeContext);
-
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -67,7 +67,9 @@ export const RecordBoardColumnNewRecordButton = () => {
         });
       }}
     >
-      <IconPlus size={theme.icon.size.md} />
+      <IconPlus
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+      />
       {t`New`}
     </StyledNewButton>
   );

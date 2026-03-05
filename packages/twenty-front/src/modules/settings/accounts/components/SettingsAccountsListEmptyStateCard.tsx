@@ -6,15 +6,16 @@ import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicro
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -26,8 +27,6 @@ export const SettingsAccountsListEmptyStateCard = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
   );
@@ -51,7 +50,13 @@ export const SettingsAccountsListEmptyStateCard = () => {
     <StyledCardsContainer>
       {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
         <SettingsCard
-          Icon={<IconGoogle size={theme.icon.size.md} />}
+          Icon={
+            <IconGoogle
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          }
           title={t`Connect with Google`}
           onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
         />
@@ -59,7 +64,13 @@ export const SettingsAccountsListEmptyStateCard = () => {
 
       {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
         <SettingsCard
-          Icon={<IconMicrosoft size={theme.icon.size.md} />}
+          Icon={
+            <IconMicrosoft
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          }
           title={t`Connect with Microsoft`}
           onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
         />
@@ -70,7 +81,13 @@ export const SettingsAccountsListEmptyStateCard = () => {
           to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
         >
           <SettingsCard
-            Icon={<IconAt size={theme.icon.size.md} />}
+            Icon={
+              <IconAt
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
+            }
             title={t`Connect Account`}
           />
         </UndecoratedLink>

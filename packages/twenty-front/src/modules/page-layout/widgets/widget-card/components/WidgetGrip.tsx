@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { IconGripVertical } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledGripContainerBase = styled.div`
   width: 20px;
@@ -33,8 +35,6 @@ type WidgetGripProps = {
 };
 
 export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledGripContainer
       layout
@@ -44,13 +44,15 @@ export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
       animate={{ width: 20, opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{
-        duration: theme.animation.duration.fast,
+        duration: resolveThemeVariableAsNumber(
+          themeCssVariables.animation.duration.fast,
+        ),
         ease: 'easeInOut',
       }}
     >
       <IconGripVertical
-        size={theme.icon.size.sm}
-        color={theme.font.color.extraLight}
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+        color={resolveThemeVariable(themeCssVariables.font.color.extraLight)}
       />
     </StyledGripContainer>
   );

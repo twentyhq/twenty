@@ -3,12 +3,7 @@ import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
-import {
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-  useContext,
-  useMemo,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -19,8 +14,12 @@ import {
 } from 'twenty-ui/display';
 import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -154,7 +153,6 @@ export const SnackBar = ({
   role = 'status',
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
-  const { theme } = useContext(ThemeContext);
   const { i18n, t } = useLingui();
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
@@ -172,8 +170,10 @@ export const SnackBar = ({
     }
 
     const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
-    const color = theme.snackBar[variant].color;
-    const size = theme.icon.size.md;
+    const color = resolveThemeVariable(
+      themeCssVariables.snackBar[variant].color,
+    );
+    const size = resolveThemeVariableAsNumber(themeCssVariables.icon.size.md);
 
     switch (variant) {
       case SnackBarVariant.Error:
@@ -197,7 +197,7 @@ export const SnackBar = ({
           <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
         );
     }
-  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant, i18n]);
+  }, [iconComponent, variant, i18n]);
 
   const handleMouseEnter = () => {
     if (progressAnimation?.state === 'running') {
@@ -227,7 +227,9 @@ export const SnackBar = ({
       data-globally-prevent-click-outside
     >
       <StyledProgressBar
-        barColor={theme.snackBar[variant].backgroundColor}
+        barColor={resolveThemeVariable(
+          themeCssVariables.snackBar[variant].backgroundColor,
+        )}
         value={progressValue}
       />
       <StyledHeader>

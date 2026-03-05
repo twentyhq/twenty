@@ -25,11 +25,13 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -86,8 +88,6 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -323,7 +323,9 @@ export const FormArrayFieldInput = ({
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing(1)),
+                  y: parseSpacingValueAsNumber(
+                    resolveThemeVariable(themeCssVariables.spacing[1]),
+                  ),
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>

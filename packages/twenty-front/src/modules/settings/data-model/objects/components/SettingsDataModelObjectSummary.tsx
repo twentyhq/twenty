@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,8 +8,11 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
@@ -68,7 +70,6 @@ const SettingsDataModelObjectPreviewItem = ({
   pluralizeLabel = true,
   index,
 }: SettingsDataModelObjectPreviewItemProps) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem.icon);
 
@@ -79,8 +80,12 @@ const SettingsDataModelObjectPreviewItem = ({
         <StyledObjectName>
           <StyledIconContainer>
             <ObjectIcon
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.md}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.md,
+              )}
             />
           </StyledIconContainer>
           <OverflowingTextWithTooltip
@@ -102,7 +107,6 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
 }: {
   selected: number;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <>
       <StyledSeparator />
@@ -110,9 +114,15 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
         <StyledObjectName>
           <StyledIconContainer>
             <IconBox
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.md}
-              color={theme.font.color.tertiary}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.md,
+              )}
+              color={resolveThemeVariable(
+                themeCssVariables.font.color.tertiary,
+              )}
             />
           </StyledIconContainer>
           <StyledOverflowingTextWithTooltip>

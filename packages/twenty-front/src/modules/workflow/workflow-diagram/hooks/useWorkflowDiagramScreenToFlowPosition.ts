@@ -1,7 +1,9 @@
 import { useReactFlow } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_COMMON } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 export const useWorkflowDiagramScreenToFlowPosition = () => {
   const { screenToFlowPosition } = useReactFlow();
 
@@ -14,7 +16,10 @@ export const useWorkflowDiagramScreenToFlowPosition = () => {
     }
 
     const visibleRightDrawerWidth = Number(
-      THEME_COMMON.rightDrawerWidth.replace('px', ''),
+      resolveThemeVariable(themeCssVariables.rightDrawerWidth).replace(
+        'px',
+        '',
+      ),
     );
 
     const flowPosition = screenToFlowPosition(position);

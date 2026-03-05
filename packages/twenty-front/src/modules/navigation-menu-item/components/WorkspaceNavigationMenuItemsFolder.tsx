@@ -11,8 +11,11 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
@@ -99,7 +102,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   selectedNavigationMenuItemId = null,
   isDragging = false,
 }: WorkspaceNavigationMenuItemsFolderProps) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
@@ -197,15 +199,27 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             rightOptions={
               isOpen ? (
                 <IconChevronDown
-                  size={theme.icon.size.sm}
-                  stroke={theme.icon.stroke.sm}
-                  color={theme.font.color.tertiary}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.sm,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.sm,
+                  )}
+                  color={resolveThemeVariable(
+                    themeCssVariables.font.color.tertiary,
+                  )}
                 />
               ) : (
                 <IconChevronRight
-                  size={theme.icon.size.sm}
-                  stroke={theme.icon.stroke.sm}
-                  color={theme.font.color.tertiary}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.sm,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.sm,
+                  )}
+                  color={resolveThemeVariable(
+                    themeCssVariables.font.color.tertiary,
+                  )}
                 />
               )
             }

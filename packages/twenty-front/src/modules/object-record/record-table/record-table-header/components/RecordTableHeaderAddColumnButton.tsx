@@ -17,10 +17,11 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
@@ -62,8 +63,6 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordTableHeaderAddColumnButton = () => {
-  const { theme } = useContext(ThemeContext);
-
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
@@ -114,7 +113,11 @@ export const RecordTableHeaderAddColumnButton = () => {
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
             <StyledPlusIconContainer>
-              <IconPlus size={theme.icon.size.md} />
+              <IconPlus
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
             </StyledPlusIconContainer>
           }
           dropdownComponents={<RecordTableHeaderPlusButtonContent />}

@@ -21,10 +21,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -36,7 +37,6 @@ type CommandMenuPageInfoProps = {
 };
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
-  const { theme } = useContext(ThemeContext);
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
@@ -134,8 +134,8 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
       <CommandMenuPageInfoLayout
         icon={
           <IconColumnInsertRight
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
           />
         }
         title={<OverflowingTextWithTooltip text={pageChip.text ?? ''} />}

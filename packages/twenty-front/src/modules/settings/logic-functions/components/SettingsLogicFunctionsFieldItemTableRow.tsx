@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
 import { type LogicFunction } from '~/generated-metadata/graphql';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useContext } from 'react';
 import { IconChevronRight } from 'twenty-ui/display';
 import { StyledTableRow } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${themeCssVariables.font.color.primary};
@@ -33,7 +34,6 @@ export const SettingsLogicFunctionsFieldItemTableRow = ({
   logicFunction: LogicFunction;
   to: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <StyledTableRow to={to}>
       <StyledNameTableCell>{logicFunction.name}</StyledNameTableCell>
@@ -41,8 +41,10 @@ export const SettingsLogicFunctionsFieldItemTableRow = ({
       <StyledRuntimeTableCell>{logicFunction.runtime}</StyledRuntimeTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
         />
       </StyledIconTableCell>
     </StyledTableRow>

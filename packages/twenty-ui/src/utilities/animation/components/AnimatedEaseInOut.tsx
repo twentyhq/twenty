@@ -1,6 +1,9 @@
-import { useContext } from 'react';
-import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+  type AnimationDuration,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 
 type AnimatedEaseInOutProps = {
   isOpen: boolean;
@@ -19,8 +22,6 @@ export const AnimatedEaseInOut = ({
   duration = 'normal',
   initial = true,
 }: AnimatedEaseInOutProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <AnimatePresence initial={initial}>
       {isOpen && (
@@ -34,7 +35,9 @@ export const AnimatedEaseInOut = ({
           animate={{ height: 'fit-content', opacity: 1 }}
           exit={{ height: 0, opacity: 0, marginBottom: 0, marginTop: 0 }}
           transition={{
-            duration: theme.animation.duration[duration],
+            duration: resolveThemeVariableAsNumber(
+              themeCssVariables.animation.duration[duration],
+            ),
             ease: 'easeInOut',
           }}
         >

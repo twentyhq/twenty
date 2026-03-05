@@ -1,9 +1,10 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledSkeletonDiv = styled.div`
   align-items: center;
@@ -13,14 +14,15 @@ const StyledSkeletonDiv = styled.div`
   height: 24px;
 `;
 export const PropertyBoxSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
   const skeletonItems = Array.from({ length: 4 }).map((_, index) => ({
     id: `skeleton-item-${index}`,
   }));
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+      highlightColor={resolveThemeVariable(
+        themeCssVariables.background.transparent.lighter,
+      )}
       borderRadius={4}
     >
       {skeletonItems.map(({ id }) => (

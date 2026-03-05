@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
@@ -9,8 +7,10 @@ import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -60,7 +60,6 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const { theme } = useContext(ThemeContext);
   const aiModels = useAtomStateValue(aiModelsState);
 
   const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
@@ -127,7 +126,11 @@ export const SettingsAgentModelCapabilities = ({
             }
           >
             <StyledCheckboxLabel>
-              <capability.Icon size={theme.icon.size.sm} />
+              <capability.Icon
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               <span>{capability.label}</span>
             </StyledCheckboxLabel>
             <Checkbox

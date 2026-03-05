@@ -32,7 +32,10 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -328,7 +331,9 @@ export const WorkflowEditActionFormBuilder = ({
                                 </StyledPlaceholderContainer>
                                 {field.type === 'RECORD' && (
                                   <IconChevronDown
-                                    size={ICON_SIZES.md}
+                                    size={resolveThemeVariableAsNumber(
+                                      themeCssVariables.icon.size.md,
+                                    )}
                                     color={
                                       themeCssVariables.font.color.tertiary
                                     }
@@ -418,7 +423,11 @@ export const WorkflowEditActionFormBuilder = ({
                 >
                   <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
-                      <IconPlus size={ICON_SIZES.sm} />
+                      <IconPlus
+                        size={resolveThemeVariableAsNumber(
+                          themeCssVariables.icon.size.sm,
+                        )}
+                      />
                       {t`Add Field`}
                     </StyledAddFieldButtonContentContainer>
                   </StyledFieldContainer>

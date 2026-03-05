@@ -1,18 +1,21 @@
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
-import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     favorite.objectNameSingular || '',
   );
   const IconToUse =
     StandardIcon || (favorite.Icon ? getIcon(favorite.Icon) : undefined);
-  const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary;
+  const iconColorToUse = StandardIcon
+    ? IconColor
+    : resolveThemeVariable(themeCssVariables.font.color.secondary);
 
   return (
     <Avatar

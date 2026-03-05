@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -23,8 +21,11 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.span`
   display: flex;
@@ -54,8 +55,6 @@ const StyledViewName = styled.span`
 `;
 
 export const ViewPickerDropdown = () => {
-  const { theme } = useContext(ThemeContext);
-
   const { currentView } = useGetCurrentViewOnly();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
@@ -89,9 +88,17 @@ export const ViewPickerDropdown = () => {
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
             {currentView && CurrentViewIcon ? (
-              <CurrentViewIcon size={theme.icon.size.md} />
+              <CurrentViewIcon
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
             ) : (
-              <IconList size={theme.icon.size.md} />
+              <IconList
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
             )}
           </StyledIconContainer>
           <StyledViewName>
@@ -99,7 +106,11 @@ export const ViewPickerDropdown = () => {
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
-            <IconChevronDown size={theme.icon.size.sm} />
+            <IconChevronDown
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }

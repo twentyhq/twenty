@@ -7,10 +7,11 @@ import {
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;
@@ -50,8 +51,6 @@ export const GraphWidgetAggregateChart = ({
   prefix,
   suffix,
 }: GraphWidgetAggregateChartProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const formattedPercentage = isDefined(trendPercentage)
     ? formatNumberChartTrend(trendPercentage)
     : undefined;
@@ -71,13 +70,17 @@ export const GraphWidgetAggregateChart = ({
           </StyledTrendPercentageValue>
           {trendPercentage >= 0 ? (
             <IconTrendingUp
-              color={theme.color.turquoise8}
-              size={theme.icon.size.md}
+              color={resolveThemeVariable(themeCssVariables.color.turquoise8)}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
             />
           ) : (
             <IconTrendingDown
-              color={theme.color.red8}
-              size={theme.icon.size.md}
+              color={resolveThemeVariable(themeCssVariables.color.red8)}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
             />
           )}
         </StyledTrendIconContainer>

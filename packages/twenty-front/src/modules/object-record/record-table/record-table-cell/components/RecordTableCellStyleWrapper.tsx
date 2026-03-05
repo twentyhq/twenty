@@ -1,8 +1,11 @@
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { type ReactNode } from 'react';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const StyledCell = styled.div<{
   backgroundColor: string;
@@ -45,15 +48,15 @@ export const RecordTableCellStyleWrapper = ({
   hasBottomBorder?: boolean;
   widthClassName: string;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
-  const { theme } = useContext(ThemeContext);
-
   const tdBackgroundColor = isSelected
-    ? theme.accent.quaternary
-    : theme.background.primary;
+    ? resolveThemeVariable(themeCssVariables.accent.quaternary)
+    : resolveThemeVariable(themeCssVariables.background.primary);
 
-  const borderColor = theme.border.color.light;
+  const borderColor = resolveThemeVariable(
+    themeCssVariables.border.color.light,
+  );
 
-  const fontColor = theme.font.color.primary;
+  const fontColor = resolveThemeVariable(themeCssVariables.font.color.primary);
 
   return (
     <StyledCell

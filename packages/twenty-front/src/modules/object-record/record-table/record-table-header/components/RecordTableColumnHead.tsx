@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
@@ -8,8 +7,11 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   align-items: center;
@@ -49,8 +51,6 @@ type RecordTableColumnHeadProps = {
 export const RecordTableColumnHead = ({
   recordField,
 }: RecordTableColumnHeadProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
     fieldMetadataItemByIdSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
@@ -76,7 +76,9 @@ export const RecordTableColumnHead = ({
   return (
     <StyledTitle hideTitle={shouldHideTitle}>
       <StyledIcon>
-        <Icon size={theme.icon.size.md} />
+        <Icon
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
       </StyledIcon>
       <StyledText>
         {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}

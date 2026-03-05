@@ -7,9 +7,10 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledTooltip = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -151,8 +152,6 @@ export const GraphWidgetTooltip = ({
   highlightedKey,
   onGraphWidgetTooltipClick,
 }: GraphWidgetTooltipProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const filteredItems = items.filter(
     (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
   );
@@ -199,7 +198,11 @@ export const GraphWidgetTooltip = ({
           <StyledHorizontalSectionPadding addBottom>
             <StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
               <span>{t`Click to see data`}</span>
-              <IconArrowUpRight size={theme.icon.size.sm} />
+              <IconArrowUpRight
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             </StyledTooltipLink>
           </StyledHorizontalSectionPadding>
         </>

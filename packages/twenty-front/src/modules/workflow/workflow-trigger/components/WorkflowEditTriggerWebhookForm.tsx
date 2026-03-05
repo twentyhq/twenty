@@ -14,7 +14,7 @@ import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -24,7 +24,11 @@ import { IconCopy } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -50,7 +54,6 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
-  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
@@ -83,8 +86,12 @@ export const WorkflowEditTriggerWebhookForm = ({
           value={displayWebhookUrl}
           RightIcon={() => (
             <IconCopy
-              size={theme.icon.size.md}
-              color={theme.font.color.secondary}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              color={resolveThemeVariable(
+                themeCssVariables.font.color.secondary,
+              )}
             />
           )}
           onRightIconClick={copyToClipboardDebounced}

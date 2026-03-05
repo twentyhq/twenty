@@ -15,9 +15,11 @@ import {
   DEFAULT_COLOR_LABELS,
   MenuItemSelectColor,
 } from 'twenty-ui/navigation';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
+import {
+  type ThemeColor,
+  MAIN_COLOR_NAMES,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID = 'navigation-menu-item-color';
 
 const StyledMenuStyleText = styled.span`

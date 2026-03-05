@@ -1,10 +1,12 @@
 import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledBackButton = styled.button`
   display: flex;
@@ -36,7 +38,6 @@ type FavoritesBackButtonProps = {
 export const FavoritesBackButton = ({
   folderName,
 }: FavoritesBackButtonProps) => {
-  const { theme } = useContext(ThemeContext);
   const setCurrentFavoriteFolderId = useSetAtomState(
     currentFavoriteFolderIdState,
   );
@@ -50,9 +51,9 @@ export const FavoritesBackButton = ({
   return (
     <StyledBackButton onClick={handleClick}>
       <IconX
-        size={theme.icon.size.md}
-        stroke={theme.icon.stroke.lg}
-        color={theme.font.color.tertiary}
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.lg)}
+        color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
       />
       <span>{folderName}</span>
     </StyledBackButton>

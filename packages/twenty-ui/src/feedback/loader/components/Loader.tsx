@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { type ThemeColor } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
+import { type ThemeColor, themeCssVariables } from '@ui/theme-constants';
 
 const StyledLoaderContainer = styled.div<{
   color?: ThemeColor;

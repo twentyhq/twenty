@@ -23,8 +23,11 @@ import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { ICON_SIZES, ICON_STROKES } from 'twenty-ui/theme-constants';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const CommandMenuWorkflowStepInfo = ({
   commandMenuPageInstanceId,
@@ -169,7 +172,12 @@ export const CommandMenuWorkflowStepInfo = ({
     <CommandMenuPageInfoLayout
       icon={
         headerIcon ? (
-          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
         ) : undefined
       }
       iconColor={headerIconColor}

@@ -12,7 +12,7 @@ import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvid
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
-import { Suspense, lazy, useContext } from 'react';
+import { Suspense, lazy } from 'react';
 
 const SignInBackgroundMockPage = lazy(() =>
   import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
@@ -27,9 +27,10 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
   background: ${themeCssVariables.background.noisy};
   display: flex;
@@ -66,7 +67,6 @@ const StyledMainContainer = styled.div`
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
-  const { theme } = useContext(ThemeContext);
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
@@ -90,7 +90,9 @@ export const DefaultLayout = () => {
                     : 0,
               }}
               transition={{
-                duration: theme.animation.duration.normal,
+                duration: resolveThemeVariable(
+                  themeCssVariables.animation.duration.normal,
+                ),
               }}
             >
               <PageDragDropProvider>

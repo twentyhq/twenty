@@ -4,11 +4,12 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyledText } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -26,7 +27,6 @@ export const SignInUpPasswordField = ({
   signInUpMode: SignInUpMode;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const form = useFormContext<Form>();
 
   return (
@@ -61,7 +61,9 @@ export const SignInUpPasswordField = ({
             {signInUpMode === SignInUpMode.SignUp && (
               <StyledText
                 text={t`At least 8 characters long.`}
-                color={theme.font.color.secondary}
+                color={resolveThemeVariable(
+                  themeCssVariables.font.color.secondary,
+                )}
               />
             )}
           </StyledInputContainer>

@@ -1,10 +1,11 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type ObjectFieldRowWithoutRelationProps = {
   field: FieldMetadataItem;
@@ -27,13 +28,16 @@ export const ObjectFieldRowWithoutRelation = ({
   field,
 }: ObjectFieldRowWithoutRelationProps) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
 
   const Icon = getIcon(field?.icon);
 
   return (
     <StyledRow>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && (
+        <Icon
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
+      )}
       <StyledFieldName>{field.label}</StyledFieldName>
     </StyledRow>
   );

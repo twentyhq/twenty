@@ -12,7 +12,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
@@ -25,8 +25,12 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,
@@ -292,7 +296,6 @@ export const NavigationDrawerItem = ({
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
 }: NavigationDrawerItemProps) => {
-  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
@@ -379,15 +382,21 @@ export const NavigationDrawerItem = ({
               <StyledIcon>
                 <Icon
                   style={{
-                    minWidth: theme.icon.size.md,
+                    minWidth: resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    ),
                   }}
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.md}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  stroke={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.stroke.md,
+                  )}
                   color={
                     showBreadcrumb &&
                     !isSettingsPage &&
                     !isNavigationDrawerExpanded
-                      ? theme.font.color.light
+                      ? resolveThemeVariable(themeCssVariables.font.color.light)
                       : 'currentColor'
                   }
                 />

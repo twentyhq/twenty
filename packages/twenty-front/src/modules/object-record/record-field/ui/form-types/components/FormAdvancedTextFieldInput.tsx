@@ -16,11 +16,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAdvancedTextFieldContainer = styled(FormFieldInputContainer)`
@@ -113,7 +115,6 @@ export const FormAdvancedTextFieldInput = ({
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { theme } = useContext(ThemeContext);
 
   const { t } = useLingui();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -232,7 +233,11 @@ export const FormAdvancedTextFieldInput = ({
                     transparentBackground
                     onClick={handleEnterFullScreen}
                   >
-                    <IconMaximize size={theme.icon.size.md} />
+                    <IconMaximize
+                      size={resolveThemeVariableAsNumber(
+                        themeCssVariables.icon.size.md,
+                      )}
+                    />
                   </StyledFullScreenButtonContainer>
                 )}
               </StyledEditorActionButtonContainer>

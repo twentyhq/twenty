@@ -9,12 +9,14 @@ import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflow
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { formatToShortNumber } from 'twenty-shared/utils';
 import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const SettingsBillingCreditsSection = ({
@@ -60,8 +62,6 @@ export const SettingsBillingCreditsSection = ({
     currentBillingSubscription.interval,
   );
 
-  const { theme } = useContext(ThemeContext);
-
   return (
     <>
       <Section>
@@ -77,15 +77,24 @@ export const SettingsBillingCreditsSection = ({
           <ProgressBar
             value={displayedProgressBarValue}
             barColor={
-              progressBarValue > 100 ? theme.color.red8 : theme.color.blue
+              progressBarValue > 100
+                ? resolveThemeVariable(themeCssVariables.color.red8)
+                : resolveThemeVariable(themeCssVariables.color.blue)
             }
-            backgroundColor={theme.background.tertiary}
+            backgroundColor={resolveThemeVariable(
+              themeCssVariables.background.tertiary,
+            )}
             withBorderRadius={true}
           />
 
           {!isTrialing && (
             <>
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
+              <HorizontalSeparator
+                noMargin
+                color={resolveThemeVariable(
+                  themeCssVariables.background.tertiary,
+                )}
+              />
               <SettingsBillingLabelValueItem
                 label={t`Base Credits`}
                 value={formatNumber(grantedCredits, {
@@ -111,7 +120,12 @@ export const SettingsBillingCreditsSection = ({
                   })}
                 />
               )}
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
+              <HorizontalSeparator
+                noMargin
+                color={resolveThemeVariable(
+                  themeCssVariables.background.tertiary,
+                )}
+              />
               <SettingsBillingLabelValueItem
                 label={t`Extra Credits Used`}
                 value={`${formatToShortNumber(extraCreditsUsed)}`}

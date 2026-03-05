@@ -8,9 +8,11 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import {
+  ColorSchemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type GraphQLPlaygroundProps = {
   onError(): void;
@@ -39,7 +41,7 @@ export const GraphQLPlayground = ({
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
 
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme } = useContext(ColorSchemeContext);
 
   if (!playgroundApiKey) {
     onError();
@@ -57,7 +59,7 @@ export const GraphQLPlayground = ({
   return (
     <StyledGraphiQLContainer>
       <GraphiQL
-        forcedTheme={theme.name as 'light' | 'dark'}
+        forcedTheme={colorScheme}
         plugins={[explorer]}
         fetcher={fetcher}
         defaultHeaders={JSON.stringify({

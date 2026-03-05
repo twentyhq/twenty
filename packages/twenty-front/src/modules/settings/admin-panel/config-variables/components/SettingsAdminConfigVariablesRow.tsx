@@ -1,12 +1,14 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { type ConfigVariable } from '~/generated-metadata/graphql';
 
 type SettingsAdminConfigVariablesRowProps = {
@@ -35,8 +37,6 @@ const StyledEllipsisLabel = styled.div`
 export const SettingsAdminConfigVariablesRow = ({
   variable,
 }: SettingsAdminConfigVariablesRowProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const displayValue =
     variable.value === ''
       ? 'null'
@@ -55,7 +55,9 @@ export const SettingsAdminConfigVariablesRow = ({
         variableName: variable.name,
       })}
     >
-      <StyledTruncatedCell color={theme.font.color.primary}>
+      <StyledTruncatedCell
+        color={resolveThemeVariable(themeCssVariables.font.color.primary)}
+      >
         <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
       <StyledTruncatedCell align="right">
@@ -63,8 +65,8 @@ export const SettingsAdminConfigVariablesRow = ({
       </StyledTruncatedCell>
       <TableCell align="right">
         <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
         />
       </TableCell>
     </StyledTableRow>

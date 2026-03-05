@@ -3,7 +3,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 
@@ -49,8 +49,10 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -124,7 +126,6 @@ const StyledNoMembers = styled(TableCell)`
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { theme } = useContext(ThemeContext);
   const navigateSettings = useNavigateSettings();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
@@ -323,8 +324,12 @@ export const SettingsWorkspaceMembers = () => {
                       <StyledInvitationTableCell>
                         <StyledIconWrapper>
                           <IconMail
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
+                            size={resolveThemeVariableAsNumber(
+                              themeCssVariables.icon.size.md,
+                            )}
+                            stroke={resolveThemeVariableAsNumber(
+                              themeCssVariables.icon.stroke.sm,
+                            )}
                           />
                         </StyledIconWrapper>
                         <StyledTextContainerWithEllipsis
@@ -463,7 +468,11 @@ export const SettingsWorkspaceMembers = () => {
                         <StyledChevronWrapper>
                           {currentWorkspaceMember?.id !==
                             workspaceMember.id && (
-                            <IconChevronRight size={theme.icon.size.sm} />
+                            <IconChevronRight
+                              size={resolveThemeVariableAsNumber(
+                                themeCssVariables.icon.size.sm,
+                              )}
+                            />
                           )}
                         </StyledChevronWrapper>
                       </TableCell>

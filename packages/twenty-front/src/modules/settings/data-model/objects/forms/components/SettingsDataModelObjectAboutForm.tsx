@@ -6,7 +6,6 @@ import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-mod
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
@@ -22,8 +21,11 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
@@ -118,7 +120,6 @@ export const SettingsDataModelObjectAboutForm = ({
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const navigateSettings = useNavigateSettings();
 
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
@@ -275,8 +276,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <StyledConflictBanner>
                 <StyledBannerContent>
                   <IconInfoCircle
-                    color={theme.color.blue}
-                    size={theme.icon.size.md}
+                    color={resolveThemeVariable(themeCssVariables.color.blue)}
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    )}
                   />
                   <StyledBannerText>
                     {t`An object with this name already exists`}
@@ -358,8 +361,12 @@ export const SettingsDataModelObjectAboutForm = ({
                                 <>
                                   <IconInfoCircle
                                     id={infoCircleElementId + fieldName}
-                                    size={theme.icon.size.md}
-                                    color={theme.font.color.tertiary}
+                                    size={resolveThemeVariableAsNumber(
+                                      themeCssVariables.icon.size.md,
+                                    )}
+                                    color={resolveThemeVariable(
+                                      themeCssVariables.font.color.tertiary,
+                                    )}
                                     style={{ outline: 'none' }}
                                   />
                                   <AppTooltip

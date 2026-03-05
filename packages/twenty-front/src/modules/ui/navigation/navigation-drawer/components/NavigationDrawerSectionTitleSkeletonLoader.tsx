@@ -1,9 +1,10 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 
 const StyledSkeletonTitle = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
@@ -11,11 +12,12 @@ const StyledSkeletonTitle = styled.div`
 `;
 
 export const NavigationDrawerSectionTitleSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+      highlightColor={resolveThemeVariable(
+        themeCssVariables.background.transparent.lighter,
+      )}
       borderRadius={4}
     >
       <StyledSkeletonTitle>

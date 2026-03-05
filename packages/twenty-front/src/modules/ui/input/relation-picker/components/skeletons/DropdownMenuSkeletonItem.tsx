@@ -2,10 +2,10 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { type CSSWidth } from '@/ui/types/CSSWidth';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 const StyledDropdownMenuSkeletonContainer = styled.div`
   --horizontal-padding: ${themeCssVariables.spacing[1]};
   --vertical-padding: ${themeCssVariables.spacing[2]};
@@ -27,12 +27,15 @@ export const DropdownMenuSkeletonItem = ({
 }: {
   width?: CSSWidth;
 }) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <StyledDropdownMenuSkeletonContainer>
       <SkeletonTheme
-        baseColor={theme.background.quaternary}
-        highlightColor={theme.background.secondary}
+        baseColor={resolveThemeVariable(
+          themeCssVariables.background.quaternary,
+        )}
+        highlightColor={resolveThemeVariable(
+          themeCssVariables.background.secondary,
+        )}
       >
         <Skeleton
           height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}

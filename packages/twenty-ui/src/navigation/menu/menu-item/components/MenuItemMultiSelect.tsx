@@ -4,9 +4,8 @@ import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
 import { MenuItemLeftContent } from '@ui/navigation/menu/menu-item/internals/components/MenuItemLeftContent';
-import { type ThemeColor } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import { type ThemeColor, themeCssVariables } from '@ui/theme-constants';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;

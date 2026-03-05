@@ -1,10 +1,13 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
@@ -39,9 +42,10 @@ const AddToNavigationDragHandleIcon = ({
   customIconContent,
   iconColor,
 }: AddToNavigationDragHandleIconProps) => {
-  const { theme } = useContext(ThemeContext);
-  const iconSize = theme.icon.size.md;
-  const iconStroke = theme.icon.stroke.sm;
+  const iconSize = resolveThemeVariableAsNumber(themeCssVariables.icon.size.md);
+  const iconStroke = resolveThemeVariableAsNumber(
+    themeCssVariables.icon.stroke.sm,
+  );
 
   if (isDefined(customIconContent)) {
     return <>{customIconContent}</>;
@@ -53,7 +57,9 @@ const AddToNavigationDragHandleIcon = ({
       <Icon
         size={iconSize}
         stroke={iconStroke}
-        color={iconColor ?? theme.grayScale.gray1}
+        color={
+          iconColor ?? resolveThemeVariable(themeCssVariables.grayScale.gray1)
+        }
       />
     );
   }
@@ -72,7 +78,6 @@ export const AddToNavigationDragHandle = ({
   payload,
   isHovered,
 }: AddToNavigationDragHandleProps) => {
-  const { theme } = useContext(ThemeContext);
   const effectiveColor =
     payload.type === 'object' && isNonEmptyString(payload.iconColor)
       ? payload.iconColor
@@ -93,9 +98,11 @@ export const AddToNavigationDragHandle = ({
     >
       {isHovered ? (
         <IconGripVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
+          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
         />
       ) : showCustomContentWithoutWrapper ? (
         customIconContent

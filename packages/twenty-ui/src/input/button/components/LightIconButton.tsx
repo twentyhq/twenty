@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { type ComponentProps, type MouseEvent } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
@@ -119,7 +122,13 @@ export const LightIconButton = ({
       title={title}
     >
       {Icon && (
-        <Icon size={size === 'medium' ? ICON_SIZES.md : ICON_SIZES.sm} />
+        <Icon
+          size={
+            size === 'medium'
+              ? resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)
+              : resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)
+          }
+        />
       )}
     </StyledButton>
   );

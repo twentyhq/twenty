@@ -2,10 +2,11 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { type DataGridProps } from 'react-data-grid';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import {
+  ColorSchemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${themeCssVariables.background.primary};
@@ -132,9 +133,10 @@ export const SpreadsheetImportTable = <Data,>({
   onSelectedRowsChange,
   selectedRows,
 }: SpreadsheetImportTableProps<Data>) => {
+  const { colorScheme } = useContext(ColorSchemeContext);
+
   const { rtl } = useSpreadsheetImportInternal();
-  const { theme } = useContext(ThemeContext);
-  const themeClassName = theme.name === 'dark' ? 'rdg-dark' : 'rdg-light';
+  const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
   if (!rows?.length || !columns?.length) return null;
 

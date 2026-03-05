@@ -10,9 +10,10 @@ import { Card } from 'twenty-ui/layout';
 
 import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
 import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
+import {
+  ColorSchemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledCoverImageContainer = styled(Card)`
   align-items: center;
   background-size: cover;
@@ -29,13 +30,14 @@ const StyledButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[5]};
 `;
 export const SettingsObjectCoverImage = () => {
+  const { colorScheme } = useContext(ColorSchemeContext);
+
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   return (
     <StyledCoverImageContainer
       style={{
         backgroundImage:
-          theme.name === 'light'
+          colorScheme === 'light'
             ? `url('${LightCoverImage.toString()}')`
             : `url('${DarkCoverImage.toString()}')`,
       }}

@@ -11,14 +11,16 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsObjectRelationItemTableRowProps = {
@@ -101,7 +103,6 @@ export const SettingsObjectRelationItemTableRow = ({
 }: SettingsObjectRelationItemTableRowProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(fieldMetadataItem.icon);
@@ -163,9 +164,15 @@ export const SettingsObjectRelationItemTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{
+              minWidth: resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              ),
+            }}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
           />
         )}
         <StyledNameContainer>
@@ -204,8 +211,12 @@ export const SettingsObjectRelationItemTableRow = ({
         <StyledRelationType>
           {RelationIcon && (
             <RelationIcon
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
             />
           )}
           {relationTypeLabel}
@@ -216,8 +227,12 @@ export const SettingsObjectRelationItemTableRow = ({
         {fieldMetadataItem.isActive ? (
           <UndecoratedLink to={linkToNavigate}>
             <StyledIconChevronRight
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
             />
           </UndecoratedLink>
         ) : (

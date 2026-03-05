@@ -15,7 +15,7 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
@@ -30,9 +30,10 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {
@@ -90,7 +91,6 @@ export const WorkflowEditActionHttpRequest = ({
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
@@ -153,7 +153,12 @@ export const WorkflowEditActionHttpRequest = ({
               value={formData.method}
               onChange={(value) => handleFieldChange('method', value)}
               disabled={actionOptions.readonly}
-              dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+              dropdownOffset={{
+                y: parseInt(
+                  resolveThemeVariable(themeCssVariables.spacing[1]),
+                  10,
+                ),
+              }}
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
 

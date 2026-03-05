@@ -1,6 +1,7 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type ZeroLineProps = {
   isVertical: boolean;
   zeroPosition: number;
@@ -14,15 +15,13 @@ export const ZeroLine = ({
   innerWidth,
   innerHeight,
 }: ZeroLineProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <line
       x1={isVertical ? 0 : zeroPosition}
       y1={isVertical ? zeroPosition : 0}
       x2={isVertical ? innerWidth : zeroPosition}
       y2={isVertical ? zeroPosition : innerHeight}
-      stroke={theme.border.color.medium}
+      stroke={resolveThemeVariable(themeCssVariables.border.color.medium)}
       strokeWidth={1}
     />
   );

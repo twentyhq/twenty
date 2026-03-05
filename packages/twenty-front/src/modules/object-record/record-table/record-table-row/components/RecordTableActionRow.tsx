@@ -1,8 +1,11 @@
 import { styled } from '@linaria/react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -12,7 +15,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
-import { useContext } from 'react';
 import {
   filterOutByProperty,
   findByProperty,
@@ -108,8 +110,6 @@ export const RecordTableActionRow = ({
   text,
   onClick,
 }: RecordTableActionRowProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -141,9 +141,11 @@ export const RecordTableActionRow = ({
       <StyledDragDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
-          stroke={theme.icon.stroke.sm}
-          size={theme.icon.size.sm}
-          color={theme.font.color.tertiary}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
         />
       </StyledIconContainer>
       <StyledActionTextContainer width={firstColumnWidth}>

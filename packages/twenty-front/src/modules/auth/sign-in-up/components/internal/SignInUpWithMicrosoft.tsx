@@ -8,14 +8,16 @@ import {
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -24,7 +26,6 @@ export const SignInUpWithMicrosoft = ({
   action: SocialSSOSignInUpActionType;
   isGlobalScope?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const signInUpStep = useAtomStateValue(signInUpStepState);
@@ -45,7 +46,13 @@ export const SignInUpWithMicrosoft = ({
     <>
       <StyledSSOButtonContainer>
         <MainButton
-          Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
+          Icon={() => (
+            <IconMicrosoft
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+            />
+          )}
           title={t`Continue with Microsoft`}
           onClick={handleClick}
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}

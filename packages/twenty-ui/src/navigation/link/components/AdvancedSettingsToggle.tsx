@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
-import { useContext, useId } from 'react';
+import { resolveThemeVariable, themeCssVariables } from '@ui/theme-constants';
+import { useId } from 'react';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -51,16 +50,12 @@ export const AdvancedSettingsToggle = ({
   };
   const instanceId = useId();
 
-  const { theme } = useContext(ThemeContext);
+  const yellowColor = resolveThemeVariable(themeCssVariables.color.yellow);
 
   return (
     <StyledContainer>
       <StyledIconContainer>
-        <IconPoint
-          size={12}
-          color={theme.color.yellow}
-          fill={theme.color.yellow}
-        />
+        <IconPoint size={12} color={yellowColor} fill={yellowColor} />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={instanceId}>
         <StyledText>{label}</StyledText>
@@ -68,7 +63,7 @@ export const AdvancedSettingsToggle = ({
         <Toggle
           id={instanceId}
           onChange={onChange}
-          color={theme.color.yellow}
+          color={yellowColor}
           value={isAdvancedModeEnabled}
         />
       </StyledToggleContainer>

@@ -3,11 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import {
-  THEME_LIGHT,
-  ThemeContextProvider,
-  ThemeProvider,
-} from 'twenty-ui/theme';
+import { ColorSchemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import {
@@ -98,13 +94,11 @@ describe('SignInUpGlobalScopeForm', () => {
 
     render(
       <JotaiProvider store={jotaiStore}>
-        <ThemeProvider theme={THEME_LIGHT}>
-          <ThemeContextProvider theme={THEME_LIGHT}>
-            <I18nProvider i18n={i18n}>
-              <SignInUpGlobalScopeForm />
-            </I18nProvider>
-          </ThemeContextProvider>
-        </ThemeProvider>
+        <ColorSchemeProvider colorScheme="light">
+          <I18nProvider i18n={i18n}>
+            <SignInUpGlobalScopeForm />
+          </I18nProvider>
+        </ColorSchemeProvider>
       </JotaiProvider>,
     );
 

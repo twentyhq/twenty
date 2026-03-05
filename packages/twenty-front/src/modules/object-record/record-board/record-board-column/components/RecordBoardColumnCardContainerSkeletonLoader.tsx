@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
@@ -37,8 +38,6 @@ const StyledStaticCellSkeleton = styled.div<{ width: number; height: number }>`
 `;
 
 export const RecordBoardColumnCardContainerSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
-
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
@@ -59,8 +58,10 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
 
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+      highlightColor={resolveThemeVariable(
+        themeCssVariables.background.transparent.lighter,
+      )}
       borderRadius={2}
     >
       <RecordCardHeaderContainer isCompact={isCompactModeActive}>

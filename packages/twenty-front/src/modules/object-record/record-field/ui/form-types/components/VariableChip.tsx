@@ -1,11 +1,14 @@
 import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { IconAlertTriangle } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type VariableChipProps = {
   rawVariableName: string;
@@ -18,7 +21,6 @@ export const VariableChip = ({
   onRemove,
   isFullRecord = false,
 }: VariableChipProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { variableLabel, variablePathLabel } = useSearchVariable({
@@ -44,9 +46,11 @@ export const VariableChip = ({
       leftIcon={
         isVariableNotFound ? (
           <IconAlertTriangle
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            color={theme.color.red}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+            color={resolveThemeVariable(themeCssVariables.color.red)}
           />
         ) : undefined
       }

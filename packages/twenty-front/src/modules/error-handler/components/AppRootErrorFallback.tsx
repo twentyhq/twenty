@@ -2,7 +2,10 @@ import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconReload } from 'twenty-ui/display';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -124,7 +127,11 @@ export const AppRootErrorFallback = ({
           </StyledEmptyTextContainer>
           <StyledButton onClick={resetErrorBoundary}>
             <StyledIconContainer>
-              <IconReload size={ICON_SIZES.md} />
+              <IconReload
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+              />
             </StyledIconContainer>
             {t`Reload`}
           </StyledButton>

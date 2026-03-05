@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-
 import {
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
@@ -7,7 +5,11 @@ import {
 } from '../internals/components/StyledMenuItemBase';
 
 import { ColorSample, type ColorSampleVariant } from '@ui/display';
-import { type ThemeColor, ThemeContext } from '@ui/theme';
+import {
+  type ThemeColor,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import {
   DEFAULT_COLOR_LABELS,
   type ColorLabels,
@@ -35,8 +37,6 @@ export const MenuItemSelectColor = ({
   variant = 'default',
   colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledMenuItemSelect
       onClick={onClick}
@@ -48,7 +48,11 @@ export const MenuItemSelectColor = ({
         <ColorSample colorName={color} variant={variant} />
         <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
+      {selected && (
+        <StyledMenuItemIconCheck
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
+      )}
     </StyledMenuItemSelect>
   );
 };

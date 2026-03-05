@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -6,8 +5,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
@@ -41,8 +42,6 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
   objectItem,
   onClick,
 }: SettingsAvailableStandardObjectItemTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
 
@@ -56,7 +55,11 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
         <Checkbox checked={!!isSelected} />
       </StyledCheckboxTableCell>
       <StyledNameTableCell>
-        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {!!Icon && (
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
+        )}
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>

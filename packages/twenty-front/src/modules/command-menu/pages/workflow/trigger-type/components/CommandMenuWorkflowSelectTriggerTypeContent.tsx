@@ -19,8 +19,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   const { getIcon } = useIcons();
@@ -73,8 +75,6 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
     };
   };
 
-  const { theme } = useContext(ThemeContext);
-
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
@@ -86,7 +86,12 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
+            LeftIcon={() => (
+              <Icon
+                color={resolveThemeVariable(themeCssVariables.color.blue)}
+                size={16}
+              />
+            )}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />
@@ -102,7 +107,12 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
+            LeftIcon={() => (
+              <Icon
+                color={resolveThemeVariable(themeCssVariables.color.purple)}
+                size={16}
+              />
+            )}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />

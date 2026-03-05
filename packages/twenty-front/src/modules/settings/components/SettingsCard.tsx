@@ -1,12 +1,14 @@
 import { styled } from '@linaria/react';
 
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;
@@ -89,8 +91,6 @@ export const SettingsCard = ({
   className,
   Status,
 }: SettingsCardProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledCard
       disabled={disabled}
@@ -106,7 +106,9 @@ export const SettingsCard = ({
             {soon && <Pill label={t`Soon`} />}
           </StyledTitle>
           {Status && Status}
-          <StyledIconChevronRight size={theme.icon.size.sm} />
+          <StyledIconChevronRight
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         </StyledHeader>
         {description && <StyledDescription>{description}</StyledDescription>}
       </StyledCardContent>

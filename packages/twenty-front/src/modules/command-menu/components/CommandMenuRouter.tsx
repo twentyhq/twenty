@@ -9,8 +9,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
@@ -26,9 +28,6 @@ export const CommandMenuRouter = () => {
   ) : (
     <></>
   );
-
-  const { theme } = useContext(ThemeContext);
-
   return (
     <CommandMenuContainer>
       <CommandMenuPageComponentInstanceContext.Provider
@@ -39,7 +38,9 @@ export const CommandMenuRouter = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: theme.animation.duration.instant,
+            duration: resolveThemeVariable(
+              themeCssVariables.animation.duration.instant,
+            ),
             delay: 0.1,
           }}
         >

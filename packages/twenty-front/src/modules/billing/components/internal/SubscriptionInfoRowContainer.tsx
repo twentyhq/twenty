@@ -1,9 +1,11 @@
 import { type IconComponent } from 'twenty-ui/display';
-import React, { useContext } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
@@ -55,11 +57,12 @@ export const SubscriptionInfoRowContainer = ({
   currentValue,
   nextValue,
 }: SubscriptionInfoRowContainerProps) => {
-  const { theme } = useContext(ThemeContext);
   return (
     <StyledContainer>
       <StyledIconLabelContainer>
-        <Icon size={theme.icon.size.md} />
+        <Icon
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        />
         <StyledLabelContainer>{label}</StyledLabelContainer>
       </StyledIconLabelContainer>
       {currentValue}

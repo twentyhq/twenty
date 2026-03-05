@@ -6,9 +6,10 @@ import { useGraphWidgetTooltipFloating } from '@/page-layout/widgets/graph/hooks
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { animated, useSpring } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type GraphWidgetFloatingTooltipProps = {
   reference: Element | VirtualElement | null;
   boundary: Element | null;
@@ -34,8 +35,6 @@ export const GraphWidgetFloatingTooltip = ({
   onMouseLeave,
   disablePointerEvents = false,
 }: GraphWidgetFloatingTooltipProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { refs, x, y, isPositioned } = useGraphWidgetTooltipFloating(
     reference,
     boundary,
@@ -78,7 +77,9 @@ export const GraphWidgetFloatingTooltip = ({
           position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: theme.lastLayerZIndex,
+          zIndex: resolveThemeVariableAsNumber(
+            themeCssVariables.lastLayerZIndex,
+          ),
           pointerEvents: disablePointerEvents || !isVisible ? 'none' : 'auto',
         }}
         role="tooltip"

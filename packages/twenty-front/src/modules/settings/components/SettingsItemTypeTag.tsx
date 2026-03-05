@@ -1,11 +1,12 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -28,7 +29,6 @@ export const SettingsItemTypeTag = ({
   className,
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
     item: { isCustom, isRemote, applicationId },
@@ -43,8 +43,12 @@ export const SettingsItemTypeTag = ({
         placeholderColorSeed={itemTagInfo.labelText}
         type="squared"
         size="xs"
-        color={theme.tag.text[itemTagInfo.labelColor]}
-        backgroundColor={theme.tag.background[itemTagInfo.labelColor]}
+        color={resolveThemeVariable(
+          themeCssVariables.tag.text[itemTagInfo.labelColor],
+        )}
+        backgroundColor={resolveThemeVariable(
+          themeCssVariables.tag.background[itemTagInfo.labelColor],
+        )}
       />
       {itemTagInfo.labelText}
     </StyledContainer>

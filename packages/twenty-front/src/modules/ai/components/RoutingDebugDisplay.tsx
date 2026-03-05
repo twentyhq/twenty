@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
@@ -324,7 +326,6 @@ type RoutingDebugDisplayProps = {
 
 export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('timing');
@@ -334,9 +335,13 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
       <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
         <StyledTimingLabel>{t`Debug Info`}</StyledTimingLabel>
         {isExpanded ? (
-          <IconChevronUp size={theme.icon.size.sm} />
+          <IconChevronUp
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         ) : (
-          <IconChevronDown size={theme.icon.size.sm} />
+          <IconChevronDown
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         )}
       </StyledToggleButton>
 

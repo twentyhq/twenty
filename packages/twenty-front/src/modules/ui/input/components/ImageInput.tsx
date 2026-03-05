@@ -2,14 +2,15 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -106,7 +107,6 @@ export const ImageInput = ({
   className,
 }: ImageInputProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
@@ -136,7 +136,9 @@ export const ImageInput = ({
             }}
           />
         ) : (
-          <IconPhotoUp size={theme.icon.size.lg} />
+          <IconPhotoUp
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.lg)}
+          />
         )}
       </StyledPicture>
       <StyledContent>

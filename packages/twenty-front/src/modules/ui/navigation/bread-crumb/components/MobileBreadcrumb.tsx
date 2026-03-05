@@ -2,11 +2,13 @@ import { t } from '@lingui/core/macro';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export type MobileBreadcrumbProps = {
   className?: string;
@@ -44,8 +46,6 @@ export const MobileBreadcrumb = ({
   className,
   links,
 }: MobileBreadcrumbProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { openSettingsMenu } = useOpenSettingsMenu();
 
   const handleBackToSettingsClick = () => {
@@ -65,14 +65,18 @@ export const MobileBreadcrumb = ({
     <StyledWrapper className={className}>
       {shouldRedirectToSettings ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <IconChevronLeft
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
           <StyledText onClick={handleBackToSettingsClick}>
             {t`Back to Settings`}
           </StyledText>
         </>
       ) : previousLink?.href ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <IconChevronLeft
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
           <StyledLink title={text} to={previousLink.href}>
             {t`Back to ${linkText}`}
           </StyledLink>

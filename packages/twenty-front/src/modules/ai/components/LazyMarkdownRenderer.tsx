@@ -10,10 +10,13 @@ import {
   StyledSkeletonContainer,
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -131,13 +134,13 @@ const MarkdownRenderer = lazy(async () => {
 });
 
 const LoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={theme.border.radius.sm}
+      baseColor={resolveThemeVariable(themeCssVariables.background.tertiary)}
+      highlightColor={resolveThemeVariable(
+        themeCssVariables.background.transparent.lighter,
+      )}
+      borderRadius={resolveThemeVariable(themeCssVariables.border.radius.sm)}
     >
       <StyledSkeletonContainer>
         <Skeleton

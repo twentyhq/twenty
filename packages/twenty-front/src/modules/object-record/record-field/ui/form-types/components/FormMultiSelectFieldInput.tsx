@@ -20,13 +20,16 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { isArray } from '@sniptt/guards';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -91,7 +94,6 @@ export const FormMultiSelectFieldInput = ({
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
   const instanceId = useId();
-  const { theme } = useContext(ThemeContext);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -227,8 +229,12 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder />
                 )}
                 <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.light}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  color={resolveThemeVariable(
+                    themeCssVariables.font.color.light,
+                  )}
                 />
               </StyledDisplayModeReadonlyContainer>
             ) : (
@@ -247,8 +253,12 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
                 )}
                 <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  color={resolveThemeVariable(
+                    themeCssVariables.font.color.tertiary,
+                  )}
                 />
               </StyledDisplayModeContainer>
             )

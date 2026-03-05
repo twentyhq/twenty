@@ -1,5 +1,4 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -10,7 +9,10 @@ import {
   IconTool,
   IconUserCircle,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   HealthIndicatorId,
   type SystemHealthService,
@@ -33,14 +35,12 @@ export const SettingsAdminHealthStatusListCard = ({
   services: Array<SystemHealthService>;
   loading?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <SettingsListCard
       items={services}
       rounded={true}
       RowIconFn={(row) => HealthStatusIcons[row.id]}
-      RowIconColor={theme.font.color.tertiary}
+      RowIconColor={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
       getItemLabel={(service) => service.label}
       isLoading={loading}
       RowRightComponent={({ item: service }) => (

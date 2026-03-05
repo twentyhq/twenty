@@ -1,9 +1,11 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { IconReload, IconX } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { AnimatedRotate } from 'twenty-ui/utilities';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
@@ -48,8 +50,6 @@ export const OverridableCheckbox = ({
   checked,
   disabled,
 }: OverridableCheckboxProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledOverridableCheckboxContainer>
       {type === 'default' && (
@@ -65,8 +65,12 @@ export const OverridableCheckbox = ({
               {!disabled && (
                 <AnimatedRotate>
                   <IconX
-                    size={theme.icon.size.md}
-                    color={theme.font.color.secondary}
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    )}
+                    color={resolveThemeVariable(
+                      themeCssVariables.font.color.secondary,
+                    )}
                   />
                 </AnimatedRotate>
               )}
@@ -86,8 +90,10 @@ export const OverridableCheckbox = ({
             >
               <AnimatedRotate animateOnHover={!disabled}>
                 <IconReload
-                  size={theme.icon.size.md}
-                  color={theme.color.orange8}
+                  size={resolveThemeVariableAsNumber(
+                    themeCssVariables.icon.size.md,
+                  )}
+                  color={resolveThemeVariable(themeCssVariables.color.orange8)}
                 />
               </AnimatedRotate>
             </StyledIconWrapper>

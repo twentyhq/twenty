@@ -18,13 +18,15 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useRef } from 'react';
+import { useRef } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -101,8 +103,6 @@ export const CommandMenuTopBar = () => {
     commandMenuNavigationStackState,
   );
 
-  const { theme } = useContext(ThemeContext);
-
   const { contextChips } = useCommandMenuContextChips();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -145,7 +145,9 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: theme.animation.duration.instant,
+                duration: resolveThemeVariableAsNumber(
+                  themeCssVariables.animation.duration.instant,
+                ),
               }}
             >
               <CommandMenuBackButton />
@@ -155,7 +157,9 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: theme.animation.duration.instant,
+                duration: resolveThemeVariableAsNumber(
+                  themeCssVariables.animation.duration.instant,
+                ),
               }}
             >
               <IconButton

@@ -7,8 +7,7 @@ import {
   H2Title,
   Status,
   Tag,
-  THEME_LIGHT,
-  ThemeProvider,
+  ColorSchemeProvider,
 } from 'twenty-sdk/ui';
 
 const CARD_STYLE = {
@@ -34,7 +33,7 @@ const TwentyUiComponent = () => {
   const [count, setCount] = useState(0);
 
   return (
-    <ThemeProvider theme={THEME_LIGHT}>
+    <ColorSchemeProvider colorScheme="light">
       <div data-testid="twenty-ui-component" style={CARD_STYLE}>
         <H2Title
           title="Twenty UI"
@@ -73,7 +72,7 @@ const TwentyUiComponent = () => {
           />
         </div>
       </div>
-    </ThemeProvider>
+    </ColorSchemeProvider>
   );
 };
 

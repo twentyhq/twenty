@@ -8,8 +8,7 @@ import {
   OverflowingTextWithTooltip,
 } from '@ui/display';
 import {
-  ICON_SIZES,
-  ICON_STROKES,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
@@ -72,8 +71,12 @@ export const MenuItemLeftContent = ({
           <MenuItemIconBoxContainer>
             <StyledDraggableItem>
               <IconGripVertical
-                size={ICON_SIZES.md}
-                stroke={ICON_STROKES.sm}
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.md,
+                )}
+                stroke={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.stroke.sm,
+                )}
                 color={gripIconColor}
               />
             </StyledDraggableItem>
@@ -81,8 +84,12 @@ export const MenuItemLeftContent = ({
         ) : (
           <StyledDraggableItem>
             <IconGripVertical
-              size={ICON_SIZES.md}
-              stroke={ICON_STROKES.sm}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.sm,
+              )}
               color={gripIconColor}
             />
           </StyledDraggableItem>

@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
 import { CardContent } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledRow = styled(CardContent)`
   align-items: center;
@@ -70,8 +73,6 @@ export const SettingsListItemCardContent = ({
   rightComponent,
   to,
 }: SettingsListItemCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const content = (
     <StyledRow
       onClick={onClick}
@@ -81,7 +82,7 @@ export const SettingsListItemCardContent = ({
     >
       {!!LeftIcon && (
         <LeftIcon
-          size={theme.icon.size.md}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
           color={LeftIconColor ?? 'currentColor'}
         />
       )}
@@ -93,8 +94,8 @@ export const SettingsListItemCardContent = ({
         {rightComponent}
         {!!to && (
           <IconChevronRight
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            color={resolveThemeVariable(themeCssVariables.font.color.tertiary)}
           />
         )}
       </StyledRightContainer>

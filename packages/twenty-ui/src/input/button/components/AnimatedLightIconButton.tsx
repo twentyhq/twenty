@@ -4,7 +4,10 @@ import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 import { motion, type MotionProps } from 'framer-motion';
 import { type ComponentProps, type MouseEvent } from 'react';
 
@@ -122,7 +125,13 @@ export const AnimatedLightIconButton = ({
     >
       <StyledIconContainer animate={animate} transition={transition}>
         {Icon && (
-          <Icon size={size === 'medium' ? ICON_SIZES.md : ICON_SIZES.sm} />
+          <Icon
+            size={
+              size === 'medium'
+                ? resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)
+                : resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)
+            }
+          />
         )}
       </StyledIconContainer>
     </StyledButton>

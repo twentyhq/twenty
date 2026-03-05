@@ -6,9 +6,10 @@ import {
   StyledRowLeftContent,
   StyledText,
 } from './WorkflowAiAgentPermissionsStyles';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: {
     id: string;
@@ -24,7 +25,6 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
   onClick,
   readonly,
 }: WorkflowAiAgentPermissionsObjectRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const IconComponent = getIcon(objectMetadata.icon);
 
@@ -35,11 +35,15 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
     >
       <StyledRowLeftContent>
         <StyledIconContainer>
-          <IconComponent size={theme.icon.size.sm} />
+          <IconComponent
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         </StyledIconContainer>
         <StyledText>{objectMetadata.labelPlural}</StyledText>
       </StyledRowLeftContent>
-      <StyledIconChevronRight size={theme.icon.size.sm} />
+      <StyledIconChevronRight
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+      />
     </StyledRow>
   );
 };

@@ -1,8 +1,8 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 export const SettingsDataModelOverviewRelationMarkers = () => {
-  const { theme } = useContext(ThemeContext);
   return (
     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
       <defs>
@@ -15,7 +15,12 @@ export const SettingsDataModelOverviewRelationMarkers = () => {
           refY="3"
           fill="none"
         >
-          <circle cx="3" cy="3" r="3" fill={theme.color.gray} />
+          <circle
+            cx="3"
+            cy="3"
+            r="3"
+            fill={resolveThemeVariable(themeCssVariables.color.gray)}
+          />
         </marker>
       </defs>
     </svg>

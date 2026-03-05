@@ -1,4 +1,4 @@
-import { useContext, useRef } from 'react';
+import { useRef } from 'react';
 import { styled } from '@linaria/react';
 
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -7,8 +7,10 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -65,12 +67,22 @@ export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus: 'Yes' | 'Maybe' | 'No';
   participants: CalendarEventParticipant[];
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const Icon = {
-    Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
-    Maybe: <IconQuestionMark stroke={theme.icon.stroke.sm} />,
-    No: <IconX stroke={theme.icon.stroke.sm} />,
+    Yes: (
+      <IconCheck
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
+    ),
+    Maybe: (
+      <IconQuestionMark
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
+    ),
+    No: (
+      <IconX
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
+    ),
   }[responseStatus];
 
   // We want to display external participants first

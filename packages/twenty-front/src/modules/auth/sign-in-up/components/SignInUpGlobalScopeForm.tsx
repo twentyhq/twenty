@@ -23,15 +23,16 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import {
   Avatar,
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -139,7 +140,6 @@ export const SignInUpGlobalScopeForm = () => {
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
-  const { theme } = useContext(ThemeContext);
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
@@ -201,7 +201,11 @@ export const SignInUpGlobalScopeForm = () => {
                       </StyledWorkspaceUrl>
                     </StyledWorkspaceTextContainer>
                     <StyledChevronIcon>
-                      <IconChevronRight size={theme.icon.size.md} />
+                      <IconChevronRight
+                        size={resolveThemeVariableAsNumber(
+                          themeCssVariables.icon.size.md,
+                        )}
+                      />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
                 </StyledWorkspaceItem>
@@ -210,13 +214,21 @@ export const SignInUpGlobalScopeForm = () => {
             <StyledWorkspaceItem onClick={() => createWorkspace()}>
               <StyledWorkspaceContent>
                 <StyledWorkspaceLogo>
-                  <IconPlus size={theme.icon.size.lg} />
+                  <IconPlus
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.lg,
+                    )}
+                  />
                 </StyledWorkspaceLogo>
                 <StyledWorkspaceTextContainer>
                   <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
                 </StyledWorkspaceTextContainer>
                 <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
+                  <IconChevronRight
+                    size={resolveThemeVariableAsNumber(
+                      themeCssVariables.icon.size.md,
+                    )}
+                  />
                 </StyledChevronIcon>
               </StyledWorkspaceContent>
             </StyledWorkspaceItem>

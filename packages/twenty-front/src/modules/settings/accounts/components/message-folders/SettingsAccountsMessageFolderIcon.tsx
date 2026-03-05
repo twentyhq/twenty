@@ -1,13 +1,14 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { useContext } from 'react';
 import {
   IconFolder,
   IconFolderRoot,
   IconInbox,
   IconSend,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 type SettingsAccountsMessageFolderIconProps = {
   folder: MessageFolder;
   isChildFolder?: boolean;
@@ -17,22 +18,37 @@ export const SettingsAccountsMessageFolderIcon = ({
   folder,
   isChildFolder = false,
 }: SettingsAccountsMessageFolderIconProps) => {
-  const { theme } = useContext(ThemeContext);
   if (folder.isSentFolder) {
-    return <IconSend size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
+    return (
+      <IconSend
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
+    );
   }
 
   if (folder.name.toLowerCase().includes('inbox')) {
     return (
-      <IconInbox size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+      <IconInbox
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
     );
   }
 
   if (isChildFolder) {
     return (
-      <IconFolderRoot size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+      <IconFolderRoot
+        size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+        stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+      />
     );
   }
 
-  return <IconFolder size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
+  return (
+    <IconFolder
+      size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+      stroke={resolveThemeVariableAsNumber(themeCssVariables.icon.stroke.sm)}
+    />
+  );
 };

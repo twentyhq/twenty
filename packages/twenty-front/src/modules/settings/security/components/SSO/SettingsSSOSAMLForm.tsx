@@ -3,7 +3,7 @@
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useContext, type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
@@ -18,8 +18,11 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -58,7 +61,6 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSSOSAMLForm = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { theme } = useContext(ThemeContext);
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -147,9 +149,13 @@ export const SettingsSSOSAMLForm = () => {
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.lg}
-              color={theme.color.blue}
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              )}
+              stroke={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.stroke.lg,
+              )}
+              color={resolveThemeVariable(themeCssVariables.color.blue)}
             />
           )}
         </StyledUploadFileContainer>

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent, useContext, useState } from 'react';
+import { type MouseEvent, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -11,9 +11,10 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
@@ -49,7 +50,6 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
-  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -73,7 +73,9 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
 
       <StyledRightContent>
         {selected && !isHovered && (
-          <StyledMenuItemIconCheck size={theme.icon.size.md} />
+          <StyledMenuItemIconCheck
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          />
         )}
 
         {isHovered && showEditButton && (

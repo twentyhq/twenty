@@ -1,12 +1,16 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui/display';
-import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
+import {
+  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -26,18 +30,21 @@ type RatingInputProps = {
   readonly?: boolean;
 };
 
-const iconSizeMd = THEME_COMMON.icon.size.md;
+const iconSizeMd = resolveThemeVariableAsNumber(themeCssVariables.icon.size.md);
 
 export const RatingInput = ({
   onChange,
   value,
   readonly,
 }: RatingInputProps) => {
-  const { theme } = useContext(ThemeContext);
   const clearField = useClearField();
 
-  const activeColor = theme.font.color.secondary;
-  const inactiveColor = theme.background.quaternary;
+  const activeColor = resolveThemeVariable(
+    themeCssVariables.font.color.secondary,
+  );
+  const inactiveColor = resolveThemeVariable(
+    themeCssVariables.background.quaternary,
+  );
 
   const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(null);
 

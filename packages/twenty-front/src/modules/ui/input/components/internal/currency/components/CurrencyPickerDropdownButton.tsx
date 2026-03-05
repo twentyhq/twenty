@@ -8,10 +8,10 @@ import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { IconChevronDown } from 'twenty-ui/display';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   color: ${({ color }) => color ?? 'none'};
@@ -50,8 +50,6 @@ export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const dropdownId = 'currency-picker-dropdown-id';
 
   const { closeDropdown } = useCloseDropdown();
@@ -74,7 +72,11 @@ export const CurrencyPickerDropdownButton = ({
         <StyledDropdownButtonContainer>
           <StyledIconContainer>
             {currencyCode}
-            <IconChevronDown size={theme.icon.size.sm} />
+            <IconChevronDown
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       }

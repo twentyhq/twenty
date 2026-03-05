@@ -1,6 +1,9 @@
-import { useContext } from 'react';
-import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { motion } from 'framer-motion';
+import {
+  type AnimationDuration,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 
 type AnimatedEaseInProps = Omit<
   React.ComponentProps<typeof motion.div>,
@@ -13,12 +16,13 @@ export const AnimatedEaseIn = ({
   children,
   duration = 'normal',
 }: AnimatedEaseInProps) => {
-  const { theme } = useContext(ThemeContext);
   const initial = { opacity: 0 };
   const animate = { opacity: 1 };
   const transition = {
     ease: 'linear',
-    duration: theme.animation.duration[duration],
+    duration: resolveThemeVariableAsNumber(
+      themeCssVariables.animation.duration[duration],
+    ),
   };
 
   return (

@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -126,8 +127,6 @@ export const SortOrFilterChip = ({
   onClick,
   type,
 }: SortOrFilterChipProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onRemove();
@@ -137,7 +136,9 @@ export const SortOrFilterChip = ({
     <StyledChip onClick={onClick} variant={variant}>
       {Icon && (
         <StyledIcon>
-          <Icon size={theme.icon.size.sm} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          />
         </StyledIcon>
       )}
       <StyledKeyLabelContainer>
@@ -153,7 +154,12 @@ export const SortOrFilterChip = ({
         onClick={handleDeleteClick}
         data-testid={'remove-icon-' + testId}
       >
-        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        <IconX
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
+        />
       </StyledDelete>
     </StyledChip>
   );

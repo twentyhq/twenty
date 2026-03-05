@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { type ThemeColor, ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type ThemeColor,
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from '@ui/theme-constants';
 
 const StyledTag = styled.h3<{
   color: TagColor;
@@ -90,8 +92,6 @@ export const Tag = ({
   preventShrink,
   preventPadding,
 }: TagProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledTag
       className={className}
@@ -104,7 +104,12 @@ export const Tag = ({
     >
       {isDefined(Icon) ? (
         <StyledIconContainer>
-          <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+          <Icon
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
+          />
         </StyledIconContainer>
       ) : (
         <></>

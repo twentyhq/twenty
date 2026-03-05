@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent, IconGripVertical } from '@ui/display';
 import {
-  ICON_SIZES,
-  ICON_STROKES,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from '@ui/theme-constants';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -46,12 +45,19 @@ export const MenuItemIconWithGripSwap = ({
   const iconContent = (
     <StyledIconSwapContainer>
       <StyledDefaultIcon className="grip-swap-default-icon">
-        <LeftIcon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+        <LeftIcon
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
+        />
       </StyledDefaultIcon>
       <StyledHoverIcon className="grip-swap-hover-icon">
         <IconGripVertical
-          size={ICON_SIZES.md}
-          stroke={ICON_STROKES.sm}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
           color={gripIconColor}
         />
       </StyledHoverIcon>

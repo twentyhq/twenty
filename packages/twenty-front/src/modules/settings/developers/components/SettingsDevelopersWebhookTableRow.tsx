@@ -2,14 +2,15 @@ import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -41,8 +42,6 @@ export const SettingsDevelopersWebhookTableRow = ({
   >;
   to: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
@@ -56,8 +55,10 @@ export const SettingsDevelopersWebhookTableRow = ({
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
+          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+          stroke={resolveThemeVariableAsNumber(
+            themeCssVariables.icon.stroke.sm,
+          )}
         />
       </StyledIconTableCell>
     </StyledApisFieldTableRow>

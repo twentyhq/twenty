@@ -2,14 +2,16 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  resolveThemeVariable,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 const StyledAnimationGroupContainerBase = styled.div``;
 
 const StyledAnimationGroupContainer = motion.create(
@@ -25,7 +27,6 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -41,9 +42,11 @@ export const NavigationDrawerItemsCollapsableContainer = ({
     if (isGroup) {
       animate = {
         width: 24,
-        backgroundColor: theme.background.transparent.lighter,
-        border: `1px solid ${theme.background.transparent.lighter}`,
-        borderRadius: theme.border.radius.sm,
+        backgroundColor: resolveThemeVariable(
+          themeCssVariables.background.transparent.lighter,
+        ),
+        border: `1px solid ${resolveThemeVariable(themeCssVariables.background.transparent.lighter)}`,
+        borderRadius: resolveThemeVariable(themeCssVariables.border.radius.sm),
       };
     }
   }
@@ -52,7 +55,11 @@ export const NavigationDrawerItemsCollapsableContainer = ({
     <StyledAnimationGroupContainer
       initial={false}
       animate={animate}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: resolveThemeVariable(
+          themeCssVariables.animation.duration.normal,
+        ),
+      }}
     >
       {children}
     </StyledAnimationGroupContainer>

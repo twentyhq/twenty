@@ -4,7 +4,7 @@ import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -12,9 +12,10 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import {
+  themeCssVariables,
+  resolveThemeVariable,
+} from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
   widgetId: string;
@@ -82,8 +83,6 @@ export const WidgetCardHeader = ({
   actions,
   className,
 }: WidgetCardHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
     widgetId,
@@ -123,7 +122,9 @@ export const WidgetCardHeader = ({
                 animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{
-                  duration: theme.animation.duration.fast,
+                  duration: resolveThemeVariable(
+                    themeCssVariables.animation.duration.fast,
+                  ),
                   ease: 'easeInOut',
                 }}
               >

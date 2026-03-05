@@ -1,4 +1,4 @@
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -12,8 +12,10 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
@@ -58,7 +60,6 @@ export const SettingsObjectMetadataItemTableRow = ({
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem.icon);
@@ -68,9 +69,15 @@ export const SettingsObjectMetadataItemTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{
+              minWidth: resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.md,
+              ),
+            }}
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.md)}
+            stroke={resolveThemeVariableAsNumber(
+              themeCssVariables.icon.stroke.sm,
+            )}
           />
         )}
         <StyledNameContainer>

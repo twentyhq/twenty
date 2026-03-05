@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  resolveThemeVariableAsNumber,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
@@ -138,7 +140,6 @@ export const ToolStepRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
@@ -193,7 +194,11 @@ export const ToolStepRenderer = ({
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
             <StyledIconTextContainer>
-              <ToolIcon size={theme.icon.size.sm} />
+              <ToolIcon
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
               {isStreaming ? (
                 <ShimmeringText>
                   <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
@@ -242,7 +247,11 @@ export const ToolStepRenderer = ({
       >
         <StyledLeftContent>
           <StyledIconTextContainer>
-            <ToolIcon size={theme.icon.size.sm} />
+            <ToolIcon
+              size={resolveThemeVariableAsNumber(
+                themeCssVariables.icon.size.sm,
+              )}
+            />
             <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
           </StyledIconTextContainer>
         </StyledLeftContent>
@@ -250,9 +259,17 @@ export const ToolStepRenderer = ({
           <StyledToolName>{toolName}</StyledToolName>
           {isExpandable &&
             (isExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
+              <IconChevronUp
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
+              <IconChevronDown
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
             ))}
         </StyledRightContent>
       </StyledToggleButton>

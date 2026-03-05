@@ -12,7 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ColorSchemeContext } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   OnboardingStatus,
@@ -20,8 +20,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const BookCall = () => {
+  const { colorScheme } = useContext(ColorSchemeContext);
+
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useAtomStateValue(currentUserState);
@@ -52,7 +53,7 @@ export const BookCall = () => {
             calLink={calendarBookingPageId ?? ''}
             config={{
               layout: 'month_view',
-              theme: theme.name === 'light' ? 'light' : 'dark',
+              theme: colorScheme === 'light' ? 'light' : 'dark',
               email: currentUser?.email ?? '',
               name: `${currentUser?.firstName} ${currentUser?.lastName}`,
             }}
