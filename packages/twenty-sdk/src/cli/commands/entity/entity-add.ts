@@ -23,6 +23,7 @@ const APP_FOLDER = 'src';
 
 export class EntityAddCommand {
   private lastObjectUniversalIdentifier: string | undefined;
+  private lastNameFieldUniversalIdentifier: string | undefined;
 
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
@@ -73,13 +74,16 @@ export class EntityAddCommand {
 
         const name = entityData.nameSingular;
         const objectUniversalIdentifier = v4();
+        const nameFieldUniversalIdentifier = v4();
 
         this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
+        this.lastNameFieldUniversalIdentifier = nameFieldUniversalIdentifier;
 
         const file = getObjectBaseFile({
           data: entityData,
           name,
           universalIdentifier: objectUniversalIdentifier,
+          nameFieldUniversalIdentifier,
         });
 
         return { name, file };
@@ -200,6 +204,17 @@ export class EntityAddCommand {
       name: `all-${kebabcase(objectName)}`,
       universalIdentifier: viewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      fields: this.lastNameFieldUniversalIdentifier
+        ? [
+            {
+              fieldMetadataUniversalIdentifier:
+                this.lastNameFieldUniversalIdentifier,
+              position: 0,
+              isVisible: true,
+              size: 200,
+            },
+          ]
+        : [],
     });
 
     const viewFolderPath = customPath

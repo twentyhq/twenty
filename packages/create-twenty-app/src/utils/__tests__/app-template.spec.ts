@@ -675,13 +675,19 @@ describe('copyBaseApplicationProject', () => {
 
       expect(content).toContain("import { defineView } from 'twenty-sdk'");
       expect(content).toContain(
-        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
+        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
       );
       expect(content).toContain('export default defineView({');
       expect(content).toContain(
         'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
       );
       expect(content).toContain("name: 'example-view'");
+      expect(content).toContain('fields: [');
+      expect(content).toContain(
+        'fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain('isVisible: true');
+      expect(content).toContain('size: 200');
     });
   });
 

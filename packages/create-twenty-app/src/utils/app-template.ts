@@ -431,9 +431,10 @@ const createExampleView = async ({
   fileName: string;
 }) => {
   const universalIdentifier = v4();
+  const viewFieldUniversalIdentifier = v4();
 
   const content = `import { defineView } from 'twenty-sdk';
-import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 
 export default defineView({
   universalIdentifier: '${universalIdentifier}',
@@ -441,6 +442,15 @@ export default defineView({
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
   position: 0,
+  fields: [
+    {
+      universalIdentifier: '${viewFieldUniversalIdentifier}',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
 });
 `;
 
