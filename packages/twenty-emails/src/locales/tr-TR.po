@@ -91,7 +91,7 @@ msgstr "Daveti kabul et"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
-msgstr ""
+msgstr "Yeni e-posta adresinizi onaylayın"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -101,7 +101,7 @@ msgstr "E-posta adresinizi onaylayın"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm new email"
-msgstr ""
+msgstr "Yeni e-postayı onayla"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
