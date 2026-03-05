@@ -53,8 +53,11 @@ import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guar
 import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
+import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -222,12 +225,54 @@ export const usePersistField = ({
             return;
           }
 
+          const morphFieldDefinition =
+            fieldDefinition as FieldDefinition<FieldMorphRelationMetadata>;
+          const morphRelations = morphFieldDefinition.metadata.morphRelations;
+          const relationType = morphFieldDefinition.metadata.relationType;
+
+          const recordWithAllMorphObjectIdsToNull =
+            buildRecordWithAllMorphObjectIdsToNull({
+              morphRelations,
+              fieldName,
+              relationType,
+            });
+
+          if (!isDefined(valueToPersist)) {
+            await updateOneRecord({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              idToUpdate: recordId,
+              updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
+            });
+            return;
+          }
+
+          const targetMorphRelation = morphRelations.find(
+            (morphRelation) =>
+              morphRelation.targetObjectMetadata.id ===
+              (valueToPersist as ObjectRecord).objectMetadataId,
+          );
+
+          if (!isDefined(targetMorphRelation)) {
+            throw new Error(
+              `Target morph relation not found for objectMetadataId ${(valueToPersist as ObjectRecord).objectMetadataId}`,
+            );
+          }
+
+          const computedFieldName = computeMorphRelationFieldName({
+            fieldName,
+            relationType,
+            targetObjectMetadataNameSingular:
+              targetMorphRelation.targetObjectMetadata.nameSingular,
+            targetObjectMetadataNamePlural:
+              targetMorphRelation.targetObjectMetadata.namePlural,
+          });
+
           const newRecord = await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
-              [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                valueToPersist?.id ?? null,
+              ...recordWithAllMorphObjectIdsToNull,
+              [`${computedFieldName}Id`]: valueToPersist?.id,
             },
           });
 
