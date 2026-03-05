@@ -20,9 +20,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError, useLazyQuery, useMutation } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   H2Title,
   IconCalendarRepeat,
@@ -49,8 +50,8 @@ type SubscriptionStatus = {
 };
 
 const StyledStatusDot = styled.div<{ isActive: boolean }>`
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.color.green : theme.color.red};
+  background-color: ${({ isActive }) =>
+    isActive ? themeCssVariables.color.green : themeCssVariables.color.red};
   border-radius: 50%;
   height: 8px;
   width: 8px;
@@ -59,18 +60,18 @@ const StyledStatusDot = styled.div<{ isActive: boolean }>`
 const StyledStatusContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCancellationNotice = styled.div`
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInputContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -84,7 +85,7 @@ const StyledActivateButtonWrapper = styled.div`
 `;
 
 const StyledSpacer = styled.div`
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsEnterprise = ({

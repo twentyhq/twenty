@@ -3,14 +3,16 @@ import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLazyQuery } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
+import { ModalContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
@@ -20,36 +22,36 @@ const MONTHLY_PRICE = 25;
 const YEARLY_PRICE = 19;
 
 const StyledSubscriptionContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(8)} 0 ${({ theme }) => theme.spacing(2)};
+  margin: ${themeCssVariables.spacing[8]} 0 ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledPriceContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
-    0 ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  margin: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]} 0
+    ${themeCssVariables.spacing[4]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledPrice = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xxl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledPriceUnit = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledBenefitsContainer = styled.div`
@@ -57,21 +59,21 @@ const StyledBenefitsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
 const StyledIntervalContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
 const StyledIntervalTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 export const EnterprisePlanModal = () => {
@@ -126,13 +128,13 @@ export const EnterprisePlanModal = () => {
   };
 
   return (
-    <Modal
-      modalId={ENTERPRISE_PLAN_MODAL_ID}
+    <ModalStatefulWrapper
+      modalInstanceId={ENTERPRISE_PLAN_MODAL_ID}
       size="small"
       padding="none"
       isClosable
     >
-      <Modal.Content isVerticalCentered>
+      <ModalContent isVerticallyCentered>
         <Title noMarginTop>{t`Get Enterprise`}</Title>
         <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
@@ -153,17 +155,13 @@ export const EnterprisePlanModal = () => {
             checked={selectedInterval === 'monthly'}
             handleChange={() => setSelectedInterval('monthly')}
           >
-            <StyledIntervalTitle>
-              {t`Monthly subscription`}
-            </StyledIntervalTitle>
+            <StyledIntervalTitle>{t`Monthly subscription`}</StyledIntervalTitle>
           </CardPicker>
           <CardPicker
             checked={selectedInterval === 'yearly'}
             handleChange={() => setSelectedInterval('yearly')}
           >
-            <StyledIntervalTitle>
-              {t`Yearly subscription`}
-            </StyledIntervalTitle>
+            <StyledIntervalTitle>{t`Yearly subscription`}</StyledIntervalTitle>
           </CardPicker>
         </StyledIntervalContainer>
 
@@ -174,7 +172,7 @@ export const EnterprisePlanModal = () => {
           Icon={() => isLoading && <Loader />}
           disabled={isLoading}
         />
-      </Modal.Content>
-    </Modal>
+      </ModalContent>
+    </ModalStatefulWrapper>
   );
 };
