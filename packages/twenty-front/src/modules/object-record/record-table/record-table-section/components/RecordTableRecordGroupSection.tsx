@@ -82,8 +82,7 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
