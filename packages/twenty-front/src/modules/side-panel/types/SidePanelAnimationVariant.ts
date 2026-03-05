@@ -1,4 +1,4 @@
-import { type COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
+import { type SIDE_PANEL_ANIMATION_VARIANTS } from '@/side-panel/constants/SidePanelAnimationVariants';
 
 export type SidePanelAnimationVariant =
-  keyof typeof COMMAND_MENU_ANIMATION_VARIANTS;
+  keyof typeof SIDE_PANEL_ANIMATION_VARIANTS;

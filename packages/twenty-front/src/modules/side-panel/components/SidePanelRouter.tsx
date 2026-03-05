@@ -2,15 +2,15 @@ import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuCont
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelContent = styled.div`
   flex: 1;
