@@ -9,7 +9,7 @@ import { useStore } from 'jotai';
 
 export const useOpenEmailThreadInCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const openEmailThreadInCommandMenu = useCallback(
     (emailThreadId: string) => {
@@ -47,14 +47,14 @@ export const useOpenEmailThreadInCommandMenu = () => {
       //   ]),
       // );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.ViewEmailThread,
         pageTitle: t`Email Thread`,
         pageIcon: IconMail,
         pageId: pageComponentInstanceId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   return {

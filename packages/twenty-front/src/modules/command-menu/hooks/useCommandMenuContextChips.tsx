@@ -25,7 +25,7 @@ export const useCommandMenuContextChips = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const { navigateCommandMenuHistory } = useSidePanelHistory();
+  const { navigateSidePanelHistory } = useSidePanelHistory();
 
   const { theme } = useContext(ThemeContext);
 
@@ -102,7 +102,7 @@ export const useCommandMenuContextChips = () => {
             ],
             text: recordIdentifier.name,
             onClick: () => {
-              navigateCommandMenuHistory(index);
+              navigateSidePanelHistory(index);
             },
           };
         }
@@ -128,7 +128,7 @@ export const useCommandMenuContextChips = () => {
           onClick: isLastChip
             ? undefined
             : () => {
-                navigateCommandMenuHistory(index);
+                navigateSidePanelHistory(index);
               },
         };
       })
@@ -136,7 +136,7 @@ export const useCommandMenuContextChips = () => {
   }, [
     sidePanelNavigationMorphItemsByPage,
     sidePanelNavigationStack,
-    navigateCommandMenuHistory,
+    navigateSidePanelHistory,
     objectMetadataItems,
     recordIdentifiers,
     records,

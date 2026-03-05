@@ -30,13 +30,13 @@ export const DashboardWidgetPlaceholder = () => {
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
     if (!isPageLayoutInEditMode) {
       setIsPageLayoutInEditMode(true);
     }
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });

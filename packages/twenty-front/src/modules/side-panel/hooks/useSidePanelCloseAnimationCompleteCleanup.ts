@@ -39,7 +39,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const commandMenuCloseAnimationCompleteCleanup = useCallback(
+  const sidePanelCloseAnimationCompleteCleanup = useCallback(
     (options?: { emitSidePanelCloseEvent?: boolean }) => {
       closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
@@ -136,6 +136,6 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
   );
 
   return {
-    commandMenuCloseAnimationCompleteCleanup,
+    sidePanelCloseAnimationCompleteCleanup,
   };
 };

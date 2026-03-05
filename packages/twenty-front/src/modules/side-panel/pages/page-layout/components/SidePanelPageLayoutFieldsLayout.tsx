@@ -30,7 +30,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SidePanelPageLayoutFieldsLayout = () => {
-  const { goBackFromCommandMenu } = useSidePanelHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { pageLayoutId } =
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
@@ -54,7 +54,7 @@ export const SidePanelPageLayoutFieldsLayout = () => {
     <StyledOuterContainer>
       <SidePanelSubPageNavigationHeader
         title={t`Layout`}
-        onBackClick={goBackFromCommandMenu}
+        onBackClick={goBackFromSidePanel}
       />
       <StyledContainer>
         <FieldsWidgetGroupsDraftInitializationEffect

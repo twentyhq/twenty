@@ -26,8 +26,8 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     objectNameSingular,
   });
 
-  const { navigateCommandMenu } = useNavigateSidePanel();
-  const { updateCommandMenuNavigationMorphItemsByPage } =
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const { updateSidePanelNavigationMorphItemsByPage } =
     useSidePanelUpdateNavigationMorphItemsByPage();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -51,7 +51,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
       objectMetadataItem.id,
     );
 
-    await updateCommandMenuNavigationMorphItemsByPage({
+    await updateSidePanelNavigationMorphItemsByPage({
       pageId,
       objectMetadataId: objectMetadataItem.id,
       objectRecordIds,
@@ -59,7 +59,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     const { records } = await findManyRecordsLazy();
     upsertRecordsInStore({ partialRecords: records ?? [] });
 
-    navigateCommandMenu({
+    navigateSidePanel({
       page: SidePanelPages.MergeRecords,
       pageTitle: t(msg`Merge records`),
       pageIcon: IconArrowMerge,
@@ -70,8 +70,8 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     objectRecordIds,
     findManyRecordsLazy,
     upsertRecordsInStore,
-    navigateCommandMenu,
-    updateCommandMenuNavigationMorphItemsByPage,
+    navigateSidePanel,
+    updateSidePanelNavigationMorphItemsByPage,
     store,
   ]);
 

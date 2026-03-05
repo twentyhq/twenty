@@ -12,16 +12,16 @@ type UseOpenUpdateMultipleRecordsPageInCommandMenuProps = {
 export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
   contextStoreInstanceId,
 }: UseOpenUpdateMultipleRecordsPageInCommandMenuProps) => {
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const openUpdateMultipleRecordsPageInCommandMenu = useCallback(async () => {
-    navigateCommandMenu({
+    navigateSidePanel({
       page: SidePanelPages.UpdateRecords,
       pageTitle: t(msg`Update records`),
       pageIcon: IconBoxMultiple,
       pageId: contextStoreInstanceId,
     });
-  }, [navigateCommandMenu, contextStoreInstanceId]);
+  }, [navigateSidePanel, contextStoreInstanceId]);
 
   return {
     openUpdateMultipleRecordsPageInCommandMenu,

@@ -31,7 +31,7 @@ export const useFrontComponentExecutionContext = ({
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
@@ -59,7 +59,7 @@ export const useFrontComponentExecutionContext = ({
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async ({ page, pageTitle, pageIcon, shouldResetSearchState }) => {
-      navigateCommandMenu({
+      navigateSidePanel({
         page,
         pageTitle,
         pageIcon: getIcon(pageIcon),

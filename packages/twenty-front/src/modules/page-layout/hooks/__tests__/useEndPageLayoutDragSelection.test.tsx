@@ -49,7 +49,7 @@ describe('useEndPageLayoutDragSelection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigatePageLayoutSidePanel as jest.Mock).mockReturnValue({
-      navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutCommandMenu,
     });
   });
 

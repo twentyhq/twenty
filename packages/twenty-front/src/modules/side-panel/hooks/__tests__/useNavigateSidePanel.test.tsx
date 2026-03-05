@@ -38,12 +38,12 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const { navigateCommandMenu } = useNavigateSidePanel();
+      const { navigateSidePanel } = useNavigateSidePanel();
 
       const { getIcon } = useIcons();
 
       return {
-        navigateCommandMenu,
+        navigateSidePanel,
         getIcon,
       };
     },
@@ -63,7 +63,7 @@ describe('useNavigateSidePanel', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.navigateCommandMenu({
+      result.current.navigateSidePanel({
         page: SidePanelPages.Root,
         pageTitle: 'Root',
         pageIcon: Icon123,

@@ -48,7 +48,7 @@ export const useNavigationMenuItemEditOrganizeActions =
   (): OrganizeActionsProps => {
     const { t } = useLingui();
     const { closeCommandMenu } = useCommandMenu();
-    const { navigateCommandMenu } = useNavigateSidePanel();
+    const { navigateSidePanel } = useNavigateSidePanel();
     const selectedNavigationMenuItemInEditMode = useAtomStateValue(
       selectedNavigationMenuItemInEditModeState,
     );
@@ -116,7 +116,7 @@ export const useNavigationMenuItemEditOrganizeActions =
       );
       if (!context) return;
       setAddMenuItemInsertionContext(context);
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,
         pageIcon: IconColumnInsertRight,

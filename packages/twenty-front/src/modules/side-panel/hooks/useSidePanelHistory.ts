@@ -16,7 +16,7 @@ export const useSidePanelHistory = () => {
   const store = useStore();
   const { closeCommandMenu } = useCommandMenu();
 
-  const goBackFromCommandMenu = useCallback(() => {
+  const goBackFromSidePanel = useCallback(() => {
     const currentNavigationStack = store.get(
       sidePanelNavigationStackState.atom,
     );
@@ -69,7 +69,7 @@ export const useSidePanelHistory = () => {
     store.set(hasUserSelectedCommandState.atom, false);
   }, [closeCommandMenu, store]);
 
-  const navigateCommandMenuHistory = useCallback(
+  const navigateSidePanelHistory = useCallback(
     (pageIndex: number) => {
       const currentNavigationStack = store.get(
         sidePanelNavigationStackState.atom,
@@ -83,7 +83,7 @@ export const useSidePanelHistory = () => {
 
       if (!isDefined(newNavigationStackItem)) {
         throw new Error(
-          `No command menu navigation stack item found for index ${pageIndex}`,
+          `No side panel navigation stack item found for index ${pageIndex}`,
         );
       }
 
@@ -125,7 +125,7 @@ export const useSidePanelHistory = () => {
   );
 
   return {
-    goBackFromCommandMenu,
-    navigateCommandMenuHistory,
+    goBackFromSidePanel,
+    navigateSidePanelHistory,
   };
 };

@@ -24,7 +24,7 @@ export const ActionOpenSidePanelPage = ({
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
 
@@ -35,7 +35,7 @@ export const ActionOpenSidePanelPage = ({
   const handleClick = () => {
     onClick?.();
 
-    navigateCommandMenu({
+    navigateSidePanel({
       page,
       pageTitle: t(pageTitle),
       pageIcon,

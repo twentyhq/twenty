@@ -40,7 +40,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const { buildBarChartFieldSelection } = useOpportunityDefaultChartConfig();
 
@@ -111,7 +111,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
       focusTitleInput: true,
     });
@@ -132,7 +132,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
       focusTitleInput: true,
     });

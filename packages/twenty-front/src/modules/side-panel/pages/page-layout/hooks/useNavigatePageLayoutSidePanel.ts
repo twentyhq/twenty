@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 
-type NavigatePageLayoutCommandMenuProps = {
+type NavigatePageLayoutSidePanelProps = {
   sidePanelPage: PageLayoutSidePanelPage;
   pageTitle?: string;
   pageIcon?: IconComponent;
@@ -15,17 +15,17 @@ type NavigatePageLayoutCommandMenuProps = {
 };
 
 export const useNavigatePageLayoutSidePanel = () => {
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
-  const navigatePageLayoutCommandMenu = useCallback(
+  const navigatePageLayoutSidePanel = useCallback(
     ({
       sidePanelPage,
       pageTitle,
       pageIcon,
       focusTitleInput = false,
       resetNavigationStack = false,
-    }: NavigatePageLayoutCommandMenuProps) => {
-      navigateCommandMenu({
+    }: NavigatePageLayoutSidePanelProps) => {
+      navigateSidePanel({
         page: sidePanelPage,
         pageTitle: isDefined(pageTitle)
           ? pageTitle
@@ -37,10 +37,10 @@ export const useNavigatePageLayoutSidePanel = () => {
         resetNavigationStack,
       });
     },
-    [navigateCommandMenu],
+    [navigateSidePanel],
   );
 
   return {
-    navigatePageLayoutCommandMenu,
+    navigatePageLayoutSidePanel,
   };
 };

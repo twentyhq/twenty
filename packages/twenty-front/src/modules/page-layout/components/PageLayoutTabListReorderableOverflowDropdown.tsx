@@ -96,7 +96,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClose = () => {
     if (!isPageLayoutTabDragging) {
@@ -112,7 +112,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
 
   const handleEditClick = (tabId: string) => {
     setPageLayoutTabSettingsOpenTabId(tabId);
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
     });
     onClose();

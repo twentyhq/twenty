@@ -31,18 +31,18 @@ export const useNavigateSidePanel = () => {
   const store = useStore();
   const { copyContextStoreStates } = useCopyContextStoreStates();
 
-  const { commandMenuCloseAnimationCompleteCleanup } =
+  const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openCommandMenu = useCallback(() => {
+  const openSidePanel = useCallback(() => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     const isSidePanelClosing = store.get(isSidePanelClosingState.atom);
 
     if (isSidePanelClosing) {
-      commandMenuCloseAnimationCompleteCleanup({
+      sidePanelCloseAnimationCompleteCleanup({
         emitSidePanelCloseEvent: false,
       });
     }
@@ -71,12 +71,12 @@ export const useNavigateSidePanel = () => {
     store.set(hasUserSelectedCommandState.atom, false);
   }, [
     copyContextStoreStates,
-    commandMenuCloseAnimationCompleteCleanup,
+    sidePanelCloseAnimationCompleteCleanup,
     pushFocusItemToFocusStack,
     store,
   ]);
 
-  const navigateCommandMenu = useCallback(
+  const navigateSidePanel = useCallback(
     ({
       page,
       pageTitle,
@@ -91,7 +91,7 @@ export const useNavigateSidePanel = () => {
     }) => {
       const computedPageId = pageId || v4();
 
-      openCommandMenu();
+      openSidePanel();
       store.set(sidePanelPageState.atom, page);
       store.set(sidePanelPageInfoState.atom, {
         title: pageTitle,
@@ -139,10 +139,10 @@ export const useNavigateSidePanel = () => {
         ]);
       }
     },
-    [openCommandMenu, store],
+    [openSidePanel, store],
   );
 
   return {
-    navigateCommandMenu,
+    navigateSidePanel,
   };
 };

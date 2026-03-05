@@ -13,7 +13,7 @@ type OpenAddItemToFolderPageParams = {
 
 export const useOpenAddItemToFolderPage = () => {
   const { t } = useLingui();
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
@@ -27,7 +27,7 @@ export const useOpenAddItemToFolderPage = () => {
       targetFolderId,
       targetIndex,
     });
-    navigateCommandMenu({
+    navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,

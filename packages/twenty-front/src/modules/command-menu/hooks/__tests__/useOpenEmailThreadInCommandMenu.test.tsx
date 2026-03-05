@@ -18,7 +18,7 @@ jest.mock('uuid', () => ({
 const mockNavigateCommandMenu = jest.fn();
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
-    navigateCommandMenu: mockNavigateCommandMenu,
+    navigateSidePanel: mockNavigateCommandMenu,
   }),
 }));
 

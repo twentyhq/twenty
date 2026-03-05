@@ -69,7 +69,7 @@ export const WorkspaceNavigationMenuItems = () => {
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { getIcon } = useIcons();
@@ -129,7 +129,7 @@ export const WorkspaceNavigationMenuItems = () => {
 
   const handleAddMenuItem = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    navigateCommandMenu({
+    navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,

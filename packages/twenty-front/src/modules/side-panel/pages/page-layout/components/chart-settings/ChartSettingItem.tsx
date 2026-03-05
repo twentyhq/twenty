@@ -41,7 +41,7 @@ export const ChartSettingItem = ({
   const { setSelectedItemId } = useSelectableList(
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const { getChartSettingsValues } = useChartSettingsValues({
     objectMetadataId,
@@ -80,7 +80,7 @@ export const ChartSettingItem = ({
   };
 
   const handleFilterClick = () => {
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutGraphFilter,
     });
   };

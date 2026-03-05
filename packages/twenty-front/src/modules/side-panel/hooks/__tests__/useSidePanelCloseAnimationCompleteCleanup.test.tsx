@@ -63,7 +63,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
   const renderHooks = () => {
     const { result } = renderHook(
       () => {
-        const { commandMenuCloseAnimationCompleteCleanup } =
+        const { sidePanelCloseAnimationCompleteCleanup } =
           useSidePanelCloseAnimationCompleteCleanup();
 
         const viewableRecordId = useAtomStateValue(viewableRecordIdState);
@@ -71,7 +71,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
         const setViewableRecordId = useSetAtomState(viewableRecordIdState);
 
         return {
-          commandMenuCloseAnimationCompleteCleanup,
+          sidePanelCloseAnimationCompleteCleanup,
           viewableRecordId,
           setViewableRecordId,
         };
@@ -131,7 +131,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     expect(result.current.viewableRecordId).toBe('record-123');
 
     act(() => {
-      result.current.commandMenuCloseAnimationCompleteCleanup();
+      result.current.sidePanelCloseAnimationCompleteCleanup();
     });
 
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
@@ -152,7 +152,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenuCloseAnimationCompleteCleanup();
+      result.current.sidePanelCloseAnimationCompleteCleanup();
     });
 
     expect(mockCloseDropdown).toHaveBeenCalledTimes(1);

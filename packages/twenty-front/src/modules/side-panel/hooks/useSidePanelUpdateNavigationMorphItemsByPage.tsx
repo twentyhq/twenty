@@ -10,7 +10,7 @@ type UpdateNavigationMorphItemsByPageParams = {
 
 export const useSidePanelUpdateNavigationMorphItemsByPage = () => {
   const store = useStore();
-  const updateCommandMenuNavigationMorphItemsByPage = useCallback(
+  const updateSidePanelNavigationMorphItemsByPage = useCallback(
     async ({
       pageId,
       objectMetadataId,
@@ -36,6 +36,6 @@ export const useSidePanelUpdateNavigationMorphItemsByPage = () => {
   );
 
   return {
-    updateCommandMenuNavigationMorphItemsByPage,
+    updateSidePanelNavigationMorphItemsByPage,
   };
 };

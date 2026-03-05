@@ -67,7 +67,7 @@ export const PageLayoutRendererContent = () => {
   const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const isMobile = useIsMobile();
 
@@ -81,7 +81,7 @@ export const PageLayoutRendererContent = () => {
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setPageLayoutTabSettingsOpenTabId(newTabId);
-          navigatePageLayoutCommandMenu({
+          navigatePageLayoutSidePanel({
             sidePanelPage: SidePanelPages.PageLayoutTabSettings,
             focusTitleInput: true,
           });

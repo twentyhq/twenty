@@ -1,17 +1,17 @@
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { CommandMenuWidthEffect } from '@/command-menu/components/CommandMenuWidthEffect';
+import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import {
-  COMMAND_MENU_WIDTH_VAR,
-  commandMenuWidthState,
-} from '@/command-menu/states/commandMenuWidthState';
+  SIDE_PANEL_WIDTH_VAR,
+  sidePanelWidthState,
+} from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
-import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
+import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -26,7 +26,7 @@ const StyledSidePanelWrapper = styled.div<{
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
-  width: ${({ isOpen }) => (isOpen ? `var(${COMMAND_MENU_WIDTH_VAR})` : '0px')};
+  width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
   transition: ${({ isResizing }) =>
     isResizing
       ? 'none'
@@ -58,14 +58,14 @@ const StyledModalContainer = styled.div`
 
 const GAP_WIDTH = 8;
 
-export const CommandMenuSidePanelForDesktop = () => {
+export const SidePanelForDesktop = () => {
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isSidePanelClosing = useAtomStateValue(isSidePanelClosingState);
-  const [commandMenuWidth, setCommandMenuWidth] = useAtomState(
-    commandMenuWidthState,
+  const [sidePanelWidth, setSidePanelWidth] = useAtomState(
+    sidePanelWidthState,
   );
   const { closeCommandMenu } = useCommandMenu();
-  const { commandMenuCloseAnimationCompleteCleanup } =
+  const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
@@ -89,7 +89,7 @@ export const CommandMenuSidePanelForDesktop = () => {
       // Close animation completed
       setShouldRenderContent(false);
       if (isSidePanelClosing) {
-        commandMenuCloseAnimationCompleteCleanup();
+        sidePanelCloseAnimationCompleteCleanup();
       }
     }
   };
@@ -103,11 +103,11 @@ export const CommandMenuSidePanelForDesktop = () => {
 
   const handleWidthChange = useCallback(
     (width: number) => {
-      setCommandMenuWidth(width);
+      setSidePanelWidth(width);
       setIsResizing(false);
       setTableWidthResizeIsActive(true);
     },
-    [setCommandMenuWidth, setTableWidthResizeIsActive],
+    [setSidePanelWidth, setTableWidthResizeIsActive],
   );
 
   const handleResizeStart = useCallback(() => {
@@ -123,15 +123,15 @@ export const CommandMenuSidePanelForDesktop = () => {
 
   return (
     <>
-      <CommandMenuWidthEffect />
+      <SidePanelWidthEffect />
       <ResizablePanelGap
         side="left"
-        constraints={COMMAND_MENU_CONSTRAINTS}
-        currentWidth={commandMenuWidth}
+        constraints={SIDE_PANEL_CONSTRAINTS}
+        currentWidth={sidePanelWidth}
         onWidthChange={handleWidthChange}
         onCollapse={handleCollapse}
         gapWidth={isSidePanelOpened ? GAP_WIDTH : 0}
-        cssVariableName={COMMAND_MENU_WIDTH_VAR}
+        cssVariableName={SIDE_PANEL_WIDTH_VAR}
         onResizeStart={handleResizeStart}
       />
 
@@ -139,7 +139,7 @@ export const CommandMenuSidePanelForDesktop = () => {
         isOpen={isSidePanelOpened}
         isResizing={isResizing}
         onTransitionEnd={handleTransitionEnd}
-        data-command-menu-panel=""
+        data-side-panel=""
       >
         <StyledSidePanel>
           <StyledModalContainer ref={handleModalContainerRef} />

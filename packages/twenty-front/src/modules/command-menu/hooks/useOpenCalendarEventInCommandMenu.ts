@@ -9,7 +9,7 @@ import { useStore } from 'jotai';
 
 export const useOpenCalendarEventInCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const openCalendarEventInCommandMenu = useCallback(
     (calendarEventId: string) => {
@@ -47,14 +47,14 @@ export const useOpenCalendarEventInCommandMenu = () => {
       //   ]),
       // );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.ViewCalendarEvent,
         pageTitle: t`Calendar Event`,
         pageIcon: IconCalendarEvent,
         pageId: pageComponentInstanceId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   return {

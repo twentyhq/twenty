@@ -24,13 +24,13 @@ const renderHooks = () => {
     () => {
       const commandMenu = useCommandMenu();
       const commandMenuHistory = useSidePanelHistory();
-      const commandMenuCloseAnimationCompleteCleanup =
+      const sidePanelCloseAnimationCompleteCleanup =
         useSidePanelCloseAnimationCompleteCleanup();
 
       return {
         commandMenu,
         commandMenuHistory,
-        commandMenuCloseAnimationCompleteCleanup,
+        sidePanelCloseAnimationCompleteCleanup,
       };
     },
     {
@@ -78,7 +78,7 @@ describe('useSidePanelHistory', () => {
     ]);
 
     act(() => {
-      result.current.commandMenuHistory.goBackFromCommandMenu();
+      result.current.commandMenuHistory.goBackFromSidePanel();
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
@@ -99,8 +99,8 @@ describe('useSidePanelHistory', () => {
     });
 
     act(() => {
-      result.current.commandMenuHistory.goBackFromCommandMenu();
-      result.current.commandMenuCloseAnimationCompleteCleanup.commandMenuCloseAnimationCompleteCleanup();
+      result.current.commandMenuHistory.goBackFromSidePanel();
+      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
@@ -126,7 +126,7 @@ describe('useSidePanelHistory', () => {
     });
 
     act(() => {
-      result.current.commandMenuHistory.navigateCommandMenuHistory(0);
+      result.current.commandMenuHistory.navigateSidePanelHistory(0);
     });
 
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(

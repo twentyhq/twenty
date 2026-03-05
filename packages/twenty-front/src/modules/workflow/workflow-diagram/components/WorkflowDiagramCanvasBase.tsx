@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
+import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -320,12 +320,12 @@ export const WorkflowDiagramCanvasBase = ({
 
       let adjustedContainerWidth = baseContainerWidth;
 
-      const commandMenuWidth = store.get(commandMenuWidthState.atom);
+      const sidePanelWidth = store.get(sidePanelWidthState.atom);
 
       if (!isInSidePanel && isSidePanelOpened) {
-        adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
+        adjustedContainerWidth = baseContainerWidth - sidePanelWidth;
       } else if (!isInSidePanel && hasViewportBeenMoved) {
-        adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
+        adjustedContainerWidth = baseContainerWidth + sidePanelWidth;
       }
 
       const flowBounds = reactflow.getNodesBounds(nodes);

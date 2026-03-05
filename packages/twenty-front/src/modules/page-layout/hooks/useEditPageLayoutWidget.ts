@@ -24,7 +24,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
   const { closeCommandMenu } = useCommandMenu();
   const setSidePanelPage = useSetAtomState(sidePanelPageState);
 
@@ -39,7 +39,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       setPageLayoutEditingWidgetId(widgetId);
 
       if (widgetType === WidgetType.IFRAME) {
-        navigatePageLayoutCommandMenu({
+        navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
@@ -48,7 +48,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
 
       if (widgetType === WidgetType.GRAPH) {
-        navigatePageLayoutCommandMenu({
+        navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
@@ -57,7 +57,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
 
       if (widgetType === WidgetType.FIELDS) {
-        navigatePageLayoutCommandMenu({
+        navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutFieldsSettings,
           pageTitle: t`Edit Fields`,
           resetNavigationStack: true,
@@ -70,7 +70,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     },
     [
       setPageLayoutEditingWidgetId,
-      navigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel,
       closeCommandMenu,
       setSidePanelPage,
     ],

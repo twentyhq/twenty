@@ -27,11 +27,11 @@ const renderHooks = (initialRecordIds: string[]) => {
 
   return renderHook(
     () => {
-      const { updateCommandMenuNavigationMorphItemsByPage } =
+      const { updateSidePanelNavigationMorphItemsByPage } =
         useSidePanelUpdateNavigationMorphItemsByPage();
 
       return {
-        updateCommandMenuNavigationMorphItemsByPage,
+        updateSidePanelNavigationMorphItemsByPage,
       };
     },
     {
@@ -45,7 +45,7 @@ describe('useSidePanelUpdateNavigationMorphItemsByPage', () => {
     const { result } = renderHooks(['record-1', 'record-2']);
 
     await act(async () => {
-      await result.current.updateCommandMenuNavigationMorphItemsByPage({
+      await result.current.updateSidePanelNavigationMorphItemsByPage({
         pageId,
         objectMetadataId,
         objectRecordIds: ['record-2', 'record-1'],
@@ -70,12 +70,12 @@ describe('useSidePanelUpdateNavigationMorphItemsByPage', () => {
     const { result } = renderHooks([]);
 
     await act(async () => {
-      await result.current.updateCommandMenuNavigationMorphItemsByPage({
+      await result.current.updateSidePanelNavigationMorphItemsByPage({
         pageId,
         objectMetadataId,
         objectRecordIds: ['record-1', 'record-2'],
       });
-      await result.current.updateCommandMenuNavigationMorphItemsByPage({
+      await result.current.updateSidePanelNavigationMorphItemsByPage({
         pageId,
         objectMetadataId,
         objectRecordIds: ['record-2', 'record-1'],

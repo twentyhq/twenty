@@ -24,7 +24,7 @@ const StyledIconChevronLeft = styled(IconChevronLeft)`
 `;
 
 export const SidePanelBackButton = () => {
-  const { goBackFromCommandMenu } = useSidePanelHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { contextChips } = useCommandMenuContextChips();
 
@@ -56,7 +56,7 @@ export const SidePanelBackButton = () => {
             Icon={StyledIconChevronLeft}
             size="small"
             variant="tertiary"
-            onClick={goBackFromCommandMenu}
+            onClick={goBackFromSidePanel}
           />
         </StyledNavigationIcon>
       }

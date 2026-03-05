@@ -34,7 +34,7 @@ export const useUpdateSidePanelPageInfo = () => {
         return;
       }
 
-      const newCommandMenuNavigationStack = [
+      const newSidePanelNavigationStack = [
         ...sidePanelNavigationStack.slice(0, -1),
         {
           page: lastSidePanelNavigationStackItem.page,
@@ -46,7 +46,7 @@ export const useUpdateSidePanelPageInfo = () => {
 
       store.set(
         sidePanelNavigationStackState.atom,
-        newCommandMenuNavigationStack,
+        newSidePanelNavigationStack,
       );
     },
     [store],

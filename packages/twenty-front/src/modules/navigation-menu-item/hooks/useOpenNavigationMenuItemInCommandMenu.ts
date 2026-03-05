@@ -3,7 +3,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import type { IconComponent } from 'twenty-ui/display';
 
 export const useOpenNavigationMenuItemInCommandMenu = () => {
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const openNavigationMenuItemInCommandMenu = ({
     pageTitle,
@@ -14,7 +14,7 @@ export const useOpenNavigationMenuItemInCommandMenu = () => {
     pageIcon: IconComponent;
     focusTitleInput?: boolean;
   }) => {
-    navigateCommandMenu({
+    navigateSidePanel({
       page: SidePanelPages.NavigationMenuItemEdit,
       pageTitle,
       pageIcon,

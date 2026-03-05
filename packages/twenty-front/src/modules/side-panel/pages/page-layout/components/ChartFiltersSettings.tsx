@@ -38,7 +38,7 @@ export const ChartFiltersSettings = ({
   objectMetadataItem,
   widget,
 }: ChartFiltersSettingsProps) => {
-  const { goBackFromCommandMenu } = useSidePanelHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { instanceId } = getChartFiltersSettingsInstanceId({
     widgetId: widget.id,
@@ -82,7 +82,7 @@ export const ChartFiltersSettings = ({
     <>
       <SidePanelSubPageNavigationHeader
         title={t`Filter`}
-        onBackClick={goBackFromCommandMenu}
+        onBackClick={goBackFromSidePanel}
       />
       <StyledChartFiltersPageContainer>
         <div>

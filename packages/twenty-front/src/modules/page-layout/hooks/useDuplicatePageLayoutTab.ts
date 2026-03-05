@@ -48,7 +48,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -130,7 +130,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
       setPageLayoutTabSettingsOpenTabId(newTabId);
 
-      navigatePageLayoutCommandMenu({
+      navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         pageTitle: newTab.title,
         focusTitleInput: true,
@@ -140,7 +140,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     },
     [
       closeCommandMenu,
-      navigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,
       setActiveTabId,

@@ -16,7 +16,7 @@ export const useCreateWidgetFromClick = () => {
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -28,13 +28,13 @@ export const useCreateWidgetFromClick = () => {
       store.set(pageLayoutDraggedAreaState, bounds);
       store.set(pageLayoutEditingWidgetIdState, null);
 
-      navigatePageLayoutCommandMenu({
+      navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
         resetNavigationStack: true,
       });
     },
     [
-      navigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
       store,

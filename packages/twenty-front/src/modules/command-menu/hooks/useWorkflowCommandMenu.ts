@@ -20,7 +20,7 @@ import { useStore } from 'jotai';
 
 export const useWorkflowCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const { setInitialWorkflowRunSidePanelTab } =
     useSetInitialWorkflowRunSidePanelTab();
 
@@ -35,14 +35,14 @@ export const useWorkflowCommandMenu = () => {
         workflowId,
       );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowTriggerSelectType,
         pageTitle: t`Trigger Type`,
         pageIcon: IconBolt,
         pageId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   const openWorkflowCreateStepInCommandMenu = useCallback(
@@ -56,14 +56,14 @@ export const useWorkflowCommandMenu = () => {
         workflowId,
       );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowStepCreate,
         pageTitle: t`Select Action`,
         pageIcon: IconSettingsAutomation,
         pageId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   const openWorkflowEditStepInCommandMenu = useCallback(
@@ -98,14 +98,14 @@ export const useWorkflowCommandMenu = () => {
         );
       }
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowStepEdit,
         pageTitle: title,
         pageIcon: icon,
         pageId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   const openWorkflowEditStepTypeInCommandMenu = useCallback(
@@ -119,14 +119,14 @@ export const useWorkflowCommandMenu = () => {
         workflowId,
       );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowStepEditType,
         pageTitle: t`Select action`,
         pageIcon: IconSettingsAutomation,
         pageId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   const openWorkflowViewStepInCommandMenu = useCallback(
@@ -174,14 +174,14 @@ export const useWorkflowCommandMenu = () => {
         );
       }
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowStepView,
         pageTitle: title,
         pageIcon: icon,
         pageId,
       });
     },
-    [navigateCommandMenu, store],
+    [navigateSidePanel, store],
   );
 
   const openWorkflowRunViewStepInCommandMenu = useCallback(
@@ -228,7 +228,7 @@ export const useWorkflowCommandMenu = () => {
         workflowSelectedNode,
       );
 
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.WorkflowRunStepView,
         pageTitle: title,
         pageIcon: icon,
@@ -240,7 +240,7 @@ export const useWorkflowCommandMenu = () => {
         stepExecutionStatus,
       });
     },
-    [navigateCommandMenu, setInitialWorkflowRunSidePanelTab, store],
+    [navigateSidePanel, setInitialWorkflowRunSidePanelTab, store],
   );
 
   return {

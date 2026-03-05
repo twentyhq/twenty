@@ -29,7 +29,7 @@ const StyledSidePanelContainer = styled.div`
 
 export const SidePanelPageLayoutFieldsSettings = () => {
   const { t } = useLingui();
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
   const { pageLayoutId, objectNameSingular } =
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
@@ -54,7 +54,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
   );
 
   const handleNavigateToLayout = () => {
-    navigatePageLayoutCommandMenu({
+    navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutFieldsLayout,
     });
   };

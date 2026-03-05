@@ -26,7 +26,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
-  const { goBackFromCommandMenu } = useSidePanelHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
@@ -82,10 +82,10 @@ export const useCommandMenuHotKeys = () => {
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: () => {
-      goBackFromCommandMenu();
+      goBackFromSidePanel();
     },
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [goBackFromCommandMenu],
+    dependencies: [goBackFromSidePanel],
     options: {
       enableOnFormTags: false,
     },
@@ -108,7 +108,7 @@ export const useCommandMenuHotKeys = () => {
         setGlobalCommandMenuContext();
       }
       if (sidePanelPage !== SidePanelPages.Root) {
-        goBackFromCommandMenu();
+        goBackFromSidePanel();
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
@@ -116,7 +116,7 @@ export const useCommandMenuHotKeys = () => {
       sidePanelPage,
       commandMenuSearch,
       contextStoreTargetedRecordsRule,
-      goBackFromCommandMenu,
+      goBackFromSidePanel,
       setGlobalCommandMenuContext,
     ],
     options: {

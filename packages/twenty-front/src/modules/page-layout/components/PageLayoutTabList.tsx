@@ -238,17 +238,17 @@ export const PageLayoutTabList = ({
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const openTabSettings = useCallback(
     (tabId: string) => {
       setPageLayoutTabSettingsOpenTabId(tabId);
-      navigatePageLayoutCommandMenu({
+      navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
   );
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);

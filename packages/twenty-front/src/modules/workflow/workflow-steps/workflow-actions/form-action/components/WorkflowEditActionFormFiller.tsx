@@ -34,7 +34,7 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
-  const { goBackFromCommandMenu } = useSidePanelHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -89,7 +89,7 @@ export const WorkflowEditActionFormFiller = ({
       response,
     });
 
-    goBackFromCommandMenu();
+    goBackFromSidePanel();
   };
 
   useEffect(() => {

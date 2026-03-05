@@ -1,5 +1,5 @@
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
-import { CommandMenuSidePanelForDesktop } from '@/command-menu/components/CommandMenuSidePanelForDesktop';
+import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { styled } from '@linaria/react';
@@ -60,7 +60,7 @@ export const MainContainerLayoutWithCommandMenu = ({
   return (
     <StyledMainContainerLayoutForDesktop>
       <StyledPageBodyForDesktop>{children}</StyledPageBodyForDesktop>
-      <CommandMenuSidePanelForDesktop />
+      <SidePanelForDesktop />
     </StyledMainContainerLayoutForDesktop>
   );
 };

@@ -18,7 +18,7 @@ import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
   const store = useStore();
-  const { navigateCommandMenu } = useNavigateSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const { removeFocusItemFromFocusStackById } =
@@ -48,28 +48,30 @@ export const useCommandMenu = () => {
       selectedNavigationMenuItemInEditModeState.atom,
     );
     if (isNavigationMenuInEditMode && isDefined(selectedNavigationItemId)) {
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
     } else if (isNavigationMenuInEditMode) {
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,
         pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,
       });
     } else {
-      navigateCommandMenu({
+      navigateSidePanel({
         page: SidePanelPages.Root,
         pageTitle: t`Command Menu`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
     }
-  }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
+  }, [closeAnyOpenDropdown, navigateSidePanel, store]);
+
+  const navigateCommandMenu = navigateSidePanel;
 
   const toggleCommandMenu = useCallback(() => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);

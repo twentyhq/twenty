@@ -33,7 +33,7 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutSidePanel();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -49,7 +49,7 @@ export const useEndPageLayoutDragSelection = (
         store.set(pageLayoutDraggedAreaState, draggedBounds);
         store.set(pageLayoutEditingWidgetIdState, null);
 
-        navigatePageLayoutCommandMenu({
+        navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
           resetNavigationStack: true,
         });
@@ -58,7 +58,7 @@ export const useEndPageLayoutDragSelection = (
 
     store.set(pageLayoutSelectedCellsState, new Set());
   }, [
-    navigatePageLayoutCommandMenu,
+    navigatePageLayoutSidePanel,
     pageLayoutDraggedAreaState,
     pageLayoutEditingWidgetIdState,
     pageLayoutSelectedCellsState,
