@@ -49,7 +49,7 @@ const StyledScrollableListWrapper = styled.div`
   }
 `;
 
-type CommandMenuSubViewWithSearchProps = {
+type SidePanelSubViewWithSearchProps = {
   backBarTitle: string;
   onBack: () => void;
   searchPlaceholder: string;
@@ -59,7 +59,7 @@ type CommandMenuSubViewWithSearchProps = {
   children?: ReactNode;
 };
 
-export const CommandMenuSubViewWithSearch = ({
+export const SidePanelSubViewWithSearch = ({
   backBarTitle,
   onBack,
   searchPlaceholder,
@@ -67,7 +67,7 @@ export const CommandMenuSubViewWithSearch = ({
   onSearchChange,
   searchInputProps,
   children,
-}: CommandMenuSubViewWithSearchProps) => (
+}: SidePanelSubViewWithSearchProps) => (
   <StyledSubViewContainer>
     <SidePanelSubPageNavigationHeader
       title={backBarTitle}

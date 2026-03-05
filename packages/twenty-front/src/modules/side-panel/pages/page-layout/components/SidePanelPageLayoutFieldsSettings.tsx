@@ -1,4 +1,4 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
@@ -78,7 +78,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
           commandGroups={[]}
           selectableItemIds={selectableItemIds}
         >
-          <CommandGroup heading={t`Customize`}>
+          <SidePanelGroup heading={t`Customize`}>
             <SelectableListItem
               itemId="layout"
               onEnter={handleNavigateToLayout}
@@ -93,7 +93,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
                 contextualTextPosition="right"
               />
             </SelectableListItem>
-          </CommandGroup>
+          </SidePanelGroup>
         </SidePanelList>
       </StyledSidePanelContainer>
       <WidgetSettingsFooter pageLayoutId={pageLayoutId} />

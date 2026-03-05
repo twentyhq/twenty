@@ -1,4 +1,4 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -71,7 +71,7 @@ export const SidePanelPageLayoutTabSettings = () => {
   return (
     <>
       <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-        <CommandGroup heading={t`Settings`}>
+        <SidePanelGroup heading={t`Settings`}>
           {canMoveLeft && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
@@ -122,7 +122,7 @@ export const SidePanelPageLayoutTabSettings = () => {
               />
             </SelectableListItem>
           )}
-        </CommandGroup>
+        </SidePanelGroup>
       </SidePanelList>
     </>
   );

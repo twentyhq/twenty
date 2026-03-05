@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconApps } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
@@ -40,7 +40,7 @@ export const SidePanelEditOwnerSection = ({
   }
 
   return (
-    <CommandGroup heading={t`Owner`}>
+    <SidePanelGroup heading={t`Owner`}>
       <SelectableListItem itemId="owner-app" onEnter={() => {}}>
         <CommandMenuItem
           Icon={IconApps}
@@ -49,6 +49,6 @@ export const SidePanelEditOwnerSection = ({
           disabled
         />
       </SelectableListItem>
-    </CommandGroup>
+    </SidePanelGroup>
   );
 };

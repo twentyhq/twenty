@@ -1,5 +1,5 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { type ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
@@ -85,11 +85,11 @@ export const SidePanelList = ({
             {children}
             {commandGroups.map(({ heading, items }) =>
               items?.length ? (
-                <CommandGroup heading={heading} key={heading}>
+                <SidePanelGroup heading={heading} key={heading}>
                   {items.map((item) => (
                     <ActionComponent action={item} key={item.key} />
                   ))}
-                </CommandGroup>
+                </SidePanelGroup>
               ) : null,
             )}
             {noResults && !loading && (

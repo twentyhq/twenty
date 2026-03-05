@@ -1,13 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
-import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { SidePanelObjectPickerItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -43,7 +43,7 @@ export const SidePanelObjectPickerSubView = ({
 }: SidePanelObjectPickerSubViewProps) => {
   const { t } = useLingui();
   const { filteredItems, selectableItemIds, isEmpty, hasSearchQuery } =
-    useFilteredPickerItems({
+    useSidePanelFilteredPickerItems({
       items: objects,
       searchQuery: searchValue,
       getSearchableValues: (item) => [item.labelPlural],
@@ -57,7 +57,7 @@ export const SidePanelObjectPickerSubView = ({
   const isAddVariant = objectMenuItemVariant === 'add';
 
   const listContent = (
-    <CommandGroup heading={t`Objects`}>
+    <SidePanelGroup heading={t`Objects`}>
       {filteredItems.map((objectMetadataItem, index) => (
         <SidePanelObjectPickerItem
           key={objectMetadataItem.id}
@@ -92,11 +92,11 @@ export const SidePanelObjectPickerSubView = ({
           />
         </SelectableListItem>
       )}
-    </CommandGroup>
+    </SidePanelGroup>
   );
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={t`Pick an object`}
       onBack={onBack}
       searchPlaceholder={t`Search an object...`}
@@ -130,6 +130,6 @@ export const SidePanelObjectPickerSubView = ({
           {listContent}
         </SidePanelList>
       )}
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };

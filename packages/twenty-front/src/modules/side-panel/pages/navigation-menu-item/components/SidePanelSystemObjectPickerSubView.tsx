@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelObjectPickerItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
-import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type SidePanelSystemObjectPickerSubViewProps = {
@@ -35,7 +35,7 @@ export const SidePanelSystemObjectPickerSubView = ({
 }: SidePanelSystemObjectPickerSubViewProps) => {
   const { t } = useLingui();
   const { filteredItems, selectableItemIds, isEmpty, hasSearchQuery } =
-    useFilteredPickerItems({
+    useSidePanelFilteredPickerItems({
       items: systemObjects,
       searchQuery: searchValue,
       getSearchableValues: (item) => [item.labelPlural],
@@ -46,7 +46,7 @@ export const SidePanelSystemObjectPickerSubView = ({
     : (emptyNoResultsText ?? t`No system objects available`);
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={t`System objects`}
       onBack={onBack}
       searchPlaceholder={t`Search a system object...`}
@@ -59,7 +59,7 @@ export const SidePanelSystemObjectPickerSubView = ({
         noResults={isEmpty}
         noResultsText={noResultsText}
       >
-        <CommandGroup heading={t`System objects`}>
+        <SidePanelGroup heading={t`System objects`}>
           {filteredItems.map((objectMetadataItem) => (
             <SidePanelObjectPickerItem
               key={objectMetadataItem.id}
@@ -70,8 +70,8 @@ export const SidePanelSystemObjectPickerSubView = ({
               objectMenuItemVariant={objectMenuItemVariant}
             />
           ))}
-        </CommandGroup>
+        </SidePanelGroup>
       </SidePanelList>
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };

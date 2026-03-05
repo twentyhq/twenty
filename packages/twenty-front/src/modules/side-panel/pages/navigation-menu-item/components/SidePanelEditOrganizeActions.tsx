@@ -8,7 +8,7 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelNavigationItemActions } from '@/side-panel/pages/navigation-menu-item/side-panel-navigation-item-actions';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -44,7 +44,7 @@ export const SidePanelEditOrganizeActions = ({
   const { t } = useLingui();
 
   return (
-    <CommandGroup heading={t`Organize`}>
+    <SidePanelGroup heading={t`Organize`}>
       <SelectableListItem
         itemId={SidePanelNavigationItemActions.MOVE_UP}
         onEnter={canMoveUp ? onMoveUp : undefined}
@@ -120,6 +120,6 @@ export const SidePanelEditOrganizeActions = ({
           onClick={onRemove}
         />
       </SelectableListItem>
-    </CommandGroup>
+    </SidePanelGroup>
   );
 };

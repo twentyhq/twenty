@@ -1,25 +1,25 @@
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
-type UseFilteredPickerItemsParams<T> = {
+type UseSidePanelFilteredPickerItemsParams<T> = {
   items: T[];
   searchQuery: string;
   getSearchableValues: (item: T) => string[];
   appendSelectableIds?: string[];
 };
 
-type UseFilteredPickerItemsResult<T> = {
+type UseSidePanelFilteredPickerItemsResult<T> = {
   filteredItems: T[];
   selectableItemIds: string[];
   isEmpty: boolean;
   hasSearchQuery: boolean;
 };
 
-export const useFilteredPickerItems = <T extends { id: string }>({
+export const useSidePanelFilteredPickerItems = <T extends { id: string }>({
   items,
   searchQuery,
   getSearchableValues,
   appendSelectableIds = [],
-}: UseFilteredPickerItemsParams<T>): UseFilteredPickerItemsResult<T> => {
+}: UseSidePanelFilteredPickerItemsParams<T>): UseSidePanelFilteredPickerItemsResult<T> => {
   const filteredItems = filterBySearchQuery({
     items,
     searchQuery,

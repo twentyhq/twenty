@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
@@ -82,7 +82,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
       : t`Type to search records`;
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={t`Add a record`}
       onBack={onBack}
       searchPlaceholder={t`Search records...`}
@@ -100,7 +100,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
           >
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <div ref={innerRef} {...droppableProps}>
-              <CommandGroup heading={t`Results`}>
+              <SidePanelGroup heading={t`Results`}>
                 {availableSearchRecords.map((record, index) => (
                   <SidePanelNewSidebarItemRecordItem
                     key={record.recordId}
@@ -108,12 +108,12 @@ export const SidePanelNewSidebarItemRecordSubView = ({
                     dragIndex={index}
                   />
                 ))}
-              </CommandGroup>
+              </SidePanelGroup>
               {placeholder}
             </div>
           </SidePanelList>
         )}
       </CommandMenuAddToNavDroppable>
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };

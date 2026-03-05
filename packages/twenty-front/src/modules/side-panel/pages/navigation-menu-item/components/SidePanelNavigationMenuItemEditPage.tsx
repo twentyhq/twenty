@@ -1,4 +1,4 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
@@ -155,7 +155,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           ]}
         >
           {selectedItem && (
-            <CommandGroup heading={t`Customize`}>
+            <SidePanelGroup heading={t`Customize`}>
               <SelectableListItem
                 itemId={ADD_ITEM_TO_FOLDER_ACTION_ID}
                 onEnter={handleAddItemToFolder}
@@ -172,7 +172,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
                 navigationMenuItemId={selectedItem.id}
                 color={parseThemeColor(selectedItem.color)}
               />
-            </CommandGroup>
+            </SidePanelGroup>
           )}
           <SidePanelEditOrganizeActions
             canMoveUp={canMoveUp}
@@ -193,12 +193,12 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           selectableItemIds={getOrganizeActionsSelectableItemIds(true)}
         >
           {selectedItem && (
-            <CommandGroup heading={t`Customize`}>
+            <SidePanelGroup heading={t`Customize`}>
               <SidePanelEditColorOption
                 navigationMenuItemId={selectedItem.id}
                 color={parseThemeColor(selectedItem.color)}
               />
-            </CommandGroup>
+            </SidePanelGroup>
           )}
           <SidePanelEditOrganizeActions
             canMoveUp={canMoveUp}

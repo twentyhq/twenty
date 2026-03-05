@@ -1,5 +1,5 @@
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
@@ -96,9 +96,9 @@ export const CommandMenu = () => {
       noResults={noResults}
     >
       {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
-        <CommandGroup heading={t`Context`}>
+        <SidePanelGroup heading={t`Context`}>
           <ResetContextToSelectionCommandButton />
-        </CommandGroup>
+        </SidePanelGroup>
       )}
     </SidePanelList>
   );

@@ -1,4 +1,4 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -189,7 +189,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      <CommandGroup heading={t`Widget type`}>
+      <SidePanelGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"
           onEnter={handleNavigateToGraphTypeSelect}
@@ -224,10 +224,10 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
             onClick={handleNavigateToRichTextSettings}
           />
         </SelectableListItem>
-      </CommandGroup>
+      </SidePanelGroup>
 
       {isApplicationEnabled && frontComponentsWithSelectItemId.length > 0 && (
-        <CommandGroup heading={t`Front Components`}>
+        <SidePanelGroup heading={t`Front Components`}>
           {frontComponentsWithSelectItemId.map(
             ({ frontComponent, selectItemId }) => (
               <SelectableListItem
@@ -246,7 +246,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
               </SelectableListItem>
             ),
           )}
-        </CommandGroup>
+        </SidePanelGroup>
       )}
     </SidePanelList>
   );

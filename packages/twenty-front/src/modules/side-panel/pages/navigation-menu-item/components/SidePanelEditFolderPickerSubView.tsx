@@ -2,10 +2,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useFolderPickerSelectionData } from '@/side-panel/pages/navigation-menu-item/hooks/useFolderPickerSelectionData';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -42,7 +42,7 @@ export const SidePanelEditFolderPickerSubView = ({
       : t`No folders available`;
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={t`Move to a folder`}
       onBack={onBack}
       searchPlaceholder={t`Search a folder...`}
@@ -55,7 +55,7 @@ export const SidePanelEditFolderPickerSubView = ({
         noResults={isEmpty}
         noResultsText={noResultsText}
       >
-        <CommandGroup heading={t`Folders`}>
+        <SidePanelGroup heading={t`Folders`}>
           {includeNoFolderOption && (
             <SelectableListItem
               itemId="no-folder"
@@ -92,8 +92,8 @@ export const SidePanelEditFolderPickerSubView = ({
               </SelectableListItem>
             );
           })}
-        </CommandGroup>
+        </SidePanelGroup>
       </SidePanelList>
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };

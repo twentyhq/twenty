@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
@@ -41,7 +41,7 @@ export const SidePanelEditLinkItemView = ({
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      <CommandGroup heading={t`Customize`}>
+      <SidePanelGroup heading={t`Customize`}>
         <SidePanelEditColorOption
           navigationMenuItemId={selectedItem.id}
           color={parseThemeColor(selectedItem.color)}
@@ -59,7 +59,7 @@ export const SidePanelEditLinkItemView = ({
             }
           }}
         />
-      </CommandGroup>
+      </SidePanelGroup>
       <SidePanelEditOrganizeActions
         canMoveUp={canMoveUp}
         canMoveDown={canMoveDown}

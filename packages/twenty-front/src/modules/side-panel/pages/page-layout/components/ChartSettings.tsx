@@ -1,4 +1,4 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { ChartSettingItem } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingItem';
@@ -159,7 +159,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           const shouldShowBanner = group.heading.id === bannerTargetHeading.id;
 
           return (
-            <CommandGroup key={group.heading.id} heading={t(group.heading)}>
+            <SidePanelGroup key={group.heading.id} heading={t(group.heading)}>
               {shouldShowBanner && hasWidgetTooManyGroups && (
                 <ChartLimitInfoBanner
                   widgetConfigurationType={configuration.configurationType}
@@ -175,7 +175,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                   configuration={configuration}
                 />
               ))}
-            </CommandGroup>
+            </SidePanelGroup>
           );
         })}
       </SidePanelList>

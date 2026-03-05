@@ -1,11 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
-import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -33,7 +33,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
     selectableItemIds,
     isEmpty,
     hasSearchQuery,
-  } = useFilteredPickerItems({
+  } = useSidePanelFilteredPickerItems({
     items: systemObjects,
     searchQuery: searchValue,
     getSearchableValues: (item) => [item.labelPlural],
@@ -43,7 +43,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
     : t`No system objects with views found`;
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={t`System objects`}
       onBack={onBack}
       searchPlaceholder={t`Search a system object...`}
@@ -56,7 +56,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
         noResults={isEmpty}
         noResultsText={noResultsText}
       >
-        <CommandGroup heading={t`System objects`}>
+        <SidePanelGroup heading={t`System objects`}>
           {filteredSystemObjectMetadataItems.map((objectMetadataItem) => (
             <SelectableListItem
               key={objectMetadataItem.id}
@@ -78,8 +78,8 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
               />
             </SelectableListItem>
           ))}
-        </CommandGroup>
+        </SidePanelGroup>
       </SidePanelList>
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };

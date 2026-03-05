@@ -7,7 +7,7 @@ import {
   IconTable,
 } from 'twenty-ui/display';
 
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -46,7 +46,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
         >
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
-            <CommandGroup heading={t`Data`}>
+            <SidePanelGroup heading={t`Data`}>
               <CommandMenuAddToNavDraggablePlaceholder index={0}>
                 <SelectableListItem itemId="object" onEnter={onSelectObject}>
                   <CommandMenuItem
@@ -96,8 +96,8 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   />
                 </SelectableListItem>
               </CommandMenuAddToNavDraggablePlaceholder>
-            </CommandGroup>
-            <CommandGroup heading={t`Other`}>
+            </SidePanelGroup>
+            <SidePanelGroup heading={t`Other`}>
               <SelectableListItem itemId="folder" onEnter={handleAddFolder}>
                 <CommandMenuItemWithAddToNavigationDrag
                   icon={IconFolder}
@@ -127,7 +127,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   }}
                 />
               </SelectableListItem>
-            </CommandGroup>
+            </SidePanelGroup>
             {placeholder}
           </div>
         </SidePanelList>

@@ -18,12 +18,12 @@ const StyledGroup = styled.div`
   gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-type CommandGroupProps = {
+type SidePanelGroupProps = {
   heading: string;
   children: React.ReactNode | React.ReactNode[];
 };
 
-export const CommandGroup = ({ heading, children }: CommandGroupProps) => {
+export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
   if (!children || !React.Children.count(children)) {
     return null;
   }

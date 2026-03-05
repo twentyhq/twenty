@@ -1,10 +1,10 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
@@ -66,7 +66,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     selectableItemIds,
     isEmpty,
     hasSearchQuery,
-  } = useFilteredPickerItems({
+  } = useSidePanelFilteredPickerItems({
     items: viewsForSelectedObject,
     searchQuery: searchValue,
     getSearchableValues: (view) => [view.name],
@@ -90,7 +90,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   };
 
   return (
-    <CommandMenuSubViewWithSearch
+    <SidePanelSubViewWithSearch
       backBarTitle={backBarTitle}
       onBack={onBack}
       searchPlaceholder={t`Search a view...`}
@@ -107,7 +107,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
           >
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <div ref={innerRef} {...droppableProps}>
-              <CommandGroup heading={t`Views`}>
+              <SidePanelGroup heading={t`Views`}>
                 {filteredViews.map((view, index) => (
                   <SelectableListItem
                     key={view.id}
@@ -145,12 +145,12 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
                     />
                   </SelectableListItem>
                 ))}
-              </CommandGroup>
+              </SidePanelGroup>
               {placeholder}
             </div>
           </SidePanelList>
         )}
       </CommandMenuAddToNavDroppable>
-    </CommandMenuSubViewWithSearch>
+    </SidePanelSubViewWithSearch>
   );
 };
