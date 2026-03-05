@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { themeCssVariables } from '@ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 
 export enum ChipSize {
   Large = 'large',
@@ -197,7 +199,7 @@ export const Chip = ({
       maxWidth={maxWidth}
     >
       {leftComponent}
-      {!isLabelHidden && label && label.trim() ? (
+      {!isLabelHidden && isDefined(label) && isNonEmptyString(label) ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
         <StyledDiv>{emptyLabel}</StyledDiv>
