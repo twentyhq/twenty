@@ -1,8 +1,7 @@
 import { lazy, Suspense } from 'react';
-import { IconLink } from 'twenty-ui/display';
 
+import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
@@ -101,8 +100,7 @@ export const WorkspaceSectionItemContent = ({
         onClick={
           isNavigationMenuInEditMode ? editModeProps.onEditModeClick : undefined
         }
-        Icon={IconLink}
-        iconColor={getEffectiveNavigationMenuItemColor(linkItem) ?? undefined}
+        Icon={() => <NavigationMenuItemIcon navigationMenuItem={linkItem} />}
         active={false}
         isSelectedInEditMode={editModeProps.isSelectedInEditMode}
         isDragging={isDragging}

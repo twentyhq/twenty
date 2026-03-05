@@ -1,0 +1,115 @@
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import type { IconComponent } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { getLinkFaviconUrl } from '@/navigation-menu-item/utils/getLinkFaviconUrl';
+
+const StyledCompositeContainer = styled.div`
+  align-items: center;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  position: relative;
+  width: 16px;
+`;
+
+const StyledMainIconWrapper = styled.div<{
+  $backgroundColor: string;
+  $borderColor?: string;
+  $noBackgroundOrBorder?: boolean;
+}>`
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: ${({ $backgroundColor, $noBackgroundOrBorder }) =>
+    $noBackgroundOrBorder ? 'transparent' : $backgroundColor};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: ${({ $borderColor, $noBackgroundOrBorder }) =>
+    $noBackgroundOrBorder || !$borderColor
+      ? 'none'
+      : `1px solid ${$borderColor}`};
+  overflow: hidden;
+`;
+
+const StyledFaviconImage = styled.img`
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+`;
+
+const StyledLinkOverlay = styled.div<{ $backgroundColor: string }>`
+  align-items: center;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  border-radius: 4px;
+  bottom: -7px;
+  display: flex;
+  height: 14px;
+  justify-content: center;
+  position: absolute;
+  right: -7px;
+  width: 14px;
+`;
+
+export type LinkIconWithLinkOverlayProps = {
+  link: string | null | undefined;
+  LinkIcon: IconComponent;
+  DefaultIcon: IconComponent;
+  color?: string | null;
+};
+
+export const LinkIconWithLinkOverlay = ({
+  link,
+  LinkIcon,
+  DefaultIcon,
+  color: navItemColor,
+}: LinkIconWithLinkOverlayProps) => {
+  const { theme } = useContext(ThemeContext);
+  const [faviconFailed, setFaviconFailed] = useState(false);
+  const faviconUrl = getLinkFaviconUrl(link);
+  const showFavicon = isDefined(faviconUrl) && !faviconFailed;
+  const linkStyle = getNavigationMenuItemIconStyleFromColor(
+    theme,
+    navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
+  );
+
+  return (
+    <StyledCompositeContainer>
+      <StyledMainIconWrapper
+        $backgroundColor={linkStyle.backgroundColor}
+        $borderColor={linkStyle.borderColor}
+        $noBackgroundOrBorder={showFavicon}
+      >
+        {showFavicon ? (
+          <StyledFaviconImage
+            src={faviconUrl}
+            alt=""
+            onError={() => setFaviconFailed(true)}
+          />
+        ) : (
+          <DefaultIcon
+            size="14px"
+            stroke={theme.icon.stroke.md}
+            color={linkStyle.iconColor}
+          />
+        )}
+      </StyledMainIconWrapper>
+      <StyledLinkOverlay $backgroundColor={theme.grayScale.gray4}>
+        <LinkIcon
+          size="12px"
+          stroke={theme.icon.stroke.md}
+          color={theme.grayScale.gray10}
+        />
+      </StyledLinkOverlay>
+    </StyledCompositeContainer>
+  );
+};
