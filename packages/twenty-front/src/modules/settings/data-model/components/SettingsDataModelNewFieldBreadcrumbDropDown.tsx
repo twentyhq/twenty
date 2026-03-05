@@ -28,8 +28,10 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDownChevron = styled(IconChevronDown)`
+const StyledDownChevronContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   position: absolute;
   right: ${themeCssVariables.spacing['1.5']};
   top: 50%;
@@ -45,9 +47,11 @@ const StyledSpan = styled.span`
   margin-left: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButton = styled(Button)`
-  color: ${themeCssVariables.font.color.primary};
-  padding-right: ${themeCssVariables.spacing[6]};
+const StyledButtonWrapper = styled.div`
+  > button {
+    color: ${themeCssVariables.font.color.primary};
+    padding-right: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
@@ -87,11 +91,17 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron size={theme.icon.size.md} />
+            <StyledDownChevronContainer>
+              <IconChevronDown size={theme.icon.size.md} />
+            </StyledDownChevronContainer>
             {isConfigureStep ? (
-              <StyledButton variant="tertiary" title={t`2. Configure`} />
+              <StyledButtonWrapper>
+                <Button variant="tertiary" title={t`2. Configure`} />
+              </StyledButtonWrapper>
             ) : (
-              <StyledButton variant="tertiary" title={t`1. Type`} />
+              <StyledButtonWrapper>
+                <Button variant="tertiary" title={t`1. Type`} />
+              </StyledButtonWrapper>
             )}
           </StyledButtonContainer>
         }

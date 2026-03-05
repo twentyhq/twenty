@@ -24,12 +24,14 @@ const StyledWrapper = styled.nav`
   height: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledLink = styled(Link)`
-  color: inherit;
-  text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const StyledLinkContainer = styled.div`
+  > a {
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const StyledText = styled.span`
@@ -71,9 +73,11 @@ export const MobileBreadcrumb = ({
       ) : previousLink?.href ? (
         <>
           <IconChevronLeft size={theme.icon.size.md} />
-          <StyledLink title={text} to={previousLink.href}>
-            {t`Back to ${linkText}`}
-          </StyledLink>
+          <StyledLinkContainer>
+            <Link title={text} to={previousLink.href}>
+              {t`Back to ${linkText}`}
+            </Link>
+          </StyledLinkContainer>
         </>
       ) : (
         <StyledText title={text}>{previousLink?.children}</StyledText>

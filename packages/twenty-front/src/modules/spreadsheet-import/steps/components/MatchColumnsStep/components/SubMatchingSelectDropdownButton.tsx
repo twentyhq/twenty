@@ -13,8 +13,9 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-const StyledIconChevronDown = styled(IconChevronDown)`
+const StyledIconChevronDownContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export type SubMatchingSelectDropdownButtonProps = {
@@ -40,7 +41,9 @@ export const SubMatchingSelectDropdownButton = ({
         text={value?.label ?? placeholder}
         color={value?.color as TagColor}
       />
-      <StyledIconChevronDown size={theme.icon.size.md} />
+      <StyledIconChevronDownContainer>
+        <IconChevronDown size={theme.icon.size.md} />
+      </StyledIconChevronDownContainer>
     </SubMatchingSelectControlContainer>
   );
 };

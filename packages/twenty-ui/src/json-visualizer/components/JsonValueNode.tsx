@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListItem';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { themeCssVariables } from '@ui/theme-constants';
 
-const StyledListItem = styled(JsonListItem)`
+const StyledListItem = styled.li`
+  align-items: center;
   column-gap: ${themeCssVariables.spacing[2]};
+  display: flex;
+  list-style-type: none;
+  white-space: nowrap;
 `;
 
 type JsonValueNodeProps = {

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import React from 'react';
 import { IconChevronRight, Label } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -6,10 +7,16 @@ export const StyledText = styled.div`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
-export const StyledLabel = styled(Label)`
+const StyledLabelWrapper = styled.div`
   margin: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
     ${themeCssVariables.spacing[0]};
 `;
+
+export const StyledLabel = ({ children }: { children: React.ReactNode }) => (
+  <StyledLabelWrapper>
+    <Label>{children}</Label>
+  </StyledLabelWrapper>
+);
 
 export const StyledRow = styled.div<{ isDisabled?: boolean }>`
   align-items: center;
@@ -61,6 +68,18 @@ export const StyledIconContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-export const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightWrapper = styled.div`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: inline-flex;
 `;
+
+export const StyledIconChevronRight = ({
+  size,
+  color,
+  stroke,
+}: React.ComponentProps<typeof IconChevronRight>) => (
+  <StyledIconChevronRightWrapper>
+    <IconChevronRight size={size} color={color} stroke={stroke} />
+  </StyledIconChevronRightWrapper>
+);
