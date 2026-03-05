@@ -1,8 +1,8 @@
-import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { parseDropTargetIdToDestination } from '@/navigation-menu-item/utils/parseDropTargetIdToDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
+import { parseDropTargetIdToDestination } from '@/navigation-menu-item/utils/parseDropTargetIdToDestination';
 
 import { getDestinationFromSortableTarget } from '@/navigation/utils/workspaceDndKitGetDestinationFromSortableTarget';
 import type { ResolvedDropTarget } from '@/navigation/utils/workspaceDndKitResolvedDropTarget';
@@ -11,10 +11,6 @@ type GetNavItemById = (
   id: string | undefined,
 ) => NavigationMenuItem | undefined;
 
-/**
- * Resolves destination and drop target id from dnd-kit operation target.
- * Used by both handleDragOver (visuals) and handleDragEnd (apply drop).
- */
 export const resolveDropTarget = (
   target: { id?: unknown; group?: unknown; index?: unknown } | null,
   getNavItemById: GetNavItemById,
