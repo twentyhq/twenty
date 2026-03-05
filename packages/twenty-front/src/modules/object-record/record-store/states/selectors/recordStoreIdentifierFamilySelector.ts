@@ -8,7 +8,6 @@ import { uncapitalize } from 'twenty-shared/utils';
 type RecordStoreIdentifierFamilyKey = {
   recordId: string;
   allowRequestsToTwentyIcons: boolean;
-  isFilesFieldMigrated?: boolean;
 };
 
 export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
@@ -20,7 +19,6 @@ export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
     ({
       recordId,
       allowRequestsToTwentyIcons,
-      isFilesFieldMigrated,
     }: RecordStoreIdentifierFamilyKey) =>
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState, recordId);
@@ -42,7 +40,6 @@ export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
         objectMetadataItem: objectMetadataItem,
         record: recordFromStore,
         allowRequestsToTwentyIcons,
-        isFilesFieldMigrated,
       });
     },
 });

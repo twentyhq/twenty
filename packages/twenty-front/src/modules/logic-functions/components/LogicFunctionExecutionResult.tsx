@@ -8,11 +8,9 @@ import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
 export const LogicFunctionExecutionResult = ({
   logicFunctionTestData,
-  maxHeight,
   isTesting = false,
 }: {
   logicFunctionTestData: LogicFunctionTestData;
-  maxHeight?: number;
   isTesting?: boolean;
 }) => {
   const result =
@@ -39,10 +37,7 @@ export const LogicFunctionExecutionResult = ({
     <WorkflowStepExecutionResult
       result={result}
       language={logicFunctionTestData.language}
-      height={Math.min(
-        logicFunctionTestData.height,
-        maxHeight ?? logicFunctionTestData.height,
-      )}
+      height={150}
       status={status}
       isTesting={isTesting}
       loadingMessage={t`Running function`}

@@ -4,27 +4,54 @@ import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplay
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledWorkflowStepBody = styled.div`
+const StyledWorkflowStepBody = styled.div<{
+  rowGap?: string;
+  display?: string;
+  overflow?: string;
+  paddingBlock?: string;
+  paddingInline?: string;
+  gridTemplateRows?: string;
+}>`
   background: ${themeCssVariables.background.primary};
-  display: flex;
+  display: ${({ display }) => display ?? 'flex'};
   flex: 1 1 auto;
   flex-direction: column;
   height: 100%;
-  overflow-y: scroll;
-  padding-block: ${themeCssVariables.spacing[4]};
-  padding-inline: ${themeCssVariables.spacing[3]};
-  row-gap: ${themeCssVariables.spacing[4]};
+  overflow: ${({ overflow }) => overflow ?? 'hidden scroll'};
+  padding-block: ${({ paddingBlock }) =>
+    paddingBlock ?? themeCssVariables.spacing[4]};
+  padding-inline: ${({ paddingInline }) =>
+    paddingInline ?? themeCssVariables.spacing[3]};
+  row-gap: ${({ rowGap }) => rowGap ?? themeCssVariables.spacing[4]};
+  grid-template-rows: ${({ gridTemplateRows }) => gridTemplateRows ?? 'none'};
 `;
 
 export const WorkflowStepBody = ({
   children,
-  className,
+  rowGap,
+  display,
+  overflow,
+  paddingBlock,
+  paddingInline,
+  gridTemplateRows,
 }: {
   children: React.ReactNode;
-  className?: string;
+  rowGap?: string;
+  display?: string;
+  overflow?: string;
+  paddingBlock?: string;
+  paddingInline?: string;
+  gridTemplateRows?: string;
 }) => {
   return (
-    <StyledWorkflowStepBody className={className}>
+    <StyledWorkflowStepBody
+      rowGap={rowGap}
+      display={display}
+      overflow={overflow}
+      paddingBlock={paddingBlock}
+      paddingInline={paddingInline}
+      gridTemplateRows={gridTemplateRows}
+    >
       <AppErrorBoundary
         resetOnLocationChange={true}
         FallbackComponent={({

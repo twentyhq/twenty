@@ -9,12 +9,10 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
@@ -22,8 +20,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -48,7 +46,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
         WorkspaceDomainsModule,
         TwentyORMModule,
         UserRoleModule,
-        FileUploadModule,
         FileModule,
         TokenModule,
         PermissionsModule,
@@ -60,10 +57,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [
-    UserWorkspaceService,
-    UserWorkspaceResolver,
-    UploadProfilePicturePermissionGuard,
-  ],
+  providers: [UserWorkspaceService, UploadProfilePicturePermissionGuard],
 })
 export class UserWorkspaceModule {}

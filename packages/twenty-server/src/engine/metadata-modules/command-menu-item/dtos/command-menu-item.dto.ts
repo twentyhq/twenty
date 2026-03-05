@@ -61,6 +61,11 @@ export class CommandMenuItemDTO {
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalAvailabilityExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

@@ -11,6 +11,8 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { AppVersionCheckModule } from 'src/engine/core-modules/application/application-version-check/application-version-check.module';
+import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -60,6 +62,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     EventLogCleanupModule,
     EnterpriseModule,
     TwentyConfigModule,
+    MarketplaceModule,
+    AppVersionCheckModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

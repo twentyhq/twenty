@@ -73,6 +73,9 @@ export class AgentMessagePartDTO {
   @Field(() => String, { nullable: true })
   fileFilename: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  fileId: string | null;
+
   @Field(() => String, { nullable: true })
   fileUrl: string | null;
 

@@ -116,7 +116,7 @@ export class ClientService {
     await this.injectClientWrapper(join(tempPath, 'core'), {
       apiClientName: 'CoreApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: false,
+      includeUploadFile: true,
     });
 
     await this.injectClientWrapper(join(tempPath, 'metadata'), {

@@ -40,7 +40,6 @@ export type ModalHeaderProps = React.PropsWithChildren & {
   hasBorderBottom?: boolean;
   paddingHorizontal?: number;
   backgroundColor?: string;
-  className?: string;
 };
 
 export const ModalHeader = ({
@@ -50,7 +49,6 @@ export const ModalHeader = ({
   hasBorderBottom,
   paddingHorizontal,
   backgroundColor,
-  className,
 }: ModalHeaderProps) => (
   <StyledHeader
     noPadding={noPadding}
@@ -58,7 +56,6 @@ export const ModalHeader = ({
     hasBorderBottom={hasBorderBottom}
     paddingHorizontal={paddingHorizontal}
     backgroundColor={backgroundColor}
-    className={className}
   >
     {children}
   </StyledHeader>

@@ -5,6 +5,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -14,6 +15,7 @@ export type TextAreaProps = {
   textAreaId: string;
   label?: string;
   disabled?: boolean;
+  height?: number;
   minRows?: number;
   maxRows?: number;
   onChange?: (value: string) => void;
@@ -73,6 +75,7 @@ export const TextArea = ({
   textAreaId,
   label,
   disabled,
+  height,
   placeholder,
   minRows = 1,
   maxRows = MAX_ROWS,
@@ -126,6 +129,7 @@ export const TextArea = ({
         disabled={disabled}
         className={className}
         readOnly={readOnly}
+        style={isDefined(height) ? { height } : undefined}
       />
     </StyledContainer>
   );

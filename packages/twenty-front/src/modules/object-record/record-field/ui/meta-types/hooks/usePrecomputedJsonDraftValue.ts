@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { orderWorkflowRunState } from '@/object-record/record-field/ui/meta-types/utils/orderWorkflowRunState';
 import { useContext } from 'react';

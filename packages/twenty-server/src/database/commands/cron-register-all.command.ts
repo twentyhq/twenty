@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
+import { AppVersionCheckCronCommand } from 'src/engine/core-modules/application/application-version-check/crons/commands/app-version-check.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
@@ -56,6 +58,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
     private readonly enterpriseKeyValidationCronCommand: EnterpriseKeyValidationCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
+    private readonly appVersionCheckCronCommand: AppVersionCheckCronCommand,
   ) {
     super();
   }
@@ -63,85 +67,92 @@ export class CronRegisterAllCommand extends CommandRunner {
   async run(): Promise<void> {
     this.logger.log('Registering all background sync cron jobs...');
 
-    const commands: Array<{ name: string; command: { run(): Promise<void> } }> =
-      [
-        {
-          name: 'MessagingMessagesImport',
-          command: this.messagingMessagesImportCronCommand,
-        },
-        {
-          name: 'MessagingMessageListFetch',
-          command: this.messagingMessageListFetchCronCommand,
-        },
-        {
-          name: 'MessagingOngoingStale',
-          command: this.messagingOngoingStaleCronCommand,
-        },
-        {
-          name: 'MessagingRelaunchFailedMessageChannels',
-          command: this.messagingRelaunchFailedMessageChannelsCronCommand,
-        },
-        {
-          name: 'CalendarEventListFetch',
-          command: this.calendarEventListFetchCronCommand,
-        },
-        {
-          name: 'CalendarEventsImport',
-          command: this.calendarEventsImportCronCommand,
-        },
-        {
-          name: 'CalendarOngoingStale',
-          command: this.calendarOngoingStaleCronCommand,
-        },
-        {
-          name: 'CalendarRelaunchFailedCalendarChannels',
-          command: this.calendarRelaunchFailedCalendarChannelsCronCommand,
-        },
-        {
-          name: 'CheckCustomDomainValidRecords',
-          command: this.checkCustomDomainValidRecordsCronCommand,
-        },
-        {
-          name: 'CheckPublicDomainsValidRecords',
-          command: this.checkPublicDomainsValidRecordsCronCommand,
-        },
-        {
-          name: 'WorkflowCronTrigger',
-          command: this.workflowCronTriggerCronCommand,
-        },
-        {
-          name: 'WorkflowRunEnqueue',
-          command: this.workflowRunEnqueueCronCommand,
-        },
-        {
-          name: 'WorkflowHandleStaledRuns',
-          command: this.workflowHandleStaledRunsCronCommand,
-        },
-        {
-          name: 'WorkflowCleanWorkflowRuns',
-          command: this.workflowCleanWorkflowRunsCronCommand,
-        },
-        {
-          name: 'CronTrigger',
-          command: this.cronTriggerCronCommand,
-        },
-        {
-          name: 'CleanSuspendedWorkspaces',
-          command: this.cleanSuspendedWorkspacesCronCommand,
-        },
-        {
-          name: 'CleanOnboardingWorkspaces',
-          command: this.cleanOnboardingWorkspacesCronCommand,
-        },
-        {
-          name: 'TrashCleanup',
-          command: this.trashCleanupCronCommand,
-        },
-        {
-          name: 'EventLogCleanup',
-          command: this.eventLogCleanupCronCommand,
-        },
-      ];
+    const commands = [
+      {
+        name: 'MessagingMessagesImport',
+        command: this.messagingMessagesImportCronCommand,
+      },
+      {
+        name: 'MessagingMessageListFetch',
+        command: this.messagingMessageListFetchCronCommand,
+      },
+      {
+        name: 'MessagingOngoingStale',
+        command: this.messagingOngoingStaleCronCommand,
+      },
+      {
+        name: 'MessagingRelaunchFailedMessageChannels',
+        command: this.messagingRelaunchFailedMessageChannelsCronCommand,
+      },
+      {
+        name: 'CalendarEventListFetch',
+        command: this.calendarEventListFetchCronCommand,
+      },
+      {
+        name: 'CalendarEventsImport',
+        command: this.calendarEventsImportCronCommand,
+      },
+      {
+        name: 'CalendarOngoingStale',
+        command: this.calendarOngoingStaleCronCommand,
+      },
+      {
+        name: 'CalendarRelaunchFailedCalendarChannels',
+        command: this.calendarRelaunchFailedCalendarChannelsCronCommand,
+      },
+      {
+        name: 'CheckCustomDomainValidRecords',
+        command: this.checkCustomDomainValidRecordsCronCommand,
+      },
+      {
+        name: 'CheckPublicDomainsValidRecords',
+        command: this.checkPublicDomainsValidRecordsCronCommand,
+      },
+      {
+        name: 'WorkflowCronTrigger',
+        command: this.workflowCronTriggerCronCommand,
+      },
+      {
+        name: 'WorkflowRunEnqueue',
+        command: this.workflowRunEnqueueCronCommand,
+      },
+      {
+        name: 'WorkflowHandleStaledRuns',
+        command: this.workflowHandleStaledRunsCronCommand,
+      },
+      {
+        name: 'WorkflowCleanWorkflowRuns',
+        command: this.workflowCleanWorkflowRunsCronCommand,
+      },
+      {
+        name: 'CronTrigger',
+        command: this.cronTriggerCronCommand,
+      },
+      {
+        name: 'CleanSuspendedWorkspaces',
+        command: this.cleanSuspendedWorkspacesCronCommand,
+      },
+      {
+        name: 'CleanOnboardingWorkspaces',
+        command: this.cleanOnboardingWorkspacesCronCommand,
+      },
+      {
+        name: 'TrashCleanup',
+        command: this.trashCleanupCronCommand,
+      },
+      {
+        name: 'EventLogCleanup',
+        command: this.eventLogCleanupCronCommand,
+      },
+      {
+        name: 'MarketplaceCatalogSync',
+        command: this.marketplaceCatalogSyncCronCommand,
+      },
+      {
+        name: 'AppVersionCheck',
+        command: this.appVersionCheckCronCommand,
+      },
+    ];
 
     if (!this.twentyConfigService.isBillingEnabled()) {
       commands.push({

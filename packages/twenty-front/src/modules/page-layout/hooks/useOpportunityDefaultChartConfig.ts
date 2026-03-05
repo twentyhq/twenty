@@ -2,7 +2,7 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useOpportunityDefaultChartConfig = () => {

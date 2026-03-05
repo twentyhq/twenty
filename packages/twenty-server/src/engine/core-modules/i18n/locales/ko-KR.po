@@ -105,7 +105,7 @@ msgid "A required configuration is missing."
 msgstr "필수 설정이 누락되었습니다."
 
 #. js-lingui-id: FVCXUT
-#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
 msgstr ""
 
@@ -893,6 +893,12 @@ msgstr ""
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "관련 필드({fieldName})에서 상충되는 필드 권한이 감지되었습니다."
 
+#. js-lingui-id: xuYXJX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "Correct direction is required"
+msgstr ""
+
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
@@ -1291,6 +1297,8 @@ msgid "Field label identifier is required"
 msgstr "필드 라벨 식별자가 필요합니다"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -1858,6 +1866,16 @@ msgstr ""
 msgid "Invalid file ID."
 msgstr "잘못된 파일 ID입니다."
 
+#. js-lingui-id: +ECOke
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
+msgstr ""
+
+#. js-lingui-id: kFbvma
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
+msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
+msgstr ""
+
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 #: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
@@ -1869,6 +1887,26 @@ msgstr "잘못된 필터 매개변수입니다."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: +GVjEm
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires an array"
+msgstr ""
+
+#. js-lingui-id: 4eM03h
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
+msgstr ""
+
+#. js-lingui-id: Np9Fvw
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: exactly one operator per field is required"
+msgstr ""
+
+#. js-lingui-id: gdJXPD
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: filter value must be an object"
 msgstr ""
 
 #. js-lingui-id: rFH0az
@@ -2133,6 +2171,11 @@ msgstr "잘못된 검증 토큰입니다."
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
 msgstr ""
 
+#. js-lingui-id: XOA98j
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
+msgid "Invalid value for \"is\" operator"
+msgstr ""
+
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
@@ -2149,11 +2192,13 @@ msgid "Invalid value for currency."
 msgstr ""
 
 #. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
 msgstr ""
 
 #. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 msgstr ""
@@ -2194,6 +2239,7 @@ msgid "Invalid value for multi-select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
 msgstr ""
@@ -2219,11 +2265,13 @@ msgid "Invalid value for select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
@@ -2807,6 +2855,11 @@ msgstr "트리거 유형이 제공되지 않았습니다"
 msgid "No valid authentication context found."
 msgstr "유효한 인증 컨텍스트를 찾을 수 없습니다."
 
+#. js-lingui-id: AzXrd9
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "No workspace found with password auth enabled."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -3148,6 +3201,11 @@ msgstr ""
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
+msgstr ""
+
+#. js-lingui-id: cd6AP5
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
 msgstr ""
 
 #. js-lingui-id: wT0H4O
@@ -4314,6 +4372,7 @@ msgstr "사용자가 작업 공간에 속하지 않습니다"
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "User not found."
 msgstr "사용자를 찾을 수 없음."
 
@@ -4576,6 +4635,8 @@ msgstr "Kanban 집계 필드 메타데이터를 찾을 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -4598,6 +4659,57 @@ msgstr ""
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
 msgstr "뷰를 찾을 수 없음."
+
+#. js-lingui-id: ipFNcM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort already exists"
+msgstr ""
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util.ts
+msgid "View sort not found"
+msgstr ""
+
+#. js-lingui-id: k/ykpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to delete not found"
+msgstr ""
+
+#. js-lingui-id: wEyUsU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update not found"
+msgstr ""
+
+#. js-lingui-id: VXQpJ+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update parent view not found"
+msgstr ""
+
+#. js-lingui-id: RP+pKP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with id {flatViewSortId} already exists"
+msgstr ""
+
+#. js-lingui-id: InEqWf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction"
+msgstr ""
+
+#. js-lingui-id: ezJrlG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction, should be ASC or DESC"
+msgstr ""
+
+#. js-lingui-id: 9/BbL9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with same fieldMetadataId and viewId already exists"
+msgstr ""
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts

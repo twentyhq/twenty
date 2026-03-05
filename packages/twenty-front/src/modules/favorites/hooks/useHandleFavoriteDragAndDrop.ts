@@ -2,7 +2,7 @@ import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableI
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';

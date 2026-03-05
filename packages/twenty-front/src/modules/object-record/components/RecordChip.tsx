@@ -1,5 +1,5 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';

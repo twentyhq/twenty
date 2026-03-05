@@ -1,8 +1,15 @@
 import * as http from 'http';
 import * as https from 'https';
 
+import axiosRetry from 'axios-retry';
+
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+jest.mock('axios-retry', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 const createMockConfigService = (
   overrides: Record<string, unknown> = {},
@@ -80,6 +87,43 @@ describe('SecureHttpClientService', () => {
       });
 
       expect(client.defaults.baseURL).toBe('https://example.com/api');
+    });
+
+    it('should configure axios-retry when retries is greater than 0', () => {
+      jest.mocked(axiosRetry).mockClear();
+      const service = new SecureHttpClientService(createMockConfigService());
+      const client = service.getHttpClient({
+        retries: 2,
+        shouldResetTimeout: true,
+      });
+
+      expect(axiosRetry).toHaveBeenCalledWith(client, {
+        retries: 2,
+        shouldResetTimeout: true,
+        retryCondition: expect.any(Function),
+      });
+    });
+
+    it('should not configure axios-retry when retries is 0', () => {
+      jest.mocked(axiosRetry).mockClear();
+      const service = new SecureHttpClientService(createMockConfigService());
+
+      service.getHttpClient({ retries: 0 });
+
+      expect(axiosRetry).not.toHaveBeenCalled();
+    });
+
+    it('should not leak retry config into axios defaults', () => {
+      const service = new SecureHttpClientService(createMockConfigService());
+      const client = service.getHttpClient({
+        retries: 2,
+        shouldResetTimeout: true,
+        baseURL: 'https://example.com',
+      });
+
+      expect(client.defaults.baseURL).toBe('https://example.com');
+      expect(client.defaults).not.toHaveProperty('retries');
+      expect(client.defaults).not.toHaveProperty('shouldResetTimeout');
     });
   });
 

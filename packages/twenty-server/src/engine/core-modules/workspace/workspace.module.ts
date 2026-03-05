@@ -6,7 +6,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -17,8 +16,8 @@ import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -27,11 +26,11 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/workspace/crons/jobs/check-custom-domain-valid-records.cron.job';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
-import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
+import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -54,7 +53,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         BillingModule,
         FileModule,
         TokenModule,
-        FileUploadModule,
         NestjsQueryTypeOrmModule.forFeature([
           UserEntity,
           WorkspaceEntity,
