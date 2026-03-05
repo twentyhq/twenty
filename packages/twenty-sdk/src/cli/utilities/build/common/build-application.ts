@@ -17,7 +17,13 @@ import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/f
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import { copy, emptyDir, ensureDir, pathExists, pathExistsSync } from '@/cli/utilities/file/fs-utils';
+import {
+  copy,
+  emptyDir,
+  ensureDir,
+  pathExists,
+  pathExistsSync,
+} from '@/cli/utilities/file/fs-utils';
 
 export type AppBuildOptions = {
   appPath: string;

@@ -5,7 +5,12 @@ import { dirname, join, relative } from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 
-import { copy, ensureDir, pathExists, remove } from '@/cli/utilities/file/fs-utils';
+import {
+  copy,
+  ensureDir,
+  pathExists,
+  remove,
+} from '@/cli/utilities/file/fs-utils';
 
 export type AssetWatcherOptions = {
   appPath: string;

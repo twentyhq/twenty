@@ -2,7 +2,13 @@ import { appendFile, writeFile } from 'node:fs/promises';
 import { join } from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { emptyDir, ensureDir, move, pathExists, remove } from '@/cli/utilities/file/fs-utils';
+import {
+  emptyDir,
+  ensureDir,
+  move,
+  pathExists,
+  remove,
+} from '@/cli/utilities/file/fs-utils';
 import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import { generate } from '@genql/cli';
 import { DEFAULT_API_URL_NAME, GENERATED_DIR } from 'twenty-shared/application';

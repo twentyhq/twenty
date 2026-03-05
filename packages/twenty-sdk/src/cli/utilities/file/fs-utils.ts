@@ -64,11 +64,7 @@ export const move = async (src: string, dest: string): Promise<void> => {
   try {
     await fsRename(src, dest);
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      'code' in error &&
-      error.code === 'EXDEV'
-    ) {
+    if (error instanceof Error && 'code' in error && error.code === 'EXDEV') {
       await cp(src, dest, { recursive: true });
       await rm(src, { recursive: true, force: true });
     } else {
