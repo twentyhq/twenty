@@ -129,7 +129,7 @@ export class ApplicationInstallService {
     } finally {
       if (resolvedPackage) {
         await this.appPackageFetcherService.cleanupExtractedDir(
-          resolvedPackage.extractedDir,
+          resolvedPackage.cleanupDir,
         );
       }
     }

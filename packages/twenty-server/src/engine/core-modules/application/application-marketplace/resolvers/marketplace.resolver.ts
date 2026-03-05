@@ -4,6 +4,11 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import {
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { AppUpgradeService } from 'src/engine/core-modules/application/application-install/app-upgrade.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
@@ -43,6 +48,13 @@ export class MarketplaceResolver {
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
+
+    if (registration.sourceType !== AppRegistrationSourceType.NPM) {
+      throw new ApplicationRegistrationException(
+        `Only NPM apps can be installed via the marketplace`,
+        ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
+      );
+    }
 
     return this.applicationInstallService.installApplication({
       appRegistrationId: registration.id,

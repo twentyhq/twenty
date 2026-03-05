@@ -50,34 +50,39 @@ export class MarketplaceService {
         return [];
       }
 
-      return parsed.data.objects.map((result) => {
-        const { name, version, description, author, links } = result.package;
-        const twentyKeyword = (result.package.keywords ?? []).find((keyword) =>
-          keyword.startsWith('twenty-uid:'),
-        );
-        const universalIdentifier = isDefined(twentyKeyword)
-          ? twentyKeyword.replace('twenty-uid:', '')
-          : name;
+      return parsed.data.objects
+        .map((result) => {
+          const { name, version, description, author, links } = result.package;
+          const twentyKeyword = (result.package.keywords ?? []).find(
+            (keyword) => keyword.startsWith('twenty-uid:'),
+          );
 
-        return {
-          id: universalIdentifier,
-          name,
-          description: description ?? '',
-          icon: 'IconApps',
-          version,
-          author: author?.name ?? 'Unknown',
-          category: '',
-          screenshots: [],
-          aboutDescription: description ?? '',
-          providers: [],
-          websiteUrl: links?.homepage,
-          objects: [],
-          fields: [],
-          logicFunctions: [],
-          frontComponents: [],
-          sourcePackage: name,
-        };
-      });
+          if (!isDefined(twentyKeyword)) {
+            return null;
+          }
+
+          const universalIdentifier = twentyKeyword.replace('twenty-uid:', '');
+
+          return {
+            id: universalIdentifier,
+            name,
+            description: description ?? '',
+            icon: 'IconApps',
+            version,
+            author: author?.name ?? 'Unknown',
+            category: '',
+            screenshots: [],
+            aboutDescription: description ?? '',
+            providers: [],
+            websiteUrl: links?.homepage,
+            objects: [],
+            fields: [],
+            logicFunctions: [],
+            frontComponents: [],
+            sourcePackage: name,
+          };
+        })
+        .filter(isDefined);
     } catch (error) {
       this.logger.warn(
         `Failed to fetch apps from npm registry: ${error instanceof Error ? error.message : String(error)}`,

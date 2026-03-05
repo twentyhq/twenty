@@ -119,9 +119,14 @@ export class AppUpgradeService {
       const appName =
         appRegistration.sourcePackage ?? appRegistration.universalIdentifier;
 
-      // No rollback needed: manifest sync runs inside a transaction
+      this.logger.error(`Upgrade failed for ${appName}`, error);
+
+      if (error instanceof ApplicationException) {
+        throw error;
+      }
+
       throw new ApplicationException(
-        `Upgrade failed for ${appName}: ${error}`,
+        `Upgrade failed for ${appName}`,
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }

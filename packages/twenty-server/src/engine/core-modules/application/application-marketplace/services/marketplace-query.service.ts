@@ -24,6 +24,7 @@ export class MarketplaceQueryService {
   private readonly logger = new Logger(MarketplaceQueryService.name);
   private cachedApps: MarketplaceAppDTO[] | null = null;
   private cacheExpiresAt = 0;
+  private hasSyncBeenEnqueued = false;
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -42,13 +43,16 @@ export class MarketplaceQueryService {
     });
 
     if (registrations.length === 0) {
-      this.logger.log(
-        'No marketplace registrations found, enqueuing one-time sync job',
-      );
-      await this.messageQueueService.add(
-        MarketplaceCatalogSyncCronJob.name,
-        {},
-      );
+      if (!this.hasSyncBeenEnqueued) {
+        this.hasSyncBeenEnqueued = true;
+        this.logger.log(
+          'No marketplace registrations found, enqueuing one-time sync job',
+        );
+        await this.messageQueueService.add(
+          MarketplaceCatalogSyncCronJob.name,
+          {},
+        );
+      }
 
       return [];
     }
@@ -94,18 +98,33 @@ export class MarketplaceQueryService {
       `Creating new registration for npm package "${params.packageName}"`,
     );
 
-    const registration = this.appRegistrationRepository.create({
-      universalIdentifier: v4(),
-      name: params.packageName,
-      sourceType: AppRegistrationSourceType.NPM,
-      sourcePackage: params.packageName,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
+    try {
+      const registration = this.appRegistrationRepository.create({
+        universalIdentifier: v4(),
+        name: params.packageName,
+        sourceType: AppRegistrationSourceType.NPM,
+        sourcePackage: params.packageName,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: params.ownerWorkspaceId,
+      });
 
-    return this.appRegistrationRepository.save(registration);
+      return await this.appRegistrationRepository.save(registration);
+    } catch {
+      const concurrentlyCreated = await this.appRegistrationRepository.findOne({
+        where: { sourcePackage: params.packageName },
+      });
+
+      if (isDefined(concurrentlyCreated)) {
+        return concurrentlyCreated;
+      }
+
+      throw new ApplicationRegistrationException(
+        `Failed to create registration for package "${params.packageName}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
   }
 
   toMarketplaceAppDTO(

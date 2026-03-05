@@ -31,6 +31,7 @@ const RESOLUTION_TIMEOUT_MS = 30_000;
 
 export type ResolvedPackage = {
   extractedDir: string;
+  cleanupDir: string;
   manifest: Manifest;
   packageJson: PackageJson;
 };
@@ -117,7 +118,12 @@ export class AppPackageFetcherService implements OnModuleInit {
         'package.json',
       );
 
-      return { extractedDir: workDir, manifest, packageJson };
+      return {
+        extractedDir: packageDir,
+        cleanupDir: workDir,
+        manifest,
+        packageJson,
+      };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
       throw new ApplicationException(
@@ -157,7 +163,12 @@ export class AppPackageFetcherService implements OnModuleInit {
         'package.json',
       );
 
-      return { extractedDir: workDir, manifest, packageJson };
+      return {
+        extractedDir: contentDir,
+        cleanupDir: workDir,
+        manifest,
+        packageJson,
+      };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
 
