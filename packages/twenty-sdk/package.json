@@ -98,7 +98,6 @@
     "@prettier/sync": "^0.5.2",
     "@storybook/addon-vitest": "^10.2.13",
     "@storybook/react-vite": "^10.2.13",
-    "@types/fs-extra": "^11.0.0",
     "@types/inquirer": "^9.0.0",
     "@types/node": "^24.0.0",
     "@types/react": "18.2.66",
