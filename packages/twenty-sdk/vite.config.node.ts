@@ -53,16 +53,6 @@ export default defineConfig(() => {
             return true;
           }
 
-          const cjsOnlyPackages = ['archiver'];
-
-          if (
-            cjsOnlyPackages.some(
-              (pkg) => id === pkg || id.startsWith(pkg + '/'),
-            )
-          ) {
-            return false;
-          }
-
           const deps = Object.keys(
             (packageJson as PackageJson).dependencies || {},
           );
