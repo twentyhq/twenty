@@ -180,6 +180,12 @@ export class WorkspaceMigrationRunnerService {
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
       getMetadataFlatEntityMapsKey,
     );
+    // Only invalidate caches for the directly mutated entity types, not all
+    // related/validation types. This prevents unnecessary full-table reloads
+    // and the legacy metadata version increment cascade for e.g. view field updates.
+    const mutatedFlatEntityMapsKeys = actionMetadataNames.map(
+      getMetadataFlatEntityMapsKey,
+    );
 
     let allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
@@ -247,7 +253,7 @@ export class WorkspaceMigrationRunnerService {
       this.logger.timeEnd('Runner', 'Transaction execution');
 
       await this.invalidateCache({
-        allFlatEntityMapsKeys,
+        allFlatEntityMapsKeys: mutatedFlatEntityMapsKeys,
         workspaceId,
       });
 
