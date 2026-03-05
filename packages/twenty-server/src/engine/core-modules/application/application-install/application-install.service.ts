@@ -12,9 +12,9 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  AppPackageResolverService,
+  AppPackageFetcherService,
   type ResolvedPackage,
-} from 'src/engine/core-modules/application/application-install/app-package-resolver.service';
+} from 'src/engine/core-modules/application/application-install/app-package-fetcher.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -45,7 +45,7 @@ export class ApplicationInstallService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly appPackageResolverService: AppPackageResolverService,
+    private readonly appPackageFetcherService: AppPackageFetcherService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
@@ -88,7 +88,7 @@ export class ApplicationInstallService {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
-      resolvedPackage = await this.appPackageResolverService.resolvePackage(
+      resolvedPackage = await this.appPackageFetcherService.resolvePackage(
         appRegistration,
         { targetVersion: params.version },
       );
@@ -128,7 +128,7 @@ export class ApplicationInstallService {
       throw error;
     } finally {
       if (resolvedPackage) {
-        await this.appPackageResolverService.cleanupExtractedDir(
+        await this.appPackageFetcherService.cleanupExtractedDir(
           resolvedPackage.extractedDir,
         );
       }

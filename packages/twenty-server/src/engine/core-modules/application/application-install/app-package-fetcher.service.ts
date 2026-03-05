@@ -26,7 +26,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const execFilePromise = promisify(execFile);
 
-const APP_RESOLVER_TMPDIR = join(tmpdir(), 'twenty-app-resolver');
+const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
 
 export type ResolvedPackage = {
@@ -36,8 +36,8 @@ export type ResolvedPackage = {
 };
 
 @Injectable()
-export class AppPackageResolverService implements OnModuleInit {
-  private readonly logger = new Logger(AppPackageResolverService.name);
+export class AppPackageFetcherService implements OnModuleInit {
+  private readonly logger = new Logger(AppPackageFetcherService.name);
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -46,7 +46,7 @@ export class AppPackageResolverService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     try {
-      await fs.rm(APP_RESOLVER_TMPDIR, { recursive: true, force: true });
+      await fs.rm(APP_FETCHER_TMPDIR, { recursive: true, force: true });
     } catch {
       // best-effort cleanup of stale temp files from previous runs
     }
@@ -78,7 +78,7 @@ export class AppPackageResolverService implements OnModuleInit {
     appRegistration: ApplicationRegistrationEntity,
     targetVersion?: string,
   ): Promise<ResolvedPackage> {
-    const workDir = join(APP_RESOLVER_TMPDIR, v4());
+    const workDir = join(APP_FETCHER_TMPDIR, v4());
 
     await fs.mkdir(workDir, { recursive: true });
 
@@ -130,7 +130,7 @@ export class AppPackageResolverService implements OnModuleInit {
   private async resolveFromTarball(
     appRegistration: ApplicationRegistrationEntity,
   ): Promise<ResolvedPackage> {
-    const workDir = join(APP_RESOLVER_TMPDIR, v4());
+    const workDir = join(APP_FETCHER_TMPDIR, v4());
 
     await fs.mkdir(workDir, { recursive: true });
 
