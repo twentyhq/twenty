@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -18,7 +18,7 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -32,6 +32,7 @@ const StyledAnimatedContainer = styled.div<{
   isExpanded: boolean;
   isResizing: boolean;
 }>`
+  height: 100vh;
   max-height: 100vh;
   overflow: hidden;
   position: relative;
@@ -39,8 +40,10 @@ const StyledAnimatedContainer = styled.div<{
     isExpanded
       ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})`
       : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
-  transition: ${({ isResizing, theme }) =>
-    isResizing ? 'none' : `width ${theme.animation.duration.normal}s`};
+  transition: ${({ isResizing }) =>
+    isResizing
+      ? 'none'
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: ${({ isExpanded }) => (isExpanded ? '100%' : '0')};
@@ -57,18 +60,18 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${({ theme, isSettings, isMobile }) =>
+  padding: ${({ isSettings, isMobile }) =>
     isSettings
       ? isMobile
-        ? theme.spacing(3, 0, 0, 8)
-        : theme.spacing(3, 0, 4, 0)
-      : theme.spacing(3, 0, 4, 2)};
+        ? `${themeCssVariables.spacing[3]} 0 0 ${themeCssVariables.spacing[8]}`
+        : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} 0`
+      : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    padding-left: ${({ theme }) => theme.spacing(5)};
-    padding-right: ${({ theme }) => theme.spacing(5)};
+    padding-left: ${themeCssVariables.spacing[5]};
+    padding-right: ${themeCssVariables.spacing[5]};
   }
 `;
 

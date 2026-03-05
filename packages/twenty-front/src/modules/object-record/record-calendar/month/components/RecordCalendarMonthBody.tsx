@@ -1,12 +1,13 @@
 import { RecordCalendarMonthBodyWeek } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyWeek';
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 4px;
   overflow: hidden;
 `;

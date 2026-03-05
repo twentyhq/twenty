@@ -5,10 +5,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type ThemeColor, ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-
+import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorGradientOptionProps = {
   colorOption: {
     id: string;
@@ -33,8 +31,8 @@ export const ChartColorGradientOption = ({
   onSelectColor,
 }: ChartColorGradientOptionProps) => {
   const colorName = colorOption.colorName as ThemeColor;
-  const { theme } = useContext(ThemeContext);
-  const colorRegistry = createGraphColorRegistry(theme);
+
+  const colorRegistry = createGraphColorRegistry();
 
   const colorSamples = (
     <StyledColorSamplesContainer>

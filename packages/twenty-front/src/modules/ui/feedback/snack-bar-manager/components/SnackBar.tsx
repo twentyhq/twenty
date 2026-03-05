@@ -19,8 +19,11 @@ import {
 } from 'twenty-ui/display';
 import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -154,8 +157,8 @@ export const SnackBar = ({
   role = 'status',
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
-  const { theme } = useContext(ThemeContext);
   const { i18n, t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
       autoPlay: isUndefined(overrideProgressValue),
@@ -197,7 +200,7 @@ export const SnackBar = ({
           <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
         );
     }
-  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant, i18n]);
+  }, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
 
   const handleMouseEnter = () => {
     if (progressAnimation?.state === 'running') {

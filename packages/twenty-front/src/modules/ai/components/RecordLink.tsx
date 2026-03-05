@@ -1,5 +1,6 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarOrIcon, ChipVariant, LinkChip } from 'twenty-ui/components';
@@ -15,9 +16,13 @@ export const RecordLink = ({
   recordId,
   displayName,
 }: RecordLinkProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
+    },
+  );
 
   if (!objectMetadataItem || !isNonEmptyString(recordId)) {
     return <span>{displayName}</span>;

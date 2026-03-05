@@ -1,7 +1,8 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconReload, IconX } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedRotate } from 'twenty-ui/utilities';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
@@ -10,15 +11,15 @@ const StyledOverridableCheckboxContainer = styled.div`
   align-items: center;
   display: inline-flex;
   justify-content: flex-start;
-  width: ${({ theme }) => theme.icon.size.xl * 2}px;
+  width: calc(${themeCssVariables.icon.size.xl} * 2);
 `;
 
 const StyledOverridableCheckboxContainerItem = styled.div`
   align-items: center;
   display: flex;
-  height: ${({ theme }) => theme.icon.size.xl}px;
+  height: ${themeCssVariables.icon.size.xl};
   justify-content: center;
-  width: ${({ theme }) => theme.icon.size.xl}px;
+  width: ${themeCssVariables.icon.size.xl};
 `;
 
 const StyledIconWrapper = styled.div<{
@@ -46,7 +47,7 @@ export const OverridableCheckbox = ({
   checked,
   disabled,
 }: OverridableCheckboxProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledOverridableCheckboxContainer>

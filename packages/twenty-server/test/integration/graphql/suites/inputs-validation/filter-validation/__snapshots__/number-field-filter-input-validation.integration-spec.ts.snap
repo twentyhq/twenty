@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - NUMBER Gql filter input - failure NUMBER field type - should fail with filter : {"numberField":{"eq":"not-a-number"}} 1`] = `"Float cannot represent non numeric value: "not-a-number""`;
+
+exports[`Filter input validation - NUMBER Gql filter input - failure NUMBER field type - should fail with filter : {"numberField":{"eq":[]}} 1`] = `"Float cannot represent non numeric value: []"`;
+
+exports[`Filter input validation - NUMBER Gql filter input - failure NUMBER field type - should fail with filter : {"numberField":{"eq":{}}} 1`] = `"Float cannot represent non numeric value: {}"`;
+
+exports[`Filter input validation - NUMBER Gql filter input - failure NUMBER field type - should fail with filter : {"numberField":{"eq":true}} 1`] = `"Float cannot represent non numeric value: true"`;
+
+exports[`Filter input validation - NUMBER Rest filter input - failure NUMBER field type - should fail with filter : "numberField[eq]:\\"[]\\"" 1`] = `
+[
+  "Invalid number value NaN for field "numberField"",
+]
+`;
+
+exports[`Filter input validation - NUMBER Rest filter input - failure NUMBER field type - should fail with filter : "numberField[eq]:\\"{}\\"" 1`] = `
+[
+  "Invalid number value NaN for field "numberField"",
+]
+`;
+
+exports[`Filter input validation - NUMBER Rest filter input - failure NUMBER field type - should fail with filter : "numberField[eq]:\\"not-a-number\\"" 1`] = `
+[
+  "Invalid number value NaN for field "numberField"",
+]
+`;
+
+exports[`Filter input validation - NUMBER Rest filter input - failure NUMBER field type - should fail with filter : "numberField[eq]:\\"true\\"" 1`] = `
+[
+  "Invalid number value NaN for field "numberField"",
+]
+`;

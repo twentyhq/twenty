@@ -10,16 +10,16 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
@@ -43,7 +43,7 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
   flex-wrap: wrap;
   width: 100%;
@@ -53,7 +53,7 @@ const StyledCardContainer = styled.div`
   display: flex;
 
   position: relative;
-  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+  width: calc(50% - ${themeCssVariables.spacing[1]});
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
@@ -64,7 +64,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -132,8 +132,6 @@ export const SettingsObjectNewFieldSelector = ({
                 <StyledContainer>
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
-                    // by default, we hide the relation type and create only the morph relation type
-                    // on submit the new field, we choose the relation type based on the amount of target object
                     .filter(([key]) => key !== FieldMetadataType.RELATION)
                     .map(
                       ([key, config]) =>

@@ -1,12 +1,11 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { useContext } from 'react';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { motion } from 'framer-motion';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CardContent } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarDayCardContentProps = {
@@ -14,18 +13,13 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContentBase = styled.div<{ divider?: boolean }>`
+const StyledCardContent = styled(CardContent)`
   align-items: flex-start;
-  background-color: ${themeCssVariables.background.secondary};
-  border-bottom: ${({ divider }) =>
-    divider ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
-
-const StyledCardContent = motion.create(StyledCardContentBase);
 
 const StyledDayContainer = styled.div`
   text-align: center;
@@ -59,7 +53,6 @@ export const CalendarDayCardContent = ({
   divider,
 }: CalendarDayCardContentProps) => {
   const { theme } = useContext(ThemeContext);
-
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
@@ -68,7 +61,9 @@ export const CalendarDayCardContent = ({
 
   const upcomingDayCardContentVariants = {
     upcoming: {},
-    ended: { backgroundColor: theme.background.primary },
+    ended: {
+      backgroundColor: theme.background.primary,
+    },
   };
 
   return (

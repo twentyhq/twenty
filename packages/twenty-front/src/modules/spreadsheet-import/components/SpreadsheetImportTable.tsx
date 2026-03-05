@@ -2,10 +2,8 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { type DataGridProps } from 'react-data-grid';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${themeCssVariables.background.primary};
@@ -38,12 +36,10 @@ const StyledDataGrid = styled(DataGrid)`
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.semiBold};
     letter-spacing: wider;
-    ${({ headerRowHeight }) =>
+    border-bottom: ${({ headerRowHeight }) =>
       headerRowHeight === 0
-        ? `
-          border: none;
-        `
-        : ''};
+        ? 'none'
+        : `1px solid ${themeCssVariables.border.color.medium}`};
   }
 
   .rdg-cell {
@@ -134,9 +130,10 @@ export const SpreadsheetImportTable = <Data,>({
   onSelectedRowsChange,
   selectedRows,
 }: SpreadsheetImportTableProps<Data>) => {
+  const { colorScheme } = useContext(ThemeContext);
+
   const { rtl } = useSpreadsheetImportInternal();
-  const { theme } = useContext(ThemeContext);
-  const themeClassName = theme.name === 'dark' ? 'rdg-dark' : 'rdg-light';
+  const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
   if (!rows?.length || !columns?.length) return null;
 

@@ -1,11 +1,12 @@
 import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/display';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const OBJECT_DROPDOWN_WIDTH = 240;
 const ACTION_DROPDOWN_WIDTH = 240;
@@ -18,14 +19,14 @@ const StyledFilterRow = styled.div<{ isMobile: boolean }>`
     isMobile
       ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
       : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   align-items: center;
 `;
 
 const StyledPlaceholder = styled.div`
-  height: ${({ theme }) => theme.spacing(8)};
-  width: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
 `;
 
 export const SettingsDatabaseEventsForm = ({

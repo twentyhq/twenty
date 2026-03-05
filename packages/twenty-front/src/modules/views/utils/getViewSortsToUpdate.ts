@@ -1,18 +1,18 @@
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
 import { isDefined } from 'twenty-shared/utils';
+import { type ViewSort } from '@/views/types/ViewSort';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const getViewSortsToUpdate = (
-  currentViewSorts: Pick<
-    CoreViewSortEssential,
-    'fieldMetadataId' | 'direction'
-  >[],
-  newViewSorts: CoreViewSortEssential[],
+  currentViewSorts: ViewSort[],
+  newViewSorts: ViewSort[],
 ) => {
   return newViewSorts.filter((newViewSort) => {
-    const correspondingViewSort = currentViewSorts.find(
-      (currentViewSort) =>
-        currentViewSort.fieldMetadataId === newViewSort.fieldMetadataId,
+    const correspondingViewSort = currentViewSorts.find((currentViewSort) =>
+      compareStrictlyExceptForNullAndUndefined(
+        currentViewSort.id,
+        newViewSort.id,
+      ),
     );
 
     if (!isDefined(correspondingViewSort)) {

@@ -7,14 +7,14 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useId } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useId } from 'react';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -22,15 +22,11 @@ const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
-const StyledSettingsCardToggleButton = styled(Toggle)<{
-  toggleCentered?: boolean;
-}>`
-  align-self: ${({ toggleCentered }) =>
-    toggleCentered ? 'center' : 'flex-start'};
+const StyledSettingsCardToggleButton = styled(Toggle)`
   flex-shrink: 0;
   margin-left: auto;
 `;
@@ -64,7 +60,7 @@ export const SettingsOptionCardContentToggle = ({
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const toggleId = useId();
 
   return (
@@ -95,7 +91,7 @@ export const SettingsOptionCardContentToggle = ({
           disabled={disabled}
           toggleSize="small"
           color={advancedMode ? theme.color.yellow : theme.color.blue}
-          toggleCentered={toggleCentered}
+          centered={toggleCentered}
         />
       </StyledSettingsCardToggleContent>
       {divider && <Separator />}

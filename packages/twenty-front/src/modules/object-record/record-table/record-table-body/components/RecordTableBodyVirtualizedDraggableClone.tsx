@@ -1,5 +1,5 @@
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { getRecordTableColumnWidthInlineStyles } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/HorizontalScrollBoxShadowCSS';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -24,25 +24,47 @@ import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/rec
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-// TODO: see how we can merge this with RecordTableStyleWrapper,
-// because we have not decided a strategy for sharing CSS bits yet
-const StyledRowDraggableCloneCSSBridge = styled.div<{
-  visibleRecordFields: RecordField[];
-  lastColumnWidth: number;
-}>`
+const MAX_COLUMNS = 100;
+
+const cloneColumnFieldWidthRules = Array.from(
+  { length: MAX_COLUMNS },
+  (_, i) => {
+    const className = getRecordTableColumnFieldWidthClassName(i);
+    const cssVar = `var(--record-table-column-field-${i})`;
+    const baseRule = `div.${className} {
+    width: ${cssVar};
+    min-width: ${cssVar};
+    max-width: ${cssVar};
+  }`;
+
+    if (i === 0) {
+      return `${baseRule}
+  div.${className} {
+    @media (max-width: ${MOBILE_VIEWPORT}px) {
+      width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+    }
+  }`;
+    }
+
+    return baseRule;
+  },
+).join('\n');
+
+const StyledRowDraggableCloneCSSBridge = styled.div`
   div.table-cell:nth-of-type(1) {
     position: sticky;
     left: 0px;
@@ -90,38 +112,7 @@ const StyledRowDraggableCloneCSSBridge = styled.div<{
     max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
-  ${({ visibleRecordFields, lastColumnWidth }) => {
-    let returnedCSS = '';
-
-    for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `--record-table-column-field-${i}: ${visibleRecordFields[i].size}px; \n`;
-    }
-
-    for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
-        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-      } \n`;
-
-      const isLabelIdentifierColumn = i === 0;
-
-      if (isLabelIdentifierColumn) {
-        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
-          @media (max-width: ${MOBILE_VIEWPORT}px) {
-            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-          }
-        } \n`;
-      }
-    }
-
-    returnedCSS += `${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
-    returnedCSS += `${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
-
-    return returnedCSS;
-  }};
+  ${cloneColumnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});
@@ -145,8 +136,6 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 }) => {
   const realIndex = rubric.source.index;
 
-  const theme = useTheme();
-
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
@@ -158,15 +147,23 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
+  const columnWidthStyles = useMemo(() => {
+    const styles: Record<string, string> =
+      getRecordTableColumnWidthInlineStyles(visibleRecordFields);
+    styles[RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME] =
+      `${lastColumnWidth}px`;
+    styles[
+      RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME
+    ] = `${lastColumnWidth}px`;
+    return styles;
+  }, [visibleRecordFields, lastColumnWidth]);
+
   if (!isDefined(recordId)) {
     return null;
   }
 
   return (
-    <StyledRowDraggableCloneCSSBridge
-      lastColumnWidth={lastColumnWidth}
-      visibleRecordFields={visibleRecordFields}
-    >
+    <StyledRowDraggableCloneCSSBridge style={columnWidthStyles}>
       <RecordTableTr
         recordId={recordId}
         focusIndex={realIndex}
@@ -176,10 +173,10 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
         style={{
           ...draggableProvided.draggableProps.style,
           background: draggableSnapshot.isDragging
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : undefined,
           borderColor: draggableSnapshot.isDragging
-            ? `${theme.border.color.medium}`
+            ? themeCssVariables.border.color.medium
             : 'transparent',
           opacity: isSecondaryDragged ? 0.3 : undefined,
         }}

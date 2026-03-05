@@ -11,7 +11,7 @@ import {
 
 import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -50,6 +50,7 @@ export type MenuItemProps = {
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
   focused?: boolean;
+  selected?: boolean;
   hotKeys?: string[];
   isSubMenuOpened?: boolean;
 };
@@ -80,6 +81,7 @@ export const MenuItem = ({
   hasSubMenu = false,
   disabled = false,
   focused = false,
+  selected = false,
   hotKeys,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
@@ -104,7 +106,7 @@ export const MenuItem = ({
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      focused={focused}
+      focused={focused || selected}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}
@@ -132,7 +134,9 @@ export const MenuItem = ({
         {hasSubMenu && !disabled && (
           <StyledSubMenuIcon
             animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
           >
             <IconChevronRight
               size={theme.icon.size.sm}

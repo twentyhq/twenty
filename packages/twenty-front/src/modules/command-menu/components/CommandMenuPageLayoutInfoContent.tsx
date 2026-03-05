@@ -18,8 +18,7 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 export const CommandMenuPageLayoutInfoContent = ({
   pageLayoutId,
 }: {

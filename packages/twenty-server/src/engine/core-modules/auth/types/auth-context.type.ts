@@ -1,13 +1,16 @@
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+export { AUTH_CONTEXT_USER_SELECT_FIELDS } from 'src/engine/core-modules/auth/constants/auth-context-user-select-fields.constants';
+export { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
+
 export type RawAuthContext = {
-  user?: UserEntity | null | undefined;
+  user?: AuthContextUser | null | undefined;
   apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
   workspaceMember?: WorkspaceMemberWorkspaceEntity;

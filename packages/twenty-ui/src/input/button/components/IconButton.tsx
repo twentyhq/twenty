@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { GRAY_SCALE_LIGHT, ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
 import React, { useContext, useMemo } from 'react';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -79,7 +78,7 @@ const computeIconButtonDynamicStyles = (
             boxShadow: focusOverride
               ? `0 0 0 3px ${themeCssVariables.accent.tertiary}`
               : 'none',
-            color: GRAY_SCALE_LIGHT.gray1,
+            color: themeCssVariables.grayScale.gray1,
             opacity: disabled ? 0.24 : 1,
             hoverBackground: disabled
               ? themeCssVariables.color.blue
@@ -100,7 +99,7 @@ const computeIconButtonDynamicStyles = (
             boxShadow: focusOverride
               ? `0 0 0 3px ${themeCssVariables.color.red3}`
               : 'none',
-            color: GRAY_SCALE_LIGHT.gray1,
+            color: themeCssVariables.grayScale.gray1,
             opacity: disabled ? 0.24 : 1,
             hoverBackground: disabled
               ? themeCssVariables.color.red
@@ -292,6 +291,7 @@ export const IconButton = ({
   to,
 }: IconButtonProps) => {
   const { theme } = useContext(ThemeContext);
+
   const dynamicStyles = useMemo(() => {
     const styles = computeIconButtonDynamicStyles(
       variant,

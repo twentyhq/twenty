@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -13,6 +12,8 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {
@@ -27,27 +28,28 @@ type SettingsDataModelFieldPreviewProps = {
 
 const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   height: fit-content;
   line-height: 24px;
   overflow: hidden;
   padding: 0
-    ${({ shrink, theme }) => (shrink ? theme.spacing(1) : theme.spacing(2))};
+    ${({ shrink }) =>
+      shrink ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
   white-space: nowrap;
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldLabel = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsDataModelFieldPreview = ({
@@ -56,12 +58,12 @@ export const SettingsDataModelFieldPreview = ({
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
-  const theme = useTheme();
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
       objectNameSingular: objectNameSingular,
     });
 
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 

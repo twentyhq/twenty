@@ -7,9 +7,7 @@ import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -44,17 +42,12 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
     color: ${themeCssVariables.font.color.tertiary};
   }
 
-  ${({ withPicture, disabled }) => {
-    if ((withPicture || disabled) === true) {
-      return '';
-    }
-
-    return `
-      &:hover {
-        background: ${themeCssVariables.background.transparent.medium};
-      }
-    `;
-  }};
+  &:hover {
+    background: ${({ withPicture, disabled }) =>
+      withPicture || disabled
+        ? 'transparent'
+        : themeCssVariables.background.transparent.medium};
+  }
 `;
 
 const StyledContent = styled.div`

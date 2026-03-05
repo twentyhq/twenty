@@ -195,7 +195,7 @@ export const SettingsAdminConfigVariableDetails = () => {
       </SubMenuTopBarContainer>
 
       <ConfirmationModal
-        modalId={RESET_VARIABLE_MODAL_ID}
+        modalInstanceId={RESET_VARIABLE_MODAL_ID}
         title={t`Reset variable`}
         subtitle={t`This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings.`}
         onConfirmClick={handleConfirmReset}

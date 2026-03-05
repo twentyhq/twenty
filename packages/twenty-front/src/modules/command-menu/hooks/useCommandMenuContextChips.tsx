@@ -1,29 +1,22 @@
+import { CommandMenuContextChipIconWrapper } from '@/command-menu/components/CommandMenuContextChipIconWrapper';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { styled } from '@linaria/react';
-import { useContext, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
-const StyledIconWrapper = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+import { useContext, useMemo } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
+  const { theme } = useContext(ThemeContext);
+  const iconSizeSm = theme.icon.size.sm;
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
@@ -35,8 +28,6 @@ export const useCommandMenuContextChips = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
-
-  const { theme } = useContext(ThemeContext);
 
   const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
@@ -120,19 +111,19 @@ export const useCommandMenuContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [<page.pageIcon size={theme.icon.size.sm} />]
+            ? [<page.pageIcon size={iconSizeSm} />]
             : [
-                <StyledIconWrapper>
+                <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
-                    size={theme.icon.size.sm}
+                    size={iconSizeSm}
                     color={
                       isDefined(page.pageIconColor) &&
                       page.pageIconColor !== 'currentColor'
                         ? page.pageIconColor
-                        : theme.font.color.tertiary
+                        : themeCssVariables.font.color.tertiary
                     }
                   />
-                </StyledIconWrapper>,
+                </CommandMenuContextChipIconWrapper>,
               ],
           text: page.pageTitle,
           onClick: isLastChip
@@ -146,12 +137,11 @@ export const useCommandMenuContextChips = () => {
   }, [
     commandMenuNavigationMorphItemsByPage,
     commandMenuNavigationStack,
+    iconSizeSm,
     navigateCommandMenuHistory,
     objectMetadataItems,
     recordIdentifiers,
     records,
-    theme.font.color.tertiary,
-    theme.icon.size.sm,
   ]);
 
   return {

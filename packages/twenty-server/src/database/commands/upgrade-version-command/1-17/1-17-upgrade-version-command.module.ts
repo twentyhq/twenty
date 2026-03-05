@@ -11,7 +11,6 @@ import { MigrateDateTimeIsFilterValuesCommand } from 'src/database/commands/upgr
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
-import { SeedWorkflowV1_16Command } from 'src/database/commands/upgrade-version-command/1-17/1-17-seed-workflow-v1-16.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -76,7 +75,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     DeleteFileRecordsAndUpdateTableCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateDateTimeIsFilterValuesCommand,
-    SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
   ],
   exports: [
@@ -89,7 +87,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     MigrateSendEmailRecipientsCommand,
     MigrateDateTimeIsFilterValuesCommand,
     DeleteFileRecordsAndUpdateTableCommand,
-    SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
   ],
 })

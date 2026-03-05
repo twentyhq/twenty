@@ -9,11 +9,11 @@ import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
@@ -25,8 +25,8 @@ export const StyledObjectFieldTableRow = styled(TableRow)`
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNameLabel = styled.div`
@@ -53,7 +53,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     roleId,
     isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
-    const theme = useTheme();
+    const { theme } = useContext(ThemeContext);
     const { getIcon } = useIcons();
     const Icon = getIcon(fieldMetadataItem.icon);
 
@@ -160,7 +160,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         <StyledNameTableCell>
           {!!Icon && (
             <Icon
-              style={{ minWidth: theme.icon.size.md }}
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />

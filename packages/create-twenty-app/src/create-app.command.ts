@@ -115,6 +115,7 @@ export class CreateAppCommand {
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
+        includeExampleIntegrationTest: false,
       };
     }
 
@@ -127,6 +128,7 @@ export class CreateAppCommand {
         includeExampleView: true,
         includeExampleNavigationMenuItem: true,
         includeExampleSkill: true,
+        includeExampleIntegrationTest: true,
       };
     }
 
@@ -171,12 +173,19 @@ export class CreateAppCommand {
             value: 'skill',
             checked: true,
           },
+          {
+            name: 'Integration test (vitest test verifying app installation)',
+            value: 'integrationTest',
+            checked: true,
+          },
         ],
       },
     ]);
 
     const includeField = selectedExamples.includes('field');
     const includeView = selectedExamples.includes('view');
+    const includeExampleIntegrationTest =
+      selectedExamples.includes('integrationTest');
     const includeObject =
       selectedExamples.includes('object') || includeField || includeView;
 
@@ -197,6 +206,7 @@ export class CreateAppCommand {
       includeExampleNavigationMenuItem:
         selectedExamples.includes('navigationMenuItem'),
       includeExampleSkill: selectedExamples.includes('skill'),
+      includeExampleIntegrationTest,
     };
   }
 

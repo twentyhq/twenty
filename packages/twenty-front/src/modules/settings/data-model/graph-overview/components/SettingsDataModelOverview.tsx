@@ -2,7 +2,7 @@ import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-ove
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
 import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Background,
   type Edge,
@@ -31,6 +31,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButtonGroup } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,
@@ -63,8 +64,8 @@ const StyledContainer = styled.div`
 
 const StyledCloseButton = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(3)};
-  left: ${({ theme }) => theme.spacing(3)};
+  top: ${themeCssVariables.spacing[3]};
+  left: ${themeCssVariables.spacing[3]};
   z-index: 5;
 `;
 

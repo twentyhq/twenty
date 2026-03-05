@@ -1,11 +1,8 @@
-import { ThemeProvider } from '@emotion/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Preview } from '@storybook/react-vite';
 import { initialize, mswLoader } from 'msw-storybook-addon';
-import { useEffect } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-//import { useDarkMode } from 'storybook-dark-mode';
 
 // eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
@@ -14,7 +11,9 @@ import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiSt
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
-import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 // eslint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -61,24 +60,14 @@ initialize({
 const preview: Preview = {
   decorators: [
     (Story) => {
-      // const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
-      const theme = THEME_LIGHT;
-
-      useEffect(() => {
-        document.documentElement.className =
-          theme.name === 'dark' ? 'dark' : 'light';
-      }, [theme]);
-
       return (
         <I18nProvider i18n={i18n}>
-          <ThemeProvider theme={theme}>
-            <ThemeContextProvider theme={theme}>
-              <ClickOutsideListenerContext.Provider
-                value={{ excludedClickOutsideId: undefined }}
-              >
-                <Story />
-              </ClickOutsideListenerContext.Provider>
-            </ThemeContextProvider>
+          <ThemeProvider colorScheme="light">
+            <ClickOutsideListenerContext.Provider
+              value={{ excludedClickOutsideId: undefined }}
+            >
+              <Story />
+            </ClickOutsideListenerContext.Provider>
           </ThemeProvider>
         </I18nProvider>
       );

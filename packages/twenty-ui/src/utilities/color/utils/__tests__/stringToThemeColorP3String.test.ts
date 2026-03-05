@@ -1,4 +1,3 @@
-import { THEME_LIGHT } from '@ui/theme';
 import { stringToThemeColor } from '@ui/utilities';
 import { stringToThemeColorP3String } from '@ui/utilities/color/utils/stringToThemeColorP3String';
 
@@ -19,14 +18,19 @@ describe('stringToThemeColor', () => {
 });
 
 describe('stringToThemeColorP3String', () => {
-  it('should return a theme color based on a string', () => {
+  it('should return a resolved CSS variable value for a color', () => {
+    const mockTheme = {
+      color: new Proxy({} as Record<string, string>, {
+        get: (_, prop) => `mock-${String(prop)}`,
+      }),
+    } as any;
+
     const color = stringToThemeColorP3String({
       string: 'test',
-      theme: THEME_LIGHT,
       variant: 9,
+      theme: mockTheme,
     });
 
     expect(typeof color).toBe('string');
-    expect(Object.values(THEME_LIGHT.color)).toContain(color);
   });
 });

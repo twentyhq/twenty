@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { Card } from 'twenty-ui/layout';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventCardProps = {
   children: React.ReactNode;

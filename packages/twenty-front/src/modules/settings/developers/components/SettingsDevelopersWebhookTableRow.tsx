@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -8,6 +7,8 @@ import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -16,17 +17,17 @@ export const StyledApisFieldTableRow = styled(TableRow)`
 
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
   padding-left: 0;
 `;
 
 const StyledUrlTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   overflow: hidden;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export const SettingsDevelopersWebhookTableRow = ({
@@ -39,8 +40,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   >;
   to: string;
 }) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>

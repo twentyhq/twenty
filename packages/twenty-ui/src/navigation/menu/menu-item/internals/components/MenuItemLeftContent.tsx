@@ -1,5 +1,5 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import {
@@ -7,7 +7,7 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -58,10 +58,10 @@ export const MenuItemLeftContent = ({
   const { theme } = useContext(ThemeContext);
 
   const gripIconColor = withIconContainer
-    ? theme.font.color.tertiary
+    ? themeCssVariables.font.color.tertiary
     : disabled
-      ? theme.font.color.extraLight
-      : theme.font.color.light;
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.light;
 
   return (
     <StyledMenuItemLeftContent className={className}>

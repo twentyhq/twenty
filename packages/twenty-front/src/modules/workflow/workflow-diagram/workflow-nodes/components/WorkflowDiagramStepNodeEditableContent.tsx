@@ -22,9 +22,8 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -52,7 +51,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   onClick?: () => void;
 }) => {
   const { i18n } = useLingui();
-  const { theme } = useContext(ThemeContext);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -97,7 +95,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     <>
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-        theme={theme}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -118,7 +115,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           </WorkflowNodeLabelWithCounterPart>
 
           <WorkflowNodeTitle
-            theme={theme}
             highlight={nodeTitleHighlighted}
             selected={selected}
           >

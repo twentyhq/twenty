@@ -1,12 +1,11 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useContext } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -23,7 +22,6 @@ const StyledContainer = styled.div`
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

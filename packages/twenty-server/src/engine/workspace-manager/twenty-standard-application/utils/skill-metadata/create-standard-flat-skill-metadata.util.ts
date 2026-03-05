@@ -138,6 +138,58 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
       },
     }),
 
+  'workspace-demo-seeding': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'workspace-demo-seeding',
+        name: 'workspace-demo-seeding',
+        label: 'Workspace Demo Seeding',
+        description:
+          'Seeding demo metadata and data for workspace setup and testing purposes',
+        icon: 'IconDatabase',
+        content: `# Workspace Demo Seeding Skill
+You will create a demo workspace that fits a particular type of company given by the user.
+
+Do not ask the user for more information, just be creative with the objects and fields, but stay professional and coherent.
+
+Create relations fields between objects, for example a car repair shop workspace would have objects for cars, employees, repairs, customers, and the relevant relations between them.
+
+DO NOT USE code-interpreter tool at all. Prefer more steps.
+
+LIMIT TO 3 OBJECTS FOR DEMO, AND 3 FIELDS FOR EACH OBJECT, to avoid bugs.
+
+For the fields you will create, make sure to create a good variety of field types to showcase the different capabilities of the platform, for example:
+- Create SELECT and SELECT_MULTIPLE field types for building demo board index views and table with groups views
+- Create DATE_TIME fields to be able to create calendar views
+- Create CURRENCY and NUMERIC fields for graphs
+
+Here are the steps for you to work properly :
+- Proceed object by object, for each object.
+- Create the object with the right tool, DO THIS FIRST
+- Wait 3 seconds before navigating, for the view to be populated by the backend
+- Navigate to its default view
+- Then create each relevant field metadata one by one, and create a view field for each of them, reorder them to the start so we see them.
+- Then seed mock data relevant :
+  - use the tool that is related to the object, look for tools, create_my_new_object, create_many_of_my_new_object, look again in tools, don't use http
+  - between 20 and 50
+  - with a coherent combination of values
+  - proceed with the relevant tools for each object, do not use code-interpreter
+  - navigate to each default view before seeding an object, so the user can see what happens.
+
+After you've finished with this part, let's proceed to the dashboard creation. We will create a dashboard with 4 graphs.
+- Navigate to the dashboard list default view
+- Create a new dashboard
+- Navigate to the dashboard page
+- Create 4 graphs :
+  - For each graph, find a relevant amount for y axis, a relevant date or select field for x axis, and if necessary a relevant group by stack
+  - Change the name of each graph so it is relevant
+  - Turn on the labels on the graphs
+`,
+        isCustom: false,
+      },
+    }),
+
   'dashboard-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
     createStandardSkillFlatMetadata({
       ...args,

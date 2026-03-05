@@ -8,12 +8,13 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
@@ -23,11 +24,7 @@ const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledRecordCardHeaderContainer = styled(RecordCardHeaderContainer)`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 type RecordCalendarCardHeaderProps = {
@@ -67,7 +64,10 @@ export const RecordCalendarCardHeader = ({
   }
 
   return (
-    <StyledRecordCardHeaderContainer isCompact={isCompactModeActive}>
+    <RecordCardHeaderContainer
+      isCompact={isCompactModeActive}
+      padding={themeCssVariables.spacing[1]}
+    >
       <StyledRecordChipContainer>
         <StopPropagationContainer>
           <RecordChip
@@ -92,6 +92,6 @@ export const RecordCalendarCardHeader = ({
           />
         </StopPropagationContainer>
       </StyledCheckboxContainer>
-    </StyledRecordCardHeaderContainer>
+    </RecordCardHeaderContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type EntityTarget,
   type ObjectLiteral,
@@ -10,7 +10,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,

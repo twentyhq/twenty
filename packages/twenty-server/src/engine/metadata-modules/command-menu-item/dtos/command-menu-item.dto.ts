@@ -1,5 +1,6 @@
 import {
   Field,
+  Float,
   HideField,
   ObjectType,
   registerEnumType,
@@ -10,6 +11,7 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -53,6 +55,15 @@ export class CommandMenuItemDTO {
   @Field({ nullable: true })
   icon?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortLabel?: string;
+
+  @IsNumber()
+  @Field(() => Float)
+  position: number;
+
   @IsBoolean()
   @Field()
   isPinned: boolean;
@@ -60,6 +71,11 @@ export class CommandMenuItemDTO {
   @IsEnum(CommandMenuItemAvailabilityType)
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalAvailabilityExpression?: string;
 
   @IsUUID()
   @IsOptional()

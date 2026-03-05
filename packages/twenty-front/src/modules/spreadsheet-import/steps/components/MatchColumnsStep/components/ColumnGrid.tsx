@@ -45,29 +45,19 @@ const StyledGridCell = styled.div<PositionProps>`
   flex: 1;
   overflow-x: auto;
   padding-bottom: ${themeCssVariables.spacing[4]};
-  padding-top: ${themeCssVariables.spacing[4]};
-  ${({ position }) => {
-    if (position === 'left') {
-      return `
-        padding-left: ${themeCssVariables.spacing[4]};
-        padding-right: ${themeCssVariables.spacing[2]};
-        padding-top:  ${themeCssVariables.spacing[4]};
-      `;
-    }
-    if (position === 'full-line') {
-      return `
-        padding-left: ${themeCssVariables.spacing[2]};
-        padding-right: ${themeCssVariables.spacing[4]};
-        padding-top:  ${themeCssVariables.spacing[0]};
-        width: 100%;
-      `;
-    }
-    return `
-      padding-left: ${themeCssVariables.spacing[2]};
-      padding-right: ${themeCssVariables.spacing[4]};
-      padding-top:  ${themeCssVariables.spacing[4]};
-    `;
-  }};
+  padding-left: ${({ position }) =>
+    position === 'left'
+      ? themeCssVariables.spacing[4]
+      : themeCssVariables.spacing[2]};
+  padding-right: ${({ position }) =>
+    position === 'left'
+      ? themeCssVariables.spacing[2]
+      : themeCssVariables.spacing[4]};
+  padding-top: ${({ position }) =>
+    position === 'full-line'
+      ? themeCssVariables.spacing[0]
+      : themeCssVariables.spacing[4]};
+  width: ${({ position }) => (position === 'full-line' ? '100%' : 'auto')};
 `;
 
 const StyledGridHeader = styled.div<PositionProps>`

@@ -7,14 +7,27 @@ import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/cur
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
-import { TEXT_INPUT_STYLE, ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;
-  ${TEXT_INPUT_STYLE}
-  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1.5]};
+
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
+
+  width: 100%;
 `;
 
 const StyledContainer = styled.div`
@@ -68,7 +81,6 @@ export const CurrencyInput = ({
   decimals,
 }: CurrencyInputProps) => {
   const { theme } = useContext(ThemeContext);
-
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef<HTMLInputElement>(null);

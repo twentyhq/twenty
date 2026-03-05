@@ -1,8 +1,6 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
-import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
@@ -11,21 +9,18 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
+import { useState, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
@@ -77,8 +72,8 @@ const StyledLinkContainer = styled.div`
 `;
 
 type AttachmentRowProps = {
-  attachment: Attachment;
-  onPreview?: (attachment: Attachment) => void;
+  attachment: AttachmentWithFile;
+  onPreview?: (attachment: AttachmentWithFile) => void;
 };
 
 export const AttachmentRow = ({
@@ -88,31 +83,19 @@ export const AttachmentRow = ({
   const { theme } = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(false);
 
-  const isFilesFieldMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
-  );
-
   const hasDownloadPermission = useHasPermissionFlag(
     PermissionFlagType.DOWNLOAD_FILE,
   );
 
   const { name: originalFileName, extension: attachmentFileExtension } =
-    getFileNameAndExtension(
-      isFilesFieldMigrated
-        ? (attachment.file?.[0]?.label as string)
-        : attachment.name,
-    );
+    getFileNameAndExtension(attachment.file.label);
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
 
-  const fileCategory = isFilesFieldMigrated
-    ? getFileCategoryFromExtension(attachment.file?.[0]?.extension)
-    : attachment.fileCategory;
+  const fileCategory = getFileCategoryFromExtension(attachment.file.extension);
 
-  const fileUrl = isFilesFieldMigrated
-    ? (attachment.file?.[0]?.url as string) // TODO : fix attachment.file type after Files field migration
-    : attachment.fullPath;
+  const fileUrl = attachment.file.url;
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -138,16 +121,12 @@ export const AttachmentRow = ({
       idToUpdate: attachment.id,
       updateOneRecordInput: {
         name: newFileName,
-        ...(isFilesFieldMigrated && isDefined(attachment.file?.[0]?.fileId)
-          ? {
-              file: [
-                {
-                  fileId: attachment.file?.[0]?.fileId,
-                  label: newFileName,
-                },
-              ],
-            }
-          : {}),
+        file: [
+          {
+            fileId: attachment.file.fileId,
+            label: newFileName,
+          },
+        ],
       },
     });
   };

@@ -1,3 +1,6 @@
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { useApolloClient } from '@apollo/client';
+
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -5,16 +8,20 @@ import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
+import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -28,6 +35,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
+  const apolloClient = useApolloClient();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
 
@@ -161,20 +169,34 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
         setCurrentAIChatThreadTitle(titlePart.data.title);
+        if (isDefined(currentAIChatThread)) {
+          const threadRef = apolloClient.cache.identify({
+            __typename: 'AgentChatThread',
+            id: currentAIChatThread,
+          });
+          if (isDefined(threadRef)) {
+            apolloClient.cache.modify({
+              id: threadRef,
+              fields: {
+                title: () => titlePart.data.title,
+              },
+            });
+          }
+        }
       }
     },
   });
 
   const isStreaming = status === 'streaming';
-
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (agentChatInput.trim() === '' || isLoading || !currentAIChatThread) {
       return;
     }
 
     const content = agentChatInput.trim();
+
     setAgentChatInput('');
 
     const browsingContext = getBrowsingContext();
@@ -191,16 +213,40 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         },
       },
     );
+
     setAgentChatUploadedFiles([]);
-  };
+  }, [
+    agentChatInput,
+    isLoading,
+    currentAIChatThread,
+    setAgentChatInput,
+    getBrowsingContext,
+    sendMessage,
+    agentChatUploadedFiles,
+    setAgentChatUploadedFiles,
+  ]);
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    onBrowserEvent: handleSendMessage,
+  });
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_STOP_EVENT_NAME,
+    onBrowserEvent: stop,
+  });
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_RETRY_EVENT_NAME,
+    onBrowserEvent: regenerate,
+  });
 
   return {
     messages,
     handleSendMessage,
     handleStop: stop,
     isLoading,
-    isStreaming,
     error,
-    handleRetry: regenerate,
+    status,
   };
 };

@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useCallback } from 'react';
+import { styled } from '@linaria/react';
+import { useCallback, useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -45,13 +45,13 @@ const StyledTrContainer = styled.div`
   flex-direction: row;
 
   div:not(:first-of-type) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 
 const StyledChevronContainer = styled.div`
   border-right: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   text-align: center;
   vertical-align: middle;
@@ -76,7 +76,7 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   border-right: none;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   width: ${({ width }) => width}px;
   min-width: ${({ width }) => width}px;
@@ -105,9 +105,9 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
   width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
 
-  border-bottom: 1px solid ${({ theme }) => theme.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.background.primary};
 
   position: sticky;
   left: 0;
@@ -115,7 +115,7 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
 `;
 
 export const RecordTableRecordGroupSection = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 

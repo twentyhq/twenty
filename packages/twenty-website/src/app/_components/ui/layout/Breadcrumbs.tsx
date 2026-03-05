@@ -1,19 +1,19 @@
 'use client';
 
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconChevronLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 
-import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
 const Container = styled.div`
-  ${mq({
-    display: ['none', 'flex', 'flex'],
-    gap: `${Theme.spacing(2)}`,
-    color: '#b3b3b3',
-  })};
+  display: none;
+  gap: ${Theme.spacing(2)};
+  color: #b3b3b3;
+  @media (min-width: 810px) {
+    display: flex;
+  }
 `;
 
 const InternalLinkItem = styled(Link)`
@@ -47,14 +47,15 @@ const StyledSection = styled.div`
 `;
 
 const StyledMobileContainer = styled.div`
-  ${mq({
-    display: ['flex', 'none', 'none'],
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: `${Theme.spacing(1)}`,
-    color: `${Theme.text.color.quarternary}`,
-    fontSize: `${Theme.font.size.sm}`,
-  })};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${Theme.spacing(1)};
+  color: ${Theme.text.color.quarternary};
+  font-size: ${Theme.font.size.sm};
+  @media (min-width: 810px) {
+    display: none;
+  }
 `;
 
 interface BreadcrumbsProps {

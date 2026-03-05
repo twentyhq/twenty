@@ -7,9 +7,10 @@ import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
+import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
-import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
+import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
@@ -19,10 +20,11 @@ import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -45,6 +47,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FieldMetadataModule,
     PermissionsModule,
     ViewModule,
+    ViewFieldModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
@@ -60,6 +63,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     MetadataToolProvider,
     NativeModelToolProvider,
     LogicFunctionToolProvider,
+    ViewFieldToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
@@ -72,6 +76,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
+        viewFieldProvider: ViewFieldToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
@@ -80,6 +85,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider,
         metadataProvider,
         logicFunctionProvider,
+        viewFieldProvider,
         viewProvider,
         workflowProvider,
       ],
@@ -89,6 +95,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         MetadataToolProvider,
         LogicFunctionToolProvider,
+        ViewFieldToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,
       ],

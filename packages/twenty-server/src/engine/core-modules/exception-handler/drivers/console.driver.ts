@@ -11,8 +11,22 @@ export class ExceptionHandlerConsoleDriver
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {
+    const sanitizedOptions = options
+      ? {
+          ...options,
+          user: options.user
+            ? {
+                id: options.user.id,
+                email: options.user.email,
+                firstName: options.user.firstName,
+                lastName: options.user.lastName,
+              }
+            : undefined,
+        }
+      : undefined;
+
     console.group('Exception Captured');
-    console.info(options);
+    console.info(sanitizedOptions);
     console.error(exceptions);
     console.groupEnd();
 

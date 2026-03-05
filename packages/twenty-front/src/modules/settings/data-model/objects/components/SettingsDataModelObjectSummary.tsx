@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -9,6 +9,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
@@ -27,17 +28,17 @@ const StyledObjectPreview = styled.div`
 
 const StyledObjectName = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   max-width: 60%;
 `;
 
 const StyledOverflowingTextWithTooltip = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledNumber = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIconContainer = styled.div`
@@ -46,10 +47,10 @@ const StyledIconContainer = styled.div`
 
 const StyledSeparator = styled.div`
   align-self: stretch;
-  background: ${({ theme }) => theme.background.quaternary};
+  background: ${themeCssVariables.background.quaternary};
   height: 1px;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsDataModelObjectPreviewItemProps = {
@@ -66,7 +67,7 @@ const SettingsDataModelObjectPreviewItem = ({
   pluralizeLabel = true,
   index,
 }: SettingsDataModelObjectPreviewItemProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem.icon);
 
@@ -100,7 +101,8 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
 }: {
   selected: number;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
+
   return (
     <>
       <StyledSeparator />

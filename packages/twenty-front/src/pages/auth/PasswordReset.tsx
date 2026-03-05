@@ -8,10 +8,11 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { ApolloError } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,8 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
 import {
@@ -86,6 +86,7 @@ const StyledMainButton = styled(MainButton)`
 `;
 
 export const PasswordReset = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
@@ -98,9 +99,6 @@ export const PasswordReset = () => {
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
-
-  const { theme } = useContext(ThemeContext);
-
   const passwordResetToken = useParams().passwordResetToken;
 
   const isLoggedIn = useIsLogged();
@@ -140,7 +138,8 @@ export const PasswordReset = () => {
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
     useUpdatePasswordViaResetTokenMutation();
 
-  const { signInWithCredentialsInWorkspace } = useAuth();
+  const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
 
@@ -186,11 +185,15 @@ export const PasswordReset = () => {
 
       const token = readCaptchaToken();
 
-      await signInWithCredentialsInWorkspace(
-        email || '',
-        formData.newPassword,
-        token,
-      );
+      if (isOnAWorkspace) {
+        await signInWithCredentialsInWorkspace(
+          email || '',
+          formData.newPassword,
+          token,
+        );
+      } else {
+        await signInWithCredentials(email || '', formData.newPassword, token);
+      }
 
       redirect(AppPath.Index);
     } catch (err) {
@@ -206,7 +209,7 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <Modal.Content isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <StyledMainContainer>
           <AnimatedEaseIn>
             <Logo
@@ -224,7 +227,9 @@ export const PasswordReset = () => {
                 <Skeleton
                   height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                   count={2}
-                  style={{ marginBottom: theme.spacing(2) }}
+                  style={{
+                    marginBottom: themeCssVariables.spacing[2],
+                  }}
                 />
               </SkeletonTheme>
             ) : (
@@ -291,7 +296,7 @@ export const PasswordReset = () => {
             )}
           </StyledContentContainer>
         </StyledMainContainer>
-      </Modal.Content>
+      </ModalContent>
     )
   );
 };

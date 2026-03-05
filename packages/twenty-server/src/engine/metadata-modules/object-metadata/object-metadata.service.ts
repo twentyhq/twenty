@@ -6,14 +6,14 @@ import {
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
+  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4, v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -633,6 +633,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
+      viewSortUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   }
@@ -675,6 +676,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
+      viewSortUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   }
