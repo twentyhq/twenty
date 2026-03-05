@@ -8,11 +8,12 @@ import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, Status } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
 
@@ -24,7 +25,7 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const TABLE_GRID = '1fr 1fr 100px 100px 80px';
+const TABLE_GRID = '1fr 1fr 100px 80px';
 
 export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,43 +66,42 @@ export const SettingsAdminApps = () => {
             <TableRow gridTemplateColumns={TABLE_GRID}>
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Source`}</TableHeader>
-              <TableHeader>{t`Owner`}</TableHeader>
               <TableHeader>{t`Listed`}</TableHeader>
               <TableHeader>{t`Featured`}</TableHeader>
             </TableRow>
           </StyledTableHeaderRowContainer>
           <TableBody>
             {filtered.map((registration) => (
-              <TableRow
+              <UndecoratedLink
                 key={registration.id}
-                gridTemplateColumns={TABLE_GRID}
                 to={getSettingsPath(
                   SettingsPath.ApplicationRegistrationDetail,
                   { applicationRegistrationId: registration.id },
                 )}
+                fullWidth
               >
-                <TableCell>{registration.name}</TableCell>
-                <TableCell>
-                  {registration.sourcePackage ?? registration.sourceType}
-                </TableCell>
-                <TableCell>
-                  {isDefined(registration.ownerWorkspaceId)
-                    ? t`Owned`
-                    : t`Orphaned`}
-                </TableCell>
-                <TableCell>
-                  <Status
-                    color={registration.isListed ? 'green' : 'gray'}
-                    text={registration.isListed ? t`Yes` : t`No`}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Status
-                    color={registration.isFeatured ? 'yellow' : 'gray'}
-                    text={registration.isFeatured ? t`Yes` : t`No`}
-                  />
-                </TableCell>
-              </TableRow>
+                <TableRow
+                  gridTemplateColumns={TABLE_GRID}
+                  isClickable
+                >
+                  <TableCell>{registration.name}</TableCell>
+                  <TableCell>
+                    {registration.sourcePackage ?? registration.sourceType}
+                  </TableCell>
+                  <TableCell>
+                    <Status
+                      color={registration.isListed ? 'green' : 'gray'}
+                      text={registration.isListed ? t`Yes` : t`No`}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Status
+                      color={registration.isFeatured ? 'yellow' : 'gray'}
+                      text={registration.isFeatured ? t`Yes` : t`No`}
+                    />
+                  </TableCell>
+                </TableRow>
+              </UndecoratedLink>
             ))}
           </TableBody>
         </Table>
