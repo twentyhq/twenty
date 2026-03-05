@@ -38,7 +38,13 @@ export const SentryInitEffect = () => {
 
           init({
             environment: sentryConfig?.environment ?? undefined,
-            release: sentryConfig?.release ?? undefined,
+            // Prefer the build-time bundle version over the server-provided
+            // release tag. The server reports its own runtime version, which
+            // masks stale-bundle mismatches in Sentry error reports.
+            release:
+              process.env.REACT_APP_BUNDLE_VERSION ??
+              sentryConfig?.release ??
+              undefined,
             dsn: sentryConfig?.dsn,
             integrations: [
               browserTracingIntegration({}),

@@ -31,6 +31,7 @@ export default defineConfig(({ command, mode }) => {
     SSL_KEY_PATH,
     REACT_APP_PORT,
     IS_DEBUG_MODE,
+    APP_VERSION,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -252,6 +253,7 @@ export default defineConfig(({ command, mode }) => {
         REACT_APP_SERVER_BASE_URL,
         IS_DEBUG_MODE,
         IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
+        REACT_APP_BUNDLE_VERSION: APP_VERSION,
       },
     },
     css: {
