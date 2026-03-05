@@ -5,7 +5,7 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_LIST_PADDING } from '@/side-panel/constants/SidePanelListPadding';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { type SidePanelActionGroupConfig } from '@/side-panel/types/SidePanelActionGroupConfig';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -63,8 +63,8 @@ export const SidePanelList = ({
   noResults = false,
   noResultsText,
 }: SidePanelListProps) => {
-  const setHasUserSelectedCommand = useSetAtomState(
-    hasUserSelectedCommandState,
+  const setHasUserSelectedSidePanelListItem = useSetAtomState(
+    hasUserSelectedSidePanelListItemState,
   );
 
   return (
@@ -79,7 +79,7 @@ export const SidePanelList = ({
             focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
             onSelect={() => {
-              setHasUserSelectedCommand(true);
+              setHasUserSelectedSidePanelListItem(true);
             }}
           >
             {children}

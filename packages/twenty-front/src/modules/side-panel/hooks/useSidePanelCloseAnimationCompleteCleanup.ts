@@ -8,7 +8,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -107,7 +107,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       store.set(sidePanelNavigationStackState.atom, []);
       resetSelectedItem();
-      store.set(hasUserSelectedCommandState.atom, false);
+      store.set(hasUserSelectedSidePanelListItemState.atom, false);
 
       if (options?.emitSidePanelCloseEvent !== false) {
         emitSidePanelCloseEvent();

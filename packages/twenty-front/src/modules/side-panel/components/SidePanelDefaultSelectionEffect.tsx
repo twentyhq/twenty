@@ -1,5 +1,5 @@
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -21,13 +21,15 @@ export const SidePanelDefaultSelectionEffect = ({
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
-  const hasUserSelectedCommand = useAtomStateValue(hasUserSelectedCommandState);
+  const hasUserSelectedSidePanelListItem = useAtomStateValue(
+    hasUserSelectedSidePanelListItemState,
+  );
 
   useEffect(() => {
     if (
       isDefined(selectedItemId) &&
       selectableItemIds.includes(selectedItemId) &&
-      hasUserSelectedCommand
+      hasUserSelectedSidePanelListItem
     ) {
       return;
     }
@@ -36,7 +38,7 @@ export const SidePanelDefaultSelectionEffect = ({
       setSelectedItemId(selectableItemIds[0]);
     }
   }, [
-    hasUserSelectedCommand,
+    hasUserSelectedSidePanelListItem,
     selectableItemIds,
     selectedItemId,
     setSelectedItemId,

@@ -10,7 +10,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
@@ -103,7 +103,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
           pageId: '1',
         },
       ]);
-      jotaiStore.set(hasUserSelectedCommandState.atom, true);
+      jotaiStore.set(hasUserSelectedSidePanelListItemState.atom, true);
       jotaiStore.set(isSidePanelClosingState.atom, true);
       result.current.setViewableRecordId('record-123');
     });
@@ -126,7 +126,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
         pageId: '1',
       },
     ]);
-    expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(true);
+    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(true);
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(true);
     expect(result.current.viewableRecordId).toBe('record-123');
 
@@ -143,7 +143,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('');
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
-    expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(false);
+    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(false);
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(false);
     expect(result.current.viewableRecordId).toBe(null);
   });

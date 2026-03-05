@@ -5,7 +5,7 @@ import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/si
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -66,7 +66,7 @@ export const useSidePanelHistory = () => {
       }
     }
 
-    store.set(hasUserSelectedCommandState.atom, false);
+    store.set(hasUserSelectedSidePanelListItemState.atom, false);
   }, [closeCommandMenu, store]);
 
   const navigateSidePanelHistory = useCallback(
@@ -119,7 +119,7 @@ export const useSidePanelHistory = () => {
 
       store.set(sidePanelNavigationMorphItemsByPageState.atom, newMorphItems);
 
-      store.set(hasUserSelectedCommandState.atom, false);
+      store.set(hasUserSelectedSidePanelListItemState.atom, false);
     },
     [store],
   );

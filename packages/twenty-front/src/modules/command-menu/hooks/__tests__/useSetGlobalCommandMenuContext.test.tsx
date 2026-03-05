@@ -5,7 +5,7 @@ import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePan
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -121,10 +121,10 @@ describe('useSetGlobalCommandMenuContext', () => {
       Icon: undefined,
       instanceId: '',
     });
-    const hasUserSelectedCommand = jotaiStore.get(
-      hasUserSelectedCommandState.atom,
+    const hasUserSelectedSidePanelListItem = jotaiStore.get(
+      hasUserSelectedSidePanelListItemState.atom,
     );
-    expect(hasUserSelectedCommand).toBe(false);
+    expect(hasUserSelectedSidePanelListItem).toBe(false);
 
     act(() => {
       result.current.setGlobalCommandMenuContext();
@@ -146,10 +146,10 @@ describe('useSetGlobalCommandMenuContext', () => {
       Icon: undefined,
       instanceId: '',
     });
-    const hasUserSelectedCommandAfter = jotaiStore.get(
-      hasUserSelectedCommandState.atom,
+    const hasUserSelectedSidePanelListItemAfter = jotaiStore.get(
+      hasUserSelectedSidePanelListItemState.atom,
     );
-    expect(hasUserSelectedCommandAfter).toBe(false);
+    expect(hasUserSelectedSidePanelListItemAfter).toBe(false);
   });
 
   it('should copy context store states to previous instance before resetting', () => {
