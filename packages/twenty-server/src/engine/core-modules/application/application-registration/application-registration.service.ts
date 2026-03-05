@@ -71,9 +71,7 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneByIdGlobal(
-    id: string,
-  ): Promise<ApplicationRegistrationEntity> {
+  async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { id },
     });

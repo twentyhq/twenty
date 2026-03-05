@@ -62,15 +62,12 @@ export const SettingsApplicationsAvailableTab = () => {
     : marketplaceApps;
 
   const filteredApplications = showFeaturedOnly
-    ? textFilteredApplications.filter(
-        (application) => application.isFeatured,
-      )
+    ? textFilteredApplications.filter((application) => application.isFeatured)
     : textFilteredApplications;
 
   const nonFeaturedCount = showFeaturedOnly
-    ? textFilteredApplications.filter(
-        (application) => !application.isFeatured,
-      ).length
+    ? textFilteredApplications.filter((application) => !application.isFeatured)
+        .length
     : 0;
 
   if (isLoading) {
