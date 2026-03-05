@@ -64,6 +64,7 @@ import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-fact
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -508,7 +509,7 @@ export class AuthResolver {
   @Mutation(() => SignUpDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async signUpInNewWorkspace(
-    @AuthUser() currentUser: UserEntity,
+    @AuthUser() currentUser: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpDTO> {
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
@@ -533,7 +534,7 @@ export class AuthResolver {
   @Mutation(() => TransientTokenDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async generateTransientToken(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TransientTokenDTO | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
@@ -780,7 +781,7 @@ export class AuthResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AuthorizeAppDTO> {
     return await this.authService.generateAuthorizationCode(
