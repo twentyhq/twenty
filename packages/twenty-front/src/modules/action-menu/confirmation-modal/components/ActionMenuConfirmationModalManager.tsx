@@ -5,7 +5,6 @@ import {
   type ActionMenuConfirmationModalResult,
   type ActionMenuConfirmationModalResultBrowserEventDetail,
 } from '@/action-menu/confirmation-modal/types/ActionMenuConfirmationModalResultBrowserEventDetail';
-import { resolvePendingActionMenuConfirmationModalResult } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -24,9 +23,7 @@ export const ActionMenuConfirmationModalManager = () => {
     actionMenuConfirmationModalConfigState,
   );
 
-  const callerId =
-    actionMenuConfirmationModalConfig?.frontComponentId ??
-    actionMenuConfirmationModalConfig?.legacyCommandActionMenuId;
+  const callerId = actionMenuConfirmationModalConfig?.frontComponentId;
 
   const emitConfirmationResult = (
     confirmationResult: ActionMenuConfirmationModalResult,
@@ -34,11 +31,6 @@ export const ActionMenuConfirmationModalManager = () => {
     if (!callerId) {
       return;
     }
-
-    resolvePendingActionMenuConfirmationModalResult({
-      callerId,
-      confirmationResult,
-    });
 
     window.dispatchEvent(
       new CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>(

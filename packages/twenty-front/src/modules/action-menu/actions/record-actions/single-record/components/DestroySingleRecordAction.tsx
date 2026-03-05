@@ -1,4 +1,4 @@
-import { ActionConfirmationModal } from '@/action-menu/actions/components/ActionConfirmationModal';
+import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
@@ -36,7 +36,7 @@ export const DestroySingleRecordAction = () => {
   };
 
   return (
-    <ActionConfirmationModal
+    <ActionModal
       title={t`Permanently Destroy Record`}
       subtitle={t`Are you sure you want to destroy this record? It cannot be recovered anymore.`}
       onConfirmClick={handleDeleteClick}

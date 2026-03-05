@@ -1,4 +1,4 @@
-import { ActionConfirmationModal } from '@/action-menu/actions/components/ActionConfirmationModal';
+import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
@@ -103,7 +103,7 @@ export const DestroyMultipleRecordsAction = () => {
 
   return (
     <ActionConfigContext.Provider value={actionConfigWithProgress}>
-      <ActionConfirmationModal
+      <ActionModal
         title={t`Permanently Destroy Records`}
         subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
         onConfirmClick={handleDestroyClick}
