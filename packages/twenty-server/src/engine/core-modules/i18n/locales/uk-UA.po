@@ -382,17 +382,22 @@ msgid "Application not found."
 msgstr "Застосунок не знайдено."
 
 #. js-lingui-id: DE/icK
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
 msgstr ""
 
 #. js-lingui-id: eiOt+9
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr ""
 
+#. js-lingui-id: QtRMs/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application upgrade failed."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
-#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "Змінну застосунку не знайдено."
 
@@ -1216,6 +1221,11 @@ msgstr "Не вдалося видалити запис."
 msgid "Failed to duplicate dashboard."
 msgstr "Не вдалося продублювати інформаційну панель."
 
+#. js-lingui-id: Ol/51Z
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Failed to extract tarball."
+msgstr ""
+
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to load queue jobs. Please try again later."
@@ -1934,6 +1944,11 @@ msgstr "Недійсне значення години. Повинен бути 
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
 msgstr "Недійсний тип постачальника ідентифікації."
+
+#. js-lingui-id: xfXYBX
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Invalid input for application registration."
+msgstr ""
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -3003,12 +3018,12 @@ msgid "One or more records were not found."
 msgstr ""
 
 #. js-lingui-id: kx632Q
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more redirect URIs are invalid."
 msgstr ""
 
 #. js-lingui-id: PUBUbK
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more requested scopes are invalid."
 msgstr ""
 
@@ -3680,6 +3695,11 @@ msgstr "Деякі з вибраних вами дозволів недійсн�
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
+#. js-lingui-id: Oa7nLQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Source channel mismatch."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -3862,6 +3882,11 @@ msgstr "Шуканого агента не знайдено. Його могли
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Ключ API не має відповідної ролі. Перевірте налаштування вашого ключа API."
+
+#. js-lingui-id: MQn14a
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app source channel does not match the expected type."
+msgstr ""
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -4171,7 +4196,7 @@ msgid "This type of record cannot be merged."
 msgstr ""
 
 #. js-lingui-id: nZbise
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
 msgstr ""
 
@@ -4258,6 +4283,11 @@ msgstr "Потрібна перевірка двофакторної автен�
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
+msgstr ""
+
+#. js-lingui-id: SpmRxi
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Unable to retrieve the application package."
 msgstr ""
 
 #. js-lingui-id: WWSSTx
