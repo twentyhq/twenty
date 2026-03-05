@@ -4,7 +4,7 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 
-export const useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose = () => {
+export const useResetWorkflowAiAgentPermissionsStateOnSidePanelClose = () => {
   const setWorkflowAiAgentPermissionsSelectedObjectId = useSetAtomState(
     workflowAiAgentPermissionsSelectedObjectIdState,
   );

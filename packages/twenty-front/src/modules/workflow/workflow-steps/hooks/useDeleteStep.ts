@@ -4,13 +4,13 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
-import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
+import { useResetWorkflowAiAgentPermissionsStateOnSidePanelClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnSidePanelClose';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteStep = () => {
   const { resetPermissionState } =
-    useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose();
+    useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
 
