@@ -16,6 +16,7 @@ import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
 const StyledContainer = styled.div`
+  align-items: center;
   box-sizing: border-box;
   display: flex;
   height: ${themeCssVariables.spacing[10]};

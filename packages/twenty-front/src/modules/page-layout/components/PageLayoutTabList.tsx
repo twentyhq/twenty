@@ -50,6 +50,7 @@ import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
+  align-items: center;
   box-sizing: border-box;
   display: flex;
   height: ${themeCssVariables.spacing[10]};
