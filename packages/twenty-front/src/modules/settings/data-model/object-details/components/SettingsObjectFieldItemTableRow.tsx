@@ -10,7 +10,7 @@ import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-de
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -36,14 +36,15 @@ type SettingsObjectFieldItemTableRowProps = {
   mode: 'view' | 'new-field';
 };
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: minmax(0, 1fr) 148px 148px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
+export const StyledObjectFieldTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="minmax(0, 1fr) 148px 148px 36px"
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
 const StyledNameContainer = styled.div`
   display: flex;
@@ -74,13 +75,10 @@ const StyledInactiveLabel = styled.span`
   }
 `;
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export const SettingsObjectFieldItemTableRow = ({
@@ -181,7 +179,10 @@ export const SettingsObjectFieldItemTableRow = ({
       onClick={mode === 'view' ? navigateToFieldEdit : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
-        <StyledNameTableCell>
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
           {!!Icon && (
             <Icon
               style={{
@@ -199,7 +200,7 @@ export const SettingsObjectFieldItemTableRow = ({
               <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
             )}
           </StyledNameContainer>
-        </StyledNameTableCell>
+        </TableCell>
       </UndecoratedLink>
 
       <TableCell>
@@ -232,14 +233,19 @@ export const SettingsObjectFieldItemTableRow = ({
           }}
         />
       </TableCell>
-      <StyledIconTableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+      >
         {status === 'active' ? (
           mode === 'view' ? (
             <UndecoratedLink to={linkToNavigate}>
-              <StyledIconChevronRight
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
+              <StyledIconChevronRightContainer>
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </StyledIconChevronRightContainer>
             </UndecoratedLink>
           ) : (
             canToggleField && (
@@ -273,7 +279,7 @@ export const SettingsObjectFieldItemTableRow = ({
             onClick={handleToggleField}
           />
         )}
-      </StyledIconTableCell>
+      </TableCell>
     </StyledObjectFieldTableRow>
   );
 };

@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-
 import {
   formatExpiration,
   isExpired,
@@ -7,22 +5,12 @@ import {
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/display';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = styled(TableRow)`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
-  }
-`;
-
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
+export const StyledApisFieldTableRow = TableRow;
 
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
@@ -50,23 +38,39 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
   return (
     <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
-      <StyledTruncatedCell color={theme.font.color.primary}>
+      <TableCell
+        color={theme.font.color.primary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
+      >
         <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
-      <StyledTruncatedCell color={theme.font.color.tertiary}>
+      <TableCell
+        color={theme.font.color.tertiary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
+      >
         <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
-      <StyledTruncatedCell
+      <TableCell
         color={
           isExpired(apiKey.expiresAt || null)
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        clickable
       >
         <StyledEllipsisLabel>{formattedExpiration}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </TableCell>
 
       <TableCell align="right">
         <IconChevronRight

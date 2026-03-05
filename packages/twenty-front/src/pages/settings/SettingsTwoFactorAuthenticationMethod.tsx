@@ -44,7 +44,7 @@ const StyledOTPContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledQRCode = styled(QRCode)`
+const StyledQRCodeSizer = styled.div`
   height: 137px;
   width: 137px;
 `;
@@ -152,7 +152,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 ) : (
                   <>
                     <StyledQRCodeWrapper>
-                      <StyledQRCode value={qrCode} />
+                      <StyledQRCodeSizer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}

@@ -54,7 +54,7 @@ const StyledContentContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
@@ -417,11 +417,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
               <SettingsAgentDetailSkeletonLoader />
             ) : (
               <>
-                <StyledTabList
-                  tabs={tabs}
-                  className="tab-list"
-                  componentInstanceId={tabListComponentId}
-                />
+                <StyledTabListContainer>
+                  <TabList
+                    tabs={tabs}
+                    className="tab-list"
+                    componentInstanceId={tabListComponentId}
+                  />
+                </StyledTabListContainer>
                 <StyledContentContainer>
                   {isRoleTab && (
                     <SettingsAgentRoleTab

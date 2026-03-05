@@ -115,12 +115,14 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledReadOnlyModelButton = styled(LightButton)`
-  cursor: default;
+const StyledReadOnlyModelButtonContainer = styled.div`
+  > * {
+    cursor: default;
 
-  &:hover,
-  &:active {
-    background: transparent;
+    &:hover,
+    &:active {
+      background: transparent;
+    }
   }
 `;
 
@@ -163,10 +165,9 @@ export const AIChatTab = () => {
                   <AIChatContextUsageButton />
                 </StyledLeftButtonsContainer>
                 <StyledRightButtonsContainer>
-                  <StyledReadOnlyModelButton
-                    accent="tertiary"
-                    title={smartModelLabel}
-                  />
+                  <StyledReadOnlyModelButtonContainer>
+                    <LightButton accent="tertiary" title={smartModelLabel} />
+                  </StyledReadOnlyModelButtonContainer>
                   <SendMessageButton onSend={handleSendAndClear} />
                 </StyledRightButtonsContainer>
               </StyledButtonsContainer>

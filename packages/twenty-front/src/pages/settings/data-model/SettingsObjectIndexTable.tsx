@@ -14,17 +14,23 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-export const StyledObjectIndexTableRow = styled(TableRow)`
-  grid-template-columns: 350px 70px 80px;
-`;
+export const StyledObjectIndexTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="350px 70px 80px"
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -120,13 +126,15 @@ export const SettingsObjectIndexTable = ({
 
   return (
     <>
-      <StyledSearchInput
-        instanceId="object-index-table-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search an index...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="object-index-table-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an index...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
       <Table>
         <StyledObjectIndexTableRow>
           {tableMetadata.fields.map((item) => (

@@ -12,22 +12,31 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { Tag } from 'twenty-ui/components';
 import { type LogicFunction } from '~/generated-metadata/graphql';
+import React from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledRouteTriggerTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 120px 120px;
-`;
+export const StyledRouteTriggerTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="1fr 120px 120px"
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
-const StyledTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledRouteTriggerTableHeaderRow = styled(StyledRouteTriggerTableRow)`
+const StyledRouteTriggerTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
+
+const StyledRouteTriggerTableHeaderRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <StyledRouteTriggerTableHeaderRowWrapper>
+    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    <StyledRouteTriggerTableRow {...props} />
+  </StyledRouteTriggerTableHeaderRowWrapper>
+);
 
 const StyledEmptyState = styled.div`
   align-items: center;
@@ -125,19 +134,33 @@ export const SettingsLogicFunctionTriggersTab = ({
               <TableHeader>{t`Auth Required`}</TableHeader>
             </StyledRouteTriggerTableHeaderRow>
             <StyledRouteTriggerTableRow>
-              <StyledTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                overflow="hidden"
+              >
                 <OverflowingTextWithTooltip
                   text={`${REACT_APP_SERVER_BASE_URL}/s${routeTrigger.path}`}
                 />
-              </StyledTableCell>
-              <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
-              <StyledTableCell>
+              </TableCell>
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                overflow="hidden"
+              >
+                {routeTrigger.httpMethod}
+              </TableCell>
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                gap={themeCssVariables.spacing[2]}
+                overflow="hidden"
+              >
                 <Tag
                   text={routeTrigger.isAuthRequired ? t`True` : t`False`}
                   color={routeTrigger.isAuthRequired ? 'green' : 'orange'}
                   weight="medium"
                 />
-              </StyledTableCell>
+              </TableCell>
             </StyledRouteTriggerTableRow>
           </Table>
         </Section>

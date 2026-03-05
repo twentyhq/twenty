@@ -18,7 +18,6 @@ import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflo
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
-import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
@@ -33,7 +32,13 @@ import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
+const StyledNodeLabelWithCounterPart = styled.div`
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  height: 14px;
+  justify-content: space-between;
+  box-sizing: border-box;
   column-gap: ${themeCssVariables.spacing[2]};
 `;
 

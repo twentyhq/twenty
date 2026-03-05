@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { t } from '@lingui/core/macro';
@@ -16,28 +15,18 @@ export type SettingsApplicationTableRowProps = {
   link?: string;
 };
 
-export const StyledApplicationTableRow = styled(TableRow)`
-  grid-template-columns: 164px minmax(0, 1fr) 36px;
-`;
+export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  '164px minmax(0, 1fr) 36px';
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.secondary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDescriptionCell = styled(TableCell)`
-  display: flex;
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
+export const StyledApplicationTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
 export const SettingsApplicationTableRow = ({
   action,
@@ -47,16 +36,26 @@ export const SettingsApplicationTableRow = ({
 }: SettingsApplicationTableRowProps) => {
   return (
     <StyledApplicationTableRow key={application.id} to={link}>
-      <StyledNameTableCell>
+      <TableCell
+        color={themeCssVariables.font.color.secondary}
+        gap={themeCssVariables.spacing[2]}
+        minWidth="0"
+        overflow="hidden"
+      >
         <OverflowingTextWithTooltip text={application.name} />
-      </StyledNameTableCell>
-      <StyledDescriptionCell>
+      </TableCell>
+      <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={application.description} />
         {hasUpdate === true && (
           <Tag color="blue" text={t`Update`} weight="medium" />
         )}
-      </StyledDescriptionCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
+      </TableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+      >
+        {action}
+      </TableCell>
     </StyledApplicationTableRow>
   );
 };

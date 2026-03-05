@@ -30,7 +30,7 @@ import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -195,10 +195,12 @@ export const SettingsObjectTable = ({
               totalObjectCount={objectSettingsItem.totalObjectCount}
               action={
                 isActive ? (
-                  <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
+                  <StyledIconChevronRightContainer>
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  </StyledIconChevronRightContainer>
                 ) : (
                   <SettingsObjectInactiveMenuDropDown
                     isCustomObject={

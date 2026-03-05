@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
 `;
 
 // TODO: refactor
-const StyledRecordTableTd = styled(RecordTableCellStyleWrapper)`
+const StyledRecordTableTdContainer = styled.div`
   border-left: 1px solid transparent;
 `;
 
@@ -28,14 +28,16 @@ export const RecordTableCellCheckboxPlaceholder = () => {
   const { hasUserSelectedAllRows } = useRecordTableBodyContextOrThrow();
 
   return (
-    <StyledRecordTableTd
-      isSelected={hasUserSelectedAllRows}
-      hasRightBorder={false}
-      widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
-    >
-      <StyledContainer data-select-disable>
-        <Checkbox hoverable checked={hasUserSelectedAllRows === true} />
-      </StyledContainer>
-    </StyledRecordTableTd>
+    <StyledRecordTableTdContainer>
+      <RecordTableCellStyleWrapper
+        isSelected={hasUserSelectedAllRows}
+        hasRightBorder={false}
+        widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
+      >
+        <StyledContainer data-select-disable>
+          <Checkbox hoverable checked={hasUserSelectedAllRows === true} />
+        </StyledContainer>
+      </RecordTableCellStyleWrapper>
+    </StyledRecordTableTdContainer>
   );
 };

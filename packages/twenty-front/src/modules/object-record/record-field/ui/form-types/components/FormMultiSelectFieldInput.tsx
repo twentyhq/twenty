@@ -50,7 +50,14 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+const StyledDisplayModeContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
+  display: flex;
+  font-family: inherit;
+  padding-inline: ${themeCssVariables.spacing[2]};
+  width: 100%;
   cursor: pointer;
 
   &:hover,
@@ -65,7 +72,7 @@ const StyledSelectInputContainer = styled.div`
   top: ${themeCssVariables.spacing[9]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
@@ -223,7 +230,9 @@ export const FormMultiSelectFieldInput = ({
                     options={selectedOptions}
                   />
                 ) : (
-                  <StyledPlaceholder />
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder />
+                  </StyledPlaceholderContainer>
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}
@@ -243,7 +252,11 @@ export const FormMultiSelectFieldInput = ({
                     options={selectedOptions}
                   />
                 ) : (
-                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder>
+                      {placeholderText}
+                    </FormFieldPlaceholder>
+                  </StyledPlaceholderContainer>
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}

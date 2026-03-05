@@ -7,27 +7,24 @@ import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 28px;
-`;
+export const StyledApisFieldTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="1fr 28px"
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
-  padding-left: 0;
-`;
-
-const StyledUrlTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  overflow: hidden;
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export const SettingsDevelopersWebhookTableRow = ({
@@ -43,7 +40,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   const { theme } = useContext(ThemeContext);
   return (
     <StyledApisFieldTableRow to={to}>
-      <StyledUrlTableCell>
+      <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip
           text={
             isValidUrl(webhook.targetUrl)
@@ -51,13 +48,18 @@ export const SettingsDevelopersWebhookTableRow = ({
               : webhook.targetUrl
           }
         />
-      </StyledUrlTableCell>
-      <StyledIconTableCell>
-        <StyledIconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      </StyledIconTableCell>
+      </TableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 0`}
+      >
+        <StyledIconChevronRightContainer>
+          <IconChevronRight
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledIconChevronRightContainer>
+      </TableCell>
     </StyledApisFieldTableRow>
   );
 };

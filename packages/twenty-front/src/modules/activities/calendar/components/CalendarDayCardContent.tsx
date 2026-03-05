@@ -13,7 +13,7 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContentContainer = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: row;
@@ -44,7 +44,7 @@ const StyledEvents = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledEventRow = styled(CalendarEventRow)`
+const StyledEventRowContainer = styled.div`
   flex: 1 0 auto;
 `;
 
@@ -67,28 +67,29 @@ export const CalendarDayCardContent = ({
   };
 
   return (
-    <StyledCardContent
-      divider={divider}
-      initial="upcoming"
-      animate="ended"
-      variants={upcomingDayCardContentVariants}
-      transition={{
-        delay: Math.max(0, dayEndsIn),
-        duration: theme.animation.duration.fast,
-      }}
-    >
-      <StyledDayContainer>
-        <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
-        <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
-      </StyledDayContainer>
-      <StyledEvents>
-        {calendarEvents.map((calendarEvent) => (
-          <StyledEventRow
-            key={calendarEvent.id}
-            calendarEvent={calendarEvent}
-          />
-        ))}
-      </StyledEvents>
-    </StyledCardContent>
+    <StyledCardContentContainer>
+      <CardContent
+        divider={divider}
+        initial="upcoming"
+        animate="ended"
+        variants={upcomingDayCardContentVariants}
+        transition={{
+          delay: Math.max(0, dayEndsIn),
+          duration: theme.animation.duration.fast,
+        }}
+      >
+        <StyledDayContainer>
+          <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
+          <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
+        </StyledDayContainer>
+        <StyledEvents>
+          {calendarEvents.map((calendarEvent) => (
+            <StyledEventRowContainer key={calendarEvent.id}>
+              <CalendarEventRow calendarEvent={calendarEvent} />
+            </StyledEventRowContainer>
+          ))}
+        </StyledEvents>
+      </CardContent>
+    </StyledCardContentContainer>
   );
 };

@@ -39,7 +39,7 @@ const StyledSearchAndFilterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -118,13 +118,15 @@ export const SettingsObjectRelationsTable = ({
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="object-relation-table-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a field...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="object-relation-table-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a field...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-relations-filter-dropdown"
           dropdownPlacement="bottom-end"

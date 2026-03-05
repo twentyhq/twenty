@@ -43,7 +43,7 @@ const StyledSearchAndFilterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -163,13 +163,15 @@ export const SettingsObjectFieldTable = ({
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="object-field-table-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a field...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="object-field-table-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a field...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-fields-filter-dropdown"
           dropdownPlacement="bottom-end"

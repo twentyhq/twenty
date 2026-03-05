@@ -11,9 +11,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSubRow } from '@/ui/layout/table/components/TableSubRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
-import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
@@ -25,9 +25,16 @@ const StyledFieldDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
 `;
 
-const StyledFieldNameTableCell = styled(StyledNameTableCell)`
-  color: ${themeCssVariables.font.color.secondary};
-`;
+const StyledFieldNameTableCell = (
+  props: React.ComponentProps<typeof TableCell>,
+) => (
+  <TableCell
+    color={themeCssVariables.font.color.secondary}
+    gap={themeCssVariables.spacing[2]}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
 export const SettingsApplicationDataTableRow = ({
   row,

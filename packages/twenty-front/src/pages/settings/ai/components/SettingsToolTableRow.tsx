@@ -19,26 +19,22 @@ export type SettingsToolTableRowProps = {
   link?: string;
 };
 
-export const StyledToolTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 100px 36px;
-`;
+export const TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 100px 36px';
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
+export const StyledToolTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsToolTableRow = ({
@@ -48,18 +44,28 @@ export const SettingsToolTableRow = ({
 }: SettingsToolTableRowProps) => {
   return (
     <StyledToolTableRow to={link}>
-      <StyledNameTableCell>
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+        minWidth="0"
+        overflow="hidden"
+      >
         <StyledIconContainer>
           <IconCode size={16} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={tool.name} />
-      </StyledNameTableCell>
+      </TableCell>
       <TableCell>
         <SettingsItemTypeTag
           item={{ isCustom: true, applicationId: tool.applicationId }}
         />
       </TableCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+      >
+        {action}
+      </TableCell>
     </StyledToolTableRow>
   );
 };

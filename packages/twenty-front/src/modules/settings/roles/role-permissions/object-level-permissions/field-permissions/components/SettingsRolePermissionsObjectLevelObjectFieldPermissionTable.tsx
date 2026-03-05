@@ -28,7 +28,7 @@ import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
   'settings-role-permissions-object-level-object-field-permission';
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -99,13 +99,15 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         title={t`Fields Permissions`}
         description={t`Ability to interact with this object's fields.`}
       />
-      <StyledSearchInput
-        instanceId="object-field-table-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search a field...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="object-field-table-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search a field...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
       <Table>
         <StyledObjectFieldTableRow>
           <SortableTableHeader

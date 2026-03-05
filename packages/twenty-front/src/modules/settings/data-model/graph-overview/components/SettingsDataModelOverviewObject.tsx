@@ -86,15 +86,17 @@ const StyledObjectInstanceCount = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-const StyledObjectLink = styled(Link)`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  text-decoration: none;
-  color: ${themeCssVariables.font.color.primary};
+const StyledObjectLinkContainer = styled.div`
+  > a {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[1]};
+    text-decoration: none;
+    color: ${themeCssVariables.font.color.primary};
 
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
+    &:hover {
+      color: ${themeCssVariables.font.color.secondary};
+    }
   }
 `;
 
@@ -123,14 +125,16 @@ export const SettingsDataModelOverviewObject = ({
     <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLink
-            to={getSettingsPath(SettingsPath.Objects, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })}
-          >
-            {Icon && <Icon size={theme.icon.size.md} />}
-            {objectMetadataItem.labelPlural}
-          </StyledObjectLink>
+          <StyledObjectLinkContainer>
+            <Link
+              to={getSettingsPath(SettingsPath.Objects, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              {Icon && <Icon size={theme.icon.size.md} />}
+              {objectMetadataItem.labelPlural}
+            </Link>
+          </StyledObjectLinkContainer>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
         <SettingsItemTypeTag item={objectMetadataItem} />

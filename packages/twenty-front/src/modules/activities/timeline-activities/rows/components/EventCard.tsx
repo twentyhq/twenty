@@ -22,7 +22,7 @@ const StyledCardContainer = styled.div`
   }
 `;
 
-const StyledCard = styled(Card)`
+const StyledCardInnerContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
@@ -40,7 +40,9 @@ export const EventCard = ({ children, isOpen }: EventCardProps) => {
   return (
     isOpen && (
       <StyledCardContainer>
-        <StyledCard fullWidth>{children}</StyledCard>
+        <StyledCardInnerContainer>
+          <Card fullWidth>{children}</Card>
+        </StyledCardInnerContainer>
       </StyledCardContainer>
     )
   );

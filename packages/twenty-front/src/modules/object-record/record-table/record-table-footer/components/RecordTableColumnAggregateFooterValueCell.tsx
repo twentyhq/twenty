@@ -38,7 +38,7 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
       : '0'};
 `;
 
-const StyledIcon = styled(IconChevronDown)`
+const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   height: 20px;
@@ -94,7 +94,9 @@ export const RecordTableColumnAggregateFooterValueCell = ({
               dropdownId={dropdownId}
             />
             {!hasAggregateOperationForViewField && (
-              <StyledIcon fontWeight="light" size={theme.icon.size.sm} />
+              <StyledIconContainer>
+                <IconChevronDown fontWeight="light" size={theme.icon.size.sm} />
+              </StyledIconContainer>
             )}
           </>
         ) : (

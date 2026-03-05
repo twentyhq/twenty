@@ -14,13 +14,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNavigationIcon = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
-`;
-
-const StyledIconChevronLeft = styled(IconChevronLeft)`
-  color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const CommandMenuBackButton = () => {
@@ -53,7 +50,7 @@ export const CommandMenuBackButton = () => {
       clickableComponent={
         <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
           <IconButton
-            Icon={StyledIconChevronLeft}
+            Icon={IconChevronLeft}
             size="small"
             variant="tertiary"
             onClick={goBackFromCommandMenu}

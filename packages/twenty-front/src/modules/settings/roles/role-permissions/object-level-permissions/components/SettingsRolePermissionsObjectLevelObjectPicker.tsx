@@ -39,8 +39,8 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
-  input {
+const StyledSearchInputContainer = styled.div`
+  > * input {
     background: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};
   }
@@ -104,15 +104,17 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     <StyledTypeSelectContainer>
       <Section>
         <StyledSearchContainer>
-          <StyledSearchInput
-            instanceId="role-permissions-object-search"
-            value={searchFilter}
-            onChange={handleSearchChange}
-            placeholder={t`Search an object`}
-            fullWidth
-            LeftIcon={IconSearch}
-            sizeVariant="lg"
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="role-permissions-object-search"
+              value={searchFilter}
+              onChange={handleSearchChange}
+              placeholder={t`Search an object`}
+              fullWidth
+              LeftIcon={IconSearch}
+              sizeVariant="lg"
+            />
+          </StyledSearchInputContainer>
         </StyledSearchContainer>
       </Section>
 
