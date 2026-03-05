@@ -21,6 +21,7 @@ import {
   ApplicationAccessTokenJwtPayload,
   AUTH_CONTEXT_USER_SELECT_FIELDS,
   type AuthContext,
+  type AuthContextUser,
   FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
@@ -119,7 +120,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateAccessToken(
     payload: AccessTokenJwtPayload,
   ): Promise<AuthContext> {
-    let user: UserEntity | null = null;
+    let user: AuthContextUser | null = null;
     let context: AuthContext = {};
 
     const workspace = await this.workspaceRepository.findOneBy({
@@ -222,7 +223,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     userWorkspaceId: string;
     expectedWorkspaceId?: string;
   }): Promise<{
-    user: UserEntity;
+    user: AuthContextUser;
     userWorkspace: UserWorkspaceEntity;
   } | null> {
     const user = await this.userRepository.findOne({
@@ -236,7 +237,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { id: params.userWorkspaceId },
-      relations: ['user', 'workspace'],
     });
 
     if (!isDefined(userWorkspace)) {
@@ -245,7 +245,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (
       isDefined(params.expectedWorkspaceId) &&
-      userWorkspace.workspace.id !== params.expectedWorkspaceId
+      userWorkspace.workspaceId !== params.expectedWorkspaceId
     ) {
       return null;
     }
