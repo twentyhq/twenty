@@ -2446,8 +2446,8 @@ export type Mutation = {
   impersonate: Impersonate;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
+  installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
-  installNpmApp: Scalars['Boolean'];
   registerNpmPackage: ApplicationRegistration;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
@@ -3030,14 +3030,14 @@ export type MutationInitiateOtpProvisioningArgs = {
 };
 
 
-export type MutationInstallMarketplaceAppArgs = {
-  universalIdentifier: Scalars['String'];
+export type MutationInstallApplicationArgs = {
+  appRegistrationId: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationInstallNpmAppArgs = {
-  packageName: Scalars['String'];
+export type MutationInstallMarketplaceAppArgs = {
+  universalIdentifier: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
 };
 
@@ -3960,6 +3960,7 @@ export type Query = {
   findOneApplication: Application;
   findOneApplicationRegistration: ApplicationRegistration;
   findOneLogicFunction: LogicFunction;
+  findOneMarketplaceApp: MarketplaceApp;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
@@ -4132,6 +4133,11 @@ export type QueryFindOneApplicationRegistrationArgs = {
 
 export type QueryFindOneLogicFunctionArgs = {
   input: LogicFunctionIdInput;
+};
+
+
+export type QueryFindOneMarketplaceAppArgs = {
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -6228,6 +6234,14 @@ export type GetLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFu
 
 export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, sourcePackage?: string | null, isFeatured: boolean, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null };
 
+export type InstallApplicationMutationVariables = Exact<{
+  appRegistrationId: Scalars['String'];
+  version?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type InstallApplicationMutation = { __typename?: 'Mutation', installApplication: boolean };
+
 export type InstallMarketplaceAppMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
@@ -6235,14 +6249,6 @@ export type InstallMarketplaceAppMutationVariables = Exact<{
 
 
 export type InstallMarketplaceAppMutation = { __typename?: 'Mutation', installMarketplaceApp: boolean };
-
-export type InstallNpmAppMutationVariables = Exact<{
-  packageName: Scalars['String'];
-  version?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type InstallNpmAppMutation = { __typename?: 'Mutation', installNpmApp: boolean };
 
 export type RegisterNpmPackageMutationVariables = Exact<{
   packageName: Scalars['String'];
@@ -6598,7 +6604,7 @@ export type UpdateApplicationRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string } };
 
 export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
   input: UpdateApplicationRegistrationVariableInput;
@@ -6631,14 +6637,14 @@ export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', 
 export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string }> };
 
 export type FindOneApplicationRegistrationQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string } };
 
 export type UninstallApplicationMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
@@ -11463,6 +11469,38 @@ export function useGetLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.Lazy
 export type GetLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeQuery>;
 export type GetLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeLazyQuery>;
 export type GetLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
+export const InstallApplicationDocument = gql`
+    mutation InstallApplication($appRegistrationId: String!, $version: String) {
+  installApplication(appRegistrationId: $appRegistrationId, version: $version)
+}
+    `;
+export type InstallApplicationMutationFn = Apollo.MutationFunction<InstallApplicationMutation, InstallApplicationMutationVariables>;
+
+/**
+ * __useInstallApplicationMutation__
+ *
+ * To run a mutation, you first call `useInstallApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInstallApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [installApplicationMutation, { data, loading, error }] = useInstallApplicationMutation({
+ *   variables: {
+ *      appRegistrationId: // value for 'appRegistrationId'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useInstallApplicationMutation(baseOptions?: Apollo.MutationHookOptions<InstallApplicationMutation, InstallApplicationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InstallApplicationMutation, InstallApplicationMutationVariables>(InstallApplicationDocument, options);
+      }
+export type InstallApplicationMutationHookResult = ReturnType<typeof useInstallApplicationMutation>;
+export type InstallApplicationMutationResult = Apollo.MutationResult<InstallApplicationMutation>;
+export type InstallApplicationMutationOptions = Apollo.BaseMutationOptions<InstallApplicationMutation, InstallApplicationMutationVariables>;
 export const InstallMarketplaceAppDocument = gql`
     mutation InstallMarketplaceApp($universalIdentifier: String!, $version: String) {
   installMarketplaceApp(
@@ -11498,38 +11536,6 @@ export function useInstallMarketplaceAppMutation(baseOptions?: Apollo.MutationHo
 export type InstallMarketplaceAppMutationHookResult = ReturnType<typeof useInstallMarketplaceAppMutation>;
 export type InstallMarketplaceAppMutationResult = Apollo.MutationResult<InstallMarketplaceAppMutation>;
 export type InstallMarketplaceAppMutationOptions = Apollo.BaseMutationOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
-export const InstallNpmAppDocument = gql`
-    mutation InstallNpmApp($packageName: String!, $version: String) {
-  installNpmApp(packageName: $packageName, version: $version)
-}
-    `;
-export type InstallNpmAppMutationFn = Apollo.MutationFunction<InstallNpmAppMutation, InstallNpmAppMutationVariables>;
-
-/**
- * __useInstallNpmAppMutation__
- *
- * To run a mutation, you first call `useInstallNpmAppMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInstallNpmAppMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [installNpmAppMutation, { data, loading, error }] = useInstallNpmAppMutation({
- *   variables: {
- *      packageName: // value for 'packageName'
- *      version: // value for 'version'
- *   },
- * });
- */
-export function useInstallNpmAppMutation(baseOptions?: Apollo.MutationHookOptions<InstallNpmAppMutation, InstallNpmAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallNpmAppMutation, InstallNpmAppMutationVariables>(InstallNpmAppDocument, options);
-      }
-export type InstallNpmAppMutationHookResult = ReturnType<typeof useInstallNpmAppMutation>;
-export type InstallNpmAppMutationResult = Apollo.MutationResult<InstallNpmAppMutation>;
-export type InstallNpmAppMutationOptions = Apollo.BaseMutationOptions<InstallNpmAppMutation, InstallNpmAppMutationVariables>;
 export const RegisterNpmPackageDocument = gql`
     mutation RegisterNpmPackage($packageName: String!) {
   registerNpmPackage(packageName: $packageName) {
@@ -11677,6 +11683,23 @@ export const FindOneMarketplaceAppDocument = gql`
   }
 }
     ${MarketplaceAppFieldsFragmentDoc}`;
+
+/**
+ * __useFindOneMarketplaceAppQuery__
+ *
+ * To run a query within a React component, call `useFindOneMarketplaceAppQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneMarketplaceAppQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneMarketplaceAppQuery({
+ *   variables: {
+ *      universalIdentifier: // value for 'universalIdentifier'
+ *   },
+ * });
+ */
 export function useFindOneMarketplaceAppQuery(baseOptions: Apollo.QueryHookOptions<FindOneMarketplaceAppQuery, FindOneMarketplaceAppQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<FindOneMarketplaceAppQuery, FindOneMarketplaceAppQueryVariables>(FindOneMarketplaceAppDocument, options);
