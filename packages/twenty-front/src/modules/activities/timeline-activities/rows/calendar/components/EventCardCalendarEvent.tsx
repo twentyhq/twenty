@@ -97,8 +97,7 @@ export const EventCardCalendarEvent = ({
   calendarEventId: string;
 }) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { openCalendarEventInSidePanel } =
-    useOpenCalendarEventInSidePanel();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const {
     record: calendarEvent,

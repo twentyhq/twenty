@@ -12,10 +12,7 @@ export const useOpenRichTextInSidePanel = () => {
   const store = useStore();
 
   const openRichTextInSidePanel = useCallback(
-    (
-      activityId: string,
-      activityObjectNameSingular: string,
-    ) => {
+    (activityId: string, activityObjectNameSingular: string) => {
       store.set(viewableRichTextComponentState.atom, {
         activityId,
         activityObjectNameSingular,

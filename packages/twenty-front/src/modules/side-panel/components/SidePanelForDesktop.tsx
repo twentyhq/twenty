@@ -61,9 +61,7 @@ const GAP_WIDTH = 8;
 export const SidePanelForDesktop = () => {
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isSidePanelClosing = useAtomStateValue(isSidePanelClosingState);
-  const [sidePanelWidth, setSidePanelWidth] = useAtomState(
-    sidePanelWidthState,
-  );
+  const [sidePanelWidth, setSidePanelWidth] = useAtomState(sidePanelWidthState);
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();

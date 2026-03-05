@@ -43,8 +43,9 @@ export const useSidePanelMatchingActions = ({
     workflowRunGlobalActions,
   );
 
-  const matchingFrontComponentGlobalActions =
-    filterActionsWithSidePanelSearch(frontComponentGlobalActions);
+  const matchingFrontComponentGlobalActions = filterActionsWithSidePanelSearch(
+    frontComponentGlobalActions,
+  );
 
   const matchingFrontComponentRecordSelectionActions =
     filterActionsWithSidePanelSearch(frontComponentRecordSelectionActions);

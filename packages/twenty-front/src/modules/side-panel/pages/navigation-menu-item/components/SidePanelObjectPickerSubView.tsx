@@ -70,7 +70,9 @@ export const SidePanelObjectPickerSubView = ({
         />
       ))}
       {isAddVariant ? (
-        <SidePanelAddToNavigationDraggablePlaceholder index={filteredItems.length}>
+        <SidePanelAddToNavigationDraggablePlaceholder
+          index={filteredItems.length}
+        >
           <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
             <CommandMenuItem
               Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}

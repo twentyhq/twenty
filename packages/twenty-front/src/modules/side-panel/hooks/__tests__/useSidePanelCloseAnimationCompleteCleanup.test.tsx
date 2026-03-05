@@ -126,7 +126,9 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
         pageId: '1',
       },
     ]);
-    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(true);
+    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(
+      true,
+    );
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(true);
     expect(result.current.viewableRecordId).toBe('record-123');
 
@@ -143,7 +145,9 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('');
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
-    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(false);
+    expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(
+      false,
+    );
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(false);
     expect(result.current.viewableRecordId).toBe(null);
   });

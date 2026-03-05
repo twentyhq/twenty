@@ -123,8 +123,7 @@ export const useCommandMenuItemFrontComponentActions = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
-  const { openFrontComponentInSidePanel } =
-    useOpenFrontComponentInSidePanel();
+  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(

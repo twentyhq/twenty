@@ -57,7 +57,8 @@ export const useSidePanelContextChips = () => {
 
     return filteredSidePanelNavigationStack
       .map((page, index) => {
-        const isLastChip = index === filteredSidePanelNavigationStack.length - 1;
+        const isLastChip =
+          index === filteredSidePanelNavigationStack.length - 1;
 
         const isRecordPage = page.page === SidePanelPages.ViewRecord;
 

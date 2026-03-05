@@ -22,7 +22,8 @@ export const useStartNodeCreation = () => {
     workflowSelectedNodeComponentState,
   );
 
-  const { openWorkflowCreateStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowCreateStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,

@@ -63,7 +63,8 @@ export const WorkflowRunVisualizerEffect = ({
       workflowRunDiagramAutomaticallyOpenedStepsComponentState,
     );
 
-  const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowRunViewStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 

@@ -21,7 +21,8 @@ import { useStore } from 'jotai';
 export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
-  const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowRunViewStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
   const { getIcon } = useIcons();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();

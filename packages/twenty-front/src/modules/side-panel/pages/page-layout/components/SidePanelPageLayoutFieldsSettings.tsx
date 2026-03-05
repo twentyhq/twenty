@@ -74,10 +74,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList
-          commandGroups={[]}
-          selectableItemIds={selectableItemIds}
-        >
+        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Customize`}>
             <SelectableListItem
               itemId="layout"

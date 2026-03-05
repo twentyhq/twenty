@@ -92,7 +92,8 @@ export const WorkflowRunDiagramStepNode = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowRunViewStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowRunViewStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const { isInSidePanel } = useContext(ActionMenuContext);
 

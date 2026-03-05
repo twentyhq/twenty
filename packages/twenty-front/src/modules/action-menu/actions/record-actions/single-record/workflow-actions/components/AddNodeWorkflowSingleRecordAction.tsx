@@ -7,7 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const AddNodeWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
-  const { openWorkflowCreateStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowCreateStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const onClick = () => {
     if (!isDefined(workflowWithCurrentVersion)) {

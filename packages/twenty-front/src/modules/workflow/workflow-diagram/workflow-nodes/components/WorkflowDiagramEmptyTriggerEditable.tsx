@@ -21,7 +21,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   const { t } = useLingui();
 
-  const { openWorkflowTriggerTypeInSidePanel } = useSidePanelWorkflowNavigation();
+  const { openWorkflowTriggerTypeInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,

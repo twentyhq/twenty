@@ -31,8 +31,7 @@ export const SidePanelResetContextToSelectionButton = () => {
       objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const { resetPreviousSidePanelContext } =
-    useResetPreviousSidePanelContext();
+  const { resetPreviousSidePanelContext } = useResetPreviousSidePanelContext();
 
   if (
     !isDefined(objectMetadataItem) ||

@@ -37,9 +37,7 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   justify-content: space-between;
   font-size: ${themeCssVariables.font.size.lg};
   height: ${({ isMobile }) =>
-    isMobile
-      ? SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE
-      : SIDE_PANEL_TOP_BAR_HEIGHT}px;
+    isMobile ? SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE : SIDE_PANEL_TOP_BAR_HEIGHT}px;
   margin: 0;
   outline: none;
   position: relative;
@@ -79,9 +77,8 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SidePanelTopBar = () => {
-  const [sidePanelSearch, setSidePanelSearch] = useAtomState(
-    sidePanelSearchState,
-  );
+  const [sidePanelSearch, setSidePanelSearch] =
+    useAtomState(sidePanelSearchState);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();

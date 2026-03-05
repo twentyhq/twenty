@@ -25,8 +25,7 @@ export type SidePanelListProps = {
 
 const StyledInnerList = styled.div`
   max-height: calc(
-    100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px -
-      ${SIDE_PANEL_LIST_PADDING * 2}px
+    100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px - ${SIDE_PANEL_LIST_PADDING * 2}px
   );
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
@@ -35,8 +34,7 @@ const StyledInnerList = styled.div`
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(
-      100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px -
-        ${SIDE_PANEL_LIST_PADDING * 2}px
+      100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px - ${SIDE_PANEL_LIST_PADDING * 2}px
     );
   }
 `;
@@ -69,9 +67,7 @@ export const SidePanelList = ({
 
   return (
     <StyledSidePanelList>
-      <SidePanelDefaultSelectionEffect
-        selectableItemIds={selectableItemIds}
-      />
+      <SidePanelDefaultSelectionEffect selectableItemIds={selectableItemIds} />
       <ScrollWrapper componentInstanceId={`scroll-wrapper-side-panel`}>
         <StyledInnerList>
           <SelectableList

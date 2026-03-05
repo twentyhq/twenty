@@ -43,8 +43,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const { openEmailThreadInSidePanel } =
-        useOpenEmailThreadInSidePanel();
+      const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
 
       const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,

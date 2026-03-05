@@ -77,8 +77,7 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openCalendarEventInSidePanel } =
-    useOpenCalendarEventInSidePanel();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
