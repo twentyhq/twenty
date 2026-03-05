@@ -241,9 +241,7 @@ export const WorkspaceDndKitProvider = ({
     }
 
     const targetIdIsString =
-      isDefined(sourceIsSortable) &&
-      isDefined(target) &&
-      typeof target.id === 'string';
+      sourceIsSortable && isDefined(target) && typeof target.id === 'string';
     if (targetIdIsString && target !== null) {
       const parsedDestination = parseDropTargetIdToDestination(
         String(target.id),
