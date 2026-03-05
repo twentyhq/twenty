@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "unicorn", "import"],
+  "jsPlugins": ["../twenty-eslint-rules/dist/oxlint-plugin.mjs"],
   "categories": {
     "correctness": "off"
   },
@@ -80,6 +81,8 @@
       "varsIgnorePattern": "^_",
       "args": "after-used",
       "argsIgnorePattern": "^_"
-    }]
+    }],
+
+    "twenty/explicit-boolean-predicates-in-if": "error"
   }
 }
