@@ -497,14 +497,13 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
 
-    const columnNameWithQuotes = `"${
-      formatColumnNamesFromCompositeFieldAndSubfields(
-        associatedGroupByField.fieldMetadata.name,
-        associatedGroupByField.subFieldName
-          ? [associatedGroupByField.subFieldName]
-          : undefined,
-      )[0]
-    }"`;
+    const columnName = formatColumnNamesFromCompositeFieldAndSubfields(
+      associatedGroupByField.fieldMetadata.name,
+      associatedGroupByField.subFieldName
+        ? [associatedGroupByField.subFieldName]
+        : undefined,
+    )[0];
+    const columnNameWithQuotes = `"${this.flatObjectMetadata.nameSingular}"."${columnName}"`;
 
     const expression = getGroupByOrderExpression({
       groupByField: associatedGroupByField,
