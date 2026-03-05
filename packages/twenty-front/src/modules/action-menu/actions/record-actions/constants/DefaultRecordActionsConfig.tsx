@@ -146,14 +146,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       objectPermissions,
       isNavigationMenuInEditMode,
     }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((isDefined(selectedRecord) &&
-            !selectedRecord.isRemote &&
-            !hasAnySoftDeleteFilterOnView &&
-            objectPermissions.canSoftDeleteObjectRecords &&
-            !isDefined(selectedRecord?.deletedAt)) ??
-          false),
+      (isDefined(selectedRecord) &&
+        !selectedRecord.isRemote &&
+        !hasAnySoftDeleteFilterOnView &&
+        objectPermissions.canSoftDeleteObjectRecords &&
+        !isDefined(selectedRecord?.deletedAt) &&
+        !isNavigationMenuInEditMode) ??
+      false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
