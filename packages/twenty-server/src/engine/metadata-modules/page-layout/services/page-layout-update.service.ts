@@ -295,6 +295,7 @@ export class PageLayoutUpdateService {
           widgetUniversalIdentifiers: [],
           icon: null,
           layoutMode: PageLayoutTabLayoutMode.GRID,
+          overrides: null,
         };
       },
     );
@@ -512,6 +513,7 @@ export class PageLayoutUpdateService {
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
           conditionalDisplay: null,
+          overrides: null,
           universalConfiguration:
             fromPageLayoutWidgetConfigurationToUniversalConfiguration({
               configuration: widgetInput.configuration,

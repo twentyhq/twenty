@@ -97,6 +97,7 @@ const buildFieldsWidget = ({
     },
   },
   universalConfiguration: null,
+  overrides: null,
 });
 
 const buildFlatPageLayoutWidgetMaps = (

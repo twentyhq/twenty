@@ -736,6 +736,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         deletedAt: null,
         icon: tabProps.icon,
         layoutMode: tabProps.layoutMode,
+        overrides: null,
       });
 
       const isFieldsWidget = widgetKey === 'fields';
@@ -786,6 +787,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         updatedAt: now,
         deletedAt: null,
         conditionalDisplay: null,
+        overrides: null,
       });
     }
 

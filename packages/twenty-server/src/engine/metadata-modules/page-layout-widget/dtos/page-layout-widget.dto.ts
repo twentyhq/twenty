@@ -1,4 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import GraphQLJSON from 'graphql-type-json';
@@ -67,4 +72,7 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;
+
+  @HideField()
+  overrides?: Partial<PageLayoutWidgetDTO> | null;
 }

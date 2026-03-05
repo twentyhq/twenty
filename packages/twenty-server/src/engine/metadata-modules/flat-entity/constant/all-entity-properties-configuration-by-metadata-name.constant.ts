@@ -34,6 +34,7 @@ type MetadataEntityPropertyConfiguration<
           : HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
         : boolean;
     toCompare: boolean;
+    isOverridable?: boolean;
   };
 };
 
@@ -834,6 +835,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     type: { toCompare: true, toStringify: false, universalProperty: undefined },
     objectMetadataId: {
@@ -850,6 +852,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
+      isOverridable: true,
     },
     configuration: {
       toCompare: true,
@@ -877,7 +880,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'pageLayoutTabUniversalIdentifier',
     },
     conditionalDisplay: {
-      toCompare: false,
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    overrides: {
+      toCompare: true,
       toStringify: true,
       universalProperty: undefined,
     },
@@ -887,11 +896,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     deletedAt: {
       toCompare: true,
@@ -899,9 +910,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     createdAt: {
       toCompare: false,
@@ -921,6 +933,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     layoutMode: {
       toCompare: false,
       toStringify: false,
+      universalProperty: undefined,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
   },
@@ -1292,5 +1309,14 @@ type FilterComparableKeys<TConfig> = {
 
 export type MetadataEntityComparablePropertyName<T extends AllMetadataName> =
   FilterComparableKeys<
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
+  >;
+
+type FilterOverridableKeys<TConfig> = {
+  [P in keyof TConfig]: TConfig[P] extends { isOverridable: true } ? P : never;
+}[keyof TConfig];
+
+export type MetadataEntityOverridablePropertyName<T extends AllMetadataName> =
+  FilterOverridableKeys<
     (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;

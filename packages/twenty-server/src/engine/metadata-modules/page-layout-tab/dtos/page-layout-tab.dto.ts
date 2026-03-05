@@ -1,4 +1,10 @@
-import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
@@ -47,4 +53,7 @@ export class PageLayoutTabDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
+
+  @HideField()
+  overrides?: Partial<PageLayoutTabDTO> | null;
 }
