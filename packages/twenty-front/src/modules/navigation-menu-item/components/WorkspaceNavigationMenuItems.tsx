@@ -9,7 +9,10 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -29,14 +32,13 @@ import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/comp
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { CommandMenuPages } from 'twenty-shared/types';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -78,9 +80,7 @@ export const WorkspaceNavigationMenuItems = () => {
 
   const loading = useIsPrefetchLoading();
   const { t } = useLingui();
-  const hasLayoutsPermission = useHasPermissionFlag(
-    PermissionFlagType.LAYOUTS,
-  );
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const canEditSidebar =
     isNavigationMenuItemEditingEnabled && hasLayoutsPermission;
 

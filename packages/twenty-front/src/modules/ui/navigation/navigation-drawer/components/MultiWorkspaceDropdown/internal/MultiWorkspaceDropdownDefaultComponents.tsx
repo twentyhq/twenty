@@ -24,7 +24,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -42,6 +41,7 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -90,7 +90,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
     );
   };
-
 
   return (
     <DropdownContent>
@@ -193,11 +192,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             onClick={handleSupport}
           />
         )}
-        <MenuItem
-          LeftIcon={IconLogout}
-          text={t`Log out`}
-          onClick={signOut}
-        />
+        <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );
