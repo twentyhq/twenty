@@ -29,12 +29,12 @@ type SidePanelNewSidebarItemMainMenuProps = {
   onSelectRecord: () => void;
 };
 
-const MAIN_MENU_ITEM_IDS = [
-  'object',
-  'view',
-  'record',
-  'folder',
-  'link',
+const MAIN_MENU_ITEM_TYPES = [
+  NavigationMenuItemType.OBJECT,
+  NavigationMenuItemType.VIEW,
+  NavigationMenuItemType.RECORD,
+  NavigationMenuItemType.FOLDER,
+  NavigationMenuItemType.LINK,
 ] as const;
 
 export const SidePanelNewSidebarItemMainMenu = ({
@@ -55,8 +55,10 @@ export const SidePanelNewSidebarItemMainMenu = ({
   );
   const hasInsertionContext = isDefined(addMenuItemInsertionContext);
   const selectableItemIds = isAddingToFolder
-    ? MAIN_MENU_ITEM_IDS.filter((itemId) => itemId !== 'folder')
-    : [...MAIN_MENU_ITEM_IDS];
+    ? MAIN_MENU_ITEM_TYPES.filter(
+        (type) => type !== NavigationMenuItemType.FOLDER,
+      )
+    : [...MAIN_MENU_ITEM_TYPES];
 
   return (
     <SidePanelAddToNavigationDroppable>
@@ -65,7 +67,10 @@ export const SidePanelNewSidebarItemMainMenu = ({
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>
-              <SelectableListItem itemId="object" onEnter={onSelectObject}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.OBJECT}
+                onEnter={onSelectObject}
+              >
                 <CommandMenuItem
                   Icon={() => (
                     <NavigationMenuItemStyleIcon
@@ -74,12 +79,15 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     />
                   )}
                   label={t`Object`}
-                  id="object"
+                  id={NavigationMenuItemType.OBJECT}
                   hasSubMenu={true}
                   onClick={onSelectObject}
                 />
               </SelectableListItem>
-              <SelectableListItem itemId="view" onEnter={onSelectView}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.VIEW}
+                onEnter={onSelectView}
+              >
                 <CommandMenuItem
                   Icon={() => (
                     <NavigationMenuItemStyleIcon
@@ -88,12 +96,15 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     />
                   )}
                   label={t`View`}
-                  id="view"
+                  id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}
                   onClick={onSelectView}
                 />
               </SelectableListItem>
-              <SelectableListItem itemId="record" onEnter={onSelectRecord}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.RECORD}
+                onEnter={onSelectRecord}
+              >
                 <CommandMenuItem
                   Icon={() => (
                     <Avatar
@@ -103,7 +114,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     />
                   )}
                   label={t`Record`}
-                  id="record"
+                  id={NavigationMenuItemType.RECORD}
                   hasSubMenu={true}
                   onClick={onSelectRecord}
                 />
@@ -111,13 +122,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
             </SidePanelGroup>
             <SidePanelGroup heading={t`Other`}>
               <SelectableListItem
-                itemId="folder"
+                itemId={NavigationMenuItemType.FOLDER}
                 onEnter={isAddingToFolder ? undefined : handleAddFolder}
               >
                 <SidePanelItemWithAddToNavigationDrag
                   icon={IconFolder}
                   label={t`Folder`}
-                  id="folder"
+                  id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
                   dragIndex={hasInsertionContext ? undefined : 3}
                   payload={{
@@ -129,11 +140,14 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   disableDrag={hasInsertionContext}
                 />
               </SelectableListItem>
-              <SelectableListItem itemId="link" onEnter={handleAddLink}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.LINK}
+                onEnter={handleAddLink}
+              >
                 <SidePanelItemWithAddToNavigationDrag
                   icon={IconLink}
                   label={t`Link`}
-                  id="link"
+                  id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
                   dragIndex={hasInsertionContext ? undefined : 4}
                   payload={{
