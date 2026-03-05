@@ -7,6 +7,7 @@ import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actio
 import { UpdateMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/UpdateMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { CreateNewIndexRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewIndexRecordNoSelectionRecordAction';
+import { EditNavigationSidebarNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/EditNavigationSidebarNoSelectionRecordAction';
 import { CreateNewViewNoSelectionRecord } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewViewNoSelectionRecord';
 import { HideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordAction';
 import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordAction';
@@ -789,6 +790,22 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
     hotKeys: ['G', 'N'],
+  },
+  [NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR,
+    label: msg`Edit navigation sidebar`,
+    shortLabel: msg`Edit sidebar`,
+    position: 30,
+    Icon: IconLayout,
+    isPinned: false,
+    availableOn: [ActionViewType.GLOBAL],
+    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+      ),
+    component: <EditNavigationSidebarNoSelectionRecordAction />,
   },
 
   [RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT]: {
