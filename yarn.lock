@@ -4058,7 +4058,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dagrejs/dagre@npm:^1.1.2":
+"@dagrejs/dagre@npm:^1.1.8":
   version: 1.1.8
   resolution: "@dagrejs/dagre@npm:1.1.8"
   dependencies:
@@ -57632,7 +57632,7 @@ __metadata:
     "@blocknote/xl-pdf-exporter": "npm:0.47.0"
     "@calcom/embed-react": "npm:^1.5.3"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
-    "@dagrejs/dagre": "npm:^1.1.2"
+    "@dagrejs/dagre": "npm:^1.1.8"
     "@floating-ui/react": "npm:^0.24.3"
     "@graphiql/plugin-explorer": "npm:^1.0.2"
     "@graphiql/react": "npm:^0.23.0"
@@ -57835,7 +57835,6 @@ __metadata:
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.47.0"
     "@clickhouse/client": "npm:^1.11.0"
-    "@dagrejs/dagre": "npm:^1.1.2"
     "@e2b/code-interpreter": "npm:^1.0.4"
     "@envelop/core": "npm:4.0.3"
     "@envelop/on-resolve": "npm:4.1.0"
