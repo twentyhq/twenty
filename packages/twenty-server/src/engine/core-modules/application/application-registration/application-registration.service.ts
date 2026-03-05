@@ -196,6 +196,7 @@ export class ApplicationRegistrationService {
       updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
     if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
+    if (isDefined(update.isListed)) updateData.isListed = update.isListed;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
