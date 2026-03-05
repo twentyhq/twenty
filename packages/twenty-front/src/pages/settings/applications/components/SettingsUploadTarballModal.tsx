@@ -43,21 +43,23 @@ export const SettingsUploadTarballModal = () => {
       return;
     }
 
-    const uploadResult = await upload(file);
+    try {
+      const uploadResult = await upload(file);
 
-    if (uploadResult.success) {
-      const installResult = await install({
-        universalIdentifier: uploadResult.universalIdentifier,
-      });
+      if (uploadResult.success) {
+        const installResult = await install({
+          universalIdentifier: uploadResult.universalIdentifier,
+        });
 
-      if (installResult) {
-        await refetch();
-        closeModal(UPLOAD_TARBALL_MODAL_ID);
+        if (installResult) {
+          await refetch();
+          closeModal(UPLOAD_TARBALL_MODAL_ID);
+        }
       }
-    }
-
-    if (isDefined(fileInputRef.current)) {
-      fileInputRef.current.value = '';
+    } finally {
+      if (isDefined(fileInputRef.current)) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

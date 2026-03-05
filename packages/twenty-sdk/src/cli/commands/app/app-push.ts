@@ -1,10 +1,8 @@
-import { appBuild } from '@/cli/public-operations/app-build';
+import { appPack } from '@/cli/public-operations/app-pack';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import chalk from 'chalk';
-import { execSync } from 'child_process';
 import fs from 'fs';
-import path from 'path';
 
 export type AppPushCommandOptions = {
   appPath?: string;
@@ -20,36 +18,19 @@ export class AppPushCommand {
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const buildResult = await appBuild({
+    const packResult = await appPack({
       appPath,
       onProgress: (message) => console.log(chalk.gray(message)),
     });
 
-    if (!buildResult.success) {
-      console.error(chalk.red(buildResult.error.message));
+    if (!packResult.success) {
+      console.error(chalk.red(packResult.error.message));
       process.exit(1);
     }
 
-    console.log(chalk.gray('Packing tarball...'));
+    const { tarballPath } = packResult.data;
 
-    const outputDir = path.join(appPath, '.twenty', 'output');
-
-    // TODO: Extract pack logic into a shared public operation (like appBuild)
-    // so app:pack and app:push share the same implementation.
-    const packOutput = execSync('npm pack --pack-destination .', {
-      cwd: outputDir,
-      encoding: 'utf-8',
-    }).trim();
-
-    const tarballName = packOutput.split('\n').pop()!;
-    const tarballPath = path.join(outputDir, tarballName);
-
-    if (!fs.existsSync(tarballPath)) {
-      console.error(chalk.red(`Tarball not found at ${tarballPath}`));
-      process.exit(1);
-    }
-
-    console.log(chalk.gray(`Uploading ${path.basename(tarballPath)}...`));
+    console.log(chalk.gray(`Uploading ${tarballPath}...`));
 
     const tarballBuffer = fs.readFileSync(tarballPath);
 

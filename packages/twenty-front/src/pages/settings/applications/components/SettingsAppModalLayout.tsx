@@ -10,40 +10,73 @@ import {
 } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type StyledAppModalProps = React.PropsWithChildren<{
+type StyledAppModalBaseProps = React.PropsWithChildren<{
   modalId: string;
-  isClosable?: boolean;
-  onClose?: () => void;
   size?: ModalSize;
   padding?: ModalPadding;
   overlay?: ModalOverlay;
   dataGloballyPreventClickOutside?: boolean;
 }>;
 
-export const StyledAppModal = ({
+type StyledAppModalProps = StyledAppModalBaseProps &
+  (
+    | { isClosable: true; onClose?: () => void }
+    | { isClosable?: false; onClose?: never }
+  );
+
+const ModalWrapper = ({
   modalId,
   children,
-  isClosable = false,
-  onClose,
   size,
   padding,
   overlay,
   dataGloballyPreventClickOutside,
-}: StyledAppModalProps) => (
-  <ModalStatefulWrapper
-    modalInstanceId={modalId}
-    isClosable={isClosable as true}
-    onClose={onClose}
-    size={size}
-    padding={padding}
-    overlay={overlay}
-    smallBorderRadius
-    narrowWidth
-    autoHeight
-    dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
+  isClosable,
+  onClose,
+}: StyledAppModalBaseProps & { isClosable: boolean; onClose?: () => void }) =>
+  isClosable ? (
+    <ModalStatefulWrapper
+      modalInstanceId={modalId}
+      isClosable={true}
+      onClose={onClose}
+      size={size}
+      padding={padding}
+      overlay={overlay}
+      smallBorderRadius
+      narrowWidth
+      autoHeight
+      dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
+    >
+      {children}
+    </ModalStatefulWrapper>
+  ) : (
+    <ModalStatefulWrapper
+      modalInstanceId={modalId}
+      isClosable={false}
+      size={size}
+      padding={padding}
+      overlay={overlay}
+      smallBorderRadius
+      narrowWidth
+      autoHeight
+      dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
+    >
+      {children}
+    </ModalStatefulWrapper>
+  );
+
+export const StyledAppModal = (props: StyledAppModalProps) => (
+  <ModalWrapper
+    modalId={props.modalId}
+    size={props.size}
+    padding={props.padding}
+    overlay={props.overlay}
+    dataGloballyPreventClickOutside={props.dataGloballyPreventClickOutside}
+    isClosable={props.isClosable ?? false}
+    onClose={props.isClosable ? props.onClose : undefined}
   >
-    {children}
-  </ModalStatefulWrapper>
+    {props.children}
+  </ModalWrapper>
 );
 
 export const StyledAppModalButton = styled(Button)`
