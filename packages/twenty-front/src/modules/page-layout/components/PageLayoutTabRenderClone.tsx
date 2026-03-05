@@ -4,11 +4,11 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
-import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledDraggableWrapper = styled.div`
@@ -37,7 +37,9 @@ export const PageLayoutTabRenderClone = ({
 
   const isHoveringTabList =
     pageLayoutTabListCurrentDragDroppableId ===
-    PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
+      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS ||
+    pageLayoutTabListCurrentDragDroppableId ===
+      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON;
 
   if (!tab) return null;
 
