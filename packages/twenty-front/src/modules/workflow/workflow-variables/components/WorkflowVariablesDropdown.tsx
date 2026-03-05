@@ -14,9 +14,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
 )<{ transparentBackground?: boolean; disabled?: boolean }>`
@@ -52,7 +50,6 @@ export const WorkflowVariablesDropdown = ({
   clickableComponent?: React.ReactNode;
 }) => {
   const { theme } = useContext(ThemeContext);
-
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -140,7 +137,7 @@ export const WorkflowVariablesDropdown = ({
       dropdownPlacement="bottom-end"
       dropdownOffset={{
         x: 2,
-        y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
+        y: parseInt(theme.spacing[multiline ? 11 : 1], 10),
       }}
     />
   );

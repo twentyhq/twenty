@@ -8,7 +8,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 
 const meta: Meta<typeof MenuItemSelectColor> = {

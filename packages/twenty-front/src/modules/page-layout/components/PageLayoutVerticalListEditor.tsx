@@ -56,14 +56,14 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
   const { isInPinnedTab } = useIsInPinnedTab();
 
   const variant = getPageLayoutVerticalListViewerVariant({
     isInPinnedTab,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
@@ -85,7 +85,7 @@ export const PageLayoutVerticalListEditor = ({
           <StyledVerticalListContainer
             ref={provided.innerRef}
             variant={variant}
-            shouldUseWhiteBackground={isMobile || isInRightDrawer}
+            shouldUseWhiteBackground={isMobile || isInSidePanel}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >

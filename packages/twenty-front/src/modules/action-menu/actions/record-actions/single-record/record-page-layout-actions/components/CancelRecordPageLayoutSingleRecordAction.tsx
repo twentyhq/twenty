@@ -1,5 +1,5 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
@@ -12,7 +12,7 @@ export const CancelRecordPageLayoutSingleRecordAction = () => {
     targetObjectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -21,7 +21,7 @@ export const CancelRecordPageLayoutSingleRecordAction = () => {
     useResetDraftPageLayoutToPersistedPageLayout(pageLayoutId);
 
   const handleClick = () => {
-    closeCommandMenu();
+    closeSidePanelMenu();
 
     resetDraftPageLayoutToPersistedPageLayout();
     setIsPageLayoutInEditMode(false);

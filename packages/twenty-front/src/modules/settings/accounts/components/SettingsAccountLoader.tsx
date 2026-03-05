@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SettingsAccountLoader = () => {
   const { theme } = useContext(ThemeContext);

@@ -14,8 +14,7 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -62,7 +61,6 @@ type SettingsRolesTableRowProps = {
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 

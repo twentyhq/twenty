@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconTwentyStarRaw from '@assets/icons/twenty-star.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconTwentyStarProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -9,8 +9,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
@@ -103,6 +102,7 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
   selected: number;
 }) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <>
       <StyledSeparator />

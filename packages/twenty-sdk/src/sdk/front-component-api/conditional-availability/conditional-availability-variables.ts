@@ -2,8 +2,8 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 
 export const isShowPage =
   null as unknown as CommandMenuContextApi['isShowPage'];
-export const isInRightDrawer =
-  null as unknown as CommandMenuContextApi['isInRightDrawer'];
+export const isInSidePanel =
+  null as unknown as CommandMenuContextApi['isInSidePanel'];
 export const isFavorite =
   null as unknown as CommandMenuContextApi['isFavorite'];
 export const isRemote = null as unknown as CommandMenuContextApi['isRemote'];

@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -13,7 +13,7 @@ import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useAtomComponentState(workflowInsertStepIdsComponentState);
@@ -22,14 +22,15 @@ export const useStartNodeCreation = () => {
     workflowSelectedNodeComponentState,
   );
 
-  const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowCreateStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   /**
@@ -56,19 +57,19 @@ export const useStartNodeCreation = () => {
         return;
       }
 
-      if (!isInRightDrawer) {
-        setCommandMenuNavigationStack([]);
+      if (!isInSidePanel) {
+        setSidePanelNavigationStack([]);
       }
 
-      openWorkflowCreateStepInCommandMenu(workflowVisualizerWorkflowId);
+      openWorkflowCreateStepInSidePanel(workflowVisualizerWorkflowId);
     },
     [
       setWorkflowInsertStepIds,
       setWorkflowSelectedNode,
       workflowVisualizerWorkflowId,
-      isInRightDrawer,
-      openWorkflowCreateStepInCommandMenu,
-      setCommandMenuNavigationStack,
+      isInSidePanel,
+      openWorkflowCreateStepInSidePanel,
+      setSidePanelNavigationStack,
     ],
   );
 

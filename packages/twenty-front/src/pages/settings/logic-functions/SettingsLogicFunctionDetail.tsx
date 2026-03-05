@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useLogicFunctionEditor } from '@/logic-functions/hooks/useLogicFunctionEditor';
+import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
@@ -23,6 +23,7 @@ import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
@@ -51,14 +52,13 @@ export const SettingsLogicFunctionDetail = () => {
     instanceId,
   );
 
-  const {
-    formValues,
-    logicFunction,
-    loading,
-    onChange,
-    executeLogicFunction,
-    isExecuting,
-  } = useLogicFunctionEditor({ logicFunctionId });
+  const { formValues, logicFunction, loading, onChange } = useLogicFunctionForm(
+    { logicFunctionId },
+  );
+
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
+    logicFunctionId,
+  });
 
   const handleTestFunction = async () => {
     navigate('#test');

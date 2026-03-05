@@ -8,7 +8,7 @@ import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPr
 import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 import { type Nullable } from 'twenty-shared/types';
@@ -85,6 +85,7 @@ export const Avatar = ({
   backgroundColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
+
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useAtom(
     invalidAvatarUrlsAtomV2,
   );
@@ -115,16 +116,16 @@ export const Avatar = ({
     : (color ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
-        theme,
         variant: 12,
+        theme,
       }));
   const fixedBackgroundColor = isPlaceholderFirstCharEmpty
     ? theme.background.transparent.light
     : (backgroundColor ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
-        theme,
         variant: 4,
+        theme,
       }));
 
   const showBackgroundColor = showPlaceholder;
@@ -148,7 +149,7 @@ export const Avatar = ({
           size={theme.icon.size.xl}
         />
       ) : showPlaceholder ? (
-        <StyledPlaceholderChar fontWeight={theme.font.weight.medium}>
+        <StyledPlaceholderChar fontWeight={500}>
           {placeholderChar}
         </StyledPlaceholderChar>
       ) : (

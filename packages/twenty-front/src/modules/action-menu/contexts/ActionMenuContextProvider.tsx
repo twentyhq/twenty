@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const ActionMenuContextProvider = ({
   children,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   objectMetadataItemOverride,
@@ -46,7 +46,7 @@ export const ActionMenuContextProvider = ({
   if (isWorkflowObject) {
     return (
       <ActionMenuContextProviderWorkflowObjects
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
         displayType={displayType}
         actionMenuType={actionMenuType}
         objectMetadataItem={objectMetadataItem}
@@ -58,7 +58,7 @@ export const ActionMenuContextProvider = ({
 
   return (
     <ActionMenuContextProviderDefault
-      isInRightDrawer={isInRightDrawer}
+      isInSidePanel={isInSidePanel}
       displayType={displayType}
       actionMenuType={actionMenuType}
       objectMetadataItem={objectMetadataItem}

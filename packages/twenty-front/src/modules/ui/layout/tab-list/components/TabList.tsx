@@ -46,7 +46,7 @@ export const TabList = ({
   tabs,
   loading,
   behaveAsLinks = true,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -118,7 +118,7 @@ export const TabList = ({
     >
       <>
         <TabListFromUrlOptionalEffect
-          isInRightDrawer={!!isInRightDrawer}
+          isInSidePanel={!!isInSidePanel}
           tabListIds={tabs.map((tab) => tab.id)}
         />
 
