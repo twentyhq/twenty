@@ -13,9 +13,9 @@ import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration/application-registration-variable.service';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
@@ -28,7 +28,7 @@ import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/dtos/workspace-migration.dto';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -129,7 +129,7 @@ export class ApplicationDevelopmentResolver {
   ) {
     return await this.applicationService.create({
       ...input,
-      sourceType: AppRegistrationSourceType.LOCAL,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
       workspaceId,
     });
   }

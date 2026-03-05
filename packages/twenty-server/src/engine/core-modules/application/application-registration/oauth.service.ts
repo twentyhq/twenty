@@ -13,7 +13,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -562,8 +562,10 @@ export class OAuthService {
     );
 
     if (
-      applicationRegistration.sourceType === AppRegistrationSourceType.NPM ||
-      applicationRegistration.sourceType === AppRegistrationSourceType.TARBALL
+      applicationRegistration.sourceType ===
+        ApplicationRegistrationSourceType.NPM ||
+      applicationRegistration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL
     ) {
       await this.applicationInstallService.installApplication({
         appRegistrationId: applicationRegistration.id,

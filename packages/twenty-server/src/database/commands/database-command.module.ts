@@ -9,7 +9,8 @@ import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-versi
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
-import { AppVersionCheckModule } from 'src/engine/core-modules/application/application-version-check/application-version-check.module';
+import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -58,7 +59,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     PublicDomainModule,
     EventLogCleanupModule,
     MarketplaceModule,
-    AppVersionCheckModule,
+    ApplicationInstallModule,
+    ApplicationUpgradeModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

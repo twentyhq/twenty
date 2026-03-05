@@ -18,8 +18,8 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration/application-registration-variable.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type MarketplaceDisplayData } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-display-data.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -106,12 +106,12 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 
-  @Field(() => AppRegistrationSourceType)
+  @Field(() => ApplicationRegistrationSourceType)
   @Column({
     type: 'text',
-    default: AppRegistrationSourceType.LOCAL,
+    default: ApplicationRegistrationSourceType.LOCAL,
   })
-  sourceType: AppRegistrationSourceType;
+  sourceType: ApplicationRegistrationSourceType;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
