@@ -16,8 +16,7 @@ import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
@@ -60,6 +59,7 @@ type ObjectOptionsDropdownMenuViewNameProps = {
 export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: ObjectOptionsDropdownMenuViewNameProps) => {
+  const { theme } = useContext(ThemeContext);
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useAtomComponentState(viewPickerSelectedIconComponentState);
 
@@ -111,7 +111,6 @@ export const ObjectOptionsDropdownMenuViewName = ({
     }
   }, [currentView?.key]);
 
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 

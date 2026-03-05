@@ -27,9 +27,7 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
   background: ${themeCssVariables.background.noisy};
   display: flex;
@@ -66,10 +64,10 @@ const StyledMainContainer = styled.div`
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
-  const { theme } = useContext(ThemeContext);
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <>

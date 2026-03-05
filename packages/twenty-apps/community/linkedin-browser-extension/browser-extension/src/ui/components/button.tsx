@@ -8,7 +8,6 @@ const StyledButton = styled.button`
   --text-color: #0a66c2;
   --bg-color: #00000000;
 
-
   font-size: ${({theme}) => theme.spacing(3.5)};
   font-weight: ${({theme}) => theme.font.weight.semiBold};
   font-family: ${({theme}) => theme.font.family};
@@ -25,7 +24,6 @@ const StyledButton = styled.button`
   transition-property: background-color, box-shadow, color;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1);
   transition-duration: 167ms;
-
 
   &:hover {
     background-color: var(--hover-bg-color);

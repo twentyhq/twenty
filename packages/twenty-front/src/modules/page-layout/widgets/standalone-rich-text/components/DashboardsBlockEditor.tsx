@@ -12,9 +12,7 @@ import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-t
 import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type DashboardsBlockEditorProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
@@ -148,8 +146,8 @@ export const DashboardsBlockEditor = ({
   readonly,
   boundaryElement,
 }: DashboardsBlockEditorProps) => {
-  const { theme } = useContext(ThemeContext);
-  const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+  const { colorScheme } = useContext(ThemeContext);
+  const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
 
   const handleFocus = () => {
     onFocus?.();

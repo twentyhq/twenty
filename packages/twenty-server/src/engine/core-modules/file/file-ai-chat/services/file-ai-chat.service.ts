@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';

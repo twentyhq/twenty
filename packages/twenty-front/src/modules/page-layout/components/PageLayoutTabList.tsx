@@ -27,7 +27,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
@@ -44,7 +44,7 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -88,7 +88,7 @@ export const PageLayoutTabList = ({
   tabs,
   loading,
   behaveAsLinks,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -238,17 +238,17 @@ export const PageLayoutTabList = ({
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const openTabSettings = useCallback(
     (tabId: string) => {
       setPageLayoutTabSettingsOpenTabId(tabId);
-      navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+      navigatePageLayoutSidePanel({
+        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
   );
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
@@ -324,7 +324,7 @@ export const PageLayoutTabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
+        isInSidePanel={!!isInSidePanel}
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 

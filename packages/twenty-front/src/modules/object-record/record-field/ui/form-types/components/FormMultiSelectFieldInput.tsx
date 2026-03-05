@@ -25,8 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -90,8 +89,8 @@ export const FormMultiSelectFieldInput = ({
   hint,
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
-  const instanceId = useId();
   const { theme } = useContext(ThemeContext);
+  const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

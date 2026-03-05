@@ -48,6 +48,7 @@
   "search.exclude": {
     "**/.yarn": true
   },
+  "eslint.useFlatConfig": true,
   "eslint.debug": true,
   "files.associations": {
     ".cursorrules": "markdown"

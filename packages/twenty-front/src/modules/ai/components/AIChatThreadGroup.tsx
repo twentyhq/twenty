@@ -1,10 +1,9 @@
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconSparkles } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
@@ -73,8 +72,8 @@ export const AIChatThreadGroup = ({
   threads: AgentChatThread[];
   title: string;
 }) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { handleThreadClick } = useAIChatThreadClick();
 
   if (threads.length === 0) {

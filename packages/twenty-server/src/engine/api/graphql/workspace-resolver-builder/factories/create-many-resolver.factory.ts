@@ -36,7 +36,6 @@ export class CreateManyResolverFactory
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
-        request: requestContext.req,
       });
 
       try {

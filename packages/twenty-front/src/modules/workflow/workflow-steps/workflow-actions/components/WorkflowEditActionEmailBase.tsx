@@ -2,7 +2,7 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
@@ -185,7 +185,7 @@ export const WorkflowEditActionEmailBase = ({
 
   const navigate = useNavigateSettings();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   useEffect(() => {
     return () => {
@@ -206,7 +206,7 @@ export const WorkflowEditActionEmailBase = ({
             options={connectedAccountOptions}
             callToActionButton={{
               onClick: () => {
-                closeCommandMenu();
+                closeSidePanelMenu();
                 navigate(SettingsPath.NewAccount);
               },
               Icon: IconPlus,

@@ -1,7 +1,7 @@
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -28,9 +28,9 @@ type NavigationBarItemName = 'main' | 'search' | 'newAIChat';
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
-  const { closeCommandMenu } = useCommandMenu();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
@@ -48,7 +48,7 @@ export const MobileNavigationBar = () => {
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
-    : isCommandMenuOpened
+    : isSidePanelOpened
       ? 'search'
       : 'main';
 
@@ -61,7 +61,7 @@ export const MobileNavigationBar = () => {
       name: 'main',
       Icon: IconList,
       onClick: () => {
-        closeCommandMenu();
+        closeSidePanelMenu();
         setIsNavigationDrawerExpanded(
           (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
         );
@@ -77,7 +77,7 @@ export const MobileNavigationBar = () => {
       Icon: IconSearch,
       onClick: () => {
         setIsNavigationDrawerExpanded(false);
-        closeCommandMenu();
+        closeSidePanelMenu();
 
         if (isSettingsPage) {
           const firstObjectMetadataItem =
@@ -99,7 +99,7 @@ export const MobileNavigationBar = () => {
             Icon: IconMessageCirclePlus,
             onClick: () => {
               setIsNavigationDrawerExpanded(false);
-              closeCommandMenu();
+              closeSidePanelMenu();
               createChatThread();
             },
           },

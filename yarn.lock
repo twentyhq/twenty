@@ -8826,6 +8826,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@isaacs/fs-minipass@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "@isaacs/fs-minipass@npm:4.0.1"
+  dependencies:
+    minipass: "npm:^7.0.4"
+  checksum: 10c0/c25b6dc1598790d5b55c0947a9b7d111cfa92594db5296c3b907e2f533c033666f692a3939eadac17b1c7c40d362d0b0635dc874cbfe3e70db7c2b07cc97a5d2
+  languageName: node
+  linkType: hard
+
 "@isaacs/string-locale-compare@npm:^1.0.1":
   version: 1.1.0
   resolution: "@isaacs/string-locale-compare@npm:1.1.0"
@@ -23126,13 +23135,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trysound/sax@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@trysound/sax@npm:0.2.0"
-  checksum: 10c0/44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
-  languageName: node
-  linkType: hard
-
 "@ts-gql/tag@npm:^0.7.3":
   version: 0.7.3
   resolution: "@ts-gql/tag@npm:0.7.3"
@@ -24210,7 +24212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.kebabcase@npm:^4.1.7, @types/lodash.kebabcase@npm:^4.1.9":
+"@types/lodash.kebabcase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.kebabcase@npm:4.1.9"
   dependencies:
@@ -24995,6 +24997,15 @@ __metadata:
   version: 8.1.3
   resolution: "@types/supports-color@npm:8.1.3"
   checksum: 10c0/03aa3616b403f3deaeb774df6d3a3969845b0c9f449814a83c2c53eb6818f5f9b571ba205330b0ebe8e46f41fd550f581a34b4310b13f0e0448694cfff37ddbf
+  languageName: node
+  linkType: hard
+
+"@types/tar@npm:^7.0.87":
+  version: 7.0.87
+  resolution: "@types/tar@npm:7.0.87"
+  dependencies:
+    tar: "npm:*"
+  checksum: 10c0/23243d293a9ae2cae647f39d56587f24bca947409d75afe9d44987d07dabca9e64ef2f5cb6cb561e14b6c2e1990c420f9d67ba27c9f73d0becd33595ec6464a5
   languageName: node
   linkType: hard
 
@@ -31321,6 +31332,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chownr@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "chownr@npm:3.0.0"
+  checksum: 10c0/43925b87700f7e3893296c8e9c56cc58f926411cce3a6e5898136daaf08f08b9a8eb76d37d3267e707d0dcc17aed2e2ebdf5848c0c3ce95cf910a919935c1b10
+  languageName: node
+  linkType: hard
+
 "chromatic@npm:^13.3.3":
   version: 13.3.5
   resolution: "chromatic@npm:13.3.5"
@@ -37100,19 +37118,6 @@ __metadata:
     merge2: "npm:^1.3.0"
     micromatch: "npm:^4.0.4"
   checksum: 10c0/42baad7b9cd40b63e42039132bde27ca2cb3a4950d0a0f9abe4639ea1aa9d3e3b40f98b1fe31cbc0cc17b664c9ea7447d911a152fa34ec5b72977b125a6fc845
-  languageName: node
-  linkType: hard
-
-"fast-glob@npm:^3.3.0":
-  version: 3.3.3
-  resolution: "fast-glob@npm:3.3.3"
-  dependencies:
-    "@nodelib/fs.stat": "npm:^2.0.2"
-    "@nodelib/fs.walk": "npm:^1.2.3"
-    glob-parent: "npm:^5.1.2"
-    merge2: "npm:^1.3.0"
-    micromatch: "npm:^4.0.8"
-  checksum: 10c0/f6aaa141d0d3384cf73cbcdfc52f475ed293f6d5b65bfc5def368b09163a9f7e5ec2b3014d80f733c405f58e470ee0cc451c2937685045cddcdeaa24199c43fe
   languageName: node
   linkType: hard
 
@@ -46783,7 +46788,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minipass@npm:^7.1.3":
+"minipass@npm:^7.0.4, minipass@npm:^7.1.3":
   version: 7.1.3
   resolution: "minipass@npm:7.1.3"
   checksum: 10c0/539da88daca16533211ea5a9ee98dc62ff5742f531f54640dd34429e621955e91cc280a91a776026264b7f9f6735947629f920944e9c1558369e8bf22eb33fbb
@@ -46797,6 +46802,15 @@ __metadata:
     minipass: "npm:^3.0.0"
     yallist: "npm:^4.0.0"
   checksum: 10c0/64fae024e1a7d0346a1102bb670085b17b7f95bf6cfdf5b128772ec8faf9ea211464ea4add406a3a6384a7d87a0cd1a96263692134323477b4fb43659a6cab78
+  languageName: node
+  linkType: hard
+
+"minizlib@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "minizlib@npm:3.1.0"
+  dependencies:
+    minipass: "npm:^7.1.2"
+  checksum: 10c0/5aad75ab0090b8266069c9aabe582c021ae53eb33c6c691054a13a45db3b4f91a7fb1bd79151e6b4e9e9a86727b522527c0a06ec7d45206b745d54cd3097bcec
   languageName: node
   linkType: hard
 
@@ -53744,6 +53758,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sax@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "sax@npm:1.5.0"
+  checksum: 10c0/bc3b60a7bfecd40b18256596e96b32df2488339ae1e00a77f842b568f0831228a16c3bd357ec500241ec0b9dc7a475a1286427795c4a8c50bb8e8878f3435dd8
+  languageName: node
+  linkType: hard
+
 "saxes@npm:^6.0.0":
   version: 6.0.0
   resolution: "saxes@npm:6.0.0"
@@ -56098,36 +56119,36 @@ __metadata:
   linkType: hard
 
 "svgo@npm:^2.8.0":
-  version: 2.8.0
-  resolution: "svgo@npm:2.8.0"
+  version: 2.8.2
+  resolution: "svgo@npm:2.8.2"
   dependencies:
-    "@trysound/sax": "npm:0.2.0"
     commander: "npm:^7.2.0"
     css-select: "npm:^4.1.3"
     css-tree: "npm:^1.1.3"
     csso: "npm:^4.2.0"
     picocolors: "npm:^1.0.0"
+    sax: "npm:^1.5.0"
     stable: "npm:^0.1.8"
   bin:
-    svgo: bin/svgo
-  checksum: 10c0/0741f5d5cad63111a90a0ce7a1a5a9013f6d293e871b75efe39addb57f29a263e45294e485a4d2ff9cc260a5d142c8b5937b2234b4ef05efdd2706fb2d360ecc
+    svgo: ./bin/svgo
+  checksum: 10c0/a3a533e1678aecdfa1c67f06d71f104da7ef574a3f63a8dfeda10368b42428c67d09a06b4eee233c5ed49ac815f1febb6193cba0f611a21bfc00366d7930205d
   languageName: node
   linkType: hard
 
 "svgo@npm:^3.0.2":
-  version: 3.3.2
-  resolution: "svgo@npm:3.3.2"
+  version: 3.3.3
+  resolution: "svgo@npm:3.3.3"
   dependencies:
-    "@trysound/sax": "npm:0.2.0"
     commander: "npm:^7.2.0"
     css-select: "npm:^5.1.0"
     css-tree: "npm:^2.3.1"
     css-what: "npm:^6.1.0"
     csso: "npm:^5.0.5"
     picocolors: "npm:^1.0.0"
+    sax: "npm:^1.5.0"
   bin:
     svgo: ./bin/svgo
-  checksum: 10c0/a6badbd3d1d6dbb177f872787699ab34320b990d12e20798ecae915f0008796a0f3c69164f1485c9def399e0ce0a5683eb4a8045e51a5e1c364bb13a0d9f79e1
+  checksum: 10c0/06568c6b0430f96748c557f0b17dc7de79b19fa16d13d7523527ede0ec727fc6d8e6a10e13ff106dc4372d2e6063a1dca7c455c495efb1b83857480425f9b965
   languageName: node
   linkType: hard
 
@@ -56323,6 +56344,19 @@ __metadata:
     fast-fifo: "npm:^1.2.0"
     streamx: "npm:^2.15.0"
   checksum: 10c0/c4bf369de2302fcf30218d091167a5372ee79b69a1b5bb493ddb7714193ca805719558966334bab1f2775c8142826865f24e25459ff1c5f0a096bc3a3d5c5ce2
+  languageName: node
+  linkType: hard
+
+"tar@npm:*, tar@npm:^7.5.9":
+  version: 7.5.10
+  resolution: "tar@npm:7.5.10"
+  dependencies:
+    "@isaacs/fs-minipass": "npm:^4.0.0"
+    chownr: "npm:^3.0.0"
+    minipass: "npm:^7.1.2"
+    minizlib: "npm:^3.1.0"
+    yallist: "npm:^5.0.0"
+  checksum: 10c0/ed905e4b33886377df6e9206e5d1bd34458c21666e27943f946799416f86348c938590d573d6a69312cb29c583b122647a64ec92782f2b7e24e68d985dd72531
   languageName: node
   linkType: hard
 
@@ -57462,36 +57496,28 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@storybook/addon-vitest": "npm:^10.2.13"
     "@storybook/react-vite": "npm:^10.2.13"
-    "@types/archiver": "npm:^6.0.0"
-    "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
-    "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.kebabcase": "npm:^4.1.9"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:18.2.66"
     "@types/react-dom": "npm:18.2.22"
     "@vitest/browser-playwright": "npm:^4.0.18"
-    archiver: "npm:^7.0.1"
     axios: "npm:^1.13.5"
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.4.0"
     esbuild: "npm:^0.25.0"
-    fast-glob: "npm:^3.3.0"
-    fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
     ink: "npm:^5.1.1"
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
-    lodash.camelcase: "npm:^4.3.0"
-    lodash.kebabcase: "npm:^4.1.1"
     playwright: "npm:^1.56.1"
     preact: "npm:^10.28.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:^10.2.13"
+    tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
     twenty-shared: "workspace:*"
@@ -57582,6 +57608,7 @@ __metadata:
     "@sentry/node": "npm:^10.27.0"
     "@sentry/profiling-node": "npm:^10.27.0"
     "@sniptt/guards": "npm:0.2.0"
+    "@types/archiver": "npm:^6.0.0"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/bytes": "npm:^3.1.1"
     "@types/dompurify": "npm:^3.0.5"
@@ -57612,6 +57639,7 @@ __metadata:
     "@types/pluralize": "npm:^0.0.33"
     "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^18.2.39"
+    "@types/tar": "npm:^7.0.87"
     "@types/unzipper": "npm:^0"
     "@yarnpkg/types": "npm:^4.0.0"
     addressparser: "npm:1.0.1"
@@ -57707,6 +57735,7 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
     stripe: "npm:19.3.1"
+    tar: "npm:^7.5.9"
     temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:2.3.5"
     tsconfig-paths: "npm:^4.2.0"
@@ -61054,6 +61083,13 @@ __metadata:
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
   checksum: 10c0/c66a5c46bc89af1625476f7f0f2ec3653c1a1791d2f9407cfb4c2ba812a1e1c9941416d71ba9719876530e3340a99925f697142989371b72d93b9ee628afd8c1
+  languageName: node
+  linkType: hard
+
+"yallist@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "yallist@npm:5.0.0"
+  checksum: 10c0/a499c81ce6d4a1d260d4ea0f6d49ab4da09681e32c3f0472dee16667ed69d01dae63a3b81745a24bd78476ec4fcf856114cb4896ace738e01da34b2c42235416
   languageName: node
   linkType: hard
 

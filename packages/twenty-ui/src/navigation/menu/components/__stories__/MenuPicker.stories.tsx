@@ -3,8 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type ReactNode } from 'react';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const meta: Meta<typeof MenuPicker> = {
   title: 'UI/Navigation/Menu/MenuPicker',
@@ -50,16 +50,15 @@ export const WithoutLabel: Story = {
   },
 };
 
-const StyledTitle = styled.h4<{ theme: ThemeType }>`
+const StyledTitle = styled.h4`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: 12px;
   margin-bottom: 8px;
 `;
 
 const SectionTitle = ({ children }: { children?: ReactNode }) => {
-  const { theme } = useContext(ThemeContext);
-  return <StyledTitle theme={theme}>{children}</StyledTitle>;
+  return <StyledTitle>{children}</StyledTitle>;
 };
 
 export const AllStates: Story = {

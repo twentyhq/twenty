@@ -7,8 +7,7 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyledText } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -25,8 +24,8 @@ export const SignInUpPasswordField = ({
   showErrors: boolean;
   signInUpMode: SignInUpMode;
 }) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const form = useFormContext<Form>();
 
   return (

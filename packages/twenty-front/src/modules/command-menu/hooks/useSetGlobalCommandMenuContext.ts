@@ -1,7 +1,7 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -21,8 +21,8 @@ export const useSetGlobalCommandMenuContext = () => {
   const setGlobalCommandMenuContext = useCallback(() => {
     store.set(
       atom(null, (get, batchSet) => {
-        const fromId = COMMAND_MENU_COMPONENT_INSTANCE_ID;
-        const toId = COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID;
+        const fromId = SIDE_PANEL_COMPONENT_INSTANCE_ID;
+        const toId = SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID;
 
         batchSet(
           contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
@@ -165,13 +165,13 @@ export const useSetGlobalCommandMenuContext = () => {
           ContextStoreViewType.Table,
         );
 
-        batchSet(commandMenuPageInfoState.atom, {
+        batchSet(sidePanelPageInfoState.atom, {
           title: undefined,
           Icon: undefined,
           instanceId: '',
         });
 
-        batchSet(hasUserSelectedCommandState.atom, false);
+        batchSet(hasUserSelectedSidePanelListItemState.atom, false);
       }),
     );
   }, [store]);

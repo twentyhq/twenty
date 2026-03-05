@@ -1,4 +1,4 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -23,7 +23,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
 
@@ -50,8 +50,8 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     });
   };
 
-  const handleOpenRecordInCommandMenu = () => {
-    openRecordInCommandMenu({
+  const handleOpenRecordInSidePanel = () => {
+    openRecordInSidePanel({
       recordId: recordId,
       objectNameSingular: objectNameSingular,
       isNewRecord: false,
@@ -114,9 +114,9 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: handleOpenRecordInCommandMenu,
+    callback: handleOpenRecordInSidePanel,
     focusId,
-    dependencies: [handleOpenRecordInCommandMenu],
+    dependencies: [handleOpenRecordInSidePanel],
   });
 
   useHotkeysOnFocusedElement({
