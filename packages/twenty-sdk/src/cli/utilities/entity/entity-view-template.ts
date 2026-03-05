@@ -22,28 +22,18 @@ export const getViewBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  const fieldsBlock =
-    fields.length > 0
-      ? `  fields: [
-${fields
-  .map((field) => {
+  const formattedFields = fields.map((field, index) => {
     const uid = field.universalIdentifier ?? v4();
-    const parts = [
-      `      universalIdentifier: '${uid}'`,
-      `      fieldMetadataUniversalIdentifier: '${field.fieldMetadataUniversalIdentifier}'`,
-      `      position: ${field.position}`,
-    ];
-    if (field.isVisible !== undefined) {
-      parts.push(`      isVisible: ${field.isVisible}`);
-    }
-    if (field.size !== undefined) {
-      parts.push(`      size: ${field.size}`);
-    }
-    return `    {\n${parts.join(',\n')},\n    }`;
-  })
-  .join(',\n')}
-  ],`
-      : `  // fields: [
+    return {
+      universalIdentifier: uid,
+      fieldMetadataUniversalIdentifier: field.fieldMetadataUniversalIdentifier,
+      position: field.position ?? index,
+      isVisible: field.isVisible ?? true,
+      size: field.size ?? 200,
+    };
+  });
+
+  const defaultFields = `  // fields: [
   //   {
   //     universalIdentifier: '...',
   //     fieldMetadataUniversalIdentifier: '...',
@@ -51,6 +41,15 @@ ${fields
   //     isVisible: true,
   //   },
   // ],`;
+
+  const fieldsBlock =
+    fields.length > 0
+      ? `  fields: [
+  ${formattedFields
+    .map((field) => JSON.stringify(field, null, 2))
+    .join(',\n')},\n
+  ],`
+      : defaultFields;
 
   return `import { defineView } from 'twenty-sdk';
 

@@ -16,9 +16,7 @@ describe('getNewObjectFileContent', () => {
       "import { defineObject, FieldType } from 'twenty-sdk'",
     );
     expect(result).toContain('export default defineObject({');
-    expect(result).toContain(
-      'export const NAME_FIELD_UNIVERSAL_IDENTIFIER',
-    );
+    expect(result).toContain('export const NAME_FIELD_UNIVERSAL_IDENTIFIER');
 
     expect(result).toContain("nameSingular: 'company'");
     expect(result).toContain("namePlural: 'companies'");
