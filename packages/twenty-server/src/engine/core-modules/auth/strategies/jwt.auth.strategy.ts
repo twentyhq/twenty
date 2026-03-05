@@ -226,6 +226,21 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   } | null> {
     const user = await this.userRepository.findOne({
       where: { id: params.userId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        defaultAvatarUrl: true,
+        isEmailVerified: true,
+        disabled: true,
+        canImpersonate: true,
+        canAccessFullAdminPanel: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        locale: true,
+      },
     });
 
     if (!isDefined(user)) {
@@ -348,6 +363,21 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   ): Promise<AuthContext> {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        defaultAvatarUrl: true,
+        isEmailVerified: true,
+        disabled: true,
+        canImpersonate: true,
+        canAccessFullAdminPanel: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        locale: true,
+      },
     });
 
     userValidator.assertIsDefinedOrThrow(

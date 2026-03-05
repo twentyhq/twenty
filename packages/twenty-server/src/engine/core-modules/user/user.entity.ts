@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Exclude } from 'class-transformer';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   BeforeInsert,
@@ -70,6 +71,7 @@ export class UserEntity {
   @Column({ default: false })
   disabled: boolean;
 
+  @Exclude()
   @Column({ nullable: true })
   passwordHash: string;
 
