@@ -70,7 +70,7 @@ const innerAppBuild = async (
 
   const clientService = new ClientService();
 
-  await clientService.generate({ appPath });
+  await clientService.generateCoreClient({ appPath });
 
   onProgress?.('Running typecheck...');
 

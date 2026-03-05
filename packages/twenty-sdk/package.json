@@ -9,7 +9,6 @@
   },
   "files": [
     "dist",
-    "generated",
     "README.md",
     "package.json"
   ],
@@ -49,11 +48,6 @@
       "types": "./dist/clients/index.d.ts",
       "import": "./dist/clients.mjs",
       "require": "./dist/clients.cjs"
-    },
-    "./generated/core": {
-      "types": "./generated/core/index.ts",
-      "import": "./generated/core/index.ts",
-      "require": "./generated/core/index.ts"
     }
   },
   "license": "AGPL-3.0",
@@ -124,9 +118,6 @@
       ],
       "clients": [
         "dist/clients/index.d.ts"
-      ],
-      "generated/core": [
-        "generated/core/index.ts"
       ]
     }
   }

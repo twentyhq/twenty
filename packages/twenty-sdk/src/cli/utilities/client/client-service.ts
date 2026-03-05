@@ -1,17 +1,17 @@
-import { appendFile, writeFile } from 'node:fs/promises';
+import { appendFile } from 'node:fs/promises';
 import { join } from 'path';
 
+import { CLIENTS_GENERATED_FOLDER } from '@/cli/constants/clients-generated-folder';
 import { ApiService } from '@/cli/utilities/api/api-service';
+import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import {
   emptyDir,
   ensureDir,
   move,
-  pathExists,
   remove,
 } from '@/cli/utilities/file/fs-utils';
-import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import { generate } from '@genql/cli';
-import { DEFAULT_API_URL_NAME, GENERATED_DIR } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 type ClientWrapperOptions = {
   apiClientName: string;
@@ -75,14 +75,14 @@ export class ClientService {
     this.apiService = new ApiService({ disableInterceptors: true });
   }
 
-  async generate({
+  async generateCoreClient({
     appPath,
     authToken,
   }: {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const outputPath = this.resolveGeneratedPath(appPath);
+    const outputPath = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_FOLDER);
     const tempPath = `${outputPath}.tmp`;
 
     const coreSchemaResponse = await this.apiService.getSchema({ authToken });
@@ -143,29 +143,6 @@ export class ClientService {
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
       includeUploadFile: true,
     });
-  }
-
-  async ensureGeneratedClientStub({
-    appPath,
-  }: {
-    appPath: string;
-  }): Promise<void> {
-    const outputPath = this.resolveGeneratedPath(appPath);
-
-    if (await pathExists(join(outputPath, 'core', 'index.ts'))) {
-      return;
-    }
-
-    await ensureDir(join(outputPath, 'core'));
-
-    await writeFile(
-      join(outputPath, 'core', 'index.ts'),
-      'export class CoreApiClient {}\n',
-    );
-  }
-
-  private resolveGeneratedPath(appPath: string): string {
-    return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
   }
 
   private async injectClientWrapper(
