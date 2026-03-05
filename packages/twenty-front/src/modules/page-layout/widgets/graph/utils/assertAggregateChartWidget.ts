@@ -1,4 +1,4 @@
-import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';

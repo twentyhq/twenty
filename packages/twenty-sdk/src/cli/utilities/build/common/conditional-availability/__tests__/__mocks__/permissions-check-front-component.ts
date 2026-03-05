@@ -1,8 +1,4 @@
-import {
-  defineFrontComponent,
-  isInRightDrawer,
-  objectPermissions,
-} from '@/sdk';
+import { defineFrontComponent, isInSidePanel, objectPermissions } from '@/sdk';
 
 const MyComponent = () => null;
 
@@ -13,6 +9,6 @@ export default defineFrontComponent({
     universalIdentifier: 'permissions-check-cmd',
     label: 'Permissions Check',
     conditionalAvailabilityExpression:
-      objectPermissions.canUpdateObjectRecords && !isInRightDrawer,
+      objectPermissions.canUpdateObjectRecords && !isInSidePanel,
   },
 });

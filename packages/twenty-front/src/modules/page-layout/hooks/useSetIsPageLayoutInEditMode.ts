@@ -1,5 +1,5 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -37,12 +37,12 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
       store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
 
-      const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
+      const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
-      if (isCommandMenuOpened) {
+      if (isSidePanelOpened) {
         store.set(
           contextStoreIsPageInEditModeComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+            instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
           }),
           value,
         );

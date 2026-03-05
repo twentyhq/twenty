@@ -1,8 +1,8 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight } from 'twenty-ui/display';
 
 type OpenAddItemToFolderPageParams = {
@@ -13,7 +13,7 @@ type OpenAddItemToFolderPageParams = {
 
 export const useOpenAddItemToFolderPage = () => {
   const { t } = useLingui();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateSidePanel } = useNavigateSidePanel();
   const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
@@ -27,8 +27,8 @@ export const useOpenAddItemToFolderPage = () => {
       targetFolderId,
       targetIndex,
     });
-    navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
+    navigateSidePanel({
+      page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack,

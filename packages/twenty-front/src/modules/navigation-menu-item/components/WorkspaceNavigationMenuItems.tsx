@@ -11,10 +11,10 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
@@ -34,7 +34,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -69,9 +69,9 @@ export const WorkspaceNavigationMenuItems = () => {
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
-  const { navigateCommandMenu } = useNavigateCommandMenu();
-  const { openNavigationMenuItemInCommandMenu } =
-    useOpenNavigationMenuItemInCommandMenu();
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const { getIcon } = useIcons();
 
   const loading = useIsPrefetchLoading();
@@ -94,12 +94,12 @@ export const WorkspaceNavigationMenuItems = () => {
           ? currentOpenFolders
           : [...currentOpenFolders, id],
       );
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle: t`Edit folder`,
         pageIcon: getIcon(item.icon ?? item.Icon ?? FOLDER_ICON_DEFAULT),
       });
     } else if (item.itemType === NavigationMenuItemType.LINK) {
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle: t`Edit link`,
         pageIcon: IconLink,
       });
@@ -108,7 +108,7 @@ export const WorkspaceNavigationMenuItems = () => {
         item.itemType === NavigationMenuItemType.VIEW
           ? item.labelIdentifier
           : objectMetadataItem.labelSingular;
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
@@ -121,7 +121,7 @@ export const WorkspaceNavigationMenuItems = () => {
   ) => {
     enterEditMode();
     setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
-    openNavigationMenuItemInCommandMenu({
+    openNavigationMenuItemInSidePanel({
       pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
     });
@@ -129,8 +129,8 @@ export const WorkspaceNavigationMenuItems = () => {
 
   const handleAddMenuItem = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
+    navigateSidePanel({
+      page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,
