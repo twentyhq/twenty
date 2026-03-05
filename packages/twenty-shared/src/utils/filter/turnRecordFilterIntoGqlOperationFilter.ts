@@ -89,6 +89,30 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     return;
   }
 
+  // ONE_TO_MANY emptiness: use nested { relation: { id: { is/isNot: 'NULL' } } }
+  // because there's no FK on this side (the FK is on the related object)
+  const isOneToManyEmptinessFilter =
+    correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
+    correspondingFieldMetadataItem.relation?.type === 'ONE_TO_MANY' &&
+    (recordFilter.operand === RecordFilterOperand.IS_EMPTY ||
+      recordFilter.operand === RecordFilterOperand.IS_NOT_EMPTY);
+
+  if (isOneToManyEmptinessFilter) {
+    if (recordFilter.operand === RecordFilterOperand.IS_NOT_EMPTY) {
+      return {
+        [correspondingFieldMetadataItem.name]: {
+          id: { isNot: 'NULL' },
+        },
+      };
+    }
+
+    return {
+      [correspondingFieldMetadataItem.name]: {
+        id: { is: 'NULL' },
+      },
+    };
+  }
+
   const shouldComputeEmptinessFilter = checkIfShouldComputeEmptinessFilter({
     recordFilterOperand: recordFilter.operand,
     correspondingFieldMetadataItem,
