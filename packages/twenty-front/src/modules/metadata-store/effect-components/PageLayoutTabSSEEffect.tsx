@@ -4,7 +4,7 @@ import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEvent
 import { AllMetadataName } from '~/generated-metadata/graphql';
 
 export const PageLayoutTabSSEEffect = () => {
-  const queryId = 'page-layout-tab-metadata-sse-effect';
+  const queryId = 'page-layout-sse-effect';
 
   const { refreshPageLayouts } = useRefreshPageLayouts();
 
