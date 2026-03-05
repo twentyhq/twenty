@@ -12,6 +12,7 @@ import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoad
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -115,11 +116,19 @@ export const PageChangeEffect = () => {
     isMatchingLocation(location, appPath),
   );
 
-  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+  const closeCommandMenuUnlessNotRelevant = useCallback(() => {
     const currentPage = store.get(commandMenuPageState.atom);
+
     if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
       return;
     }
+
+    const commandMenuIsAiChat = currentPage === CommandMenuPages.AskAI;
+
+    if (commandMenuIsAiChat) {
+      return;
+    }
+
     closeCommandMenu();
   }, [closeCommandMenu, store]);
 
@@ -130,8 +139,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenuUnlessOnEditPage();
-  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
+    closeCommandMenuUnlessNotRelevant();
+  }, [location.pathname, closeCommandMenuUnlessNotRelevant]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -207,6 +216,24 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
+        const isNewRecord = location.state?.isNewRecord === true;
+
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
+        }
+
+        const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+
+        if (isCommandMenuOpen) {
+          return;
+        }
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.RecordShowPage,
@@ -220,18 +247,6 @@ export const PageChangeEffect = () => {
             },
           },
         });
-
-        const isNewRecord = location.state?.isNewRecord === true;
-
-        if (
-          isNewRecord &&
-          isDefined(location.state?.labelIdentifierFieldName)
-        ) {
-          openNewRecordTitleCell({
-            recordId: location.state.objectRecordId,
-            fieldName: location.state.labelIdentifierFieldName,
-          });
-        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -376,6 +391,7 @@ export const PageChangeEffect = () => {
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
     openNewRecordTitleCell,
+    store,
   ]);
 
   useEffect(() => {
