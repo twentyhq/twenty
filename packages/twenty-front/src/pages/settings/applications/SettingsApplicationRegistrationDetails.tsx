@@ -33,6 +33,7 @@ import {
   IconArrowRight,
   IconChartBar,
   IconCheck,
+  IconBox,
   IconDownload,
   IconExternalLink,
   IconKey,
@@ -502,6 +503,33 @@ export const SettingsApplicationRegistrationDetails = () => {
           t`Universal identifier copied`,
         ),
     },
+    ...(isNpmSource && isNonEmptyString(registration.sourcePackage)
+      ? [
+          {
+            Icon: IconBox,
+            label: t`Package`,
+            value: registration.sourcePackage,
+          },
+        ]
+      : registration.sourceType ===
+            ApplicationRegistrationSourceType.TARBALL
+        ? [
+            {
+              Icon: IconBox,
+              label: t`Source`,
+              value: t`Tarball upload`,
+            },
+          ]
+        : registration.sourceType ===
+              ApplicationRegistrationSourceType.LOCAL
+          ? [
+              {
+                Icon: IconBox,
+                label: t`Source`,
+                value: t`Local development`,
+              },
+            ]
+          : []),
   ];
 
   const stats = statsData?.findApplicationRegistrationStats;

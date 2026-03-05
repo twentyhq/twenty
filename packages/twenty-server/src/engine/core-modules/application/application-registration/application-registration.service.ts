@@ -375,6 +375,7 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.version ?? null,
       sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage: params.packageName,
+      isListed: true,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
