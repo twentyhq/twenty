@@ -1,6 +1,6 @@
 export const STANDARD_FRONT_COMPONENTS = {
   navigateToNextRecord: {
-    universalIdentifier: '20202020-fc01-4c01-8c01-c0aba11fc001',
+    universalIdentifier: 'aec12b85-29df-465f-a329-1c72c81ed95c',
     name: 'Navigate to next record',
     componentName: 'NavigateToNextRecordSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -9,7 +9,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   navigateToPreviousRecord: {
-    universalIdentifier: '20202020-fc02-4c02-8c02-c0aba11fc002',
+    universalIdentifier: 'b53c54b9-152a-4100-975c-1bc582bfb951',
     name: 'Navigate to previous record',
     componentName: 'NavigateToPreviousRecordSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -18,7 +18,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   createNewRecord: {
-    universalIdentifier: '20202020-fc03-4c03-8c03-c0aba11fc003',
+    universalIdentifier: '1e6e57bb-89c4-482e-bf44-d62ad1c05d2f',
     name: 'Create new record',
     componentName: 'CreateNewIndexRecordNoSelectionRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/no-selection',
@@ -27,7 +27,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   deleteSingleRecord: {
-    universalIdentifier: '20202020-fc04-4c04-8c04-c0aba11fc004',
+    universalIdentifier: 'cbc7e92f-d4fe-4956-ba66-a81b7f9713c6',
     name: 'Delete single record',
     componentName: 'DeleteSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -36,7 +36,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   deleteMultipleRecords: {
-    universalIdentifier: '20202020-fc05-4c05-8c05-c0aba11fc005',
+    universalIdentifier: '35c25fd2-6060-440a-b734-aa3016c11f47',
     name: 'Delete multiple records',
     componentName: 'DeleteMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -45,7 +45,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   restoreSingleRecord: {
-    universalIdentifier: '20202020-fc06-4c06-8c06-c0aba11fc006',
+    universalIdentifier: '88262225-1253-4dfe-9bf7-563b73e6d9ea',
     name: 'Restore single record',
     componentName: 'RestoreSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -54,7 +54,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   restoreMultipleRecords: {
-    universalIdentifier: '20202020-fc07-4c07-8c07-c0aba11fc007',
+    universalIdentifier: '105ff959-838c-44bc-8a92-60d61093ebc4',
     name: 'Restore multiple records',
     componentName: 'RestoreMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -63,7 +63,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   destroySingleRecord: {
-    universalIdentifier: '20202020-fc08-4c08-8c08-c0aba11fc008',
+    universalIdentifier: '212d9e7d-e149-417b-9a0f-5024835349e6',
     name: 'Destroy single record',
     componentName: 'DestroySingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -72,7 +72,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   destroyMultipleRecords: {
-    universalIdentifier: '20202020-fc09-4c09-8c09-c0aba11fc009',
+    universalIdentifier: 'f647d17d-b4ae-4a4c-99a9-4e5e4e3068a2',
     name: 'Destroy multiple records',
     componentName: 'DestroyMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -81,7 +81,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   addToFavorites: {
-    universalIdentifier: '20202020-fc0a-4c0a-8c0a-c0aba11fc00a',
+    universalIdentifier: '5694b053-1f42-416c-a26a-375f826aa9b3',
     name: 'Add to favorites',
     componentName: 'AddToFavoritesSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -90,7 +90,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   removeFromFavorites: {
-    universalIdentifier: '20202020-fc0b-4c0b-8c0b-c0aba11fc00b',
+    universalIdentifier: '21105d6a-33a2-4ae3-8edb-c33c38d2e091',
     name: 'Remove from favorites',
     componentName: 'RemoveFromFavoritesSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -99,7 +99,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   exportNoteToPdf: {
-    universalIdentifier: '20202020-fc0c-4c0c-8c0c-c0aba11fc00c',
+    universalIdentifier: '980399e9-e530-4430-bf47-7f3f482434b4',
     name: 'Export note to PDF',
     componentName: 'ExportNoteActionSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -108,7 +108,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   exportFromRecordIndex: {
-    universalIdentifier: '20202020-fc0d-4c0d-8c0d-c0aba11fc00d',
+    universalIdentifier: '6aca9ecc-b419-453d-8243-6d19faa8c8a7',
     name: 'Export from record index',
     componentName: 'ExportMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -117,7 +117,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   exportFromRecordShow: {
-    universalIdentifier: '20202020-fc0e-4c0e-8c0e-c0aba11fc00e',
+    universalIdentifier: '74d8f880-1be1-432e-b475-8970deed809e',
     name: 'Export from record show',
     componentName: 'ExportSingleRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/single-record',
@@ -126,7 +126,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   updateMultipleRecords: {
-    universalIdentifier: '20202020-fc0f-4c0f-8c0f-c0aba11fc00f',
+    universalIdentifier: 'f89c3e6b-6d96-4103-8cfc-4de6017a75c0',
     name: 'Update multiple records',
     componentName: 'UpdateMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -135,7 +135,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   mergeMultipleRecords: {
-    universalIdentifier: '20202020-fc10-4c10-8c10-c0aba11fc010',
+    universalIdentifier: '9c6757aa-ecdd-4b21-8466-fb1e8f0bfcb8',
     name: 'Merge multiple records',
     componentName: 'MergeMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -144,7 +144,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   exportMultipleRecords: {
-    universalIdentifier: '20202020-fc11-4c11-8c11-c0aba11fc011',
+    universalIdentifier: '05381918-8c9c-421f-ab89-10e365a463f8',
     name: 'Export multiple records',
     componentName: 'ExportMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -153,7 +153,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   importRecords: {
-    universalIdentifier: '20202020-fc12-4c12-8c12-c0aba11fc012',
+    universalIdentifier: 'acfd8025-36d1-4a35-9508-a0422e53d380',
     name: 'Import records',
     componentName: 'ImportRecordsNoSelectionRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/no-selection',
@@ -162,7 +162,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   exportView: {
-    universalIdentifier: '20202020-fc13-4c13-8c13-c0aba11fc013',
+    universalIdentifier: '012dc64f-ad2b-419a-98ea-d0019ff3d56d',
     name: 'Export view',
     componentName: 'ExportMultipleRecordsAction',
     sourceComponentPath: 'action-menu/actions/record-actions/multiple-records',
@@ -171,7 +171,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeDeletedRecords: {
-    universalIdentifier: '20202020-fc14-4c14-8c14-c0aba11fc014',
+    universalIdentifier: 'dad2327b-9020-4d13-a38c-14d1207e66fc',
     name: 'See deleted records',
     componentName: 'SeeDeletedRecordsNoSelectionRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/no-selection',
@@ -180,7 +180,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   createNewView: {
-    universalIdentifier: '20202020-fc15-4c15-8c15-c0aba11fc015',
+    universalIdentifier: 'd7bf58ad-e716-47c1-8c51-209c755c5f27',
     name: 'Create view',
     componentName: 'CreateNewViewNoSelectionRecord',
     sourceComponentPath: 'action-menu/actions/record-actions/no-selection',
@@ -189,7 +189,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   hideDeletedRecords: {
-    universalIdentifier: '20202020-fc16-4c16-8c16-c0aba11fc016',
+    universalIdentifier: '75e93e21-effb-48ef-ba1c-588c358fd56f',
     name: 'Hide deleted records',
     componentName: 'HideDeletedRecordsNoSelectionRecordAction',
     sourceComponentPath: 'action-menu/actions/record-actions/no-selection',
@@ -198,7 +198,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToPeople: {
-    universalIdentifier: '20202020-fc17-4c17-8c17-c0aba11fc017',
+    universalIdentifier: '5a5c1e43-9fb5-49bf-bcde-355973f913b9',
     name: 'Go to People',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -207,7 +207,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToCompanies: {
-    universalIdentifier: '20202020-fc18-4c18-8c18-c0aba11fc018',
+    universalIdentifier: '22ac113b-fe7d-41de-b06f-d863964bc445',
     name: 'Go to Companies',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -216,7 +216,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToDashboards: {
-    universalIdentifier: '20202020-fc19-4c19-8c19-c0aba11fc019',
+    universalIdentifier: 'c71cc879-50af-4e20-9bdc-52f90c9862ed',
     name: 'Go to Dashboards',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -225,7 +225,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToOpportunities: {
-    universalIdentifier: '20202020-fc1a-4c1a-8c1a-c0aba11fc01a',
+    universalIdentifier: 'ebb4c2ca-6b70-4d2e-8919-79475a278273',
     name: 'Go to Opportunities',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -234,7 +234,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToSettings: {
-    universalIdentifier: '20202020-fc1b-4c1b-8c1b-c0aba11fc01b',
+    universalIdentifier: '1fb7b785-b79a-42b7-aff2-e57fe1d74e35',
     name: 'Go to Settings',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -243,7 +243,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToTasks: {
-    universalIdentifier: '20202020-fc1c-4c1c-8c1c-c0aba11fc01c',
+    universalIdentifier: 'c08ff958-141d-4892-8737-1faf6b630a2b',
     name: 'Go to Tasks',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -252,7 +252,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToNotes: {
-    universalIdentifier: '20202020-fc1d-4c1d-8c1d-c0aba11fc01d',
+    universalIdentifier: 'd32f7962-e8e1-46d6-856c-ccc71e71d50c',
     name: 'Go to Notes',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -261,7 +261,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   editRecordPageLayout: {
-    universalIdentifier: '20202020-fc1e-4c1e-8c1e-c0aba11fc01e',
+    universalIdentifier: 'd1a8a4c5-2644-4d4b-b684-64625a700760',
     name: 'Edit record page layout',
     componentName: 'EditRecordPageLayoutSingleRecordAction',
     sourceComponentPath:
@@ -272,7 +272,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   saveRecordPageLayout: {
-    universalIdentifier: '20202020-fc1f-4c1f-8c1f-c0aba11fc01f',
+    universalIdentifier: '7956ba3a-fd4d-466e-96b5-9e3e8b637c44',
     name: 'Save record page layout',
     componentName: 'SaveRecordPageLayoutSingleRecordAction',
     sourceComponentPath:
@@ -283,7 +283,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   cancelRecordPageLayout: {
-    universalIdentifier: '20202020-fc20-4c20-8c20-c0aba11fc020',
+    universalIdentifier: 'd392762b-4c42-4471-9c45-c92e66728380',
     name: 'Cancel record page layout edition',
     componentName: 'CancelRecordPageLayoutSingleRecordAction',
     sourceComponentPath:
@@ -294,7 +294,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   editDashboardLayout: {
-    universalIdentifier: '20202020-fc21-4c21-8c21-c0aba11fc021',
+    universalIdentifier: '8a87b33b-f196-414c-a60a-16402aa0b57f',
     name: 'Edit dashboard layout',
     componentName: 'EditDashboardSingleRecordAction',
     sourceComponentPath:
@@ -305,7 +305,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   saveDashboardLayout: {
-    universalIdentifier: '20202020-fc22-4c22-8c22-c0aba11fc022',
+    universalIdentifier: '5d7b4510-79e8-440f-8707-21741c00d262',
     name: 'Save dashboard layout',
     componentName: 'SaveDashboardSingleRecordAction',
     sourceComponentPath:
@@ -316,7 +316,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   cancelDashboardLayout: {
-    universalIdentifier: '20202020-fc23-4c23-8c23-c0aba11fc023',
+    universalIdentifier: 'dac81512-3890-4ba5-8471-bd94738ab80a',
     name: 'Cancel dashboard layout edition',
     componentName: 'CancelDashboardSingleRecordAction',
     sourceComponentPath:
@@ -327,7 +327,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   duplicateDashboard: {
-    universalIdentifier: '20202020-fc24-4c24-8c24-c0aba11fc024',
+    universalIdentifier: 'e2bec30e-a6b0-47ff-9708-45855ae96fe7',
     name: 'Duplicate dashboard',
     componentName: 'DuplicateDashboardSingleRecordAction',
     sourceComponentPath:
@@ -338,7 +338,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToWorkflows: {
-    universalIdentifier: '20202020-fc29-4c29-8c29-c0aba11fc029',
+    universalIdentifier: '9d313f79-170f-47cc-b9c4-a2076a86232f',
     name: 'Go to Workflows',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -347,7 +347,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   activateWorkflow: {
-    universalIdentifier: '20202020-fc2a-4c2a-8c2a-c0aba11fc02a',
+    universalIdentifier: '97b89dc4-cef9-4439-9358-35c98616eb1e',
     name: 'Activate workflow',
     componentName: 'ActivateWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -358,7 +358,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   deactivateWorkflow: {
-    universalIdentifier: '20202020-fc2b-4c2b-8c2b-c0aba11fc02b',
+    universalIdentifier: 'cbf92077-1892-47e0-9435-14ea8f50a510',
     name: 'Deactivate workflow',
     componentName: 'DeactivateWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -369,7 +369,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   discardDraftWorkflow: {
-    universalIdentifier: '20202020-fc2c-4c2c-8c2c-c0aba11fc02c',
+    universalIdentifier: '972dc871-7f9c-4035-957c-e6662f4df7c5',
     name: 'Discard draft workflow',
     componentName: 'DiscardDraftWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -380,7 +380,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   testWorkflow: {
-    universalIdentifier: '20202020-fc2d-4c2d-8c2d-c0aba11fc02d',
+    universalIdentifier: '39e9aa5a-cacc-4543-9053-f1fbf923e170',
     name: 'Test workflow',
     componentName: 'TestWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -391,7 +391,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeActiveVersionWorkflow: {
-    universalIdentifier: '20202020-fc2e-4c2e-8c2e-c0aba11fc02e',
+    universalIdentifier: '6259a4a5-428e-41b9-a032-333c2d51e15f',
     name: 'See active version',
     componentName: 'SeeActiveVersionWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -402,7 +402,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeRunsWorkflow: {
-    universalIdentifier: '20202020-fc2f-4c2f-8c2f-c0aba11fc02f',
+    universalIdentifier: 'b8fa3327-e5c4-43f4-a3ac-c17d26af0847',
     name: 'See runs',
     componentName: 'SeeRunsWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -413,7 +413,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeVersionsWorkflow: {
-    universalIdentifier: '20202020-fc30-4c30-8c30-c0aba11fc030',
+    universalIdentifier: '62f41c00-629f-400d-85f8-d532d76c7879',
     name: 'See versions history',
     componentName: 'SeeVersionsWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -424,7 +424,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   addNodeWorkflow: {
-    universalIdentifier: '20202020-fc31-4c31-8c31-c0aba11fc031',
+    universalIdentifier: 'da1e499c-1298-4ec4-9a7b-5f2276075888',
     name: 'Add a node',
     componentName: 'AddNodeWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -435,7 +435,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   tidyUpWorkflow: {
-    universalIdentifier: '20202020-fc32-4c32-8c32-c0aba11fc032',
+    universalIdentifier: '3dac631e-dfb7-4570-ac27-15d98ee8ec43',
     name: 'Tidy up workflow',
     componentName: 'TidyUpWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -446,7 +446,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   duplicateWorkflow: {
-    universalIdentifier: '20202020-fc33-4c33-8c33-c0aba11fc033',
+    universalIdentifier: '566a48c5-5342-446f-a041-9db59bcdab6b',
     name: 'Duplicate workflow',
     componentName: 'DuplicateWorkflowSingleRecordAction',
     sourceComponentPath:
@@ -457,7 +457,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   goToRuns: {
-    universalIdentifier: '20202020-fc34-4c34-8c34-c0aba11fc034',
+    universalIdentifier: '0bd0ccfc-1909-4d19-b694-610878f07a3a',
     name: 'Go to runs',
     componentName: 'ActionLink',
     sourceComponentPath: 'action-menu/actions/components',
@@ -466,7 +466,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeVersionWorkflowRun: {
-    universalIdentifier: '20202020-fc35-4c35-8c35-c0aba11fc035',
+    universalIdentifier: '2e09d6b0-60c3-447c-8d5d-1af70a2d037b',
     name: 'See version (workflow run)',
     componentName: 'SeeVersionWorkflowRunSingleRecordAction',
     sourceComponentPath:
@@ -477,7 +477,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeWorkflowWorkflowRun: {
-    universalIdentifier: '20202020-fc36-4c36-8c36-c0aba11fc036',
+    universalIdentifier: '88a80460-6e2f-4587-8a04-a67d894fdf69',
     name: 'See workflow (workflow run)',
     componentName: 'SeeWorkflowWorkflowRunSingleRecordAction',
     sourceComponentPath:
@@ -488,7 +488,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   stopWorkflowRun: {
-    universalIdentifier: '20202020-fc37-4c37-8c37-c0aba11fc037',
+    universalIdentifier: '110fb676-2a09-4ac0-bd19-7261bc588967',
     name: 'Stop workflow run',
     componentName: 'StopWorkflowRunSingleRecordAction',
     sourceComponentPath:
@@ -499,7 +499,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeRunsWorkflowVersion: {
-    universalIdentifier: '20202020-fc38-4c38-8c38-c0aba11fc038',
+    universalIdentifier: '3d673f94-ecf9-4e38-8eac-684cf4cad617',
     name: 'See runs (workflow version)',
     componentName: 'SeeRunsWorkflowVersionSingleRecordAction',
     sourceComponentPath:
@@ -510,7 +510,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeWorkflowWorkflowVersion: {
-    universalIdentifier: '20202020-fc39-4c39-8c39-c0aba11fc039',
+    universalIdentifier: 'aec002df-0fc1-45ed-8526-9600623ef5f6',
     name: 'See workflow (workflow version)',
     componentName: 'SeeWorkflowWorkflowVersionSingleRecordAction',
     sourceComponentPath:
@@ -521,7 +521,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   useAsDraftWorkflowVersion: {
-    universalIdentifier: '20202020-fc3a-4c3a-8c3a-c0aba11fc03a',
+    universalIdentifier: 'cb11ab5c-974a-4942-bb8a-77efa6b5bb26',
     name: 'Use as draft (workflow version)',
     componentName: 'UseAsDraftWorkflowVersionSingleRecordAction',
     sourceComponentPath:
@@ -532,7 +532,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   seeVersionsWorkflowVersion: {
-    universalIdentifier: '20202020-fc3b-4c3b-8c3b-c0aba11fc03b',
+    universalIdentifier: 'a93c9f09-7a7f-4665-982a-0709a652c5bd',
     name: 'See versions history (workflow version)',
     componentName: 'SeeVersionsWorkflowVersionSingleRecordAction',
     sourceComponentPath:
@@ -543,7 +543,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: true,
   },
   searchRecords: {
-    universalIdentifier: '20202020-fc25-4c25-8c25-c0aba11fc025',
+    universalIdentifier: '7791c67a-e58d-4a2d-9cfd-58110a04cb8f',
     name: 'Search records',
     componentName: 'ActionOpenSidePanelPage',
     sourceComponentPath: 'action-menu/actions/components',
@@ -552,7 +552,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: false,
   },
   searchRecordsFallback: {
-    universalIdentifier: '20202020-fc26-4c26-8c26-c0aba11fc026',
+    universalIdentifier: '7f7fc9f2-0291-4264-a789-d21e8f1c774e',
     name: 'Search records fallback',
     componentName: 'ActionOpenSidePanelPage',
     sourceComponentPath: 'action-menu/actions/components',
@@ -561,7 +561,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: false,
   },
   askAi: {
-    universalIdentifier: '20202020-fc27-4c27-8c27-c0aba11fc027',
+    universalIdentifier: '75d8fed0-36d9-4798-afa5-1472ecac0884',
     name: 'Ask AI',
     componentName: 'ActionOpenSidePanelPage',
     sourceComponentPath: 'action-menu/actions/components',
@@ -570,7 +570,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     isHeadless: false,
   },
   viewPreviousAiChats: {
-    universalIdentifier: '20202020-fc28-4c28-8c28-c0aba11fc028',
+    universalIdentifier: '5e7876fa-7a9b-487f-8e05-1a1c7ce029d9',
     name: 'View previous AI chats',
     componentName: 'ActionOpenSidePanelPage',
     sourceComponentPath: 'action-menu/actions/components',
