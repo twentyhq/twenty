@@ -55,7 +55,9 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
     roleId,
-    authContext,
+    workspaceMember: isUserAuthContext(authContext)
+      ? authContext.workspaceMember
+      : undefined,
   });
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {

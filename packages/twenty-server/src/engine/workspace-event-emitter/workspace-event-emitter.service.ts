@@ -499,12 +499,7 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       objectMetadata,
       roleId,
-      // TODO: Fix this
-      authContext: {
-        userWorkspaceId: subscriberAuthContext.userWorkspaceId,
-        workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-        workspaceMember,
-      },
+      workspaceMember,
     });
   }
 

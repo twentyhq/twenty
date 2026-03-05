@@ -3,8 +3,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -27,13 +28,10 @@ describe('DataArgProcessorService', () => {
 
   const mockWorkspaceId = '20202020-1234-1234-1234-123456789012';
 
-  const createMockAuthContext = (): WorkspaceAuthContext =>
-    ({
-      type: 'system',
-      workspace: {
-        id: mockWorkspaceId,
-      },
-    }) as unknown as WorkspaceAuthContext;
+  const createMockAuthContext = (): SystemWorkspaceAuthContext => ({
+    type: 'system',
+    workspace: { id: mockWorkspaceId } as WorkspaceEntity,
+  });
 
   const createFlatFieldMetadataMaps = (
     fieldNames: string[],
