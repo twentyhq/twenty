@@ -45,7 +45,7 @@ If your project includes the example integration test (`src/__tests__/app-instal
 yarn test
 ```
 
-The test builds and installs the app, then verifies it appears in the applications list. Test configuration (API URL and API key) is defined in `vitest.config.ts`. In CI, these values can be overridden via environment variables.
+The test builds and installs the app, then verifies it appears in the applications list. Test configuration (API URL and API key) is defined in `vitest.config.ts`.
 
 ## LLMs instructions
 
