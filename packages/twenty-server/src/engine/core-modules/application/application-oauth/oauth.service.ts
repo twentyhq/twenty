@@ -11,9 +11,11 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -33,6 +35,8 @@ export class OAuthService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationService: ApplicationService,
+    private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -189,17 +193,10 @@ export class OAuthService {
       );
     }
 
-    const application = await this.findApplication(
+    const application = await this.findOrInstallApplication(
       applicationRegistration,
       authCodeToken.workspaceId,
     );
-
-    if (!application) {
-      return this.errorResponse(
-        'invalid_grant',
-        `Application "${applicationRegistration.name}" is not installed in this workspace. Install it first.`,
-      );
-    }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
@@ -544,15 +541,56 @@ export class OAuthService {
     return null;
   }
 
-  private async findApplication(
+  private async findOrInstallApplication(
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
-  ): Promise<ApplicationEntity | null> {
-    return this.applicationRepository.findOne({
+  ): Promise<ApplicationEntity> {
+    const existingApplication = await this.applicationRepository.findOne({
       where: {
         applicationRegistrationId: applicationRegistration.id,
         workspaceId,
       },
+    });
+
+    if (existingApplication) {
+      return existingApplication;
+    }
+
+    try {
+      await this.applicationInstallService.installApplication({
+        appRegistrationId: applicationRegistration.id,
+        workspaceId,
+      });
+
+      const installedApplication = await this.applicationRepository.findOne({
+        where: {
+          applicationRegistrationId: applicationRegistration.id,
+          workspaceId,
+        },
+      });
+
+      if (installedApplication) {
+        return installedApplication;
+      }
+
+      this.logger.warn(
+        `Install succeeded but application not found in workspace, falling back to bare creation`,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Auto-install failed for ${applicationRegistration.name}, falling back to bare creation`,
+        error,
+      );
+    }
+
+    return this.applicationService.create({
+      universalIdentifier: applicationRegistration.universalIdentifier,
+      name: applicationRegistration.name,
+      description: applicationRegistration.description,
+      version: '0.0.0',
+      sourcePath: 'oauth-install',
+      applicationRegistrationId: applicationRegistration.id,
+      workspaceId,
     });
   }
 

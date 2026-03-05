@@ -52,19 +52,11 @@ describe('Install application should fail when entity does not exist', () => {
     });
   });
 
-  it('should fail with execution error when deleting non-existent field metadata', async () => {
+  it('should fail with execution error when installing non-existent app registration', async () => {
     const { errors } = await installApplication({
       expectToFail: true,
       input: {
-        workspaceMigration: {
-          actions: [
-            {
-              type: 'delete',
-              metadataName: 'fieldMetadata',
-              universalIdentifier: '20202020-6110-4547-9fd0-2525257a2c3f',
-            },
-          ],
-        },
+        appRegistrationId: '20202020-0000-0000-0000-000000000000',
       },
     });
 

@@ -61,6 +61,12 @@ describe('Manifest update - roles', () => {
     }
 
     await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [TEST_APP_ID, TEST_WORKSPACE_ID],
+    );
+
+    await globalThis.testDataSource.query(
       `DELETE FROM core."applicationRegistration"
        WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
       [TEST_APP_ID, TEST_WORKSPACE_ID],

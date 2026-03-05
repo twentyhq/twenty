@@ -16,6 +16,7 @@ export const setupApplicationForSync = async ({
   sourcePath: string;
 }) => {
   const registrationId = crypto.randomUUID();
+  const applicationId = crypto.randomUUID();
   const oAuthClientId = crypto.randomUUID();
 
   await globalThis.testDataSource.query(
@@ -33,6 +34,24 @@ export const setupApplicationForSync = async ({
       [],
       TEST_WORKSPACE_ID,
       'local',
+    ],
+  );
+
+  await globalThis.testDataSource.query(
+    `INSERT INTO core."application"
+      (id, "universalIdentifier", name, description, version, "sourcePath",
+       "sourceType", "workspaceId", "applicationRegistrationId")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
+      applicationId,
+      applicationUniversalIdentifier,
+      name,
+      description,
+      '1.0.0',
+      sourcePath,
+      'local',
+      TEST_WORKSPACE_ID,
+      registrationId,
     ],
   );
 

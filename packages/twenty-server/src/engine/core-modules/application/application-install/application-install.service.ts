@@ -8,6 +8,10 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -56,9 +60,16 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+    const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
     });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL
