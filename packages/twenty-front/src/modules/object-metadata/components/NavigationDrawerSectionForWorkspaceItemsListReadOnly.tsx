@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';

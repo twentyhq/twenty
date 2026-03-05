@@ -3,7 +3,7 @@ import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadat
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 
 import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
 import { themeCssVariables } from 'twenty-ui/theme-constants';
