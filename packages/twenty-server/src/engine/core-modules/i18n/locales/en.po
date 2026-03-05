@@ -493,6 +493,22 @@ msgstr "Billing product not found."
 msgid "Billing subscription not found."
 msgstr "Billing subscription not found."
 
+#. js-lingui-id: 0j1d4L
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle already exists."
+msgstr "Blocklist handle already exists."
+
+#. js-lingui-id: Hbe5jq
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle is required."
+msgstr "Blocklist handle is required."
+
+#. js-lingui-id: xYLtTf
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist item not found."
+msgstr "Blocklist item not found."
+
 #. js-lingui-id: Ara8xP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget"
@@ -512,6 +528,11 @@ msgstr "Body must be an object"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Body must be an object for widget \"{widgetTitle}\""
+
+#. js-lingui-id: HOWEGX
+#: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
+msgid "Bulk update of blocklist entries is not allowed."
+msgstr "Bulk update of blocklist entries is not allowed."
 
 #. js-lingui-id: AjVXBS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -567,6 +588,11 @@ msgstr "Cannot add permissions on system objects."
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Cannot complete operation due to related records."
 msgstr "Cannot complete operation due to related records."
+
+#. js-lingui-id: 6Sk/wo
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot create blocklist entry for another workspace member."
+msgstr "Cannot create blocklist entry for another workspace member."
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1850,6 +1876,11 @@ msgstr "Invalid depth parameter."
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid email address."
 msgstr "Invalid email address."
+
+#. js-lingui-id: Lq9KTr
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Invalid email or domain."
+msgstr "Invalid email or domain."
 
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
@@ -4381,6 +4412,12 @@ msgstr "User does not have permission."
 msgid "User friendly error message"
 msgstr "User friendly error message"
 
+#. js-lingui-id: NJT8W8
+#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
+msgid "User id is required."
+msgstr "User id is required."
+
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -4970,6 +5007,11 @@ msgstr "Workspace ID and role mismatch."
 msgid "Workspace is not ready to welcome new members"
 msgstr "Workspace is not ready to welcome new members"
 
+#. js-lingui-id: SWTQfb
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Workspace member cannot be updated."
+msgstr "Workspace member cannot be updated."
+
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
@@ -5179,6 +5221,11 @@ msgstr "You don't have permission to modify this view."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
 msgstr "You have exhausted your credits. Please upgrade your plan to continue."
+
+#. js-lingui-id: nq15cs
+#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
+msgid "You must be authenticated to manage blocklist."
+msgstr "You must be authenticated to manage blocklist."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
