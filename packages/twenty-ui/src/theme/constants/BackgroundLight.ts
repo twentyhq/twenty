@@ -6,7 +6,7 @@ import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 import { TRANSPARENT_COLORS_LIGHT } from './TransparentColorsLight';
 
 export const BACKGROUND_LIGHT = {
-  noisy: `url(${LightNoise.toString()});`,
+  noisy: `url(${LightNoise.toString()})`,
   primary: GRAY_SCALE_LIGHT.gray1,
   secondary: GRAY_SCALE_LIGHT.gray2,
   tertiary: GRAY_SCALE_LIGHT.gray4,

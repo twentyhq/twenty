@@ -5,14 +5,12 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 export const isImageIdentifierField = ({
   fieldMetadataItem,
   objectMetadataItem,
-  isFilesFieldMigrated,
 }: {
   fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'name'>;
   objectMetadataItem: Pick<
     ObjectMetadataItem,
     'imageIdentifierFieldMetadataId' | 'nameSingular'
   >;
-  isFilesFieldMigrated?: boolean;
 }) => {
   if (
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Company &&
@@ -22,10 +20,7 @@ export const isImageIdentifierField = ({
   }
 
   if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Person) {
-    if (isFilesFieldMigrated === true) {
-      return fieldMetadataItem.name === 'avatarFile';
-    }
-    return fieldMetadataItem.name === 'avatarUrl';
+    return fieldMetadataItem.name === 'avatarFile';
   }
 
   return (

@@ -27,8 +27,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
-import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
 import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -53,12 +53,18 @@ export class ResetPasswordService {
 
   async generatePasswordResetToken(
     email: string,
-    workspaceId: string,
+    workspaceId?: string,
   ): Promise<PasswordResetToken> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
+        userFriendlyMessage: msg`User not found.`,
+      }),
     );
+
+    const targetWorkspaceId =
+      workspaceId ??
+      (await this.findFirstPasswordAuthEnabledWorkspaceIdOrThrow(user.id));
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -70,6 +76,8 @@ export class ResetPasswordService {
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
+
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const existingToken = await this.appTokenRepository.findOne({
       where: {
@@ -89,6 +97,9 @@ export class ResetPasswordService {
       throw new AuthException(
         `Token has already been generated. Please wait for ${timeToWait} to generate again.`,
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Password reset token has already been generated. Please wait for ${timeToWait} to generate again.`,
+        },
       );
     }
 
@@ -98,33 +109,39 @@ export class ResetPasswordService {
       .update(plainResetToken)
       .digest('hex');
 
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
     await this.appTokenRepository.save({
       userId: user.id,
-      workspaceId: workspaceId,
+      workspaceId: targetWorkspaceId,
       value: hashedResetToken,
       expiresAt,
       type: AppTokenType.PasswordResetToken,
     });
 
     return {
-      workspaceId,
+      workspaceId: targetWorkspaceId,
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
   }
 
-  async sendEmailPasswordResetLink(
-    resetToken: PasswordResetToken,
-    email: string,
-    locale: keyof typeof APP_LOCALES,
-  ): Promise<EmailPasswordResetLinkDTO> {
+  async sendEmailPasswordResetLink({
+    resetToken,
+    email,
+    locale,
+  }: {
+    resetToken: PasswordResetToken;
+    email: string;
+    locale: keyof typeof APP_LOCALES;
+  }): Promise<EmailPasswordResetLinkDTO> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
     );
     const hasPassword = isDefined(user.passwordHash);
+
+    const resetPasswordPath = getAppPath(AppPath.ResetPassword, {
+      passwordResetToken: resetToken.passwordResetToken,
+    });
 
     const workspace = await this.workspaceRepository.findOneBy({
       id: resetToken.workspaceId,
@@ -134,9 +151,7 @@ export class ResetPasswordService {
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
-      pathname: getAppPath(AppPath.ResetPassword, {
-        passwordResetToken: resetToken.passwordResetToken,
-      }),
+      pathname: resetPasswordPath,
     });
 
     const emailData = {
@@ -233,5 +248,35 @@ export class ResetPasswordService {
     );
 
     return { success: true };
+  }
+
+  private async findFirstPasswordAuthEnabledWorkspaceIdOrThrow(
+    userId: string,
+  ): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        workspaceUsers: {
+          user: {
+            id: userId,
+          },
+        },
+        isPasswordAuthEnabled: true,
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+    });
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'No password auth enabled workspace found',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`No workspace found with password auth enabled.`,
+        },
+      );
+    }
+
+    return workspace.id;
   }
 }

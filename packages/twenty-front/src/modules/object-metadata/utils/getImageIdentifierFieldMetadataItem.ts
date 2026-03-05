@@ -7,12 +7,10 @@ export const getImageIdentifierFieldMetadataItem = (
     ObjectMetadataItem,
     'fields' | 'imageIdentifierFieldMetadataId' | 'nameSingular'
   >,
-  isFilesFieldMigrated?: boolean,
 ): FieldMetadataItem | undefined =>
   objectMetadataItem.fields.find((fieldMetadataItem) =>
     isImageIdentifierField({
       fieldMetadataItem,
       objectMetadataItem,
-      isFilesFieldMigrated,
     }),
   );

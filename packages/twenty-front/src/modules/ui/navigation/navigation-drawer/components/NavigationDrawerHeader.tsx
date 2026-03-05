@@ -13,7 +13,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div<{ isExpanded: boolean }>`
-  align-items: center;
+  align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
@@ -25,6 +25,7 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   align-items: center;
+  align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
@@ -38,6 +39,13 @@ const StyledNavigationDrawerCollapseButton = styled(
   height: ${themeCssVariables.spacing[6]};
   padding-right: ${themeCssVariables.spacing[1]};
   width: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledWorkspaceDropdownContainer = styled.div`
+  min-height: ${themeCssVariables.spacing[8]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 type NavigationDrawerHeaderProps = {
@@ -55,7 +63,9 @@ export const NavigationDrawerHeader = ({
 
   return (
     <StyledContainer isExpanded={isNavigationDrawerExpanded}>
-      <MultiWorkspaceDropdownButton />
+      <StyledWorkspaceDropdownContainer>
+        <MultiWorkspaceDropdownButton />
+      </StyledWorkspaceDropdownContainer>
       {!isMobile && (
         <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
           <LightIconButton
