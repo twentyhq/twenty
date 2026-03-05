@@ -1,5 +1,5 @@
-import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
-import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
+import { CommandMenuItemActionMenuDropdown } from '@/action-menu/components/CommandMenuItemActionMenuDropdown';
+import { CommandMenuItemContextProvider } from '@/action-menu/contexts/CommandMenuItemContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -11,13 +11,13 @@ export const RecordShowSidePanelActionMenu = () => {
   return (
     <>
       {contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContextProvider
+        <CommandMenuItemContextProvider
           isInSidePanel={true}
           displayType="dropdownItem"
           actionMenuType="command-menu-show-page-action-menu-dropdown"
         >
-          <CommandMenuActionMenuDropdown />
-        </ActionMenuContextProvider>
+          <CommandMenuItemActionMenuDropdown />
+        </CommandMenuItemContextProvider>
       )}
     </>
   );

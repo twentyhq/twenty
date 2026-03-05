@@ -2,11 +2,11 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
 import {
-  ActionViewType,
+  CommandMenuItemViewType,
   CoreObjectNameSingular,
   AppPath,
 } from 'twenty-shared/types';
@@ -27,10 +27,10 @@ export const createMockActionMenuActions = ({
   deleteMock?: () => void;
   addToFavoritesMock?: () => void;
   exportMock?: () => void;
-}): ActionConfig[] => [
+}): CommandMenuItemConfig[] => [
   {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
@@ -39,14 +39,14 @@ export const createMockActionMenuActions = ({
     Icon: IconHeart,
     shouldBeRegistered: () => true,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <Action onClick={addToFavoritesMock} />,
   },
   {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
@@ -55,12 +55,12 @@ export const createMockActionMenuActions = ({
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
-    availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <Action onClick={exportMock} />,
   },
   {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
@@ -70,14 +70,14 @@ export const createMockActionMenuActions = ({
     isPinned: true,
     shouldBeRegistered: () => true,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <Action onClick={deleteMock} />,
   },
   {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
@@ -85,14 +85,14 @@ export const createMockActionMenuActions = ({
     Icon: IconUser,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
-      viewType === ActionViewType.SHOW_PAGE,
+      viewType === CommandMenuItemViewType.SHOW_PAGE,
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}

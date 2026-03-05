@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -68,7 +68,7 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuItemContext);
 
   const store = useStore();
 

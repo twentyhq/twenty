@@ -1,5 +1,5 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
@@ -41,7 +41,7 @@ export const ExportMultipleRecordsAction = () => {
       }
     : undefined;
 
-  const actionConfig = useContext(ActionConfigContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
 
   if (!isDefined(actionConfig)) {
     return null;
@@ -70,8 +70,8 @@ export const ExportMultipleRecordsAction = () => {
   };
 
   return (
-    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+    <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
       <ActionDisplay onClick={handleClick} />
-    </ActionConfigContext.Provider>
+    </CommandMenuItemConfigContext.Provider>
   );
 };

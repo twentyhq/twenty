@@ -1,6 +1,6 @@
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
-import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { getCommandMenuItemViewType } from '@/action-menu/actions/utils/getCommandMenuItemViewType';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -84,7 +84,7 @@ export const useShouldActionBeRegisteredParams = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuItemContext);
 
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
@@ -105,7 +105,7 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const viewType = getActionViewType(
+  const viewType = getCommandMenuItemViewType(
     contextStoreCurrentViewType,
     contextStoreTargetedRecordsRule,
   );

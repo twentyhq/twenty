@@ -1,7 +1,7 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
@@ -18,7 +18,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType } = useContext(ActionMenuContext);
+  const { actionMenuType } = useContext(CommandMenuItemContext);
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
@@ -43,9 +43,9 @@ export const useRunWorkflowRecordAgnosticActions = () => {
       );
 
       return {
-        type: ActionType.WorkflowRun,
+        type: CommandMenuItemType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
-        scope: ActionScope.Global,
+        scope: CommandMenuItemScope.Global,
         label: name,
         shortLabel: name,
         position: index,
@@ -62,7 +62,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
                 workflowId: activeWorkflowVersion.workflowId,
               });
             }}
-            closeSidePanelOnCommandMenuListActionExecution={false}
+            closeSidePanelOnCommandMenuItemListActionExecution={false}
           />
         ),
       };

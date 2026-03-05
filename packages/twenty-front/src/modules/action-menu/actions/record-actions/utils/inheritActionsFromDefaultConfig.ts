@@ -1,5 +1,5 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
 import { type DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
 
 export const inheritActionsFromDefaultConfig = ({
@@ -7,12 +7,12 @@ export const inheritActionsFromDefaultConfig = ({
   actionKeys,
   propertiesToOverwrite,
 }: {
-  config: Record<string, ActionConfig>;
+  config: Record<string, CommandMenuItemConfig>;
   actionKeys: DefaultRecordActionConfigKeys[];
   propertiesToOverwrite: Partial<
-    Record<DefaultRecordActionConfigKeys, Partial<ActionConfig>>
+    Record<DefaultRecordActionConfigKeys, Partial<CommandMenuItemConfig>>
   >;
-}): Record<string, ActionConfig> => {
+}): Record<string, CommandMenuItemConfig> => {
   const actionsFromDefaultConfig = actionKeys.reduce(
     (acc, key) => ({
       ...acc,
@@ -21,7 +21,7 @@ export const inheritActionsFromDefaultConfig = ({
         ...propertiesToOverwrite[key],
       },
     }),
-    {} as Record<string, ActionConfig>,
+    {} as Record<string, CommandMenuItemConfig>,
   );
 
   return {

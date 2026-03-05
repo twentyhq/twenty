@@ -1,7 +1,7 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
@@ -32,9 +32,9 @@ const meta: Meta<typeof ActionDisplay> = {
   component: ActionDisplay,
   decorators: [
     (Story) => (
-      <ActionConfigContext.Provider value={addToFavoritesAction}>
+      <CommandMenuItemConfigContext.Provider value={addToFavoritesAction}>
         <Story />
-      </ActionConfigContext.Provider>
+      </CommandMenuItemConfigContext.Provider>
     ),
     ComponentDecorator,
     RouterDecorator,
@@ -49,7 +49,7 @@ export const AsButton: Story = {
   },
   decorators: [
     (Story) => (
-      <ActionMenuContext.Provider
+      <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
           actionMenuType: 'command-menu',
@@ -58,7 +58,7 @@ export const AsButton: Story = {
         }}
       >
         <Story />
-      </ActionMenuContext.Provider>
+      </CommandMenuItemContext.Provider>
     ),
   ],
   play: async ({ canvasElement }) => {
@@ -85,7 +85,7 @@ export const AsListItem: Story = {
       </SelectableListComponentInstanceContext.Provider>
     ),
     (Story) => (
-      <ActionMenuContext.Provider
+      <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
           actionMenuType: 'command-menu',
@@ -94,7 +94,7 @@ export const AsListItem: Story = {
         }}
       >
         <Story />
-      </ActionMenuContext.Provider>
+      </CommandMenuItemContext.Provider>
     ),
   ],
   play: async ({ canvasElement }) => {
@@ -121,7 +121,7 @@ export const AsDropdownItem: Story = {
       </SelectableListComponentInstanceContext.Provider>
     ),
     (Story) => (
-      <ActionMenuContext.Provider
+      <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
           actionMenuType: 'command-menu',
@@ -130,7 +130,7 @@ export const AsDropdownItem: Story = {
         }}
       >
         <Story />
-      </ActionMenuContext.Provider>
+      </CommandMenuItemContext.Provider>
     ),
   ],
   play: async ({ canvasElement }) => {

@@ -3,8 +3,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemActionMenuDropdown } from '@/action-menu/components/CommandMenuItemActionMenuDropdown';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -19,9 +19,9 @@ const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
-const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
-  title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
-  component: CommandMenuActionMenuDropdown,
+const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
+  title: 'Modules/ActionMenu/CommandMenuItemActionMenuDropdown',
+  component: CommandMenuItemActionMenuDropdown,
   decorators: [
     (Story) => (
       <JotaiProvider store={jotaiStore}>
@@ -38,7 +38,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: 'story-action-menu' }}
             >
-              <ActionMenuContext.Provider
+              <CommandMenuItemContext.Provider
                 value={{
                   isInSidePanel: true,
                   displayType: 'dropdownItem',
@@ -51,7 +51,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
                 }}
               >
                 <Story />
-              </ActionMenuContext.Provider>
+              </CommandMenuItemContext.Provider>
             </ActionMenuComponentInstanceContext.Provider>
           </JestContextStoreSetter>
         </ContextStoreComponentInstanceContext.Provider>
@@ -70,7 +70,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CommandMenuActionMenuDropdown>;
+type Story = StoryObj<typeof CommandMenuItemActionMenuDropdown>;
 
 export const Default: Story = {
   args: {

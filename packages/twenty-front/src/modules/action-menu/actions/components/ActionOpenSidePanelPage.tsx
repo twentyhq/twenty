@@ -1,5 +1,5 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,7 +22,7 @@ export const ActionOpenSidePanelPage = ({
   onClick?: () => void;
   shouldResetSearchState?: boolean;
 }) => {
-  const actionConfig = useContext(ActionConfigContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
 
   const { navigateSidePanel } = useNavigateSidePanel();
 

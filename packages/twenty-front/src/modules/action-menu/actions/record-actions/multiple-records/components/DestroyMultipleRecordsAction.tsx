@@ -1,5 +1,5 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -77,7 +77,7 @@ export const DestroyMultipleRecordsAction = () => {
       delayInMsBetweenMutations: 50,
     });
 
-  const actionConfig = useContext(ActionConfigContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
 
   if (!isDefined(actionConfig)) {
     return null;
@@ -102,13 +102,13 @@ export const DestroyMultipleRecordsAction = () => {
   };
 
   return (
-    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+    <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
       <ActionModal
         title={t`Permanently Destroy Records`}
         subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
         onConfirmClick={handleDestroyClick}
         confirmButtonText={t`Destroy Records`}
       />
-    </ActionConfigContext.Provider>
+    </CommandMenuItemConfigContext.Provider>
   );
 };

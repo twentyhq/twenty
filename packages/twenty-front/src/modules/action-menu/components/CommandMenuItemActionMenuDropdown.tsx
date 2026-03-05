@@ -1,14 +1,14 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 
-export const CommandMenuActionMenuDropdown = () => {
-  const { actions } = useContext(ActionMenuContext);
+export const CommandMenuItemActionMenuDropdown = () => {
+  const { actions } = useContext(CommandMenuItemContext);
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -18,7 +18,7 @@ export const CommandMenuActionMenuDropdown = () => {
     getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
   const recordSelectionActions = actions.filter(
-    (action) => action.scope === ActionScope.RecordSelection,
+    (action) => action.scope === CommandMenuItemScope.RecordSelection,
   );
 
   const selectableItemIdArray = recordSelectionActions.map(

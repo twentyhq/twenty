@@ -7,9 +7,9 @@ import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-ac
 import { DashboardSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/types/DashboardSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from 'twenty-shared/types';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,15 +29,15 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 3,
       Icon: IconPencil,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId) &&
         objectPermissions.canUpdateObjectRecords,
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [CommandMenuItemViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },
     [PageLayoutSingleRecordActionKeys.SAVE_LAYOUT]: {
@@ -48,15 +48,15 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPrimaryCTA: true,
       position: 4,
       Icon: IconDeviceFloppy,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId) &&
         objectPermissions.canUpdateObjectRecords,
-      availableOn: [ActionViewType.PAGE_EDIT_MODE],
+      availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
       component: <SaveDashboardSingleRecordAction />,
     },
     [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
@@ -66,15 +66,15 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 5,
       Icon: IconCancel,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId) &&
         objectPermissions.canUpdateObjectRecords,
-      availableOn: [ActionViewType.PAGE_EDIT_MODE],
+      availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
       component: <CancelDashboardSingleRecordAction />,
     },
     [DashboardSingleRecordActionKeys.DUPLICATE_DASHBOARD]: {
@@ -84,16 +84,16 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 6,
       Icon: IconCopyPlus,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         objectPermissions.canUpdateObjectRecords,
       availableOn: [
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-        ActionViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
       ],
       component: <DuplicateDashboardSingleRecordAction />,
     },

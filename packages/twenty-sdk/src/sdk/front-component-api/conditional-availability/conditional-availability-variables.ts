@@ -1,31 +1,31 @@
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { type CommandMenuItemContextApi } from 'twenty-shared/types';
 
 export const isShowPage =
-  null as unknown as CommandMenuContextApi['isShowPage'];
+  null as unknown as CommandMenuItemContextApi['isShowPage'];
 export const isInSidePanel =
-  null as unknown as CommandMenuContextApi['isInSidePanel'];
+  null as unknown as CommandMenuItemContextApi['isInSidePanel'];
 export const isFavorite =
-  null as unknown as CommandMenuContextApi['isFavorite'];
-export const isRemote = null as unknown as CommandMenuContextApi['isRemote'];
+  null as unknown as CommandMenuItemContextApi['isFavorite'];
+export const isRemote = null as unknown as CommandMenuItemContextApi['isRemote'];
 export const isNoteOrTask =
-  null as unknown as CommandMenuContextApi['isNoteOrTask'];
+  null as unknown as CommandMenuItemContextApi['isNoteOrTask'];
 export const isSelectAll =
-  null as unknown as CommandMenuContextApi['isSelectAll'];
+  null as unknown as CommandMenuItemContextApi['isSelectAll'];
 export const hasAnySoftDeleteFilterOnView =
-  null as unknown as CommandMenuContextApi['hasAnySoftDeleteFilterOnView'];
+  null as unknown as CommandMenuItemContextApi['hasAnySoftDeleteFilterOnView'];
 export const numberOfSelectedRecords =
-  null as unknown as CommandMenuContextApi['numberOfSelectedRecords'];
+  null as unknown as CommandMenuItemContextApi['numberOfSelectedRecords'];
 export const objectPermissions =
-  null as unknown as CommandMenuContextApi['objectPermissions'];
+  null as unknown as CommandMenuItemContextApi['objectPermissions'];
 export const selectedRecord = null as unknown as NonNullable<
-  CommandMenuContextApi['selectedRecord']
+  CommandMenuItemContextApi['selectedRecord']
 >;
 export const featureFlags =
-  null as unknown as CommandMenuContextApi['featureFlags'];
+  null as unknown as CommandMenuItemContextApi['featureFlags'];
 export const targetObjectReadPermissions =
-  null as unknown as CommandMenuContextApi['targetObjectReadPermissions'];
+  null as unknown as CommandMenuItemContextApi['targetObjectReadPermissions'];
 export const targetObjectWritePermissions =
-  null as unknown as CommandMenuContextApi['targetObjectWritePermissions'];
+  null as unknown as CommandMenuItemContextApi['targetObjectWritePermissions'];
 
 export const isDefined = null as unknown as (value: unknown) => boolean;
 export const isNonEmptyString = null as unknown as (value: unknown) => boolean;

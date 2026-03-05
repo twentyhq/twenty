@@ -1,22 +1,22 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { useContext } from 'react';
 
 export const Action = ({
   onClick,
   closeSidePanelOnShowPageOptionsActionExecution = false,
-  closeSidePanelOnCommandMenuListActionExecution = true,
+  closeSidePanelOnCommandMenuItemListActionExecution = true,
 }: {
   onClick: () => void;
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
-  closeSidePanelOnCommandMenuListActionExecution?: boolean;
+  closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
 }) => {
-  const actionConfig = useContext(ActionConfigContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
 
   const { closeActionMenu } = useCloseActionMenu({
     closeSidePanelOnShowPageOptionsActionExecution,
-    closeSidePanelOnCommandMenuListActionExecution,
+    closeSidePanelOnCommandMenuItemListActionExecution,
   });
 
   if (!actionConfig) {

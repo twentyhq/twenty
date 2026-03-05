@@ -1,11 +1,11 @@
 import { useRunWorkflowRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions';
 import {
-  ActionMenuContext,
-  type ActionMenuContextType,
-} from '@/action-menu/contexts/ActionMenuContext';
+  CommandMenuItemContext,
+  type CommandMenuItemContextType,
+} from '@/action-menu/contexts/CommandMenuItemContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
+import { useCommandMenuItemContextApi } from '@/action-menu/hooks/useCommandMenuItemContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -16,22 +16,22 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-type ActionMenuContextProviderWorkflowObjectsProps = {
+type CommandMenuItemContextProviderWorkflowObjectsProps = {
   objectMetadataItem: ObjectMetadataItem;
-  isInSidePanel: ActionMenuContextType['isInSidePanel'];
-  displayType: ActionMenuContextType['displayType'];
-  actionMenuType: ActionMenuContextType['actionMenuType'];
+  isInSidePanel: CommandMenuItemContextType['isInSidePanel'];
+  displayType: CommandMenuItemContextType['displayType'];
+  actionMenuType: CommandMenuItemContextType['actionMenuType'];
   children: React.ReactNode;
 };
 
-const ActionMenuContextProviderWorkflowObjectsContent = ({
+const CommandMenuItemContextProviderWorkflowObjectsContent = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
   actionMenuType,
   children,
   selectedRecordId,
-}: ActionMenuContextProviderWorkflowObjectsProps & {
+}: CommandMenuItemContextProviderWorkflowObjectsProps & {
   selectedRecordId: string;
 }) => {
   const params = useShouldActionBeRegisteredParams({
@@ -51,13 +51,13 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
+  const commandMenuItemContextApi = useCommandMenuItemContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentActions(commandMenuItemContextApi);
 
   return (
-    <ActionMenuContext.Provider
+    <CommandMenuItemContext.Provider
       value={{
         isInSidePanel,
         displayType,
@@ -70,17 +70,17 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
       }}
     >
       {children}
-    </ActionMenuContext.Provider>
+    </CommandMenuItemContext.Provider>
   );
 };
 
-const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
+const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
   actionMenuType,
   children,
-}: ActionMenuContextProviderWorkflowObjectsProps & {
+}: CommandMenuItemContextProviderWorkflowObjectsProps & {
   workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
 }) => {
   const params = useShouldActionBeRegisteredParams({
@@ -97,13 +97,13 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
+  const commandMenuItemContextApi = useCommandMenuItemContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentActions(commandMenuItemContextApi);
 
   return (
-    <ActionMenuContext.Provider
+    <CommandMenuItemContext.Provider
       value={{
         isInSidePanel,
         displayType,
@@ -116,17 +116,17 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
       }}
     >
       {children}
-    </ActionMenuContext.Provider>
+    </CommandMenuItemContext.Provider>
   );
 };
 
-export const ActionMenuContextProviderWorkflowObjects = ({
+export const CommandMenuItemContextProviderWorkflowObjects = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
   actionMenuType,
   children,
-}: ActionMenuContextProviderWorkflowObjectsProps) => {
+}: CommandMenuItemContextProviderWorkflowObjectsProps) => {
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -143,7 +143,7 @@ export const ActionMenuContextProviderWorkflowObjects = ({
 
   if (isDefined(selectedRecord?.id)) {
     return (
-      <ActionMenuContextProviderWorkflowObjectsContent
+      <CommandMenuItemContextProviderWorkflowObjectsContent
         objectMetadataItem={objectMetadataItem}
         isInSidePanel={isInSidePanel}
         displayType={displayType}
@@ -151,12 +151,12 @@ export const ActionMenuContextProviderWorkflowObjects = ({
         selectedRecordId={selectedRecord.id}
       >
         {children}
-      </ActionMenuContextProviderWorkflowObjectsContent>
+      </CommandMenuItemContextProviderWorkflowObjectsContent>
     );
   }
 
   return (
-    <ActionMenuContextProviderWorkflowObjectsWithoutWorkflow
+    <CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow
       objectMetadataItem={objectMetadataItem}
       isInSidePanel={isInSidePanel}
       displayType={displayType}
@@ -164,6 +164,6 @@ export const ActionMenuContextProviderWorkflowObjects = ({
       workflowWithCurrentVersion={undefined}
     >
       {children}
-    </ActionMenuContextProviderWorkflowObjectsWithoutWorkflow>
+    </CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow>
   );
 };

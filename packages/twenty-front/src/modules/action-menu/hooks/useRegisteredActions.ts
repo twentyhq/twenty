@@ -1,9 +1,9 @@
 import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
-import { ActionViewType } from 'twenty-shared/types';
+import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
-import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
-import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
+import { getCommandMenuItemConfig } from '@/action-menu/actions/utils/getCommandMenuItemConfig';
+import { getCommandMenuItemViewType } from '@/action-menu/actions/utils/getCommandMenuItemViewType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -31,12 +31,12 @@ export const useRegisteredActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const viewType = getActionViewType(
+  const viewType = getCommandMenuItemViewType(
     contextStoreCurrentViewType,
     contextStoreTargetedRecordsRule,
   );
 
-  const recordActionConfig = getActionConfig({
+  const recordActionConfig = getCommandMenuItemConfig({
     objectMetadataItem,
   });
 
@@ -60,18 +60,18 @@ export const useRegisteredActions = (
     if (contextStoreIsPageInEditMode) {
       return (
         isDefined(action.availableOn) &&
-        action.availableOn.includes(ActionViewType.PAGE_EDIT_MODE)
+        action.availableOn.includes(CommandMenuItemViewType.PAGE_EDIT_MODE)
       );
     }
 
     if (isDefined(viewType)) {
       return (
         action.availableOn?.includes(viewType) ||
-        action.availableOn?.includes(ActionViewType.GLOBAL)
+        action.availableOn?.includes(CommandMenuItemViewType.GLOBAL)
       );
     }
 
-    return action.availableOn?.includes(ActionViewType.GLOBAL);
+    return action.availableOn?.includes(CommandMenuItemViewType.GLOBAL);
   });
 
   const actions = actionsToRegister

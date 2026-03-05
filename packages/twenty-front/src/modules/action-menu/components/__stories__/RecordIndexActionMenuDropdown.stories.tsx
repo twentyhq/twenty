@@ -4,7 +4,7 @@ import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -41,7 +41,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           <ActionMenuComponentInstanceContext.Provider
             value={{ instanceId: 'story-action-menu' }}
           >
-            <ActionMenuContext.Provider
+            <CommandMenuItemContext.Provider
               value={{
                 isInSidePanel: true,
                 displayType: 'dropdownItem',
@@ -54,7 +54,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
               }}
             >
               <Story />
-            </ActionMenuContext.Provider>
+            </CommandMenuItemContext.Provider>
           </ActionMenuComponentInstanceContext.Provider>
         </JotaiProvider>
       );

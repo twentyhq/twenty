@@ -1,13 +1,13 @@
 import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useRecordAgnosticActions = () => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const actions: Record<string, ActionConfig> = {
+  const actions: Record<string, CommandMenuItemConfig> = {
     [RecordAgnosticActionsKeys.SEARCH_RECORDS]:
       RECORD_AGNOSTIC_ACTIONS_CONFIG[RecordAgnosticActionsKeys.SEARCH_RECORDS],
     [RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK]:

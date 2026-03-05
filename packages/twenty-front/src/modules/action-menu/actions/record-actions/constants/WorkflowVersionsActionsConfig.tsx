@@ -9,9 +9,9 @@ import { SeeWorkflowWorkflowVersionSingleRecordAction } from '@/action-menu/acti
 import { UseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/components/UseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, AppPath } from 'twenty-shared/types';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType, AppPath } from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,14 +31,14 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`See runs`,
         position: 1,
         isPinned: true,
-        type: ActionType.Standard,
-        scope: ActionScope.RecordSelection,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.RecordSelection,
         Icon: IconHistoryToggle,
         shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
           isDefined(workflowWithCurrentVersion),
         availableOn: [
-          ActionViewType.SHOW_PAGE,
-          ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+          CommandMenuItemViewType.SHOW_PAGE,
+          CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ],
         component: <SeeRunsWorkflowVersionSingleRecordAction />,
       },
@@ -48,14 +48,14 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`See workflow`,
         position: 2,
         isPinned: true,
-        type: ActionType.Standard,
-        scope: ActionScope.RecordSelection,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.RecordSelection,
         Icon: IconSettingsAutomation,
         shouldBeRegistered: ({ selectedRecord }) =>
           isDefined(selectedRecord?.workflow?.id),
         availableOn: [
-          ActionViewType.SHOW_PAGE,
-          ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+          CommandMenuItemViewType.SHOW_PAGE,
+          CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ],
         component: <SeeWorkflowWorkflowVersionSingleRecordAction />,
       },
@@ -65,14 +65,14 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`Use as draft`,
         position: 3,
         isPinned: true,
-        type: ActionType.Standard,
-        scope: ActionScope.RecordSelection,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.RecordSelection,
         Icon: IconPencil,
         shouldBeRegistered: ({ selectedRecord }) =>
           isDefined(selectedRecord) && selectedRecord.status !== 'DRAFT',
         availableOn: [
-          ActionViewType.SHOW_PAGE,
-          ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+          CommandMenuItemViewType.SHOW_PAGE,
+          CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ],
         component: <UseAsDraftWorkflowVersionSingleRecordAction />,
       },
@@ -81,20 +81,20 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         label: msg`See versions history`,
         shortLabel: msg`See versions`,
         position: 4,
-        type: ActionType.Standard,
-        scope: ActionScope.RecordSelection,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.RecordSelection,
         Icon: IconVersions,
         shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
           isDefined(workflowWithCurrentVersion),
         availableOn: [
-          ActionViewType.SHOW_PAGE,
-          ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+          CommandMenuItemViewType.SHOW_PAGE,
+          CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ],
         component: <SeeVersionsWorkflowVersionSingleRecordAction />,
       },
       [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
-        type: ActionType.Navigation,
-        scope: ActionScope.Global,
+        type: CommandMenuItemType.Navigation,
+        scope: CommandMenuItemScope.Global,
         key: NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS,
         label: msg`Go to runs`,
         shortLabel: msg`See runs`,
@@ -103,7 +103,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         accent: 'default',
         isPinned: true,
         shouldBeRegistered: () => true,
-        availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+        availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
         component: (
           <ActionLink
             to={AppPath.RecordIndexPage}

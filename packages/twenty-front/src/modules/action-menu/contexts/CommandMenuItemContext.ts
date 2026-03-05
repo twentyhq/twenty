@@ -1,7 +1,7 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
 import { createContext } from 'react';
 
-export type ActionMenuContextType = {
+export type CommandMenuItemContextType = {
   isInSidePanel: boolean;
   displayType: 'button' | 'listItem' | 'dropdownItem';
   actionMenuType:
@@ -10,10 +10,10 @@ export type ActionMenuContextType = {
     | 'index-page-action-menu'
     | 'index-page-action-menu-dropdown'
     | 'command-menu-show-page-action-menu-dropdown';
-  actions: ActionConfig[];
+  actions: CommandMenuItemConfig[];
 };
 
-export const ActionMenuContext = createContext<ActionMenuContextType>({
+export const CommandMenuItemContext = createContext<CommandMenuItemContextType>({
   isInSidePanel: false,
   actionMenuType: 'command-menu',
   displayType: 'button',

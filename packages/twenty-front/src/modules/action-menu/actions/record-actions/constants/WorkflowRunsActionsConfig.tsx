@@ -6,9 +6,9 @@ import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/
 import { StopWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/StopWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from 'twenty-shared/types';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
 import {
   IconPlayerStop,
@@ -24,13 +24,13 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`See version`,
       position: 0,
       isPinned: true,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       Icon: IconVersions,
       shouldBeRegistered: () => true,
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <SeeVersionWorkflowRunSingleRecordAction />,
     },
@@ -41,13 +41,13 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`See workflow`,
       position: 1,
       isPinned: true,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       Icon: IconSettingsAutomation,
       shouldBeRegistered: () => true,
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <SeeWorkflowWorkflowRunSingleRecordAction />,
     },
@@ -57,8 +57,8 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`Stop`,
       position: 2,
       isPinned: true,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       Icon: IconPlayerStop,
       shouldBeRegistered: ({ selectedRecord, isSelectAll }) => {
         if (isSelectAll === true) {
@@ -69,9 +69,9 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         return stoppableStatuses.includes(selectedRecord?.status);
       },
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-        ActionViewType.INDEX_PAGE_BULK_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
       ],
       component: <StopWorkflowRunSingleRecordAction />,
     },

@@ -15,9 +15,9 @@ import { TestWorkflowSingleRecordAction } from '@/action-menu/actions/record-act
 import { TidyUpWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TidyUpWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, AppPath } from 'twenty-shared/types';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType, AppPath } from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import {
   type WorkflowStep,
@@ -63,8 +63,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPrimaryCTA: true,
       position: 3,
       Icon: IconPower,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
@@ -73,8 +73,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
           )) &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <ActivateWorkflowSingleRecordAction />,
     },
@@ -85,15 +85,15 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 4,
       Icon: IconPlayerPause,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         workflowWithCurrentVersion.currentVersion.status === 'ACTIVE' &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <DeactivateWorkflowSingleRecordAction />,
     },
@@ -104,16 +104,16 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 5,
       Icon: IconNoteOff,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         workflowWithCurrentVersion.versions.length > 1 &&
         workflowWithCurrentVersion.currentVersion.status === 'DRAFT' &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <DiscardDraftWorkflowSingleRecordAction />,
     },
@@ -124,8 +124,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 6,
       Icon: IconPlayerPlay,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
@@ -138,8 +138,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
           workflowWithCurrentVersion.currentVersion.trigger.type === 'CRON') &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <TestWorkflowSingleRecordAction />,
     },
@@ -151,15 +151,15 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 7,
       Icon: IconVersions,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion, selectedRecord }) =>
         (workflowWithCurrentVersion?.statuses?.includes('ACTIVE') || false) &&
         (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false) &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <SeeActiveVersionWorkflowSingleRecordAction />,
     },
@@ -170,14 +170,14 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 8,
       Icon: IconHistoryToggle,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <SeeRunsWorkflowSingleRecordAction />,
     },
@@ -188,14 +188,14 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 9,
       Icon: IconVersions,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <SeeVersionsWorkflowSingleRecordAction />,
     },
@@ -207,12 +207,12 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 10,
       Icon: IconPlus,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         !isDefined(selectedRecord?.deletedAt),
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [CommandMenuItemViewType.SHOW_PAGE],
       component: <AddNodeWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.TIDY_UP]: {
@@ -222,12 +222,12 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 11,
       Icon: IconReorder,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         !isDefined(selectedRecord?.deletedAt),
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [CommandMenuItemViewType.SHOW_PAGE],
       component: <TidyUpWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.DUPLICATE_WORKFLOW]: {
@@ -237,21 +237,21 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 12,
       Icon: IconCopy,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         isDefined(workflowWithCurrentVersion.currentVersion) &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <DuplicateWorkflowSingleRecordAction />,
     },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
-      type: ActionType.Navigation,
-      scope: ActionScope.Global,
+      type: CommandMenuItemType.Navigation,
+      scope: CommandMenuItemScope.Global,
       key: NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS,
       label: msg`Go to runs`,
       shortLabel: msg`See runs`,
@@ -261,7 +261,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
         !hasAnySoftDeleteFilterOnView,
-      availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+      availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
       component: (
         <ActionLink
           to={AppPath.RecordIndexPage}

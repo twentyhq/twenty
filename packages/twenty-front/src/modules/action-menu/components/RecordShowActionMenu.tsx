@@ -1,5 +1,5 @@
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
-import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
+import { CommandMenuItemContextProvider } from '@/action-menu/contexts/CommandMenuItemContextProvider';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -26,13 +26,13 @@ export const RecordShowActionMenu = () => {
   return (
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContextProvider
+        <CommandMenuItemContextProvider
           isInSidePanel={false}
           displayType="button"
           actionMenuType="show-page-action-menu"
         >
           {!isMobile && <PageHeaderActionMenuButtons />}
-        </ActionMenuContextProvider>
+        </CommandMenuItemContextProvider>
       )}
     </>
   );

@@ -97,7 +97,7 @@ export const CreateRelatedRecordAction = ({
   return (
     <Action
       onClick={handleCreateRelatedRecord}
-      closeSidePanelOnCommandMenuListActionExecution={false}
+      closeSidePanelOnCommandMenuItemListActionExecution={false}
     />
   );
 };

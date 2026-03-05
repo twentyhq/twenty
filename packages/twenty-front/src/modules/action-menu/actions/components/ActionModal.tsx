@@ -2,8 +2,8 @@ import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -19,7 +19,7 @@ export type ActionModalProps = {
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
-  closeSidePanelOnCommandMenuListActionExecution?: boolean;
+  closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
 };
 
 export const ActionModal = ({
@@ -30,13 +30,13 @@ export const ActionModal = ({
   confirmButtonAccent = 'danger',
   isLoading = false,
   closeSidePanelOnShowPageOptionsActionExecution,
-  closeSidePanelOnCommandMenuListActionExecution,
+  closeSidePanelOnCommandMenuItemListActionExecution,
 }: ActionModalProps) => {
   const { openModal } = useModal();
 
   const { closeActionMenu } = useCloseActionMenu({
     closeSidePanelOnShowPageOptionsActionExecution,
-    closeSidePanelOnCommandMenuListActionExecution,
+    closeSidePanelOnCommandMenuItemListActionExecution,
   });
 
   const handleConfirmClick = async () => {
@@ -44,8 +44,8 @@ export const ActionModal = ({
     closeActionMenu();
   };
 
-  const actionConfig = useContext(ActionConfigContext);
-  const { actionMenuType } = useContext(ActionMenuContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const { actionMenuType } = useContext(CommandMenuItemContext);
 
   const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
 

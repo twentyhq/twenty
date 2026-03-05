@@ -1,6 +1,6 @@
-import { type ActionMenuContextType } from '@/action-menu/contexts/ActionMenuContext';
-import { ActionMenuContextProviderDefault } from '@/action-menu/contexts/ActionMenuContextProviderDefault';
-import { ActionMenuContextProviderWorkflowObjects } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowObjects';
+import { type CommandMenuItemContextType } from '@/action-menu/contexts/CommandMenuItemContext';
+import { CommandMenuItemContextProviderDefault } from '@/action-menu/contexts/CommandMenuItemContextProviderDefault';
+import { CommandMenuItemContextProviderWorkflowObjects } from '@/action-menu/contexts/CommandMenuItemContextProviderWorkflowObjects';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -9,13 +9,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-export const ActionMenuContextProvider = ({
+export const CommandMenuItemContextProvider = ({
   children,
   isInSidePanel,
   displayType,
   actionMenuType,
   objectMetadataItemOverride,
-}: Omit<ActionMenuContextType, 'actions'> & {
+}: Omit<CommandMenuItemContextType, 'actions'> & {
   children: React.ReactNode;
   objectMetadataItemOverride?: ObjectMetadataItem;
 }) => {
@@ -45,25 +45,25 @@ export const ActionMenuContextProvider = ({
 
   if (isWorkflowObject) {
     return (
-      <ActionMenuContextProviderWorkflowObjects
+      <CommandMenuItemContextProviderWorkflowObjects
         isInSidePanel={isInSidePanel}
         displayType={displayType}
         actionMenuType={actionMenuType}
         objectMetadataItem={objectMetadataItem}
       >
         {children}
-      </ActionMenuContextProviderWorkflowObjects>
+      </CommandMenuItemContextProviderWorkflowObjects>
     );
   }
 
   return (
-    <ActionMenuContextProviderDefault
+    <CommandMenuItemContextProviderDefault
       isInSidePanel={isInSidePanel}
       displayType={displayType}
       actionMenuType={actionMenuType}
       objectMetadataItem={objectMetadataItem}
     >
       {children}
-    </ActionMenuContextProviderDefault>
+    </CommandMenuItemContextProviderDefault>
   );
 };

@@ -1,9 +1,9 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
 import { type DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
 import { IconHeart, IconPlus } from 'twenty-ui/display';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
@@ -22,10 +22,10 @@ describe('inheritActionsFromDefaultConfig', () => {
   });
 
   it('should return only provided config when no default action keys are specified', () => {
-    const customConfig: Record<string, ActionConfig> = {
+    const customConfig: Record<string, CommandMenuItemConfig> = {
       'custom-action': {
-        type: ActionType.Standard,
-        scope: ActionScope.Object,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.Object,
         key: 'custom-action',
         label: 'Custom Action',
         position: 100,
@@ -166,10 +166,10 @@ describe('inheritActionsFromDefaultConfig', () => {
   });
 
   it('should merge inherited actions with provided config', () => {
-    const customConfig: Record<string, ActionConfig> = {
+    const customConfig: Record<string, CommandMenuItemConfig> = {
       'custom-action': {
-        type: ActionType.Standard,
-        scope: ActionScope.Object,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.Object,
         key: 'custom-action',
         label: 'Custom Action',
         position: 100,
@@ -199,10 +199,10 @@ describe('inheritActionsFromDefaultConfig', () => {
   });
 
   it('should prioritize provided config over inherited actions when keys conflict', () => {
-    const customConfig: Record<string, ActionConfig> = {
+    const customConfig: Record<string, CommandMenuItemConfig> = {
       [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
-        type: ActionType.Standard,
-        scope: ActionScope.Object,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.Object,
         key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
         label: 'Overridden Create Action',
         position: 999,
@@ -231,10 +231,10 @@ describe('inheritActionsFromDefaultConfig', () => {
   });
 
   it('should handle complex scenario with inheritance, overrides, and custom config', () => {
-    const customConfig: Record<string, ActionConfig> = {
+    const customConfig: Record<string, CommandMenuItemConfig> = {
       'custom-action-1': {
-        type: ActionType.Standard,
-        scope: ActionScope.Object,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.Object,
         key: 'custom-action-1',
         label: 'Custom Action 1',
         position: 50,
@@ -243,8 +243,8 @@ describe('inheritActionsFromDefaultConfig', () => {
         component: MockComponent,
       },
       [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-        type: ActionType.Standard,
-        scope: ActionScope.RecordSelection,
+        type: CommandMenuItemType.Standard,
+        scope: CommandMenuItemScope.RecordSelection,
         key: SingleRecordActionKeys.ADD_TO_FAVORITES,
         label: 'Completely Custom Favorites',
         position: 1000,

@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
@@ -28,7 +28,7 @@ const meta: Meta<typeof ActionComponent> = {
       <ActionMenuComponentInstanceContext.Provider
         value={{ instanceId: 'story' }}
       >
-        <ActionMenuContext.Provider
+        <CommandMenuItemContext.Provider
           value={{
             isInSidePanel: false,
             actionMenuType: 'index-page-action-menu',
@@ -37,7 +37,7 @@ const meta: Meta<typeof ActionComponent> = {
           }}
         >
           <Story />
-        </ActionMenuContext.Provider>
+        </CommandMenuItemContext.Provider>
       </ActionMenuComponentInstanceContext.Provider>
     ),
   ],

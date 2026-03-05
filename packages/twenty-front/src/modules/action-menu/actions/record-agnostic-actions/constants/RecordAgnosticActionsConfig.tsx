@@ -1,23 +1,23 @@
 import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, SidePanelPages } from 'twenty-shared/types';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType, SidePanelPages } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
 import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
 
-export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
+export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, CommandMenuItemConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Global,
     key: RecordAgnosticActionsKeys.SEARCH_RECORDS,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 0,
     isPinned: false,
     Icon: IconSearch,
-    availableOn: [ActionViewType.GLOBAL],
+    availableOn: [CommandMenuItemViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
         page={SidePanelPages.SearchRecords}
@@ -30,15 +30,15 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     shouldBeRegistered: () => true,
   },
   [RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK]: {
-    type: ActionType.Fallback,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Fallback,
+    scope: CommandMenuItemScope.Global,
     key: RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 1,
     isPinned: false,
     Icon: IconSearch,
-    availableOn: [ActionViewType.GLOBAL],
+    availableOn: [CommandMenuItemViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
         page={SidePanelPages.SearchRecords}
@@ -50,15 +50,15 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     shouldBeRegistered: () => true,
   },
   [RecordAgnosticActionsKeys.ASK_AI]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Global,
     key: RecordAgnosticActionsKeys.ASK_AI,
     label: msg`Ask AI`,
     shortLabel: msg`Ask AI`,
     position: 2,
     isPinned: false,
     Icon: IconSparkles,
-    availableOn: [ActionViewType.GLOBAL],
+    availableOn: [CommandMenuItemViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
         page={SidePanelPages.AskAI}
@@ -70,15 +70,15 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     shouldBeRegistered: () => true,
   },
   [RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Global,
     key: RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS,
     label: msg`View Previous AI Chats`,
     shortLabel: msg`Previous AI Chats`,
     position: 3,
     isPinned: false,
     Icon: IconHistory,
-    availableOn: [ActionViewType.GLOBAL],
+    availableOn: [CommandMenuItemViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
         page={SidePanelPages.ViewPreviousAIChats}

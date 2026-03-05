@@ -1,18 +1,18 @@
 import { useRunWorkflowRecordActions } from '@/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions';
 import { useRunWorkflowRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions';
 import {
-  ActionMenuContext,
-  type ActionMenuContextType,
-} from '@/action-menu/contexts/ActionMenuContext';
+  CommandMenuItemContext,
+  type CommandMenuItemContextType,
+} from '@/action-menu/contexts/CommandMenuItemContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
+import { useCommandMenuItemContextApi } from '@/action-menu/hooks/useCommandMenuItemContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const ActionMenuContextProviderDefault = ({
+export const CommandMenuItemContextProviderDefault = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
@@ -20,9 +20,9 @@ export const ActionMenuContextProviderDefault = ({
   children,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  isInSidePanel: ActionMenuContextType['isInSidePanel'];
-  displayType: ActionMenuContextType['displayType'];
-  actionMenuType: ActionMenuContextType['actionMenuType'];
+  isInSidePanel: CommandMenuItemContextType['isInSidePanel'];
+  displayType: CommandMenuItemContextType['displayType'];
+  actionMenuType: CommandMenuItemContextType['actionMenuType'];
   children: React.ReactNode;
 }) => {
   const params = useShouldActionBeRegisteredParams({
@@ -51,13 +51,13 @@ export const ActionMenuContextProviderDefault = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
+  const commandMenuItemContextApi = useCommandMenuItemContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentActions(commandMenuItemContextApi);
 
   return (
-    <ActionMenuContext.Provider
+    <CommandMenuItemContext.Provider
       value={{
         isInSidePanel,
         displayType,
@@ -71,6 +71,6 @@ export const ActionMenuContextProviderDefault = ({
       }}
     >
       {children}
-    </ActionMenuContext.Provider>
+    </CommandMenuItemContext.Provider>
   );
 };

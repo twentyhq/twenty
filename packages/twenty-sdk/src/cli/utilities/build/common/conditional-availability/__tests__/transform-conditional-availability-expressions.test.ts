@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from '@/cli/utilities/build/common/conditional-availability/utils/transform-conditional-availability-expressions';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { type CommandMenuItemContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 const MOCKS_DIR = path.join(__dirname, '__mocks__');
@@ -11,8 +11,8 @@ const readMock = (filename: string): string =>
   fs.readFileSync(path.join(MOCKS_DIR, filename), 'utf8');
 
 const buildMockCommandMenuContextApi = (
-  overrides: Partial<CommandMenuContextApi> = {},
-): CommandMenuContextApi => ({
+  overrides: Partial<CommandMenuItemContextApi> = {},
+): CommandMenuItemContextApi => ({
   isShowPage: false,
   isInSidePanel: false,
   isFavorite: false,
@@ -57,7 +57,7 @@ const extractConditionalAvailabilityExpressionFromTransformedSource = (
 
 const transformMockAndEvaluate = (
   filename: string,
-  context: CommandMenuContextApi,
+  context: CommandMenuItemContextApi,
 ): boolean => {
   const source = readMock(filename);
 

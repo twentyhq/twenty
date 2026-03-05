@@ -1,8 +1,8 @@
-import { ActionViewType } from 'twenty-shared/types';
+import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 
-export const getActionViewType = (
+export const getCommandMenuItemViewType = (
   contextStoreCurrentViewType: ContextStoreViewType | null,
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule,
 ) => {
@@ -11,22 +11,22 @@ export const getActionViewType = (
   }
 
   if (contextStoreCurrentViewType === ContextStoreViewType.ShowPage) {
-    return ActionViewType.SHOW_PAGE;
+    return CommandMenuItemViewType.SHOW_PAGE;
   }
 
   if (
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
   ) {
-    return ActionViewType.INDEX_PAGE_NO_SELECTION;
+    return CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION;
   }
 
   if (
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
   ) {
-    return ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION;
+    return CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION;
   }
 
-  return ActionViewType.INDEX_PAGE_BULK_SELECTION;
+  return CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION;
 };

@@ -1,10 +1,10 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 
-export const ActionComponent = ({ action }: { action: ActionConfig }) => {
+export const ActionComponent = ({ action }: { action: CommandMenuItemConfig }) => {
   return (
-    <ActionConfigContext.Provider value={action}>
+    <CommandMenuItemConfigContext.Provider value={action}>
       {action.component}
-    </ActionConfigContext.Provider>
+    </CommandMenuItemConfigContext.Provider>
   );
 };

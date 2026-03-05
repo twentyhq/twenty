@@ -1,5 +1,5 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
@@ -13,7 +13,7 @@ const StyledActionContainer = styled(motion.div)`
 
 export const PageHeaderActionMenuButtons = () => {
   const { theme } = useContext(ThemeContext);
-  const { actions } = useContext(ActionMenuContext);
+  const { actions } = useContext(CommandMenuItemContext);
   const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();
 
   const actionsWithPositionForAnimation = pinnedActions.map(

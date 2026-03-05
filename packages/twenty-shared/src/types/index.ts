@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { ActionViewType } from './ActionViewType';
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
@@ -15,7 +14,8 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
-export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type { CommandMenuItemContextApi } from './CommandMenuItemContextApi';
+export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,

@@ -1,8 +1,8 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
@@ -34,12 +34,12 @@ const StyledDropdownMenuContainer = styled.div`
 
 export const RecordIndexActionMenuDropdown = () => {
   const { t } = useLingui();
-  const { actions } = useContext(ActionMenuContext);
+  const { actions } = useContext(CommandMenuItemContext);
 
   const recordIndexActions = actions.filter(
     (action) =>
-      action.type === ActionType.Standard &&
-      action.scope === ActionScope.RecordSelection,
+      action.type === CommandMenuItemType.Standard &&
+      action.scope === CommandMenuItemScope.RecordSelection,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(

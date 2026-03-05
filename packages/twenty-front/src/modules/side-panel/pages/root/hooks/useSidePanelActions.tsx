@@ -1,66 +1,66 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { useContext } from 'react';
 
 export const useSidePanelActions = () => {
-  const { actions } = useContext(ActionMenuContext);
+  const { actions } = useContext(CommandMenuItemContext);
 
   const navigateActions = actions?.filter(
-    (action) => action.type === ActionType.Navigation,
+    (action) => action.type === CommandMenuItemType.Navigation,
   );
 
-  const actionRecordSelectionActions: ActionConfig[] = actions?.filter(
+  const actionRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.Standard &&
-      action.scope === ActionScope.RecordSelection,
+      action.type === CommandMenuItemType.Standard &&
+      action.scope === CommandMenuItemScope.RecordSelection,
   );
 
-  const actionObjectActions: ActionConfig[] = actions?.filter(
+  const actionObjectActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.Standard &&
-      action.scope === ActionScope.Object,
+      action.type === CommandMenuItemType.Standard &&
+      action.scope === CommandMenuItemScope.Object,
   );
 
-  const actionGlobalActions: ActionConfig[] = actions?.filter(
+  const actionGlobalActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.Standard &&
-      action.scope === ActionScope.Global,
+      action.type === CommandMenuItemType.Standard &&
+      action.scope === CommandMenuItemScope.Global,
   );
 
-  const workflowRunRecordSelectionActions: ActionConfig[] = actions?.filter(
+  const workflowRunRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.WorkflowRun &&
-      action.scope === ActionScope.RecordSelection,
+      action.type === CommandMenuItemType.WorkflowRun &&
+      action.scope === CommandMenuItemScope.RecordSelection,
   );
 
-  const workflowRunGlobalActions: ActionConfig[] = actions?.filter(
+  const workflowRunGlobalActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.WorkflowRun &&
-      action.scope === ActionScope.Global,
+      action.type === CommandMenuItemType.WorkflowRun &&
+      action.scope === CommandMenuItemScope.Global,
   );
 
-  const frontComponentGlobalActions: ActionConfig[] = actions?.filter(
+  const frontComponentGlobalActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.FrontComponent &&
-      action.scope === ActionScope.Global,
+      action.type === CommandMenuItemType.FrontComponent &&
+      action.scope === CommandMenuItemScope.Global,
   );
 
-  const frontComponentRecordSelectionActions: ActionConfig[] = actions?.filter(
+  const frontComponentRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.FrontComponent &&
-      action.scope === ActionScope.RecordSelection,
+      action.type === CommandMenuItemType.FrontComponent &&
+      action.scope === CommandMenuItemScope.RecordSelection,
   );
 
-  const fallbackActions: ActionConfig[] = actions?.filter(
-    (action) => action.type === ActionType.Fallback,
+  const fallbackActions: CommandMenuItemConfig[] = actions?.filter(
+    (action) => action.type === CommandMenuItemType.Fallback,
   );
 
-  const createRelatedRecordActions: ActionConfig[] = actions?.filter(
+  const createRelatedRecordActions: CommandMenuItemConfig[] = actions?.filter(
     (action) =>
-      action.type === ActionType.Standard &&
-      action.scope === ActionScope.CreateRelatedRecord,
+      action.type === CommandMenuItemType.Standard &&
+      action.scope === CommandMenuItemScope.CreateRelatedRecord,
   );
 
   return {

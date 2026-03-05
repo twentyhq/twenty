@@ -4,16 +4,16 @@ import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/co
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
 import { WORKSPACE_MEMBERS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getActionConfig = ({
+export const getCommandMenuItemConfig = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
-}): Record<string, ActionConfig> => {
+}): Record<string, CommandMenuItemConfig> => {
   if (!isDefined(objectMetadataItem)) {
     return {};
   }

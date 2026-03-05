@@ -1,7 +1,7 @@
 import { type ObjectPermissions } from './ObjectPermissions';
 import { type ObjectRecord } from './ObjectRecord';
 
-export type CommandMenuContextApi = {
+export type CommandMenuItemContextApi = {
   isShowPage: boolean;
   isInSidePanel: boolean;
   isFavorite: boolean;

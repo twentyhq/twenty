@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -22,15 +22,15 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
-  type CommandMenuContextApi,
+  type CommandMenuItemContextApi,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useCommandMenuContextApi = (): CommandMenuContextApi => {
+export const useCommandMenuItemContextApi = (): CommandMenuItemContextApi => {
   const store = useStore();
 
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuItemContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -148,7 +148,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
-    selectedRecord: selectedRecord as CommandMenuContextApi['selectedRecord'],
+    selectedRecord: selectedRecord as CommandMenuItemContextApi['selectedRecord'],
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,

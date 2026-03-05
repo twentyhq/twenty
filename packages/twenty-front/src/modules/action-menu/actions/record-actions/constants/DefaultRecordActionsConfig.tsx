@@ -26,11 +26,11 @@ import { EditRecordPageLayoutSingleRecordAction } from '@/action-menu/actions/re
 import { SaveRecordPageLayoutSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/components/SaveRecordPageLayoutSingleRecordAction';
 import { RecordPageLayoutSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/types/RecordPageLayoutSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
 import {
-  ActionViewType,
+  CommandMenuItemViewType,
   CoreObjectNameSingular,
   AppPath,
   SettingsPath,
@@ -81,35 +81,35 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | SingleRecordActionKeys
   | MultipleRecordsActionKeys
   | RecordPageLayoutSingleRecordActionKeys,
-  ActionConfig
+  CommandMenuItemConfig
 > = {
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next record`,
     position: 0,
     isPinned: true,
     Icon: IconChevronDown,
     shouldBeRegistered: ({ isInSidePanel }) => !isInSidePanel,
-    availableOn: [ActionViewType.SHOW_PAGE],
+    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <NavigateToNextRecordSingleRecordAction />,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous record`,
     position: 1,
     isPinned: true,
     Icon: IconChevronUp,
     shouldBeRegistered: ({ isInSidePanel }) => !isInSidePanel,
-    availableOn: [ActionViewType.SHOW_PAGE],
+    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <NavigateToPreviousRecordSingleRecordAction />,
   },
   [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     label: msg`Create new record`,
     shortLabel: msg`New record`,
@@ -120,12 +120,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       (objectPermissions.canUpdateObjectRecords &&
         !hasAnySoftDeleteFilterOnView) ??
       false,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewIndexRecordNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.DELETE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
@@ -145,14 +145,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         !isDefined(selectedRecord?.deletedAt)) ??
       false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <DeleteSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.DELETE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.DELETE,
     label: msg`Delete records`,
     shortLabel: msg`Delete`,
@@ -172,12 +172,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DeleteMultipleRecordsAction />,
   },
   [SingleRecordActionKeys.RESTORE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.RESTORE,
     label: msg`Restore record`,
     shortLabel: msg`Restore`,
@@ -200,14 +200,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
             hasAnySoftDeleteFilterOnView))) ??
       false,
     availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     component: <RestoreSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.RESTORE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.RESTORE,
     label: msg`Restore records`,
     shortLabel: msg`Restore`,
@@ -228,12 +228,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <RestoreMultipleRecordsAction />,
   },
   [SingleRecordActionKeys.DESTROY]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
     label: msg`Permanently destroy record`,
     shortLabel: msg`Destroy`,
@@ -247,14 +247,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         isDefined(selectedRecord?.deletedAt)) ??
       false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <DestroySingleRecordAction />,
   },
   [MultipleRecordsActionKeys.DESTROY]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
@@ -275,13 +275,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DestroyMultipleRecordsAction />,
   },
 
   [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
@@ -298,14 +298,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isDefined(selectedRecord?.deletedAt) &&
       !hasAnySoftDeleteFilterOnView,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <AddToFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
@@ -324,14 +324,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isDefined(selectedRecord?.deletedAt) &&
       !hasAnySoftDeleteFilterOnView,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     component: <RemoveFromFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT_NOTE_TO_PDF]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
     label: msg`Export to PDF`,
     shortLabel: msg`Export`,
@@ -342,12 +342,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(isNoteOrTask) &&
       isNoteOrTask &&
       isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
-    availableOn: [ActionViewType.SHOW_PAGE],
+    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <ExportNoteActionSingleRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
@@ -357,13 +357,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ selectedRecord }) =>
       isDefined(selectedRecord) && !selectedRecord.isRemote,
-    availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <ExportMultipleRecordsAction />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     label: msg`Export`,
     shortLabel: msg`Export`,
@@ -373,13 +373,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ selectedRecord }) =>
       isDefined(selectedRecord) && !selectedRecord.isRemote,
-    availableOn: [ActionViewType.SHOW_PAGE],
+    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [MultipleRecordsActionKeys.UPDATE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.UPDATE,
     label: msg`Update records`,
     shortLabel: msg`Update`,
@@ -389,12 +389,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     shouldBeRegistered: ({ objectPermissions, isRemote }) =>
       objectPermissions.canUpdateObjectRecords && !isRemote,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <UpdateMultipleRecordsAction />,
   },
   [MultipleRecordsActionKeys.MERGE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.MERGE,
     label: msg`Merge records`,
     shortLabel: msg`Merge`,
@@ -412,12 +412,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       Boolean(objectPermissions.canUpdateObjectRecords) &&
       Boolean(objectPermissions.canDestroyObjectRecords) &&
       numberOfSelectedRecords <= MUTATION_MAX_MERGE_RECORDS,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <MergeMultipleRecordsAction />,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
     label: msg`Export records`,
     shortLabel: msg`Export`,
@@ -426,13 +426,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <ExportMultipleRecordsAction />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
     label: msg`Import records`,
     shortLabel: msg`Import`,
@@ -442,13 +442,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
       !hasAnySoftDeleteFilterOnView,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordAction />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
   },
   [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
@@ -457,13 +457,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <ExportMultipleRecordsAction />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     label: msg`See deleted records`,
     shortLabel: msg`Deleted records`,
@@ -473,12 +473,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
       !hasAnySoftDeleteFilterOnView,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <SeeDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.CREATE_NEW_VIEW]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_VIEW,
     label: msg`Create View`,
     shortLabel: msg`Create View`,
@@ -488,12 +488,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
       !hasAnySoftDeleteFilterOnView,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewViewNoSelectionRecord />,
   },
   [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Object,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.Object,
     key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
     label: msg`Hide deleted records`,
     shortLabel: msg`Hide deleted`,
@@ -503,12 +503,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
       isDefined(hasAnySoftDeleteFilterOnView) && hasAnySoftDeleteFilterOnView,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <HideDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to Workflows`,
     shortLabel: msg`See Workflows`,
@@ -523,13 +523,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     component: (
       <ActionLink
@@ -540,8 +540,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'W'],
   },
   [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
@@ -549,11 +549,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconUser,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -562,7 +562,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Person) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -572,8 +572,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'P'],
   },
   [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
@@ -581,11 +581,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconBuildingSkyscraper,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -594,7 +594,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Company) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -604,8 +604,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'C'],
   },
   [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
     label: msg`Go to Dashboards`,
     shortLabel: msg`Dashboards`,
@@ -613,10 +613,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconLayoutDashboard,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -625,7 +625,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Dashboard) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -635,8 +635,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'D'],
   },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
@@ -644,11 +644,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -658,7 +658,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) &&
       (objectMetadataItem?.nameSingular !==
         CoreObjectNameSingular.Opportunity ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -668,8 +668,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'O'],
   },
   [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
@@ -677,10 +677,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
     component: (
@@ -694,8 +694,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'S'],
   },
   [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
@@ -703,11 +703,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -716,7 +716,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Task) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -726,8 +726,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'T'],
   },
   [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
@@ -735,11 +735,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.PAGE_EDIT_MODE,
+      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+      CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -748,7 +748,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       getTargetObjectReadPermission(CoreObjectNameSingular.Note) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
-        viewType === ActionViewType.SHOW_PAGE),
+        viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -765,8 +765,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     position: 30,
     Icon: IconPencil,
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     requiredPermissionFlag: PermissionFlagType.LAYOUTS,
     shouldBeRegistered: ({
       selectedRecord,
@@ -782,7 +782,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [ActionViewType.SHOW_PAGE],
+    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <EditRecordPageLayoutSingleRecordAction />,
   },
   [RecordPageLayoutSingleRecordActionKeys.SAVE_RECORD_PAGE_LAYOUT]: {
@@ -793,8 +793,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPrimaryCTA: true,
     position: 31,
     Icon: IconDeviceFloppy,
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     requiredPermissionFlag: PermissionFlagType.LAYOUTS,
     shouldBeRegistered: ({
       selectedRecord,
@@ -810,7 +810,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [ActionViewType.PAGE_EDIT_MODE],
+    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
     component: <SaveRecordPageLayoutSingleRecordAction />,
   },
   [RecordPageLayoutSingleRecordActionKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION]: {
@@ -820,8 +820,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     position: 32,
     Icon: IconCancel,
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
+    type: CommandMenuItemType.Standard,
+    scope: CommandMenuItemScope.RecordSelection,
     requiredPermissionFlag: PermissionFlagType.LAYOUTS,
     shouldBeRegistered: ({
       selectedRecord,
@@ -837,7 +837,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [ActionViewType.PAGE_EDIT_MODE],
+    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
     component: <CancelRecordPageLayoutSingleRecordAction />,
   },
 };

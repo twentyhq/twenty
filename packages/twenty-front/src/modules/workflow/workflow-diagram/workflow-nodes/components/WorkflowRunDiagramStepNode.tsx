@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -95,7 +95,7 @@ export const WorkflowRunDiagramStepNode = ({
   const { openWorkflowRunViewStepInSidePanel } =
     useSidePanelWorkflowNavigation();
 
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuItemContext);
 
   const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,

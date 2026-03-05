@@ -1,16 +1,16 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const checkInShortcuts = (action: ActionConfig, search: string) => {
+const checkInShortcuts = (action: CommandMenuItemConfig, search: string) => {
   const concatenatedString = action.hotKeys?.join('') ?? '';
   const searchNormalized = normalizeSearchText(search.trim());
   return normalizeSearchText(concatenatedString).includes(searchNormalized);
 };
 
-const checkInLabels = (action: ActionConfig, search: string) => {
+const checkInLabels = (action: CommandMenuItemConfig, search: string) => {
   const actionLabel = getActionLabel(action.label);
   if (isNonEmptyString(actionLabel)) {
     const searchNormalized = normalizeSearchText(search);
@@ -27,7 +27,7 @@ export const useFilterActionsWithSidePanelSearch = ({
   sidePanelSearch,
 }: UseFilterActionsWithSidePanelSearchProps) => {
   const filterActionsWithSidePanelSearch = useCallback(
-    (actions: ActionConfig[]) => {
+    (actions: CommandMenuItemConfig[]) => {
       return actions.filter((action) =>
         sidePanelSearch.length > 0
           ? checkInShortcuts(action, sidePanelSearch) ||

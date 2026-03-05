@@ -3,7 +3,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import {
-  type ActionViewType,
+  type CommandMenuItemViewType,
   type ObjectPermissions,
 } from 'twenty-shared/types';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -23,7 +23,7 @@ export type ShouldBeRegisteredFunctionParams = {
   selectedRecord?: ObjectRecord;
   numberOfSelectedRecords?: number;
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
-  viewType?: ActionViewType;
+  viewType?: CommandMenuItemViewType;
   getTargetObjectReadPermission: (
     objectMetadataItemNameSingular: string,
   ) => boolean;

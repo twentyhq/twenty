@@ -1,8 +1,8 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -13,7 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { type CommandMenuItemContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
   isDefined,
@@ -36,7 +36,7 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
 
 type BuildActionFromItemParams = {
   item: CommandMenuItemWithFrontComponent;
-  scope: ActionScope;
+  scope: CommandMenuItemScope;
   index: number;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
@@ -54,7 +54,7 @@ type BuildActionFromItemParams = {
     context?: HeadlessFrontComponentMountContext,
   ) => void;
   mountContext?: HeadlessFrontComponentMountContext;
-  commandMenuContextApi: CommandMenuContextApi;
+  commandMenuContextApi: CommandMenuItemContextApi;
 };
 
 // TODO: we should remove this backward compatibility logic in the future
@@ -95,7 +95,7 @@ const buildActionFromItem = ({
   };
 
   return {
-    type: ActionType.FrontComponent,
+    type: CommandMenuItemType.FrontComponent,
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
@@ -120,7 +120,7 @@ const buildActionFromItem = ({
 };
 
 export const useCommandMenuItemFrontComponentActions = (
-  commandMenuContextApi: CommandMenuContextApi,
+  commandMenuContextApi: CommandMenuItemContextApi,
 ) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -130,7 +130,7 @@ export const useCommandMenuItemFrontComponentActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType } = useContext(ActionMenuContext);
+  const { actionMenuType } = useContext(CommandMenuItemContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -203,7 +203,7 @@ export const useCommandMenuItemFrontComponentActions = (
   const globalActions = globalItems.map((item, index) =>
     buildActionFromItem({
       item,
-      scope: ActionScope.Global,
+      scope: CommandMenuItemScope.Global,
       index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
@@ -216,7 +216,7 @@ export const useCommandMenuItemFrontComponentActions = (
   const recordScopedActions = recordScopedItems.map((item, index) =>
     buildActionFromItem({
       item,
-      scope: ActionScope.RecordSelection,
+      scope: CommandMenuItemScope.RecordSelection,
       index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,

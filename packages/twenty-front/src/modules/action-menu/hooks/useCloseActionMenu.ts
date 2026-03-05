@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
@@ -10,12 +10,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseActionMenu = ({
   closeSidePanelOnShowPageOptionsActionExecution = false,
-  closeSidePanelOnCommandMenuListActionExecution = true,
+  closeSidePanelOnCommandMenuItemListActionExecution = true,
 }: {
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
-  closeSidePanelOnCommandMenuListActionExecution?: boolean;
+  closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
 } = {}) => {
-  const { actionMenuType, isInSidePanel } = useContext(ActionMenuContext);
+  const { actionMenuType, isInSidePanel } = useContext(CommandMenuItemContext);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -32,8 +32,8 @@ export const useCloseActionMenu = ({
   const closeActionMenu = () => {
     if (actionMenuType === 'command-menu') {
       if (
-        isDefined(closeSidePanelOnCommandMenuListActionExecution) &&
-        !closeSidePanelOnCommandMenuListActionExecution
+        isDefined(closeSidePanelOnCommandMenuItemListActionExecution) &&
+        !closeSidePanelOnCommandMenuItemListActionExecution
       ) {
         return;
       }

@@ -3,9 +3,9 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, AppPath, SettingsPath } from 'twenty-shared/types';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType, AppPath, SettingsPath } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
 import { IconSettings } from 'twenty-ui/display';
 
@@ -13,8 +13,8 @@ export const WORKSPACE_MEMBERS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
   {
     config: {
       [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-        type: ActionType.Navigation,
-        scope: ActionScope.Global,
+        type: CommandMenuItemType.Navigation,
+        scope: CommandMenuItemScope.Global,
         key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
         label: msg`Manage members in settings`,
         shortLabel: msg`Manage in settings`,
@@ -22,10 +22,10 @@ export const WORKSPACE_MEMBERS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         Icon: IconSettings,
         isPinned: true,
         availableOn: [
-          ActionViewType.INDEX_PAGE_NO_SELECTION,
-          ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-          ActionViewType.INDEX_PAGE_BULK_SELECTION,
-          ActionViewType.SHOW_PAGE,
+          CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
+          CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+          CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+          CommandMenuItemViewType.SHOW_PAGE,
         ],
         shouldBeRegistered: () => true,
         component: (

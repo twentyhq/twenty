@@ -1,4 +1,4 @@
-export enum ActionType {
+export enum CommandMenuItemType {
   Standard = 'Standard',
   WorkflowRun = 'WorkflowRun',
   FrontComponent = 'FrontComponent',

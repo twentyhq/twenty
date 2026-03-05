@@ -1,8 +1,8 @@
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { ActionDropdownItem } from '@/action-menu/actions/display/components/ActionDropdownItem';
 import { ActionListItem } from '@/action-menu/actions/display/components/ActionListItem';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
+import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
 import { type MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -29,8 +29,8 @@ export const ActionDisplay = ({
   to?: string;
   disabled?: boolean;
 }) => {
-  const action = useContext(ActionConfigContext);
-  const { displayType } = useContext(ActionMenuContext);
+  const action = useContext(CommandMenuItemConfigContext);
+  const { displayType } = useContext(CommandMenuItemContext);
 
   if (!action) {
     return null;

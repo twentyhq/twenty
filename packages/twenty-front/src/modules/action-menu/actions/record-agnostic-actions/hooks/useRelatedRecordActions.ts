@@ -1,8 +1,8 @@
 import { CreateRelatedRecordAction } from '@/action-menu/actions/record-actions/single-record/components/CreateRelatedRecordAction';
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, CoreObjectNameSingular } from 'twenty-shared/types';
+import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItemViewType, CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -22,8 +22,8 @@ export const useRelatedRecordActions = ({
   sourceObjectMetadataItem,
   getIcon,
   startPosition,
-}: GenerateRelatedRecordActionsParams): Record<string, ActionConfig> => {
-  const relatedActions: Record<string, ActionConfig> = {};
+}: GenerateRelatedRecordActionsParams): Record<string, CommandMenuItemConfig> => {
+  const relatedActions: Record<string, CommandMenuItemConfig> = {};
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -68,8 +68,8 @@ export const useRelatedRecordActions = ({
     const actionKey = `create-related-${targetObjectLabelSingular}`;
 
     relatedActions[actionKey] = {
-      type: ActionType.Standard,
-      scope: ActionScope.CreateRelatedRecord,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.CreateRelatedRecord,
       key: actionKey,
       label: msg`Create ${targetObjectLabelSingular}`,
       shortLabel: msg`Create ${targetObjectLabelSingular}`,
@@ -103,8 +103,8 @@ export const useRelatedRecordActions = ({
           )) ??
         false,
       availableOn: [
-        ActionViewType.SHOW_PAGE,
-        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: React.createElement(CreateRelatedRecordAction, {
         targetFieldMetadataItemRelation: field.relation,

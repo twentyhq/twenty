@@ -1,15 +1,15 @@
-import { type ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { type ActionType } from '@/action-menu/actions/types/ActionType';
-import { type ActionViewType } from 'twenty-shared/types';
+import { type CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
+import { type CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { type CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { type MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/display';
 import { type MenuItemAccent } from 'twenty-ui/navigation';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 
-export type ActionConfig = {
-  type: ActionType;
-  scope: ActionScope;
+export type CommandMenuItemConfig = {
+  type: CommandMenuItemType;
+  scope: CommandMenuItemScope;
   key: string;
   label: MessageDescriptor | string;
   shortLabel?: MessageDescriptor | string;
@@ -19,7 +19,7 @@ export type ActionConfig = {
   isPinned?: boolean;
   isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
-  availableOn?: ActionViewType[];
+  availableOn?: CommandMenuItemViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   component: React.ReactNode;
   hotKeys?: string[];

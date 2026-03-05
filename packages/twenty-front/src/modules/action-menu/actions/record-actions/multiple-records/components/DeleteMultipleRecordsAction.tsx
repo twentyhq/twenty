@@ -1,5 +1,5 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { CommandMenuItemConfigContext } from '@/action-menu/contexts/CommandMenuItemConfigContext';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -70,7 +70,7 @@ export const DeleteMultipleRecordsAction = () => {
       delayInMsBetweenMutations: 50,
     });
 
-  const actionConfig = useContext(ActionConfigContext);
+  const actionConfig = useContext(CommandMenuItemConfigContext);
 
   if (!isDefined(actionConfig)) {
     return null;
@@ -95,8 +95,8 @@ export const DeleteMultipleRecordsAction = () => {
   };
 
   return (
-    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+    <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
       <Action onClick={handleDeleteClick} />
-    </ActionConfigContext.Provider>
+    </CommandMenuItemConfigContext.Provider>
   );
 };

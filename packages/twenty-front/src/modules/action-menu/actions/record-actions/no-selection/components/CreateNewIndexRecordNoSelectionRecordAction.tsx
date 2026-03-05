@@ -12,7 +12,7 @@ export const CreateNewIndexRecordNoSelectionRecordAction = () => {
   return (
     <Action
       onClick={() => createNewIndexRecord({ position: 'first' })}
-      closeSidePanelOnCommandMenuListActionExecution={false}
+      closeSidePanelOnCommandMenuItemListActionExecution={false}
     />
   );
 };
