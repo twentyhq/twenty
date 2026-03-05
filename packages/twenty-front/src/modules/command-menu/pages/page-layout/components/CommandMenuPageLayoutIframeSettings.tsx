@@ -3,12 +3,13 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -20,8 +21,8 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export const CommandMenuPageLayoutIframeSettings = () => {

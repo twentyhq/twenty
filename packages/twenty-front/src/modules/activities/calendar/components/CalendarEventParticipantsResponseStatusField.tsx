@@ -2,8 +2,8 @@ import { useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
-import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
@@ -24,7 +24,6 @@ const StyledInlineCellBaseContainer = styled.div`
 
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${themeCssVariables.spacing[6]};
-  padding: 0;
   width: 100%;
 `;
 

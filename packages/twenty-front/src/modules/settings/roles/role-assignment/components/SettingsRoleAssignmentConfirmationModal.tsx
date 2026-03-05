@@ -25,7 +25,7 @@ export const SettingsRoleAssignmentConfirmationModal = ({
 
   return (
     <ConfirmationModal
-      modalId={ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID}
+      modalInstanceId={ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID}
       title={title}
       subtitle={
         selectedRoleTarget.role ? (

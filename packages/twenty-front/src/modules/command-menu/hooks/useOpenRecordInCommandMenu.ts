@@ -12,15 +12,13 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -30,7 +28,6 @@ import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
-  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const { navigateCommandMenu } = useCommandMenu();
@@ -169,10 +166,9 @@ export const useOpenRecordInCommandMenu = () => {
         ? getIcon(objectMetadataItem.icon)
         : getIcon('IconList');
 
-      const IconColor = getIconColorForObjectType({
-        objectType: objectMetadataItem.nameSingular,
-        theme,
-      });
+      const IconColor = getIconColorForObjectType(
+        objectMetadataItem.nameSingular,
+      );
 
       const objectLabelSingular = objectMetadataItem.labelSingular;
 
@@ -211,7 +207,6 @@ export const useOpenRecordInCommandMenu = () => {
       navigateCommandMenu,
       openNewRecordTitleCell,
       runWorkflowRunOpeningInCommandMenuSideEffects,
-      theme,
       store,
     ],
   );

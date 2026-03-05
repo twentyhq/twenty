@@ -1,19 +1,25 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, type ButtonAccent } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+  type ModalOverlay,
+} from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
-  modalId: string;
+  modalInstanceId: string;
   title: string;
   loading?: boolean;
   subtitle: ReactNode;
@@ -24,19 +30,12 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
   AdditionalButtons?: React.ReactNode;
-  modalVariant?: ModalVariants;
+  overlay?: ModalOverlay;
 };
-
-const StyledConfirmationModal = styled(Modal)`
-  border-radius: ${({ theme }) => theme.spacing(1)};
-  width: calc(400px - ${({ theme }) => theme.spacing(32)});
-  height: auto;
-`;
 
 export const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;
-  justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCenteredTitle = styled.div`
@@ -44,24 +43,24 @@ const StyledCenteredTitle = styled.div`
 `;
 
 const StyledSection = styled(Section)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
-  border-color: ${({ theme }) => theme.border.color.danger};
+  border-color: ${themeCssVariables.border.color.danger};
   box-shadow: none;
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.md};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   :hover {
-    background-color: ${({ theme }) => theme.color.red3};
+    background-color: ${themeCssVariables.color.red3};
   }
 `;
 
 const defaultConfirmButtonText = msg`Confirm`;
 
 export const ConfirmationModal = ({
-  modalId,
+  modalInstanceId,
   title,
   loading,
   subtitle,
@@ -72,7 +71,7 @@ export const ConfirmationModal = ({
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
-  modalVariant = 'primary',
+  overlay = 'dark',
 }: ConfirmationModalProps) => {
   const { i18n, t } = useLingui();
   const translatedConfirmButtonText =
@@ -96,12 +95,12 @@ export const ConfirmationModal = ({
   const { closeModal } = useModal();
 
   const handleConfirmClick = () => {
-    closeModal(modalId);
+    closeModal(modalInstanceId);
     onConfirmClick();
   };
 
   const handleCancelClick = () => {
-    closeModal(modalId);
+    closeModal(modalInstanceId);
     onClose?.();
   };
 
@@ -112,17 +111,20 @@ export const ConfirmationModal = ({
   };
 
   return (
-    <StyledConfirmationModal
-      modalId={modalId}
+    <ModalStatefulWrapper
+      modalInstanceId={modalInstanceId}
       onClose={() => {
         onClose?.();
       }}
       onEnter={handleEnter}
       isClosable={true}
       padding="large"
-      modalVariant={modalVariant}
+      overlay={overlay}
       dataGloballyPreventClickOutside
-      ignoreContainer
+      renderInDocumentBody
+      smallBorderRadius
+      narrowWidth
+      autoHeight
     >
       <StyledCenteredTitle>
         <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
@@ -152,6 +154,7 @@ export const ConfirmationModal = ({
         variant="secondary"
         title={t`Cancel`}
         fullWidth
+        justify="center"
         dataTestId="confirmation-modal-cancel-button"
       />
 
@@ -164,8 +167,9 @@ export const ConfirmationModal = ({
         title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}
         fullWidth
+        justify="center"
         dataTestId="confirmation-modal-confirm-button"
       />
-    </StyledConfirmationModal>
+    </ModalStatefulWrapper>
   );
 };

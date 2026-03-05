@@ -31,7 +31,6 @@ export { GRAY_SCALE_DARK } from './constants/GrayScaleDark';
 export { GRAY_SCALE_DARK_ALPHA } from './constants/GrayScaleDarkAlpha';
 export { GRAY_SCALE_LIGHT } from './constants/GrayScaleLight';
 export { GRAY_SCALE_LIGHT_ALPHA } from './constants/GrayScaleLightAlpha';
-export { HOVER_BACKGROUND } from './constants/HoverBackground';
 export { ICON } from './constants/Icon';
 export { ILLUSTRATION_ICON_DARK } from './constants/IllustrationIconDark';
 export { ILLUSTRATION_ICON_LIGHT } from './constants/IllustrationIconLight';
@@ -39,7 +38,6 @@ export type { ThemeColor } from './constants/MainColorNames';
 export { MAIN_COLOR_NAMES } from './constants/MainColorNames';
 export { MAIN_COLORS_DARK } from './constants/MainColorsDark';
 export { MAIN_COLORS_LIGHT } from './constants/MainColorsLight';
-export { MOBILE_VIEWPORT } from './constants/MobileViewport';
 export { MODAL } from './constants/Modal';
 export { RGBA } from './constants/Rgba';
 export { SECONDARY_COLORS_DARK } from './constants/SecondaryColorsDark';
@@ -49,7 +47,6 @@ export { SNACK_BAR_LIGHT } from './constants/SnackBarLight';
 export { TAG_DARK } from './constants/TagDark';
 export { TAG_LIGHT } from './constants/TagLight';
 export { TEXT } from './constants/Text';
-export { TEXT_INPUT_STYLE } from './constants/TextInputStyle';
 export { THEME_COMMON } from './constants/ThemeCommon';
 export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
@@ -60,8 +57,6 @@ export {
   ThemeContext,
   ThemeContextProvider,
 } from './provider/ThemeContextProvider';
-export { ThemeCssVariableInjectorEffect } from './provider/ThemeCssVariableInjectorEffect';
 export { ThemeProvider } from './provider/ThemeProvider';
 export type { ThemeType } from './types/ThemeType';
 export { getNextThemeColor } from './utils/getNextThemeColor';
-export { SPACING_VALUES } from './utils/spacingValues';

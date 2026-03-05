@@ -36,6 +36,17 @@ yarn twenty function:execute  # Execute a function with JSON payload
 yarn twenty app:uninstall  # Uninstall app from workspace
 ```
 
+## Integration Tests
+
+If your project includes the example integration test (`src/__tests__/app-install.integration-test.ts`), you can run it with:
+
+```bash
+# Make sure a Twenty server is running at http://localhost:3000
+yarn test
+```
+
+The test builds and installs the app, then verifies it appears in the applications list. Test configuration (API URL and API key) is defined in `vitest.config.ts`.
+
 ## LLMs instructions
 
 Main docs and pitfalls are available in LLMS.md file.

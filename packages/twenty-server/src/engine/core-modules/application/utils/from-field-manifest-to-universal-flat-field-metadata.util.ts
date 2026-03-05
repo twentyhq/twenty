@@ -97,6 +97,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    viewSortUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };

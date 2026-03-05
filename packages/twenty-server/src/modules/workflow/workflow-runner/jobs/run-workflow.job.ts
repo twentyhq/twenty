@@ -62,6 +62,8 @@ export class RunWorkflowJob {
           status: WorkflowRunStatus.FAILED,
           error: error.message,
         });
+
+        throw error;
       }
     }, authContext);
   }
@@ -156,13 +158,19 @@ export class RunWorkflowJob {
     const lastExecutedStepOutput =
       workflowRun.state?.stepInfos[lastExecutedStepId];
 
-    const { nextStepIdsToExecute } =
+    const { nextStepIdsToExecute, nextStepIdsToSkip, nextStepIdsToFailSafely } =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
         executedStepOutput: lastExecutedStepOutput,
       });
 
-    if (!isDefined(nextStepIdsToExecute) || nextStepIdsToExecute.length === 0) {
+    const hasStepsToSkipOrFailSafely =
+      isDefined(nextStepIdsToSkip) || isDefined(nextStepIdsToFailSafely);
+
+    const hasStepsToExecute =
+      isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0;
+
+    if (!hasStepsToSkipOrFailSafely && !hasStepsToExecute) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -172,11 +180,28 @@ export class RunWorkflowJob {
       return;
     }
 
-    await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: nextStepIdsToExecute,
-      workflowRunId,
-      workspaceId,
-    });
+    const steps = workflowRun.state?.flow?.steps ?? [];
+
+    if (hasStepsToSkipOrFailSafely) {
+      await this.workflowExecutorWorkspaceService.skipAndFailSafelyStepsThenContinue(
+        {
+          stepIdsToSkip: nextStepIdsToSkip ?? [],
+          stepIdsToFailSafely: nextStepIdsToFailSafely ?? [],
+          steps,
+          workflowRunId,
+          workspaceId,
+          executedStepsCount: 0,
+        },
+      );
+    }
+
+    if (hasStepsToExecute) {
+      await this.workflowExecutorWorkspaceService.executeFromSteps({
+        stepIds: nextStepIdsToExecute,
+        workflowRunId,
+        workspaceId,
+      });
+    }
   }
 
   private async incrementTriggerMetrics({

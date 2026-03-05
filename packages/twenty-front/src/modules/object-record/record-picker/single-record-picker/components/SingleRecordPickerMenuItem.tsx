@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
@@ -21,10 +19,6 @@ type SingleRecordPickerMenuItemProps = {
   onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
   isRecordSelected: boolean;
 };
-
-const StyledSelectableItem = styled(SelectableListItem)`
-  width: 100%;
-`;
 
 export const SingleRecordPickerMenuItem = ({
   morphItem,
@@ -64,7 +58,7 @@ export const SingleRecordPickerMenuItem = ({
     singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
-    <StyledSelectableItem
+    <SelectableListItem
       itemId={morphItem.recordId}
       key={morphItem.recordId}
       onEnter={() => {
@@ -94,6 +88,6 @@ export const SingleRecordPickerMenuItem = ({
             : undefined
         }
       />
-    </StyledSelectableItem>
+    </SelectableListItem>
   );
 };

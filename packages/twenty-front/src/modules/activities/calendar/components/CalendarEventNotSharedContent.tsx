@@ -7,22 +7,23 @@ import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledVisibilityCard = styled(Card)`
-  border-color: ${themeCssVariables.border.color.light};
   color: ${themeCssVariables.font.color.light};
   flex: 1;
+  border-color: ${themeCssVariables.border.color.light};
   transition: color ${themeCssVariables.animation.duration.normal} ease;
   width: 100%;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
   align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  box-sizing: border-box;
+  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
-  background-color: ${themeCssVariables.background.transparent.lighter};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
 `;
 
 export const CalendarEventNotSharedContent = () => {

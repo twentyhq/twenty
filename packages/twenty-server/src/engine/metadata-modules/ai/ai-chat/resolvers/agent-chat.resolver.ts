@@ -9,14 +9,14 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
@@ -41,12 +41,6 @@ export class AgentChatResolver {
     private readonly agentChatService: AgentChatService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
   ) {}
-
-  @Query(() => [AgentChatThreadDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
-    return this.agentChatService.getThreadsForUser(userWorkspaceId);
-  }
 
   @Query(() => AgentChatThreadDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)

@@ -1,6 +1,9 @@
 import { FieldMetadataSSEEffect } from '@/metadata-store/effect-components/FieldMetadataSSEEffect';
 import { NavigationMenuItemSSEEffect } from '@/metadata-store/effect-components/NavigationMenuItemSSEEffect';
 import { ObjectMetadataItemSSEEffect } from '@/metadata-store/effect-components/ObjectMetadataItemSSEEffect';
+import { PageLayoutSSEEffect } from '@/metadata-store/effect-components/PageLayoutSSEEffect';
+import { PageLayoutTabSSEEffect } from '@/metadata-store/effect-components/PageLayoutTabSSEEffect';
+import { PageLayoutWidgetSSEEffect } from '@/metadata-store/effect-components/PageLayoutWidgetSSEEffect';
 import { ViewFieldSSEEffect } from '@/metadata-store/effect-components/ViewFieldSSEEffect';
 import { ViewSSEEffect } from '@/metadata-store/effect-components/ViewSSEEffect';
 import { SSEClientEffect } from '@/sse-db-event/components/SSEClientEffect';
@@ -21,6 +24,9 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
       <NavigationMenuItemSSEEffect />
       <FieldMetadataSSEEffect />
       <ObjectMetadataItemSSEEffect />
+      <PageLayoutSSEEffect />
+      <PageLayoutTabSSEEffect />
+      <PageLayoutWidgetSSEEffect />
       <ViewFieldSSEEffect />
       <ViewSSEEffect />
       {children}

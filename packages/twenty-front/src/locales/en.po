@@ -801,11 +801,6 @@ msgstr "Add \"{trimmedName}\" to options"
 msgid "Add a {objectLabelSingular}"
 msgstr "Add a {objectLabelSingular}"
 
-#. js-lingui-id: 7W8nJr
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Group"
-msgstr "Add a Group"
-
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -821,6 +816,12 @@ msgstr "Add a node"
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
 msgstr "Add a record"
+
+#. js-lingui-id: r8W+9y
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Section"
+msgstr "Add a Section"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
@@ -1525,6 +1526,9 @@ msgstr "Amount Micros"
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 msgid "An error occurred"
 msgstr "An error occurred"
 
@@ -1550,6 +1554,7 @@ msgstr "An error occurred while uploading the picture."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -1773,10 +1778,20 @@ msgstr "application detail page"
 msgid "Application details"
 msgstr "Application details"
 
+#. js-lingui-id: lGEBD4
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Application installed successfully."
+msgstr "Application installed successfully."
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr "Application successfully uninstalled."
+
+#. js-lingui-id: V+GSWz
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Application upgraded successfully."
+msgstr "Application upgraded successfully."
 
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -2482,6 +2497,8 @@ msgid "Can't scan? Copy the"
 msgstr "Can't scan? Copy the"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2697,6 +2714,11 @@ msgstr "Choose between OIDC and SAML protocols"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Choose between Short and Full"
+
+#. js-lingui-id: +yPBXI
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Choose file"
+msgstr "Choose file"
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -4675,6 +4697,11 @@ msgstr "Drag and Drop Here"
 msgid "Drag to add to navbar"
 msgstr "Drag to add to navbar"
 
+#. js-lingui-id: VIbDgE
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Drop fields here"
+msgstr "Drop fields here"
+
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -4716,6 +4743,11 @@ msgstr "Duplicates"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
 msgstr "Dutch"
+
+#. js-lingui-id: 3MYDWJ
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "e.g. @twentyhq/hello-world"
+msgstr "e.g. @twentyhq/hello-world"
 
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -5021,10 +5053,10 @@ msgstr "Emails"
 msgid "Emails and Calendar"
 msgstr "Emails and Calendar"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -5305,6 +5337,11 @@ msgstr "Enter the credentials to set the connection"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
 msgstr "Enter the infos to set the connection"
+
+#. js-lingui-id: n1dNU/
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Enter the npm package name of the application you want to install."
+msgstr "Enter the npm package name of the application you want to install."
 
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5957,6 +5994,11 @@ msgstr "Failed to get response"
 msgid "Failed to impersonate user. {errorMessage}"
 msgstr "Failed to impersonate user. {errorMessage}"
 
+#. js-lingui-id: qZwtAi
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Failed to install the application."
+msgstr "Failed to install the application."
+
 #. js-lingui-id: BTjpvA
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
 msgid "Failed to load front component: {errorMessage}"
@@ -6059,6 +6101,11 @@ msgstr "Failed to update role"
 msgid "Failed to update variable"
 msgstr "Failed to update variable"
 
+#. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Failed to upgrade the application."
+msgstr "Failed to upgrade the application."
+
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
@@ -6075,15 +6122,15 @@ msgstr "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgid "Failed to upload file: {fileName}"
 msgstr "Failed to upload file: {fileName}"
 
-#. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Failed to upload image: "
-msgstr "Failed to upload image: "
-
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Failed to upload picture"
+
+#. js-lingui-id: vWFfVs
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Failed to upload tarball."
+msgstr "Failed to upload tarball."
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -6245,11 +6292,6 @@ msgstr "File label"
 msgid "File upload failed"
 msgstr "File upload failed"
 
-#. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentList.tsx
-msgid "File URL is not defined"
-msgstr "File URL is not defined"
-
 #. js-lingui-id: sER+bs
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Files"
@@ -6383,6 +6425,7 @@ msgstr "Folders"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Forgot your password?"
 
@@ -6496,9 +6539,9 @@ msgstr "Gauge Chart"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "General"
@@ -7199,6 +7242,7 @@ msgstr "Insert a JSON input, then press \"Run\" to test your function."
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 msgid "Install"
 msgstr "Install"
 
@@ -7206,6 +7250,17 @@ msgstr "Install"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Install and manage applications"
+
+#. js-lingui-id: gR90Vf
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+msgid "Install app"
+msgstr "Install app"
+
+#. js-lingui-id: H3eHCv
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Install from npm"
+msgstr "Install from npm"
 
 #. js-lingui-id: JXiMtM
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -7221,6 +7276,11 @@ msgstr "Installed"
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
 msgstr "Installed applications"
+
+#. js-lingui-id: wJJ+Wy
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Installing..."
+msgstr "Installing..."
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -7366,11 +7426,6 @@ msgstr "Invalid URL. Click edit to configure this widget."
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Invalid verification code. Please try again."
-
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Invalid workspace"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
@@ -7724,6 +7779,11 @@ msgstr "Last payment failed. Please contact your admin."
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Last payment failed. Please update your billing details."
 msgstr "Last payment failed. Please update your billing details."
+
+#. js-lingui-id: pJxM65
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "latest"
+msgstr "latest"
 
 #. js-lingui-id: wL3cK8
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8079,9 +8139,8 @@ msgstr "Logout"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Logs"
 
@@ -9940,6 +9999,11 @@ msgstr "Owner"
 msgid "p"
 msgstr "p"
 
+#. js-lingui-id: VXyQnz
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Package name"
+msgstr "Package name"
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -11690,6 +11754,11 @@ msgstr "See workflow"
 msgid "See Workflows"
 msgstr "See Workflows"
 
+#. js-lingui-id: 2PIP/G
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
+msgstr "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -11706,6 +11775,11 @@ msgstr "Select 1 {fieldTypeLabelLowercase} field"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "Select 1 field"
+
+#. js-lingui-id: YfBvUy
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Select a .tar.gz application package to upload and install."
+msgstr "Select a .tar.gz application package to upload and install."
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -12027,6 +12101,11 @@ msgstr "Settings permissions"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Settings tab"
 msgstr "Settings tab"
+
+#. js-lingui-id: dIJGKR
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Setup a tailor-made workspace"
+msgstr "Setup a tailor-made workspace"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -13773,7 +13852,6 @@ msgstr "Unordered list with bullets"
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
 msgstr "Untitled"
@@ -13811,6 +13889,7 @@ msgid "update"
 msgstr "update"
 
 #. js-lingui-id: EkH9pt
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -13872,6 +13951,11 @@ msgstr "Upgrade"
 msgid "Upgrade Plan"
 msgstr "Upgrade Plan"
 
+#. js-lingui-id: pKCx2F
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrade to {latestAvailableVersion}"
+msgstr "Upgrade to {latestAvailableVersion}"
+
 #. js-lingui-id: ggd+Ee
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Upgrade to access"
@@ -13882,6 +13966,11 @@ msgstr "Upgrade to access"
 msgid "Upgrade to Enterprise to access audit logs"
 msgstr "Upgrade to Enterprise to access audit logs"
 
+#. js-lingui-id: +Gi3x1
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrading..."
+msgstr "Upgrading..."
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -13891,6 +13980,11 @@ msgstr "Upload"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Upload .xlsx, .xls or .csv file"
+
+#. js-lingui-id: BhkxTk
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Upload failed."
+msgstr "Upload failed."
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -13914,6 +14008,12 @@ msgstr "Upload files"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Upload Files"
+
+#. js-lingui-id: aG3MkW
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Upload tarball"
+msgstr "Upload tarball"
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -14125,6 +14225,11 @@ msgstr "Verify the code from the app"
 msgid "Version"
 msgstr "Version"
 
+#. js-lingui-id: OVk6Na
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Version (optional)"
+msgstr "Version (optional)"
+
 #. js-lingui-id: IHIWR4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -14245,6 +14350,11 @@ msgstr "View role"
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
 msgstr "View Role"
+
+#. js-lingui-id: 4y776f
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view sort"
+msgstr "view sort"
 
 #. js-lingui-id: FNDoRH
 #: src/pages/settings/ai/SettingsAI.tsx

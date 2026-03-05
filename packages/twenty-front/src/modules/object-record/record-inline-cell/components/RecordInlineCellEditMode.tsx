@@ -7,7 +7,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   autoUpdate,
   flip,

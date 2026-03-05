@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -48,27 +47,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-
-const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
-  isDropdownOpen?: boolean;
-}>`
-  ${({ isDropdownOpen, theme }) =>
-    !isDropdownOpen &&
-    css`
-      .displayOnHover {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity ${theme.animation.duration.instant}s ease;
-      }
-    `}
-
-  &:hover {
-    .displayOnHover {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-`;
 
 const StyledClickableZone = styled.div`
   align-items: center;
@@ -238,7 +216,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
-      <StyledListItem
+      <RecordDetailRecordsListItemContainer
         isDropdownOpen={isDropdownOpen}
         data-testid="record-detail-records-list-item"
       >
@@ -286,7 +264,7 @@ export const RecordDetailRelationRecordsListItem = ({
             }
           />
         )}
-      </StyledListItem>
+      </RecordDetailRecordsListItemContainer>
       <AnimatedEaseInOut isOpen={isExpanded}>
         <RecordFieldList
           instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
@@ -300,7 +278,7 @@ export const RecordDetailRelationRecordsListItem = ({
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
-          modalId={getDeleteRelationModalId(relationRecord.id)}
+          modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
           title={t`Delete Related ${relationObjectTypeName}`}
           subtitle={
             <Trans>

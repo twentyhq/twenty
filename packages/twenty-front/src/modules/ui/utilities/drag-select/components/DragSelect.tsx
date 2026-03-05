@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type RefObject, useCallback, useState } from 'react';
 
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -23,12 +23,14 @@ type Position = {
   y: number;
 };
 
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 const StyledDragSelection = styled.div<SelectionBox>`
   position: absolute;
   z-index: 99;
   opacity: 0.2;
-  border: 1px solid ${({ theme }) => theme.color.blue3};
-  background: ${({ theme }) => theme.color.blue7};
+  border: 1px solid ${themeCssVariables.color.blue3};
+  background: ${themeCssVariables.color.blue7};
   top: ${({ top }) => top}px;
   left: ${({ left }) => left}px;
   width: ${({ width }) => width}px;

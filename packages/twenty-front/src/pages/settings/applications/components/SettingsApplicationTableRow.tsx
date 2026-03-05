@@ -1,15 +1,18 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { t } from '@lingui/core/macro';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
   application: ApplicationWithoutRelation;
+  hasUpdate?: boolean;
   link?: string;
 };
 
@@ -29,9 +32,17 @@ const StyledActionTableCell = styled(TableCell)`
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledDescriptionCell = styled(TableCell)`
+  display: flex;
+  align-items: center;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
 export const SettingsApplicationTableRow = ({
   action,
   application,
+  hasUpdate,
   link,
 }: SettingsApplicationTableRowProps) => {
   return (
@@ -39,9 +50,12 @@ export const SettingsApplicationTableRow = ({
       <StyledNameTableCell>
         <OverflowingTextWithTooltip text={application.name} />
       </StyledNameTableCell>
-      <TableCell>
+      <StyledDescriptionCell>
         <OverflowingTextWithTooltip text={application.description} />
-      </TableCell>
+        {hasUpdate === true && (
+          <Tag color="blue" text={t`Update`} weight="medium" />
+        )}
+      </StyledDescriptionCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledApplicationTableRow>
   );

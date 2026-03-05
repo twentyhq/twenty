@@ -366,6 +366,10 @@ export const seedAgents = async ({
   schemaName,
   workspaceId,
 }: SeedAgentsArgs) => {
+  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+    return;
+  }
+
   const threadId = await seedChatThreads({
     queryRunner,
     schemaName,

@@ -12,7 +12,6 @@ export const getObjectRecordIdentifier = ({
   objectMetadataItem,
   record,
   allowRequestsToTwentyIcons,
-  isFilesFieldMigrated,
 }: {
   objectMetadataItem: Pick<
     ObjectMetadataItem,
@@ -23,7 +22,6 @@ export const getObjectRecordIdentifier = ({
   >;
   record: ObjectRecord;
   allowRequestsToTwentyIcons: boolean;
-  isFilesFieldMigrated?: boolean;
 }): ObjectRecordIdentifier => {
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
@@ -45,7 +43,6 @@ export const getObjectRecordIdentifier = ({
     record,
     imageIdentifierFieldMetadata,
     allowRequestsToTwentyIcons,
-    isFilesFieldMigrated,
   );
 
   const linkToShowPage = getLinkToShowPage(

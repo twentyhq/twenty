@@ -4,7 +4,7 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advance
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   flex: 2;

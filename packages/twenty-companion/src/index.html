@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Twenty - Meeting Notes</title>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="header" id="drag-region">
+        <div class="header-left">
+          <button class="btn back-btn" id="backButton" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="app-logo">
+            <svg width="28" height="28" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="96" height="96" rx="11.293" fill="#000000"/>
+              <path d="M19.25 35.746C19.25 30.5 23.508 26.246 28.75 26.246H47.039C47.309 26.246 47.555 26.406 47.668 26.652C47.781 26.902 47.73 27.191 47.547 27.395L43.539 31.75C42.84 32.508 41.859 32.945 40.828 32.945H28.801C27.227 32.945 25.949 34.223 25.949 35.797V42.98C25.949 43.906 25.199 44.652 24.273 44.652H20.93C20.004 44.652 19.258 43.906 19.258 42.98V35.746Z" fill="white"/>
+              <path d="M76.152 60.254C76.152 65.5 71.895 69.754 66.648 69.754H58.879C53.633 69.754 49.375 65.5 49.375 60.254V46.652C49.375 45.727 49.723 44.836 50.352 44.152L54.883 39.234C55.074 39.027 55.371 38.957 55.637 39.055C55.898 39.164 56.074 39.41 56.074 39.691V60.211C56.074 61.785 57.352 63.063 58.926 63.063H66.605C68.18 63.063 69.457 61.785 69.457 60.211V35.797C69.457 34.223 68.18 32.945 66.605 32.945H57.676C56.652 32.945 55.68 33.375 54.98 34.121L28.348 63.063H44.352C45.273 63.063 46.023 63.813 46.023 64.738V68.082C46.023 69.008 45.273 69.754 44.352 69.754H22.785C20.832 69.754 19.242 68.168 19.242 66.211V64.441C19.242 63.551 19.574 62.695 20.18 62.039L50.039 29.605C52.016 27.457 54.789 26.246 57.707 26.246H66.641C71.887 26.246 76.145 30.5 76.145 35.746V60.254Z" fill="white"/>
+            </svg>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="search-container">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="#666666"/>
+              </svg>
+            </span>
+            <input type="text" class="search-input" placeholder="Search notes">
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="btn new-note-btn" id="newNoteBtn">Record In-person Meeting</button>
+          <button class="btn join-meeting-btn" id="joinMeetingBtn">Record Meeting</button>
+          <button id="toggleSidebar" class="btn toggle-sidebar-btn" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="#666666"/>
+            </svg>
+          </button>
+          <div class="user-avatar">
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="40" height="40" rx="20" fill="#f0f0f0"/>
+              <path d="M20 20C22.7614 20 25 17.7614 25 15C25 12.2386 22.7614 10 20 10C17.2386 10 15 12.2386 15 15C15 17.7614 17.2386 20 20 20Z" fill="#a0a0a0"/>
+              <path d="M12 31C12 26.0294 15.5817 22 20 22C24.4183 22 28 26.0294 28 31" stroke="#a0a0a0" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+      </header>
+
+      <!-- Home Screen View -->
+      <div id="homeView">
+        <main class="main-content">
+          <div class="content-container">
+            <!-- Only showing notes section, calendar hidden -->
+            <section class="meetings-section">
+              <h2 class="section-title">Notes</h2>
+              <div class="meetings-list" id="notes-list">
+                <!-- Meeting cards will be inserted here by JavaScript -->
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+
+      <!-- Note Editor View -->
+      <div id="editorView" style="display: none;">
+        <div class="note-container">
+          <main class="editor-content">
+            <div class="note-header">
+              <div class="title-container">
+                <h1 id="noteTitle" contenteditable="true">Paint shopping plan</h1>
+                <div class="edit-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#a0a0a0"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="note-meta">
+                <span class="note-date">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V10H19V20ZM19 8H5V6H19V8ZM9 14H7V12H9V14ZM13 14H11V12H13V14ZM17 14H15V12H17V14ZM9 18H7V16H9V18ZM13 18H11V16H13V18ZM17 18H15V16H17V18Z" fill="#6947BD"/>
+                  </svg>
+                  <span id="noteDate">Apr 24</span>
+                </span>
+                <span class="note-author">
+                  <svg width="14" height="14" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="20" fill="#f0f0f0"/>
+                    <path d="M20 20C22.7614 20 25 17.7614 25 15C25 12.2386 22.7614 10 20 10C17.2386 10 15 12.2386 15 15C15 17.7614 17.2386 20 20 20Z" fill="#a0a0a0"/>
+                    <path d="M12 31C12 26.0294 15.5817 22 20 22C24.4183 22 28 26.0294 28 31" stroke="#a0a0a0" stroke-width="4"/>
+                  </svg>
+                  Me
+                </span>
+                <a class="recall-link" id="recallLink" href="#" style="display: none;" title="View recording on Recall.ai">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" fill="currentColor"/>
+                  </svg>
+                  View Recording
+                </a>
+              </div>
+            </div>
+            <textarea id="simple-editor"># Meeting Title
+• Paint shopping plan
+
+# Meeting Date and Time
+• April 24, 2025, 22:36:12
+
+# Participants
+• Nick Faro
+
+# Description
+• The meeting involved Nick Faro discussing plans to purchase a can of paint. The conversation was brief and included a humorous remark about going to Mars. There were no specific action items or further details discussed during the meeting.
+
+Chat with meeting transcript: https://notes.granola.ai/d/393a95cf-4788-4a47-9deb-3952c665a56b</textarea>
+          </main>
+
+          <aside class="sidebar" id="sidebar" style="display:none;">
+            <div class="sidebar-content">
+              <section class="sidebar-section">
+                <h3>SHARE NOTES</h3>
+                <div class="share-options">
+                  <button class="share-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="#666666"/>
+                    </svg>
+                    Copy link
+                  </button>
+                  <button class="share-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="#666666"/>
+                    </svg>
+                    Copy text
+                  </button>
+                </div>
+
+                <div class="share-export">
+                  <button class="share-btn wide">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 18H4V8L12 13L20 8V18ZM12 11L4 6H20L12 11Z" fill="#666666"/>
+                    </svg>
+                    Email
+                  </button>
+                  <button class="share-btn wide">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z" fill="#4285F4"/>
+                    </svg>
+                    Slack
+                  </button>
+                </div>
+              </section>
+
+              <section class="sidebar-section">
+                <h3>ASK TWENTY</h3>
+                <div class="ai-options">
+                  <button class="ai-btn">Generate meeting summary</button>
+                  <button class="ai-btn">List action items</button>
+                  <button class="ai-btn">Write follow-up email</button>
+                  <button class="ai-btn">List Q&A</button>
+                </div>
+              </section>
+            </div>
+          </aside>
+        </div>
+
+        <div class="floating-controls">
+          <div class="control-buttons">
+            <button class="control-btn record-btn" id="recordButton">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="record-icon">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" fill="currentColor"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="currentColor"/>
+              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="stop-icon" style="display: none;">
+                <path d="M6 6h12v12H6V6z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button class="control-btn generate-btn">
+              <svg width="16" height="16" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
+                <path d="M208,512a24.84,24.84,0,0,1-23.34-16l-39.84-103.6a16.06,16.06,0,0,0-9.19-9.19L32,343.34a25,25,0,0,1,0-46.68l103.6-39.84a16.06,16.06,0,0,0,9.19-9.19L184.66,144a25,25,0,0,1,46.68,0l39.84,103.6a16.06,16.06,0,0,0,9.19,9.19l103,39.63A25.49,25.49,0,0,1,400,320.52a24.82,24.82,0,0,1-16,22.82l-103.6,39.84a16.06,16.06,0,0,0-9.19,9.19L231.34,496A24.84,24.84,0,0,1,208,512Z" fill="currentColor"/>
+                <path d="M88,176a14.67,14.67,0,0,1-13.69-9.4L57.45,122.76a7.28,7.28,0,0,0-4.21-4.21L9.4,101.69a14.67,14.67,0,0,1,0-27.38L53.24,57.45a7.31,7.31,0,0,0,4.21-4.21L74.16,9.79A15,15,0,0,1,86.23.11,14.67,14.67,0,0,1,101.69,9.4l16.86,43.84a7.31,7.31,0,0,0,4.21,4.21L166.6,74.31a14.67,14.67,0,0,1,0,27.38l-43.84,16.86a7.28,7.28,0,0,0-4.21,4.21L101.69,166.6A14.67,14.67,0,0,1,88,176Z" fill="currentColor"/>
+                <path d="M400,256a16,16,0,0,1-14.93-10.26l-22.84-59.37a8,8,0,0,0-4.6-4.6l-59.37-22.84a16,16,0,0,1,0-29.86l59.37-22.84a8,8,0,0,0,4.6-4.6L384.9,42.68a16.45,16.45,0,0,1,13.17-10.57,16,16,0,0,1,16.86,10.15l22.84,59.37a8,8,0,0,0,4.6,4.6l59.37,22.84a16,16,0,0,1,0,29.86l-59.37,22.84a8,8,0,0,0-4.6,4.6l-22.84,59.37A16,16,0,0,1,400,256Z" fill="currentColor"/>
+              </svg>
+              Auto
+            </button>
+          </div>
+        </div>
+
+        <div class="chat-input-container">
+          <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Ask about the meeting..." style="display: none;" />
+            <button id="sendButton" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="#0077FF"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel hidden" id="debugPanel">
+      <div class="debug-panel-header" id="debug-drag-region">
+        <h3>Debugging Tools</h3>
+        <button class="debug-panel-close" id="closeDebugPanelBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="debug-panel-content">
+        <!-- SDK Logger Section -->
+        <div class="debug-section" id="loggerSection">
+          <div class="debug-section-header">
+            <h4>RecallAI SDK Logger</h4>
+            <button class="debug-section-action" id="clearLoggerBtn">Clear</button>
+          </div>
+          <div class="debug-section-content" id="sdkLoggerContent">
+            <!-- Log entries will be added here dynamically -->
+          </div>
+        </div>
+
+        <!-- Transcript Section -->
+        <div class="debug-section" id="transcriptSection">
+          <div class="debug-section-header">
+            <h4>Transcript</h4>
+          </div>
+          <div class="debug-section-content" id="transcriptContent">
+            <div class="placeholder-content">
+              <p>Live transcript will appear here during recording</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participants Section -->
+        <div class="debug-section" id="participantsSection">
+          <div class="debug-section-header">
+            <h4>Meeting Participants</h4>
+          </div>
+          <div class="debug-section-content" id="participantsContent">
+            <div class="placeholder-content">
+              <p>Detected participants will appear here</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participant Video Debug Section -->
+        <div class="debug-section" id="videoSection">
+          <div class="debug-section-header">
+            <h4>Participant Video</h4>
+          </div>
+          <div class="debug-section-content" id="videoContent">
+            <div class="placeholder-content video-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" fill="#999"/>
+              </svg>
+              <p>Participant video will appear here</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screenshare Video Debug Section -->
+        <div class="debug-section" id="screenshareSection">
+          <div class="debug-section-header">
+            <h4>Screenshare</h4>
+          </div>
+          <div class="debug-section-content" id="screenshareContent">
+            <div class="placeholder-content video-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" fill="#999"/>
+              </svg>
+              <p>Screenshare will appear here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="debug-panel-toggle panel-hidden" id="debugPanelToggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z" fill="currentColor"/>
+      </svg>
+    </button>
+  </body>
+</html>

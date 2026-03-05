@@ -9,6 +9,10 @@ const StyledRowContent = styled(CardContent)`
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[12]};
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
+
+  &[data-clickable='false'] {
+    cursor: default;
+  }
 `;
 
 export const ActivityRow = ({

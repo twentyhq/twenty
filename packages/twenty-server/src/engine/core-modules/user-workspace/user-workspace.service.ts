@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -17,10 +18,7 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -35,8 +33,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -45,6 +43,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -60,10 +60,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
-    private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -421,79 +419,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     applicationUniversalIdentifier?: string,
     queryRunner?: QueryRunner,
   ) {
-    const isOtherFileMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
-      workspaceId,
-    );
-
-    if (isOtherFileMigrated) {
-      return this.computeDefaultAvatarUrlMigrated(
-        userId,
-        workspaceId,
-        isExistingUser,
-        pictureUrl,
-        applicationUniversalIdentifier,
-        queryRunner,
-      );
-    }
-
-    return this.computeDefaultAvatarUrlLegacy(
+    return this.computeDefaultAvatarUrlMigrated(
       userId,
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
+      queryRunner,
     );
-  }
-
-  private async computeDefaultAvatarUrlLegacy(
-    userId: string,
-    workspaceId: string,
-    isExistingUser: boolean,
-    pictureUrl?: string,
-  ) {
-    if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarUrl: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
-      });
-
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
-
-      try {
-        const [_, subFolder, filename] =
-          await this.fileService.copyFileFromWorkspaceToWorkspace(
-            userWorkspace.workspaceId,
-            userWorkspace.defaultAvatarUrl,
-            workspaceId,
-          );
-
-        return `${subFolder}/${filename}`;
-      } catch (error) {
-        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-          return;
-        }
-        throw error;
-      }
-    }
-
-    if (!isDefined(pictureUrl) || pictureUrl === '') return;
-
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload avatar');
-    }
-
-    return files[0].path;
   }
 
   private async computeDefaultAvatarUrlMigrated(

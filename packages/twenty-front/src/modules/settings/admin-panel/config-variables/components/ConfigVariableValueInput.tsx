@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { type ConfigVariable } from '~/generated-metadata/graphql';

@@ -16,16 +16,17 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 export type ChartFiltersSettingsProps = {

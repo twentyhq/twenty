@@ -1,4 +1,5 @@
 import { type UIMessage } from 'ai';
+import { isExtendedFileUIPart } from 'twenty-shared/ai';
 
 const CODE_INTERPRETER_MIME_TYPES = new Set([
   'text/csv',
@@ -18,7 +19,7 @@ const CODE_INTERPRETER_MIME_TYPES = new Set([
 
 export type ExtractedFile = {
   filename: string;
-  url: string;
+  fileId: string;
   mimeType: string;
 };
 
@@ -41,13 +42,13 @@ export const extractCodeInterpreterFiles = (
     const filesForThisMessage: ExtractedFile[] = [];
 
     for (const part of message.parts) {
-      if (part.type === 'file') {
+      if (isExtendedFileUIPart(part)) {
         const mimeType = part.mediaType ?? '';
 
         if (CODE_INTERPRETER_MIME_TYPES.has(mimeType)) {
           filesForThisMessage.push({
             filename: part.filename ?? 'uploaded_file',
-            url: part.url,
+            fileId: part.fileId,
             mimeType,
           });
         } else {

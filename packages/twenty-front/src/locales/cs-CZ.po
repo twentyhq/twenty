@@ -806,11 +806,6 @@ msgstr "Přidat \"{trimmedName}\" do možností"
 msgid "Add a {objectLabelSingular}"
 msgstr "Přidat {objectLabelSingular}"
 
-#. js-lingui-id: 7W8nJr
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Group"
-msgstr ""
-
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -825,6 +820,12 @@ msgstr "Přidat uzel"
 #. js-lingui-id: nGv1DN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
+msgstr ""
+
+#. js-lingui-id: r8W+9y
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -1530,6 +1531,9 @@ msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 msgid "An error occurred"
 msgstr "Došlo k chybě"
 
@@ -1555,6 +1559,7 @@ msgstr "Při nahrávání obrázku došlo k chybě."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -1778,9 +1783,19 @@ msgstr "stránka s podrobnostmi aplikace"
 msgid "Application details"
 msgstr "Podrobnosti aplikace"
 
+#. js-lingui-id: lGEBD4
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Application installed successfully."
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
+msgstr ""
+
+#. js-lingui-id: V+GSWz
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Application upgraded successfully."
 msgstr ""
 
 #. js-lingui-id: fL7WXr
@@ -2487,6 +2502,8 @@ msgid "Can't scan? Copy the"
 msgstr "Nemůžete skenovat? Zkopírujte"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2702,6 +2719,11 @@ msgstr "Vyberte mezi protokoly OIDC a SAML"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Vyberte mezi Krátkým a Plným"
+
+#. js-lingui-id: +yPBXI
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Choose file"
+msgstr ""
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -4680,6 +4702,11 @@ msgstr "Přetáhněte sem"
 msgid "Drag to add to navbar"
 msgstr ""
 
+#. js-lingui-id: VIbDgE
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Drop fields here"
+msgstr ""
+
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -4721,6 +4748,11 @@ msgstr "Duplicity"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
 msgstr "Holandština"
+
+#. js-lingui-id: 3MYDWJ
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "e.g. @twentyhq/hello-world"
+msgstr ""
 
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -5026,10 +5058,10 @@ msgstr "E-maily"
 msgid "Emails and Calendar"
 msgstr "E-maily a kalendář"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "E-maily z blokového seznamu budou ignorovány. Spravujte blokovaný seznam na stránce nastavení \"Účty\"."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -5310,6 +5342,11 @@ msgstr "Zadejte údaje pro nastavení připojení"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
 msgstr "Zadejte informace pro nastavení připojení"
+
+#. js-lingui-id: n1dNU/
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Enter the npm package name of the application you want to install."
+msgstr ""
 
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5962,6 +5999,11 @@ msgstr "Nepodařilo se získat odpověď"
 msgid "Failed to impersonate user. {errorMessage}"
 msgstr "Nepodařilo se vydávat za uživatele. {errorMessage}"
 
+#. js-lingui-id: qZwtAi
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Failed to install the application."
+msgstr ""
+
 #. js-lingui-id: BTjpvA
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
 msgid "Failed to load front component: {errorMessage}"
@@ -6064,6 +6106,11 @@ msgstr "Nepodařilo se aktualizovat roli"
 msgid "Failed to update variable"
 msgstr "Nepodařilo se aktualizovat proměnnou"
 
+#. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Failed to upgrade the application."
+msgstr ""
+
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
@@ -6080,15 +6127,15 @@ msgstr ""
 msgid "Failed to upload file: {fileName}"
 msgstr "Nepodařilo se nahrát soubor: {fileName}"
 
-#. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Failed to upload image: "
-msgstr "Nelze nahrát obrázek: "
-
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Nepodařilo se nahrát obrázek"
+
+#. js-lingui-id: vWFfVs
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Failed to upload tarball."
+msgstr ""
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -6250,11 +6297,6 @@ msgstr ""
 msgid "File upload failed"
 msgstr ""
 
-#. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentList.tsx
-msgid "File URL is not defined"
-msgstr ""
-
 #. js-lingui-id: sER+bs
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Files"
@@ -6388,6 +6430,7 @@ msgstr "Složky"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Zapomněli jste heslo?"
 
@@ -6501,9 +6544,9 @@ msgstr "Ukazatelový graf"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Obecné"
@@ -7204,6 +7247,7 @@ msgstr "Vložte vstup JSON a pak stiskněte \"Spustit\" pro testování vaší f
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 msgid "Install"
 msgstr ""
 
@@ -7211,6 +7255,17 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Instalace a správa aplikací"
+
+#. js-lingui-id: gR90Vf
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+msgid "Install app"
+msgstr ""
+
+#. js-lingui-id: H3eHCv
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Install from npm"
+msgstr ""
 
 #. js-lingui-id: JXiMtM
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -7226,6 +7281,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
 msgstr "Nainstalované aplikace"
+
+#. js-lingui-id: wJJ+Wy
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Installing..."
+msgstr ""
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -7371,11 +7431,6 @@ msgstr "Neplatná adresa URL. Kliknutím na Upravit nakonfigurujte tento widget.
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Neplatný ověřovací kód. Prosím, zkuste to znovu."
-
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Neplatný pracovní prostor"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
@@ -7729,6 +7784,11 @@ msgstr "Poslední platba selhala. Prosím, kontaktujte svého správce."
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Last payment failed. Please update your billing details."
 msgstr "Poslední platba selhala. Prosím, aktualizujte své fakturační údaje."
+
+#. js-lingui-id: pJxM65
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "latest"
+msgstr ""
 
 #. js-lingui-id: wL3cK8
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8084,9 +8144,8 @@ msgstr "Odhlásit"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Protokoly"
 
@@ -9945,6 +10004,11 @@ msgstr ""
 msgid "p"
 msgstr ""
 
+#. js-lingui-id: VXyQnz
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Package name"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -11695,6 +11759,11 @@ msgstr "Zobrazit pracovní postup"
 msgid "See Workflows"
 msgstr "Zobrazit pracovní postupy"
 
+#. js-lingui-id: 2PIP/G
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
+msgstr ""
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -11710,6 +11779,11 @@ msgstr ""
 #. js-lingui-id: VjMMyZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Select 1 field"
+msgstr ""
+
+#. js-lingui-id: YfBvUy
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Select a .tar.gz application package to upload and install."
 msgstr ""
 
 #. js-lingui-id: OMoA3j
@@ -12031,6 +12105,11 @@ msgstr "Nastavení oprávnění"
 #. js-lingui-id: rl/5Qa
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Settings tab"
+msgstr ""
+
+#. js-lingui-id: dIJGKR
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Setup a tailor-made workspace"
 msgstr ""
 
 #. js-lingui-id: Ue7X/E
@@ -13776,7 +13855,6 @@ msgstr ""
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
 msgstr "Nepojmenovaný"
@@ -13814,6 +13892,7 @@ msgid "update"
 msgstr "aktualizovat"
 
 #. js-lingui-id: EkH9pt
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -13875,6 +13954,11 @@ msgstr "Upgrade"
 msgid "Upgrade Plan"
 msgstr "Upgradovat plán"
 
+#. js-lingui-id: pKCx2F
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrade to {latestAvailableVersion}"
+msgstr ""
+
 #. js-lingui-id: ggd+Ee
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Upgrade to access"
@@ -13883,6 +13967,11 @@ msgstr ""
 #. js-lingui-id: jmVW3I
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Upgrade to Enterprise to access audit logs"
+msgstr ""
+
+#. js-lingui-id: +Gi3x1
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrading..."
 msgstr ""
 
 #. js-lingui-id: ONWvwQ
@@ -13894,6 +13983,11 @@ msgstr "Nahrát"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Nahrát soubor .xlsx, .xls nebo .csv"
+
+#. js-lingui-id: BhkxTk
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Upload failed."
+msgstr ""
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -13917,6 +14011,12 @@ msgstr "Nahrát soubory"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Nahrát soubory"
+
+#. js-lingui-id: aG3MkW
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Upload tarball"
+msgstr ""
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -14128,6 +14228,11 @@ msgstr "Ověřte kód z aplikace"
 msgid "Version"
 msgstr "Verze"
 
+#. js-lingui-id: OVk6Na
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Version (optional)"
+msgstr ""
+
 #. js-lingui-id: IHIWR4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -14247,6 +14352,11 @@ msgstr ""
 #. js-lingui-id: mzftV9
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
+msgstr ""
+
+#. js-lingui-id: 4y776f
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view sort"
 msgstr ""
 
 #. js-lingui-id: FNDoRH
