@@ -85,7 +85,7 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
           ...this.relationFieldMetadataGqlInputTypeGenerator.generateConnectRelationFieldInputType(
             {
               fieldMetadata: relationFieldMetadata,
-              typeOptions: { ...typeOptions, nullable: true },
+              typeOptions,
             },
           ),
         };
