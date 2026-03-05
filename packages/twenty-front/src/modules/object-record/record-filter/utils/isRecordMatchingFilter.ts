@@ -431,9 +431,23 @@ export const isRecordMatchingFilter = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        // ONE_TO_MANY relation: handle { is: 'NULL' } / { is: 'NOT_NULL' }
+        const relationFilter = filterValue as { is?: string };
+
+        if (relationFilter?.is === 'NULL') {
+          const val = record[filterKey];
+
+          return !val || (Array.isArray(val) && val.length === 0);
+        }
+
+        if (relationFilter?.is === 'NOT_NULL') {
+          const val = record[filterKey];
+
+          return Array.isArray(val) && val.length > 0;
+        }
+
+        // Other relation filters can't be validated client-side, pass through
+        return true;
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({
