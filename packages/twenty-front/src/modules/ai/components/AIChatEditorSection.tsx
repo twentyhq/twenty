@@ -10,7 +10,6 @@ import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFil
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -102,12 +101,14 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledReadOnlyModelButton = styled(LightButton)`
-  cursor: default;
+const StyledReadOnlyModelButtonContainer = styled.div`
+  > * {
+    cursor: default;
 
-  &:hover,
-  &:active {
-    background: transparent;
+    &:hover,
+    &:active {
+      background: transparent;
+    }
   }
 `;
 
@@ -115,23 +116,14 @@ export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
-  const { isLoading, messages, error, handleSendMessage } =
-    useAgentChatContextOrThrow();
-  const hasMessages = messages.length > 0;
 
-  const { editor, handleSendAndClear } = useAIChatEditor({
-    onSendMessage: handleSendMessage,
-  });
+  const { editor, handleSendAndClear } = useAIChatEditor();
 
   return (
     <>
-      {!hasMessages && !error && !isLoading && (
-        <AIChatEmptyState editor={editor} />
-      )}
-      {!hasMessages && error && !isLoading && (
-        <AIChatStandaloneError error={error} />
-      )}
-      {isLoading && !hasMessages && <AIChatSkeletonLoader />}
+      <AIChatEmptyState editor={editor} />
+      <AIChatStandaloneError />
+      <AIChatSkeletonLoader />
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
@@ -142,13 +134,12 @@ export const AIChatEditorSection = () => {
           <StyledButtonsContainer>
             <StyledLeftButtonsContainer>
               <AgentChatFileUploadButton />
-              {hasMessages && <AIChatContextUsageButton />}
+              <AIChatContextUsageButton />
             </StyledLeftButtonsContainer>
             <StyledRightButtonsContainer>
-              <StyledReadOnlyModelButton
-                accent="tertiary"
-                title={smartModelLabel}
-              />
+              <StyledReadOnlyModelButtonContainer>
+                <LightButton accent="tertiary" title={smartModelLabel} />
+              </StyledReadOnlyModelButtonContainer>
               <SendMessageButton onSend={handleSendAndClear} />
             </StyledRightButtonsContainer>
           </StyledButtonsContainer>
