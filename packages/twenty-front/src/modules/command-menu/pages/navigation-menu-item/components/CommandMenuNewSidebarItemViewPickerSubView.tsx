@@ -18,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,7 +52,8 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
-        view.key !== ViewKey.Index,
+        view.key !== ViewKey.Index &&
+        view.visibility === ViewVisibility.WORKSPACE,
     )
     .sort((a, b) => a.position - b.position);
 
