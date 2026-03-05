@@ -23,9 +23,7 @@ import {
 import { type IconComponent } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledDragDropPlaceholderCell = styled(
-  RecordTableDragAndDropPlaceholderCell,
-)`
+const StyledDragDropPlaceholderCellContainer = styled.div`
   left: 0;
   position: sticky;
 `;
@@ -138,7 +136,9 @@ export const RecordTableActionRow = ({
 
   return (
     <StyledRecordTableDraggableTr onClick={onClick}>
-      <StyledDragDropPlaceholderCell />
+      <StyledDragDropPlaceholderCellContainer>
+        <RecordTableDragAndDropPlaceholderCell />
+      </StyledDragDropPlaceholderCellContainer>
       <StyledIconContainer>
         <LeftIcon
           stroke={resolveThemeVariableAsNumber(

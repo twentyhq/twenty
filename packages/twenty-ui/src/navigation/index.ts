@@ -58,7 +58,10 @@ export {
 export type { MenuItemIconWithGripSwapProps } from './menu/menu-item/internals/components/MenuItemIconWithGripSwap';
 export { MenuItemIconWithGripSwap } from './menu/menu-item/internals/components/MenuItemIconWithGripSwap';
 export { MenuItemLeftContent } from './menu/menu-item/internals/components/MenuItemLeftContent';
-export type { MenuItemBaseProps } from './menu/menu-item/internals/components/StyledMenuItemBase';
+export type {
+  MenuItemBaseProps,
+  HoverableMenuItemBaseProps,
+} from './menu/menu-item/internals/components/StyledMenuItemBase';
 export {
   StyledMenuItemBase,
   StyledMenuItemLabel,

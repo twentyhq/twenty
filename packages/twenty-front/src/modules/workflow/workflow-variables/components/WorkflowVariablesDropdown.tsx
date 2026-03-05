@@ -19,18 +19,21 @@ import {
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
-const StyledDropdownVariableButtonContainer = styled(
-  StyledDropdownButtonContainer,
-)<{ transparentBackground?: boolean; disabled?: boolean }>`
-  background-color: ${({ transparentBackground }) =>
-    transparentBackground
-      ? 'transparent'
-      : themeCssVariables.background.transparent.lighter};
+const StyledDropdownVariableButtonWrapper = styled.div<{
+  transparentBackground?: boolean;
+  disabled?: boolean;
+}>`
+  > div {
+    background-color: ${({ transparentBackground }) =>
+      transparentBackground
+        ? 'transparent'
+        : themeCssVariables.background.transparent.lighter};
+    color: ${themeCssVariables.font.color.tertiary};
+    padding: ${themeCssVariables.spacing[2]};
 
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[2]};
-  :hover {
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    :hover {
+      cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    }
   }
 `;
 
@@ -94,16 +97,20 @@ export const WorkflowVariablesDropdown = ({
 
   if (disabled === true || noAvailableVariables) {
     return (
-      <StyledDropdownVariableButtonContainer
-        isUnfolded={isDropdownOpen}
+      <StyledDropdownVariableButtonWrapper
         disabled={true}
         transparentBackground
       >
-        <IconVariablePlus
-          size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
-          color={resolveThemeVariable(themeCssVariables.font.color.light)}
-        />
-      </StyledDropdownVariableButtonContainer>
+        <StyledDropdownButtonContainer
+          isUnfolded={isDropdownOpen}
+          transparentBackground
+        >
+          <IconVariablePlus
+            size={resolveThemeVariableAsNumber(themeCssVariables.icon.size.sm)}
+            color={resolveThemeVariable(themeCssVariables.font.color.light)}
+          />
+        </StyledDropdownButtonContainer>
+      </StyledDropdownVariableButtonWrapper>
     );
   }
 
@@ -113,16 +120,18 @@ export const WorkflowVariablesDropdown = ({
       isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer
-            isUnfolded={isDropdownOpen}
-            transparentBackground
-          >
-            <IconVariablePlus
-              size={resolveThemeVariableAsNumber(
-                themeCssVariables.icon.size.sm,
-              )}
-            />
-          </StyledDropdownVariableButtonContainer>
+          <StyledDropdownVariableButtonWrapper transparentBackground>
+            <StyledDropdownButtonContainer
+              isUnfolded={isDropdownOpen}
+              transparentBackground
+            >
+              <IconVariablePlus
+                size={resolveThemeVariableAsNumber(
+                  themeCssVariables.icon.size.sm,
+                )}
+              />
+            </StyledDropdownButtonContainer>
+          </StyledDropdownVariableButtonWrapper>
         )
       }
       dropdownComponents={

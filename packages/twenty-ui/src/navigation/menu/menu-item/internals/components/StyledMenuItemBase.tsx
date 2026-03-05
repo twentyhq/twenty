@@ -140,14 +140,69 @@ export const StyledDraggableItem = styled.div`
   display: flex;
 `;
 
-type HoverableMenuItemBaseProps = {
+export type HoverableMenuItemBaseProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default';
 } & MenuItemBaseProps;
 
-export const StyledHoverableMenuItemBase = styled(
-  StyledMenuItemBase,
-)<HoverableMenuItemBaseProps>`
+export const StyledHoverableMenuItemBase = styled.div<HoverableMenuItemBaseProps>`
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  height: calc(32px - 2 * var(--vertical-padding));
+  justify-content: space-between;
+  padding: var(--vertical-padding) var(--horizontal-padding);
+  position: relative;
+  user-select: none;
+  width: calc(100% - 2 * var(--horizontal-padding));
+
+  background: ${({ isKeySelected, focused }) =>
+    isKeySelected || focused
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+
+  transition: ${({ isHoverBackgroundDisabled, disabled }) =>
+    disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
+
+  color: ${({ accent, disabled }) => {
+    if (disabled !== undefined && disabled !== false) {
+      return themeCssVariables.font.color.tertiary;
+    }
+    switch (accent) {
+      case 'danger':
+        return themeCssVariables.font.color.danger;
+      case 'placeholder':
+        return themeCssVariables.font.color.tertiary;
+      case 'default':
+      default:
+        return themeCssVariables.font.color.secondary;
+    }
+  }};
+
+  &:hover {
+    background: ${({
+      accent,
+      disabled,
+      isHoverBackgroundDisabled,
+      isKeySelected,
+      focused,
+    }) => {
+      if (disabled === true)
+        return isKeySelected || focused
+          ? themeCssVariables.background.transparent.light
+          : 'transparent';
+      if (accent === 'danger')
+        return themeCssVariables.background.transparent.danger;
+      if (isHoverBackgroundDisabled === true) return 'transparent';
+      return themeCssVariables.background.transparent.light;
+    }};
+  }
+
   & .hoverable-buttons {
     opacity: ${({ isIconDisplayedOnHoverOnly }) =>
       isIconDisplayedOnHoverOnly === true ? '0' : '1'};
