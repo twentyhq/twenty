@@ -3,7 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -31,7 +31,9 @@ import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/applic
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -61,6 +63,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -324,6 +327,33 @@ export class ApplicationRegistrationResolver {
       tarballBuffer,
       universalIdentifier,
       ownerWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @Query(() => String, { nullable: true })
+  async applicationRegistrationTarballUrl(
+    @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string | null> {
+    const registration = await this.applicationRegistrationService.findOneById(
+      id,
+      workspaceId,
+    );
+
+    if (registration.sourceType !== ApplicationRegistrationSourceType.TARBALL) {
+      return null;
+    }
+
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: registration.id,
+      workspaceId,
+      fileFolder: FileFolder.AppTarball,
     });
   }
 

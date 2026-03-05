@@ -11,11 +11,14 @@ import {
 } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
 
+import { join } from 'path';
+
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   type FileTokenJwtPayloadLegacy,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -28,6 +31,7 @@ export class FileService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
+    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
@@ -130,6 +134,18 @@ export class FileService {
       buffer,
       mimeType: file.mimeType ?? 'application/octet-stream',
     };
+  }
+
+  async getAppTarballStream({
+    registrationId,
+  }: {
+    registrationId: string;
+  }): Promise<Readable> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.readFile({
+      filePath: join('app-tarball', registrationId, 'app.tar.gz'),
+    });
   }
 
   signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {

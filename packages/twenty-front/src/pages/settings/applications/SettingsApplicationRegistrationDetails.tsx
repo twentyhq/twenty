@@ -4,6 +4,7 @@ import { ROTATE_APPLICATION_REGISTRATION_CLIENT_SECRET } from '@/settings/applic
 import { TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP } from '@/settings/application-registrations/graphql/mutations/transferApplicationRegistrationOwnership';
 import { UPDATE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistration';
 import { UPDATE_APPLICATION_REGISTRATION_VARIABLE } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistrationVariable';
+import { APPLICATION_REGISTRATION_TARBALL_URL } from '@/settings/application-registrations/graphql/queries/applicationRegistrationTarballUrl';
 import { FIND_APPLICATION_REGISTRATION_STATS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationStats';
 import { FIND_APPLICATION_REGISTRATION_VARIABLES } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationVariables';
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
@@ -47,7 +48,12 @@ import {
 } from 'twenty-ui/display';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { Button } from 'twenty-ui/input';
-import { Card, Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import {
+  Card,
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import {
   ApplicationRegistrationSourceType,
@@ -191,6 +197,14 @@ export const SettingsApplicationRegistrationDetails = () => {
     variables: { id: applicationRegistrationId },
     skip: !applicationRegistrationId,
   });
+
+  const { data: tarballUrlData } = useQuery(
+    APPLICATION_REGISTRATION_TARBALL_URL,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
   const [updateRegistration] = useMutation(UPDATE_APPLICATION_REGISTRATION, {
     refetchQueries: [
@@ -511,17 +525,27 @@ export const SettingsApplicationRegistrationDetails = () => {
             value: registration.sourcePackage,
           },
         ]
-      : registration.sourceType ===
-            ApplicationRegistrationSourceType.TARBALL
+      : registration.sourceType === ApplicationRegistrationSourceType.TARBALL
         ? [
             {
-              Icon: IconBox,
+              Icon: IconDownload,
               label: t`Source`,
               value: t`Tarball upload`,
+              ...(isNonEmptyString(
+                tarballUrlData?.applicationRegistrationTarballUrl,
+              )
+                ? {
+                    onClick: () => {
+                      window.open(
+                        tarballUrlData.applicationRegistrationTarballUrl,
+                        '_blank',
+                      );
+                    },
+                  }
+                : {}),
             },
           ]
-        : registration.sourceType ===
-              ApplicationRegistrationSourceType.LOCAL
+        : registration.sourceType === ApplicationRegistrationSourceType.LOCAL
           ? [
               {
                 Icon: IconBox,

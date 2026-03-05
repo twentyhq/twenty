@@ -93,11 +93,24 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     try {
-      const fileStream = await this.fileService.getFileStreamById({
-        fileId,
-        workspaceId,
-        fileFolder,
-      });
+      const fileStream =
+        fileFolder === FileFolder.AppTarball
+          ? await this.fileService.getAppTarballStream({
+              registrationId: fileId,
+            })
+          : await this.fileService.getFileStreamById({
+              fileId,
+              workspaceId,
+              fileFolder,
+            });
+
+      if (fileFolder === FileFolder.AppTarball) {
+        res.setHeader('Content-Type', 'application/gzip');
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="app.tar.gz"`,
+        );
+      }
 
       fileStream.on('error', () => {
         throw new FileException(

@@ -3947,6 +3947,7 @@ export type Query = {
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
+  applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
@@ -6618,6 +6619,13 @@ export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
 
 
 export type UpdateApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
+
+export type ApplicationRegistrationTarballUrlQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ApplicationRegistrationTarballUrlQuery = { __typename?: 'Query', applicationRegistrationTarballUrl?: string | null };
 
 export type FindApplicationRegistrationByClientIdQueryVariables = Exact<{
   clientId: Scalars['String'];
@@ -13628,6 +13636,22 @@ export function useFindApplicationRegistrationByClientIdLazyQuery(baseOptions?: 
 export type FindApplicationRegistrationByClientIdQueryHookResult = ReturnType<typeof useFindApplicationRegistrationByClientIdQuery>;
 export type FindApplicationRegistrationByClientIdLazyQueryHookResult = ReturnType<typeof useFindApplicationRegistrationByClientIdLazyQuery>;
 export type FindApplicationRegistrationByClientIdQueryResult = Apollo.QueryResult<FindApplicationRegistrationByClientIdQuery, FindApplicationRegistrationByClientIdQueryVariables>;
+export const ApplicationRegistrationTarballUrlDocument = gql`
+    query ApplicationRegistrationTarballUrl($id: String!) {
+  applicationRegistrationTarballUrl(id: $id)
+}
+    `;
+export function useApplicationRegistrationTarballUrlQuery(baseOptions: Apollo.QueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables> & ({ variables: ApplicationRegistrationTarballUrlQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
+        }
+export function useApplicationRegistrationTarballUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
+        }
+export type ApplicationRegistrationTarballUrlQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlQuery>;
+export type ApplicationRegistrationTarballUrlLazyQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlLazyQuery>;
+export type ApplicationRegistrationTarballUrlQueryResult = Apollo.QueryResult<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>;
 export const FindApplicationRegistrationStatsDocument = gql`
     query FindApplicationRegistrationStats($id: String!) {
   findApplicationRegistrationStats(id: $id) {
