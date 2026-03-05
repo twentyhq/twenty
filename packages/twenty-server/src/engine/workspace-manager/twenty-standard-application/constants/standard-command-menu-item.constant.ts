@@ -11,7 +11,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 0,
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'not isInRightDrawer',
+    conditionalAvailabilityExpression: 'not isInSidePanel',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.navigateToNextRecord.universalIdentifier,
   },
@@ -23,7 +23,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 1,
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'not isInRightDrawer',
+    conditionalAvailabilityExpression: 'not isInSidePanel',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.navigateToPreviousRecord.universalIdentifier,
   },
