@@ -36,7 +36,9 @@ export class OnboardingService {
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
     return (
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     );
   }
 
