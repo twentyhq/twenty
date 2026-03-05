@@ -61,9 +61,7 @@ describe('ensureDir', () => {
   });
 
   it('should not throw when the directory already exists', async () => {
-    await ensureDir(tmpDir);
-
-    expect(existsSync(tmpDir)).toBe(true);
+    await expect(ensureDir(tmpDir)).resolves.not.toThrow();
   });
 });
 
@@ -90,14 +88,17 @@ describe('ensureFile', () => {
 });
 
 describe('emptyDir', () => {
-  it('should remove all contents of an existing directory', async () => {
+  it('should remove all contents including nested subdirectories', async () => {
     await writeFile(join(tmpDir, 'a.txt'), 'a');
-    await writeFile(join(tmpDir, 'b.txt'), 'b');
+    const subDir = join(tmpDir, 'nested');
+    await ensureDir(subDir);
+    await writeFile(join(subDir, 'deep.txt'), 'deep');
 
     await emptyDir(tmpDir);
 
     const entries = await readdir(tmpDir);
     expect(entries).toEqual([]);
+    expect(existsSync(tmpDir)).toBe(true);
   });
 
   it('should create the directory when it does not exist', async () => {
@@ -114,12 +115,14 @@ describe('emptyDir', () => {
     const filePath = join(tmpDir, 'not-a-dir.txt');
     await writeFile(filePath, 'file');
 
-    await expect(emptyDir(filePath)).rejects.toThrow();
+    await expect(emptyDir(filePath)).rejects.toMatchObject({
+      code: 'ENOTDIR',
+    });
   });
 });
 
 describe('copy', () => {
-  it('should copy a file to a new location', async () => {
+  it('should copy a file without removing the source', async () => {
     const src = join(tmpDir, 'source.txt');
     const dest = join(tmpDir, 'dest.txt');
     await writeFile(src, 'content');
@@ -127,6 +130,7 @@ describe('copy', () => {
     await copy(src, dest);
 
     expect(await readFile(dest, 'utf-8')).toBe('content');
+    expect(await readFile(src, 'utf-8')).toBe('content');
   });
 
   it('should recursively copy a directory', async () => {
