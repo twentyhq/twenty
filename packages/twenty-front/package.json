@@ -150,6 +150,7 @@
     "monaco-editor": "^0.51.0",
     "monaco-editor-auto-typings": "^0.4.5",
     "optionator": "^0.9.1",
+    "oxlint": "^1.51.0",
     "playwright": "^1.56.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "vite-plugin-svgr": "^4.3.0",
