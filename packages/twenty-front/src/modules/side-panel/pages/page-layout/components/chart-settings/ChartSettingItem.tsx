@@ -3,7 +3,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
-import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -39,7 +39,7 @@ export const ChartSettingItem = ({
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
   const { openDropdown } = useOpenDropdown();
   const { setSelectedItemId } = useSelectableList(
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 

@@ -1,4 +1,4 @@
-import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
+import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
@@ -20,7 +20,7 @@ const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
   display: ${({ alignToTop }) => (alignToTop ? 'flex' : 'block')};
   height: ${({ alignToTop }) =>
-    alignToTop ? `${COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE}px` : 'auto'};
+    alignToTop ? `${SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE}px` : 'auto'};
   position: ${({ alignToTop }) => (alignToTop ? 'fixed' : 'static')};
   right: ${({ alignToTop }) =>
     alignToTop ? themeCssVariables.spacing[3] : 'auto'};

@@ -1,6 +1,6 @@
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
-import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
@@ -32,7 +32,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useSidePanelCloseAnimationCompleteCleanup = () => {
   const store = useStore();
   const { resetSelectedItem } = useSelectableList(
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
   const { resetContextStoreStates } = useResetContextStoreStates();

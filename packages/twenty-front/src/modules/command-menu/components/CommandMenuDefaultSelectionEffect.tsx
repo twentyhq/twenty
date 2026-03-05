@@ -1,4 +1,4 @@
-import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -13,12 +13,12 @@ export const CommandMenuDefaultSelectionEffect = ({
   selectableItemIds: string[];
 }) => {
   const { setSelectedItemId } = useSelectableList(
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
   const hasUserSelectedCommand = useAtomStateValue(hasUserSelectedCommandState);

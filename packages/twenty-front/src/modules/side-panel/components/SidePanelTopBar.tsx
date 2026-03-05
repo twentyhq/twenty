@@ -2,8 +2,8 @@ import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
-import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
-import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
+import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
@@ -39,8 +39,8 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   font-size: ${themeCssVariables.font.size.lg};
   height: ${({ isMobile }) =>
     isMobile
-      ? COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE
-      : COMMAND_MENU_SEARCH_BAR_HEIGHT}px;
+      ? SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE
+      : SIDE_PANEL_TOP_BAR_HEIGHT}px;
   margin: 0;
   outline: none;
   position: relative;
