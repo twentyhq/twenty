@@ -1,3 +1,7 @@
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
+import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -26,6 +30,18 @@ const NUMBER_OF_SKELETONS = 6;
 
 export const AIChatSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);
+
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
+
+  const shouldRender = agentChatIsLoading && !hasMessages;
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <SkeletonTheme

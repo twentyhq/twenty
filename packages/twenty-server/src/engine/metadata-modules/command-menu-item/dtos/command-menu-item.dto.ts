@@ -1,5 +1,6 @@
 import {
   Field,
+  Float,
   HideField,
   ObjectType,
   registerEnumType,
@@ -10,6 +11,7 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -52,6 +54,15 @@ export class CommandMenuItemDTO {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortLabel?: string;
+
+  @IsNumber()
+  @Field(() => Float)
+  position: number;
 
   @IsBoolean()
   @Field()

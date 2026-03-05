@@ -1,5 +1,8 @@
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
+import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
@@ -9,15 +12,24 @@ type SendMessageButtonProps = {
 };
 
 export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
-  const agentChatInput = useAtomStateValue(agentChatInputState);
-  const { handleStop, isLoading, isStreaming } = useAgentChatContextOrThrow();
+  const agentChatInputIsEmpty = useAtomStateValue(
+    agentChatInputIsEmptySelector,
+  );
 
-  if (isStreaming) {
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const handleStopClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
+  };
+
+  if (agentChatIsStreaming) {
     return (
       <RoundedIconButton
         Icon={IconPlayerStop}
         size="medium"
-        onClick={() => handleStop()}
+        onClick={handleStopClick}
       />
     );
   }
@@ -27,7 +39,7 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
       Icon={IconArrowUp}
       size="medium"
       onClick={onSend}
-      disabled={!agentChatInput || isLoading}
+      disabled={agentChatInputIsEmpty || agentChatIsLoading}
     />
   );
 };
