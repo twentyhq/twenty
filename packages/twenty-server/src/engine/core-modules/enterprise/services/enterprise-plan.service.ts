@@ -152,9 +152,7 @@ export class EnterprisePlanService implements OnModuleInit {
       return true;
     }
 
-    return false;
-
-    // return this.checkLegacyKey(); // temporary
+    return this.checkLegacyKey(); // temporary
   }
 
   isValidEnterpriseKeyFormat(key: string): boolean {
@@ -164,16 +162,12 @@ export class EnterprisePlanService implements OnModuleInit {
   private checkLegacyKey(): boolean {
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
 
-    if (!enterpriseKey) {
-      return false;
-    }
-
-    if (isDefined(this.cachedKeyPayload)) {
+    if (!isDefined(enterpriseKey)) {
       return false;
     }
 
     this.logger.warn(
-      'Plain-text enterprise keys are deprecated and will stop working ' +
+      'Unsigned enterprise keys are deprecated and will stop working ' +
         'in a future version. Please obtain a signed key from twenty.com.',
     );
 

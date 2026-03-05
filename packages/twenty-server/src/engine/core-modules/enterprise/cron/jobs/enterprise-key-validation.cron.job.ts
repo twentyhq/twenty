@@ -30,7 +30,9 @@ export class EnterpriseKeyValidationCronJob {
     ENTERPRISE_KEY_VALIDATION_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    this.logger.log('Starting enterprise key refresh and seat report...');
+    this.logger.log(
+      'Starting enterprise validity token refresh and seat report...',
+    );
 
     const refreshSuccess =
       await this.enterprisePlanService.refreshValidityToken();
@@ -40,7 +42,7 @@ export class EnterpriseKeyValidationCronJob {
     } else {
       this.logger.warn(
         'Enterprise validity token refresh did not succeed. ' +
-          'Current validity token will continue to work until expiration.',
+          'Existing validity token will continue to work until expiration.',
       );
     }
 

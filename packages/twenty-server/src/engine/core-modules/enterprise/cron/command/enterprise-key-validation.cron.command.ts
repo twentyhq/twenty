@@ -10,7 +10,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 
 @Command({
   name: 'cron:enterprise-key-validation',
-  description: 'Starts a daily cron job to refresh the enterprise license key',
+  description:
+    'Starts a daily cron job to refresh the enterprise  validity token',
 })
 export class EnterpriseKeyValidationCronCommand extends CommandRunner {
   constructor(

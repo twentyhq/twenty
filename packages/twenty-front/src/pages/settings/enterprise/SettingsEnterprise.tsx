@@ -23,7 +23,6 @@ import { ApolloError, useLazyQuery, useMutation } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   H2Title,
   IconCalendarRepeat,
@@ -35,6 +34,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
@@ -505,7 +505,6 @@ export const SettingsEnterprise = ({
       );
     }
 
-    // Subscription canceled — ended completely, cannot be reactivated in Stripe
     if (isCanceled) {
       return (
         <>

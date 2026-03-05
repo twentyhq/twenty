@@ -24,8 +24,8 @@ export class EnterpriseFeaturesEnabledGuard implements CanActivate {
     try {
       if (!this.enterprisePlanService.isValid()) {
         throw new AuthException(
-          'Enterprise validity token is not valid',
-          AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE,
+          'Enterprise features are not enabled',
+          AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID,
         );
       }
 
