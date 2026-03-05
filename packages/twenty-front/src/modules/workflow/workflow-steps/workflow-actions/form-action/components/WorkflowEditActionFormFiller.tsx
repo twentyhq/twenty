@@ -1,9 +1,9 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -34,7 +34,7 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -89,7 +89,7 @@ export const WorkflowEditActionFormFiller = ({
       response,
     });
 
-    goBackFromCommandMenu();
+    goBackFromSidePanel();
   };
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export const WorkflowEditActionFormFiller = ({
         })}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
-        <RightDrawerFooter
+        <SidePanelFooter
           actions={[
             <CmdEnterActionButton
               title={t`Submit`}

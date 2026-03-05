@@ -32,14 +32,14 @@ export const MergePreviewTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }}
     >
       <Section>
         <SummaryCard
           objectNameSingular={objectNameSingular}
           objectRecordId={recordId}
-          isInRightDrawer={true}
+          isInSidePanel={true}
         />
 
         {getCardComponent(CardType.FieldCard, {

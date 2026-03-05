@@ -29,7 +29,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 export const WidgetActionFieldEdit = () => {
   const widget = useCurrentWidget();
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -75,7 +75,7 @@ export const WidgetActionFieldEdit = () => {
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   if (isRelationField) {

@@ -1,4 +1,4 @@
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -10,9 +10,9 @@ export const useResetFocusStackToRecordIndex = () => {
   const store = useStore();
 
   const resetFocusStackToRecordIndex = () => {
-    const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+    const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
 
-    const shouldEnableGlobalHotkeys = !isCommandMenuOpen;
+    const shouldEnableGlobalHotkeys = !isSidePanelOpen;
 
     resetFocusStackToFocusItem({
       focusStackItem: {

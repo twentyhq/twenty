@@ -30,7 +30,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -140,7 +140,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
 
   return {
     isShowPage,
-    isInRightDrawer,
+    isInSidePanel,
     isFavorite,
     isRemote,
     isNoteOrTask,
