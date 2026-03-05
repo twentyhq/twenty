@@ -68,8 +68,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
          "sourceType", "sourcePackage", "latestAvailableVersion",
-         "marketplaceDisplayData")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+         "marketplaceDisplayData", "isListed")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         id,
         params.universalIdentifier,
@@ -84,6 +84,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         params.marketplaceDisplayData
           ? JSON.stringify(params.marketplaceDisplayData)
           : null,
+        true,
       ],
     );
 

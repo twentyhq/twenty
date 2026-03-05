@@ -119,8 +119,6 @@ export class ApplicationTarballService {
           { workspaceId: params.ownerWorkspaceId },
         );
 
-      const fileId = v4();
-
       const savedFile = await this.fileStorageService.writeFile({
         sourceFile: params.tarballBuffer,
         resourcePath: `${appRegistration.id}/app.tar.gz`,
@@ -129,7 +127,7 @@ export class ApplicationTarballService {
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceId: params.ownerWorkspaceId,
-        fileId,
+        fileId: appRegistration.tarballFileId ?? v4(),
         settings: {
           isTemporaryFile: false,
           toDelete: false,
