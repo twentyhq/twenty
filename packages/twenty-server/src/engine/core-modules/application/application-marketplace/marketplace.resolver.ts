@@ -45,6 +45,16 @@ export class MarketplaceResolver {
     return this.marketplaceQueryService.findManyMarketplaceApps();
   }
 
+  @Query(() => MarketplaceAppDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async findOneMarketplaceApp(
+    @Args('universalIdentifier') universalIdentifier: string,
+  ): Promise<MarketplaceAppDTO> {
+    return this.marketplaceQueryService.findOneMarketplaceApp(
+      universalIdentifier,
+    );
+  }
+
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)

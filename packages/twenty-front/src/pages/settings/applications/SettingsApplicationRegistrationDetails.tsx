@@ -34,6 +34,7 @@ import {
   IconChartBar,
   IconCheck,
   IconDownload,
+  IconExternalLink,
   IconKey,
   IconRefresh,
   IconShield,
@@ -43,7 +44,7 @@ import {
   IconWorld,
   Status,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { Button, Toggle } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
@@ -116,6 +117,24 @@ const StyledRotateContainer = styled.div`
 const StyledDangerButtonGroup = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledToggleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[3]};
+  justify-content: space-between;
+`;
+
+const StyledToggleLabel = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+`;
+
+const StyledMarketplaceActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type ServerVariable = {
@@ -225,6 +244,37 @@ export const SettingsApplicationRegistrationDetails = () => {
   ).some(
     (application) =>
       application.universalIdentifier === registration.universalIdentifier,
+  );
+
+  const handleToggleListed = async () => {
+    try {
+      await updateRegistration({
+        variables: {
+          input: {
+            id: applicationRegistrationId,
+            update: {
+              isListed: !registration.isListed,
+            },
+          },
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: registration.isListed
+          ? t`App removed from marketplace`
+          : t`App listed on marketplace`,
+      });
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error updating marketplace listing`,
+      });
+    }
+  };
+
+  const marketplacePageUrl = getSettingsPath(
+    SettingsPath.AvailableApplicationDetail,
+    {
+      availableApplicationId: registration.universalIdentifier,
+    },
   );
 
   const handleInstallOnWorkspace = async () => {
@@ -538,6 +588,32 @@ export const SettingsApplicationRegistrationDetails = () => {
               items={generalItems}
               gridAutoColumns="3fr 8fr"
             />
+          </Section>
+
+          <Section>
+            <H2Title
+              title={t`Marketplace Listing`}
+              description={t`Control visibility on the marketplace. Unlisted apps are still accessible via direct link.`}
+            />
+            <StyledToggleRow>
+              <StyledToggleLabel>
+                {registration.isListed
+                  ? t`Listed on marketplace`
+                  : t`Not listed on marketplace`}
+              </StyledToggleLabel>
+              <Toggle
+                value={registration.isListed}
+                onChange={handleToggleListed}
+              />
+            </StyledToggleRow>
+            <StyledMarketplaceActions>
+              <Button
+                Icon={IconExternalLink}
+                title={t`View marketplace page`}
+                variant="secondary"
+                to={`/settings/${marketplacePageUrl}`}
+              />
+            </StyledMarketplaceActions>
           </Section>
 
           <Section>

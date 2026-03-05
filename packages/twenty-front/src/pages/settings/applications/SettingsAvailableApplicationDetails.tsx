@@ -17,6 +17,7 @@ import {
   IconColumns,
   IconCommand,
   IconDownload,
+  IconEyeOff,
   IconFileText,
   IconInfoCircle,
   IconLayoutGrid,
@@ -27,7 +28,10 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  useFindOneMarketplaceAppQuery,
+} from '~/generated-metadata/graphql';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
@@ -240,6 +244,19 @@ const StyledProviderItem = styled.li`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledUnlistedBanner = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+`;
+
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
     availableApplicationId: string;
@@ -253,9 +270,44 @@ export const SettingsAvailableApplicationDetails = () => {
     PermissionFlagType.MARKETPLACE_APPS,
   );
 
-  const application = useMemo(() => {
+  const listedApp = useMemo(() => {
     return marketplaceApps?.find((app) => app.id === availableApplicationId);
   }, [availableApplicationId, marketplaceApps]);
+
+  const { data: singleAppData } = useFindOneMarketplaceAppQuery({
+    variables: { universalIdentifier: availableApplicationId },
+    skip: isDefined(listedApp) || !availableApplicationId,
+  });
+
+  const singleApp = singleAppData?.findOneMarketplaceApp;
+
+  const application = useMemo(() => {
+    if (isDefined(listedApp)) {
+      return listedApp;
+    }
+
+    if (!isDefined(singleApp)) {
+      return undefined;
+    }
+
+    const totalFieldsCount =
+      (singleApp.objects ?? []).reduce(
+        (count, appObject) => count + appObject.fields.length,
+        0,
+      ) + (singleApp.fields ?? []).length;
+
+    return {
+      ...singleApp,
+      content: {
+        objects: (singleApp.objects ?? []).length,
+        fields: totalFieldsCount,
+        functions: (singleApp.logicFunctions ?? []).length,
+        frontComponents: (singleApp.frontComponents ?? []).length,
+      },
+    };
+  }, [listedApp, singleApp]);
+
+  const isUnlisted = !isDefined(listedApp) && isDefined(application);
 
   const handleInstall = async () => {
     if (isDefined(application)) {
@@ -438,6 +490,12 @@ export const SettingsAvailableApplicationDetails = () => {
       ]}
     >
       <SettingsPageContainer>
+        {isUnlisted && (
+          <StyledUnlistedBanner>
+            <IconEyeOff size={16} />
+            {t`This application is not listed on the marketplace. It was shared via a direct link.`}
+          </StyledUnlistedBanner>
+        )}
         <StyledHeader>
           <StyledHeaderLeft>
             <StyledLogo>

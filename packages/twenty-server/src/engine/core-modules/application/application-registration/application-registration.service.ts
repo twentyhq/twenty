@@ -251,6 +251,7 @@ export class ApplicationRegistrationService {
       | 'websiteUrl'
       | 'termsUrl'
       | 'latestAvailableVersion'
+      | 'isListed'
       | 'isFeatured'
       | 'marketplaceDisplayData'
       | 'ownerWorkspaceId'
@@ -272,6 +273,7 @@ export class ApplicationRegistrationService {
         websiteUrl: params.websiteUrl,
         termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
+        isListed: params.isListed,
         isFeatured: params.isFeatured,
         marketplaceDisplayData: params.marketplaceDisplayData,
       });
@@ -290,6 +292,7 @@ export class ApplicationRegistrationService {
       websiteUrl: params.websiteUrl,
       termsUrl: params.termsUrl,
       latestAvailableVersion: params.latestAvailableVersion,
+      isListed: params.isListed,
       isFeatured: params.isFeatured,
       marketplaceDisplayData: params.marketplaceDisplayData,
       oAuthClientId: v4(),
@@ -361,6 +364,12 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
       where: { sourceType },
+    });
+  }
+
+  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      where: { isListed: true },
     });
   }
 

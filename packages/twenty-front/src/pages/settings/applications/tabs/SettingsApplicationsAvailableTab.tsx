@@ -1,11 +1,16 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
+import { IconSparkles } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
+import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -27,24 +32,56 @@ const StyledEmptyState = styled.div`
   text-align: center;
 `;
 
+const StyledHintLink = styled.button`
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.blue};
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+`;
+
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(true);
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
 
-  const applications = marketplaceApps;
+  const textFilteredApplications = useMemo(() => {
+    if (!searchTerm) {
+      return marketplaceApps;
+    }
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return marketplaceApps.filter(
+      (application) =>
+        application.name.toLowerCase().includes(lowerSearch) ||
+        application.description.toLowerCase().includes(lowerSearch) ||
+        application.author.toLowerCase().includes(lowerSearch),
+    );
+  }, [marketplaceApps, searchTerm]);
 
   const filteredApplications = useMemo(() => {
-    return applications.filter(
-      (application) =>
-        application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        application.description
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        application.author.toLowerCase().includes(searchTerm.toLowerCase()),
+    if (!showFeaturedOnly) {
+      return textFilteredApplications;
+    }
+
+    return textFilteredApplications.filter(
+      (application) => application.isFeatured,
     );
-  }, [applications, searchTerm]);
+  }, [textFilteredApplications, showFeaturedOnly]);
+
+  const nonFeaturedCount = useMemo(() => {
+    if (!showFeaturedOnly) {
+      return 0;
+    }
+
+    return textFilteredApplications.filter(
+      (application) => !application.isFeatured,
+    ).length;
+  }, [textFilteredApplications, showFeaturedOnly]);
 
   if (isLoading) {
     return (
@@ -54,6 +91,9 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }
 
+  const showNonFeaturedHint =
+    filteredApplications.length === 0 && nonFeaturedCount > 0;
+
   return (
     <Section>
       <StyledSearchInputContainer>
@@ -61,11 +101,43 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onChange={setSearchTerm}
+          filterDropdown={(filterButton: ReactNode) => (
+            <Dropdown
+              dropdownId="marketplace-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconSparkles}
+                      onToggleChange={() =>
+                        setShowFeaturedOnly(!showFeaturedOnly)
+                      }
+                      toggled={showFeaturedOnly}
+                      text={t`Featured only`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
         />
       </StyledSearchInputContainer>
 
       {filteredApplications.length === 0 ? (
-        <StyledEmptyState>{t`No applications available`}</StyledEmptyState>
+        <StyledEmptyState>
+          {showNonFeaturedHint
+            ? t`No featured applications found. ${nonFeaturedCount} non-featured result(s) available — `
+            : t`No applications available`}
+          {showNonFeaturedHint && (
+            <StyledHintLink onClick={() => setShowFeaturedOnly(false)}>
+              {t`show all`}
+            </StyledHintLink>
+          )}
+        </StyledEmptyState>
       ) : (
         <StyledCardsGrid>
           {filteredApplications.map((application) => (

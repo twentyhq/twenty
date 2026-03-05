@@ -16,6 +16,7 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     latestAvailableVersion
     websiteUrl
     termsUrl
+    isListed
     createdAt
     updatedAt
   }

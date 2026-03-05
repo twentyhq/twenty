@@ -36,9 +36,7 @@ export class MarketplaceQueryService {
     }
 
     const registrations =
-      await this.applicationRegistrationService.findManyBySourceType(
-        ApplicationRegistrationSourceType.NPM,
-      );
+      await this.applicationRegistrationService.findManyListed();
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
@@ -61,6 +59,15 @@ export class MarketplaceQueryService {
     this.cacheExpiresAt = Date.now() + MARKETPLACE_CACHE_TTL_MS;
 
     return this.cachedApps;
+  }
+
+  async findOneMarketplaceApp(
+    universalIdentifier: string,
+  ): Promise<MarketplaceAppDTO> {
+    const registration =
+      await this.findRegistrationByUniversalIdentifier(universalIdentifier);
+
+    return this.toMarketplaceAppDTO(registration);
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -108,6 +115,7 @@ export class MarketplaceQueryService {
       frontComponents: displayData?.frontComponents ?? [],
       sourcePackage: registration.sourcePackage ?? undefined,
       defaultRole: displayData?.defaultRole,
+      isFeatured: registration.isFeatured,
     };
   }
 }
