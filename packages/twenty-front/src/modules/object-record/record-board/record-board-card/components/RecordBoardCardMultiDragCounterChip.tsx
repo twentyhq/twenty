@@ -3,7 +3,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
-const StyledNotificationCounter = styled(NotificationCounter)`
+const StyledNotificationCounterContainer = styled.div`
   position: absolute;
   top: -7px;
   right: -7px;
@@ -23,5 +23,9 @@ export const RecordBoardCardMultiDragCounterChip = () => {
     return null;
   }
 
-  return <StyledNotificationCounter count={selectedCount} />;
+  return (
+    <StyledNotificationCounterContainer>
+      <NotificationCounter count={selectedCount} />
+    </StyledNotificationCounterContainer>
+  );
 };

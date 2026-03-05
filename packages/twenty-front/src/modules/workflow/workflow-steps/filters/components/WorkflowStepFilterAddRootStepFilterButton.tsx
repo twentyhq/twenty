@@ -7,7 +7,7 @@ import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -17,15 +17,17 @@ export const WorkflowStepFilterAddRootStepFilterButton = () => {
   const { addRootStepFilter } = useAddRootStepFilter();
 
   return (
-    <StyledButton
-      Icon={IconFilter}
-      size="small"
-      variant="secondary"
-      accent="default"
-      onClick={addRootStepFilter}
-      ariaLabel={t`Add first filter`}
-      title={t`Add first filter`}
-      disabled={readonly}
-    />
+    <StyledButtonContainer>
+      <Button
+        Icon={IconFilter}
+        size="small"
+        variant="secondary"
+        accent="default"
+        onClick={addRootStepFilter}
+        ariaLabel={t`Add first filter`}
+        title={t`Add first filter`}
+        disabled={readonly}
+      />
+    </StyledButtonContainer>
   );
 };

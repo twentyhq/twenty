@@ -3,7 +3,7 @@ import React from 'react';
 import { Label } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledGroupHeading = styled(Label)`
+const StyledGroupHeadingContainer = styled.div`
   align-items: center;
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
@@ -29,7 +29,9 @@ export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
   }
   return (
     <>
-      <StyledGroupHeading>{heading}</StyledGroupHeading>
+      <StyledGroupHeadingContainer>
+        <Label>{heading}</Label>
+      </StyledGroupHeadingContainer>
       <StyledGroup>{children}</StyledGroup>
     </>
   );
