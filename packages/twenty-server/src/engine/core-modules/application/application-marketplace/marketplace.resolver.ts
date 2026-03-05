@@ -12,7 +12,6 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,7 +37,6 @@ export class MarketplaceResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly applicationUpgradeService: ApplicationUpgradeService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -71,43 +69,6 @@ export class MarketplaceResolver {
     return this.applicationInstallService.installApplication({
       appRegistrationId: registration.id,
       version,
-      workspaceId: workspace.id,
-    });
-  }
-
-  @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async installNpmApp(
-    @Args('packageName') packageName: string,
-    @Args('version', { type: () => String, nullable: true })
-    version: string | undefined,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    const registration =
-      await this.marketplaceQueryService.findOrCreateNpmRegistration({
-        packageName,
-        ownerWorkspaceId: workspace.id,
-      });
-
-    return this.applicationInstallService.installApplication({
-      appRegistrationId: registration.id,
-      version,
-      workspaceId: workspace.id,
-    });
-  }
-
-  @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async upgradeApplication(
-    @Args('appRegistrationId') appRegistrationId: string,
-    @Args('targetVersion') targetVersion: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return this.applicationUpgradeService.upgradeApplication({
-      appRegistrationId,
-      targetVersion,
       workspaceId: workspace.id,
     });
   }

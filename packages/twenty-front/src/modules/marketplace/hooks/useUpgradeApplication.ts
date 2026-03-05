@@ -29,9 +29,11 @@ export const useUpgradeApplication = () => {
       }
 
       return false;
-    } catch {
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
+
       enqueueErrorSnackBar({
-        message: t`Failed to upgrade the application.`,
+        message: graphqlMessage ?? t`Failed to upgrade the application.`,
       });
 
       return false;

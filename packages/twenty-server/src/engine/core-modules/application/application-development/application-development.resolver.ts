@@ -1,5 +1,4 @@
 import {
-  Logger,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -21,7 +20,9 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
@@ -54,10 +55,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationDevelopmentResolver {
-  private readonly logger = new Logger(ApplicationDevelopmentResolver.name);
-
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
+    private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
@@ -82,19 +82,17 @@ export class ApplicationDevelopmentResolver {
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
-    const applicationRegistrationId =
-      await this.resolveApplicationRegistrationId(
-        manifest.application.universalIdentifier,
-        {
-          name: manifest.application.displayName,
-          description: manifest.application.description,
-          logoUrl: manifest.application.logoUrl,
-          author: manifest.application.author,
-          websiteUrl: manifest.application.websiteUrl,
-          termsUrl: manifest.application.termsUrl,
-        },
-        workspaceId,
-      );
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      manifest.application.universalIdentifier,
+      workspaceId,
+    );
+
+    await this.ensureApplicationExists({
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId,
+      applicationRegistrationId,
+    });
 
     const workspaceMigration =
       await this.applicationSyncService.synchronizeFromManifest({
@@ -158,16 +156,8 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  private async resolveApplicationRegistrationId(
+  private async findApplicationRegistrationId(
     universalIdentifier: string,
-    metadata: {
-      name: string;
-      description?: string;
-      logoUrl?: string;
-      author?: string;
-      websiteUrl?: string;
-      termsUrl?: string;
-    },
     workspaceId: string,
   ): Promise<string> {
     const existingRegistration =
@@ -175,35 +165,27 @@ export class ApplicationDevelopmentResolver {
         universalIdentifier,
       );
 
-    if (existingRegistration) {
-      const isOwner =
-        await this.applicationRegistrationService.isOwnedByWorkspace(
-          existingRegistration.id,
-          workspaceId,
-        );
-
-      if (!isOwner) {
-        throw new ApplicationException(
-          'Cannot sync application: registration is owned by another workspace',
-          ApplicationExceptionCode.FORBIDDEN,
-        );
-      }
-
-      return existingRegistration.id;
+    if (!existingRegistration) {
+      throw new ApplicationException(
+        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
     }
 
-    const { applicationRegistration: newRegistration } =
-      await this.applicationRegistrationService.create(
-        { ...metadata, universalIdentifier },
+    const isOwner =
+      await this.applicationRegistrationService.isOwnedByWorkspace(
+        existingRegistration.id,
         workspaceId,
-        null,
       );
 
-    this.logger.log(
-      `Created app registration for ${metadata.name} (${universalIdentifier})`,
-    );
+    if (!isOwner) {
+      throw new ApplicationException(
+        'Cannot sync application: registration is owned by another workspace',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
 
-    return newRegistration.id;
+    return existingRegistration.id;
   }
 
   private async syncRegistrationMetadata(
@@ -240,5 +222,30 @@ export class ApplicationDevelopmentResolver {
         );
       }
     }
+  }
+
+  private async ensureApplicationExists(params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+  }): Promise<void> {
+    const existing = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (existing) {
+      return;
+    }
+
+    await this.applicationService.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourcePath: params.universalIdentifier,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+    });
   }
 }

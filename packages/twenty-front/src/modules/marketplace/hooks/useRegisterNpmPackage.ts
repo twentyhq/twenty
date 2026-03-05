@@ -33,9 +33,11 @@ export const useRegisterNpmPackage = () => {
       });
 
       return true;
-    } catch {
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
+
       enqueueErrorSnackBar({
-        message: t`Failed to register npm package.`,
+        message: graphqlMessage ?? t`Failed to register npm package.`,
       });
 
       return false;

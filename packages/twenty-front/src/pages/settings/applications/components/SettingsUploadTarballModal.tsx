@@ -2,12 +2,15 @@ import { styled } from '@linaria/react';
 import { useRef } from 'react';
 
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { INSTALL_APPLICATION } from '~/modules/marketplace/graphql/mutations/installApplication';
 import { useUploadAppTarball } from '~/modules/marketplace/hooks/useUploadAppTarball';
 import {
   StyledAppModal,
@@ -23,9 +26,11 @@ const StyledFileInput = styled.input`
 `;
 
 export const SettingsUploadTarballModal = () => {
-  const { t } = useLingui();
+  const { t: tFn } = useLingui();
   const { closeModal } = useModal();
   const { upload, isUploading } = useUploadAppTarball();
+  const [installApplication] = useMutation(INSTALL_APPLICATION);
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const apolloClient = useApolloClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,12 +50,31 @@ export const SettingsUploadTarballModal = () => {
     try {
       const uploadResult = await upload(file);
 
-      if (uploadResult.success) {
-        await apolloClient.refetchQueries({
-          include: [FIND_MANY_APPLICATION_REGISTRATIONS],
-        });
-        closeModal(UPLOAD_TARBALL_MODAL_ID);
+      if (!uploadResult.success) {
+        return;
       }
+
+      const registrationId = uploadResult.registrationId;
+
+      if (isDefined(registrationId)) {
+        try {
+          await installApplication({
+            variables: { appRegistrationId: registrationId },
+          });
+          enqueueSuccessSnackBar({
+            message: t`Application installed successfully.`,
+          });
+        } catch {
+          enqueueErrorSnackBar({
+            message: t`Tarball uploaded but installation failed.`,
+          });
+        }
+      }
+
+      await apolloClient.refetchQueries({
+        include: [FIND_MANY_APPLICATION_REGISTRATIONS],
+      });
+      closeModal(UPLOAD_TARBALL_MODAL_ID);
     } finally {
       if (isDefined(fileInputRef.current)) {
         fileInputRef.current.value = '';
@@ -71,7 +95,7 @@ export const SettingsUploadTarballModal = () => {
     >
       <StyledAppModalTitle>
         <H1Title
-          title={t`Upload tarball`}
+          title={tFn`Upload tarball`}
           fontColor={H1TitleFontColor.Primary}
         />
       </StyledAppModalTitle>
@@ -79,7 +103,7 @@ export const SettingsUploadTarballModal = () => {
         alignment={SectionAlignment.Center}
         fontColor={SectionFontColor.Primary}
       >
-        {t`Select a .tar.gz application package to register.`}
+        {tFn`Select a .tar.gz application package to upload and install.`}
       </StyledAppModalSection>
 
       <StyledFileInput
@@ -92,14 +116,14 @@ export const SettingsUploadTarballModal = () => {
       <StyledAppModalButton
         onClick={handleCancel}
         variant="secondary"
-        title={t`Cancel`}
+        title={tFn`Cancel`}
         fullWidth
       />
       <StyledAppModalButton
         onClick={handleSelectFile}
         variant="secondary"
         accent="blue"
-        title={t`Choose file`}
+        title={tFn`Choose file`}
         disabled={isUploading}
         fullWidth
       />

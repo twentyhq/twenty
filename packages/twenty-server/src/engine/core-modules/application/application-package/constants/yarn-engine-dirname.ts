@@ -6,6 +6,6 @@ export const YARN_ENGINE_DIRNAME = path.resolve(
   __dirname,
   path.join(
     ASSET_PATH,
-    'engine/core-modules/application/constants/yarn-engine',
+    'engine/core-modules/application/application-package/constants/yarn-engine',
   ),
 );

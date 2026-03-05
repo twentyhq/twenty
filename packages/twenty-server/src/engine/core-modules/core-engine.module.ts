@@ -11,6 +11,7 @@ import { ApplicationOAuthModule } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
@@ -96,6 +97,7 @@ import { FileModule } from './file/file.module';
     ApplicationOAuthModule,
     ApplicationModule,
     ApplicationInstallModule,
+    ApplicationUpgradeModule,
     ApplicationDevelopmentModule,
     MarketplaceModule,
     AppTokenModule,

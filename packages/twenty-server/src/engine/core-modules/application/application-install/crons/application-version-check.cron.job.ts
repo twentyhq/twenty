@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { APPLICATION_VERSION_CHECK_CRON_PATTERN } from 'src/engine/core-modules/application/application-upgrade/crons/constants/application-version-check-cron-pattern.constant';
+import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

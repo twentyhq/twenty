@@ -16,7 +16,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -93,28 +92,18 @@ export class ApplicationSyncService {
       ).toString('utf-8'),
     ) as PackageJson;
 
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
-
-    let application = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier: manifest.application.universalIdentifier,
-      workspaceId,
-    });
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      },
+    );
 
     if (!application) {
-      application = await this.applicationService.create({
-        universalIdentifier: manifest.application.universalIdentifier,
-        name,
-        description: manifest.application.description,
-        version: packageJson.version,
-        sourcePath: 'cli-sync',
-        defaultRoleId: null,
-        workspaceId,
-        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
-        packageJsonFileId: null,
-        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
-        yarnLockFileId: null,
-        availablePackages: defaultPackageFields.availablePackages,
-      });
+      throw new ApplicationException(
+        `Application "${manifest.application.universalIdentifier}" is not installed in workspace "${workspaceId}". Install it first.`,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+      );
     }
 
     await this.applicationVariableService.upsertManyApplicationVariableEntities(

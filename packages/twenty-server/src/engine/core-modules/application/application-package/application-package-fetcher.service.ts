@@ -7,6 +7,7 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
@@ -54,13 +55,30 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
+  async resolveNpmPackage(
+    packageName: string,
+    targetVersion?: string,
+  ): Promise<ResolvedPackage> {
+    return this.resolveFromNpm(packageName, targetVersion);
+  }
+
   async resolvePackage(
     appRegistration: ApplicationRegistrationEntity,
     options?: { targetVersion?: string },
   ): Promise<ResolvedPackage | null> {
     switch (appRegistration.sourceType) {
       case ApplicationRegistrationSourceType.NPM:
-        return this.resolveFromNpm(appRegistration, options?.targetVersion);
+        if (!appRegistration.sourcePackage) {
+          throw new ApplicationException(
+            `App registration ${appRegistration.id} has sourceType=npm but no sourcePackage`,
+            ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+          );
+        }
+
+        return this.resolveFromNpm(
+          appRegistration.sourcePackage,
+          options?.targetVersion,
+        );
       case ApplicationRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
       case ApplicationRegistrationSourceType.LOCAL:
@@ -77,7 +95,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   }
 
   private async resolveFromNpm(
-    appRegistration: ApplicationRegistrationEntity,
+    packageName: string,
     targetVersion?: string,
   ): Promise<ResolvedPackage> {
     const workDir = join(APP_FETCHER_TMPDIR, v4());
@@ -89,30 +107,21 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       const authToken = this.twentyConfigService.get('APP_REGISTRY_TOKEN');
 
-      if (!appRegistration.sourcePackage) {
-        throw new ApplicationException(
-          `App registration ${appRegistration.id} has sourceType=npm but no sourcePackage`,
-          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-        );
-      }
-
-      const sourcePackage = appRegistration.sourcePackage;
-
-      assertValidNpmPackageName(sourcePackage);
+      assertValidNpmPackageName(packageName);
 
       const versionSpec = targetVersion ?? 'latest';
 
       await this.writeNpmrc({
         workDir,
-        packageName: sourcePackage,
+        packageName,
         registryUrl,
         authToken,
       });
       await this.setupYarnEngine(workDir);
-      await this.writeMinimalPackageJson(workDir, sourcePackage, versionSpec);
+      await this.writeMinimalPackageJson(workDir, packageName, versionSpec);
       await this.runYarnInstall(workDir);
 
-      const packageDir = join(workDir, 'node_modules', sourcePackage);
+      const packageDir = join(workDir, 'node_modules', packageName);
       const manifest = await readJsonFileOrThrow<Manifest>(
         packageDir,
         'manifest.json',
@@ -131,7 +140,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
       throw new ApplicationException(
-        `Failed to resolve npm package ${appRegistration.sourcePackage}: ${error}`,
+        `Failed to resolve npm package ${packageName}: ${error}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
@@ -273,11 +282,19 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         },
       );
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const stderr =
+        isDefined(error) &&
+        typeof error === 'object' &&
+        'stderr' in error &&
+        typeof (error as { stderr: unknown }).stderr === 'string'
+          ? (error as { stderr: string }).stderr
+          : undefined;
+
+      const message =
+        stderr ?? (error instanceof Error ? error.message : String(error));
 
       throw new ApplicationException(
-        `yarn install failed: ${errorMessage}`,
+        `yarn install failed: ${message}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }

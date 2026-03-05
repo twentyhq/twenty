@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationOAuthResolver } from 'src/engine/core-modules/application/application-oauth/application-oauth.resolver';
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-discovery.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
@@ -25,9 +23,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       ApplicationEntity,
       UserWorkspaceEntity,
     ]),
-    ApplicationModule,
     ApplicationRegistrationModule,
-    ApplicationInstallModule,
     TokenModule,
     FeatureFlagModule,
     PermissionsModule,

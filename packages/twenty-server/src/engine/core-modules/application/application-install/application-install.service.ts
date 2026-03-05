@@ -11,11 +11,12 @@ import { Repository } from 'typeorm';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   ApplicationPackageFetcherService,
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
@@ -43,8 +44,7 @@ export class ApplicationInstallService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly applicationService: ApplicationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
@@ -100,9 +100,19 @@ export class ApplicationInstallService {
         return true;
       }
 
+      const universalIdentifier = appRegistration.universalIdentifier;
+
+      await this.ensureApplicationExists({
+        universalIdentifier,
+        name: resolvedPackage.manifest.application.displayName,
+        workspaceId: params.workspaceId,
+        applicationRegistrationId: appRegistration.id,
+        sourceType: appRegistration.sourceType,
+      });
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
-        appRegistration.universalIdentifier,
+        universalIdentifier,
         params.workspaceId,
       );
 
@@ -112,14 +122,8 @@ export class ApplicationInstallService {
         applicationRegistrationId: appRegistration.id,
       });
 
-      await this.updateApplicationSourceType(
-        appRegistration.universalIdentifier,
-        params.workspaceId,
-        appRegistration.sourceType,
-      );
-
       this.logger.log(
-        `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -205,14 +209,29 @@ export class ApplicationInstallService {
     return result;
   }
 
-  private async updateApplicationSourceType(
-    universalIdentifier: string,
-    workspaceId: string,
-    sourceType: ApplicationRegistrationSourceType,
-  ): Promise<void> {
-    await this.applicationRepository.update(
-      { universalIdentifier, workspaceId },
-      { sourceType },
-    );
+  private async ensureApplicationExists(params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+    sourceType: ApplicationRegistrationSourceType;
+  }): Promise<ApplicationEntity> {
+    const existing = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (isDefined(existing)) {
+      return existing;
+    }
+
+    return this.applicationService.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourcePath: params.universalIdentifier,
+      sourceType: params.sourceType,
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+    });
   }
 }

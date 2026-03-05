@@ -6,6 +6,6 @@ export const SEED_DEPENDENCIES_DIRNAME = path.resolve(
   __dirname,
   path.join(
     ASSET_PATH,
-    'engine/core-modules/application/constants/seed-dependencies',
+    'engine/core-modules/application/application-package/constants/seed-dependencies',
   ),
 );

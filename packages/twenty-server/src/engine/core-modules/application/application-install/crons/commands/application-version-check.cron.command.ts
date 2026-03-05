@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 
-import { ApplicationVersionCheckCronJob } from 'src/engine/core-modules/application/application-upgrade/crons/application-version-check.cron.job';
 import { APPLICATION_VERSION_CHECK_CRON_PATTERN } from 'src/engine/core-modules/application/application-upgrade/crons/constants/application-version-check-cron-pattern.constant';
+import { ApplicationVersionCheckCronJob } from 'src/engine/core-modules/application/application-upgrade/crons/application-version-check.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';

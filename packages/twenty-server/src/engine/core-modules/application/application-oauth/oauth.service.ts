@@ -13,10 +13,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -36,8 +33,6 @@ export class OAuthService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationService: ApplicationService,
-    private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -194,10 +189,17 @@ export class OAuthService {
       );
     }
 
-    const application = await this.findOrInstallApplication(
+    const application = await this.findApplication(
       applicationRegistration,
       authCodeToken.workspaceId,
     );
+
+    if (!application) {
+      return this.errorResponse(
+        'invalid_grant',
+        `Application "${applicationRegistration.name}" is not installed in this workspace. Install it first.`,
+      );
+    }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
@@ -542,60 +544,15 @@ export class OAuthService {
     return null;
   }
 
-  private async findOrInstallApplication(
+  private async findApplication(
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
-  ): Promise<ApplicationEntity> {
-    const existingApplication = await this.applicationRepository.findOne({
+  ): Promise<ApplicationEntity | null> {
+    return this.applicationRepository.findOne({
       where: {
         applicationRegistrationId: applicationRegistration.id,
         workspaceId,
       },
-    });
-
-    if (existingApplication) {
-      return existingApplication;
-    }
-
-    this.logger.log(
-      `Auto-installing application "${applicationRegistration.name}" in workspace ${workspaceId}`,
-    );
-
-    if (
-      applicationRegistration.sourceType ===
-        ApplicationRegistrationSourceType.NPM ||
-      applicationRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL
-    ) {
-      await this.applicationInstallService.installApplication({
-        appRegistrationId: applicationRegistration.id,
-        workspaceId,
-      });
-
-      const installedApplication = await this.applicationRepository.findOne({
-        where: {
-          applicationRegistrationId: applicationRegistration.id,
-          workspaceId,
-        },
-      });
-
-      if (installedApplication) {
-        return installedApplication;
-      }
-
-      this.logger.warn(
-        `Install succeeded but application not found in workspace, falling back to bare creation`,
-      );
-    }
-
-    return this.applicationService.create({
-      universalIdentifier: applicationRegistration.universalIdentifier,
-      name: applicationRegistration.name,
-      description: applicationRegistration.description,
-      version: '0.0.0',
-      sourcePath: 'oauth-install',
-      applicationRegistrationId: applicationRegistration.id,
-      workspaceId,
     });
   }
 

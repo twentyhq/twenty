@@ -129,42 +129,6 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`My Apps`}
           description={t`Apps you've created, registered, or published`}
         />
-        <StyledButtonGroupContainer>
-          <ButtonGroup size="small" variant="secondary">
-            <Button
-              Icon={IconDownload}
-              title={t`Register from npm`}
-              onClick={handleRegisterFromNpm}
-            />
-            <Dropdown
-              dropdownId={REGISTER_APP_DROPDOWN_ID}
-              clickableComponent={
-                <IconButton
-                  size="small"
-                  variant="secondary"
-                  Icon={IconChevronDown}
-                  position="right"
-                />
-              }
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItem
-                      LeftIcon={IconDownload}
-                      text={t`Register from npm`}
-                      onClick={handleRegisterFromNpm}
-                    />
-                    <MenuItem
-                      LeftIcon={IconUpload}
-                      text={t`Upload tarball`}
-                      onClick={handleUploadTarball}
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          </ButtonGroup>
-        </StyledButtonGroupContainer>
         {registrations.length > 0 && (
           <SettingsListCard
             items={registrations}
@@ -187,6 +151,42 @@ export const SettingsApplicationsDeveloperTab = () => {
           />
         )}
       </Section>
+      <StyledButtonGroupContainer>
+        <ButtonGroup size="small" variant="secondary">
+          <Button
+            Icon={IconDownload}
+            title={t`Register from npm`}
+            onClick={handleRegisterFromNpm}
+          />
+          <Dropdown
+            dropdownId={REGISTER_APP_DROPDOWN_ID}
+            clickableComponent={
+              <IconButton
+                size="small"
+                variant="secondary"
+                Icon={IconChevronDown}
+                position="right"
+              />
+            }
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconDownload}
+                    text={t`Register from npm`}
+                    onClick={handleRegisterFromNpm}
+                  />
+                  <MenuItem
+                    LeftIcon={IconUpload}
+                    text={t`Upload tarball`}
+                    onClick={handleUploadTarball}
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
+        </ButtonGroup>
+      </StyledButtonGroupContainer>
 
       <SettingsRegisterNpmAppModal />
       <SettingsUploadTarballModal />
