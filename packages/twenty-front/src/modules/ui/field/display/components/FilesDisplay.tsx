@@ -1,12 +1,12 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { UploadFileChip } from '@/ui/field/display/components/UploadFileChip';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
 type FilesDisplayProps = {
@@ -22,9 +22,9 @@ export const FilesDisplay = ({
   isUploadWindowOpen = false,
   isFileUploading = false,
 }: FilesDisplayProps) => {
-  const setFilePreview = useSetRecoilStateV2(filePreviewStateV2);
-  const isAttachmentPreviewEnabled = useRecoilValueV2(
-    isAttachmentPreviewEnabledStateV2,
+  const setFilePreview = useSetAtomState(filePreviewState);
+  const isAttachmentPreviewEnabled = useAtomStateValue(
+    isAttachmentPreviewEnabledState,
   );
 
   const handlePreview = (file: FieldFilesValue) => {

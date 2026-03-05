@@ -7,6 +7,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -14,8 +15,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -50,8 +53,8 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
-  @Column({ type: 'text', default: 'local' })
-  sourceType: 'local';
+  @Column({ type: 'text', default: AppRegistrationSourceType.LOCAL })
+  sourceType: AppRegistrationSourceType;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
@@ -88,8 +91,21 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  settingsCustomTabFrontComponentId: string | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
+  applicationRegistrationId: string | null;
+
+  @ManyToOne(() => ApplicationRegistrationEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationRegistrationId' })
+  applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
 
   @OneToMany(() => AgentEntity, (agent) => agent.application, {
     onDelete: 'CASCADE',

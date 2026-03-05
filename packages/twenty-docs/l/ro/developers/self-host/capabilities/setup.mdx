@@ -5,7 +5,7 @@ title: Configurare
 # Gestionarea configurației
 
 <Warning>
-  **Prima instalare?** Urmați [ghidul de instalare Docker Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
+**Prima instalare?** Urmați [ghidul de instalare Docker Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
 </Warning>
 
 Twenty oferă **două moduri de configurare** pentru a se potrivi nevoilor diferite de implementare:
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 4. Schimbările intră în vigoare imediat (în termen de 15 secunde pentru implementări cu mai multe containere)
 
 <Warning>
-  **Implementări Multi-Container:** Când utilizați configurarea bazei de date (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), atât serverul cât și containerele worker citesc din aceeași bază de date. Modificările din panoul de administrare afectează ambele automat, eliminând necesitatea duplicării variabilelor de mediu între containere (cu excepția variabilelor de infrastructură).
+**Implementări Multi-Container:** Când utilizați configurarea bazei de date (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), atât serverul cât și containerele worker citesc din aceeași bază de date. Modificările din panoul de administrare afectează ambele automat, eliminând necesitatea duplicării variabilelor de mediu între containere (cu excepția variabilelor de infrastructură).
 </Warning>
 
 **Ce puteți configura prin panoul de administrare:**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 ![Variabile de Configurare Panou Admin](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrare la **Setări → Panou Admin → Variabile de Configurare**.
-  Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`), și secretele aplicației (`APP_SECRET`) pot fi configurate doar prin fișierul `.env`.
+Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrare la **Setări → Panou Admin → Variabile de Configurare**.
+Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`), și secretele aplicației (`APP_SECRET`) pot fi configurate doar prin fișierul `.env`.
 
-  [Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. Configurare Doar Mediu
@@ -93,7 +93,7 @@ Activați modul cu mai multe spații de lucru pentru implementări de tip SaaS, 
 * Setări specifice spațiului de lucru, precum subdomeniu și domeniu personalizat, devin disponibile în setările spațiului de lucru
 
 <Warning>
-  **Setare exclusiv de mediu:** `IS_MULTIWORKSPACE_ENABLED` poate fi configurată doar prin fișierul `.env` și necesită o repornire. Nu poate fi modificată prin panoul de administrare.
+**Setare exclusiv de mediu:** `IS_MULTIWORKSPACE_ENABLED` poate fi configurată doar prin fișierul `.env` și necesită o repornire. Nu poate fi modificată prin panoul de administrare.
 </Warning>
 
 ### Configurarea DNS pentru modul cu mai multe spații de lucru
@@ -149,7 +149,7 @@ Când este activată, doar utilizatorii cu `canAccessFullAdminPanel` pot crea sp
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
 **Domenii necesare** (configurate automat):
@@ -168,7 +168,7 @@ Dacă aplicația dvs. este în modul de test, va trebui să adăugați utilizato
 ## Integrare Microsoft 365
 
 <Warning>
-  Utilizatorii trebuie să aibă un [Licență Microsoft 365](https://admin.microsoft.com/Adminportal/Home) pentru a putea utiliza API-ul Calendar și Mesagerie. Nu vor putea sincroniza contul lor pe Twenty fără una.
+Utilizatorii trebuie să aibă un [Licență Microsoft 365](https://admin.microsoft.com/Adminportal/Home) pentru a putea utiliza API-ul Calendar și Mesagerie. Nu vor putea sincroniza contul lor pe Twenty fără una.
 </Warning>
 
 ### Creați un proiect în Microsoft Azure
@@ -211,7 +211,7 @@ Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
 ### Configurați scopurile
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. Configurați setările dvs. SMTP:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    Va trebui să provisionați o [Parolă de Aplicație](https://support.google.com/accounts/answer/185833).
 
+  <ArticleTab>
+
+  Va trebui să provisionați o [Parolă de Aplicație](https://support.google.com/accounts/answer/185833).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+  * Rulați imaginea smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * Accesați interfața smtp4dev aici: [http://localhost:8090](http://localhost:8090)
+  * Setați următoarele variabile:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
-
-    * Rulați imaginea smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * Accesați interfața smtp4dev aici: [http://localhost:8090](http://localhost:8090)
-    * Setați următoarele variabile:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
 ## Funcții logice
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty acceptă funcții logice pentru fluxuri de lucru și logică personalizată. Mediul de execuție este configurat prin variabila de mediu `SERVERLESS_TYPE`.
 
 <Warning>
-  **Atenționare de securitate:** Driverul local (`SERVERLESS_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări de producție care gestionează cod neverificat, recomandăm cu tărie utilizarea `SERVERLESS_TYPE=LAMBDA` sau `SERVERLESS_TYPE=DISABLED`.
+**Atenționare de securitate:** Driverul local (`SERVERLESS_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări de producție care gestionează cod neverificat, recomandăm cu tărie utilizarea `SERVERLESS_TYPE=LAMBDA` sau `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Drivere disponibile
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Când se utilizează `SERVERLESS_TYPE=DISABLED`, orice încercare de a executa o funcție logică va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără capabilități de funcții logice.
+Când se utilizează `SERVERLESS_TYPE=DISABLED`, orice încercare de a executa o funcție logică va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără capabilități de funcții logice.
 </Note>

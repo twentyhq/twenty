@@ -4,25 +4,27 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-start;
   max-width: 100%;
   overflow: hidden;
@@ -143,6 +145,10 @@ export const RelationFromManyFieldDisplay = () => {
         return { record: extracted.record, objectMetadata };
       })
       .filter(isDefined);
+
+    if (fieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
+      return <ForbiddenFieldDisplay />;
+    }
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>

@@ -5,19 +5,20 @@ import {
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
+import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type ActionMenuContextProviderWorkflowObjectsProps = {
   objectMetadataItem: ObjectMetadataItem;
-  isInRightDrawer: ActionMenuContextType['isInRightDrawer'];
+  isInSidePanel: ActionMenuContextType['isInSidePanel'];
   displayType: ActionMenuContextType['displayType'];
   actionMenuType: ActionMenuContextType['actionMenuType'];
   children: React.ReactNode;
@@ -25,7 +26,7 @@ type ActionMenuContextProviderWorkflowObjectsProps = {
 
 const ActionMenuContextProviderWorkflowObjectsContent = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
@@ -50,13 +51,15 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuContextApi = useCommandMenuContextApi();
+
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions();
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [
@@ -73,7 +76,7 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
 
 const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
@@ -94,13 +97,15 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuContextApi = useCommandMenuContextApi();
+
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions();
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [
@@ -117,12 +122,12 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
 
 export const ActionMenuContextProviderWorkflowObjects = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
 }: ActionMenuContextProviderWorkflowObjectsProps) => {
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -133,13 +138,14 @@ export const ActionMenuContextProviderWorkflowObjects = ({
       : undefined;
 
   const selectedRecord =
-    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   if (isDefined(selectedRecord?.id)) {
     return (
       <ActionMenuContextProviderWorkflowObjectsContent
         objectMetadataItem={objectMetadataItem}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
         displayType={displayType}
         actionMenuType={actionMenuType}
         selectedRecordId={selectedRecord.id}
@@ -152,7 +158,7 @@ export const ActionMenuContextProviderWorkflowObjects = ({
   return (
     <ActionMenuContextProviderWorkflowObjectsWithoutWorkflow
       objectMetadataItem={objectMetadataItem}
-      isInRightDrawer={isInRightDrawer}
+      isInSidePanel={isInSidePanel}
       displayType={displayType}
       actionMenuType={actionMenuType}
       workflowWithCurrentVersion={undefined}

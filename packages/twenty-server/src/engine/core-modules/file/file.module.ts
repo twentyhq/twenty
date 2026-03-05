@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileAIChatModule } from 'src/engine/core-modules/file/file-ai-chat/file-ai-chat.module';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
@@ -15,10 +16,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
-import { FileUploadService } from './file-upload/services/file-upload.service';
+import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
+import { FileUrlModule } from './file-url/file-url.module';
+import { FileWorkflowModule } from './file-workflow/file-workflow.module';
 import { FilesFieldModule } from './files-field/files-field.module';
-import { FileResolver } from './resolvers/file.resolver';
-import { FileMetadataService } from './services/file-metadata.service';
+import { FileByIdGuard } from './guards/file-by-id.guard';
 import { FileService } from './services/file.service';
 
 @Module({
@@ -27,21 +29,30 @@ import { FileService } from './services/file.service';
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
     PermissionsModule,
     FileStorageModule,
+    FileUrlModule,
     FilesFieldModule,
+    FileCorePictureModule,
+    FileWorkflowModule,
+    FileAIChatModule,
     SecureHttpClientModule,
   ],
   providers: [
     FileService,
-    FileMetadataService,
-    FileResolver,
     FilePathGuard,
+    FileByIdGuard,
     FileAttachmentListener,
     FileWorkspaceMemberListener,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
-    FileUploadService,
   ],
-  exports: [FileService, FileMetadataService],
+  exports: [
+    FileService,
+    FileUrlModule,
+    FilesFieldModule,
+    FileCorePictureModule,
+    FileWorkflowModule,
+    FileAIChatModule,
+  ],
   controllers: [FileController],
 })
 export class FileModule {}

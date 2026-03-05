@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent, useState } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -12,12 +11,12 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1 0 0;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -26,7 +25,7 @@ const StyledTextContainer = styled.div`
 const StyledRightContent = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type PageLayoutTabMenuItemSelectAvatarProps = {
@@ -48,7 +47,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   return (

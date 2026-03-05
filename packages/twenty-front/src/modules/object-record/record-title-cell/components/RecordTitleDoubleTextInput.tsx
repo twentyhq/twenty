@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ClipboardEvent } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -9,12 +9,13 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: inherit;
   width: 100%;
 `;

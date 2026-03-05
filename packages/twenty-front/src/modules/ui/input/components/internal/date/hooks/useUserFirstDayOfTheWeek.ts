@@ -1,6 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/utils';
 
 export const useUserFirstDayOfTheWeek = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const systemFirstDayOfTheWeek = detectCalendarStartDay();
 
   const isSystemFirstDayOfTheWeek =

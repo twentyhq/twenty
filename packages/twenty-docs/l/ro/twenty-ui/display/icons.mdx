@@ -14,35 +14,44 @@ O listă de pictograme utilizate în toată aplicația noastră.
 Folosim pictograme Tabler pentru React în toată aplicația.
 
 <Tabs>
-  <Tab title="Instalare">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="Instalare">
+<br />
 
-  <Tab title="Proprietăți">
-    Poți importa fiecare pictogramă ca o componentă. Iată un exemplu:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="Proprietăți">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+Poți importa fiecare pictogramă ca o componentă. Iată un exemplu:
+<br />
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip   | Descriere                                  | Implicit     |
-    | ----------- | ----- | ------------------------------------------ | ------------ |
-    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24           |
-    | culoare     | șir   | Culoarea pictogramelor                     | currentColor |
-    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2            |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip   | Descriere                                  | Implicit     |
+| ----------- | ----- | ------------------------------------------ | ------------ |
+| dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24           |
+| culoare     | șir   | Culoarea pictogramelor                     | currentColor |
+| trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Pictograme personalizate
@@ -54,20 +63,29 @@ Pe lângă pictogramele Tabler, aplicația utilizează și alte pictograme perso
 Afișează o pictogramă de agendă.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="Utilizare">
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip   | Descriere                                  | Implicit |
-    | ----------- | ----- | ------------------------------------------ | -------- |
-    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24       |
-    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2        |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip   | Descriere                                  | Implicit |
+| ----------- | ----- | ------------------------------------------ | -------- |
+| dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24       |
+| trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2        |
+
+
+
+</Tab>
+
 </Tabs>

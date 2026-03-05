@@ -1,16 +1,18 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 import { CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRowContent = styled(CardContent)<{
-  clickable?: boolean;
-}>`
+const StyledRowContentContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(12)};
-  padding: ${({ theme }) => theme.spacing(0, 4)};
-  cursor: ${({ clickable }) => (clickable === true ? 'pointer' : 'default')};
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[12]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
+
+  > *[data-clickable='false'] {
+    cursor: default;
+  }
 `;
 
 export const ActivityRow = ({
@@ -28,8 +30,10 @@ export const ActivityRow = ({
   };
 
   return (
-    <StyledRowContent onClick={handleClick} clickable={disabled !== true}>
-      {children}
-    </StyledRowContent>
+    <StyledRowContentContainer>
+      <CardContent onClick={handleClick} isClickable={disabled !== true}>
+        {children}
+      </CardContent>
+    </StyledRowContentContainer>
   );
 };

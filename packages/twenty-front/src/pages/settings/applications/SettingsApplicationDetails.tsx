@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  IconApps,
   IconBox,
   IconInfoCircle,
   IconLock,
@@ -14,18 +15,19 @@ import {
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     APPLICATION_DETAIL_ID,
   );
@@ -43,11 +45,17 @@ export const SettingsApplicationDetails = () => {
     ? t`Application details`
     : applicationName;
 
+  const settingsCustomTabFrontComponentId =
+    application?.settingsCustomTabFrontComponentId;
+
   const tabs = [
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'permissions', title: t`Permissions`, Icon: IconLock },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
+    ...(isDefined(settingsCustomTabFrontComponentId)
+      ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
+      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -67,6 +75,16 @@ export const SettingsApplicationDetails = () => {
       case 'settings':
         return (
           <SettingsApplicationDetailSettingsTab application={application} />
+        );
+      case 'custom':
+        return isDefined(settingsCustomTabFrontComponentId) ? (
+          <SettingsApplicationCustomTab
+            settingsCustomTabFrontComponentId={
+              settingsCustomTabFrontComponentId
+            }
+          />
+        ) : (
+          <></>
         );
       default:
         return <></>;

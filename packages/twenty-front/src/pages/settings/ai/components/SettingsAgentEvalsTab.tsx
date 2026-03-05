@@ -10,10 +10,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +27,7 @@ import {
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 
@@ -35,13 +36,13 @@ const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[6]};
+  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledEmptyMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 type SettingsAgentEvalsTabProps = {
@@ -70,7 +71,7 @@ export const SettingsAgentEvalsTab = ({
   const navigate = useNavigate();
 
   const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
-  const setActiveTabId = useSetRecoilComponentState(
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentId,
   );
@@ -197,7 +198,7 @@ export const SettingsAgentEvalsTab = ({
       </Section>
 
       <ConfirmationModal
-        modalId={DELETE_EVAL_INPUT_MODAL_ID}
+        modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
         title={t`Delete Evaluation Input`}
         subtitle={t`Are you sure you want to delete this evaluation input?`}
         onConfirmClick={handleDeleteInput}

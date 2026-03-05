@@ -10,8 +10,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   type RadialBarCustomLayerProps,
@@ -43,15 +42,16 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   width: 100%;
 
   ${({ $isClickable }) =>
-    $isClickable &&
-    `
+    $isClickable
+      ? `
     svg g path[fill^="url(#"] {
       cursor: pointer;
     }
-  `}
+  `
+      : ''}
 `;
 
-const StyledH1Title = styled(H1Title)`
+const StyledH1TitleWrapper = styled.div`
   left: 50%;
   position: absolute;
   top: 50%;
@@ -69,8 +69,7 @@ export const GraphWidgetGaugeChart = ({
   customFormatter,
   onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
-  const theme = useTheme();
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -136,10 +135,12 @@ export const GraphWidgetGaugeChart = ({
           layers={['bars', renderValueEndLine]}
         />
         {showValue && (
-          <StyledH1Title
-            title={formattedValue}
-            fontColor={H1TitleFontColor.Primary}
-          />
+          <StyledH1TitleWrapper>
+            <H1Title
+              title={formattedValue}
+              fontColor={H1TitleFontColor.Primary}
+            />
+          </StyledH1TitleWrapper>
         )}
       </StyledChartContainer>
       <GraphWidgetLegend

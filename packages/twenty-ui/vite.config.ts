@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
+import * as fs from 'fs';
 import * as path from 'path';
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts, { type PluginOptions } from 'vite-plugin-dts';
@@ -12,7 +14,7 @@ type Checkers = Parameters<typeof checker>[0];
 import packageJson from './package.json';
 
 const entries = Object.keys(packageJson.exports)
-  .filter((el) => el !== './style.css')
+  .filter((el) => !el.endsWith('.css'))
   .map((module) => `src/${module}/index.ts`);
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
@@ -73,10 +75,7 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({
-        jsxImportSource: '@emotion/react',
-        plugins: [['@swc/plugin-emotion', {}]],
-      }),
+      react(),
       tsconfigPaths({
         root: __dirname,
         projects: ['tsconfig.json'],
@@ -84,29 +83,32 @@ export default defineConfig(({ command }) => {
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
-      wyw({
-        include: [
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Tag.tsx',
-          '**/Avatar.tsx',
-          '**/Chip.tsx',
-          '**/LinkChip.tsx',
-          '**/Avatar.tsx',
-          '**/AvatarChipLeftComponent.tsx',
-          '**/ContactLink.tsx',
-          '**/RoundedLink.tsx',
-        ],
-        babelOptions: {
-          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          babelOptions: {
+            presets: ['@babel/preset-typescript', '@babel/preset-react'],
+          },
+        }),
+      ),
+      {
+        name: 'copy-theme-css',
+        closeBundle() {
+          const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
+          for (const file of themeCssFiles) {
+            fs.copyFileSync(
+              path.resolve(__dirname, `src/theme-constants/${file}`),
+              path.resolve(__dirname, `dist/${file}`),
+            );
+          }
         },
-      }),
+      },
     ],
-    // Configuration for building your library.
-    // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',
       sourcemap: false,
+      emptyOutDir: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {
@@ -120,7 +122,6 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        // External packages that should not be bundled into your library.
         external: Object.keys(packageJson.dependencies || {}),
         output: [
           {

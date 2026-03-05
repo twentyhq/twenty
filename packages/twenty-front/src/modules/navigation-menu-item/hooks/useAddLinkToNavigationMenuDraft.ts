@@ -1,14 +1,15 @@
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 import { normalizeUrl } from '@/navigation-menu-item/utils/normalizeUrl';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddLinkToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
 
@@ -47,6 +48,7 @@ export const useAddLinkToNavigationMenuDraft = () => {
       userWorkspaceId: undefined,
       name: label.trim() || 'Link',
       link: normalizedUrl,
+      color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
       applicationId: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

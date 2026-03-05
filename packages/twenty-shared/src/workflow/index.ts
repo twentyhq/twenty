@@ -67,7 +67,14 @@ export { workflowRunStatusSchema } from './schemas/workflow-run-status-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
+export type { FunctionInput } from './types/FunctionInput';
+export type {
+  InputSchemaPropertyType,
+  InputSchemaProperty,
+  InputSchema,
+} from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
+export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
@@ -76,6 +83,7 @@ export type {
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
+export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
@@ -92,7 +100,6 @@ export type {
   Node,
   BaseOutputSchemaV2,
 } from './workflow-schema/types/base-output-schema.type';
-export { buildOutputSchemaFromValue } from './workflow-schema/utils/buildOutputSchemaFromValue';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
 export type {
   GlobalAvailability,

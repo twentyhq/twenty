@@ -1,24 +1,23 @@
-import { useRecoilValue } from 'recoil';
-
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 
 import { KeyboardShortcutMenuOpenContent } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const KeyboardShortcutMenu = () => {
   const { toggleKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-  const isKeyboardShortcutMenuOpened = useRecoilValue(
+  const isKeyboardShortcutMenuOpened = useAtomStateValue(
     isKeyboardShortcutMenuOpenedState,
   );
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   useGlobalHotkeys({
     keys: ['shift+?', 'meta+?'],
     callback: () => {
-      closeCommandMenu();
+      closeSidePanelMenu();
       toggleKeyboardShortcutMenu();
     },
     containsModifier: false,

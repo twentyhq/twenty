@@ -1,22 +1,31 @@
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
-import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
-import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
-import { convertToLabel } from '@/cli/utilities/entity/entity-label';
-import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
-import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import kebabcase from 'lodash.kebabcase';
+import { writeFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
+import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
+import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
+import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
+import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
+import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
 const APP_FOLDER = 'src';
 
 export class EntityAddCommand {
+  private lastObjectUniversalIdentifier: string | undefined;
+
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
       const entity = entityType ?? (await this.getEntity());
@@ -27,25 +36,29 @@ export class EntityAddCommand {
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
         : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER, entityName);
 
-      await fs.ensureDir(appPath);
+      await ensureDir(appPath);
 
       const { name, file } = await this.getEntityData(entity);
 
       const filePath = join(appPath, this.getFileName(name, entity));
 
-      if (await fs.pathExists(filePath)) {
+      if (await pathExists(filePath)) {
         const { overwrite } = await this.handleFileExist();
         if (!overwrite) {
           return;
         }
       }
 
-      await fs.writeFile(filePath, file);
+      await writeFile(filePath, file);
 
       console.log(
         chalk.green(`✓ Created ${entityName}:`),
         chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
       );
+
+      if (entity === SyncableEntity.Object) {
+        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
+      }
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -61,10 +74,14 @@ export class EntityAddCommand {
         const entityData = await this.getObjectData();
 
         const name = entityData.nameSingular;
+        const objectUniversalIdentifier = v4();
+
+        this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
 
         const file = getObjectBaseFile({
           data: entityData,
           name,
+          universalIdentifier: objectUniversalIdentifier,
         });
 
         return { name, file };
@@ -113,9 +130,140 @@ export class EntityAddCommand {
         return { name, file };
       }
 
+      case SyncableEntity.Skill: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSkillBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.View: {
+        const entityData = await this.getViewData();
+
+        const name = entityData.name;
+
+        const file = getViewBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.NavigationMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getNavigationMenuItemBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayout: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
       default:
         assertUnreachable(entity);
     }
+  }
+
+  private async promptAndCreateViewAndNavigationMenuItem(
+    objectName: string,
+    customPath?: string,
+  ): Promise<void> {
+    const { createViewAndNavItem } = await inquirer.prompt<{
+      createViewAndNavItem: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'createViewAndNavItem',
+        message:
+          'Also create a view and navigation menu item for this object? (recommended)',
+        default: true,
+      },
+    ]);
+
+    if (!createViewAndNavItem || !this.lastObjectUniversalIdentifier) {
+      return;
+    }
+
+    const viewUniversalIdentifier = v4();
+
+    const viewFile = getViewBaseFile({
+      name: `all-${kebabCase(objectName)}`,
+      universalIdentifier: viewUniversalIdentifier,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+    });
+
+    const viewFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.View),
+        );
+
+    await ensureDir(viewFolderPath);
+
+    const viewFileName = `all-${kebabCase(objectName)}.ts`;
+    const viewFilePath = join(viewFolderPath, viewFileName);
+
+    if (await pathExists(viewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(viewFilePath, viewFile);
+
+    console.log(
+      chalk.green(`✓ Created view:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
+    );
+
+    const navFile = getNavigationMenuItemBaseFile({
+      name: objectName,
+      viewUniversalIdentifier,
+    });
+
+    const navFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.NavigationMenuItem),
+        );
+
+    await ensureDir(navFolderPath);
+
+    const navFileName = `${kebabCase(objectName)}.ts`;
+    const navFilePath = join(navFolderPath, navFileName);
+
+    if (await pathExists(navFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(navFilePath, navFile);
+
+    console.log(
+      chalk.green(`✓ Created navigation menu item:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navFilePath)),
+    );
   }
 
   private async getEntity() {
@@ -291,17 +439,50 @@ export class EntityAddCommand {
     ]);
   }
 
+  private async getViewData() {
+    return inquirer.prompt<{
+      name: string;
+      objectUniversalIdentifier: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your view:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this view belongs to:',
+        default: 'fill-later',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
+  }
+
   getFolderName(entity: SyncableEntity) {
-    return `${kebabcase(entity)}s`;
+    return `${kebabCase(entity)}s`;
   }
 
   getFileName(name: string, entity: SyncableEntity) {
     switch (entity) {
       case SyncableEntity.FrontComponent: {
-        return `${kebabcase(name)}.tsx`;
+        return `${kebabCase(name)}.tsx`;
       }
       default: {
-        return `${kebabcase(name)}.ts`;
+        return `${kebabCase(name)}.ts`;
       }
     }
   }

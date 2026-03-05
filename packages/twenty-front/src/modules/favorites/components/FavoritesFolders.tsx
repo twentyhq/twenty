@@ -2,10 +2,10 @@ import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentW
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { IconFolder } from 'twenty-ui/display';
 
 type FavoriteFoldersProps = {
@@ -20,8 +20,9 @@ export const FavoriteFolders = ({
   const { favoritesByFolder } = useFavoritesByFolder();
   const { createNewFavoriteFolder } = useCreateFavoriteFolder();
 
-  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilState(isFavoriteFolderCreatingState);
+  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
+    isFavoriteFolderCreatingState,
+  );
 
   const handleFavoriteFolderNameChange = (value: string) => {
     setNewFolderName(value);

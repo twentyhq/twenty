@@ -8,9 +8,9 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -19,7 +19,7 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
-import { BarChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-data-output.dto';
+import { BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart-data.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -44,7 +44,7 @@ type GetBarChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: BarChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -59,7 +59,7 @@ export class BarChartDataService {
     objectMetadataId,
     configuration,
     authContext,
-  }: GetBarChartDataParams): Promise<BarChartDataOutputDTO> {
+  }: GetBarChartDataParams): Promise<BarChartDataDTO> {
     try {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -166,6 +166,7 @@ export class BarChartDataService {
         secondaryDateGranularity:
           configuration.secondaryAxisGroupByDateGranularity,
         secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
@@ -217,7 +218,7 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
-  }): BarChartDataOutputDTO {
+  }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
@@ -249,6 +250,7 @@ export class BarChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: false,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
@@ -352,7 +354,7 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
-  }): BarChartDataOutputDTO {
+  }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
@@ -389,6 +391,7 @@ export class BarChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: true,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);

@@ -1,7 +1,8 @@
-import { atom } from 'recoil';
 import { type PublicFeatureFlag } from '~/generated-metadata/graphql';
 
-export const labPublicFeatureFlagsState = atom<PublicFeatureFlag[]>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
+export const labPublicFeatureFlagsState = createAtomState<PublicFeatureFlag[]>({
   key: 'labPublicFeatureFlagsState',
-  default: [],
+  defaultValue: [],
 });

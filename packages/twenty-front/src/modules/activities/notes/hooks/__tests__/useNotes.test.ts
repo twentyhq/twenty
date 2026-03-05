@@ -10,20 +10,15 @@ jest.mock('@/activities/hooks/useActivities', () => ({
   })),
 }));
 
-jest.mock('recoil', () => {
-  const actualRecoil = jest.requireActual('recoil');
-  return {
-    ...actualRecoil,
-    useRecoilState: jest.fn(() => {
-      const mockCurrentNotesQueryVariables = {
-        filter: {},
-        orderBy: 'mockOrderBy',
-      };
-      return [mockCurrentNotesQueryVariables, jest.fn()];
-    }),
-    atom: jest.fn(),
-  };
-});
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomState', () => ({
+  useAtomState: jest.fn(() => {
+    const mockCurrentNotesQueryVariables = {
+      filter: {},
+      orderBy: 'mockOrderBy',
+    };
+    return [mockCurrentNotesQueryVariables, jest.fn()];
+  }),
+}));
 
 describe('useNotes', () => {
   it('should return notes, and loading as expected', () => {

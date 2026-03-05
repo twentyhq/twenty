@@ -1,7 +1,10 @@
-import { type FileUIPart } from 'ai';
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatUploadedFilesState = atom<FileUIPart[]>({
+import { type AgentChatFileUIPart } from '@/ai/types/agent-chat-file-ui-part.type';
+
+export const agentChatUploadedFilesState = createAtomState<
+  AgentChatFileUIPart[]
+>({
   key: 'ai/agentChatUploadedFilesState',
-  default: [],
+  defaultValue: [],
 });

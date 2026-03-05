@@ -3,6 +3,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -18,6 +19,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -47,8 +49,8 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           // a configuration with actual field metadata IDs from the backend.
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -70,8 +72,8 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -88,6 +90,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-note',
       title: 'Note',
       icon: 'IconNotes',
@@ -114,8 +117,8 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -132,6 +135,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -158,8 +162,8 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -169,6 +173,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
@@ -195,8 +200,8 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

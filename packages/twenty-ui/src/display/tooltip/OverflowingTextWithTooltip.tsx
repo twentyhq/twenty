@@ -3,11 +3,11 @@ import { type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { THEME_COMMON } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from '@ui/theme-constants';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
-const spacing4 = THEME_COMMON.spacing(4);
+const spacing4 = themeCssVariables.spacing[4];
 
 const StyledOverflowingMultilineText = styled.div<{
   isContentOverflowing: boolean;
@@ -63,6 +63,7 @@ type OverflowingTextWithTooltipProps = {
   size?: 'large' | 'small';
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
+  tooltipDelay?: TooltipDelay;
 } & (
   | {
       text: string | null | undefined;
@@ -80,6 +81,7 @@ export const OverflowingTextWithTooltip = ({
   isTooltipMultiline,
   displayedMaxRows,
   tooltipContent,
+  tooltipDelay = TooltipDelay.mediumDelay,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -154,7 +156,7 @@ export const OverflowingTextWithTooltip = ({
               noArrow
               place="bottom"
               positionStrategy="absolute"
-              delay={TooltipDelay.mediumDelay}
+              delay={tooltipDelay}
               isOpen={true}
             >
               {isTooltipMultiline ? (

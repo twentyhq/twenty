@@ -11,15 +11,15 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -54,7 +54,7 @@ export const ObjectOptionsDropdownCustomView = ({
       }
     : null;
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -66,7 +66,7 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const isDefaultView = currentView?.key === ViewKey.Index;
 
-  const recordIndexCalendarLayout = useRecoilValue(
+  const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
 
@@ -79,8 +79,9 @@ export const ObjectOptionsDropdownCustomView = ({
   const visibleFieldsCount = visibleBoardFields.length;
 
   const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
-  const setViewPickerReferenceViewId = useSetRecoilComponentState(
+  const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
+    recordIndexId,
   );
 
   const handleDelete = () => {
@@ -104,7 +105,7 @@ export const ObjectOptionsDropdownCustomView = ({
     'Delete view',
   ];
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
@@ -223,7 +224,7 @@ export const ObjectOptionsDropdownCustomView = ({
               <SelectableListItem
                 itemId="Group"
                 onEnter={() =>
-                  isDefined(recordGroupFieldMetadata)
+                  isDefined(recordIndexGroupFieldMetadataItem)
                     ? onContentChange('recordGroups')
                     : onContentChange('recordGroupFields')
                 }
@@ -231,7 +232,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 <MenuItem
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
-                    isDefined(recordGroupFieldMetadata)
+                    isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
@@ -240,7 +241,7 @@ export const ObjectOptionsDropdownCustomView = ({
                   contextualText={
                     isDefaultView
                       ? t`Not available on Default View`
-                      : recordGroupFieldMetadata?.label
+                      : recordIndexGroupFieldMetadataItem?.label
                   }
                   contextualTextPosition="right"
                   hasSubMenu

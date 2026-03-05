@@ -6,7 +6,7 @@ import { draggedRecordIdsComponentState } from '@/object-record/record-drag/stat
 import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 describe('useEndRecordDrag', () => {
@@ -15,18 +15,19 @@ describe('useEndRecordDrag', () => {
   it('should clear all board drag states', () => {
     const { result } = renderHook(
       () => {
-        const [isMultiDragActive, setIsMultiDragActive] =
-          useRecoilComponentState(isMultiDragActiveComponentState);
+        const [isMultiDragActive, setIsMultiDragActive] = useAtomComponentState(
+          isMultiDragActiveComponentState,
+        );
 
-        const [draggedRecordIds, setDraggedRecordIds] = useRecoilComponentState(
+        const [draggedRecordIds, setDraggedRecordIds] = useAtomComponentState(
           draggedRecordIdsComponentState,
         );
 
         const [primaryDraggedRecordId, setPrimaryDraggedRecordId] =
-          useRecoilComponentState(primaryDraggedRecordIdComponentState);
+          useAtomComponentState(primaryDraggedRecordIdComponentState);
 
-        const [originalSelection, setOriginalSelection] =
-          useRecoilComponentState(originalDragSelectionComponentState);
+        const [originalDragSelection, setOriginalDragSelection] =
+          useAtomComponentState(originalDragSelectionComponentState);
 
         const { endRecordDrag } = useEndRecordDrag();
 
@@ -35,11 +36,11 @@ describe('useEndRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
           setIsMultiDragActive,
           setDraggedRecordIds,
           setPrimaryDraggedRecordId,
-          setOriginalSelection,
+          setOriginalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -49,13 +50,17 @@ describe('useEndRecordDrag', () => {
       result.current.setIsMultiDragActive(true);
       result.current.setDraggedRecordIds(['record-1', 'record-2']);
       result.current.setPrimaryDraggedRecordId('record-1');
-      result.current.setOriginalSelection(['record-1', 'record-2', 'record-3']);
+      result.current.setOriginalDragSelection([
+        'record-1',
+        'record-2',
+        'record-3',
+      ]);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
     expect(result.current.draggedRecordIds).toEqual(['record-1', 'record-2']);
     expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalSelection).toEqual([
+    expect(result.current.originalDragSelection).toEqual([
       'record-1',
       'record-2',
       'record-3',
@@ -68,6 +73,6 @@ describe('useEndRecordDrag', () => {
     expect(result.current.isMultiDragActive).toBe(false);
     expect(result.current.draggedRecordIds).toEqual([]);
     expect(result.current.primaryDraggedRecordId).toBeNull();
-    expect(result.current.originalSelection).toEqual([]);
+    expect(result.current.originalDragSelection).toEqual([]);
   });
 });

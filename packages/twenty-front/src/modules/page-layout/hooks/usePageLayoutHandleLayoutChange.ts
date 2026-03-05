@@ -2,9 +2,10 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { type Layout, type Layouts } from 'react-grid-layout';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -18,73 +19,73 @@ export const usePageLayoutHandleLayoutChange = (
     pageLayoutIdFromProps,
   );
 
+  const store = useStore();
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    tabListInstanceId,
-  );
-
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const handleLayoutChange = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (_: Layout[], allLayouts: Layouts) => {
-        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+  const handleLayoutChange = useCallback(
+    (_: Layout[], allLayouts: Layouts) => {
+      const activeTabId = store.get(
+        activeTabIdComponentState.atomFamily({
+          instanceId: tabListInstanceId,
+        }),
+      );
 
-        if (!isDefined(activeTabId)) return;
+      if (!isDefined(activeTabId)) return;
 
-        const currentTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+      const currentTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
-        set(pageLayoutCurrentLayoutsState, {
-          ...currentTabLayouts,
-          [activeTabId]: structuredClone(allLayouts),
-        });
+      store.set(pageLayoutCurrentLayoutsState, {
+        ...currentTabLayouts,
+        [activeTabId]: structuredClone(allLayouts),
+      });
 
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
 
-        const currentTab = pageLayoutDraft.tabs.find(
-          (tab) => tab.id === activeTabId,
-        );
+      const currentTab = pageLayoutDraft.tabs.find(
+        (tab) => tab.id === activeTabId,
+      );
 
-        if (!currentTab) return;
+      if (!currentTab) return;
 
-        const updatedWidgets = convertLayoutsToWidgets(
-          currentTab.widgets,
-          allLayouts,
-        );
+      const updatedWidgets = convertLayoutsToWidgets(
+        currentTab.widgets,
+        allLayouts,
+      );
 
-        if (isDefined(activeTabId)) {
-          set(pageLayoutDraftState, (prev) => ({
-            ...prev,
-            tabs: prev.tabs.map((tab) => {
-              if (tab.id === activeTabId) {
-                const tabWidgets = updatedWidgets.filter(
-                  (w) => w.pageLayoutTabId === activeTabId,
-                );
-                return {
-                  ...tab,
-                  widgets: tabWidgets,
-                };
-              }
-              return tab;
-            }),
-          }));
-        }
-      },
-    [activeTabIdState, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+      if (isDefined(activeTabId)) {
+        store.set(pageLayoutDraftState, (prev) => ({
+          ...prev,
+          tabs: prev.tabs.map((tab) => {
+            if (tab.id === activeTabId) {
+              const tabWidgets = updatedWidgets.filter(
+                (w) => w.pageLayoutTabId === activeTabId,
+              );
+              return {
+                ...tab,
+                widgets: tabWidgets,
+              };
+            }
+            return tab;
+          }),
+        }));
+      }
+    },
+    [
+      tabListInstanceId,
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      store,
+    ],
   );
 
   return { handleLayoutChange };

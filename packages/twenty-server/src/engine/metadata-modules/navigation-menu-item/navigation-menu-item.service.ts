@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -198,7 +198,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating navigation menu item',
@@ -287,7 +287,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating navigation menu item',
@@ -367,7 +367,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting navigation menu item',

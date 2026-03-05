@@ -1,37 +1,35 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useStore } from 'jotai';
 
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const useMoveHoverToCurrentCell = (recordTableId: string) => {
-  const setHoverPosition = useSetRecoilComponentState(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
-  const isSomeCellInEditModeSelector = useRecoilComponentCallbackState(
+  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
-  const moveHoverToCurrentCell = useRecoilCallback(
-    ({ snapshot }) =>
-      (cellPosition: TableCellPosition) => {
-        const isSomeCellInEditMode = getSnapshotValue(
-          snapshot,
-          isSomeCellInEditModeSelector,
-        );
+  const store = useStore();
 
-        if (!isSomeCellInEditMode) {
-          setHoverPosition(cellPosition);
-        }
-      },
-    [isSomeCellInEditModeSelector, setHoverPosition],
+  const moveHoverToCurrentCell = useCallback(
+    (cellPosition: TableCellPosition) => {
+      const cellInEditMode = store.get(isSomeCellInEditMode);
+
+      if (!cellInEditMode) {
+        setRecordTableHoverPosition(cellPosition);
+      }
+    },
+    [store, isSomeCellInEditMode, setRecordTableHoverPosition],
   );
 
   return { moveHoverToCurrentCell };

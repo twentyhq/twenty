@@ -2,9 +2,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,26 +17,26 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledIconChevronRightContainer = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSearchInputContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsObjectTable = ({
@@ -44,11 +46,10 @@ export const SettingsObjectTable = ({
   objectMetadataItems: ObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
-  const theme = useTheme();
-
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -58,13 +59,10 @@ export const SettingsObjectTable = ({
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
-  const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
-    {
-      objectMetadataItems,
-    },
-  );
+  const { totalCountByObjectMetadataItemNamePlural } =
+    useCombinedGetTotalCount();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const allObjectSettingsArray = useMemo(
     () =>
@@ -79,7 +77,7 @@ export const SettingsObjectTable = ({
                 currentWorkspace?.workspaceCustomApplication?.id,
             }).labelText,
             fieldsCount: objectMetadataItem.fields.filter(
-              (field) => !field.isSystem,
+              (field) => !isHiddenSystemField(field),
             ).length,
             totalObjectCount:
               totalCountByObjectMetadataItemNamePlural[
@@ -173,7 +171,9 @@ export const SettingsObjectTable = ({
       )}
 
       <Table>
-        <StyledObjectTableRow>
+        <TableRow
+          gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
             (settingsObjectsTableMetadataField) => (
               <SortableTableHeader
@@ -187,7 +187,7 @@ export const SettingsObjectTable = ({
             ),
           )}
           <TableHeader></TableHeader>
-        </StyledObjectTableRow>
+        </TableRow>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 
@@ -198,10 +198,12 @@ export const SettingsObjectTable = ({
               totalObjectCount={objectSettingsItem.totalObjectCount}
               action={
                 isActive ? (
-                  <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
+                  <StyledIconChevronRightContainer>
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  </StyledIconChevronRightContainer>
                 ) : (
                   <SettingsObjectInactiveMenuDropDown
                     isCustomObject={

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -16,12 +16,13 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -58,16 +59,16 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
 `;
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: block;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export const Select = <Value extends SelectValue>({
@@ -140,7 +141,7 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );

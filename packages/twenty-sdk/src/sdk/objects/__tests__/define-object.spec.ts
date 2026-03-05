@@ -1,6 +1,6 @@
 import { defineObject } from '@/sdk';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectManifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('defineObject', () => {
   const validConfig: ObjectManifest = {
@@ -10,6 +10,8 @@ describe('defineObject', () => {
     labelSingular: 'Post Card',
     labelPlural: 'Post Cards',
     icon: 'IconMail',
+    labelIdentifierFieldMetadataUniversalIdentifier:
+      '58a0a314-d7ea-4865-9850-7fb84e72f30b',
     fields: [
       {
         universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -109,17 +111,6 @@ describe('defineObject', () => {
     const result = defineObject(config as any);
 
     expect(result.config.fields).toEqual([]);
-  });
-
-  it('should accept missing fields', () => {
-    const config = {
-      ...validConfig,
-      fields: undefined,
-    };
-
-    const result = defineObject(config as any);
-
-    expect(result.config.fields).toBeUndefined();
   });
 
   it('should return error when field is missing label', () => {
@@ -238,5 +229,20 @@ describe('defineObject', () => {
     const result = defineObject(config as any);
 
     expect(result.config.fields[0].options).toHaveLength(2);
+  });
+
+  it('should return error when labelIdentifierFieldMetadataUniversalIdentifier references non-existent field', () => {
+    const config: ObjectManifest = {
+      ...validConfig,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'non-existent-field-uuid',
+    };
+
+    const result = defineObject(config);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'labelIdentifierFieldMetadataUniversalIdentifier must reference a field defined in the fields array',
+    );
   });
 });

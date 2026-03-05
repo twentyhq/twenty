@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isDestroyingEventStreamState = createState<boolean>({
+export const isDestroyingEventStreamState = createAtomState<boolean>({
   key: 'isDestroyingEventStreamState',
   defaultValue: false,
 });

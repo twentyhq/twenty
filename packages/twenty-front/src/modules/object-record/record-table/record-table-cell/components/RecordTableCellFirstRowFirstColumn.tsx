@@ -1,18 +1,40 @@
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { StyledCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
-const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
+const StyledRecordTableTd = styled.div<{
+  backgroundColor: string;
+  borderColor: string;
+  isDragging?: boolean;
+  fontColor: string;
+  hasRightBorder?: boolean;
+  hasBottomBorder?: boolean;
+  zIndex: number;
+}>`
+  border-bottom: 1px solid
+    ${({ borderColor, hasBottomBorder, isDragging }) =>
+      hasBottomBorder && !isDragging ? borderColor : 'transparent'};
+
+  color: ${({ fontColor }) => fontColor};
+  border-right: ${({ borderColor, hasRightBorder }) =>
+    hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+
+  padding: 0;
+
+  text-align: left;
+
+  background: ${({ backgroundColor, isDragging }) =>
+    isDragging ? 'transparent' : backgroundColor};
+
   z-index: ${({ zIndex }) => zIndex};
 `;
 
@@ -33,21 +55,23 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const hoverPosition = useRecoilComponentValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
-  const focusPosition = useRecoilComponentValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
   const isFocusPortalOnThisCell =
-    focusPosition?.column === 0 && focusPosition.row === 0;
+    recordTableFocusPosition?.column === 0 &&
+    recordTableFocusPosition.row === 0;
 
   const isHoveredPortalOnThisCell =
-    hoverPosition?.column === 0 && hoverPosition.row === 0;
+    recordTableHoverPosition?.column === 0 &&
+    recordTableHoverPosition.row === 0;
 
-  const [isRecordTableScrolledVertically] = useRecoilComponentState(
+  const [isRecordTableScrolledVertically] = useAtomComponentState(
     isRecordTableScrolledVerticallyComponentState,
   );
 

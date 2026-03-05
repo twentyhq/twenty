@@ -1,24 +1,27 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type SetRecoilState } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 
-const initializeState = ({ set }: { set: SetRecoilState }) => {
-  set(
+const JotaiInitDecorator: Decorator = (Story) => {
+  jotaiStore.set(
     isModalOpenedComponentState.atomFamily({
       instanceId: 'confirmation-modal',
     }),
     true,
   );
-
-  set(focusStackState, [
+  jotaiStore.set(focusStackState.atom, [
     {
       focusId: 'confirmation-modal',
       componentInstance: {
@@ -31,14 +34,14 @@ const initializeState = ({ set }: { set: SetRecoilState }) => {
       },
     },
   ]);
+  return <Story />;
 };
 
 const meta: Meta<typeof ConfirmationModal> = {
   title: 'UI/Layout/Modal/ConfirmationModal',
   component: ConfirmationModal,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [JotaiInitDecorator, RootDecorator, ComponentDecorator],
   parameters: {
-    initializeState,
     disableHotkeyInitialization: true,
   },
 };
@@ -51,7 +54,7 @@ const confirmMock = fn();
 
 export const Default: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Pariatur labore.',
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
     confirmButtonText: 'Delete',
@@ -69,7 +72,7 @@ export const InputConfirmation: Story = {
 
 export const CloseOnEscape: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Escape Key Test',
     subtitle: 'This modal should close when pressing the Escape key.',
     confirmButtonText: 'Confirm',
@@ -92,7 +95,7 @@ export const CloseOnEscape: Story = {
 
 export const CloseOnClickOutside: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Click Outside Test',
     subtitle: 'This modal should close when clicking outside of it.',
     confirmButtonText: 'Confirm',
@@ -118,7 +121,7 @@ export const CloseOnClickOutside: Story = {
 
 export const ConfirmWithEnterKey: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Enter Key Test',
     subtitle: 'This modal should confirm when pressing the Enter key.',
     confirmButtonText: 'Confirm',
@@ -139,7 +142,7 @@ export const ConfirmWithEnterKey: Story = {
 
 export const CancelButtonClick: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Cancel Button Test',
     subtitle: 'Clicking the cancel button should close the modal',
     confirmButtonText: 'Confirm',
@@ -163,7 +166,7 @@ export const CancelButtonClick: Story = {
 
 export const ConfirmButtonClick: Story = {
   args: {
-    modalId: 'confirmation-modal',
+    modalInstanceId: 'confirmation-modal',
     title: 'Confirm Button Test',
     subtitle: 'Clicking the confirm button should trigger the confirm action',
     confirmButtonText: 'Confirm',

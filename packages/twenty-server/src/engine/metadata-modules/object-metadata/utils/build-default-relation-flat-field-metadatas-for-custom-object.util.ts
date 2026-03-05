@@ -1,12 +1,14 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  STANDARD_OBJECTS,
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+} from 'twenty-shared/metadata';
+import { FieldMetadataType, FeatureFlagKey } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -19,14 +21,6 @@ import {
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-
-const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
-  'timelineActivity',
-  'favorite',
-  'attachment',
-  'noteTarget',
-  'taskTarget',
-] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 const morphIdByRelationObjectNameSingular = {
   timelineActivity:
@@ -149,7 +143,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.namePlural,
               label: capitalize(targetFlatObjectMetadata.labelPlural),
-              isSystem: true,
+              isSystem: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
                 targetObjectMetadataId: targetFlatObjectMetadata.id,

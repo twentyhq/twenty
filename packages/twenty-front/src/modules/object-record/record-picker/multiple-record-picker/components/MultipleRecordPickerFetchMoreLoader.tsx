@@ -11,21 +11,23 @@ import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/ob
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${({ theme }) => theme.grayScale.gray9};
+  color: ${themeCssVariables.grayScale.gray9};
   display: flex;
   height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(8)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${themeCssVariables.spacing[8]};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIntersectionObserver = styled.div`
@@ -33,63 +35,65 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
+  const store = useStore();
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
-  ] = useRecoilComponentState(multipleRecordPickerIsFetchingMoreComponentState);
+  ] = useAtomComponentState(multipleRecordPickerIsFetchingMoreComponentState);
 
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const paginationState = useRecoilComponentValue(
+  const paginationState = useAtomComponentSelectorValue(
     multipleRecordPickerPaginationSelector,
     componentInstanceId,
   );
 
-  const isLoading = useRecoilComponentValue(
+  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useRecoilComponentValue(
+  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
-    multipleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useAtomComponentStateValue(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const fetchMore = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const paginationState = snapshot
-          .getLoadable(
-            multipleRecordPickerPaginationState.atomFamily({
-              instanceId: componentInstanceId,
-            }),
-          )
-          .getValue();
+  const fetchMore = useCallback(async () => {
+    const currentPaginationState = store.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
 
-        if (isLoading || !paginationState.hasNextPage) {
-          return;
-        }
+    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
+      return;
+    }
 
-        await performSearch({
-          multipleRecordPickerInstanceId: componentInstanceId,
-          forceSearchFilter: searchFilter,
-          loadMore: true,
-        });
-      },
-    [componentInstanceId, performSearch, searchFilter, isLoading],
-  );
+    await performSearch({
+      multipleRecordPickerInstanceId: componentInstanceId,
+      forceSearchFilter: multipleRecordPickerSearchFilter,
+      loadMore: true,
+    });
+  }, [
+    componentInstanceId,
+    performSearch,
+    multipleRecordPickerSearchFilter,
+    multipleRecordPickerIsLoading,
+    store,
+  ]);
 
   const { ref } = useInView({
     onChange: useCallback(
@@ -110,7 +114,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     !paginationState.hasNextPage ||
     multipleRecordPickerShouldShowInitialLoading ||
     multipleRecordPickerShouldShowSkeleton ||
-    (isLoading && !multipleRecordPickerIsFetchingMore)
+    (multipleRecordPickerIsLoading && !multipleRecordPickerIsFetchingMore)
   ) {
     return null;
   }

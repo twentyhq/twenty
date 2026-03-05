@@ -1,9 +1,9 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { selectorFamily } from 'recoil';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { findById, isDefined } from 'twenty-shared/utils';
 
-export const fieldMetadataItemByIdSelector = selectorFamily({
+export const fieldMetadataItemByIdSelector = createAtomFamilySelector({
   key: 'fieldMetadataItemByIdSelector',
   get:
     ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>

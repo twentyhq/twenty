@@ -1,9 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutIsInitializedComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'pageLayoutIsInitializedComponentState',
     defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,

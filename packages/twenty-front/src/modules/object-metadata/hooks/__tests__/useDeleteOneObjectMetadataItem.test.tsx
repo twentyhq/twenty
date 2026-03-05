@@ -13,7 +13,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { mockedCoreViewsData } from '~/testing/mock-data/views';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
@@ -49,7 +49,7 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: {
-        getCoreViews: mockedCoreViewsData,
+        getCoreViews: mockedCoreViews,
       },
     })),
   },

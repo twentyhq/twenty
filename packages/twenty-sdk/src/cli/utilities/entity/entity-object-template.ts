@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 
 export const getObjectBaseFile = ({
   data,
+  universalIdentifier = v4(),
 }: {
   data: {
     nameSingular: string;
@@ -10,9 +11,8 @@ export const getObjectBaseFile = ({
     labelPlural: string;
   };
   name: string;
+  universalIdentifier?: string;
 }) => {
-  const universalIdentifier = v4();
-
   return `import { defineObject } from 'twenty-sdk';
 
 export default defineObject({

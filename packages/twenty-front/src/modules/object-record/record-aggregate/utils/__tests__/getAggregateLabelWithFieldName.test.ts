@@ -1,12 +1,12 @@
 import { getAggregateLabelWithFieldName } from '@/object-record/record-aggregate/utils/getAggregateLabelWithFieldName';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { findByProperty } from 'twenty-shared/utils';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('getAggregateLabelWithFieldName', () => {
-  const mockFieldMetadataItem = getMockCompanyObjectMetadataItem().fields.find(
-    findByProperty('name', 'name'),
-  )!;
+  const mockFieldMetadataItem = getMockObjectMetadataItemOrThrow(
+    'company',
+  ).fields.find(findByProperty('name', 'name'))!;
 
   it('should return correct label for provided field metadata item and operation', () => {
     expect(

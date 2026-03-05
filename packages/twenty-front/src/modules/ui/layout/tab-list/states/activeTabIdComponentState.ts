@@ -1,7 +1,9 @@
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const activeTabIdComponentState = createComponentState<string | null>({
+export const activeTabIdComponentState = createAtomComponentState<
+  string | null
+>({
   key: 'activeTabIdComponentState',
   defaultValue: null,
   componentInstanceContext: TabListComponentInstanceContext,

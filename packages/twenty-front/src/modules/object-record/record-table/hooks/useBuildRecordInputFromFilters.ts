@@ -4,20 +4,19 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useBuildRecordInputFromFilters = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  // we might need to build a recoil callback for better performance
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const buildRecordInputFromFilters = (): Partial<ObjectRecord> => {
     return buildRecordInputFromFilter({

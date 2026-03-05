@@ -1,18 +1,19 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
-import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 
 const StyledSearchInputContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCardsGrid = styled.div`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
   @media (max-width: 800px) {
@@ -21,8 +22,8 @@ const StyledCardsGrid = styled.div`
 `;
 
 const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;
 

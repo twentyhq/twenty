@@ -1,24 +1,25 @@
-import { getDefaultFunctionInputFromInputSchema } from '@/logic-functions/utils/getDefaultFunctionInputFromInputSchema';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
-import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 type WorkflowEditActionLogicFunctionProps = {
@@ -56,7 +57,7 @@ export const WorkflowEditActionLogicFunction = ({
       ? toolInputSchema
       : [toolInputSchema];
 
-    const defaultInput = getDefaultFunctionInputFromInputSchema(schemaArray)[0];
+    const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
 
     if (!isObject(defaultInput)) {
       return action.settings.input.logicFunctionInput ?? {};
@@ -118,7 +119,8 @@ export const WorkflowEditActionLogicFunction = ({
               fullWidth
             />
           ) : (
-            <WorkflowMessage
+            <Callout
+              variant={'neutral'}
               title={t`No input fields for this action`}
               description={t`You can see the function logic in your application settings.`}
             />

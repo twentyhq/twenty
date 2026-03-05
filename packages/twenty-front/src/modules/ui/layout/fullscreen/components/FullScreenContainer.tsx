@@ -4,8 +4,9 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];
@@ -14,7 +15,7 @@ type FullScreenContainerProps = {
 };
 
 const StyledFullScreen = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -22,14 +23,14 @@ const StyledFullScreen = styled.div`
 
 const StyledMainContainer = styled.div`
   height: calc(
-    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 5)}
+    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${themeCssVariables.spacing[9]}
   );
-  padding: ${({ theme }) =>
-    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPageHeader = styled(PageHeader)`
-  padding-left: ${({ theme }) => theme.spacing(3)};
+const StyledPageHeaderContainer = styled.div`
+  padding-left: ${themeCssVariables.spacing[3]};
 `;
 
 export const FullScreenContainer = ({
@@ -41,11 +42,13 @@ export const FullScreenContainer = ({
 
   return (
     <StyledFullScreen>
-      <StyledPageHeader
-        title={<Breadcrumb links={links} />}
-        hasClosePageButton={!isMobile}
-        onClosePage={exitFullScreen}
-      />
+      <StyledPageHeaderContainer>
+        <PageHeader
+          title={<Breadcrumb links={links} />}
+          hasClosePageButton={!isMobile}
+          onClosePage={exitFullScreen}
+        />
+      </StyledPageHeaderContainer>
       <StyledMainContainer>{children}</StyledMainContainer>
     </StyledFullScreen>
   );

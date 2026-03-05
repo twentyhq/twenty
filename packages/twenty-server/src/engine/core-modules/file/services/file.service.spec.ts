@@ -1,6 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -12,18 +15,11 @@ jest.mock('uuid', () => ({
 
 describe('FileService', () => {
   let service: FileService;
-  let fileStorageService: FileStorageService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FileService,
-        {
-          provide: FileStorageService,
-          useValue: {
-            copyLegacy: jest.fn(),
-          },
-        },
         {
           provide: TwentyConfigService,
           useValue: {},
@@ -32,39 +28,25 @@ describe('FileService', () => {
           provide: JwtWrapperService,
           useValue: {},
         },
+        {
+          provide: FileStorageService,
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(FileEntity),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(ApplicationEntity),
+          useValue: {},
+        },
       ],
     }).compile();
 
     service = module.get<FileService>(FileService);
-    fileStorageService = module.get<FileStorageService>(FileStorageService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  it('copyFileFromWorkspaceToWorkspace - should copy a file to a new workspace', async () => {
-    const result = await service.copyFileFromWorkspaceToWorkspace(
-      'workspaceId',
-      'path/to/file',
-      'newWorkspaceId',
-    );
-
-    expect(fileStorageService.copyLegacy).toHaveBeenCalledWith({
-      from: {
-        folderPath: 'workspace-workspaceId/path/to',
-        filename: 'file',
-      },
-      to: {
-        folderPath: 'workspace-newWorkspaceId/path/to',
-        filename: 'mocked-uuid',
-      },
-    });
-
-    expect(result).toEqual([
-      'workspace-newWorkspaceId',
-      'path/to',
-      'mocked-uuid',
-    ]);
   });
 });

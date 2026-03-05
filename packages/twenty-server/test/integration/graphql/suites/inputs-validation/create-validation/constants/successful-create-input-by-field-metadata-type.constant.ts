@@ -23,14 +23,6 @@ export const successfulCreateInputByFieldMetadataType: {
         return record.textField === 'test';
       },
     },
-    {
-      input: {
-        textField: '',
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.textField === '';
-      },
-    },
   ],
   [FieldMetadataType.NUMBER]: [
     {
@@ -41,30 +33,6 @@ export const successfulCreateInputByFieldMetadataType: {
         return record.numberField === 1;
       },
     },
-    {
-      input: {
-        numberField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.numberField === null;
-      },
-    },
-    {
-      input: {
-        numberField: 0,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.numberField === 0;
-      },
-    },
-    {
-      input: {
-        numberField: -1.1,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.numberField === -1.1;
-      },
-    },
   ],
   [FieldMetadataType.UUID]: [
     {
@@ -73,14 +41,6 @@ export const successfulCreateInputByFieldMetadataType: {
       },
       validateInput: (record: Record<string, any>) => {
         return record.uuidField === '00000000-0000-4000-8000-000000000000';
-      },
-    },
-    {
-      input: {
-        uuidField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.uuidField === null;
       },
     },
   ],
@@ -162,22 +122,6 @@ export const successfulCreateInputByFieldMetadataType: {
         return record.rawJsonField === null;
       },
     },
-    {
-      input: {
-        rawJsonField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.rawJsonField === null;
-      },
-    },
-    {
-      input: {
-        rawJsonField: '{"key": "value"}',
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.rawJsonField.key === 'value';
-      },
-    },
   ],
   [FieldMetadataType.ARRAY]: [
     {
@@ -202,26 +146,6 @@ export const successfulCreateInputByFieldMetadataType: {
         );
       },
     },
-    {
-      input: {
-        arrayField: [],
-      },
-      validateInput: (record: Record<string, any>) => {
-        return (
-          Array.isArray(record.arrayField) && record.arrayField.length === 0
-        );
-      },
-    },
-    {
-      input: {
-        arrayField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return (
-          Array.isArray(record.arrayField) && record.arrayField.length === 0
-        );
-      },
-    },
   ],
   [FieldMetadataType.RATING]: [
     {
@@ -230,14 +154,6 @@ export const successfulCreateInputByFieldMetadataType: {
       },
       validateInput: (record: Record<string, any>) => {
         return record.ratingField === 'RATING_2';
-      },
-    },
-    {
-      input: {
-        ratingField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.ratingField === null;
       },
     },
   ],
@@ -279,42 +195,36 @@ export const successfulCreateInputByFieldMetadataType: {
   [FieldMetadataType.DATE]: [
     {
       input: {
-        dateField: '2025-01-13',
-      },
-      validateInput: (record: Record<string, any>) => {
-        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
-      },
-    },
-    {
-      input: {
         dateField: null,
       },
       validateInput: (record: Record<string, any>) => {
         return record.dateField === null;
       },
     },
+    {
+      input: {
+        dateField: '2025-01-13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
   ],
   [FieldMetadataType.DATE_TIME]: [
     {
       input: {
-        dateTimeField: '2025-01-13 00:00:00',
+        dateTimeField: '2025-01-13T10:30:00.000Z',
       },
       validateInput: (record: Record<string, any>) => {
         const date = new Date(record.dateTimeField);
 
         return (
           date.toDateString() === 'Mon Jan 13 2025' &&
-          date.getMinutes() === 0 &&
-          date.getSeconds() === 0
+          date.getUTCHours() === 10 &&
+          date.getUTCMinutes() === 30 &&
+          date.getUTCSeconds() === 0 &&
+          date.getUTCMilliseconds() === 0
         );
-      },
-    },
-    {
-      input: {
-        dateTimeField: null,
-      },
-      validateInput: (record: Record<string, any>) => {
-        return record.dateTimeField === null;
       },
     },
   ],

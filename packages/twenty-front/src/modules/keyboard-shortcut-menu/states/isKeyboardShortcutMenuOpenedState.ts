@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isKeyboardShortcutMenuOpenedState = atom({
+export const isKeyboardShortcutMenuOpenedState = createAtomState<boolean>({
   key: 'keyboard-shortcut-menu/isKeyboardShortcutMenuOpenedState',
-  default: false,
+  defaultValue: false,
 });

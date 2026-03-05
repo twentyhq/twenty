@@ -10,35 +10,41 @@ image: /images/user-guide/tasks/tasks_header.png
 Usado quando um usuário precisa selecionar vários valores entre várias opções.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { Checkbox } from "twenty-ui/display";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return (
-        <Checkbox
-          checked={true}
-          indeterminate={false}
-          onChange={() => console.log("onChange function fired")}
-          onCheckedChange={() => console.log("onCheckedChange function fired")}
-          variant="primary"
-          size="small"
-          shape="squared"
-        />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkbox } from "twenty-ui/display";
 
-  <Tab title="Propriedades">
-    | Propriedades    | Tipo     | Descrição                                                                                        |
-    | --------------- | -------- | ------------------------------------------------------------------------------------------------ |
-    | marcado         | booleano | Indica se a caixa de seleção está selecionada                                                    |
-    | indeterminado   | booleano | Indica se a caixa de seleção está em um estado indeterminado (nem selecionada nem desmarcada)    |
-    | onChange        | função   | A função de retorno de chamada que você deseja acionar quando o estado da caixa de seleção mudar |
-    | onCheckedChange | função   | A função de retorno de chamada que você deseja acionar quando o estado `selecionado` mudar       |
-    | variante        | string   | A variante do estilo visual da caixa. As opções incluem: `primária`, `secundária` e `terciária`  |
-    | tamanho         | string   | O tamanho da caixa de seleção. Tem duas opções: `pequena` e `grande`                             |
-    | forma           | string   | A forma da caixa de seleção. Tem duas opções: `quadrada` e `arredondada`                         |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Propriedades">
+
+
+| Propriedades    | Tipo     | Descrição                                                                                        |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| marcado         | booleano | Indica se a caixa de seleção está selecionada                                                    |
+| indeterminado   | booleano | Indica se a caixa de seleção está em um estado indeterminado (nem selecionada nem desmarcada)    |
+| onChange        | função   | A função de retorno de chamada que você deseja acionar quando o estado da caixa de seleção mudar |
+| onCheckedChange | função   | A função de retorno de chamada que você deseja acionar quando o estado `selecionado` mudar       |
+| variante        | string   | A variante do estilo visual da caixa. As opções incluem: `primária`, `secundária` e `terciária`  |
+| tamanho         | string   | O tamanho da caixa de seleção. Tem duas opções: `pequena` e `grande`                             |
+| forma           | string   | A forma da caixa de seleção. Tem duas opções: `quadrada` e `arredondada`                         |
+
+
+
+</Tab>
 </Tabs>

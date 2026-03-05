@@ -1,6 +1,7 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const workflowAiAgentPermissionsIsAddingPermissionState = atom<boolean>({
-  key: 'workflowAiAgentPermissionsIsAddingPermissionState',
-  default: false,
-});
+export const workflowAiAgentPermissionsIsAddingPermissionState =
+  createAtomState<boolean>({
+    key: 'workflowAiAgentPermissionsIsAddingPermissionState',
+    defaultValue: false,
+  });

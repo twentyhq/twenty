@@ -6,8 +6,8 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   type DragStart,
@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonth = () => {
-  const recordCalendarSelectedDate = useRecoilComponentValue(
+  const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
 

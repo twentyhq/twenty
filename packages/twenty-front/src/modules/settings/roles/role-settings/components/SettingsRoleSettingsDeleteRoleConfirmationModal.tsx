@@ -26,7 +26,7 @@ export const SettingsRoleSettingsDeleteRoleConfirmationModal = ({
 
   return (
     <ConfirmationModal
-      modalId={ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID}
+      modalInstanceId={ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID}
       title={t`Delete Role Permanently`}
       subtitle={
         <SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle

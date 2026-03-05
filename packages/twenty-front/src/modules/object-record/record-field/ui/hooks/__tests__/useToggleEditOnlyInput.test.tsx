@@ -2,7 +2,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { booleanFieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
@@ -12,7 +12,7 @@ import {
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
+import { generateMockRecordNode } from '~/testing/utils/generateMockRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -39,7 +39,7 @@ const mocks: MockedResponse[] = [
     result: jest.fn(() => ({
       data: {
         updateCompany: {
-          ...generateEmptyJestRecordNode({
+          ...generateMockRecordNode({
             objectNameSingular: CoreObjectNameSingular.Company,
             input: { id: recordId },
             withDepthOneRelation: true,

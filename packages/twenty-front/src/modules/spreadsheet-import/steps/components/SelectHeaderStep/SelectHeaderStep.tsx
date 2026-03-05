@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { type ImportedRow } from '@/spreadsheet-import/types';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { useComputeColumnSuggestionsAndAutoMatch } from '@/spreadsheet-import/hooks/useComputeColumnSuggestionsAndAutoMatch';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -14,8 +15,8 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { useLingui } from '@lingui/react/macro';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
-const StyledHeading = styled(Heading)`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+const StyledHeadingContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledTableContainer = styled.div`
@@ -103,8 +104,10 @@ export const SelectHeaderStep = ({
 
   return (
     <>
-      <Modal.Content>
-        <StyledHeading title={t`Select header row`} />
+      <ModalContent>
+        <StyledHeadingContainer>
+          <Heading title={t`Select header row`} />
+        </StyledHeadingContainer>
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}
@@ -112,7 +115,7 @@ export const SelectHeaderStep = ({
             setSelectedRowIndexes={setSelectedRowIndexes}
           />
         </StyledTableContainer>
-      </Modal.Content>
+      </ModalContent>
       <StepNavigationButton
         onContinue={handleOnContinue}
         onBack={onBack}

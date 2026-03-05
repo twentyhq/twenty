@@ -5,15 +5,14 @@ import { useFavoriteFolderPicker } from '@/favorites/favorite-folder-picker/hook
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-
-import { useRecoilState } from 'recoil';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { Key } from 'ts-key-enum';
 
 type FavoriteFolderPickerProps = {
@@ -31,8 +30,9 @@ export const FavoriteFolderPicker = ({
   objectNameSingular,
   dropdownId,
 }: FavoriteFolderPickerProps) => {
-  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilState(isFavoriteFolderCreatingState);
+  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
+    isFavoriteFolderCreatingState,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     FavoriteFolderPickerInstanceContext,
@@ -43,19 +43,19 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  const [favoriteFoldersSearchFilter] = useRecoilComponentState(
+  const [favoriteFolderSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
   const filteredFolders = favoriteFolders.filter((folder) =>
     folder.name
       .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+      .includes(favoriteFolderSearchFilter.toLowerCase()),
   );
 
   const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+    !favoriteFolderSearchFilter ||
+    'no folder'.includes(favoriteFolderSearchFilter.toLowerCase());
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],

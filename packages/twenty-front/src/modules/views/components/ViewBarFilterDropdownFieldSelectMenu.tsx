@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
@@ -10,7 +10,7 @@ import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/con
 import { useFilterDropdownSelectableFieldMetadataItems } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownSelectableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { ViewBarFilterDropdownBottomMenu } from '@/views/components/ViewBarFilterDropdownBottomMenu';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
 
@@ -24,22 +24,23 @@ import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarF
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledInput = styled.input`
   background: transparent;
   border: none;
   border-top: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 0;
-  border-top-left-radius: ${({ theme }) => theme.border.radius.md};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
+  border-top-left-radius: ${themeCssVariables.border.radius.md};
+  border-top-right-radius: ${themeCssVariables.border.radius.md};
+  color: ${themeCssVariables.font.color.primary};
   margin: 0;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   min-height: 19px;
   font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
   font-weight: inherit;
   max-width: 100%;
@@ -47,13 +48,13 @@ export const StyledInput = styled.input`
   text-decoration: none;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
+    color: ${themeCssVariables.font.color.light};
   }
 `;
 
 export const ViewBarFilterDropdownFieldSelectMenu = () => {
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
-    useRecoilComponentState(objectFilterDropdownSearchInputComponentState);
+    useAtomComponentState(objectFilterDropdownSearchInputComponentState);
 
   const {
     selectableHiddenFieldMetadataItems,

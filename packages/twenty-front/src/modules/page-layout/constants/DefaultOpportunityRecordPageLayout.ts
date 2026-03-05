@@ -19,6 +19,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -46,7 +47,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -56,6 +57,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -83,7 +85,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -93,6 +95,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-tasks',
       title: 'Tasks',
       icon: 'IconCheckbox',
@@ -120,7 +123,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -130,6 +133,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-notes',
       title: 'Notes',
       icon: 'IconNotes',
@@ -157,7 +161,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -167,6 +171,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
@@ -194,7 +199,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -204,6 +209,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-emails',
       title: 'Emails',
       icon: 'IconMail',
@@ -231,7 +237,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -241,6 +247,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'opportunity-tab-calendar',
       title: 'Calendar',
       icon: 'IconCalendarEvent',
@@ -268,7 +275,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

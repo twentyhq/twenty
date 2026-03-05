@@ -2,6 +2,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+import { AdvancedFilterSSEEffect } from '@/object-record/advanced-filter/components/AdvancedFilterSSEEffect';
 
 import { ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/advanced-filter/constants/AdvancedFilterDropdownContentWidth';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
@@ -10,21 +11,22 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export const AdvancedFilterRootRecordFilterGroup = () => {
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
@@ -45,6 +47,7 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
     >
       <DropdownContent widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}>
         <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
+          <AdvancedFilterSSEEffect />
           <StyledContainer>
             {childRecordFiltersAndRecordFilterGroups.map(
               (recordFilterGroupChild, recordFilterGroupChildIndex) =>

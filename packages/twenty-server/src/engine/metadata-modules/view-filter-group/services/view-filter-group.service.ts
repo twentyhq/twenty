@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -82,7 +81,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(buildAndRunResult)) {
+    if (buildAndRunResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         buildAndRunResult,
         'Multiple validation errors occurred while creating view filter group',
@@ -154,7 +153,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view filter group',
@@ -227,7 +226,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view filter group',
@@ -305,7 +304,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view filter group',

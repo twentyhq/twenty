@@ -1,14 +1,15 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
@@ -19,7 +20,7 @@ export const useTriggerActionMenuDropdown = ({
     ActionMenuComponentInstanceContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -28,46 +29,43 @@ export const useTriggerActionMenuDropdown = ({
     getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
 
   const recordIndexActionMenuDropdownPositionCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       recordIndexActionMenuDropdownPositionComponentState,
       actionMenuDropdownId,
     );
 
   const { openDropdown } = useOpenDropdown();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const store = useStore();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const triggerActionMenuDropdown = useCallback(
+    (event: React.MouseEvent, recordId: string) => {
+      event.preventDefault();
 
-  const triggerActionMenuDropdown = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (event: React.MouseEvent, recordId: string) => {
-        event.preventDefault();
+      store.set(recordIndexActionMenuDropdownPositionCallbackState, {
+        x: event.pageX,
+        y: event.pageY,
+      });
 
-        set(recordIndexActionMenuDropdownPositionCallbackState, {
-          x: event.pageX,
-          y: event.pageY,
-        });
+      const isRowSelected = store.get(isRowSelectedFamilyState(recordId));
 
-        const isRowSelected = getSnapshotValue(
-          snapshot,
-          isRowSelectedFamilyState(recordId),
-        );
+      if (isRowSelected !== true) {
+        store.set(isRowSelectedFamilyState(recordId), true);
+      }
 
-        if (isRowSelected !== true) {
-          set(isRowSelectedFamilyState(recordId), true);
-        }
+      closeSidePanelMenu();
 
-        closeCommandMenu();
-
-        openDropdown({
-          dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
-        });
-      },
+      openDropdown({
+        dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      });
+    },
     [
       recordIndexActionMenuDropdownPositionCallbackState,
       isRowSelectedFamilyState,
-      closeCommandMenu,
+      closeSidePanelMenu,
       openDropdown,
       actionMenuDropdownId,
+      store,
     ],
   );
 

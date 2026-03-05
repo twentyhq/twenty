@@ -170,6 +170,14 @@ const SettingsAvailableApplicationDetails = lazy(() =>
   })),
 );
 
+const SettingsApplicationRegistrationDetails = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationRegistrationDetails'
+  ).then((module) => ({
+    default: module.SettingsApplicationRegistrationDetails,
+  })),
+);
+
 const SettingsAgentForm = lazy(() =>
   import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
     default: module.SettingsAgentForm,
@@ -415,28 +423,39 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         element={<SettingsTwoFactorAuthenticationMethod />}
       />
       <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
-      <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
-      <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
       <Route
-        path={SettingsPath.AccountsConfiguration}
-        element={<SettingsAccountsConfiguration />}
-      />
-      <Route
-        path={SettingsPath.AccountsCalendars}
-        element={<SettingsAccountsCalendars />}
-      />
-      <Route
-        path={SettingsPath.AccountsEmails}
-        element={<SettingsAccountsEmails />}
-      />
-      <Route
-        path={SettingsPath.NewImapSmtpCaldavConnection}
-        element={<SettingsNewImapSmtpCaldavConnection />}
-      />
-      <Route
-        path={SettingsPath.EditImapSmtpCaldavConnection}
-        element={<SettingsEditImapSmtpCaldavConnection />}
-      />
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
+          />
+        }
+      >
+        <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+        <Route
+          path={SettingsPath.NewAccount}
+          element={<SettingsNewAccount />}
+        />
+        <Route
+          path={SettingsPath.AccountsConfiguration}
+          element={<SettingsAccountsConfiguration />}
+        />
+        <Route
+          path={SettingsPath.AccountsCalendars}
+          element={<SettingsAccountsCalendars />}
+        />
+        <Route
+          path={SettingsPath.AccountsEmails}
+          element={<SettingsAccountsEmails />}
+        />
+        <Route
+          path={SettingsPath.NewImapSmtpCaldavConnection}
+          element={<SettingsNewImapSmtpCaldavConnection />}
+        />
+        <Route
+          path={SettingsPath.EditImapSmtpCaldavConnection}
+          element={<SettingsEditImapSmtpCaldavConnection />}
+        />
+      </Route>
       <Route
         element={
           <SettingsProtectedRouteWrapper
@@ -610,6 +629,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.AvailableApplicationDetail}
           element={<SettingsAvailableApplicationDetails />}
+        />
+        <Route
+          path={SettingsPath.ApplicationRegistrationDetail}
+          element={<SettingsApplicationRegistrationDetails />}
         />
         <Route
           path={SettingsPath.ApplicationLogicFunctionDetail}

@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-
 import { type IconComponent } from '@ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 export type MenuItemIconProps = {
@@ -12,7 +12,7 @@ export const MenuItemIcon = ({
   Icon,
   withContainer = false,
 }: MenuItemIconProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   if (!Icon) {
     return null;

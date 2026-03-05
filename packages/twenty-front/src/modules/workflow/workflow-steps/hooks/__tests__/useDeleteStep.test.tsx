@@ -2,13 +2,12 @@ import React from 'react';
 
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 const mockDeleteWorkflowVersionStep = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockDeleteStepsOutputSchema = jest.fn();
-const mockCloseCommandMenu = jest.fn();
+const mockCloseSidePanel = jest.fn();
 
 jest.mock(
   '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep',
@@ -31,9 +30,9 @@ jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
   }),
 }));
 
-jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
-  useCommandMenu: () => ({
-    closeCommandMenu: mockCloseCommandMenu,
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({
+    closeSidePanelMenu: mockCloseSidePanel,
   }),
 }));
 
@@ -42,9 +41,9 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
 }));
 
 jest.mock(
-  '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose',
+  '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnSidePanelClose',
   () => ({
-    useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose: () => ({
+    useResetWorkflowAiAgentPermissionsStateOnSidePanelClose: () => ({
       resetPermissionState: jest.fn(),
     }),
   }),
@@ -55,15 +54,13 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
     'workflow-visualizer-instance-id';
 
   return (
-    <RecoilRoot>
-      <WorkflowVisualizerComponentInstanceContext.Provider
-        value={{
-          instanceId: workflowVisualizerComponentInstanceId,
-        }}
-      >
-        {children}
-      </WorkflowVisualizerComponentInstanceContext.Provider>
-    </RecoilRoot>
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: workflowVisualizerComponentInstanceId,
+      }}
+    >
+      {children}
+    </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };
 
@@ -99,7 +96,7 @@ describe('useDeleteStep', () => {
       workflowVersionId: mockWorkflowVersionId,
       stepId: mockStepId,
     });
-    expect(mockCloseCommandMenu).toHaveBeenCalled();
+    expect(mockCloseSidePanel).toHaveBeenCalled();
     expect(mockDeleteStepsOutputSchema).toHaveBeenCalledWith({
       stepIds: [mockStepId],
       workflowVersionId: mockWorkflowVersionId,

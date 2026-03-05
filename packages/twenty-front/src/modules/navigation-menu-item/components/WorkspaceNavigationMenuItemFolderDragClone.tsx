@@ -1,16 +1,17 @@
-import { useTheme } from '@emotion/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -32,8 +33,8 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   navigationMenuItemFolderContentLength,
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
-  const theme = useTheme();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { theme } = useContext(ThemeContext);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 
   if (!isDefined(navigationMenuItem)) {

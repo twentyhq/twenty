@@ -1,14 +1,17 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
 import { getViewFiltersToUpdate } from '@/views/utils/getViewFiltersToUpdate';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
@@ -19,113 +22,117 @@ export const useSaveRecordFiltersToViewFilters = () => {
     performViewFilterAPIDelete,
   } = usePerformViewFilterAPIPersist();
 
-  const { currentView } = useGetCurrentViewOnly();
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
+    contextStoreCurrentViewIdComponentState,
+  );
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFiltersCallbackState = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 
-  const saveRecordFiltersToViewFilters = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        if (!canPersistChanges || !isDefined(currentView)) {
-          return;
-        }
+  const store = useStore();
 
-        const currentViewFilters = currentView?.viewFilters ?? [];
+  const saveRecordFiltersToViewFilters = useCallback(async () => {
+    const views = store.get(coreViewsState.atom);
 
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+    const currentCoreView = views.find(
+      (view) => view.id === contextStoreCurrentViewId,
+    );
 
-        const newViewFilters = currentRecordFilters.map(
-          mapRecordFilterToViewFilter,
-        );
+    if (!isDefined(currentCoreView)) {
+      return;
+    }
 
-        const viewFiltersToCreate = getViewFiltersToCreate(
-          currentViewFilters,
-          newViewFilters,
-        );
+    const currentView = convertCoreViewToView(currentCoreView);
 
-        const viewFiltersToDelete = getViewFiltersToDelete(
-          currentViewFilters,
-          newViewFilters,
-        );
+    if (!canPersistChanges || !isDefined(currentView)) {
+      return;
+    }
 
-        const viewFiltersToUpdate = getViewFiltersToUpdate(
-          currentViewFilters,
-          newViewFilters,
-        );
+    const currentViewFilters = currentView?.viewFilters ?? [];
 
-        const createViewFilterInputs = viewFiltersToCreate.map(
-          (viewFilter) => ({
-            input: {
-              id: viewFilter.id,
-              fieldMetadataId: viewFilter.fieldMetadataId,
-              viewId: currentView.id,
-              value: viewFilter.value,
-              operand: viewFilter.operand,
-              viewFilterGroupId: viewFilter.viewFilterGroupId,
-              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-              subFieldName: viewFilter.subFieldName ?? null,
-            },
-          }),
-        );
+    const currentRecordFilters = store.get(currentRecordFiltersCallbackState);
 
-        const updateViewFilterInputs = viewFiltersToUpdate.map(
-          (viewFilter) => ({
-            input: {
-              id: viewFilter.id,
-              update: {
-                value: viewFilter.value,
-                operand: viewFilter.operand,
-                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-                viewFilterGroupId: viewFilter.viewFilterGroupId,
-                subFieldName: viewFilter.subFieldName ?? null,
-              },
-            },
-          }),
-        );
+    const newViewFilters = currentRecordFilters.map(
+      mapRecordFilterToViewFilter,
+    );
 
-        const deleteViewFilterInputs = viewFiltersToDelete.map(
-          (viewFilter) => ({
-            input: {
-              id: viewFilter.id,
-            },
-          }),
-        );
+    const viewFiltersToCreate = getViewFiltersToCreate(
+      currentViewFilters,
+      newViewFilters,
+    );
 
-        const createResult = await performViewFilterAPICreate(
-          createViewFilterInputs,
-        );
-        if (createResult.status === 'failed') {
-          return;
-        }
+    const viewFiltersToDelete = getViewFiltersToDelete(
+      currentViewFilters,
+      newViewFilters,
+    );
 
-        const updateResult = await performViewFilterAPIUpdate(
-          updateViewFilterInputs,
-        );
-        if (updateResult.status === 'failed') {
-          return;
-        }
+    const viewFiltersToUpdate = getViewFiltersToUpdate(
+      currentViewFilters,
+      newViewFilters,
+    );
 
-        const deleteResult = await performViewFilterAPIDelete(
-          deleteViewFilterInputs,
-        );
-        if (deleteResult.status === 'failed') {
-          return;
-        }
+    const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
+      input: {
+        id: viewFilter.id,
+        fieldMetadataId: viewFilter.fieldMetadataId,
+        viewId: currentView.id,
+        value: viewFilter.value,
+        operand: viewFilter.operand,
+        viewFilterGroupId: viewFilter.viewFilterGroupId,
+        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+        subFieldName: viewFilter.subFieldName ?? null,
       },
-    [
-      canPersistChanges,
-      currentView,
-      currentRecordFiltersCallbackState,
-      performViewFilterAPICreate,
-      performViewFilterAPIUpdate,
-      performViewFilterAPIDelete,
-    ],
-  );
+    }));
+
+    const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
+      input: {
+        id: viewFilter.id,
+        update: {
+          value: viewFilter.value,
+          operand: viewFilter.operand,
+          positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+          viewFilterGroupId: viewFilter.viewFilterGroupId,
+          subFieldName: viewFilter.subFieldName ?? null,
+        },
+      },
+    }));
+
+    const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
+      input: {
+        id: viewFilter.id,
+      },
+    }));
+
+    const createResult = await performViewFilterAPICreate(
+      createViewFilterInputs,
+    );
+    if (createResult.status === 'failed') {
+      return;
+    }
+
+    const updateResult = await performViewFilterAPIUpdate(
+      updateViewFilterInputs,
+    );
+    if (updateResult.status === 'failed') {
+      return;
+    }
+
+    const deleteResult = await performViewFilterAPIDelete(
+      deleteViewFilterInputs,
+    );
+    if (deleteResult.status === 'failed') {
+      return;
+    }
+  }, [
+    store,
+    canPersistChanges,
+    currentRecordFiltersCallbackState,
+    performViewFilterAPICreate,
+    performViewFilterAPIUpdate,
+    performViewFilterAPIDelete,
+    contextStoreCurrentViewId,
+  ]);
 
   return {
     saveRecordFiltersToViewFilters,

@@ -1,12 +1,12 @@
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useOpenSettingsMenu = () => {
-  const setIsNavigationDrawerExpanded = useSetRecoilState(
+  const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-  const setCurrentMobileNavigationDrawer = useSetRecoilState(
+  const setCurrentMobileNavigationDrawer = useSetAtomState(
     currentMobileNavigationDrawerState,
   );
 

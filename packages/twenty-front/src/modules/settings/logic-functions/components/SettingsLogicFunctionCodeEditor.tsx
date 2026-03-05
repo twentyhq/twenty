@@ -39,6 +39,7 @@ export const SettingsLogicFunctionCodeEditor = ({
     if (files.length > 1) {
       files.forEach((file) => {
         const model = monaco.editor.getModel(monaco.Uri.file(file.path));
+
         if (!isDefined(model)) {
           monaco.editor.createModel(
             file.content,

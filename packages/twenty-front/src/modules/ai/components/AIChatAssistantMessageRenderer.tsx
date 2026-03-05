@@ -1,71 +1,58 @@
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
-import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
+import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import { keyframes, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { isToolUIPart } from 'ai';
+import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
+import { styled } from '@linaria/react';
+import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLoadingIconContainer = styled.div`
   align-items: center;
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLoadingIcon = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledLoadingIconWrapper = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
   transform: rotate(90deg);
 `;
 
-const streamingDotsAnimation = keyframes`
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-`;
-
-const StyledStreamingIndicator = styled.div`
-  &::after {
-    display: inline-block;
-    content: '';
-    animation: ${streamingDotsAnimation} 750ms steps(3, end) infinite;
-    width: 2ch;
-    text-align: left;
-  }
-`;
-
 const InitialLoadingIndicator = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon size={theme.icon.size.xl} />
+      <StyledLoadingIconWrapper>
+        <IconDotsVertical size={theme.icon.size.xl} />
+      </StyledLoadingIconWrapper>
     </StyledLoadingIconContainer>
   );
 };
 
-const MessagePartRenderer = ({ part }: { part: ExtendedUIMessagePart }) => {
+const MessagePartRenderer = ({
+  part,
+  isStreaming,
+}: {
+  part: ExtendedUIMessagePart;
+  isStreaming: boolean;
+}) => {
   switch (part.type) {
-    case 'reasoning':
-      return (
-        <ReasoningSummaryDisplay
-          content={part.text}
-          isThinking={part.state === 'streaming'}
-        />
-      );
     case 'text':
       return <LazyMarkdownRenderer text={part.text} />;
     case 'data-routing-status':
@@ -84,8 +71,13 @@ const MessagePartRenderer = ({ part }: { part: ExtendedUIMessagePart }) => {
         />
       );
     default:
-      if (isToolUIPart(part)) {
-        return <ToolStepRenderer toolPart={part} />;
+      if (isToolUIPart(part) === true && part.type !== 'dynamic-tool') {
+        return (
+          <ToolStepRenderer
+            toolPart={part as ToolUIPart}
+            isStreaming={isStreaming}
+          />
+        );
       }
       return null;
   }
@@ -102,25 +94,48 @@ export const AIChatAssistantMessageRenderer = ({
 }) => {
   // Filter out data-code-execution parts when tool-code_interpreter exists
   // (the tool part contains the final result, data-code-execution is for streaming updates)
+  // Also filter out data-thread-title (consumed by useAgentChat, not rendered)
   const hasCodeInterpreterTool = messageParts.some(
     (part) => part.type === 'tool-code_interpreter',
   );
-  const filteredParts = hasCodeInterpreterTool
-    ? messageParts.filter((part) => part.type !== 'data-code-execution')
-    : messageParts;
+  const filteredParts = messageParts.filter(
+    (part) =>
+      part.type !== 'data-thread-title' &&
+      (!hasCodeInterpreterTool || part.type !== 'data-code-execution'),
+  );
+  const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
-  if (!filteredParts.length && !hasError) {
+  if (!renderItems.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {filteredParts.map((part, index) => (
-          <MessagePartRenderer key={index} part={part} />
-        ))}
+        {renderItems.map((renderItem, index) =>
+          renderItem.type === 'thinking-steps' ? (
+            <ThinkingStepsDisplay
+              key={index}
+              parts={renderItem.parts}
+              isLastMessageStreaming={isLastMessageStreaming}
+              hasAssistantTextResponseStarted={renderItems
+                .slice(index + 1)
+                .some(
+                  (nextRenderItem) =>
+                    nextRenderItem.type === 'part' &&
+                    nextRenderItem.part.type === 'text' &&
+                    nextRenderItem.part.text.trim().length > 0,
+                )}
+            />
+          ) : (
+            <MessagePartRenderer
+              key={index}
+              part={renderItem.part}
+              isStreaming={isLastMessageStreaming}
+            />
+          ),
+        )}
       </StyledMessagePartsContainer>
-      {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
   );
 };

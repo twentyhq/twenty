@@ -9,13 +9,14 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -150,10 +151,12 @@ export class WorkspaceMigrationRunnerService {
   }
 
   run = async ({
-    actions,
-    applicationUniversalIdentifier,
+    workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-  }: WorkspaceMigration): Promise<{
+  }: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
   }> => {
@@ -169,6 +172,9 @@ export class WorkspaceMigrationRunnerService {
         ...actionMetadataNames,
         ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
         ...actionMetadataNames.flatMap(getMetadataSerializedRelationNames),
+        ...actionMetadataNames.flatMap(
+          getMetadataRelatedMetadataNamesForValidation,
+        ),
       ]),
     ];
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(

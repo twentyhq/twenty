@@ -63,6 +63,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     frontComponentId: commandMenuItemEntity.frontComponentId,
     label: commandMenuItemEntity.label,
     icon: commandMenuItemEntity.icon,
+    shortLabel: commandMenuItemEntity.shortLabel,
+    position: commandMenuItemEntity.position,
     isPinned: commandMenuItemEntity.isPinned,
     availabilityType: commandMenuItemEntity.availabilityType,
     availabilityObjectMetadataId:
@@ -73,6 +75,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     createdAt: commandMenuItemEntity.createdAt.toISOString(),
     updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
     applicationUniversalIdentifier,
+    conditionalAvailabilityExpression:
+      commandMenuItemEntity.conditionalAvailabilityExpression,
     availabilityObjectMetadataUniversalIdentifier,
     frontComponentUniversalIdentifier,
   };

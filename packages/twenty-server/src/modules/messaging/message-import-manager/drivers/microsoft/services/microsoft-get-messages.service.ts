@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type EmailAddress } from 'addressparser';
-import { isDefined } from 'twenty-shared/utils';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -151,6 +151,9 @@ export class MicrosoftGetMessagesService {
           : MessageDirection.INCOMING,
         participants,
         attachments: [],
+        messageFolderExternalIds: response.parentFolderId
+          ? [response.parentFolderId]
+          : [],
       };
     });
 

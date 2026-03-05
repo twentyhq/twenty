@@ -10,12 +10,10 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-
-const companiesMock = getCompaniesMock();
 
 const companyMockObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('company');
@@ -44,9 +42,9 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
-      value: companiesMock[0].name,
+      value: mockedCompanyRecords[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
-      displayValue: companiesMock[0].name,
+      displayValue: mockedCompanyRecords[0].name,
       operand: RecordFilterOperand.CONTAINS,
       type: 'TEXT',
       label: 'Name',
@@ -61,7 +59,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     expect(result).toEqual({
       name: {
-        ilike: '%Linkedin%',
+        ilike: `%${mockedCompanyRecords[0].name}%`,
       },
     });
   });
@@ -87,9 +85,9 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
-      value: companiesMock[0].name,
+      value: mockedCompanyRecords[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
-      displayValue: companiesMock[0].name,
+      displayValue: mockedCompanyRecords[0].name,
       operand: ViewFilterOperand.CONTAINS,
       type: FieldMetadataType.TEXT,
       label: 'Name',
@@ -116,7 +114,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       and: [
         {
           name: {
-            ilike: '%Linkedin%',
+            ilike: `%${mockedCompanyRecords[0].name}%`,
           },
         },
         {
@@ -1024,9 +1022,9 @@ describe('should work as expected for the different field types', () => {
 
     const dateFilterIs: RecordFilter = {
       id: 'company-date-filter-is',
-      value: '2024-09-17T20:46:58.922Z',
+      value: '2024-09-17',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
-      displayValue: '2024-09-17T20:46:58.922Z',
+      displayValue: '2024-09-17',
       operand: ViewFilterOperand.IS,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
@@ -1081,12 +1079,12 @@ describe('should work as expected for the different field types', () => {
           and: [
             {
               createdAt: {
-                lt: '2024-09-17T20:47:00Z',
+                gte: '2024-09-16T22:00:00Z',
               },
             },
             {
               createdAt: {
-                gte: '2024-09-17T20:46:00Z',
+                lt: '2024-09-17T22:00:00Z',
               },
             },
           ],

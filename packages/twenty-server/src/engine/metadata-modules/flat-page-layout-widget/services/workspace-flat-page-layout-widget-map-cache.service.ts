@@ -10,9 +10,11 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { fromPageLayoutWidgetEntityToFlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-entity-to-flat-page-layout-widget.util';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -31,6 +33,10 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectRepository(ViewEntity)
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {
     super();
   }
@@ -44,6 +50,8 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
       pageLayoutTabs,
       objectMetadatas,
       fieldMetadatas,
+      frontComponents,
+      views,
     ] = await Promise.all([
       this.pageLayoutWidgetRepository.find({
         where: { workspaceId },
@@ -69,6 +77,16 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
+      this.frontComponentRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
     ]);
 
     const applicationIdToUniversalIdentifierMap =
@@ -79,6 +97,12 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
       createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataUniversalIdentifierById = Object.fromEntries(
       createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
+    const frontComponentUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(frontComponents),
+    );
+    const viewUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(views),
     );
 
     const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
@@ -91,6 +115,8 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
           pageLayoutTabIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataUniversalIdentifierById,
+          frontComponentUniversalIdentifierById,
+          viewUniversalIdentifierById,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

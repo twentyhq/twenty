@@ -1,5 +1,6 @@
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
+import { convertCoreViewFieldGroupToViewFieldGroup } from '@/views/utils/convertCoreViewFieldGroupToViewFieldGroup';
 import { convertCoreViewFieldToViewField } from '@/views/utils/convertCoreViewFieldToViewField';
 import { convertCoreViewFilterGroupToViewFilterGroup } from '@/views/utils/convertCoreViewFilterGroupToViewFilterGroup';
 import { convertCoreViewFilterToViewFilter } from '@/views/utils/convertCoreViewFilterToViewFilter';
@@ -8,6 +9,7 @@ import { convertCoreViewKeyToViewKey } from '@/views/utils/convertCoreViewKeyToV
 import { convertCoreViewOpenRecordInToViewOpenRecordIn } from '@/views/utils/convertCoreViewOpenRecordInToViewOpenRecordIn';
 import { convertCoreViewTypeToViewType } from '@/views/utils/convertCoreViewTypeToViewType';
 import { ViewVisibility } from '~/generated-metadata/graphql';
+import { convertCoreViewSortToViewSort } from '@/views/utils/convertCoreViewSortToViewSort';
 
 export const convertCoreViewToView = (
   coreView: CoreViewWithRelations,
@@ -28,6 +30,9 @@ export const convertCoreViewToView = (
     viewFields: coreView.viewFields?.map((viewField) =>
       convertCoreViewFieldToViewField(viewField),
     ),
+    viewFieldGroups: coreView.viewFieldGroups?.map((viewFieldGroup) =>
+      convertCoreViewFieldGroupToViewFieldGroup(viewFieldGroup),
+    ),
     viewGroups: coreView.viewGroups?.map((viewGroup) =>
       convertCoreViewGroupToViewGroup(viewGroup),
     ),
@@ -37,7 +42,7 @@ export const convertCoreViewToView = (
     viewFilterGroups: coreView.viewFilterGroups?.map(
       convertCoreViewFilterGroupToViewFilterGroup,
     ),
-    viewSorts: coreView.viewSorts,
+    viewSorts: coreView.viewSorts?.map(convertCoreViewSortToViewSort),
     mainGroupByFieldMetadataId: coreView.mainGroupByFieldMetadataId ?? null,
     shouldHideEmptyGroups: coreView.shouldHideEmptyGroups,
     kanbanAggregateOperation: coreView.kanbanAggregateOperation ?? null,

@@ -10,6 +10,8 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     folderId
     name
     link
+    icon
+    color
     position
     applicationId
     createdAt

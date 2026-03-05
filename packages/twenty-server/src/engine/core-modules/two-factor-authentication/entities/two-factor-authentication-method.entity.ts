@@ -1,5 +1,3 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import {
   Column,
@@ -18,17 +16,13 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
-@ObjectType('TwoFactorAuthenticationMethod')
 export class TwoFactorAuthenticationMethodEntity {
-  @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field({ nullable: false })
   @Column({ nullable: false, type: 'uuid' })
   userWorkspaceId: string;
 
-  @Field(() => UserWorkspaceEntity)
   @ManyToOne(
     () => UserWorkspaceEntity,
     (userWorkspace) => userWorkspace.twoFactorAuthenticationMethods,
@@ -49,22 +43,18 @@ export class TwoFactorAuthenticationMethodEntity {
   })
   status: OTPStatus;
 
-  @Field(() => TwoFactorAuthenticationStrategy)
   @Column({
     type: 'enum',
     enum: TwoFactorAuthenticationStrategy,
   })
   strategy: TwoFactorAuthenticationStrategy;
 
-  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Field()
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Field({ nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 }

@@ -10,40 +10,47 @@ image: /images/user-guide/table-views/table.png
 يستعرض شريط التنقل الذي يحتوي على عدة مكونات `NavigationBarItem`.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+<Tab title="استخدام">
 
-    export const MyComponent = () => {
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-       const navigationItems = [
-         {
-           name: "Home",
-           Icon: IconHome,
-           onClick: () => console.log("Home clicked"),
-         },
-         {
-           name: "Profile",
-           Icon: IconUser,
-           onClick: () => console.log("Profile clicked"),
-         },
-         {
-           name: "Settings",
-           Icon: IconSettings,
-           onClick: () => console.log("Settings clicked"),
-         },
-       ];
+export const MyComponent = () => {
 
-      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-    };
-    ```
-  </Tab>
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
 
-  <Tab title="المحددات">
-    | المحددات         | النوع  | الوصف                                                                                                                                                            |
-    | ---------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | اسم العنصر النشط | نص     | اسم العنصر النشط حاليًا في قائمة التنقل                                                                                                                          |
-    | العناصر          | مصفوفة | مصفوفة من الكائنات التي تمثل كل عنصر من عناصر التنقل. كل كائن يحتوي على `الاسم` للعنصر، ومكون `الأيقونة` للعرض، ودالة `onClick` التي تستدعي عند النقر على العنصر |
-  </Tab>
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="المحددات">
+
+
+| المحددات         | النوع  | الوصف                                                                                                                                                            |
+| ---------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| اسم العنصر النشط | نص     | اسم العنصر النشط حاليًا في قائمة التنقل                                                                                                                          |
+| العناصر          | مصفوفة | مصفوفة من الكائنات التي تمثل كل عنصر من عناصر التنقل. كل كائن يحتوي على `الاسم` للعنصر، ومكون `الأيقونة` للعرض، ودالة `onClick` التي تستدعي عند النقر على العنصر |
+
+
+
+
+</Tab>
 </Tabs>

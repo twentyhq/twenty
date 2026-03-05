@@ -11,7 +11,7 @@ import { useTriggerActionMenuDropdown } from '@/object-record/record-table/recor
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ReactNode } from 'react';
 
 type RecordTableNoRecordGroupBodyContextProviderProps = {
@@ -58,8 +58,9 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     triggerActionMenuDropdown(event, recordId);
   };
 
-  const hasUserSelectedAllRows = useRecoilComponentValue(
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
     hasUserSelectedAllRowsComponentState,
+    recordTableId,
   );
 
   return (

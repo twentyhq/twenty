@@ -1,5 +1,5 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -7,7 +7,8 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useRecoilValue } from 'recoil';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
@@ -45,9 +46,12 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForObjectMetadataItemsProps) => {
-  const { toggleNavigationSection, isNavigationSectionOpenState } =
-    useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const navigationSectionId = 'Objects' + (isRemote ? 'Remote' : 'Workspace');
+  const { toggleNavigationSection } = useNavigationSection(navigationSectionId);
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
+    isNavigationSectionOpenFamilyState,
+    navigationSectionId,
+  );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

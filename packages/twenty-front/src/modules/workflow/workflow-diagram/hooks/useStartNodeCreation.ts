@@ -1,35 +1,36 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentState(workflowInsertStepIdsComponentState);
+    useAtomComponentState(workflowInsertStepIdsComponentState);
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
 
-  const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowCreateStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   /**
@@ -56,19 +57,19 @@ export const useStartNodeCreation = () => {
         return;
       }
 
-      if (!isInRightDrawer) {
-        setCommandMenuNavigationStack([]);
+      if (!isInSidePanel) {
+        setSidePanelNavigationStack([]);
       }
 
-      openWorkflowCreateStepInCommandMenu(workflowVisualizerWorkflowId);
+      openWorkflowCreateStepInSidePanel(workflowVisualizerWorkflowId);
     },
     [
       setWorkflowInsertStepIds,
       setWorkflowSelectedNode,
       workflowVisualizerWorkflowId,
-      isInRightDrawer,
-      openWorkflowCreateStepInCommandMenu,
-      setCommandMenuNavigationStack,
+      isInSidePanel,
+      openWorkflowCreateStepInSidePanel,
+      setSidePanelNavigationStack,
     ],
   );
 

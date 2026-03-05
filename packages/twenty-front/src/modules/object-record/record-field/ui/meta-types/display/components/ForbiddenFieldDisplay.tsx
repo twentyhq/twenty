@@ -1,27 +1,28 @@
-import { type Theme, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconLock } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledContainer = styled.div<{ theme: Theme }>`
+const StyledContainer = styled.div`
   align-items: center;
   display: inline-flex;
 
-  background: ${({ theme }) => theme.background.transparent.light};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  font-size: ${({ theme }) => theme.font.size.md};
-  padding: ${({ theme }) => theme.spacing(1)};
-  gap: ${({ theme }) => theme.spacing(1)};
+  background: ${themeCssVariables.background.transparent.light};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  font-size: ${themeCssVariables.font.size.md};
+  padding: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[1]};
 
   border-radius: 4px;
 `;
 
 export const ForbiddenFieldDisplay = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledContainer theme={theme}>
+    <StyledContainer>
       <IconLock size={theme.icon.size.sm} />
       <Trans>Not shared</Trans>
     </StyledContainer>

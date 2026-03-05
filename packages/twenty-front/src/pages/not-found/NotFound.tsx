@@ -1,11 +1,18 @@
-import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { lazy, Suspense } from 'react';
+
+const SignInBackgroundMockPage = lazy(() =>
+  import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
+    (module) => ({ default: module.SignInBackgroundMockPage }),
+  ),
+);
 import { AppPath } from 'twenty-shared/types';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,
@@ -17,8 +24,8 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;
-  backdrop-filter: ${({ theme }) => theme.blur.light};
-  background: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${themeCssVariables.blur.light};
+  background: ${themeCssVariables.background.transparent.secondary};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -61,7 +68,9 @@ export const NotFound = () => {
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>
-      <SignInBackgroundMockPage />
+      <Suspense fallback={null}>
+        <SignInBackgroundMockPage />
+      </Suspense>
     </>
   );
 };

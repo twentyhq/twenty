@@ -3,7 +3,7 @@ import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/componen
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
 import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useLingui } from '@lingui/react/macro';
@@ -11,18 +11,21 @@ import { IconPlus } from 'twenty-ui/display';
 
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAddAccountSection = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+const StyledAddAccountSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsAccountsConnectedAccountsListCard = ({
@@ -50,15 +53,17 @@ export const SettingsAccountsConnectedAccountsListCard = ({
           ))}
         </StyledTableRows>
       </Table>
-      <StyledAddAccountSection>
-        <Button
-          Icon={IconPlus}
-          title={t`Add account`}
-          variant="secondary"
-          size="small"
-          onClick={() => navigateSettings(SettingsPath.NewAccount)}
-        />
-      </StyledAddAccountSection>
+      <StyledAddAccountSectionContainer>
+        <Section>
+          <Button
+            Icon={IconPlus}
+            title={t`Add account`}
+            variant="secondary"
+            size="small"
+            onClick={() => navigateSettings(SettingsPath.NewAccount)}
+          />
+        </Section>
+      </StyledAddAccountSectionContainer>
     </Section>
   );
 };

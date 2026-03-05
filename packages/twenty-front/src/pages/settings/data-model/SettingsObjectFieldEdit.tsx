@@ -27,9 +27,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
-import styled from '@emotion/styled';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -40,6 +40,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -54,7 +55,7 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsObjectFieldEdit = () => {
@@ -67,14 +68,14 @@ export const SettingsObjectFieldEdit = () => {
 
   const navigate = useNavigate();
 
-  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useAtomState(
     navigationMemorizedUrlState,
   );
 
   const [
     shouldNavigateBackToMemorizedUrlOnSave,
     setShouldNavigateBackToMemorizedUrlOnSave,
-  ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
+  ] = useAtomState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
 
@@ -428,7 +429,7 @@ export const SettingsObjectFieldEdit = () => {
       </FormProvider>
       {fieldMetadataItem?.isCustom && (
         <ConfirmationModal
-          modalId={DELETE_FIELD_MODAL_ID}
+          modalInstanceId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}
           subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
           confirmButtonText={t`Delete`}

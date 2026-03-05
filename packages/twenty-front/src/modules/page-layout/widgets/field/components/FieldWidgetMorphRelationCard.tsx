@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -23,23 +23,24 @@ import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/wi
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowMoreButtonContainer = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type FieldWidgetMorphRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetMorphRelationCard = ({
   fieldDefinition,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetMorphRelationCardProps) => {
   const widget = useCurrentWidget();
 
@@ -53,7 +54,7 @@ export const FieldWidgetMorphRelationCard = ({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldDefinition.metadata.fieldName,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const handleItemClick = (id: string) =>
@@ -131,7 +132,7 @@ export const FieldWidgetMorphRelationCard = ({
   const hasMoreRecords = remainingCount > 0;
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
         <FieldContext.Provider
           value={{
@@ -171,6 +172,6 @@ export const FieldWidgetMorphRelationCard = ({
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

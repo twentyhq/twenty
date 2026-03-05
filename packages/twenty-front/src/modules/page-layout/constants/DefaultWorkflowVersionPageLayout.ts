@@ -3,6 +3,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -24,6 +25,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
     // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-version-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -50,8 +52,8 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -62,6 +64,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
     // Flow tab (position 200)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-version-tab-flow',
       title: 'Flow',
       icon: 'IconSettings',
@@ -88,8 +91,8 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

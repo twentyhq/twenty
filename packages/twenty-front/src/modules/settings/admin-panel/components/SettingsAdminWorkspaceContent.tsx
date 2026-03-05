@@ -15,13 +15,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -32,6 +33,7 @@ import {
 } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type FeatureFlagKey,
@@ -46,21 +48,21 @@ type SettingsAdminWorkspaceContentProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
-  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentUser] = useRecoilState(currentUserState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [currentUser] = useAtomState(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
@@ -69,7 +71,7 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useRecoilValue(userLookupResultState);
+  const userLookupResult = useAtomStateValue(userLookupResultState);
 
   const { t } = useLingui();
 
@@ -150,7 +152,7 @@ export const SettingsAdminWorkspaceContent = ({
           label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           leftComponent={
-            <AvatarChip
+            <AvatarOrIcon
               avatarUrl={
                 getImageAbsoluteURI({
                   imageUrl: isNonEmptyString(activeWorkspace?.logo)

@@ -3,7 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -15,10 +16,7 @@ import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -34,6 +32,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     );
   }
 
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   const mockViewFilterGroup: ViewFilterGroup = {
     __typename: 'ViewFilterGroup',
     id: 'filter-group-1',
@@ -43,8 +45,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     positionInViewFilterGroup: 0,
   };
 
-  const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
+  const allCompaniesCoreView = mockedCoreViews.find(
+    (v) => v.name === 'All Companies',
+  )!;
+  const allCompaniesView = allCompaniesCoreView as unknown as View;
 
   const mockCoreViewFilterGroup: Omit<CoreViewFilterGroup, 'workspaceId'> = {
     __typename: 'CoreViewFilterGroup',
@@ -72,8 +76,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useAtomComponentStateValue(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -88,8 +93,8 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           contextStoreCurrentViewId: mockView.id,
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(coreViewsState, [mockCoreView]);
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [mockCoreView]);
           },
         }),
       },
@@ -123,8 +128,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useAtomComponentStateValue(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -138,15 +144,13 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -165,8 +169,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useAtomComponentStateValue(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -180,17 +185,16 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [
+              { ...mockCoreView, viewFilterGroups: [] },
+            ]);
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, [
-              { ...mockCoreView, viewFilterGroups: [] },
-            ]);
           },
         }),
       },

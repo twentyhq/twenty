@@ -1,9 +1,9 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -13,6 +13,7 @@ import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/S
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 
 type WorkflowAiAgentPromptTabProps = {
+  prompt: string;
   readonly: boolean;
   aiModelOptions: SelectOption[];
   onPromptChange: (value: string) => void;
@@ -25,6 +26,7 @@ type WorkflowAiAgentPromptTabProps = {
 };
 
 export const WorkflowAiAgentPromptTab = ({
+  prompt,
   readonly,
   aiModelOptions,
   onPromptChange,
@@ -32,7 +34,7 @@ export const WorkflowAiAgentPromptTab = ({
   onModelConfigurationChange,
   onResponseFormatChange,
 }: WorkflowAiAgentPromptTabProps) => {
-  const workflowAiAgentActionAgent = useRecoilValue(
+  const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentState,
   );
   return (
@@ -42,7 +44,7 @@ export const WorkflowAiAgentPromptTab = ({
         VariablePicker={WorkflowVariablePicker}
         label={t`Instructions for AI`}
         placeholder={t`Describe what you want the AI to do...`}
-        defaultValue={workflowAiAgentActionAgent?.prompt || ''}
+        defaultValue={prompt}
         onChange={onPromptChange}
         readonly={readonly}
       />

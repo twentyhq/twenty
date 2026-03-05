@@ -1,9 +1,9 @@
 import { type ReactNode, useEffect, useRef } from 'react';
 
 import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import styled from '@emotion/styled';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledListItemContainer = styled.div`
@@ -18,15 +18,17 @@ export type SelectableListItemProps = {
   itemId: string;
   children: ReactNode;
   onEnter?: () => void;
+  className?: string;
 };
 
 export const SelectableListItem = ({
   itemId,
   children,
   onEnter,
+  className,
 }: SelectableListItemProps) => {
-  const isSelectedItemId = useRecoilComponentFamilyValue(
-    isSelectedItemIdComponentFamilySelector,
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
     itemId,
   );
 
@@ -56,7 +58,7 @@ export const SelectableListItem = ({
       {isSelectedItemId && isDefined(onEnter) && (
         <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
-      <StyledListItemContainer ref={listItemRef}>
+      <StyledListItemContainer ref={listItemRef} className={className}>
         {children}
       </StyledListItemContainer>
     </>

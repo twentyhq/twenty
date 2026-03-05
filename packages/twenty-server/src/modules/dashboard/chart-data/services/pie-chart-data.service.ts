@@ -7,15 +7,15 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
-import { PieChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/pie-chart-data-output.dto';
+import { PieChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/pie-chart-data.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -31,7 +31,7 @@ type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -46,7 +46,7 @@ export class PieChartDataService {
     objectMetadataId,
     configuration,
     authContext,
-  }: GetPieChartDataParams): Promise<PieChartDataOutputDTO> {
+  }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
       if (
         configuration.configurationType !== WidgetConfigurationType.PIE_CHART
@@ -130,6 +130,7 @@ export class PieChartDataService {
           CalendarStartDay.MONDAY,
         limit,
         primaryAxisOrderBy: configuration.orderBy,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
       return this.transformToPieChartData({
@@ -171,7 +172,7 @@ export class PieChartDataService {
     configuration: PieChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
-  }): PieChartDataOutputDTO {
+  }): PieChartDataDTO {
     const filteredResults = configuration.hideEmptyCategory
       ? rawResults.filter(
           (result) =>

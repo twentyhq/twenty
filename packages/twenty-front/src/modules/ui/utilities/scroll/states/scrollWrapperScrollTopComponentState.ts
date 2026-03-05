@@ -1,8 +1,8 @@
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const scrollWrapperScrollTopComponentState =
-  createComponentState<number>({
+  createAtomComponentState<number>({
     key: 'scrollWrapperScrollTopComponentState',
     defaultValue: 0,
     componentInstanceContext: ScrollWrapperComponentInstanceContext,

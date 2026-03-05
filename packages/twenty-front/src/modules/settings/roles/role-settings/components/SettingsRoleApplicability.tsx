@@ -1,32 +1,33 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${themeCssVariables.spacing[1]};
+  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color
-    ${({ theme }) => theme.animation.duration.normal}s ease;
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledCheckboxLabel = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type SettingsRoleApplicabilityValues = {
@@ -49,8 +50,7 @@ export const SettingsRoleApplicability = ({
   onApplicabilityChange,
   isEditable,
 }: SettingsRoleApplicabilityProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const options = [

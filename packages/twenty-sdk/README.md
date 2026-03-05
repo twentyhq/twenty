@@ -14,8 +14,8 @@
 
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
-- Type‑safe client and workspace entity typings
-- Built‑in CLI for auth, dev mode (watch & sync), generate, uninstall, and function management
+- Two auto‑generated typed GraphQL clients: `CoreApiClient` (workspace data) and `MetadataApiClient` (workspace configuration & file uploads)
+- Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
 ## Documentation
@@ -52,7 +52,7 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
-  app:generate         Generate Twenty client
+  app:typecheck        Run TypeScript type checking on the application
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
@@ -125,22 +125,26 @@ Application development commands.
 - `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
-- `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
+- `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
 
-- `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
+- `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
 
 ### Entity
 
 - `twenty entity:add [entityType]` — Add a new entity to your application.
   - Arguments:
-    - `entityType`: one of `function`, `front-component`, `object`, or `role`. If omitted, an interactive prompt is shown.
+    - `entityType`: one of `object`, `field`, `function`, `front-component`, `role`, `view`, `navigation-menu-item`, or `skill`. If omitted, an interactive prompt is shown.
   - Options:
     - `--path <path>`: The path where the entity file should be created (relative to the current directory).
   - Behavior:
     - `object`: prompts for singular/plural names and labels, then creates a `*.object.ts` definition file.
+    - `field`: prompts for name, label, type, and target object, then creates a `*.field.ts` definition file.
     - `function`: prompts for a name and scaffolds a `*.function.ts` logic function file.
     - `front-component`: prompts for a name and scaffolds a `*.front-component.tsx` file.
     - `role`: prompts for a name and scaffolds a `*.role.ts` role definition file.
+    - `view`: prompts for a name and target object, then creates a `*.view.ts` definition file.
+    - `navigation-menu-item`: prompts for a name and scaffolds a `*.navigation-menu-item.ts` file.
+    - `skill`: prompts for a name and scaffolds a `*.skill.ts` skill definition file.
 
 ### Function
 
@@ -151,8 +155,10 @@ Application development commands.
 
 - `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
   - Options:
-    - `-n, --functionName <name>`: Name of the function to execute (required if `-u` not provided).
-    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `-n` not provided).
+    - `--preInstall`: Execute the pre-install logic function defined in the application manifest (required if `--postInstall`, `-n`, and `-u` not provided).
+    - `--postInstall`: Execute the post-install logic function defined in the application manifest (required if `--preInstall`, `-n`, and `-u` not provided).
+    - `-n, --functionName <name>`: Name of the function to execute (required if `--postInstall` and `-u` not provided).
+    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `--postInstall` and `-n` not provided).
     - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
 
 Examples:
@@ -164,6 +170,9 @@ twenty app:dev
 # Start dev mode with a custom workspace profile
 twenty app:dev --workspace my-custom-workspace
 
+# Type check the application
+twenty app:typecheck
+
 # Add a new entity interactively
 twenty entity:add
 
@@ -173,8 +182,14 @@ twenty entity:add function
 # Add a new front component
 twenty entity:add front-component
 
-# Generate client types
-twenty app:generate
+# Add a new view
+twenty entity:add view
+
+# Add a new navigation menu item
+twenty entity:add navigation-menu-item
+
+# Add a new skill
+twenty entity:add skill
 
 # Uninstall the app from the workspace
 twenty app:uninstall
@@ -193,6 +208,12 @@ twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Execute a function by universal identifier
 twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
+
+# Execute the pre-install function
+twenty function:execute --preInstall
+
+# Execute the post-install function
+twenty function:execute --postInstall
 ```
 
 ## Configuration
@@ -231,7 +252,7 @@ Notes:
 
 ## Troubleshooting
 - Auth errors: run `twenty auth:login` again and ensure the API key has the required permissions.
-- Typings out of date: run `twenty app:generate` to refresh the client and types.
+- Typings out of date: restart `twenty app:dev` to refresh the client and types.
 - Not seeing changes in dev: make sure dev mode is running (`twenty app:dev`).
 
 ## Contributing

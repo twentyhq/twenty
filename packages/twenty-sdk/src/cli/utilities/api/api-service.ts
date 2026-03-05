@@ -1,38 +1,37 @@
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 import { createClient } from 'graphql-sse';
-import {
-  buildClientSchema,
-  getIntrospectionQuery,
-  printSchema,
-} from 'graphql/index';
 import * as path from 'path';
-import {
-  type ApplicationManifest,
-  type Manifest,
-} from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor(options?: { disableInterceptors: boolean }) {
-    const { disableInterceptors = false } = options || {};
+  constructor(options?: {
+    disableInterceptors?: boolean;
+    serverUrl?: string;
+    token?: string;
+  }) {
+    const { disableInterceptors = false, serverUrl, token } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
     this.client.interceptors.request.use(async (config) => {
       const twentyConfig = await this.configService.getConfig();
 
-      config.baseURL = twentyConfig.apiUrl;
+      config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
-      if (twentyConfig.apiKey) {
-        config.headers.Authorization = `Bearer ${twentyConfig.apiKey}`;
+      const authToken = token ?? twentyConfig.apiKey;
+
+      if (!config.headers.Authorization && authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
       }
 
       return config;
@@ -102,15 +101,193 @@ export class ApiService {
     }
   }
 
-  async checkApplicationExist(
+  async findOneApplication(
     universalIdentifier: string,
-  ): Promise<ApiResponse<boolean>> {
+  ): Promise<ApiResponse<{ id: string; universalIdentifier: string } | null>> {
     try {
       const query = `
-        query CheckApplicationExist($universalIdentifier: UUID!) {
-          checkApplicationExist(universalIdentifier: $universalIdentifier)
+        query FindOneApplication($universalIdentifier: UUID!) {
+          findOneApplication(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+          }
         }
       `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        const isNotFound = response.data.errors.some(
+          (error: { extensions?: { code?: string } }) =>
+            error.extensions?.code === 'NOT_FOUND',
+        );
+
+        if (isNotFound) {
+          return { success: true, data: null };
+        }
+
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findOneApplication,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async generateApplicationToken(applicationId: string): Promise<
+    ApiResponse<{
+      applicationAccessToken: { token: string; expiresAt: string };
+      applicationRefreshToken: { token: string; expiresAt: string };
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation GenerateApplicationToken($applicationId: UUID!) {
+          generateApplicationToken(applicationId: $applicationId) {
+            applicationAccessToken {
+              token
+              expiresAt
+            }
+            applicationRefreshToken {
+              token
+              expiresAt
+            }
+          }
+        }
+      `;
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { applicationId },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.generateApplicationToken,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async renewApplicationToken(applicationRefreshToken: string): Promise<
+    ApiResponse<{
+      applicationAccessToken: { token: string; expiresAt: string };
+      applicationRefreshToken: { token: string; expiresAt: string };
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation RenewApplicationToken($applicationRefreshToken: String!) {
+          renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
+            applicationAccessToken {
+              token
+              expiresAt
+            }
+            applicationRefreshToken {
+              token
+              expiresAt
+            }
+          }
+        }
+      `;
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { applicationRefreshToken },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.renewApplicationToken,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async findApplicationRegistrationByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+      oAuthClientId: string;
+    } | null>
+  > {
+    try {
+      const query = `
+        query FindApplicationRegistrationByUniversalIdentifier($universalIdentifier: String!) {
+          findApplicationRegistrationByUniversalIdentifier(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+            oAuthClientId
+          }
+        }
+      `;
+
       const response = await this.client.post(
         '/metadata',
         {
@@ -134,8 +311,69 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.checkApplicationExist,
-        message: `Successfully find application`,
+        data: response.data.data
+          .findApplicationRegistrationByUniversalIdentifier,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async createApplicationRegistration(input: {
+    name: string;
+    description?: string;
+    universalIdentifier: string;
+  }): Promise<
+    ApiResponse<{
+      applicationRegistration: {
+        id: string;
+        universalIdentifier: string;
+        oAuthClientId: string;
+      };
+      clientSecret: string;
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation CreateApplicationRegistration($input: CreateApplicationRegistrationInput!) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
+              id
+              universalIdentifier
+              oAuthClientId
+            }
+            clientSecret
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { input },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.createApplicationRegistration,
       };
     } catch (error) {
       return {
@@ -147,7 +385,8 @@ export class ApiService {
 
   async createApplication(
     manifest: Manifest,
-  ): Promise<ApiResponse<ApplicationManifest>> {
+    options?: { applicationRegistrationId?: string },
+  ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
         mutation CreateOneApplication($input: CreateApplicationInput!) {
@@ -158,13 +397,19 @@ export class ApiService {
         }
       `;
 
+      const input: Record<string, string> = {
+        universalIdentifier: manifest.application.universalIdentifier,
+        name: manifest.application.displayName,
+        version: '0.0.1',
+        sourcePath: 'cli-sync',
+      };
+
+      if (options?.applicationRegistrationId) {
+        input.applicationRegistrationId = options.applicationRegistrationId;
+      }
+
       const variables = {
-        input: {
-          universalIdentifier: manifest.application.universalIdentifier,
-          name: manifest.application.displayName,
-          version: '0.0.1',
-          sourcePath: 'cli-sync',
-        },
+        input,
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -205,7 +450,10 @@ export class ApiService {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest)
+          syncApplication(manifest: $manifest) {
+            applicationUniversalIdentifier
+            actions
+          }
         }
       `;
 
@@ -238,9 +486,27 @@ export class ApiService {
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const graphqlErrors = error.response.data?.errors;
+
+        if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
+          return {
+            success: false,
+            error: graphqlErrors[0]?.message || error.message,
+          };
+        }
+
+        return {
+          success: false,
+          error:
+            error.response.data?.message ||
+            `HTTP ${error.response.status}: ${error.message}`,
+        };
+      }
+
       return {
         success: false,
-        error,
+        error: error instanceof Error ? error.message : error,
       };
     }
   }
@@ -295,21 +561,40 @@ export class ApiService {
     }
   }
 
-  async getSchema(): Promise<ApiResponse<string>> {
+  async getSchema(options?: {
+    authToken?: string;
+  }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/graphql', options);
+  }
+
+  async getMetadataSchema(options?: {
+    authToken?: string;
+  }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/metadata', options);
+  }
+
+  private async introspectEndpoint(
+    endpoint: string,
+    options?: { authToken?: string },
+  ): Promise<ApiResponse<string>> {
     try {
       const introspectionQuery = getIntrospectionQuery();
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+      };
+
+      if (options?.authToken) {
+        headers.Authorization = `Bearer ${options.authToken}`;
+      }
+
       const response = await this.client.post(
-        '/graphql',
+        endpoint,
         {
           query: introspectionQuery,
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
+        { headers },
       );
 
       if (response.data.errors) {
@@ -324,7 +609,7 @@ export class ApiService {
       return {
         success: true,
         data: printSchema(schema),
-        message: 'Successfully load schema',
+        message: `Successfully loaded schema from ${endpoint}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -332,7 +617,7 @@ export class ApiService {
           success: false,
           error:
             error.response.data.errors[0]?.message ||
-            'Failed to load graphql Schema',
+            `Failed to load schema from ${endpoint}`,
         };
       }
       throw error;
@@ -478,7 +763,7 @@ export class ApiService {
     const twentyConfig = await this.configService.getConfig();
 
     const wsClient = createClient({
-      url: twentyConfig.apiUrl + '/graphql',
+      url: twentyConfig.apiUrl + '/metadata',
       headers: {
         Authorization: `Bearer ${twentyConfig.apiKey}`,
         'Content-Type': 'application/json',
@@ -513,6 +798,140 @@ export class ApiService {
         complete: () => console.log('Completed'),
       },
     );
+  }
+
+  // TODO: Migrate to MetadataClient once available
+  // (see https://github.com/twentyhq/core-team-issues/issues/2289)
+  async uploadAppTarball({
+    tarballBuffer,
+    universalIdentifier,
+  }: {
+    tarballBuffer: Buffer;
+    universalIdentifier?: string;
+  }): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
+          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+          }
+        }
+      `;
+
+      const operations = JSON.stringify({
+        query: mutation,
+        variables: {
+          file: null,
+          universalIdentifier: universalIdentifier ?? null,
+        },
+      });
+
+      const map = JSON.stringify({
+        '0': ['variables.file'],
+      });
+
+      const formData = new FormData();
+
+      formData.append('operations', operations);
+      formData.append('map', map);
+      formData.append(
+        '0',
+        new Blob([new Uint8Array(tarballBuffer)], {
+          type: 'application/gzip',
+        }),
+        'app.tar.gz',
+      );
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        formData,
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0]?.message || 'Failed to upload tarball',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.uploadAppTarball,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async installTarballApp({
+    universalIdentifier,
+  }: {
+    universalIdentifier: string;
+  }): Promise<ApiResponse<boolean>> {
+    try {
+      const mutation = `
+        mutation InstallMarketplaceApp($universalIdentifier: String!) {
+          installMarketplaceApp(universalIdentifier: $universalIdentifier)
+        }
+      `;
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message || 'Failed to install application',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.installMarketplaceApp,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+
+      return {
+        success: false,
+        error,
+      };
+    }
   }
 
   async uploadFile({

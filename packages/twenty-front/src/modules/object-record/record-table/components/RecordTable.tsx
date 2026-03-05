@@ -14,11 +14,17 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import isEmpty from 'lodash.isempty';
 
 export const RecordTable = () => {
-  const { recordTableId, objectNameSingular, objectMetadataItem } =
-    useRecordTableContextOrThrow();
+  const {
+    recordTableId,
+    objectNameSingular,
+    objectMetadataItem,
+    visibleRecordFields,
+  } = useRecordTableContextOrThrow();
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -30,17 +36,17 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const recordTableHasRecords = useRecoilComponentValue(
+  const recordTableHasRecords = useAtomComponentSelectorValue(
     recordIndexHasRecordsComponentSelector,
     recordTableId,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
     recordTableId,
   );
@@ -75,7 +81,9 @@ export const RecordTable = () => {
           <RecordTableScrollToFocusedRowEffect />
         </>
       )}
-      {recordTableIsEmpty && !hasRecordGroups ? (
+      {isRecordTableInitialLoading &&
+      isEmpty(visibleRecordFields) ? null : recordTableIsEmpty &&
+        !hasRecordGroups ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent

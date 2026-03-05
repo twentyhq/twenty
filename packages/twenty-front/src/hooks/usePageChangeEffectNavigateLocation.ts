@@ -1,18 +1,29 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
+const readReturnToPathFromUrlSearchParams = (): string | null => {
+  const value = new URLSearchParams(window.location.search).get('returnToPath');
+
+  return value && isValidReturnToPath(value) ? value : null;
+};
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
@@ -23,38 +34,29 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
-  const onGoingUserCreationPaths = [
-    AppPath.Invite,
-    AppPath.SignInUp,
-    AppPath.VerifyEmail,
-    AppPath.Verify,
-  ];
-  const onboardingPaths = [
-    AppPath.CreateWorkspace,
-    AppPath.CreateProfile,
-    AppPath.SyncEmails,
-    AppPath.InviteTeam,
-    AppPath.PlanRequired,
-    AppPath.PlanRequiredSuccess,
-    AppPath.BookCallDecision,
-    AppPath.BookCall,
-  ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
-  const verifyEmailRedirectPath = useRecoilValue(verifyEmailRedirectPathState);
+  const verifyEmailRedirectPath = useAtomStateValue(
+    verifyEmailRedirectPathState,
+  );
+
+  const returnToPath = useAtomStateValue(returnToPathState);
+  const resolvedReturnToPath = isNonEmptyString(returnToPath)
+    ? returnToPath
+    : readReturnToPathFromUrlSearchParams();
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
     !someMatchingLocationOf([
-      ...onGoingUserCreationPaths,
+      ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
     ])
   ) {
@@ -133,15 +135,19 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
-    someMatchingLocationOf([...onboardingPaths, ...onGoingUserCreationPaths]) &&
+    someMatchingLocationOf([
+      ...ONBOARDING_PATHS,
+      ...ONGOING_USER_CREATION_PATHS,
+    ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    isLoggedIn
+    isLoggedIn &&
+    isOnAWorkspace
   ) {
-    return defaultHomePagePath;
+    return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLoggedIn) {
-    return defaultHomePagePath;
+    return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (

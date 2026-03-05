@@ -1,12 +1,12 @@
-import { type MouseEvent, type ReactElement } from 'react';
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import { type MouseEvent, type ReactElement, useContext } from 'react';
+import { styled } from '@linaria/react';
 import {
   type Avatar,
   type AvatarProps,
   type IconComponent,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`
   align-items: center;
@@ -16,18 +16,18 @@ const StyledNonClickableStartIcon = styled.div`
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
 
   white-space: nowrap;
-  height: ${({ theme }) => theme.spacing(6)};
-  width: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledAvatarWrapper = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 export const DropdownMenuHeaderLeftComponent = ({
@@ -40,8 +40,7 @@ export const DropdownMenuHeaderLeftComponent = ({
     }
   | Record<never, never>
 )) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <>
       {'Icon' in props &&

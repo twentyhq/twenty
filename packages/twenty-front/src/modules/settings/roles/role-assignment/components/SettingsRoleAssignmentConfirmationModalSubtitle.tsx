@@ -2,13 +2,14 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 type SettingsRoleAssignmentConfirmationModalSubtitleProps = {
@@ -20,7 +21,9 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
   selectedRoleTarget,
   onRoleClick,
 }: SettingsRoleAssignmentConfirmationModalSubtitleProps) => {
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
 
   const enrichedSelectedWorkspaceMember = currentWorkspaceMembers.find(
     (member) => member.id === selectedRoleTarget.id,

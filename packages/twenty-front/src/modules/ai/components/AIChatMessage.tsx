@@ -1,14 +1,22 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
+import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
+import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -26,15 +34,19 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
 `;
 
 const StyledMessageText = styled.div<{ isUser?: boolean }>`
-  background: ${({ theme, isUser }) =>
-    isUser ? theme.background.tertiary : theme.background.transparent};
-  border-radius: ${({ theme, isUser }) =>
-    isUser ? theme.border.radius.sm : '0'};
-  color: ${({ theme, isUser }) =>
-    isUser ? theme.font.color.secondary : theme.font.color.primary};
+  background: ${({ isUser }) =>
+    isUser ? themeCssVariables.background.tertiary : 'transparent'};
+  border-radius: ${({ isUser }) =>
+    isUser ? themeCssVariables.border.radius.sm : '0'};
+  color: ${({ isUser }) =>
+    isUser
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
+  line-height: 1.4em;
   max-width: 100%;
-  padding: ${({ theme, isUser }) => (isUser ? theme.spacing(1, 2) : 0)};
+  padding: ${({ isUser }) =>
+    isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
   width: fit-content;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -48,15 +60,15 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.4;
-    padding: ${({ theme }) => theme.spacing(1)};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    background: ${({ theme }) => theme.background.tertiary};
+    padding: 1px 3px;
+    border-radius: ${themeCssVariables.border.radius.sm};
+    background: ${themeCssVariables.background.tertiary};
   }
 
   pre {
-    background: ${({ theme }) => theme.background.tertiary};
-    padding: ${({ theme }) => theme.spacing(2)};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${themeCssVariables.background.tertiary};
+    padding: ${themeCssVariables.spacing[2]};
+    border-radius: ${themeCssVariables.border.radius.sm};
     overflow-x: auto;
     max-width: 100%;
 
@@ -68,40 +80,53 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 
   p {
-    margin-block: ${({ isUser, theme }) =>
-      isUser ? '0' : `${theme.spacing(1)}`};
-    line-height: 1.5;
+    margin-block: ${({ isUser }) =>
+      isUser ? '0' : themeCssVariables.spacing[1]};
+    line-height: 1.4em;
   }
 
   ul,
   ol {
-    margin: ${({ theme }) => theme.spacing(1)} 0;
-    padding-left: ${({ theme }) => theme.spacing(4)};
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing[1]} 0;
+    padding-left: ${themeCssVariables.spacing[4]};
+  }
+
+  ul {
+    list-style-type: disc;
   }
 
   li {
-    margin: ${({ theme }) => theme.spacing(0.5)} 0;
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing['0.5']} 0;
+    padding-bottom: ${themeCssVariables.spacing['0.5']};
+    padding-top: ${themeCssVariables.spacing['0.5']};
   }
 
   blockquote {
-    border-left: 3px solid ${({ theme }) => theme.border.color.medium};
-    margin: ${({ theme }) => theme.spacing(2)} 0;
-    padding-left: ${({ theme }) => theme.spacing(2)};
-    color: ${({ theme }) => theme.font.color.secondary};
+    border-left: 3px solid ${themeCssVariables.border.color.medium};
+    margin: ${themeCssVariables.spacing[2]} 0;
+    padding-left: ${themeCssVariables.spacing[2]};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledMessageFooter = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: space-between;
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${themeCssVariables.spacing[1]};
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity calc(${themeCssVariables.animation.duration.normal} * 1s)
+    ease-in-out;
   width: 100%;
+`;
+
+const StyledMessageTimestamp = styled.span`
+  color: ${themeCssVariables.font.color.light};
 `;
 
 const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
@@ -113,36 +138,50 @@ const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
 const StyledFilesContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   flex-wrap: wrap;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-export const AIChatMessage = ({
-  message,
-  isLastMessageStreaming,
-  error,
-}: {
-  message: ExtendedUIMessage;
-  isLastMessageStreaming: boolean;
-  error?: Error | null;
-}) => {
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+export const AIChatMessage = ({ messageId }: { messageId: string }) => {
+  const agentChatMessage = useAtomComponentFamilySelectorValue(
+    agentChatMessageComponentFamilySelector,
+    { messageId },
+  );
 
-  const isUser = message.role === AgentMessageRole.USER;
-  const showError =
-    isDefined(error) && message.role === AgentMessageRole.ASSISTANT;
+  const agentChatMessageIds = useAtomComponentSelectorValue(
+    agentChatMessageIdsComponentSelector,
+  );
 
-  const fileParts = message.parts.filter((part) => part.type === 'file');
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const agentChatError = useAtomStateValue(agentChatErrorState);
+
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+
+  if (!isDefined(agentChatMessage)) {
+    return null;
+  }
+
+  const isLastMessage = agentChatMessageIds.at(-1) === messageId;
+
+  const isLastMessageStreaming = agentChatIsStreaming && isLastMessage;
+  const isLastAssistantMessage =
+    isLastMessage && agentChatMessage?.role === AgentMessageRole.ASSISTANT;
+  const shouldShowError = isDefined(agentChatError) && isLastAssistantMessage;
+
+  const isUser = agentChatMessage.role === AgentMessageRole.USER;
+
+  const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
 
   return (
-    <StyledMessageBubble key={message.id} isUser={isUser}>
+    <StyledMessageBubble key={agentChatMessage.id} isUser={isUser}>
       <StyledMessageContainer isUser={isUser}>
         <StyledMessageText isUser={isUser}>
           <AIChatAssistantMessageRenderer
             isLastMessageStreaming={isLastMessageStreaming}
-            messageParts={message.parts}
-            hasError={showError}
+            messageParts={agentChatMessage.parts}
+            hasError={shouldShowError}
           />
         </StyledMessageText>
         {fileParts.length > 0 && (
@@ -152,23 +191,25 @@ export const AIChatMessage = ({
             ))}
           </StyledFilesContainer>
         )}
-        {showError && <AIChatErrorRenderer error={error} />}
+        {shouldShowError && <AIChatErrorRenderer error={agentChatError} />}
       </StyledMessageContainer>
-      {message.parts.length > 0 && message.metadata?.createdAt && (
-        <StyledMessageFooter className="message-footer">
-          <span>
-            {beautifyPastDateRelativeToNow(
-              message.metadata?.createdAt,
-              localeCatalog,
-            )}
-          </span>
-          <LightCopyIconButton
-            copyText={
-              message.parts.find((part) => part.type === 'text')?.text ?? ''
-            }
-          />
-        </StyledMessageFooter>
-      )}
+      {agentChatMessage.parts.length > 0 &&
+        agentChatMessage.metadata?.createdAt && (
+          <StyledMessageFooter className="message-footer">
+            <StyledMessageTimestamp>
+              {beautifyPastDateRelativeToNow(
+                agentChatMessage.metadata?.createdAt,
+                localeCatalog,
+              )}
+            </StyledMessageTimestamp>
+            <LightCopyIconButton
+              copyText={
+                agentChatMessage.parts.find((part) => part.type === 'text')
+                  ?.text ?? ''
+              }
+            />
+          </StyledMessageFooter>
+        )}
     </StyledMessageBubble>
   );
 };

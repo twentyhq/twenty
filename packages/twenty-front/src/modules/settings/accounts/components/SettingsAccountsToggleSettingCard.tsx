@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { Toggle } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type Parameter = {
   value: boolean;
@@ -13,30 +14,34 @@ type SettingsAccountsToggleSettingCardProps = {
   parameters: Parameter[];
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
-  cursor: pointer;
+const StyledCardContentContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[4]};
+    cursor: pointer;
 
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    &:hover {
+      background: ${themeCssVariables.background.transparent.lighter};
+    }
   }
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledToggle = styled(Toggle)`
+const StyledToggleContainer = styled.span`
   margin-left: auto;
+  display: flex;
+  align-items: center;
 `;
 
 export const SettingsAccountsToggleSettingCard = ({
@@ -44,17 +49,20 @@ export const SettingsAccountsToggleSettingCard = ({
 }: SettingsAccountsToggleSettingCardProps) => (
   <Card rounded>
     {parameters.map((parameter, index) => (
-      <StyledCardContent
-        key={index}
-        divider={index < parameters.length - 1}
-        onClick={() => parameter.onToggle(!parameter.value)}
-      >
-        <div>
-          <StyledTitle>{parameter.title}</StyledTitle>
-          <StyledDescription>{parameter.description}</StyledDescription>
-        </div>
-        <StyledToggle value={parameter.value} onChange={parameter.onToggle} />
-      </StyledCardContent>
+      <StyledCardContentContainer key={index}>
+        <CardContent
+          divider={index < parameters.length - 1}
+          onClick={() => parameter.onToggle(!parameter.value)}
+        >
+          <div>
+            <StyledTitle>{parameter.title}</StyledTitle>
+            <StyledDescription>{parameter.description}</StyledDescription>
+          </div>
+          <StyledToggleContainer>
+            <Toggle value={parameter.value} onChange={parameter.onToggle} />
+          </StyledToggleContainer>
+        </CardContent>
+      </StyledCardContentContainer>
     ))}
   </Card>
 );

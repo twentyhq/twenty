@@ -13,6 +13,7 @@ import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomai
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -28,6 +29,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -115,6 +117,8 @@ describe('WorkspaceService', () => {
           FeatureFlagService,
           ExceptionHandlerService,
           PermissionsService,
+          FileCorePictureService,
+          AiModelRegistryService,
         ].map((service) => ({
           provide: service,
           useValue: {},

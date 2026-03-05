@@ -1,8 +1,9 @@
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -10,11 +11,12 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
 import {
   type FeatureFlagKey,
+  PermissionFlagType,
   useFindManyApplicationsQuery,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
-import { SettingsApplicationsCreateTab } from '~/pages/settings/applications/tabs/SettingsApplicationsCreateTab';
+import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
 
 const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
@@ -22,11 +24,15 @@ const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
 export const SettingsApplications = () => {
   const { t } = useLingui();
 
+  const hasDeveloperAccess = useHasPermissionFlag(
+    PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+  );
+
   const isMarketplaceEnabled = useIsFeatureEnabled(
     'IS_MARKETPLACE_ENABLED' as FeatureFlagKey,
   );
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     APPLICATIONS_TAB_LIST_ID,
   );
@@ -51,26 +57,28 @@ export const SettingsApplications = () => {
           {applications.length > 0 && (
             <SettingsApplicationsTable applications={applications} />
           )}
-          <SettingsApplicationsCreateTab />
+          {hasDeveloperAccess && <SettingsApplicationsDeveloperTab />}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     );
   }
 
   const tabs = [
-    { id: 'available', title: t`Available`, Icon: IconDownload },
+    { id: 'marketplace', title: t`Marketplace`, Icon: IconDownload },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
-    { id: 'create', title: t`Create an app`, Icon: IconCode },
+    ...(hasDeveloperAccess
+      ? [{ id: 'developer', title: t`Developer`, Icon: IconCode }]
+      : []),
   ];
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case 'available':
+      case 'marketplace':
         return <SettingsApplicationsAvailableTab />;
       case 'installed':
         return <SettingsApplicationsInstalledTab />;
-      case 'create':
-        return <SettingsApplicationsCreateTab />;
+      case 'developer':
+        return <SettingsApplicationsDeveloperTab />;
       default:
         return <SettingsApplicationsAvailableTab />;
     }

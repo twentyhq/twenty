@@ -105,7 +105,7 @@ msgid "A required configuration is missing."
 msgstr "En nödvändig konfiguration saknas."
 
 #. js-lingui-id: FVCXUT
-#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
 msgstr ""
 
@@ -123,6 +123,16 @@ msgstr ""
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
+msgstr ""
+
+#. js-lingui-id: 73tqJw
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A system field has invalid properties."
+msgstr ""
+
+#. js-lingui-id: WYnYE1
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A system field is missing."
 msgstr ""
 
 #. js-lingui-id: c1qcYo
@@ -371,8 +381,23 @@ msgstr "API-nyckelns roll hittades inte."
 msgid "Application not found."
 msgstr "Applikation hittades inte."
 
+#. js-lingui-id: DE/icK
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Application registration not found."
+msgstr ""
+
+#. js-lingui-id: eiOt+9
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Application registration variable not found."
+msgstr ""
+
+#. js-lingui-id: QtRMs/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application upgrade failed."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
-#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "Applikationsvariabel hittades inte."
 
@@ -491,6 +516,11 @@ msgstr ""
 #. js-lingui-id: TaToDK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: AjVXBS
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Calendar"
 msgstr ""
 
 #. js-lingui-id: bQS4UN
@@ -853,7 +883,7 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "Anslutning är inte tillåten för {connectFieldName} på {objectMetadataNameSingular}"
 
 #. js-lingui-id: /OJTzk
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "Anslutet konto hittades inte."
 
@@ -867,6 +897,12 @@ msgstr ""
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "Motstridiga fältbehörigheter har upptäckts på ett relationsfält ({fieldName})."
+
+#. js-lingui-id: xuYXJX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "Correct direction is required"
+msgstr ""
 
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
@@ -1093,6 +1129,11 @@ msgstr "E-postverifiering krävs inte."
 msgid "Email verification not required."
 msgstr "E-postverifiering krävs inte."
 
+#. js-lingui-id: BXEcos
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Emails"
+msgstr ""
+
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
@@ -1119,6 +1160,11 @@ msgstr "Miljövariabeln CLOUDFLARE_API_KEY måste definieras för att använda d
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 msgid "Error"
 msgstr "Fel"
+
+#. js-lingui-id: b3ictS
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Exactly one of \"groups\" or \"fields\" must be provided"
+msgstr ""
 
 #. js-lingui-id: ksMwKk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1156,7 +1202,7 @@ msgid "Failed to create record."
 msgstr "Det gick inte att skapa post."
 
 #. js-lingui-id: mWj8el
-#: src/engine/core-modules/file/files-field/files-field.service.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr ""
 
@@ -1174,6 +1220,11 @@ msgstr "Det gick inte att ta bort post."
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Failed to duplicate dashboard."
 msgstr "Det gick inte att duplicera instrumentpanelen."
+
+#. js-lingui-id: Ol/51Z
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Failed to extract tarball."
+msgstr ""
 
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1256,6 +1307,8 @@ msgid "Field label identifier is required"
 msgstr "Fältetikettens identifierare krävs"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -1338,14 +1391,24 @@ msgstr "Fältet för att uppdatera objektmetadata hittades inte"
 msgid "Field type NUMERIC is not supported. Use Number instead."
 msgstr ""
 
-#. js-lingui-id: q2XPsD
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Field type POSITION is a system type and cannot be created manually."
+#. js-lingui-id: p6JTHU
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
+msgid "Field type POSITION must be a system field"
 msgstr ""
 
-#. js-lingui-id: FDPb27
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Field type TS_VECTOR is a system type and cannot be created manually."
+#. js-lingui-id: VDesPB
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
+msgid "Field type POSITION must be named \"position\""
+msgstr ""
+
+#. js-lingui-id: 7cWO6W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must be a system field"
+msgstr ""
+
+#. js-lingui-id: hoCDqQ
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr ""
 
 #. js-lingui-id: 5Buorv
@@ -1391,14 +1454,24 @@ msgstr "FieldMetadataId krävs för att skapa en vygrupp."
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId krävs för att skapa en vynsortering."
 
+#. js-lingui-id: VgGXR3
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
+#. js-lingui-id: 9HjeLQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget has no associated view"
+msgstr ""
+
+#. js-lingui-id: 8sAaBn
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget not found"
+msgstr ""
+
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
-msgstr ""
-
-#. js-lingui-id: pFq+yh
-#: src/engine/core-modules/file/files-field/files-field.service.ts
-msgid "File {fileId} is not associated with a files field. It can't be downloaded."
 msgstr ""
 
 #. js-lingui-id: v+527c
@@ -1407,15 +1480,25 @@ msgid "File {fileId} was not uploaded for this field. Please re-upload the file.
 msgstr ""
 
 #. js-lingui-id: weWV3g
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "File not found."
 msgstr "Fil hittades inte."
 
+#. js-lingui-id: sER+bs
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Files"
+msgstr ""
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
+msgstr ""
+
+#. js-lingui-id: ylQd2j
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Flow"
 msgstr ""
 
 #. js-lingui-id: 9110hD
@@ -1535,6 +1618,11 @@ msgstr ""
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Handle-aliaser krävs."
+
+#. js-lingui-id: i0qMbr
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Home"
+msgstr ""
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -1726,17 +1814,19 @@ msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle
 msgstr ""
 
 #. js-lingui-id: IptMRL
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget"
 msgstr ""
 
 #. js-lingui-id: nFIvYZ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
 msgstr ""
 
 #. js-lingui-id: jUt31O
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid connected account ID."
 msgstr "Ogiltigt ID för anslutet konto."
 
@@ -1761,7 +1851,7 @@ msgid "Invalid depth parameter."
 msgstr "Ogiltig parameter för djup."
 
 #. js-lingui-id: 9lqqpY
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid email address."
 msgstr "Ogiltig e-postadress."
@@ -1776,10 +1866,25 @@ msgstr "Ogiltig funktionsflaggsnyckel."
 msgid "Invalid field input."
 msgstr "Ogiltig fältinmatning."
 
+#. js-lingui-id: dqt3x1
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Invalid file folder."
+msgstr ""
+
 #. js-lingui-id: d6DMa/
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid file ID."
 msgstr "Ogiltigt fil-ID."
+
+#. js-lingui-id: +ECOke
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
+msgstr ""
+
+#. js-lingui-id: kFbvma
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
+msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
+msgstr ""
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -1792,6 +1897,26 @@ msgstr "Ogiltig filterparameter."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: +GVjEm
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires an array"
+msgstr ""
+
+#. js-lingui-id: 4eM03h
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
+msgstr ""
+
+#. js-lingui-id: Np9Fvw
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: exactly one operator per field is required"
+msgstr ""
+
+#. js-lingui-id: gdJXPD
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: filter value must be an object"
 msgstr ""
 
 #. js-lingui-id: rFH0az
@@ -1819,6 +1944,11 @@ msgstr "Ogiltigt timvärde. Borde vara heltal större än 1"
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
 msgstr "Ogiltig typ av identitetsleverantör."
+
+#. js-lingui-id: xfXYBX
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Invalid input for application registration."
+msgstr ""
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -2056,6 +2186,11 @@ msgstr "Ogiltig valideringstoken."
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
 msgstr ""
 
+#. js-lingui-id: XOA98j
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
+msgid "Invalid value for \"is\" operator"
+msgstr ""
+
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
@@ -2071,9 +2206,16 @@ msgstr ""
 msgid "Invalid value for currency."
 msgstr ""
 
-#. js-lingui-id: AUbno1
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
-msgid "Invalid value for date: \"{inspectedValue}\""
+#. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
+msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
+msgstr ""
+
+#. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 msgstr ""
 
 #. js-lingui-id: mANTdg
@@ -2112,6 +2254,7 @@ msgid "Invalid value for multi-select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
 msgstr ""
@@ -2137,11 +2280,13 @@ msgid "Invalid value for select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
@@ -2727,10 +2872,25 @@ msgstr "Ingen utlösartyp angiven"
 msgid "No valid authentication context found."
 msgstr "Ingen giltig autentiseringskontext hittades."
 
+#. js-lingui-id: AzXrd9
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "No workspace found with password auth enabled."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
+msgstr ""
+
+#. js-lingui-id: KiJn9B
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Note"
+msgstr ""
+
+#. js-lingui-id: 1DBGsz
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Notes"
 msgstr ""
 
 #. js-lingui-id: t9QlBd
@@ -2857,6 +3017,16 @@ msgstr "Ett eller flera objekt du försöker ställa in behörigheter för kunde
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
+msgstr ""
+
+#. js-lingui-id: kx632Q
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "One or more redirect URIs are invalid."
+msgstr ""
+
+#. js-lingui-id: PUBUbK
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "One or more requested scopes are invalid."
 msgstr ""
 
 #. js-lingui-id: eYgzEd
@@ -3050,6 +3220,11 @@ msgstr ""
 msgid "Password is too weak."
 msgstr ""
 
+#. js-lingui-id: cd6AP5
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
@@ -3112,12 +3287,12 @@ msgstr "Använd single sign-on för att autentisera."
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
 msgstr ""
 
-#. js-lingui-id: KTTUV3
+#. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Position must be a non-negative integer"
+msgid "Position must be a finite number"
 msgstr ""
 
 #. js-lingui-id: +DJKfQ
@@ -3524,6 +3699,11 @@ msgstr "Vissa av de valda behörigheterna är ogiltiga. Vänligen försök igen 
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
+#. js-lingui-id: Oa7nLQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Source channel mismatch."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -3543,11 +3723,6 @@ msgstr "SSO är inaktiverat."
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Standardagenter kan inte ändras."
-
-#. js-lingui-id: dc5N0o
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
-msgid "Standard fields cannot be deleted"
-msgstr "Standardfält kan inte raderas"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -3602,6 +3777,38 @@ msgstr ""
 "S\n"
 "nd"
 
+#. js-lingui-id: Bhmfez
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
+msgid "System field {expectedFieldName} has invalid {property}"
+msgstr ""
+
+#. js-lingui-id: 1gOTOh
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
+msgid "System field {expectedFieldName} is missing"
+msgstr ""
+
+#. js-lingui-id: q1oDDx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
+msgid "System fields cannot be deleted"
+msgstr ""
+
+#. js-lingui-id: oEsYJM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
+msgid "System fields cannot be updated"
+msgstr ""
+
+#. js-lingui-id: /ojawH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be deleted"
+msgstr ""
+
+#. js-lingui-id: sndTPB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be updated"
+msgstr ""
+
 #. js-lingui-id: 8UWeLh
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Tab not found for widget duplication."
@@ -3645,6 +3852,16 @@ msgstr ""
 msgid "targetRecordId is required when targetObjectMetadataId is provided"
 msgstr ""
 
+#. js-lingui-id: GtycJ/
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Tasks"
+msgstr ""
+
+#. js-lingui-id: 2kFzQB
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Temporary file cannot be downloaded."
+msgstr ""
+
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
@@ -3671,6 +3888,11 @@ msgstr "Agenten du letar efter kunde inte hittas. Den kan ha raderats eller så 
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API-nyckeln har ingen giltig roll tilldelad. Vänligen kontrollera din API-nyckelkonfiguration."
+
+#. js-lingui-id: MQn14a
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app source channel does not match the expected type."
+msgstr ""
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3756,6 +3978,11 @@ msgstr "Rollen du letar efter kunde inte hittas. Det kan ha blivit raderat eller
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "Rollen du försöker ändra kunde inte hittas. Det kan ha blivit raderat eller så har du kanske inte åtkomst till det."
+
+#. js-lingui-id: vD3FVp
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "The server address you entered is not allowed. Please use a public server address."
+msgstr ""
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -3974,6 +4201,11 @@ msgstr "Denna underdomän är redan upptagen."
 msgid "This type of record cannot be merged."
 msgstr ""
 
+#. js-lingui-id: nZbise
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This universal identifier is already claimed by another registration."
+msgstr ""
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -3988,6 +4220,11 @@ msgstr "Denna variabel kan endast ställas in via miljön."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Torsdag"
+
+#. js-lingui-id: cklVjM
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Timeline"
+msgstr ""
 
 #. js-lingui-id: /ObxXq
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4052,6 +4289,11 @@ msgstr "Verifiering med tvåfaktorsautentisering krävs."
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
+msgstr ""
+
+#. js-lingui-id: SpmRxi
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Unable to retrieve the application package."
 msgstr ""
 
 #. js-lingui-id: WWSSTx
@@ -4133,15 +4375,11 @@ msgstr "Användaren har redan en tilldelad roll."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Användare har inte åtkomst till detta arbetsutrymme"
-
-#. js-lingui-id: kZ0tmK
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-msgid "User does not have access to this workspace."
-msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -4170,6 +4408,7 @@ msgstr "Användare är inte en del av arbetsutrymmet"
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "User not found."
 msgstr "Användare hittades inte."
 
@@ -4179,6 +4418,7 @@ msgid "User not found. Please check the email or ID."
 msgstr "Användaren hittades inte. Vänligen kontrollera e-post eller ID."
 
 #. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Användare skapades inte med e-post/lösenord"
@@ -4431,6 +4671,8 @@ msgstr "Visa kanbanaggregatfältmetadata hittades inte"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -4444,10 +4686,66 @@ msgstr "Visa kanbanaggregatfältmetadata hittades inte"
 msgid "View not found"
 msgstr "Vy hittades inte"
 
+#. js-lingui-id: BHDATQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "View not found after upsert"
+msgstr ""
+
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
 msgstr "Vy hittades inte."
+
+#. js-lingui-id: ipFNcM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort already exists"
+msgstr ""
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util.ts
+msgid "View sort not found"
+msgstr ""
+
+#. js-lingui-id: k/ykpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to delete not found"
+msgstr ""
+
+#. js-lingui-id: wEyUsU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update not found"
+msgstr ""
+
+#. js-lingui-id: VXQpJ+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update parent view not found"
+msgstr ""
+
+#. js-lingui-id: RP+pKP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with id {flatViewSortId} already exists"
+msgstr ""
+
+#. js-lingui-id: InEqWf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction"
+msgstr ""
+
+#. js-lingui-id: ezJrlG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction, should be ASC or DESC"
+msgstr ""
+
+#. js-lingui-id: 9/BbL9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with same fieldMetadataId and viewId already exists"
+msgstr ""
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4593,66 +4891,16 @@ msgstr ""
 msgid "Widget row exceeds grid height"
 msgstr ""
 
-#. js-lingui-id: deSJ/B
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type CALENDAR is not supported yet."
-msgstr ""
-
-#. js-lingui-id: +IjuqI
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type EMAILS is not supported yet."
-msgstr ""
-
 #. js-lingui-id: F+TRXG
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type FIELD is not supported yet."
 msgstr ""
 
-#. js-lingui-id: nuvnbi
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELD_RICH_TEXT is not supported yet."
-msgstr ""
-
-#. js-lingui-id: UZo3be
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FILES is not supported yet."
-msgstr ""
-
-#. js-lingui-id: SL+U0X
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type NOTES is not supported yet."
-msgstr ""
-
-#. js-lingui-id: vczFIm
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TASKS is not supported yet."
-msgstr ""
-
-#. js-lingui-id: ynJTP+
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TIMELINE is not supported yet."
-msgstr ""
-
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
-msgstr ""
-
-#. js-lingui-id: geYIT7
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW is not supported yet."
-msgstr ""
-
-#. js-lingui-id: RcZOVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_RUN is not supported yet."
-msgstr ""
-
-#. js-lingui-id: U4YrVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_VERSION is not supported yet."
 msgstr ""
 
 #. js-lingui-id: KSK8fH
@@ -4715,7 +4963,6 @@ msgstr ""
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "Arbetsområdesskapande är begränsat till administratörer"
 
@@ -4758,7 +5005,7 @@ msgstr "Arbetsyta hittades inte för prenumerationshändelse."
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts

@@ -1,9 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { IconGripVertical } from 'twenty-ui/display';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
-const StyledGripContainer = styled(motion.div)`
+const StyledGripContainerBase = styled.div`
   width: 20px;
   height: 20px;
   display: flex;
@@ -11,18 +12,19 @@ const StyledGripContainer = styled(motion.div)`
   justify-content: center;
   cursor: grab;
   user-select: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
 
   &:active {
     cursor: grabbing;
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${themeCssVariables.background.tertiary};
   }
 
   &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${themeCssVariables.background.tertiary};
   }
 `;
+const StyledGripContainer = motion.create(StyledGripContainerBase);
 
 type WidgetGripProps = {
   className?: string;
@@ -30,8 +32,7 @@ type WidgetGripProps = {
 };
 
 export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledGripContainer
       layout

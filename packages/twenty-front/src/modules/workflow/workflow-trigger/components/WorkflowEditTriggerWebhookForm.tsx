@@ -3,7 +3,7 @@ import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-type
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
@@ -12,21 +12,19 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
 import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildOutputSchemaFromValue,
-  TRIGGER_STEP_ID,
-} from 'twenty-shared/workflow';
+import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import { IconCopy } from 'twenty-ui/display';
 
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -52,14 +50,14 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const onBlur = () => {
     setErrorMessagesVisible(true);
@@ -112,7 +110,7 @@ export const WorkflowEditTriggerWebhookForm = ({
               { computeOutputSchema: false },
             );
           }}
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.httpMethod === 'POST' && (
@@ -153,9 +151,7 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = buildOutputSchemaFromValue(
-                parsingResult.data,
-              );
+              const outputSchema = getOutputSchemaFromValue(parsingResult.data);
 
               triggerOptions.onTriggerUpdate(
                 {

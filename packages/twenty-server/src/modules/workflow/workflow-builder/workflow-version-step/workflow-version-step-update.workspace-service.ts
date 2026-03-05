@@ -57,18 +57,21 @@ export class WorkflowVersionStepUpdateWorkspaceService {
 
     const isStepTypeChanged = existingStep.type !== step.type;
 
-    const updatedStep = isStepTypeChanged
+    const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
       ? await this.updateWorkflowVersionStepType({
           existingStep,
           newStep: step,
           workspaceId,
           workflowVersionId,
         })
-      : await this.updateWorkflowVersionStepSettings({
-          newStep: step,
-          workspaceId,
-          workflowVersionId,
-        });
+      : {
+          updatedStep: await this.updateWorkflowVersionStepSettings({
+            newStep: step,
+            workspaceId,
+            workflowVersionId,
+          }),
+          additionalCreatedSteps: undefined,
+        };
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
@@ -77,6 +80,10 @@ export class WorkflowVersionStepUpdateWorkspaceService {
         return existingStep;
       }
     });
+
+    if (isDefined(additionalCreatedSteps)) {
+      updatedSteps.push(...additionalCreatedSteps);
+    }
 
     await this.workflowVersionStepHelpersWorkspaceService.updateWorkflowVersionStepsAndTrigger(
       {
@@ -99,7 +106,10 @@ export class WorkflowVersionStepUpdateWorkspaceService {
     newStep: WorkflowAction;
     workspaceId: string;
     workflowVersionId: string;
-  }): Promise<WorkflowAction> {
+  }): Promise<{
+    updatedStep: WorkflowAction;
+    additionalCreatedSteps?: WorkflowAction[];
+  }> {
     await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
       {
         step: existingStep,
@@ -107,7 +117,7 @@ export class WorkflowVersionStepUpdateWorkspaceService {
       },
     );
 
-    const { builtStep } =
+    const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
           type: newStep.type,
@@ -118,16 +128,19 @@ export class WorkflowVersionStepUpdateWorkspaceService {
         },
       );
 
-    return this.workflowSchemaWorkspaceService.enrichOutputSchema({
-      step: {
-        ...builtStep,
-        id: existingStep.id,
-        nextStepIds: existingStep.nextStepIds,
-        position: existingStep.position,
-      },
-      workspaceId,
-      workflowVersionId,
-    });
+    const updatedStep =
+      await this.workflowSchemaWorkspaceService.enrichOutputSchema({
+        step: {
+          ...builtStep,
+          id: existingStep.id,
+          nextStepIds: existingStep.nextStepIds,
+          position: existingStep.position,
+        },
+        workspaceId,
+        workflowVersionId,
+      });
+
+    return { updatedStep, additionalCreatedSteps };
   }
 
   private async updateWorkflowVersionStepSettings({

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -124,7 +124,7 @@ export class ViewGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating view groups',
@@ -190,7 +190,7 @@ export class ViewGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view group',
@@ -261,7 +261,7 @@ export class ViewGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view group',
@@ -335,7 +335,7 @@ export class ViewGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view group',

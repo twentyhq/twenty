@@ -1,7 +1,7 @@
 import { workflowTriggerSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import type { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-trigger-input.dto';
+import type { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-trigger.input';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,

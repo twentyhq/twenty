@@ -1,6 +1,8 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentNavigationMenuItemFolderIdState = atom<string | null>({
+export const currentNavigationMenuItemFolderIdState = createAtomState<
+  string | null
+>({
   key: 'currentNavigationMenuItemFolderIdState',
-  default: null,
+  defaultValue: null,
 });

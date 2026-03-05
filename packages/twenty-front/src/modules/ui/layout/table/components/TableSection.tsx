@@ -1,8 +1,8 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ReactNode, useState } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext, useState } from 'react';
 import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableSectionProps = {
   children: ReactNode;
@@ -12,27 +12,27 @@ type TableSectionProps = {
 
 const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
   text-align: left;
 `;
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : 0)};
+  max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : '0')};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   overflow: hidden;
   transition:
-    max-height ${({ theme }) => theme.animation.duration.normal}s,
-    opacity ${({ theme }) => theme.animation.duration.normal}s;
+    max-height calc(${themeCssVariables.animation.duration.normal} * 1s),
+    opacity calc(${themeCssVariables.animation.duration.normal} * 1s);
 `;
 
-const StyledSectionContent = styled(TableBody)`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+const StyledSectionContentContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 export const TableSection = ({
@@ -40,8 +40,8 @@ export const TableSection = ({
   isInitiallyExpanded = true,
   title,
 }: TableSectionProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
-  const theme = useTheme();
 
   const handleToggleSection = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -66,7 +66,9 @@ export const TableSection = ({
         )}
       </StyledSectionHeader>
       <StyledSection isExpanded={isExpanded}>
-        <StyledSectionContent>{children}</StyledSectionContent>
+        <StyledSectionContentContainer>
+          <TableBody>{children}</TableBody>
+        </StyledSectionContentContainer>
       </StyledSection>
     </>
   );

@@ -1,10 +1,11 @@
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   if (isDefined(tab.logo)) {
     return <Avatar avatarUrl={tab.logo} size="md" placeholder={tab.title} />;

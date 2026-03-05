@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import QRCode from 'react-qr-code';
@@ -12,46 +12,46 @@ import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-f
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconCopy } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledQRCodeContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(4)} 0;
+  margin: ${themeCssVariables.spacing[4]} 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledQRCodeWrapper = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledOTPContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledQRCode = styled(QRCode)`
+const StyledQRCodeSizer = styled.div`
   height: 137px;
   width: 137px;
 `;
 
 const StyledCopySetupKeyText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   text-align: left;
   line-height: 1.5;
 `;
@@ -59,29 +59,28 @@ const StyledCopySetupKeyText = styled.div`
 const StyledCopySetupKeyLink = styled.button`
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: inline;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   padding: 0;
   text-decoration: underline;
   margin-left: 0;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledDivider = styled.div`
-  margin: ${({ theme }) => theme.spacing(6)} 0;
+  margin: ${themeCssVariables.spacing[6]} 0;
   width: 100%;
 `;
 
 export const SettingsTwoFactorAuthenticationMethod = () => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-  const qrCode = useRecoilValueV2(qrCodeState);
+  const { copyToClipboard } = useCopyToClipboard();
+  const qrCode = useAtomStateValue(qrCodeState);
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
@@ -99,14 +98,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-      await navigator.clipboard.writeText(secret);
-      enqueueSuccessSnackBar({
-        message: t`Setup key copied to clipboard`,
-        options: {
-          icon: <IconCopy size={theme.icon.size.md} />,
-          duration: 2000,
-        },
-      });
+      await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
 
@@ -160,7 +152,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 ) : (
                   <>
                     <StyledQRCodeWrapper>
-                      <StyledQRCode value={qrCode} />
+                      <StyledQRCodeSizer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}

@@ -1,27 +1,37 @@
 import { Action } from '@/action-menu/actions/components/Action';
+import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
+import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  evaluateConditionalAvailabilityExpression,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
+import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
-  type CommandMenuItemFieldsFragment,
   CommandMenuItemAvailabilityType,
+  type CommandMenuItemFieldsFragment,
   FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;
+  conditionalAvailabilityExpression?: string | null;
 };
 
 type BuildActionFromItemParams = {
@@ -30,24 +40,59 @@ type BuildActionFromItemParams = {
   index: number;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
-  openFrontComponentInCommandMenu: (params: {
+  openFrontComponentInSidePanel: (params: {
     frontComponentId: string;
     pageTitle: string;
     pageIcon: IconComponent;
+    recordContext?: {
+      recordId: string;
+      objectNameSingular: string;
+    };
   }) => void;
+  mountHeadlessFrontComponent: (
+    frontComponentId: string,
+    context?: HeadlessFrontComponentMountContext,
+  ) => void;
+  mountContext?: HeadlessFrontComponentMountContext;
+  commandMenuContextApi: CommandMenuContextApi;
 };
 
+// TODO: we should remove this backward compatibility logic in the future
+// once we have migrated all command menu items
 const buildActionFromItem = ({
   item,
   scope,
   index,
   isPinned,
   getIcon,
-  openFrontComponentInCommandMenu,
+  openFrontComponentInSidePanel,
+  mountHeadlessFrontComponent,
+  mountContext,
+  commandMenuContextApi,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+
+  const isHeadless = item.frontComponent?.isHeadless === true;
+
+  const handleClick = () => {
+    if (isHeadless) {
+      mountHeadlessFrontComponent(item.frontComponentId, mountContext);
+    } else {
+      openFrontComponentInSidePanel({
+        frontComponentId: item.frontComponentId,
+        pageTitle: displayLabel,
+        pageIcon: Icon,
+        recordContext: isDefined(mountContext)
+          ? {
+              recordId: mountContext.recordId,
+              objectNameSingular: mountContext.objectNameSingular,
+            }
+          : undefined,
+      });
+    }
+  };
 
   return {
     type: ActionType.FrontComponent,
@@ -58,40 +103,61 @@ const buildActionFromItem = ({
     position: index,
     isPinned,
     Icon,
-    shouldBeRegistered: () => true,
-    component: (
-      <Action
-        onClick={() =>
-          openFrontComponentInCommandMenu({
-            frontComponentId: item.frontComponentId,
-            pageTitle: displayLabel,
-            pageIcon: Icon,
-          })
-        }
-        closeSidePanelOnCommandMenuListActionExecution={false}
+    shouldBeRegistered: () =>
+      evaluateConditionalAvailabilityExpression(
+        item.conditionalAvailabilityExpression,
+        commandMenuContextApi,
+      ),
+    component: isHeadless ? (
+      <HeadlessFrontComponentAction
+        frontComponentId={item.frontComponentId}
+        onClick={handleClick}
       />
+    ) : (
+      <Action onClick={handleClick} />
     ),
   };
 };
 
-export const useCommandMenuItemFrontComponentActions = () => {
+export const useCommandMenuItemFrontComponentActions = (
+  commandMenuContextApi: CommandMenuContextApi,
+) => {
   const { getIcon } = useIcons();
-  const { openFrontComponentInCommandMenu } =
-    useOpenFrontComponentInCommandMenu();
+  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
+  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  const currentObjectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const targetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+
+  const currentObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
+  );
+
+  const selectedRecordIds =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
+      : [];
+
+  const mountContext: HeadlessFrontComponentMountContext | undefined =
+    selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
+      ? {
+          recordId: selectedRecordIds[0],
+          objectNameSingular: currentObjectMetadataItem.nameSingular,
+        }
+      : undefined;
 
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
@@ -111,13 +177,14 @@ export const useCommandMenuItemFrontComponentActions = () => {
     ) ?? [];
 
   const selectedRecordCount =
-    targetedRecordsRule.mode === 'selection'
-      ? targetedRecordsRule.selectedRecordIds.length
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
       : 0;
 
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
-    item.availabilityObjectMetadataId === currentObjectMetadataItemId;
+    item.availabilityObjectMetadataId ===
+      contextStoreCurrentObjectMetadataItemId;
 
   const globalItems = frontComponentItems.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
@@ -125,11 +192,12 @@ export const useCommandMenuItemFrontComponentActions = () => {
 
   const recordScopedItems = frontComponentItems.filter((item) => {
     if (!objectMatches(item)) return false;
-    if (item.availabilityType === CommandMenuItemAvailabilityType.SINGLE_RECORD)
-      return selectedRecordCount === 1;
-    if (item.availabilityType === CommandMenuItemAvailabilityType.BULK_RECORDS)
-      return selectedRecordCount >= 1;
-    return false;
+
+    return (
+      item.availabilityType ===
+        CommandMenuItemAvailabilityType.RECORD_SELECTION &&
+      selectedRecordCount >= 1
+    );
   });
 
   const globalActions = globalItems.map((item, index) =>
@@ -137,9 +205,11 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.Global,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
-      openFrontComponentInCommandMenu,
+      openFrontComponentInSidePanel,
+      mountHeadlessFrontComponent,
+      commandMenuContextApi,
     }),
   );
 
@@ -148,9 +218,12 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.RecordSelection,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
-      openFrontComponentInCommandMenu,
+      openFrontComponentInSidePanel,
+      mountHeadlessFrontComponent,
+      commandMenuContextApi,
+      mountContext,
     }),
   );
 

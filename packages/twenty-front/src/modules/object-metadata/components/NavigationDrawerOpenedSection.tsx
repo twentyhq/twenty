@@ -5,7 +5,7 @@ import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/hooks/us
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
@@ -29,8 +29,8 @@ export const NavigationDrawerOpenedSection = () => {
   const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
   const { workspaceNavigationMenuItemsObjectMetadataItems } =
     useWorkspaceNavigationMenuItems();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const {
@@ -52,7 +52,7 @@ export const NavigationDrawerOpenedSection = () => {
     return;
   }
 
-  const workspaceItemsToExclude = isNavigationMenuItemEnabled
+  const workspaceItemsToExclude = isNavigationMenuItemEditingEnabled
     ? workspaceNavigationMenuItemsObjectMetadataItems
     : workspaceFavoritesObjectMetadataItems;
 

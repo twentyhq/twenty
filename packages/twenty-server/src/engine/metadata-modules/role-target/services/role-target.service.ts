@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -113,7 +113,7 @@ export class RoleTargetService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating role targets',
@@ -174,7 +174,7 @@ export class RoleTargetService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting role target',

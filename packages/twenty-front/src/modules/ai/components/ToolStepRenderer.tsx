@@ -1,10 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
@@ -24,15 +24,16 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-family: ${themeCssVariables.font.family};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContentContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   min-width: 0;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledJsonTreeContainer = styled.div`
@@ -49,83 +50,94 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   border: none;
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'auto')};
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  color: ${themeCssVariables.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
   justify-content: space-between;
   width: 100%;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledToolName = styled.span`
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ theme }) => theme.font.color.light};
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  padding: ${({ theme }) => theme.spacing(0.5)}
-    ${({ theme }) => theme.spacing(1)};
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.xs};
+  color: ${themeCssVariables.font.color.light};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLeftContent = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRightContent = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDisplayMessage = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledIconTextContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 
   svg {
-    min-width: ${({ theme }) => theme.icon.size.sm}px;
+    min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
   }
 `;
 
 const StyledTabContainer = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTab = styled.div<{ isActive: boolean }>`
-  color: ${({ theme, isActive }) =>
-    isActive ? theme.font.color.primary : theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme, isActive }) =>
-    isActive ? theme.font.weight.medium : theme.font.weight.regular};
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
+  padding-bottom: ${themeCssVariables.spacing[2]};
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 type TabType = 'output' | 'input';
 
-export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
+export const ToolStepRenderer = ({
+  toolPart,
+  isStreaming,
+}: {
+  toolPart: ToolUIPart;
+  isStreaming: boolean;
+}) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
@@ -147,11 +159,16 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
         stdout?: string;
         stderr?: string;
         exitCode?: number;
-        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+        files?: Array<{
+          fileId: string;
+          filename: string;
+          url: string;
+          mimeType?: string;
+        }>;
       };
     } | null;
 
-    const isRunning = !output && !hasError;
+    const isRunning = !output && !hasError && isStreaming;
 
     return (
       <CodeExecutionDisplay
@@ -166,17 +183,23 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   if (!output && !hasError) {
+    const displayText = isStreaming
+      ? getToolDisplayMessage(input, rawToolName, false)
+      : getToolDisplayMessage(input, rawToolName, true);
+
     return (
       <StyledContainer>
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
             <StyledIconTextContainer>
               <ToolIcon size={theme.icon.size.sm} />
-              <ShimmeringText>
-                <StyledDisplayMessage>
-                  {getToolDisplayMessage(input, rawToolName, false)}
-                </StyledDisplayMessage>
-              </ShimmeringText>
+              {isStreaming ? (
+                <ShimmeringText>
+                  <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+                </ShimmeringText>
+              ) : (
+                <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+              )}
             </StyledIconTextContainer>
           </StyledLeftContent>
           <StyledRightContent>
@@ -187,7 +210,6 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
     );
   }
 
-  // For execute_tool, the actual result is nested inside output.result
   const outputResult = ToolOutputResultSchema.safeParse(output);
   const unwrappedOutput =
     rawToolName === 'execute_tool' && outputResult.success

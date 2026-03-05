@@ -1,10 +1,10 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export type ProfilingQueue = {
   [runName: string]: string[];
 };
 
-export const profilingQueueState = atom<ProfilingQueue>({
+export const profilingQueueState = createAtomState<ProfilingQueue>({
   key: 'profilingQueueState',
-  default: {},
+  defaultValue: {},
 });

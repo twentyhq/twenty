@@ -2,31 +2,32 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 const StyledRelationChipsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   flex-wrap: wrap;
 `;
 
 type FieldWidgetMorphRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetMorphRelationField = ({
   fieldDefinition,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetMorphRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
 
@@ -41,7 +42,7 @@ export const FieldWidgetMorphRelationField = ({
   }
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <StyledRelationChipsContainer>
           {recordsWithObjectNameSingular.map((morphItem, index) => (
@@ -53,6 +54,6 @@ export const FieldWidgetMorphRelationField = ({
           ))}
         </StyledRelationChipsContainer>
       </StyledContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

@@ -11,20 +11,19 @@ export const HtmlElementConfigZ = z.object({
     .string()
     .regex(/^Html[A-Z]/, 'Name must be PascalCase starting with Html'),
   properties: z.record(z.string(), PropertySchemaZ),
+  events: z.array(z.string()).optional(),
 });
 
 export const HtmlElementConfigArrayZ = z.array(HtmlElementConfigZ);
 
 export const ComponentSchemaZ = z.object({
   name: z.string().min(1),
-  tagName: z.string().min(1),
   customElementName: z.string().min(1),
   properties: z.record(z.string(), PropertySchemaZ),
   events: z.array(z.string()).readonly(),
-  isHtmlElement: z.boolean(),
   htmlTag: z.string().optional(),
-  componentImport: z.string().optional(),
-  componentPath: z.string().optional(),
+  customHostRenderer: z.string().optional(),
+  customHostRendererPath: z.string().optional(),
 });
 
 export type PropertySchema = z.infer<typeof PropertySchemaZ>;

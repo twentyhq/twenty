@@ -1,32 +1,34 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext } from 'react';
 import { motion } from 'framer-motion';
 
-const StyledButton = styled(motion.button)<{ variant?: 'blue' | 'red' }>`
+const StyledButton = styled.button<{
+  variant?: 'blue' | 'red';
+}>`
   align-items: center;
-  background-color: ${({ theme, variant }) =>
+  background-color: ${({ variant }) =>
     variant === 'red'
-      ? theme.background.danger
-      : theme.background.transparent.lighter};
-  border-color: ${({ theme, variant }) =>
-    variant === 'red' ? theme.border.color.danger : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+      ? themeCssVariables.background.danger
+      : themeCssVariables.background.transparent.lighter};
+  border-color: ${({ variant }) =>
+    variant === 'red'
+      ? themeCssVariables.border.color.danger
+      : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   border-style: solid;
   border-width: 1px;
   display: flex;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  padding-inline: ${themeCssVariables.spacing[1]};
   height: 24px;
   width: 24px;
   box-sizing: border-box;
   cursor: pointer;
 `;
-
-const MotionIconChevronDown = motion.create(IconChevronDown);
 
 export const JsonArrow = ({
   isOpen,
@@ -37,10 +39,16 @@ export const JsonArrow = ({
   onClick: () => void;
   variant?: 'blue' | 'red';
 }) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const { arrowButtonCollapsedLabel, arrowButtonExpandedLabel } =
     useJsonTreeContextOrThrow();
+
+  const iconColor =
+    variant === 'blue'
+      ? themeCssVariables.color.blue
+      : variant === 'red'
+        ? themeCssVariables.font.color.danger
+        : themeCssVariables.font.color.secondary;
 
   return (
     <StyledButton variant={variant} onClick={onClick}>
@@ -48,19 +56,13 @@ export const JsonArrow = ({
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>
 
-      <MotionIconChevronDown
-        size={theme.icon.size.md}
-        color={
-          variant === 'blue'
-            ? theme.color.blue
-            : variant === 'red'
-              ? theme.font.color.danger
-              : theme.font.color.secondary
-        }
+      <motion.div
         initial={false}
         animate={{ rotate: isOpen ? 0 : -90 }}
-        transition={{ duration: ANIMATION.duration.normal }}
-      />
+        transition={{ duration: 0.3 }}
+      >
+        <IconChevronDown size={theme.icon.size.md} color={iconColor} />
+      </motion.div>
     </StyledButton>
   );
 };

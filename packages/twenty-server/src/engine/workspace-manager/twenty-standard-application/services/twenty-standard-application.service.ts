@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -20,6 +20,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
+// TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
 export class TwentyStandardApplicationService {
   constructor(
@@ -113,19 +114,19 @@ export class TwentyStandardApplicationService {
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
           idByUniversalIdentifierByMetadataName,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while synchronizing twenty-standard application',

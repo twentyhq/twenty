@@ -1,22 +1,17 @@
-import { useRecoilCallback } from 'recoil';
-
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useReadCaptchaToken = () => {
-  const readCaptchaToken = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const existingCaptchaToken = snapshot
-          .getLoadable(captchaTokenState)
-          .getValue();
+  const store = useStore();
+  const readCaptchaToken = useCallback(() => {
+    const existingCaptchaToken = store.get(captchaTokenState.atom);
 
-        if (isDefined(existingCaptchaToken)) {
-          return existingCaptchaToken;
-        }
-      },
-    [],
-  );
+    if (isDefined(existingCaptchaToken)) {
+      return existingCaptchaToken;
+    }
+  }, [store]);
 
   return { readCaptchaToken };
 };

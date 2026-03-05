@@ -1,14 +1,25 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
+import { type ActionConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
+
+// Must match ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
+const ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
+  'action-menu-confirmation-modal-result';
+
+type ActionMenuConfirmationModalResultBrowserEventDetail = {
+  frontComponentId: string;
+  confirmationResult: ActionConfirmationModalResult;
+};
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  frontComponentId: string;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<
@@ -24,18 +35,19 @@ export const FrontComponentWorkerEffect = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  frontComponentId,
   frontComponentHostCommunicationApi,
   setReceiver,
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const frontComponentHostCommunicationApiRef = useRef(
-    frontComponentHostCommunicationApi,
-  );
-  frontComponentHostCommunicationApiRef.current =
-    frontComponentHostCommunicationApi;
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
+    if (isInitializedRef.current) {
+      return;
+    }
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const worker = createRemoteWorker();
@@ -48,19 +60,39 @@ export const FrontComponentWorkerEffect = ({
       setError(workerError);
     };
 
-    // Expose host functions to the worker via stable refs to avoid recreating threads
-    const stableFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-      {
-        navigate: (...args) =>
-          frontComponentHostCommunicationApiRef.current.navigate(...args),
-      };
-
     const thread = new ThreadWebWorker<
       WorkerExports,
       FrontComponentHostCommunicationApi
     >(worker, {
-      exports: stableFrontComponentHostCommunicationApi,
+      exports: frontComponentHostCommunicationApi,
     });
+
+    const handleActionMenuConfirmationModalResultBrowserEvent = (
+      event: CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>,
+    ) => {
+      const actionMenuConfirmationModalResultBrowserEventDetail = event.detail;
+
+      if (
+        actionMenuConfirmationModalResultBrowserEventDetail.frontComponentId !==
+        frontComponentId
+      ) {
+        return;
+      }
+
+      thread.imports
+        .onConfirmationModalResult(
+          actionMenuConfirmationModalResultBrowserEventDetail.confirmationResult,
+        )
+        .catch((error: Error) => {
+          setError(error);
+        });
+    };
+
+    window.addEventListener(
+      ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+      handleActionMenuConfirmationModalResultBrowserEvent as EventListener,
+    );
+
     setThread(thread);
 
     thread.imports
@@ -74,18 +106,26 @@ export const FrontComponentWorkerEffect = ({
       });
 
     setReceiver(newReceiver);
+    isInitializedRef.current = true;
 
     return () => {
+      window.removeEventListener(
+        ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+        handleActionMenuConfirmationModalResultBrowserEvent as EventListener,
+      );
       setThread(null);
       worker.terminate();
+      isInitializedRef.current = false;
     };
   }, [
     componentUrl,
     applicationAccessToken,
     apiUrl,
+    frontComponentId,
     setError,
     setReceiver,
     setThread,
+    frontComponentHostCommunicationApi,
   ]);
 
   return null;

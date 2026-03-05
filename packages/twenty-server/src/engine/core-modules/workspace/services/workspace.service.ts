@@ -18,6 +18,7 @@ import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custo
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
@@ -28,6 +29,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,6 +38,8 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -85,6 +89,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     fastModel: PermissionFlagType.WORKSPACE,
     smartModel: PermissionFlagType.WORKSPACE,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
+    autoEnableNewAiModels: PermissionFlagType.AI_SETTINGS,
+    disabledAiModelIds: PermissionFlagType.AI_SETTINGS,
+    enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
+    useRecommendedModels: PermissionFlagType.AI_SETTINGS,
   };
 
   constructor(
@@ -108,6 +116,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly customDomainManagerService: CustomDomainManagerService,
+    private readonly fileCorePictureService: FileCorePictureService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectDataSource()
@@ -214,8 +224,52 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
     }
 
+    const isChangingModels =
+      isDefined(payload.smartModel) || isDefined(payload.fastModel);
+    const isChangingAvailability =
+      payload.useRecommendedModels !== undefined ||
+      payload.autoEnableNewAiModels !== undefined ||
+      payload.disabledAiModelIds !== undefined ||
+      payload.enabledAiModelIds !== undefined;
+
+    if (isChangingModels || isChangingAvailability) {
+      const effectiveWorkspace = {
+        useRecommendedModels:
+          payload.useRecommendedModels ?? workspace.useRecommendedModels,
+        autoEnableNewAiModels:
+          payload.autoEnableNewAiModels ?? workspace.autoEnableNewAiModels,
+        disabledAiModelIds:
+          payload.disabledAiModelIds ?? workspace.disabledAiModelIds,
+        enabledAiModelIds:
+          payload.enabledAiModelIds ?? workspace.enabledAiModelIds,
+      };
+
+      const modelsToValidate = [
+        payload.smartModel ?? workspace.smartModel,
+        payload.fastModel ?? workspace.fastModel,
+      ].filter(isDefined);
+
+      for (const modelId of modelsToValidate) {
+        if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
+          throw new WorkspaceException(
+            'Selected model has been disabled by the administrator',
+            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+          );
+        }
+
+        if (!isModelAllowedByWorkspace(modelId, effectiveWorkspace)) {
+          throw new WorkspaceException(
+            'Selected model is not available in this workspace',
+            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+          );
+        }
+      }
+    }
+
+    let updatedWorkspace: WorkspaceEntity;
+
     try {
-      return await this.workspaceRepository.save({
+      updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
       });
@@ -230,10 +284,19 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       }
       throw error;
     }
+
+    if (payload.logo === null && isDefined(workspace.logoFileId)) {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId: workspace.logoFileId,
+        workspaceId: workspace.id,
+      });
+    }
+
+    return updatedWorkspace;
   }
 
   async activateWorkspace(
-    user: UserEntity,
+    user: AuthContextUser,
     workspace: WorkspaceEntity,
     data: ActivateWorkspaceInput,
   ) {

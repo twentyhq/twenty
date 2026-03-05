@@ -1,14 +1,14 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useSelectedRecordIds } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIds';
-import { useOpenMergeRecordsPageInCommandMenu } from '@/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu';
+import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const MergeMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -17,14 +17,14 @@ export const MergeMultipleRecordsAction = () => {
   }
   const selectedRecordIds = useSelectedRecordIds();
 
-  const { openMergeRecordsPageInCommandMenu } =
-    useOpenMergeRecordsPageInCommandMenu({
+  const { openMergeRecordsPageInSidePanel } =
+    useOpenMergeRecordsPageInSidePanel({
       objectNameSingular: objectMetadataItem.nameSingular,
       objectRecordIds: selectedRecordIds,
     });
 
   const handleClick = () => {
-    openMergeRecordsPageInCommandMenu();
+    openMergeRecordsPageInSidePanel();
   };
 
   return <ActionDisplay onClick={handleClick} />;

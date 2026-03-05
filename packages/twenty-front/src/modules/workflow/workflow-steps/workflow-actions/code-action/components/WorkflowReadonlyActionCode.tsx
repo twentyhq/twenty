@@ -5,7 +5,7 @@ import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLog
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -29,7 +29,7 @@ export const WorkflowReadonlyActionCode = ({
     id: logicFunctionId,
   });
 
-  const { code, loading } = useGetLogicFunctionSourceCode({
+  const { sourceHandlerCode, loading } = useGetLogicFunctionSourceCode({
     logicFunctionId,
   });
 
@@ -60,7 +60,7 @@ export const WorkflowReadonlyActionCode = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={code ?? undefined}
+            value={sourceHandlerCode ?? undefined}
             language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}

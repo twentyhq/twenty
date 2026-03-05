@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -8,8 +8,8 @@ import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -18,7 +18,7 @@ type UseMergeRecordsActionsProps = {
 export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
-  const mergeSettings = useRecoilValueV2(mergeSettingsState);
+  const mergeSettings = useAtomStateValue(mergeSettingsState);
 
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
@@ -26,15 +26,15 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetRecoilStateV2(isMergeInProgressState);
+  const setIsMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
-    setMergeInProgress(true);
+    setIsMergeInProgress(true);
     try {
       const mergedRecord = await mergeManyRecords({
         recordIds: selectedRecords.map((record) => record.id),
@@ -51,7 +51,7 @@ export const useMergeRecordsActions = ({
       enqueueSuccessSnackBar({
         message: t`Successfully merged ${recordCount} records`,
       });
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       navigate(AppPath.RecordShowPage, {
         objectNameSingular,
@@ -65,7 +65,7 @@ export const useMergeRecordsActions = ({
             : t`Failed to merge records. Please try again.`,
       });
     } finally {
-      setMergeInProgress(false);
+      setIsMergeInProgress(false);
     }
   };
 

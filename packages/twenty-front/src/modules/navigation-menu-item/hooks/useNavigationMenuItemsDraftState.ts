@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -6,15 +5,16 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuItemsDraftState = () => {
-  const isNavigationMenuInEditMode = useRecoilValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const prefetchNavigationMenuItems = useRecoilValue(
+  const prefetchNavigationMenuItems = useAtomStateValue(
     prefetchNavigationMenuItemsState,
   );
-  const navigationMenuItemsDraft = useRecoilValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
 

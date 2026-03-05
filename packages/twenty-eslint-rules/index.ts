@@ -35,9 +35,17 @@ import {
     RULE_NAME as noAngleBracketPlaceholdersName,
 } from './rules/no-angle-bracket-placeholders';
 import {
+    rule as noDirectAtomFamilyInSelector,
+    RULE_NAME as noDirectAtomFamilyInSelectorName,
+} from './rules/no-direct-atom-family-in-selector';
+import {
     rule as noHardcodedColors,
     RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
+import {
+    rule as noJotaiStoreInSelector,
+    RULE_NAME as noJotaiStoreInSelectorName,
+} from './rules/no-jotai-store-in-selector';
 import {
     rule as noNavigatePreferLink,
     RULE_NAME as noNavigatePreferLinkName,
@@ -58,14 +66,8 @@ import {
     rule as styledComponentsPrefixedWithStyled,
     RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
-import {
-    rule as useGetLoadableAndGetValueToGetAtoms,
-    RULE_NAME as useGetLoadableAndGetValueToGetAtomsName,
-} from './rules/use-getLoadable-and-getValue-to-get-atoms';
-import {
-    rule as useRecoilCallbackHasDependencyArray,
-    RULE_NAME as useRecoilCallbackHasDependencyArrayName,
-} from './rules/useRecoilCallback-has-dependency-array';
+
+
 
 /**
  * Import your custom workspace rules at the top of this file.
@@ -102,12 +104,10 @@ module.exports = {
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
     [explicitBooleanPredicatesInIfName]: explicitBooleanPredicatesInIf,
-    [useGetLoadableAndGetValueToGetAtomsName]:
-      useGetLoadableAndGetValueToGetAtoms,
     [maxConstsPerFileName]: maxConstsPerFile,
-    [useRecoilCallbackHasDependencyArrayName]:
-      useRecoilCallbackHasDependencyArray,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
+    [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
+    [noDirectAtomFamilyInSelectorName]: noDirectAtomFamilyInSelector,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [graphqlResolversShouldBeGuardedName]: graphqlResolversShouldBeGuarded,

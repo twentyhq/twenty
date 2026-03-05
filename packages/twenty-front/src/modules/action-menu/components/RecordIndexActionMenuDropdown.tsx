@@ -6,7 +6,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,8 +15,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
@@ -49,19 +49,19 @@ export const RecordIndexActionMenuDropdown = () => {
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuDropdownPosition = useRecoilComponentValue(
+  const recordIndexActionMenuDropdownPosition = useAtomComponentStateValue(
     recordIndexActionMenuDropdownPositionComponentState,
     dropdownId,
   );
 
-  const { openCommandMenu } = useCommandMenu();
+  const { openSidePanelMenu } = useSidePanelMenu();
 
   const selectedItemIdArray = [
     ...recordIndexActions.map((action) => action.key),
     'more-actions',
   ];
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -73,8 +73,8 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{
-        x: actionMenuDropdownPosition.x ?? 0,
-        y: actionMenuDropdownPosition.y ?? 0,
+        x: recordIndexActionMenuDropdownPosition.x ?? 0,
+        y: recordIndexActionMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
         <DropdownContent>
@@ -95,14 +95,14 @@ export const RecordIndexActionMenuDropdown = () => {
                   key="more-actions"
                   onEnter={() => {
                     closeDropdown(dropdownId);
-                    openCommandMenu();
+                    openSidePanelMenu();
                   }}
                 >
                   <MenuItem
                     LeftIcon={IconLayoutSidebarRightExpand}
                     onClick={() => {
                       closeDropdown(dropdownId);
-                      openCommandMenu();
+                      openSidePanelMenu();
                     }}
                     focused={selectedItemId === 'more-actions'}
                     text={t`More actions`}

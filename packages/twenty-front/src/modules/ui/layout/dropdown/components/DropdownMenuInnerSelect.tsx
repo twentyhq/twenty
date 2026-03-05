@@ -2,26 +2,27 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useTheme } from '@emotion/react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: ${({ theme }) => theme.spacing(7)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  height: ${themeCssVariables.spacing[7]};
 
   justify-content: space-between;
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   box-sizing: border-box;
@@ -43,8 +44,7 @@ export const DropdownMenuInnerSelect = ({
   dropdownId,
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
 
   return (

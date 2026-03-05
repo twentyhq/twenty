@@ -1,16 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { UPLOAD_WORKSPACE_MEMBER_PROFILE_PICTURE } from '@/settings/members/graphql/mutations/uploadWorkspaceMemberProfilePicture';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { useMutation } from '@apollo/client';
-import { buildSignedPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { useUploadWorkspaceMemberProfilePictureMutation } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberPictureUploaderProps = {
@@ -32,11 +31,11 @@ export const WorkspaceMemberPictureUploader = ({
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
 
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
 
-  const [uploadPicture] = useMutation(UPLOAD_WORKSPACE_MEMBER_PROFILE_PICTURE);
+  const [uploadPicture] = useUploadWorkspaceMemberProfilePictureMutation();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -56,6 +55,7 @@ export const WorkspaceMemberPictureUploader = ({
     setIsUploading(true);
     setErrorMessage(null);
 
+    let newAvatarUrl: string | null = null;
     try {
       const { data } = await uploadPicture({
         variables: { file },
@@ -74,10 +74,10 @@ export const WorkspaceMemberPictureUploader = ({
       await updateOneRecord({
         objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: workspaceMemberId,
-        updateOneRecordInput: { avatarUrl: signedFile.path },
+        updateOneRecordInput: { avatarUrl: signedFile.url },
       });
 
-      const newAvatarUrl = buildSignedPath(signedFile);
+      newAvatarUrl = signedFile.url;
 
       if (isEditingSelf && isDefined(currentWorkspaceMember)) {
         setCurrentWorkspaceMember({

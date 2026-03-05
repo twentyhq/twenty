@@ -1,16 +1,17 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   ConfigSource,
   type ConfigVariable,
 } from '~/generated-metadata/graphql';
 
 const StyledHelpText = styled.div<{ color?: string }>`
-  color: ${({ theme, color }) => color || theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
 `;
 
@@ -24,7 +25,7 @@ export const ConfigVariableHelpText = ({
   variable,
   hasValueChanged,
 }: ConfigVariableHelpTextProps) => {
-  const isConfigVariablesInDbEnabled = useRecoilValue(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
   const { t } = useLingui();

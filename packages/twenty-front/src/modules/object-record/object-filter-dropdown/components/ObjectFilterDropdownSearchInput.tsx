@@ -4,23 +4,24 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const ObjectFilterDropdownSearchInput = () => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const selectedOperandInDropdown = useRecoilComponentValue(
+  const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentState(
+  const setObjectFilterDropdownSearchInput = useSetAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
   );
 

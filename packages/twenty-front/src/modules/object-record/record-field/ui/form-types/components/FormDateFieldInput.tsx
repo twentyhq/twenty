@@ -18,8 +18,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   useId,
@@ -30,11 +29,11 @@ import {
 } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Nullable } from 'twenty-ui/utilities';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
-const StyledInputContainer = styled(FormFieldInputInnerContainer)`
+const StyledInputContainerWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0;
@@ -44,21 +43,34 @@ const StyledInputContainer = styled(FormFieldInputInnerContainer)`
 
 const StyledDateInputAbsoluteContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(1)};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
-  ${TEXT_INPUT_STYLE}
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
-  &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 
-  ${({ hasError, theme }) =>
-    hasError &&
-    css`
-      color: ${theme.color.red};
-    `};
+  &:disabled {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
+
+  color: ${({ hasError }) =>
+    hasError
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
 `;
 
 const StyledDateInputContainer = styled.div`
@@ -315,49 +327,50 @@ export const FormDateFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <StyledInputContainer
-          formFieldInputInstanceId={instanceId}
-          ref={datePickerWrapperRef}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-        >
-          {draftValue.type === 'static' ? (
-            <>
-              <StyledDateInput
-                type="text"
-                placeholder={placeholderToDisplay}
-                value={inputDate}
-                onFocus={handleInputFocus}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeydown}
-                disabled={readonly}
-              />
+        <StyledInputContainerWrapper ref={datePickerWrapperRef}>
+          <FormFieldInputInnerContainer
+            formFieldInputInstanceId={instanceId}
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+          >
+            {draftValue.type === 'static' ? (
+              <>
+                <StyledDateInput
+                  type="text"
+                  placeholder={placeholderToDisplay}
+                  value={inputDate}
+                  onFocus={handleInputFocus}
+                  onChange={handleInputChange}
+                  onKeyDown={handleInputKeydown}
+                  disabled={readonly}
+                />
 
-              {draftValue.mode === 'edit' ? (
-                <StyledDateInputContainer>
-                  <StyledDateInputAbsoluteContainer>
-                    <OverlayContainer>
-                      <DatePicker
-                        instanceId={instanceId}
-                        plainDateString={pickerDate}
-                        onChange={handlePickerChange}
-                        onClose={handlePickerMouseSelect}
-                        onEnter={handlePickerEnter}
-                        onEscape={handlePickerEscape}
-                        onClear={handlePickerClear}
-                        hideHeaderInput
-                      />
-                    </OverlayContainer>
-                  </StyledDateInputAbsoluteContainer>
-                </StyledDateInputContainer>
-              ) : null}
-            </>
-          ) : (
-            <VariableChipStandalone
-              rawVariableName={draftValue.value}
-              onRemove={readonly ? undefined : handleUnlinkVariable}
-            />
-          )}
-        </StyledInputContainer>
+                {draftValue.mode === 'edit' ? (
+                  <StyledDateInputContainer>
+                    <StyledDateInputAbsoluteContainer>
+                      <OverlayContainer>
+                        <DatePicker
+                          instanceId={instanceId}
+                          plainDateString={pickerDate}
+                          onChange={handlePickerChange}
+                          onClose={handlePickerMouseSelect}
+                          onEnter={handlePickerEnter}
+                          onEscape={handlePickerEscape}
+                          onClear={handlePickerClear}
+                          hideHeaderInput
+                        />
+                      </OverlayContainer>
+                    </StyledDateInputAbsoluteContainer>
+                  </StyledDateInputContainer>
+                ) : null}
+              </>
+            ) : (
+              <VariableChipStandalone
+                rawVariableName={draftValue.value}
+                onRemove={readonly ? undefined : handleUnlinkVariable}
+              />
+            )}
+          </FormFieldInputInnerContainer>
+        </StyledInputContainerWrapper>
 
         {VariablePicker && !readonly ? (
           <VariablePicker

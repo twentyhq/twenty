@@ -1,18 +1,18 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
-import { useRecoilValue } from 'recoil';
-
 export const useGetCurrentViewOnly = () => {
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const currentView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: contextStoreCurrentViewId ?? '',
+    },
   );
 
   return {

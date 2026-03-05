@@ -29,13 +29,27 @@ yarn twenty auth:switch    # Switch default workspace
 yarn twenty auth:list      # List all configured workspaces
 
 # Application
-yarn twenty app:dev        # Start dev mode (watch, build, and sync)
-yarn twenty entity:add     # Add a new entity (function, front-component, object, role)
-yarn twenty app:generate   # Generate typed Twenty client
+yarn twenty app:dev        # Start dev mode (watch, build, sync, and auto-generate typed client)
+yarn twenty entity:add     # Add a new entity (object, field, function, front-component, role, view, navigation-menu-item)
 yarn twenty function:logs  # Stream function logs
 yarn twenty function:execute  # Execute a function with JSON payload
 yarn twenty app:uninstall  # Uninstall app from workspace
 ```
+
+## Integration Tests
+
+If your project includes the example integration test (`src/__tests__/app-install.integration-test.ts`), you can run it with:
+
+```bash
+# Make sure a Twenty server is running at http://localhost:3000
+yarn test
+```
+
+The test builds and installs the app, then verifies it appears in the applications list. Test configuration (API URL and API key) is defined in `vitest.config.ts`.
+
+## LLMs instructions
+
+Main docs and pitfalls are available in LLMS.md file.
 
 ## Learn More
 

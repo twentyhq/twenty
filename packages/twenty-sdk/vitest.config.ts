@@ -16,11 +16,7 @@ export default defineConfig({
       'src/**/__integration__/**/*.{test,spec}.{ts,tsx}',
       'src/**/*.{test,spec}.{ts,tsx}',
     ],
-    exclude: [
-      '**/node_modules/**',
-      '**/.git/**',
-      '**/__e2e__/**',
-    ],
+    exclude: ['**/node_modules/**', '**/.git/**', '**/__e2e__/**'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],

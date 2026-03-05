@@ -1,7 +1,8 @@
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconMinus, IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
 
 type SettingsCounterProps = {
@@ -16,19 +17,22 @@ type SettingsCounterProps = {
 const StyledCounterContainer = styled.div<{ showButtons: boolean }>`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   margin-left: auto;
-  width: ${({ theme, showButtons }) =>
-    showButtons ? theme.spacing(30) : theme.spacing(16)};
+  width: ${({ showButtons }) =>
+    showButtons
+      ? themeCssVariables.spacing[30]
+      : themeCssVariables.spacing[16]};
 `;
 
-const StyledTextInput = styled(SettingsTextInput)`
-  width: ${({ theme }) => theme.spacing(16)};
-  input {
-    width: ${({ theme }) => theme.spacing(16)};
-    height: ${({ theme }) => theme.spacing(6)};
+const StyledTextInputContainer = styled.div`
+  width: ${themeCssVariables.spacing[16]};
+
+  > * input {
+    width: ${themeCssVariables.spacing[16]};
+    height: ${themeCssVariables.spacing[6]};
     text-align: center;
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 `;
 
@@ -81,14 +85,16 @@ export const SettingsCounter = ({
           disabled={disabled}
         />
       )}
-      <StyledTextInput
-        instanceId="settings-counter-input"
-        name="counter"
-        fullWidth
-        value={value.toString()}
-        onChange={handleTextInputChange}
-        disabled={disabled}
-      />
+      <StyledTextInputContainer>
+        <SettingsTextInput
+          instanceId="settings-counter-input"
+          name="counter"
+          fullWidth
+          value={value.toString()}
+          onChange={handleTextInputChange}
+          disabled={disabled}
+        />
+      </StyledTextInputContainer>
       {showButtons && (
         <IconButton
           size="small"

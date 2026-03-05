@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
@@ -13,7 +12,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
@@ -39,8 +38,6 @@ export const WorkflowEditActionUpdateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpdateRecordProps) => {
-  const theme = useTheme();
-
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -169,7 +166,7 @@ export const WorkflowEditActionUpdateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownOffset={{ y: 4 }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

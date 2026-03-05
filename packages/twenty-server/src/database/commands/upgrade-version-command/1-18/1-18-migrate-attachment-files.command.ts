@@ -14,9 +14,7 @@ import { v4 } from 'uuid';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -25,13 +23,14 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Command({
   name: 'upgrade:1-18:migrate-attachment-files',
   description:
-    'Migrate attachment files to file field: copy files and create file records',
+    '[DEPRECATED] Migrate attachment files to file field - this migration is now complete and no longer needed',
 })
 export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -39,7 +38,6 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldMetadataService: FieldMetadataService,
@@ -52,23 +50,20 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace({
     workspaceId,
-    options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
-      workspaceId,
+    this.logger.log(
+      `[DEPRECATED] Attachment files migration is no longer needed for workspace ${workspaceId}. ` +
+        `The IS_FILES_FIELD_MIGRATED feature flag has been removed as all workspaces are now migrated.`,
     );
+  }
 
-    if (isMigrated) {
-      this.logger.log(
-        `Attachment files migration already completed for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
+  private _deprecatedMigrationLogic = async ({
+    workspaceId,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    isDryRun: boolean;
+  }) => {
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Starting attachment files migration for workspace ${workspaceId}`,
     );
@@ -195,102 +190,108 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const attachmentRepository =
-      await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
-        workspaceId,
-        'attachment',
-        { shouldBypassPermissionChecks: true },
+    const systemAuthContext = buildSystemAuthContext(workspaceId);
+
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
+      const attachmentRepository =
+        await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
+          workspaceId,
+          'attachment',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const attachments = await attachmentRepository.find({
+        where: {
+          fullPath: Not(IsNull()),
+          file: Or(IsNull(), Equal([])),
+        },
+        select: ['id', 'name', 'fullPath'],
+      });
+
+      if (attachments.length === 0) {
+        this.logger.log(
+          `No attachments to migrate for workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      this.logger.log(
+        `Found ${attachments.length} attachment(s) to migrate in workspace ${workspaceId}`,
       );
 
-    const attachments = await attachmentRepository.find({
-      where: {
-        fullPath: Not(IsNull()),
-        file: Or(IsNull(), Equal([])),
-      },
-      select: ['id', 'name', 'fullPath'],
-    });
+      const fileRepository = this.coreDataSource.getRepository(FileEntity);
 
-    if (attachments.length === 0) {
-      this.logger.log(`No attachments to migrate for workspace ${workspaceId}`);
-
-      return;
-    }
-
-    this.logger.log(
-      `Found ${attachments.length} attachment(s) to migrate in workspace ${workspaceId}`,
-    );
-
-    const fileRepository = this.coreDataSource.getRepository(FileEntity);
-
-    for (const attachment of attachments) {
-      if (!isNonEmptyString(attachment.fullPath)) {
-        this.logger.warn(
-          `Skipping attachment ${attachment.id} - invalid fullPath`,
-        );
-
-        continue;
-      }
-
-      try {
-        const { type: fileExtension, filename } =
-          extractFolderPathFilenameAndTypeOrThrow(attachment.fullPath);
-
-        const fileId = v4();
-        const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
-        const newResourcePath = `${FileFolder.FilesField}/${attachmentFileflatFieldMetadata.universalIdentifier}/${newFilename}`;
-
-        if (!isDryRun) {
-          await this.fileStorageService.copyLegacy({
-            from: {
-              folderPath: `workspace-${workspaceId}`,
-              filename: attachment.fullPath,
-            },
-            to: {
-              folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
-              filename: newResourcePath,
-            },
-          });
-
-          const fileEntity = fileRepository.create({
-            id: fileId,
-            path: newResourcePath,
-            workspaceId,
-            applicationId: twentyStandardFlatApplication.id,
-            size: -1,
-            settings: {
-              isTemporaryFile: true,
-              toDelete: false,
-            },
-          });
-
-          await fileRepository.save(fileEntity);
-
-          await attachmentRepository.update(
-            { id: attachment.id },
-            {
-              file: [
-                {
-                  fileId: fileEntity.id,
-                  label: attachment.name || filename,
-                },
-              ],
-            },
+      for (const attachment of attachments) {
+        if (!isNonEmptyString(attachment.fullPath)) {
+          this.logger.warn(
+            `Skipping attachment ${attachment.id} - invalid fullPath`,
           );
+
+          continue;
         }
 
-        this.logger.log(
-          `Migrated attachment ${attachment.id} (${attachment.name})`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to migrate attachment ${attachment.id} in workspace ${workspaceId}: ${error.message}`,
-        );
-        throw error;
-      }
-    }
+        try {
+          const { type: fileExtension, filename } =
+            extractFolderPathFilenameAndTypeOrThrow(attachment.fullPath);
 
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed attachment files migration for workspace ${workspaceId}`,
-    );
-  }
+          const fileId = v4();
+          const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
+          const newResourcePath = `${FileFolder.FilesField}/${attachmentFileflatFieldMetadata.universalIdentifier}/${newFilename}`;
+
+          if (!isDryRun) {
+            await this.fileStorageService.copyLegacy({
+              from: {
+                folderPath: `workspace-${workspaceId}`,
+                filename: attachment.fullPath,
+              },
+              to: {
+                folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
+                filename: newResourcePath,
+              },
+            });
+
+            const fileEntity = fileRepository.create({
+              id: fileId,
+              path: newResourcePath,
+              workspaceId,
+              applicationId: twentyStandardFlatApplication.id,
+              size: -1,
+              settings: {
+                isTemporaryFile: true,
+                toDelete: false,
+              },
+            });
+
+            await fileRepository.save(fileEntity);
+
+            await attachmentRepository.update(
+              { id: attachment.id },
+              {
+                file: [
+                  {
+                    fileId: fileEntity.id,
+                    label: attachment.name || filename,
+                  },
+                ],
+              },
+            );
+          }
+
+          this.logger.log(
+            `Migrated attachment ${attachment.id} (${attachment.name})`,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Failed to migrate attachment ${attachment.id} in workspace ${workspaceId}: ${error.message}`,
+          );
+          throw error;
+        }
+      }
+
+      this.logger.log(
+        `${isDryRun ? '[DRY RUN] ' : ''}Completed attachment files migration for workspace ${workspaceId}`,
+      );
+    }, systemAuthContext);
+  };
 }

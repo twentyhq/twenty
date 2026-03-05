@@ -14,7 +14,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
@@ -47,7 +47,7 @@ export const MultiSelectInput = ({
     selectableListComponentInstanceId,
   );
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     selectableListComponentInstanceId,
   );

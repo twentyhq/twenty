@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -9,15 +9,15 @@ import { ObjectSettings } from '@/settings/data-model/object-details/components/
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { styled } from '@linaria/react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -29,6 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
@@ -41,16 +42,15 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SettingsObjectDetailPage = () => {
+  const { theme } = useContext(ThemeContext);
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
-  const theme = useTheme();
-
   const { objectNamePlural = '' } = useParams();
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilState(
+  const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useAtomState(
     updatedObjectNamePluralState,
   );
   const objectMetadataItem =
@@ -61,12 +61,12 @@ export const SettingsObjectDetailPage = () => {
     objectMetadataItem,
   });
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );

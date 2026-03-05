@@ -3,15 +3,17 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledVariableInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type HttpRequestTestVariableInputProps = {
@@ -25,8 +27,13 @@ export const HttpRequestTestVariableInput = ({
   actionId,
   readonly,
 }: HttpRequestTestVariableInputProps) => {
-  const [httpRequestTestData, setHttpRequestTestData] = useRecoilState(
-    httpRequestTestDataFamilyState(actionId),
+  const httpRequestTestData = useAtomFamilyStateValue(
+    httpRequestTestDataFamilyState,
+    actionId,
+  );
+  const setHttpRequestTestData = useSetAtomFamilyState(
+    httpRequestTestDataFamilyState,
+    actionId,
   );
   const mockStep: WorkflowStep = {
     id: 'test-step',

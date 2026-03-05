@@ -1,31 +1,22 @@
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/MaxAttachmentSize';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import {
   extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
-import { useCreateFileMutation } from '~/generated-metadata/graphql';
+import { type WorkflowAttachment } from 'twenty-shared/workflow';
+import { useUploadWorkflowFileMutation } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-type WorkflowFile = {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  createdAt: string;
-};
-
 export const useUploadWorkflowFile = () => {
-  const coreClient = useApolloCoreClient();
-  const [createFile] = useCreateFileMutation({ client: coreClient });
+  const [uploadWorkflowFileMutation] = useUploadWorkflowFileMutation();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const uploadWorkflowFile = async (
     file: File,
-  ): Promise<WorkflowFile | null> => {
+  ): Promise<WorkflowAttachment | null> => {
     try {
       if (file.size > MAX_ATTACHMENT_SIZE) {
         const fileName = file.name;
@@ -36,25 +27,18 @@ export const useUploadWorkflowFile = () => {
         return null;
       }
 
-      const result = await createFile({
+      const result = await uploadWorkflowFileMutation({
         variables: { file },
       });
-
-      const uploadedFile = result?.data?.createFile;
-
+      const uploadedFile = result?.data?.uploadWorkflowFile;
       if (!isDefined(uploadedFile)) {
         throw new Error('File upload failed');
       }
-
-      const { type } = extractFolderPathFilenameAndTypeOrThrow(
-        uploadedFile.path,
-      );
-
-      const workflowFile: WorkflowFile = {
+      const workflowFile: WorkflowAttachment = {
         id: uploadedFile.id,
         name: file.name,
         size: uploadedFile.size,
-        type: type,
+        type: extractFolderPathFilenameAndTypeOrThrow(uploadedFile.path).type,
         createdAt: uploadedFile.createdAt,
       };
 

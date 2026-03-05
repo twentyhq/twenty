@@ -1,11 +1,11 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useSetRecoilState } from 'recoil';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { FOLDER_DROPPABLE_IDS } from '@/ui/layout/draggable-list/utils/folderDroppableIds';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
@@ -16,7 +16,7 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
 

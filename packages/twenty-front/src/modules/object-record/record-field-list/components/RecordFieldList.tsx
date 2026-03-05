@@ -1,6 +1,6 @@
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -15,6 +15,7 @@ import { RecordFieldListComponentInstanceContext } from '@/object-record/record-
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -22,8 +23,11 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import {
+  FieldMetadataType,
+  type CoreObjectNameSingular,
+} from 'twenty-shared/types';
 
 type RecordFieldListProps = {
   instanceId: string;
@@ -53,6 +57,7 @@ export const RecordFieldList = ({
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
@@ -63,7 +68,7 @@ export const RecordFieldList = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+  const setRecordFieldListHoverPosition = useSetAtomComponentState(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );
@@ -187,6 +192,12 @@ export const RecordFieldList = ({
                     fieldName: fieldMetadataItem.name,
                     prefix: instanceId,
                   })}`,
+                  isForbidden: isJunctionRelationForbidden({
+                    fieldMetadataItem,
+                    sourceObjectMetadataId: objectMetadataItem.id,
+                    objectMetadataItems,
+                    objectPermissionsByObjectMetadataId,
+                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

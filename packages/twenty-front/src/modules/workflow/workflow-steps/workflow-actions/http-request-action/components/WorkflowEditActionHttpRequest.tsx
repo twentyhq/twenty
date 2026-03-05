@@ -8,15 +8,14 @@ import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionBut
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
@@ -31,7 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {
@@ -40,16 +39,16 @@ type WorkflowEditActionHttpRequestProps = {
   };
 };
 
-const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+const StyledTabListContainer = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTestTabContent = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 100%;
   min-height: 400px;
 `;
@@ -57,12 +56,12 @@ const StyledTestTabContent = styled.div`
 const StyledConfigurationTabContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 100%;
   flex: 1;
 `;
 
-const StyledFullHeightFormRawJsonFieldInput = styled(FormRawJsonFieldInput)`
+const StyledFullHeightFormRawJsonFieldInputContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -89,8 +88,8 @@ export const WorkflowEditActionHttpRequest = ({
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const activeTabId = useRecoilComponentValue(
+  const { theme } = useContext(ThemeContext);
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );
@@ -129,11 +128,13 @@ export const WorkflowEditActionHttpRequest = ({
 
   return (
     <>
-      <StyledTabList
-        tabs={tabs}
-        behaveAsLinks={false}
-        componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
-      />
+      <StyledTabListContainer>
+        <TabList
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
+        />
+      </StyledTabListContainer>
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
           <StyledConfigurationTabContent>
@@ -152,7 +153,9 @@ export const WorkflowEditActionHttpRequest = ({
               value={formData.method}
               onChange={(value) => handleFieldChange('method', value)}
               disabled={actionOptions.readonly}
-              dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+              dropdownOffset={{
+                y: parseInt(theme.spacing[1], 10),
+              }}
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
 
@@ -177,14 +180,16 @@ export const WorkflowEditActionHttpRequest = ({
               />
             )}
 
-            <StyledFullHeightFormRawJsonFieldInput
-              label={t`Expected Response Body`}
-              placeholder={JSON_RESPONSE_PLACEHOLDER}
-              defaultValue={outputSchema}
-              onChange={handleOutputSchemaChange}
-              readonly={actionOptions.readonly}
-              error={error}
-            />
+            <StyledFullHeightFormRawJsonFieldInputContainer>
+              <FormRawJsonFieldInput
+                label={t`Expected Response Body`}
+                placeholder={JSON_RESPONSE_PLACEHOLDER}
+                defaultValue={outputSchema}
+                onChange={handleOutputSchemaChange}
+                readonly={actionOptions.readonly}
+                error={error}
+              />
+            </StyledFullHeightFormRawJsonFieldInputContainer>
           </StyledConfigurationTabContent>
         )}
         {activeTabId === WorkflowHttpRequestTabId.TEST && (

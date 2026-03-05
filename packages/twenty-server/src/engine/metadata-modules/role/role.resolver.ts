@@ -9,11 +9,11 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -48,12 +48,12 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import {
   ApiKeyForRoleDTO,
   RoleDTO,
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';

@@ -1,6 +1,8 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const selectedNavigationMenuItemInEditModeState = atom<string | null>({
+export const selectedNavigationMenuItemInEditModeState = createAtomState<
+  string | null
+>({
   key: 'selectedNavigationMenuItemInEditModeState',
-  default: null,
+  defaultValue: null,
 });

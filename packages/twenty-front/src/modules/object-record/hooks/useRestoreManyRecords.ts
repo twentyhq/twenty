@@ -12,9 +12,9 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -34,7 +34,7 @@ export const useRestoreManyRecords = ({
 }: useRestoreManyRecordProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const apiConfig = useRecoilValue(apiConfigState);
+  const apiConfig = useAtomStateValue(apiConfigState);
 
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;

@@ -16,12 +16,12 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
@@ -37,7 +37,7 @@ export const useUpdateOneRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();

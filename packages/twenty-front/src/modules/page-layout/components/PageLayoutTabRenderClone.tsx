@@ -3,13 +3,13 @@ import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-la
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 const StyledDraggableWrapper = styled.div`
   display: flex;
   cursor: grab;
@@ -28,9 +28,8 @@ export const PageLayoutTabRenderClone = ({
   provided: DraggableProvided;
   activeTabId: string | null;
 }) => {
-  const theme = useTheme();
-
-  const pageLayoutTabListCurrentDragDroppableId = useRecoilComponentValue(
+  const { theme } = useContext(ThemeContext);
+  const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
 

@@ -10,43 +10,43 @@ import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBas
 import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
 
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme, withLongerMarginBottom }) =>
-      theme.spacing(withLongerMarginBottom ? 8 : 2)};
+  margin: ${themeCssVariables.spacing[8]} 0
+    ${({ withLongerMarginBottom }) =>
+      withLongerMarginBottom
+        ? themeCssVariables.spacing[8]
+        : themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledSubscriptionPriceContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
-    0 ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  margin: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]} 0
+    ${themeCssVariables.spacing[4]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledBenefitsContainer = styled.div`
@@ -55,7 +55,7 @@ const StyledBenefitsContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledOrganizationBenefitsContainer = styled.div`
@@ -64,28 +64,28 @@ const StyledOrganizationBenefitsContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLinkGroup = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
 
   > span {
-    background-color: ${({ theme }) => theme.font.color.light};
+    background-color: ${themeCssVariables.font.color.light};
     border-radius: 50%;
     height: 2px;
     width: 2px;
@@ -99,13 +99,13 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
+  const [billingCheckoutSession, setBillingCheckoutSession] = useAtomState(
     billingCheckoutSessionState,
   );
 
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
-  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,
   );
   if (isDefined(verifyEmailRedirectPath)) {
@@ -184,6 +184,14 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     };
   };
 
+  const planChangeLink = (plan: BillingPlanKey) => {
+    const interval = billingCheckoutSession.interval;
+    const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+    return AppPath.PlanRequired.concat(
+      `?billingCheckoutSession={%22plan%22:%22${plan}%22,%22interval%22:%22${interval}%22,%22requirePaymentMethod%22:${requirePaymentMethod}}`,
+    );
+  };
+
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
@@ -259,10 +267,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           <Trans>Log out</Trans>
         </ClickToActionLink>
         <span />
-        <ClickToActionLink href={TWENTY_PRICING_LINK}>
-          <Trans>Change Plan</Trans>
-        </ClickToActionLink>
-        <span />
         <ClickToActionLink
           href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
           target={calendarBookingPageId ? '_self' : '_blank'}
@@ -270,6 +274,16 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         >
           <Trans>Book a Call</Trans>
         </ClickToActionLink>
+        <span />
+        {currentPlanKey === BillingPlanKey.PRO ? (
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.ENTERPRISE)}>
+            <Trans>Organization plan</Trans>
+          </ClickToActionLink>
+        ) : (
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.PRO)}>
+            <Trans>Pro plan</Trans>
+          </ClickToActionLink>
+        )}
       </StyledLinkGroup>
     </>
   );

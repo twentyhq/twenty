@@ -1,6 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
@@ -10,15 +10,14 @@ import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,

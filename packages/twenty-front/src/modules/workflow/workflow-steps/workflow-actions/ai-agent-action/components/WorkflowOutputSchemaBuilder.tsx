@@ -3,14 +3,14 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlus, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
@@ -25,80 +25,80 @@ const StyledOutputSchemaContainer = styled.div`
 const StyledFieldsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledOutputSchemaFieldContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSettingsContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledSettingsHeader = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[3]};
   grid-template-columns: 1fr 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitleContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledCloseButtonContainer = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledAddFieldButton = styled.button`
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
   font-family: inherit;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  background-color: ${themeCssVariables.background.transparent.lighter};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledMessageContentContainer = styled.div`
   flex-direction: column;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[4]};
   line-height: normal;
 `;
 
 const StyledMessageDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.secondary};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 export const WorkflowOutputSchemaBuilder = ({
@@ -106,7 +106,7 @@ export const WorkflowOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: WorkflowOutputSchemaBuilderProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const addField = () => {
     const newField: OutputSchemaField = {

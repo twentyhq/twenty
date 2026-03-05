@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;
@@ -12,12 +13,16 @@ type SettingsDataModelPreviewFormCardProps = {
   disabled?: boolean;
 };
 
-const StyledPreviewContainer = styled(CardContent)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+const StyledPreviewContainerWrapper = styled.div`
+  > * {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
 `;
 
-const StyledFormContainer = styled(CardContent)`
-  padding: 0;
+const StyledFormContainerWrapper = styled.div`
+  > * {
+    padding: 0;
+  }
 `;
 
 export const SettingsDataModelPreviewFormCard = ({
@@ -26,12 +31,18 @@ export const SettingsDataModelPreviewFormCard = ({
   form,
 }: SettingsDataModelPreviewFormCardProps) => (
   <Card className={className} fullWidth rounded>
-    <StyledPreviewContainer divider={!!form}>
-      <StyledFormCardTitle>
-        <Trans>Preview</Trans>
-      </StyledFormCardTitle>
-      {preview}
-    </StyledPreviewContainer>
-    {!!form && <StyledFormContainer>{form}</StyledFormContainer>}
+    <StyledPreviewContainerWrapper>
+      <CardContent divider={!!form}>
+        <StyledFormCardTitle>
+          <Trans>Preview</Trans>
+        </StyledFormCardTitle>
+        {preview}
+      </CardContent>
+    </StyledPreviewContainerWrapper>
+    {!!form && (
+      <StyledFormContainerWrapper>
+        <CardContent>{form}</CardContent>
+      </StyledFormContainerWrapper>
+    )}
   </Card>
 );

@@ -7,10 +7,12 @@ import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getFavoriteSecondaryLabel } from '@/favorites/utils/getFavoriteSecondaryLabel';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -22,14 +24,14 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -49,7 +51,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   isGroup,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const { t } = useLingui();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
   const { isDragging } = useContext(FavoritesDragContext);
@@ -62,17 +64,19 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const isMobile = useIsMobile();
 
-  const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
+  const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useAtomState(
     openFavoriteFolderIdsState,
   );
 
-  const setCurrentFolderId = useSetRecoilState(currentFavoriteFolderIdState);
+  const setCurrentFavoriteFolderId = useSetAtomState(
+    currentFavoriteFolderIdState,
+  );
 
   const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) =>
+      setCurrentFavoriteFolderId((prev) =>
         prev === folder.folderId ? null : folder.folderId,
       );
     } else {
@@ -91,7 +95,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
-  const isDropdownOpenComponent = useRecoilComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -158,7 +162,7 @@ export const CurrentWorkspaceMemberFavorites = ({
     />
   );
 
-  const isModalOpened = useRecoilComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );
@@ -188,7 +192,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               onClick={handleToggle}
               rightOptions={rightOptions}
               className="navigation-drawer-item"
-              isRightOptionsDropdownOpen={isDropdownOpenComponent}
+              isRightOptionsDropdownOpen={isDropdownOpen}
               triggerEvent="CLICK"
               preventCollapseOnMobile={isMobile}
             />
@@ -255,7 +259,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={modalId}
+            modalInstanceId={modalId}
             title={
               folder.favorites.length > 1
                 ? t`Remove ${favoriteCount} favorites?`

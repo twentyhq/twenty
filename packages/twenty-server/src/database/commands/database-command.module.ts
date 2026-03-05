@@ -8,6 +8,9 @@ import { ConfirmationQuestion } from 'src/database/commands/questions/confirmati
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
+import { AppVersionCheckModule } from 'src/engine/core-modules/application/application-version-check/application-version-check.module';
+import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -54,12 +57,15 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     TrashCleanupModule,
     PublicDomainModule,
     EventLogCleanupModule,
+    MarketplaceModule,
+    AppVersionCheckModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
     ListOrphanedWorkspaceEntitiesCommand,
+    GenerateApiKeyCommand,
   ],
 })
 export class DatabaseCommandModule {}

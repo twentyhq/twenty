@@ -68,5 +68,76 @@ export const computeStandardWorkflowVersionViewFields = (
         size: 150,
       },
     }),
+
+    // workflowVersionRecordPageFields view fields
+    workflowVersionRecordPageFieldsName: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'workflowVersion',
+      context: {
+        viewName: 'workflowVersionRecordPageFields',
+        viewFieldName: 'name',
+        fieldName: 'name',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    workflowVersionRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'workflowVersion',
+      context: {
+        viewName: 'workflowVersionRecordPageFields',
+        viewFieldName: 'status',
+        fieldName: 'status',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    workflowVersionRecordPageFieldsWorkflow:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'workflowVersion',
+        context: {
+          viewName: 'workflowVersionRecordPageFields',
+          viewFieldName: 'workflow',
+          fieldName: 'workflow',
+          position: 2,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      }),
+    workflowVersionRecordPageFieldsTrigger: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'workflowVersion',
+        context: {
+          viewName: 'workflowVersionRecordPageFields',
+          viewFieldName: 'trigger',
+          fieldName: 'trigger',
+          position: 3,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      },
+    ),
+    workflowVersionRecordPageFieldsCreatedAt:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'workflowVersion',
+        context: {
+          viewName: 'workflowVersionRecordPageFields',
+          viewFieldName: 'createdAt',
+          fieldName: 'createdAt',
+          position: 0,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'other',
+        },
+      }),
   };
 };

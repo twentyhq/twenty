@@ -6,6 +6,18 @@ export const APPLICATION_MANIFEST_METADATA_NAMES = [
   'logicFunction',
   'frontComponent',
   'role',
+  'skill',
+  'view',
+  'viewField',
+  'viewFieldGroup',
+  'viewFilter',
+  'viewFilterGroup',
+  'viewGroup',
+  'navigationMenuItem',
+  'pageLayout',
+  'pageLayoutTab',
+  'pageLayoutWidget',
+  'commandMenuItem',
 ] as const satisfies AllMetadataName[];
 
 export type ApplicationManifestMetadataName =

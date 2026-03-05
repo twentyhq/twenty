@@ -25,11 +25,11 @@ description: 使用 CSV 导入批量更新记录的完整分步指南。
 | 您的文件中缺少    | **创建**新记录（带自动生成的 ID） |
 
 <Warning>
-  **多选字段会被覆盖，而不是合并。**
+**多选字段会被覆盖，而不是合并。**
 
-  如果一条记录已选择了 `Option A` 和 `Option B`，而您导入了 `["Option C"]`，则导入后该记录将只保留 `Option C`。 导入会替换之前的所有选择——不会在其基础上追加。
+如果一条记录已选择了 `Option A` 和 `Option B`，而您导入了 `["Option C"]`，则导入后该记录将只保留 `Option C`。 导入会替换之前的所有选择——不会在其基础上追加。
 
-  若要保留现有值，请在导入中包含它们全部：`["Option A","Option B","Option C"]`
+若要保留现有值，请在导入中包含它们全部：`["Option A","Option B","Option C"]`
 </Warning>
 
 ## 步骤 1：导出现有数据
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **不要更改唯一标识符的值。**
+**不要更改唯一标识符的值。**
 
-  如果您将 `john@acme.com` 更改为 `john.smith@acme.com`，Twenty 将创建新记录，而不是更新现有记录。
+如果您将 `john@acme.com` 更改为 `john.smith@acme.com`，Twenty 将创建新记录，而不是更新现有记录。
 </Warning>
 
 ## 步骤 3：导入已更新的文件

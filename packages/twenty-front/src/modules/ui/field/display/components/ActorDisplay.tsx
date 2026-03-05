@@ -3,7 +3,7 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
@@ -79,7 +79,7 @@ export const ActorDisplay = ({
       label={name ?? ''}
       emptyLabel={t`Untitled`}
       leftComponent={
-        <AvatarChip
+        <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
           avatarType={workspaceMemberId ? 'rounded' : 'squared'}
           placeholder={name}

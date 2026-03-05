@@ -1,14 +1,11 @@
-import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type AgentMessage } from '~/generated-metadata/graphql';
+import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-export const AgentChatMessagesComponentInstanceContext =
-  createComponentInstanceContext();
-
-export const agentChatMessagesComponentState = createComponentState<
-  AgentMessage[]
+export const agentChatMessagesComponentState = createAtomComponentState<
+  ExtendedUIMessage[]
 >({
   key: 'agentChatMessagesComponentState',
   defaultValue: [],
-  componentInstanceContext: AgentChatMessagesComponentInstanceContext,
+  componentInstanceContext: AgentChatComponentInstanceContext,
 });

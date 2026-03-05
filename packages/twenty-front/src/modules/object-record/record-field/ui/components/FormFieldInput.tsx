@@ -59,6 +59,7 @@ type FormFieldInputProps = {
   field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
+  onClear?: () => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
@@ -71,6 +72,7 @@ export const FormFieldInput = ({
   field,
   defaultValue,
   onChange,
+  onClear,
   VariablePicker,
   readonly,
   placeholder,
@@ -234,6 +236,7 @@ export const FormFieldInput = ({
       defaultValue={
         defaultValue as FieldRelationValue<FieldRelationToOneValue> | string
       }
+      onClear={onClear}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}

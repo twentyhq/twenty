@@ -1,7 +1,6 @@
-import { useRecoilValue } from 'recoil';
-
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -28,7 +27,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] =
     useDeleteTwoFactorAuthenticationMethodMutation();
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();
   const twoFactorAuthenticationStrategy =
@@ -99,7 +98,7 @@ export const DeleteTwoFactorAuthentication = () => {
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
+        modalInstanceId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
         title={t`2FA Method Reset`}
         subtitle={
           isTwoFactorAuthenticationEnforced ? (

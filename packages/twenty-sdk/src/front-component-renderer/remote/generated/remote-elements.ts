@@ -1,12 +1,3 @@
-/*
- * _____                    _
- *|_   _|_      _____ _ __ | |_ _   _
- *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
- *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
- *  |_|   \_/\_/ \___|_| |_|\__|\__, |
- *                              |___/
- */
-
 import {
   createRemoteElement,
   RemoteRootElement,
@@ -609,6 +600,239 @@ export const HtmlHrElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlIframeProperties = HtmlCommonProperties & {
+  src?: string;
+  name?: string;
+  width?: string;
+  height?: string;
+  allow?: string;
+  sandbox?: string;
+  allowFullScreen?: boolean;
+  loading?: string;
+  referrerPolicy?: string;
+  srcDoc?: string;
+};
+
+export const HtmlIframeElement = createRemoteElement<
+  HtmlIframeProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    name: { type: String },
+    width: { type: String },
+    height: { type: String },
+    allow: { type: String },
+    sandbox: { type: String },
+    allowFullScreen: { type: Boolean },
+    loading: { type: String },
+    referrerPolicy: { type: String },
+    srcDoc: { type: String },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
+export type HtmlVideoProperties = HtmlCommonProperties & {
+  src?: string;
+  poster?: string;
+  controls?: boolean;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  preload?: string;
+  width?: string;
+  height?: string;
+  crossOrigin?: string;
+  playsInline?: boolean;
+  disablePictureInPicture?: boolean;
+  disableRemotePlayback?: boolean;
+};
+
+export const HtmlVideoElement = createRemoteElement<
+  HtmlVideoProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents & {
+    timeupdate(event: RemoteEvent<SerializedEventData>): void;
+    play(event: RemoteEvent<SerializedEventData>): void;
+    pause(event: RemoteEvent<SerializedEventData>): void;
+    ended(event: RemoteEvent<SerializedEventData>): void;
+    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
+    loadeddata(event: RemoteEvent<SerializedEventData>): void;
+    volumechange(event: RemoteEvent<SerializedEventData>): void;
+    seeking(event: RemoteEvent<SerializedEventData>): void;
+    seeked(event: RemoteEvent<SerializedEventData>): void;
+    error(event: RemoteEvent<SerializedEventData>): void;
+    canplay(event: RemoteEvent<SerializedEventData>): void;
+    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
+    waiting(event: RemoteEvent<SerializedEventData>): void;
+    progress(event: RemoteEvent<SerializedEventData>): void;
+    durationchange(event: RemoteEvent<SerializedEventData>): void;
+    ratechange(event: RemoteEvent<SerializedEventData>): void;
+    stalled(event: RemoteEvent<SerializedEventData>): void;
+    suspend(event: RemoteEvent<SerializedEventData>): void;
+    emptied(event: RemoteEvent<SerializedEventData>): void;
+  }
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    poster: { type: String },
+    controls: { type: Boolean },
+    autoPlay: { type: Boolean },
+    loop: { type: Boolean },
+    muted: { type: Boolean },
+    preload: { type: String },
+    width: { type: String },
+    height: { type: String },
+    crossOrigin: { type: String },
+    playsInline: { type: Boolean },
+    disablePictureInPicture: { type: Boolean },
+    disableRemotePlayback: { type: Boolean },
+  },
+  events: [
+    ...HTML_COMMON_EVENTS_ARRAY,
+    'timeupdate',
+    'play',
+    'pause',
+    'ended',
+    'loadedmetadata',
+    'loadeddata',
+    'volumechange',
+    'seeking',
+    'seeked',
+    'error',
+    'canplay',
+    'canplaythrough',
+    'waiting',
+    'progress',
+    'durationchange',
+    'ratechange',
+    'stalled',
+    'suspend',
+    'emptied',
+  ],
+});
+
+export type HtmlAudioProperties = HtmlCommonProperties & {
+  src?: string;
+  controls?: boolean;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  preload?: string;
+  crossOrigin?: string;
+};
+
+export const HtmlAudioElement = createRemoteElement<
+  HtmlAudioProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents & {
+    timeupdate(event: RemoteEvent<SerializedEventData>): void;
+    play(event: RemoteEvent<SerializedEventData>): void;
+    pause(event: RemoteEvent<SerializedEventData>): void;
+    ended(event: RemoteEvent<SerializedEventData>): void;
+    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
+    loadeddata(event: RemoteEvent<SerializedEventData>): void;
+    volumechange(event: RemoteEvent<SerializedEventData>): void;
+    seeking(event: RemoteEvent<SerializedEventData>): void;
+    seeked(event: RemoteEvent<SerializedEventData>): void;
+    error(event: RemoteEvent<SerializedEventData>): void;
+    canplay(event: RemoteEvent<SerializedEventData>): void;
+    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
+    waiting(event: RemoteEvent<SerializedEventData>): void;
+    progress(event: RemoteEvent<SerializedEventData>): void;
+    durationchange(event: RemoteEvent<SerializedEventData>): void;
+    ratechange(event: RemoteEvent<SerializedEventData>): void;
+    stalled(event: RemoteEvent<SerializedEventData>): void;
+    suspend(event: RemoteEvent<SerializedEventData>): void;
+    emptied(event: RemoteEvent<SerializedEventData>): void;
+  }
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    controls: { type: Boolean },
+    autoPlay: { type: Boolean },
+    loop: { type: Boolean },
+    muted: { type: Boolean },
+    preload: { type: String },
+    crossOrigin: { type: String },
+  },
+  events: [
+    ...HTML_COMMON_EVENTS_ARRAY,
+    'timeupdate',
+    'play',
+    'pause',
+    'ended',
+    'loadedmetadata',
+    'loadeddata',
+    'volumechange',
+    'seeking',
+    'seeked',
+    'error',
+    'canplay',
+    'canplaythrough',
+    'waiting',
+    'progress',
+    'durationchange',
+    'ratechange',
+    'stalled',
+    'suspend',
+    'emptied',
+  ],
+});
+
+export type HtmlSourceProperties = HtmlCommonProperties & {
+  src?: string;
+  type?: string;
+  media?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+};
+
+export const HtmlSourceElement = createRemoteElement<
+  HtmlSourceProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    type: { type: String },
+    media: { type: String },
+    srcSet: { type: String },
+    sizes: { type: String },
+    width: { type: Number },
+    height: { type: Number },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
+export type RemoteStyleProperties = {
+  cssText?: string;
+  styleKey?: string;
+};
+
+export const RemoteStyleElement = createRemoteElement<
+  RemoteStyleProperties,
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>
+>({
+  properties: {
+    cssText: { type: String },
+    styleKey: { type: String },
+  },
+});
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);
 customElements.define('html-section', HtmlSectionElement);
@@ -652,6 +876,11 @@ customElements.define('html-th', HtmlThElement);
 customElements.define('html-td', HtmlTdElement);
 customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
+customElements.define('html-iframe', HtmlIframeElement);
+customElements.define('html-video', HtmlVideoElement);
+customElements.define('html-audio', HtmlAudioElement);
+customElements.define('html-source', HtmlSourceElement);
+customElements.define('remote-style', RemoteStyleElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
 export { RemoteRootElement, RemoteFragmentElement };
@@ -700,6 +929,11 @@ declare global {
     'html-td': InstanceType<typeof HtmlTdElement>;
     'html-br': InstanceType<typeof HtmlBrElement>;
     'html-hr': InstanceType<typeof HtmlHrElement>;
+    'html-iframe': InstanceType<typeof HtmlIframeElement>;
+    'html-video': InstanceType<typeof HtmlVideoElement>;
+    'html-audio': InstanceType<typeof HtmlAudioElement>;
+    'html-source': InstanceType<typeof HtmlSourceElement>;
+    'remote-style': InstanceType<typeof RemoteStyleElement>;
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;
   }

@@ -5,8 +5,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useLingui } from '@lingui/react/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconChevronLeft } from 'twenty-ui/display';
 
 import { WorkspacesForSignIn } from './components/WorkspacesForSignIn';
@@ -16,9 +17,9 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const { t } = useLingui();
 
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
 
-  const setMultiWorkspaceDropdownState = useSetRecoilState(
+  const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
   );
   const [searchValue, setSearchValue] = useState('');
@@ -28,7 +29,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdownState('default')}
+            onClick={() => setMultiWorkspaceDropdown('default')}
             Icon={IconChevronLeft}
           />
         }

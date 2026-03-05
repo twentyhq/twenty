@@ -2,9 +2,9 @@ import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';

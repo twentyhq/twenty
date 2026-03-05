@@ -8,8 +8,9 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { allMockPersonRecords } from '~/testing/mock-data/people';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
 const DEFAULT_ACTION = {
@@ -96,7 +97,11 @@ export const DisabledWithEmptyValues: Story = {
   },
 };
 
-const peopleMock = allMockPersonRecords[0];
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
+const peopleMock = flatPersonRecords[0];
 
 export const DisabledWithDefaultStaticValues: Story = {
   args: {

@@ -1,9 +1,20 @@
-import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
+import { useEffect } from 'react';
+import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+
+import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
+import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -14,6 +25,8 @@ const StyledConversationContainer = styled.div`
   max-width: 700px;
   padding: 24px;
 `;
+
+const INSTANCE_ID = 'agentChatStoryInstance';
 
 // Mock messages for the conversation showcase
 const mockUserMessage: ExtendedUIMessage = {
@@ -65,6 +78,7 @@ print("Chart saved successfully!")`,
         executionTimeMs: 2340,
         files: [
           {
+            fileId: '550e8400-e29b-41d4-a716-446655440005',
             filename: 'sales_chart.png',
             url: 'https://picsum.photos/800/480',
             mimeType: 'image/png',
@@ -174,10 +188,110 @@ print(df.head())`,
   },
 };
 
+const mockThinkingStepsStreaming: ExtendedUIMessage = {
+  id: 'msg-thinking-streaming',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-web_search',
+      toolCallId: 'tool-web-search-streaming',
+      input: { query: 'top leads status' },
+      output: { result: { ok: true } },
+      state: 'output-available',
+    },
+    {
+      type: 'reasoning',
+      text: 'I need to evaluate the latest lead activity and pipeline stage changes before I can answer accurately.',
+      state: 'streaming',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
+const mockThinkingStepsDone: ExtendedUIMessage = {
+  id: 'msg-thinking-done',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-web_search',
+      toolCallId: 'tool-web-search-done',
+      input: { query: 'top leads status' },
+      output: { result: { ok: true } },
+      state: 'output-available',
+    },
+    {
+      type: 'reasoning',
+      text: 'I filtered the most engaged leads and checked the latest interactions to determine which opportunities are moving forward.',
+      state: 'done',
+    },
+    {
+      type: 'text',
+      text: 'You currently have 5 top leads in active stages. Two are in proposal review and three are in scheduled demo follow-up.',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
+const allMockMessages = [
+  mockUserMessage,
+  mockAssistantWithCodeExecution,
+  mockSimpleTextResponse,
+  mockStreamingMessage,
+  mockCodeExecutionRunning,
+  mockCodeExecutionError,
+  mockThinkingStepsStreaming,
+  mockThinkingStepsDone,
+];
+
+const AgentChatMessagesSetterEffect = ({
+  messages,
+}: {
+  messages: ExtendedUIMessage[];
+}) => {
+  const store = useStore();
+
+  useEffect(() => {
+    store.set(
+      agentChatMessagesComponentState.atomFamily({ instanceId: INSTANCE_ID }),
+      messages,
+    );
+
+    for (const message of messages) {
+      store.set(
+        agentChatMessageComponentFamilyState.atomFamily({
+          instanceId: INSTANCE_ID,
+          familyKey: message.id,
+        }),
+        message,
+      );
+    }
+  }, [messages, store]);
+
+  return null;
+};
+
+const AgentChatInstanceDecorator: Decorator = (Story) => (
+  <AgentChatComponentInstanceContext.Provider
+    value={{ instanceId: INSTANCE_ID }}
+  >
+    <AgentChatMessagesSetterEffect messages={allMockMessages} />
+    <Story />
+  </AgentChatComponentInstanceContext.Provider>
+);
+
 const meta: Meta<typeof AIChatMessage> = {
   title: 'Modules/AI/AIChatMessage',
   component: AIChatMessage,
-  decorators: [ComponentDecorator, RootDecorator, SnackBarDecorator],
+  decorators: [
+    ComponentDecorator,
+    RootDecorator,
+    SnackBarDecorator,
+    AgentChatInstanceDecorator,
+  ],
   parameters: {
     container: { width: 700 },
   },
@@ -190,46 +304,48 @@ type Story = StoryObj<typeof AIChatMessage>;
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>
-      <AIChatMessage message={mockUserMessage} isLastMessageStreaming={false} />
-      <AIChatMessage
-        message={mockAssistantWithCodeExecution}
-        isLastMessageStreaming={false}
-      />
+      <AIChatMessage messageId={mockUserMessage.id} />
+      <AIChatMessage messageId={mockAssistantWithCodeExecution.id} />
     </StyledConversationContainer>
   ),
 };
 
 export const UserMessage: Story = {
-  args: {
-    message: mockUserMessage,
-    isLastMessageStreaming: false,
-  },
+  render: () => <AIChatMessage messageId={mockUserMessage.id} />,
 };
 
 export const AssistantTextResponse: Story = {
-  args: {
-    message: mockSimpleTextResponse,
-    isLastMessageStreaming: false,
-  },
+  render: () => <AIChatMessage messageId={mockSimpleTextResponse.id} />,
 };
 
 export const AssistantStreaming: Story = {
-  args: {
-    message: mockStreamingMessage,
-    isLastMessageStreaming: true,
-  },
+  render: () => <AIChatMessage messageId={mockStreamingMessage.id} />,
 };
 
 export const CodeExecutionRunning: Story = {
-  args: {
-    message: mockCodeExecutionRunning,
-    isLastMessageStreaming: false,
-  },
+  render: () => <AIChatMessage messageId={mockCodeExecutionRunning.id} />,
 };
 
 export const CodeExecutionWithError: Story = {
-  args: {
-    message: mockCodeExecutionError,
-    isLastMessageStreaming: false,
+  render: () => <AIChatMessage messageId={mockCodeExecutionError.id} />,
+};
+
+export const ThinkingStepsThinkingState: Story = {
+  render: () => <AIChatMessage messageId={mockThinkingStepsStreaming.id} />,
+};
+
+export const ThinkingStepsDoneCollapsed: Story = {
+  render: () => <AIChatMessage messageId={mockThinkingStepsDone.id} />,
+};
+
+export const ThinkingStepsDoneExpanded: Story = {
+  render: () => <AIChatMessage messageId={mockThinkingStepsDone.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const summaryButton = await canvas.findByRole('button', {
+      name: /2 steps/i,
+    });
+
+    await userEvent.click(summaryButton);
   },
 };

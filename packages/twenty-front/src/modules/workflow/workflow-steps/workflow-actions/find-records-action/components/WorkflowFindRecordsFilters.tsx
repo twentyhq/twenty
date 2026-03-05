@@ -1,15 +1,15 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { AdvancedFilterCommandMenuContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuContainer';
+import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const WorkflowFindRecordsFilters = ({
   objectMetadataItem,
@@ -20,42 +20,31 @@ export const WorkflowFindRecordsFilters = ({
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
+    currentRecordFilterGroupsComponentState,
+  );
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 
-  const onUpdate = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
+  const store = useStore();
 
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+  const onUpdate = useCallback(() => {
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
-        const newFilter = {
-          recordFilterGroups: currentRecordFilterGroups,
-          recordFilters: currentRecordFilters,
-        } satisfies FindRecordsActionFilter;
+    const existingRecordFilters = store.get(currentRecordFilters);
 
-        onChange(newFilter);
-      },
-    [
-      currentRecordFilterGroupsCallbackState,
-      currentRecordFiltersCallbackState,
-      onChange,
-    ],
-  );
+    const newFilter = {
+      recordFilterGroups: existingRecordFilterGroups,
+      recordFilters: existingRecordFilters,
+    } satisfies FindRecordsActionFilter;
+
+    onChange(newFilter);
+  }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
 
   return (
-    <AdvancedFilterCommandMenuContainer
+    <AdvancedFilterSidePanelContainer
       objectMetadataItem={objectMetadataItem}
       onUpdate={readonly ? undefined : onUpdate}
       VariablePicker={WorkflowVariablePicker}

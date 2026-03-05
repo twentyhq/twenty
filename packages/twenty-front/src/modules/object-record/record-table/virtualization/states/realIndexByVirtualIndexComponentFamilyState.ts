@@ -1,8 +1,8 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 
 export const realIndexByVirtualIndexComponentFamilyState =
-  createComponentFamilyState<number | null, { virtualIndex: number }>({
+  createAtomComponentFamilyState<number | null, { virtualIndex: number }>({
     key: 'realIndexByVirtualIndexComponentFamilyState',
     componentInstanceContext: RecordTableComponentInstanceContext,
     defaultValue: null,

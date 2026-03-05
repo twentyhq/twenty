@@ -22,7 +22,6 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
     return `${chunk.name}.${extension}`;
   }
 
-  // Remove 'src/' prefix and '/index.ts' suffix to get the module path
   const modulePath = entry.replace('src/', '').replace('/index.ts', '');
 
   return `${modulePath}/index.${extension}`;

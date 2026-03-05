@@ -1,13 +1,14 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -21,8 +22,8 @@ const StyledShowPageRightContainer = styled.div`
 const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  background: ${themeCssVariables.background.primary};
+  padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 
 export type UpdateMultipleRecordsState = Record<string, any>;
@@ -42,7 +43,7 @@ export const UpdateMultipleRecordsContainer = ({
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>(
     {},
@@ -55,7 +56,7 @@ export const UpdateMultipleRecordsContainer = ({
         enqueueSuccessSnackBar({
           message: t`Successfully updated ${count} records`,
         });
-        closeCommandMenu();
+        closeSidePanelMenu();
       }
     } catch (error) {
       enqueueErrorSnackBar({
@@ -69,7 +70,7 @@ export const UpdateMultipleRecordsContainer = ({
 
   const handleCancel = () => {
     cancel();
-    closeCommandMenu();
+    closeSidePanelMenu();
   };
 
   const hasChanges = Object.values(fieldUpdates).some(
@@ -84,7 +85,7 @@ export const UpdateMultipleRecordsContainer = ({
   };
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <StyledContentContainer>
@@ -104,6 +105,6 @@ export const UpdateMultipleRecordsContainer = ({
           />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

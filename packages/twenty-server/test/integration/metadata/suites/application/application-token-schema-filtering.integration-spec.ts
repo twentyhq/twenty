@@ -59,7 +59,8 @@ describe('Application token schema filtering', () => {
       expectToFail: false,
     });
 
-    standardAppToken = tokenData.generateApplicationToken.token;
+    standardAppToken =
+      tokenData.generateApplicationToken.applicationAccessToken.token;
   });
 
   it('should not include custom objects in the schema when using a standard app token', async () => {

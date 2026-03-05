@@ -1,5 +1,5 @@
 import { type MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { IconPlus } from 'twenty-ui/display';

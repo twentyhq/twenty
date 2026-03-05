@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isFavoriteFolderCreatingState = atom<boolean>({
+export const isFavoriteFolderCreatingState = createAtomState<boolean>({
   key: 'isFavoriteFolderCreatingState',
-  default: false,
+  defaultValue: false,
 });

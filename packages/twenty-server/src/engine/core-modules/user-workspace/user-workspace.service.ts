@@ -1,10 +1,11 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
 import { FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
@@ -14,13 +15,15 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -32,6 +35,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -40,6 +44,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -47,13 +53,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
-    private readonly fileUploadService: FileUploadService,
+    private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
   ) {
@@ -66,11 +73,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
     }: {
       userId: string;
       workspaceId: string;
       isExistingUser: boolean;
       pictureUrl?: string;
+      applicationUniversalIdentifier?: string;
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
@@ -79,6 +88,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
+      queryRunner,
     );
 
     const userWorkspace = this.userWorkspaceRepository.create({
@@ -92,7 +103,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       : this.userWorkspaceRepository.save(userWorkspace);
   }
 
-  async createWorkspaceMember(workspaceId: string, user: UserEntity) {
+  async createWorkspaceMember(workspaceId: string, user: AuthContextUser) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -138,47 +149,71 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
+    roleId?: string | null,
   ) {
-    let userWorkspace = await this.checkUserWorkspaceExists(
+    const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
-    if (!userWorkspace) {
-      userWorkspace = await this.create({
-        userId: user.id,
-        workspaceId: workspace.id,
-        isExistingUser: true,
-      });
+    if (existingUserWorkspace) {
+      return;
+    }
 
-      await this.createWorkspaceMember(workspace.id, user);
+    const resolvedRoleId = await this.resolveRoleIdForNewMember(
+      roleId,
+      workspace,
+    );
 
-      const defaultRoleId = workspace.defaultRoleId;
+    const userWorkspace = await this.create({
+      userId: user.id,
+      workspaceId: workspace.id,
+      isExistingUser: true,
+    });
 
-      if (!isDefined(defaultRoleId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
-        );
-      }
+    await this.createWorkspaceMember(workspace.id, user);
 
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId: workspace.id,
-        userWorkspaceIds: [userWorkspace.id],
-        roleId: defaultRoleId,
-      });
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId: workspace.id,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId: resolvedRoleId,
+    });
 
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
+
+    await this.onboardingService.setOnboardingCreateProfilePending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+  }
+
+  private async resolveRoleIdForNewMember(
+    roleId: string | null | undefined,
+    workspace: WorkspaceEntity,
+  ): Promise<string> {
+    if (isDefined(roleId)) {
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        roleId,
         workspace.id,
-        user.email,
       );
 
-      await this.onboardingService.setOnboardingCreateProfilePending({
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      });
+      return roleId;
     }
+
+    const defaultRoleId = workspace.defaultRoleId;
+
+    if (!isDefined(defaultRoleId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      );
+    }
+
+    return defaultRoleId;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
@@ -382,6 +417,26 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspaceId: string,
     isExistingUser: boolean,
     pictureUrl?: string,
+    applicationUniversalIdentifier?: string,
+    queryRunner?: QueryRunner,
+  ) {
+    return this.computeDefaultAvatarUrlMigrated(
+      userId,
+      workspaceId,
+      isExistingUser,
+      pictureUrl,
+      applicationUniversalIdentifier,
+      queryRunner,
+    );
+  }
+
+  private async computeDefaultAvatarUrlMigrated(
+    userId: string,
+    workspaceId: string,
+    isExistingUser: boolean,
+    pictureUrl?: string,
+    applicationUniversalIdentifier?: string,
+    queryRunner?: QueryRunner,
   ) {
     if (isExistingUser) {
       const userWorkspace = await this.userWorkspaceRepository.findOne({
@@ -396,15 +451,25 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
       if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
 
-      try {
-        const [_, subFolder, filename] =
-          await this.fileService.copyFileFromWorkspaceToWorkspace(
-            userWorkspace.workspaceId,
-            userWorkspace.defaultAvatarUrl,
-            workspaceId,
-          );
+      const sourceFileId = extractFileIdFromUrl(
+        userWorkspace.defaultAvatarUrl,
+        FileFolder.CorePicture,
+      );
 
-        return `${subFolder}/${filename}`;
+      if (!isDefined(sourceFileId)) return;
+
+      try {
+        const savedFile =
+          await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
+            sourceWorkspaceId: userWorkspace.workspaceId,
+            sourceFileId,
+            targetWorkspaceId: workspaceId,
+            targetApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            queryRunner,
+          });
+
+        return savedFile.url;
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -415,17 +480,17 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     if (!isDefined(pictureUrl) || pictureUrl === '') return;
 
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
+    const savedFile =
+      await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
+        {
+          imageUrl: pictureUrl,
+          workspaceId,
+          applicationUniversalIdentifier,
+          queryRunner,
+        },
+      );
 
-    if (!files.length) {
-      throw new Error('Failed to upload avatar');
-    }
-
-    return files[0].path;
+    return savedFile?.url;
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
@@ -471,7 +536,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         appToken?: AppTokenEntity;
       }>;
     },
-    user: UserEntity,
+    user: AuthContextUser,
     authProvider: AuthProviderEnum,
   ) {
     return {

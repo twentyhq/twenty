@@ -7,15 +7,16 @@ import {
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRecordChip = styled(RecordChip)`
-  margin: ${({ theme }) => theme.spacing(2)};
+const StyledRecordChipContainer = styled.div`
+  margin: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
-  margin: ${({ theme }) => theme.spacing(2)};
+const StyledPlaceholderContainer = styled.div`
+  margin: ${themeCssVariables.spacing[2]};
 `;
 
 type FormSingleRecordFieldChipProps = {
@@ -57,12 +58,18 @@ export const FormSingleRecordFieldChip = ({
 
   if (!!draftValue && draftValue.type === 'static' && !!selectedRecord) {
     return (
-      <StyledRecordChip
-        record={selectedRecord}
-        objectNameSingular={objectNameSingular}
-      />
+      <StyledRecordChipContainer>
+        <RecordChip
+          record={selectedRecord}
+          objectNameSingular={objectNameSingular}
+        />
+      </StyledRecordChipContainer>
     );
   }
 
-  return <StyledPlaceholder>{t`Select`}</StyledPlaceholder>;
+  return (
+    <StyledPlaceholderContainer>
+      <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
+    </StyledPlaceholderContainer>
+  );
 };

@@ -2,9 +2,9 @@ import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/con
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { renderSliceHighlight } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderSliceHighlight';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { useTheme } from '@emotion/react';
-import { useEffect, useState, type RefObject } from 'react';
+import { type RefObject, useContext, useEffect, useState } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartHoverLayerEffectProps = {
   hoveredSlice: BarChartSlice | null;
@@ -23,7 +23,8 @@ export const BarChartHoverLayerEffect = ({
   layout,
   canvasRef,
 }: BarChartHoverLayerEffectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
+
   const [dpr] = useState<number>(
     () =>
       (typeof window !== 'undefined' ? window.devicePixelRatio : undefined) ||

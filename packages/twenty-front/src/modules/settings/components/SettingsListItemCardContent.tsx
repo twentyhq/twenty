@@ -1,41 +1,34 @@
-import isPropValid from '@emotion/is-prop-valid';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
 import { CardContent } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRow = styled(CardContent, {
-  shouldForwardProp: (prop) => prop !== 'to' && isPropValid(prop),
-})<{ to?: boolean }>`
-  align-items: center;
-  cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  min-height: ${({ theme }) => theme.spacing(6)};
-
-  &:hover {
-    ${({ to, theme }) =>
-      to && `background: ${theme.background.transparent.light};`}
+const StyledRowContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.medium};
+    gap: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]};
+    padding-left: ${themeCssVariables.spacing[3]};
+    min-height: ${themeCssVariables.spacing[6]};
   }
 `;
 
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledContent = styled.div`
   flex: 1 1 0;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -47,14 +40,16 @@ const StyledLabel = styled.span`
 `;
 
 const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.font.color.secondary};
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    color: ${themeCssVariables.font.color.secondary};
+    text-decoration: none;
+  }
 `;
 
 type SettingsListItemCardContentProps = {
@@ -78,34 +73,47 @@ export const SettingsListItemCardContent = ({
   rightComponent,
   to,
 }: SettingsListItemCardContentProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const content = (
-    <StyledRow onClick={onClick} divider={divider} to={!!to}>
-      {!!LeftIcon && (
-        <LeftIcon
-          size={theme.icon.size.md}
-          color={LeftIconColor ?? 'currentColor'}
-        />
-      )}
-      <StyledContent>
-        <StyledLabel>{label}</StyledLabel>
-        {!!description && <StyledDescription>{description}</StyledDescription>}
-      </StyledContent>
-      <StyledRightContainer>
-        {rightComponent}
-        {!!to && (
-          <IconChevronRight
+    <StyledRowContainer>
+      <CardContent
+        onClick={onClick}
+        divider={divider}
+        isClickable={!!onClick || !!to}
+        hasHoverHighlight={!!to}
+      >
+        {!!LeftIcon && (
+          <LeftIcon
             size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
+            color={LeftIconColor ?? 'currentColor'}
           />
         )}
-      </StyledRightContainer>
-    </StyledRow>
+        <StyledContent>
+          <StyledLabel>{label}</StyledLabel>
+          {!!description && (
+            <StyledDescription>{description}</StyledDescription>
+          )}
+        </StyledContent>
+        <StyledRightContainer>
+          {rightComponent}
+          {!!to && (
+            <IconChevronRight
+              size={theme.icon.size.md}
+              color={theme.font.color.tertiary}
+            />
+          )}
+        </StyledRightContainer>
+      </CardContent>
+    </StyledRowContainer>
   );
 
   if (isDefined(to)) {
-    return <StyledLink to={to}>{content}</StyledLink>;
+    return (
+      <StyledLinkContainer>
+        <Link to={to}>{content}</Link>
+      </StyledLinkContainer>
+    );
   }
 
   return content;

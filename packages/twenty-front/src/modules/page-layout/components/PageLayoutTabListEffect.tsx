@@ -4,7 +4,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useEffect } from 'react';
 
 type PageLayoutTabListEffectProps = Pick<
@@ -21,20 +21,20 @@ export const PageLayoutTabListEffect = ({
   componentInstanceId,
   defaultTabToFocusOnMobileAndSidePanelId,
 }: PageLayoutTabListEffectProps) => {
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );
 
   const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const initialActiveTabId = getPageLayoutTabListInitialActiveTabId({
     activeTabId,
     tabs,
     defaultTabToFocusOnMobileAndSidePanelId,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   useEffect(() => {

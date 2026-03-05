@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const multiWorkspaceDropdownState = atom<
+export const multiWorkspaceDropdownState = createAtomState<
   'default' | 'workspaces-list' | 'themes'
 >({
   key: 'multiWorkspaceDropdownState',
-  default: 'default',
+  defaultValue: 'default',
 });

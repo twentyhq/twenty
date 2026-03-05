@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
 
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
@@ -15,20 +15,21 @@ import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from './DateTimePicker';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSeparator = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   height: 1px;
   width: 100%;
 `;
@@ -61,7 +62,7 @@ export const DateTimePickerHeader = ({
   nextMonthButtonDisabled,
   hideInput = false,
 }: DateTimePickerHeaderProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
   return (

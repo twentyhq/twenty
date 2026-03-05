@@ -1,10 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledTabMoreButton = styled(TabButton)`
-  height: ${({ theme }) => theme.spacing(10)};
+const StyledTabMoreButtonContainer = styled.div`
+  > * {
+    height: ${themeCssVariables.spacing[10]};
+  }
 `;
 
 export const TabMoreButton = ({
@@ -17,12 +20,14 @@ export const TabMoreButton = ({
   className?: string;
 }) => {
   return (
-    <StyledTabMoreButton
-      id="tab-more-button"
-      active={active}
-      title={`+${hiddenTabsCount} ${t`More`}`}
-      RightIcon={IconChevronDown}
-      className={className}
-    />
+    <StyledTabMoreButtonContainer>
+      <TabButton
+        id="tab-more-button"
+        active={active}
+        title={`+${hiddenTabsCount} ${t`More`}`}
+        RightIcon={IconChevronDown}
+        className={className}
+      />
+    </StyledTabMoreButtonContainer>
   );
 };

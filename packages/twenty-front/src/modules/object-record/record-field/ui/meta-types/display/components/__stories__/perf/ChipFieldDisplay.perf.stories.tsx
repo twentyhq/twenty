@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ChipFieldDisplay';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';

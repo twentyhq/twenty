@@ -43,15 +43,6 @@ export class AgentChatService {
     return this.threadRepository.save(thread);
   }
 
-  async getThreadsForUser(userWorkspaceId: string) {
-    return this.threadRepository.find({
-      where: {
-        userWorkspaceId,
-      },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async getThreadById(threadId: string, userWorkspaceId: string) {
     const thread = await this.threadRepository.findOne({
       where: {
@@ -113,16 +104,6 @@ export class AgentChatService {
       await this.messagePartRepository.save(dbParts);
     }
 
-    if (uiMessage.role === AgentMessageRole.USER) {
-      const messageContent = uiMessage.parts.find(
-        (part) => part.type === 'text',
-      )?.text;
-
-      if (messageContent) {
-        this.generateTitleIfNeeded(threadId, messageContent);
-      }
-    }
-
     return savedMessage;
   }
 
@@ -144,26 +125,28 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
   }
 
-  private async generateTitleIfNeeded(
+  async generateTitleIfNeeded(
     threadId: string,
     messageContent: string,
-  ) {
+  ): Promise<string | null> {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
       select: ['id', 'title'],
     });
 
     if (!thread || thread.title || !messageContent) {
-      return;
+      return null;
     }
 
     const title =
       await this.titleGenerationService.generateThreadTitle(messageContent);
 
     await this.threadRepository.update(threadId, { title });
+
+    return title;
   }
 }

@@ -1,9 +1,9 @@
 import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/components/FrontComponentErrorEffect';
 import { FrontComponentHostCommunicationApiEffect } from '@/front-component-renderer/remote/components/FrontComponentHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
-import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
+import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
   type RemoteReceiver,
@@ -12,8 +12,7 @@ import {
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ThemeProvider } from '@emotion/react';
-import { type ThemeType } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 
@@ -24,7 +23,7 @@ type FrontComponentContentProps = {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
-  theme: ThemeType;
+  colorScheme: 'light' | 'dark';
 };
 
 export const FrontComponentRenderer = ({
@@ -34,7 +33,7 @@ export const FrontComponentRenderer = ({
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
-  theme,
+  colorScheme,
 }: FrontComponentContentProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<ThreadWebWorker<
@@ -42,6 +41,8 @@ export const FrontComponentRenderer = ({
     FrontComponentHostCommunicationApi
   > | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
+    useState(false);
 
   const MemoizedFrontComponentWorkerEffect = useMemo(() => {
     return (
@@ -49,6 +50,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
+        frontComponentId={executionContext.frontComponentId}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
         setThread={setThread}
@@ -63,6 +65,7 @@ export const FrontComponentRenderer = ({
     setThread,
     applicationAccessToken,
     apiUrl,
+    executionContext.frontComponentId,
   ]);
 
   return (
@@ -98,12 +101,15 @@ export const FrontComponentRenderer = ({
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}
+            onExecutionContextInitialized={() =>
+              setIsExecutionContextInitialized(true)
+            }
           />
         </>
       )}
 
-      {isDefined(receiver) && (
-        <ThemeProvider theme={theme}>
+      {isDefined(receiver) && isExecutionContextInitialized && (
+        <ThemeProvider colorScheme={colorScheme}>
           <RemoteRootRenderer
             receiver={receiver}
             components={componentRegistry}

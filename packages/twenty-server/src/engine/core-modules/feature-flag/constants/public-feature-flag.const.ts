@@ -1,4 +1,4 @@
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 type FeatureFlagMetadata = {
   label: string;
@@ -27,14 +27,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       description: 'Enable row level permission',
       imagePath:
         'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
-    },
-  },
-  {
-    key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
-    metadata: {
-      label: 'Real-Time',
-      description: 'See all updates without reloading the page',
-      imagePath: 'https://twenty.com/images/lab/is-real-time-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

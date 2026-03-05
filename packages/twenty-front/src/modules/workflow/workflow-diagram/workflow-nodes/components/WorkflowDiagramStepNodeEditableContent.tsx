@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { EMPTY_NODE_ID } from '@/workflow/workflow-diagram/constants/EmptyNodeId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -19,7 +19,7 @@ import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workf
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
@@ -64,7 +64,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const workflowInsertStepIds = useRecoilComponentValue(
+  const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
   );
 

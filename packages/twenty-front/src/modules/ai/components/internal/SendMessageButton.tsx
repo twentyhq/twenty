@@ -1,38 +1,35 @@
-import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilValue } from 'recoil';
-import { Key } from 'ts-key-enum';
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
+import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
 
-export const SendMessageButton = () => {
-  const agentChatInput = useRecoilValue(agentChatInputState);
-  const { handleSendMessage, handleStop, isLoading, isStreaming } =
-    useAgentChatContextOrThrow();
+type SendMessageButtonProps = {
+  onSend: () => void;
+};
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: (event: KeyboardEvent) => {
-      if (!event.ctrlKey && !event.metaKey) {
-        event.preventDefault();
-        handleSendMessage();
-      }
-    },
-    focusId: AI_CHAT_INPUT_ID,
-    dependencies: [agentChatInput, isLoading],
-    options: {
-      enableOnFormTags: true,
-    },
-  });
+export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
+  const agentChatInputIsEmpty = useAtomStateValue(
+    agentChatInputIsEmptySelector,
+  );
 
-  if (isStreaming) {
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const handleStopClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
+  };
+
+  if (agentChatIsStreaming) {
     return (
       <RoundedIconButton
         Icon={IconPlayerStop}
         size="medium"
-        onClick={() => handleStop()}
+        onClick={handleStopClick}
       />
     );
   }
@@ -41,8 +38,8 @@ export const SendMessageButton = () => {
     <RoundedIconButton
       Icon={IconArrowUp}
       size="medium"
-      onClick={() => handleSendMessage()}
-      disabled={!agentChatInput || isLoading}
+      onClick={onSend}
+      disabled={agentChatInputIsEmpty || agentChatIsLoading}
     />
   );
 };

@@ -1,10 +1,14 @@
 import { type ApplicationConfig } from '@/sdk/application/application-config';
 import { type FrontComponentConfig } from '@/sdk/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
+import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
+import { type ViewConfig } from '@/sdk/views/view-config';
 import {
   type FieldManifest,
-  type ObjectManifest,
+  type NavigationMenuItemManifest,
   type RoleManifest,
+  type SkillManifest,
 } from 'twenty-shared/application';
 
 export type ValidationResult<T> = {
@@ -15,14 +19,16 @@ export type ValidationResult<T> = {
 
 export type DefinableEntity =
   | ApplicationConfig
-  | ObjectManifest
+  | ObjectConfig
   | FieldManifest
   | FrontComponentConfig
   | LogicFunctionConfig
-  | RoleManifest;
+  | RoleManifest
+  | SkillManifest
+  | ViewConfig
+  | NavigationMenuItemManifest
+  | PageLayoutConfig;
 
-export type DefineEntity<C extends DefinableEntity = DefinableEntity> = <
-  T extends C,
->(
+export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: T,
 ) => ValidationResult<T>;

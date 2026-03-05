@@ -1,9 +1,9 @@
-import { atom } from 'recoil';
-
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
 export const settingsAccountsSelectedMessageChannelState =
-  atom<MessageChannel | null>({
+  createAtomState<MessageChannel | null>({
     key: 'settingsAccountsSelectedMessageChannelState',
-    default: null,
+    defaultValue: null,
   });

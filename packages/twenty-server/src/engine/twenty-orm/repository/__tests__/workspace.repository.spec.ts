@@ -1,4 +1,5 @@
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
@@ -14,7 +15,6 @@ import {
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -105,6 +105,8 @@ describe('WorkspaceRepository', () => {
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      viewSortIds: [],
+      viewSortUniversalIdentifiers: [],
       universalSettings: null,
     };
 

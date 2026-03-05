@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { AdvancedFilterCommandMenuRecordFilterOperandSelect } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect';
+import { AdvancedFilterSidePanelRecordFilterOperandSelect } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -11,12 +11,13 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFilterRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledOperandSelectContainer = styled.div`
@@ -52,7 +53,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow =
             recordFilterId={recordFilter.id}
           />
           <StyledOperandSelectContainer>
-            <AdvancedFilterCommandMenuRecordFilterOperandSelect
+            <AdvancedFilterSidePanelRecordFilterOperandSelect
               recordFilterId={recordFilter.id}
             />
           </StyledOperandSelectContainer>

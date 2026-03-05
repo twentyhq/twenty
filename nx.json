@@ -120,6 +120,7 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs",
+        "silent": true,
         "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
@@ -127,7 +128,7 @@
       "configurations": {
         "ci": {
           "ci": true,
-          "maxWorkers": 3
+          "maxWorkers": 1
         },
         "coverage": {
           "coverageReporters": ["lcov", "text"]
@@ -148,7 +149,7 @@
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "NODE_OPTIONS='--max-old-space-size=10240' VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
+        "command": "NODE_OPTIONS='--max-old-space-size=10240' storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
@@ -277,7 +278,7 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "style": "@emotion/styled",
+        "style": "@linaria/react",
         "linter": "eslint",
         "bundler": "vite",
         "compiler": "swc",
@@ -285,7 +286,7 @@
         "projectNameAndRootFormat": "derived"
       },
       "library": {
-        "style": "@emotion/styled",
+        "style": "@linaria/react",
         "linter": "eslint",
         "bundler": "vite",
         "compiler": "swc",
@@ -293,7 +294,7 @@
         "projectNameAndRootFormat": "derived"
       },
       "component": {
-        "style": "@emotion/styled"
+        "style": "@linaria/react"
       }
     }
   },

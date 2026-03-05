@@ -3,12 +3,13 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTableRow';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -35,17 +36,19 @@ export type ApplicationDataTableRow = {
 
 const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 
-const StyledEmptyHeader = styled(TableHeader)`
-  min-width: 0;
+const StyledEmptyHeaderContainer = styled.div`
+  > div {
+    min-width: 0;
+  }
 `;
 
 const StyledSearchInputContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(8)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
@@ -128,7 +131,9 @@ export const SettingsApplicationDataTable = ({
             <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>{t`App`}</TableHeader>
             <TableHeader align="right">{t`Fields`}</TableHeader>
-            <StyledEmptyHeader />
+            <StyledEmptyHeaderContainer>
+              <TableHeader />
+            </StyledEmptyHeaderContainer>
           </TableRow>
           {shouldDisplayObjects && (
             <TableSection title={t`Objects`}>

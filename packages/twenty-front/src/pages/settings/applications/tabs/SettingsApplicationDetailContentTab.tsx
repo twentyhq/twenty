@@ -1,8 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -22,7 +23,7 @@ export const SettingsApplicationDetailContentTab = ({
     objects: { id: string }[];
   };
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const applicationObjectIds = useMemo(
     () => application?.objects.map((object) => object.id) ?? [],
@@ -40,7 +41,7 @@ export const SettingsApplicationDetailContentTab = ({
       )
       .map((objectMetadataItem) => {
         const nonSystemFields = objectMetadataItem.fields.filter(
-          (field) => !field.isSystem,
+          (field) => !isHiddenSystemField(field),
         );
 
         const fields: ApplicationDataTableFieldItem[] = nonSystemFields.map(

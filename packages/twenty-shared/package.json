@@ -1,6 +1,7 @@
 {
   "name": "twenty-shared",
   "private": true,
+  "sideEffects": false,
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -22,6 +23,7 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.1.0",
     "tsx": "^4.19.3",
+    "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1",
     "vite-tsconfig-paths": "^4.2.1"
@@ -29,6 +31,7 @@
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "class-validator": "^0.14.0",
+    "expr-eval": "^2.0.2",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
@@ -63,6 +66,11 @@
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
     },
+    "./logic-function": {
+      "types": "./dist/logic-function/index.d.ts",
+      "import": "./dist/logic-function.mjs",
+      "require": "./dist/logic-function.cjs"
+    },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
       "import": "./dist/metadata.mjs",
@@ -88,6 +96,11 @@
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.cjs"
     },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
+    },
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
       "import": "./dist/workflow.mjs",
@@ -105,11 +118,13 @@
     "application",
     "constants",
     "database-events",
+    "logic-function",
     "metadata",
     "testing",
     "translations",
     "types",
     "utils",
+    "vite",
     "workflow",
     "workspace"
   ],
@@ -127,6 +142,9 @@
       "database-events": [
         "dist/database-events/index.d.ts"
       ],
+      "logic-function": [
+        "dist/logic-function/index.d.ts"
+      ],
       "metadata": [
         "dist/metadata/index.d.ts"
       ],
@@ -141,6 +159,9 @@
       ],
       "utils": [
         "dist/utils/index.d.ts"
+      ],
+      "vite": [
+        "dist/vite/index.d.ts"
       ],
       "workflow": [
         "dist/workflow/index.d.ts"

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -9,7 +9,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   IconGmail,
   IconMail,
@@ -17,13 +17,14 @@ import {
   IconMicrosoft,
 } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
@@ -35,14 +36,14 @@ const StyledTextContainer = styled.div`
 `;
 
 const StyledEmail = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledButtonsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   width: 100%;
   max-width: 240px;
 `;
@@ -51,22 +52,22 @@ const StyledBottomLinks = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
 `;
 
 const StyledLinkButton = styled.button`
   background: none;
   border: none;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 140%;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 
   &:disabled {
@@ -76,7 +77,7 @@ const StyledLinkButton = styled.button`
 `;
 
 const StyledDot = styled.div`
-  background: ${({ theme }) => theme.font.color.light};
+  background: ${themeCssVariables.font.color.light};
   border-radius: 50%;
   height: 2px;
   width: 2px;
@@ -89,7 +90,7 @@ export const EmailVerificationSent = ({
   email: string | null;
   isError?: boolean;
 }) => {
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const { handleResendEmailVerificationToken, loading: isLoading } =
     useHandleResendEmailVerificationToken();

@@ -1,9 +1,9 @@
-import { atom } from 'recoil';
-
 import type { AddMenuItemInsertionContext } from '@/navigation-menu-item/types/AddMenuItemInsertionContext';
 
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
 export const addMenuItemInsertionContextState =
-  atom<AddMenuItemInsertionContext | null>({
+  createAtomState<AddMenuItemInsertionContext | null>({
     key: 'addMenuItemInsertionContextState',
-    default: null,
+    defaultValue: null,
   });

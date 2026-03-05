@@ -3,7 +3,8 @@ import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/i
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -15,15 +16,17 @@ type PrefetchedNavigationMenuItemsData = {
 
 export const usePrefetchedNavigationMenuItemsData =
   (): PrefetchedNavigationMenuItemsData => {
-    const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useAtomStateValue(
+      currentWorkspaceMemberState,
+    );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const prefetchNavigationMenuItems = useRecoilValue(
+    const prefetchNavigationMenuItems = useAtomStateValue(
       prefetchNavigationMenuItemsState,
     );
-    const isNavigationMenuInEditMode = useRecoilValue(
+    const isNavigationMenuInEditMode = useAtomStateValue(
       isNavigationMenuInEditModeState,
     );
-    const navigationMenuItemsDraft = useRecoilValue(
+    const navigationMenuItemsDraft = useAtomStateValue(
       navigationMenuItemsDraftState,
     );
 

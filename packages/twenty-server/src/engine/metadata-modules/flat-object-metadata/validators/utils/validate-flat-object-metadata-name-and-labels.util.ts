@@ -66,8 +66,8 @@ export const validateFlatObjectMetadataNameAndLabels = ({
   if (
     universalFlatObjectMetadataToValidate.isLabelSyncedWithName &&
     !areFlatObjectMetadataNamesSyncedWithLabels({
-      flatObjectdMetadata: universalFlatObjectMetadataToValidate,
-      isSystemBuild: buildOptions.isSystemBuild,
+      flatObjectMetadata: universalFlatObjectMetadataToValidate,
+      buildOptions,
     })
   ) {
     errors.push({

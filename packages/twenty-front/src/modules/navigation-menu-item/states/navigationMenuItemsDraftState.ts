@@ -1,7 +1,10 @@
-import { atom } from 'recoil';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const navigationMenuItemsDraftState = atom<NavigationMenuItem[] | null>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
+export const navigationMenuItemsDraftState = createAtomState<
+  NavigationMenuItem[] | null
+>({
   key: 'navigationMenuItemsDraftState',
-  default: null,
+  defaultValue: null,
 });

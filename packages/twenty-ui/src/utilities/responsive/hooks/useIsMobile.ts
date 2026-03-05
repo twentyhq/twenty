@@ -1,4 +1,4 @@
-import { MOBILE_VIEWPORT } from '@ui/theme';
+import { MOBILE_VIEWPORT } from '@ui/theme-constants';
 import { useMediaQuery } from 'react-responsive';
 
 export const useIsMobile = () =>

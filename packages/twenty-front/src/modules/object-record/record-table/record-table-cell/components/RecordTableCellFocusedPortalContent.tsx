@@ -7,26 +7,28 @@ import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { BORDER_COMMON } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
-  isRowActive: boolean;
+  isRecordTableRowActive: boolean;
 }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRowActive }) =>
-    isRowActive ? theme.accent.quaternary : theme.background.primary};
-  border-radius: ${BORDER_COMMON.radius.sm};
+  background: ${themeCssVariables.background.transparent.secondary};
+  background-color: ${({ isRecordTableRowActive }) =>
+    isRecordTableRowActive
+      ? themeCssVariables.accent.quaternary
+      : themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme }) => `1px solid ${theme.color.blue8}`};
+  outline: 1px solid ${themeCssVariables.color.blue8};
 
   user-select: none;
 `;
@@ -35,32 +37,32 @@ export const RecordTableCellFocusedPortalContent = () => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
   const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
-  const focusPosition = useRecoilComponentValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
-  const isRowActive = useRecoilComponentFamilyValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
 
-  const hoverPosition = useRecoilComponentValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
   const arePositionsDifferent =
-    hoverPosition?.row !== focusPosition?.row ||
-    hoverPosition?.column !== focusPosition?.column;
+    recordTableHoverPosition?.row !== recordTableFocusPosition?.row ||
+    recordTableHoverPosition?.column !== recordTableFocusPosition?.column;
 
   const handleContainerMouseMove = () => {
-    if (arePositionsDifferent && isDefined(focusPosition)) {
-      onMoveHoverToCurrentCell(focusPosition);
+    if (arePositionsDifferent && isDefined(recordTableFocusPosition)) {
+      onMoveHoverToCurrentCell(recordTableFocusPosition);
     }
   };
 
   return (
     <StyledRecordTableCellFocusPortalContent
-      isRowActive={isRowActive}
+      isRecordTableRowActive={isRecordTableRowActive}
       onMouseMove={handleContainerMouseMove}
     >
       <RecordTableCellDisplayMode>

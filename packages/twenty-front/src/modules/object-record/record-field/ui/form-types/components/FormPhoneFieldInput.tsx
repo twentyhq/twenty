@@ -1,15 +1,14 @@
-import { t } from '@lingui/core/macro';
 import {
-  FormCountryCodeSelectInput,
-  type FormCountryCodeSelectInputUpdatedValue,
-} from '@/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput';
+  FormCallingCodeSelectInput,
+  type FormCallingCodeSelectInputUpdatedValue,
+} from '@/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { getCountryCallingCode } from 'libphonenumber-js';
+import { t } from '@lingui/core/macro';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -26,19 +25,12 @@ export const FormPhoneFieldInput = ({
   readonly,
   VariablePicker,
 }: FormPhoneFieldInputProps) => {
-  const handleCountryChange = (
-    newCountry: FormCountryCodeSelectInputUpdatedValue,
+  const handleCallingCodeChange = (
+    newValue: FormCallingCodeSelectInputUpdatedValue,
   ) => {
-    let newCallingCode;
-    if (newCountry === '') {
-      newCallingCode = '';
-    } else {
-      newCallingCode = getCountryCallingCode(newCountry);
-    }
-
     onChange({
-      primaryPhoneCountryCode: newCountry,
-      primaryPhoneCallingCode: newCallingCode,
+      primaryPhoneCountryCode: newValue.countryCode,
+      primaryPhoneCallingCode: newValue.callingCode,
       primaryPhoneNumber: defaultValue?.primaryPhoneNumber ?? '',
     });
   };
@@ -55,11 +47,13 @@ export const FormPhoneFieldInput = ({
     <FormFieldInputContainer>
       {label && <InputLabel>{label}</InputLabel>}
       <FormNestedFieldInputContainer>
-        <FormCountryCodeSelectInput
-          label={t`Country Code`}
+        <FormCallingCodeSelectInput
+          label={t`Calling Code`}
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode ?? ''}
-          onChange={handleCountryChange}
+          selectedCallingCode={defaultValue?.primaryPhoneCallingCode}
+          onChange={handleCallingCodeChange}
           readonly={readonly}
+          VariablePicker={VariablePicker}
         />
         <FormNumberFieldInput
           label={t`Phone Number`}

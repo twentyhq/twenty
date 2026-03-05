@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -15,8 +16,9 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
 
@@ -28,16 +30,16 @@ const StyledContainer = styled.div<{
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: 24px;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  padding-right: ${themeCssVariables.spacing[1]};
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
 `;
 
 const StyledColumnHeaderCell = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
 
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   box-sizing: border-box;
@@ -48,7 +50,7 @@ const StyledColumnHeaderCell = styled.div`
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const allRowsSelectedStatus = useRecoilComponentValue(
+  const allRowsSelectedStatus = useAtomComponentSelectorValue(
     allRowsSelectedStatusComponentSelector,
   );
 
@@ -62,12 +64,12 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValue(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -83,33 +85,36 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
-    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+    isRecordTableRowActive ||
+    (isRecordTableRowFocused && isRecordTableRowFocusActive);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
   const shouldDisplayBorderBottom =
-    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+    hasRecordGroups ||
+    !isFirstRowActiveOrFocused ||
+    isRecordTableScrolledVertically;
 
   return (
     <StyledColumnHeaderCell

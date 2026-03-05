@@ -1,19 +1,23 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[6]};
 
   @media (max-width: ${MOBILE_VIEWPORT}pxF) {
     flex-direction: column;
@@ -21,8 +25,8 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
   return (
     <Section>
       <H2Title

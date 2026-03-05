@@ -1,4 +1,3 @@
-import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -10,30 +9,35 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext, useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
+  const store = useStore();
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -47,7 +51,7 @@ export const useShouldActionBeRegisteredParams = ({
       return false;
     }
 
-    if (isNavigationMenuItemEnabled && isDefined(objectMetadataItem)) {
+    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
       const foundNavigationMenuItem = navigationMenuItems?.find(
         (item) =>
           item.targetRecordId === recordId &&
@@ -62,14 +66,15 @@ export const useShouldActionBeRegisteredParams = ({
     return !!foundFavorite;
   }, [
     recordId,
-    isNavigationMenuItemEnabled,
+    isNavigationMenuItemEditingEnabled,
     objectMetadataItem,
     navigationMenuItems,
     favorites,
   ]);
 
   const selectedRecord =
-    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -79,21 +84,24 @@ export const useShouldActionBeRegisteredParams = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
+    recordIndexId,
   );
 
   const isShowPage =
-    useRecoilComponentValue(contextStoreCurrentViewTypeComponentState) ===
+    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useRecoilComponentValue(
+  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
   );
 
@@ -104,39 +112,29 @@ export const useShouldActionBeRegisteredParams = ({
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const getObjectReadPermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canRead;
-      },
-    [],
+  const getObjectReadPermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return store.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canRead;
+    },
+    [store],
   );
 
-  const getObjectWritePermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canUpdate;
-      },
-    [],
+  const getObjectWritePermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return store.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canUpdate;
+    },
+    [store],
   );
 
-  const forceRegisteredActionsByKey = useRecoilValue(
-    forceRegisteredActionsByKeyState,
-  );
-
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
     const featureFlag = currentWorkspace?.featureFlags?.find(
@@ -151,16 +149,15 @@ export const useShouldActionBeRegisteredParams = ({
     isFavorite,
     objectPermissions,
     isNoteOrTask,
-    isInRightDrawer,
+    isInSidePanel,
     hasAnySoftDeleteFilterOnView,
     isShowPage,
     isSelectAll,
     selectedRecord,
-    numberOfSelectedRecords,
+    numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
-    forceRegisteredActionsByKey,
     isFeatureFlagEnabled,
   };
 };

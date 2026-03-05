@@ -1,7 +1,6 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -11,11 +10,10 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import {
@@ -30,18 +28,18 @@ import {
   ViewVisibility,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { resetContent } = useObjectOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { copyToClipboard } = useCopyToClipboard();
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
   const { canPersistChanges } = useCanPersistViewChanges();
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
@@ -59,16 +57,9 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
     resetContent();
   };
 
-  const handleCopyLink = () => {
+  const handleCopyLink = async () => {
     const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl);
-    enqueueSuccessSnackBar({
-      message: t`Link copied to clipboard`,
-      options: {
-        icon: <IconCopy size={theme.icon.size.md} />,
-        duration: 2000,
-      },
-    });
+    await copyToClipboard(currentUrl, t`Link copied to clipboard`);
   };
 
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;

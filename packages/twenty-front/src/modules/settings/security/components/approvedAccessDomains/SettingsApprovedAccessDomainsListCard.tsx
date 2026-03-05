@@ -9,26 +9,29 @@ import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const [approvedAccessDomains, setApprovedAccessDomains] = useRecoilState(
+  const [approvedAccessDomains, setApprovedAccessDomains] = useAtomState(
     approvedAccessDomainsState,
   );
 
@@ -53,12 +56,14 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   };
 
   return loading || !approvedAccessDomains.length ? (
-    <StyledLink to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
-      <SettingsCard
-        title={t`Add Approved Access Domain`}
-        Icon={<IconMailCog />}
-      />
-    </StyledLink>
+    <StyledLinkContainer>
+      <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
+        <SettingsCard
+          title={t`Add Approved Access Domain`}
+          Icon={<IconMailCog />}
+        />
+      </Link>
+    </StyledLinkContainer>
   ) : (
     <>
       <SettingsSecurityApprovedAccessDomainValidationEffect />

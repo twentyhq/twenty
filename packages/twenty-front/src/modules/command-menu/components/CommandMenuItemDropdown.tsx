@@ -2,14 +2,14 @@ import {
   CommandMenuItem,
   type CommandMenuItemProps,
 } from '@/command-menu/components/CommandMenuItem';
-import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import {
   Dropdown,
   type DropdownProps,
 } from '@/ui/layout/dropdown/components/Dropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export type CommandMenuItemDropdownProps = CommandMenuItemProps &
   Pick<
@@ -31,13 +31,13 @@ export const CommandMenuItemDropdown = ({
   dropdownId,
   disabled = false,
 }: CommandMenuItemDropdownProps) => {
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
   const { setSelectedItemId } = useSelectableList(
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
   return (

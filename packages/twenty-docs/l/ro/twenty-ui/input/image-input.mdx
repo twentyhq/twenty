@@ -10,25 +10,32 @@ image: /images/user-guide/objects/objects.png
 Permite utilizatorilor să încarce și să elimine o imagine.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { ImageInput } from "@/ui/input/components/ImageInput";
+<Tab title="Utilizare">
 
-    export const MyComponent = () => {
-      return <ImageInput/>;
-    };
-    ```
-  </Tab>
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip     | Descriere                                                                                           |
-    | ----------- | ------- | --------------------------------------------------------------------------------------------------- |
-    | imagine     | șir     | URL-ul sursei imaginii                                                                              |
-    | onUpload    | funcție | Funcția apelată când un utilizator încarcă o imagine nouă. Primește obiectul `File` ca parametru    |
-    | onRemove    | funcție | Funcția apelată când utilizatorul face clic pe butonul de eliminare                                 |
-    | onAbort     | funcție | Funcția apelată când utilizatorul face clic pe butonul de anulare în timpul încărcării unei imagini |
-    | isUploading | boolean | Indică dacă o imagine este în curs de încărcare                                                     |
-    | mesajEroare | şir     | Un mesaj de eroare opțional care să fie afișat sub intrarea imaginii                                |
-    | dezactivat  | boolean | Dacă este „adevărat”, întreaga intrare este dezactivată, iar butoanele nu sunt clicabile            |
-  </Tab>
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip     | Descriere                                                                                           |
+| ----------- | ------- | --------------------------------------------------------------------------------------------------- |
+| imagine     | șir     | URL-ul sursei imaginii                                                                              |
+| onUpload    | funcție | Funcția apelată când un utilizator încarcă o imagine nouă. Primește obiectul `File` ca parametru    |
+| onRemove    | funcție | Funcția apelată când utilizatorul face clic pe butonul de eliminare                                 |
+| onAbort     | funcție | Funcția apelată când utilizatorul face clic pe butonul de anulare în timpul încărcării unei imagini |
+| isUploading | boolean | Indică dacă o imagine este în curs de încărcare                                                     |
+| mesajEroare | şir     | Un mesaj de eroare opțional care să fie afișat sub intrarea imaginii                                |
+| dezactivat  | boolean | Dacă este „adevărat”, întreaga intrare este dezactivată, iar butoanele nu sunt clicabile            |
+
+
+
+
+</Tab>
 </Tabs>

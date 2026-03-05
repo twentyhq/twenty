@@ -1,7 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectFieldItemTableRow,
-  StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -14,11 +16,13 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IconArchive,
@@ -28,18 +32,19 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -89,17 +94,20 @@ export const SettingsObjectFieldTable = ({
   const [showInactive, setShowInactive] = useState(true);
   const [showSystemFields, setShowSystemFields] = useState(false);
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
 
-  const [settingsObjectFields, setSettingsObjectFields] = useRecoilState(
-    settingsObjectFieldsFamilyState({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const settingsObjectFields = useAtomFamilyStateValue(
+    settingsObjectFieldsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+  const setSettingsObjectFields = useSetAtomFamilyState(
+    settingsObjectFieldsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   useEffect(() => {
@@ -110,7 +118,7 @@ export const SettingsObjectFieldTable = ({
     const filteredBySystem = showSystemFields
       ? settingsObjectFields
       : settingsObjectFields?.filter(
-          (fieldMetadataItem) => !fieldMetadataItem.isSystem,
+          (fieldMetadataItem) => !isHiddenSystemField(fieldMetadataItem),
         );
 
     const fieldsToDisplay = excludeRelations
@@ -156,13 +164,15 @@ export const SettingsObjectFieldTable = ({
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="object-field-table-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a field...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="object-field-table-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a field...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-fields-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -203,7 +213,9 @@ export const SettingsObjectFieldTable = ({
         />
       </StyledSearchAndFilterContainer>
       <Table>
-        <StyledObjectFieldTableRow>
+        <TableRow
+          gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {tableMetadata.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -214,7 +226,7 @@ export const SettingsObjectFieldTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectFieldTableRow>
+        </TableRow>
         {filteredItems.map((objectSettingsDetailItem) => {
           const status = objectSettingsDetailItem.fieldMetadataItem.isActive
             ? 'active'

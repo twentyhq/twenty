@@ -1,53 +1,48 @@
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePersonAvatarUpload } from '@/object-record/record-show/hooks/usePersonAvatarUpload';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
-// TODO: refactor all this hierarchy of right drawer / show page record to avoid drill down
+// TODO: refactor all this hierarchy of side panel / show page record to avoid drill down
 export const SummaryCard = ({
   objectNameSingular,
   objectRecordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: SummaryCardProps) => {
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId,
   });
 
-  const recordCreatedAt = useRecoilValue<string | null>(
-    recordStoreFamilySelector({
+  const recordCreatedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelector,
+    {
       recordId: objectRecordId,
       fieldName: 'createdAt',
-    }),
-  );
-  const allowRequestsToTwentyIcons = useRecoilValue(
+    },
+  ) as string | null;
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
-  );
-  const isFilesFieldMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
   );
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
@@ -56,14 +51,14 @@ export const SummaryCard = ({
 
   const { onUploadPicture } = usePersonAvatarUpload(objectRecordId);
 
-  const isMobile = useIsMobile() || isInRightDrawer;
+  const isMobile = useIsMobile() || isInSidePanel;
 
-  const recordIdentifier = useRecoilValue(
-    recordStoreIdentifierFamilySelector({
+  const recordIdentifier = useAtomFamilySelectorValue(
+    recordStoreIdentifierFamilySelector,
+    {
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,
-      isFilesFieldMigrated,
-    }),
+    },
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
