@@ -92,7 +92,7 @@
     "@stylistic/eslint-plugin": "^1.5.0",
     "@swc-node/register": "^1.11.1",
     "@swc/cli": "^0.7.10",
-    "@swc/core": "^1.15.8",
+    "@swc/core": "^1.15.11",
     "@swc/helpers": "~0.5.19",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.0",
