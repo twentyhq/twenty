@@ -281,6 +281,43 @@ describe('ApplicationVariableEntityService', () => {
       expect(repository.update).not.toHaveBeenCalled();
     });
 
+    it('should update existing value when shouldUpdateValue is true', async () => {
+      const existingVariable = {
+        id: '1',
+        key: 'EXISTING_VAR',
+        value: 'existing-encrypted-value',
+        isSecret: true,
+        applicationId: mockApplicationId,
+      } as ApplicationVariableEntity;
+
+      repository.find.mockResolvedValue([existingVariable]);
+      repository.save.mockResolvedValue({} as any);
+      repository.delete.mockResolvedValue({ affected: 0 } as any);
+
+      await service.upsertManyApplicationVariableEntities({
+        applicationVariables: {
+          EXISTING_VAR: {
+            universalIdentifier: 'existing-var-123',
+            value: 'new-value',
+            description: 'Updated description',
+            isSecret: true,
+          },
+        },
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+        shouldUpdateValue: true,
+      });
+
+      expect(repository.save).toHaveBeenCalledWith([
+        {
+          id: '1',
+          description: 'Updated description',
+          value: 'encrypted_new-value',
+          isSecret: true,
+        },
+      ]);
+    });
+
     it('should update existing value if isSecret changes', async () => {
       const existingVariable = {
         id: '1',

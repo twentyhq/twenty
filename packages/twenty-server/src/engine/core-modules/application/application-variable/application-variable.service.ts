@@ -84,10 +84,12 @@ export class ApplicationVariableEntityService {
     applicationVariables,
     applicationId,
     workspaceId,
+    shouldUpdateValue = false,
   }: {
     applicationVariables?: ApplicationVariables;
     applicationId: string;
     workspaceId: string;
+    shouldUpdateValue?: boolean;
   }) {
     if (!isDefined(applicationVariables)) {
       return;
@@ -123,7 +125,8 @@ export class ApplicationVariableEntityService {
           id: existingVariable.id,
           description: description ?? '',
           isSecret: isSecretValue,
-          ...(existingVariable.isSecret !== isSecret
+          ...(shouldUpdateValue ||
+          existingVariable.isSecret !== isSecretValue
             ? { value: encryptedValue }
             : {}),
         });
