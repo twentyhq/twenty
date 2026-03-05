@@ -11,9 +11,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSubRow } from '@/ui/layout/table/components/TableSubRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
-import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
@@ -23,10 +23,6 @@ const FIELD_SUB_ROW_GRID_COLUMNS = '180px 1fr';
 
 const StyledFieldDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
-`;
-
-const StyledFieldNameTableCell = styled(StyledNameTableCell)`
-  color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const SettingsApplicationDataTableRow = ({
@@ -96,7 +92,10 @@ export const SettingsApplicationDataTableRow = ({
               key={field.key}
               gridAutoColumns={FIELD_SUB_ROW_GRID_COLUMNS}
             >
-              <StyledFieldNameTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.secondary}
+                gap={themeCssVariables.spacing[2]}
+              >
                 {isDefined(FieldIcon) && (
                   <FieldIcon
                     size={theme.icon.size.md}
@@ -104,7 +103,7 @@ export const SettingsApplicationDataTableRow = ({
                   />
                 )}
                 {field.label}
-              </StyledFieldNameTableCell>
+              </TableCell>
               <TableCell>
                 <SettingsObjectFieldDataType
                   value={field.type as SettingsFieldType}

@@ -6,23 +6,10 @@ import { StyledTableRow } from '@/settings/logic-functions/components/SettingsLo
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledRuntimeTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.secondary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export const SettingsLogicFunctionsFieldItemTableRow = ({
@@ -35,15 +22,33 @@ export const SettingsLogicFunctionsFieldItemTableRow = ({
   const { theme } = useContext(ThemeContext);
   return (
     <StyledTableRow to={to}>
-      <StyledNameTableCell>{logicFunction.name}</StyledNameTableCell>
-      <StyledNameTableCell></StyledNameTableCell>
-      <StyledRuntimeTableCell>{logicFunction.runtime}</StyledRuntimeTableCell>
-      <StyledIconTableCell>
-        <StyledIconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      </StyledIconTableCell>
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+      >
+        {logicFunction.name}
+      </TableCell>
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+      ></TableCell>
+      <TableCell
+        color={themeCssVariables.font.color.secondary}
+        gap={themeCssVariables.spacing[2]}
+      >
+        {logicFunction.runtime}
+      </TableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+      >
+        <StyledIconChevronRightContainer>
+          <IconChevronRight
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledIconChevronRightContainer>
+      </TableCell>
     </StyledTableRow>
   );
 };

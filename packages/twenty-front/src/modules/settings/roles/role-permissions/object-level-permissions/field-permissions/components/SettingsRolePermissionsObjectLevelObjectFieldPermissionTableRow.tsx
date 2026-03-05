@@ -20,14 +20,8 @@ import {
   RelationType,
 } from '~/generated-metadata/graphql';
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px minmax(0, 1fr) 60px 60px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
+export const FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  '180px minmax(0, 1fr) 60px 60px';
 
 const StyledNameLabel = styled.div`
   white-space: nowrap;
@@ -156,8 +150,13 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
-      <StyledObjectFieldTableRow>
-        <StyledNameTableCell>
+      <TableRow
+        gridTemplateColumns={FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      >
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
           {!!Icon && (
             <Icon
               style={{
@@ -170,7 +169,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           <StyledNameLabel title={fieldMetadataItem.label}>
             {fieldMetadataItem.label}
           </StyledNameLabel>
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsObjectFieldDataType
             Icon={RelationIcon}
@@ -212,6 +211,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             </TableCell>
           )}
         </>
-      </StyledObjectFieldTableRow>
+      </TableRow>
     );
   };

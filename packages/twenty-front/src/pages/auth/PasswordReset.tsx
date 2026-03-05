@@ -73,7 +73,7 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-const StyledFullWidthMotionDiv = styled(motion.div)`
+const StyledFullWidthContainer = styled.div`
   width: 100%;
 `;
 
@@ -81,7 +81,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledMainButton = styled(MainButton)`
+const StyledMainButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -234,64 +234,70 @@ export const PasswordReset = () => {
               </SkeletonTheme>
             ) : (
               <StyledForm onSubmit={handleSubmit(onSubmit)}>
-                <StyledFullWidthMotionDiv
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 800,
-                    damping: 35,
-                  }}
-                >
-                  <StyledInputContainer>
-                    <TextInput
-                      autoFocus
-                      value={email}
-                      placeholder={t`Email`}
-                      fullWidth
-                      disabled
+                <StyledFullWidthContainer>
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 800,
+                      damping: 35,
+                    }}
+                  >
+                    <StyledInputContainer>
+                      <TextInput
+                        autoFocus
+                        value={email}
+                        placeholder={t`Email`}
+                        fullWidth
+                        disabled
+                      />
+                    </StyledInputContainer>
+                  </motion.div>
+                </StyledFullWidthContainer>
+                <StyledFullWidthContainer>
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 800,
+                      damping: 35,
+                    }}
+                  >
+                    <Controller
+                      name="newPassword"
+                      control={control}
+                      render={({
+                        field: { onChange, onBlur, value },
+                        fieldState: { error },
+                      }) => (
+                        <StyledInputContainer>
+                          <TextInput
+                            autoFocus
+                            value={value}
+                            type="password"
+                            placeholder={t`New Password`}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={error?.message}
+                            fullWidth
+                          />
+                        </StyledInputContainer>
+                      )}
                     />
-                  </StyledInputContainer>
-                </StyledFullWidthMotionDiv>
-                <StyledFullWidthMotionDiv
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 800,
-                    damping: 35,
-                  }}
-                >
-                  <Controller
-                    name="newPassword"
-                    control={control}
-                    render={({
-                      field: { onChange, onBlur, value },
-                      fieldState: { error },
-                    }) => (
-                      <StyledInputContainer>
-                        <TextInput
-                          autoFocus
-                          value={value}
-                          type="password"
-                          placeholder={t`New Password`}
-                          onBlur={onBlur}
-                          onChange={onChange}
-                          error={error?.message}
-                          fullWidth
-                        />
-                      </StyledInputContainer>
-                    )}
-                  />
-                </StyledFullWidthMotionDiv>
+                  </motion.div>
+                </StyledFullWidthContainer>
 
-                <StyledMainButton
-                  variant="secondary"
-                  title={passwordActionLabel}
-                  type="submit"
-                  fullWidth
-                  disabled={isUpdatingPassword}
-                />
+                <StyledMainButtonContainer>
+                  <MainButton
+                    variant="secondary"
+                    title={passwordActionLabel}
+                    type="submit"
+                    fullWidth
+                    disabled={isUpdatingPassword}
+                  />
+                </StyledMainButtonContainer>
               </StyledForm>
             )}
           </StyledContentContainer>

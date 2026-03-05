@@ -95,14 +95,16 @@ const StyledBannerText = styled.span`
   flex: 1;
 `;
 
-const StyledConflictButton = styled(Button)`
-  border-color: ${themeCssVariables.color.blue};
-  color: ${themeCssVariables.color.blue};
-  &:hover {
-    background: ${themeCssVariables.accent.secondary};
-  }
-  &:focus-visible {
-    box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+const StyledConflictButtonContainer = styled.div`
+  > button {
+    border-color: ${themeCssVariables.color.blue};
+    color: ${themeCssVariables.color.blue};
+    &:hover {
+      background: ${themeCssVariables.accent.secondary};
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+    }
   }
 `;
 
@@ -281,18 +283,20 @@ export const SettingsDataModelObjectAboutForm = ({
                     {t`An object with this name already exists`}
                   </StyledBannerText>
                 </StyledBannerContent>
-                <StyledConflictButton
-                  size="small"
-                  variant="secondary"
-                  accent="blue"
-                  title={t`Open`}
-                  onClick={() =>
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        conflictingObjectMetadataItem.namePlural,
-                    })
-                  }
-                />
+                <StyledConflictButtonContainer>
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    accent="blue"
+                    title={t`Open`}
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          conflictingObjectMetadataItem.namePlural,
+                      })
+                    }
+                  />
+                </StyledConflictButtonContainer>
               </StyledConflictBanner>
             )}
             {[
