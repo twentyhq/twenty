@@ -44,6 +44,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
   viewFilterGroup: {},
+  viewSort: {},
   frontComponent: {},
   webhook: {},
 } as const satisfies MetadataSerializedRelationProperties;

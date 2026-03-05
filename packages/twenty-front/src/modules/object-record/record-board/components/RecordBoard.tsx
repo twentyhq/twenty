@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useContext, useRef } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumns } from '@/object-record/record-board/components/RecordBoardColumns';
 import { RecordBoardDragDropContext } from '@/object-record/record-board/components/RecordBoardDragDropContext';
@@ -22,7 +23,7 @@ const StyledContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: calc(100% - ${({ theme }) => theme.spacing(2)});
+  min-height: calc(100% - ${themeCssVariables.spacing[2]});
   height: min-content;
 `;
 

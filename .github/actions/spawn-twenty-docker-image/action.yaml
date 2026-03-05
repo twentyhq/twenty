@@ -1,0 +1,80 @@
+name: Spawn Twenty Docker Image
+description: >
+  Starts a full Twenty instance (server, worker, database, redis) using Docker
+  Compose. The server is available at http://localhost:3000 for subsequent steps
+  in the caller's job.
+  Pulls the specified semver image tag from Docker Hub.
+  Designed to be consumed from external repositories (e.g., twenty-app).
+
+inputs:
+  twenty-version:
+    description: 'Twenty Docker Hub image tag as semver (e.g., v0.40.0, v1.0.0).'
+    required: true
+  twenty-repository:
+    description: 'Twenty repository to checkout docker compose files from.'
+    required: false
+    default: 'twentyhq/twenty'
+  github-token:
+    description: 'GitHub token for cross-repo checkout. Required when calling from an external repository.'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  server-url:
+    description: 'URL where the Twenty server can be reached'
+    value: http://localhost:3000
+  access-token:
+    description: 'Admin access token for the Twenty instance'
+    value: ${{ steps.admin-token.outputs.access-token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate version
+      shell: bash
+      run: |
+        VERSION="${{ inputs.twenty-version }}"
+        if ! echo "$VERSION" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "::error::twenty-version must be a semver tag (e.g., v0.40.0). Got: '$VERSION'"
+          exit 1
+        fi
+
+    - name: Checkout docker compose files
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.twenty-repository }}
+        ref: ${{ inputs.twenty-version }}
+        token: ${{ inputs.github-token }}
+        sparse-checkout: |
+          packages/twenty-docker
+        sparse-checkout-cone-mode: false
+        path: .twenty-spawn
+
+    - name: Prepare environment
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        cp .env.example .env
+        echo "" >> .env
+        echo "TAG=${{ inputs.twenty-version }}" >> .env
+        echo "APP_SECRET=replace_me_with_a_random_string" >> .env
+        echo "SERVER_URL=http://localhost:3000" >> .env
+
+    - name: Start Twenty instance
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        docker compose up -d --wait || {
+          echo "::error::Docker compose failed to start or health checks timed out"
+          docker compose logs
+          exit 1
+        }
+        echo "Twenty instance is ready at http://localhost:3000"
+
+    - name: Set admin access token
+      id: admin-token
+      shell: bash
+      run: |
+        ACCESS_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik"
+        echo "::add-mask::$ACCESS_TOKEN"
+        echo "access-token=$ACCESS_TOKEN" >> "$GITHUB_OUTPUT"

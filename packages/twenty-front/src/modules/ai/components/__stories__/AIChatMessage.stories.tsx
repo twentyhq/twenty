@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -66,6 +66,7 @@ print("Chart saved successfully!")`,
         executionTimeMs: 2340,
         files: [
           {
+            fileId: '550e8400-e29b-41d4-a716-446655440005',
             filename: 'sales_chart.png',
             url: 'https://picsum.photos/800/480',
             mimeType: 'image/png',

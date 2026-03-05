@@ -1,11 +1,9 @@
 import { BLUR_DARK } from '@ui/theme/constants/BlurDark';
 import { ILLUSTRATION_ICON_DARK } from '@ui/theme/constants/IllustrationIconDark';
-import {
-  COLOR_DARK,
-  GRAY_SCALE_DARK,
-  SNACK_BAR_DARK,
-  type ThemeType,
-} from '..';
+import { COLOR_DARK } from './ColorsDark';
+import { GRAY_SCALE_DARK } from './GrayScaleDark';
+import { SNACK_BAR_DARK } from './SnackBarDark';
+import type { ThemeType } from '../types/ThemeType';
 import { ACCENT_DARK } from './AccentDark';
 import { BACKGROUND_DARK } from './BackgroundDark';
 import { BORDER_DARK } from './BorderDark';

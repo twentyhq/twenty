@@ -12,7 +12,6 @@ export type LogicFunctionTestData = {
     error?: string;
   };
   language: 'plaintext' | 'json';
-  height: number;
 };
 
 export const DEFAULT_OUTPUT_VALUE = {
@@ -28,7 +27,6 @@ export const logicFunctionTestDataFamilyState = createAtomFamilyState<
   key: 'logicFunctionTestDataFamilyState',
   defaultValue: {
     language: 'plaintext',
-    height: 64,
     input: {},
     shouldInitInput: true,
     output: DEFAULT_OUTPUT_VALUE,

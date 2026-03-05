@@ -1,5 +1,4 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { useTheme } from '@emotion/react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
@@ -9,6 +8,8 @@ import {
   StyledRowLeftContent,
   StyledText,
 } from './WorkflowAiAgentPermissionsStyles';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -27,7 +28,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isClickable = !readonly && !isEnabled && Boolean(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
 

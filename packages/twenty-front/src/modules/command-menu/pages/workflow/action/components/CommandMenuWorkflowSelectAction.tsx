@@ -10,7 +10,6 @@ import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconFunction } from 'twenty-ui/display';
@@ -31,7 +30,6 @@ export const CommandMenuWorkflowSelectAction = ({
   const isDraftEmailEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
   );
-  const theme = useTheme();
 
   const { t } = useLingui();
 
@@ -113,10 +111,7 @@ export const CommandMenuWorkflowSelectAction = ({
               withIconContainer={true}
               LeftIcon={() => (
                 <IconFunction
-                  color={getActionIconColorOrThrow({
-                    theme,
-                    actionType: 'LOGIC_FUNCTION',
-                  })}
+                  color={getActionIconColorOrThrow('LOGIC_FUNCTION')}
                   size={16}
                 />
               )}

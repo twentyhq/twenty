@@ -6,11 +6,11 @@ describe('getActivityAttachmentIdsToDelete', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: 'https://example.com/files/images/test.txt',
+        file: [{ url: 'https://example.com/files/images/test.txt' }],
       },
       {
         id: '2',
-        fullPath: 'https://example.com/files/images/test2.txt',
+        file: [{ url: 'https://example.com/files/images/test2.txt' }],
       },
     ] as Attachment[];
     const newActivityBody = JSON.stringify([
@@ -37,7 +37,6 @@ describe('getActivityAttachmentIdsToDelete', () => {
       newActivityBody,
       attachments,
       oldActivityBody,
-      false,
     );
     expect(attachmentIdsToDelete).toEqual([]);
   });
@@ -46,11 +45,11 @@ describe('getActivityAttachmentIdsToDelete', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: 'https://example.com/files/images/test.txt',
+        file: [{ url: 'https://example.com/files/images/test.txt' }],
       },
       {
         id: '2',
-        fullPath: 'https://example.com/files/images/test2.txt',
+        file: [{ url: 'https://example.com/files/images/test2.txt' }],
       },
     ] as Attachment[];
     const newActivityBody = JSON.stringify([
@@ -73,7 +72,6 @@ describe('getActivityAttachmentIdsToDelete', () => {
       newActivityBody,
       attachments,
       oldActivityBody,
-      false,
     );
     expect(attachmentIdsToDelete).toEqual(['2']);
   });

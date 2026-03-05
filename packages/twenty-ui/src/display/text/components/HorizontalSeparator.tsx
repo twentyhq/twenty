@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
-import { type JSX, useContext } from 'react';
+import { type JSX } from 'react';
 import { Label } from '@ui/display';
-import { THEME_COMMON, ThemeContext } from '@ui/theme';
-
-const spacing3 = THEME_COMMON.spacing(3);
-const spacing2 = THEME_COMMON.spacing(2);
+import { themeCssVariables } from '@ui/theme-constants';
 
 type HorizontalSeparatorProps = {
   visible?: boolean;
@@ -21,16 +18,20 @@ const StyledSeparator = styled.div<{
   background-color: ${({ backgroundColor }) => backgroundColor};
   height: ${({ visible }) => (visible ? '1px' : '0')};
   flex-shrink: 0;
-  margin-bottom: ${({ noMargin }) => (noMargin ? '0' : spacing3)};
-  margin-top: ${({ noMargin }) => (noMargin ? '0' : spacing3)};
+  margin-bottom: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
+  margin-top: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
 const StyledSeparatorContainer = styled.div<{ noMargin: boolean }>`
   align-items: center;
   display: flex;
-  margin-bottom: ${({ noMargin }) => (noMargin ? '0' : spacing3)};
-  margin-top: ${({ noMargin }) => (noMargin ? '0' : spacing3)};
+  margin-bottom: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
+  margin-top: ${({ noMargin }) =>
+    noMargin ? '0' : themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
@@ -44,7 +45,7 @@ const StyledLine = styled.div<{
 `;
 
 const StyledText = styled.span`
-  margin: 0 ${spacing2};
+  margin: 0 ${themeCssVariables.spacing[2]};
 `;
 
 export const HorizontalSeparator = ({
@@ -53,8 +54,7 @@ export const HorizontalSeparator = ({
   noMargin = false,
   color,
 }: HorizontalSeparatorProps): JSX.Element => {
-  const { theme } = useContext(ThemeContext);
-  const borderColor = color ?? theme.border.color.medium;
+  const borderColor = color ?? themeCssVariables.border.color.medium;
 
   return (
     <>

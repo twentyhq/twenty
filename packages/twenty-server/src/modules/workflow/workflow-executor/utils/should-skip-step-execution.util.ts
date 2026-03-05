@@ -32,8 +32,9 @@ export const shouldSkipStepExecution = ({
   }
 
   return parentSteps.every(
-    (step) =>
-      stepInfos[step.id]?.status === StepStatus.SKIPPED ||
-      stepInfos[step.id]?.status === StepStatus.STOPPED,
+    (parentStep) =>
+      stepInfos[parentStep.id]?.status === StepStatus.SKIPPED ||
+      stepInfos[parentStep.id]?.status === StepStatus.STOPPED ||
+      stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
   );
 };

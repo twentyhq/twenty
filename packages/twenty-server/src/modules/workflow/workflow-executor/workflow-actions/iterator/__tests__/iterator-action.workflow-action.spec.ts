@@ -192,9 +192,9 @@ describe('IteratorWorkflowAction', () => {
         },
       } as any;
 
-      workflowRunWorkspaceService.getWorkflowRunOrFail
-        .mockResolvedValueOnce(mockStepInfo)
-        .mockResolvedValueOnce(mockStepInfo);
+      workflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        mockStepInfo,
+      );
 
       const result = await service.execute(input);
 
@@ -243,9 +243,9 @@ describe('IteratorWorkflowAction', () => {
         },
       } as any;
 
-      workflowRunWorkspaceService.getWorkflowRunOrFail
-        .mockResolvedValueOnce(mockStepInfo)
-        .mockResolvedValueOnce(mockStepInfo);
+      workflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        mockStepInfo,
+      );
 
       const result = await service.execute(input);
 

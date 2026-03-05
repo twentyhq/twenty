@@ -24,7 +24,7 @@ const makeDynamicRelationWidget = (suffix: string): PageLayoutWidget =>
     title: `Dynamic Relation ${suffix}`,
   });
 
-const makeServerLayout = (tabs: PageLayout['tabs']): PageLayout =>
+const makePersistedLayout = (tabs: PageLayout['tabs']): PageLayout =>
   ({
     id: 'layout-1',
     name: 'Layout',
@@ -58,17 +58,20 @@ const makeTab = (
   }) as PageLayout['tabs'][number];
 
 describe('reInjectDynamicRelationWidgetsFromDraft', () => {
-  it('should return server layout unchanged when draft has no dynamic widgets', () => {
-    const serverLayout = makeServerLayout([
+  it('should return persisted layout unchanged when draft has no dynamic widgets', () => {
+    const persistedLayout = makePersistedLayout([
       makeTab('tab-1', [makeWidget({ id: 'w1' })]),
     ]);
     const draft = makeDraftLayout([
       makeTab('tab-1', [makeWidget({ id: 'w1' })]),
     ]);
 
-    const result = reInjectDynamicRelationWidgetsFromDraft(serverLayout, draft);
+    const result = reInjectDynamicRelationWidgetsFromDraft(
+      persistedLayout,
+      draft,
+    );
 
-    expect(result).toBe(serverLayout);
+    expect(result).toBe(persistedLayout);
   });
 
   it('should inject dynamic widgets after the first FIELDS widget', () => {
@@ -82,14 +85,17 @@ describe('reInjectDynamicRelationWidgetsFromDraft', () => {
     });
     const dynamicWidget = makeDynamicRelationWidget('relation-1');
 
-    const serverLayout = makeServerLayout([
+    const persistedLayout = makePersistedLayout([
       makeTab('tab-1', [fieldsWidget, timelineWidget]),
     ]);
     const draft = makeDraftLayout([
       makeTab('tab-1', [fieldsWidget, dynamicWidget, timelineWidget]),
     ]);
 
-    const result = reInjectDynamicRelationWidgetsFromDraft(serverLayout, draft);
+    const result = reInjectDynamicRelationWidgetsFromDraft(
+      persistedLayout,
+      draft,
+    );
 
     expect(result.tabs[0].widgets).toHaveLength(3);
     expect(result.tabs[0].widgets[0].id).toBe('fields-1');
@@ -106,12 +112,17 @@ describe('reInjectDynamicRelationWidgetsFromDraft', () => {
     });
     const dynamicWidget = makeDynamicRelationWidget('relation-1');
 
-    const serverLayout = makeServerLayout([makeTab('tab-1', [timelineWidget])]);
+    const persistedLayout = makePersistedLayout([
+      makeTab('tab-1', [timelineWidget]),
+    ]);
     const draft = makeDraftLayout([
       makeTab('tab-1', [timelineWidget, dynamicWidget]),
     ]);
 
-    const result = reInjectDynamicRelationWidgetsFromDraft(serverLayout, draft);
+    const result = reInjectDynamicRelationWidgetsFromDraft(
+      persistedLayout,
+      draft,
+    );
 
     expect(result.tabs[0].widgets).toHaveLength(2);
     expect(result.tabs[0].widgets[0].id).toBe('timeline-1');
@@ -131,7 +142,7 @@ describe('reInjectDynamicRelationWidgetsFromDraft', () => {
     });
     const dynamicWidget = makeDynamicRelationWidget('rel-1');
 
-    const serverLayout = makeServerLayout([
+    const persistedLayout = makePersistedLayout([
       makeTab('tab-1', [fieldsWidget1]),
       makeTab('tab-2', [fieldsWidget2]),
     ]);
@@ -140,7 +151,10 @@ describe('reInjectDynamicRelationWidgetsFromDraft', () => {
       makeTab('tab-2', [fieldsWidget2]),
     ]);
 
-    const result = reInjectDynamicRelationWidgetsFromDraft(serverLayout, draft);
+    const result = reInjectDynamicRelationWidgetsFromDraft(
+      persistedLayout,
+      draft,
+    );
 
     // Tab 1 should have dynamic widget injected
     expect(result.tabs[0].widgets).toHaveLength(2);
@@ -156,12 +170,17 @@ describe('reInjectDynamicRelationWidgetsFromDraft', () => {
     const dynamicWidget1 = makeDynamicRelationWidget('rel-1');
     const dynamicWidget2 = makeDynamicRelationWidget('rel-2');
 
-    const serverLayout = makeServerLayout([makeTab('tab-1', [fieldsWidget])]);
+    const persistedLayout = makePersistedLayout([
+      makeTab('tab-1', [fieldsWidget]),
+    ]);
     const draft = makeDraftLayout([
       makeTab('tab-1', [fieldsWidget, dynamicWidget1, dynamicWidget2]),
     ]);
 
-    const result = reInjectDynamicRelationWidgetsFromDraft(serverLayout, draft);
+    const result = reInjectDynamicRelationWidgetsFromDraft(
+      persistedLayout,
+      draft,
+    );
 
     expect(result.tabs[0].widgets).toHaveLength(3);
     expect(result.tabs[0].widgets[0].id).toBe('fields-1');

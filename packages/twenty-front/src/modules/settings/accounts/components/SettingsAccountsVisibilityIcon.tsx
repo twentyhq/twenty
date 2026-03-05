@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type VisibilityElementState = 'active' | 'inactive';
 
@@ -16,18 +17,20 @@ const StyledCardMedia = styled(SettingsAccountsCardMedia)`
 `;
 
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.accent.accent4060 : theme.background.quaternary};
+  background-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.accent.accent4060
+      : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
 `;
 
 const StyledMetadataSkeleton = styled(StyledSubjectSkeleton)`
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledBodySkeleton = styled(StyledSubjectSkeleton)`
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: ${themeCssVariables.border.radius.xs};
   flex: 1 0 auto;
 `;
 

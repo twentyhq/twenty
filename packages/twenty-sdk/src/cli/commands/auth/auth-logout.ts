@@ -1,24 +1,19 @@
-import chalk from 'chalk';
+import { authLogout } from '@/cli/public-operations/auth-logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import chalk from 'chalk';
 
 export class AuthLogoutCommand {
-  private configService = new ConfigService();
-
   async execute(): Promise<void> {
-    try {
-      await this.configService.clearConfig();
-      const activeWorkspace = ConfigService.getActiveWorkspace();
-      console.log(
-        chalk.green(
-          `✓ Successfully logged out (workspace: ${activeWorkspace})`,
-        ),
-      );
-    } catch (error) {
-      console.error(
-        chalk.red('Logout failed:'),
-        error instanceof Error ? error.message : error,
-      );
+    const result = await authLogout();
+
+    if (!result.success) {
+      console.error(chalk.red('Logout failed:'), result.error.message);
       process.exit(1);
     }
+
+    const activeWorkspace = ConfigService.getActiveWorkspace();
+    console.log(
+      chalk.green(`✓ Successfully logged out (workspace: ${activeWorkspace})`),
+    );
   }
 }

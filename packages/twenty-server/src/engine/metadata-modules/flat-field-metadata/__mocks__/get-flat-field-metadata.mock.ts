@@ -53,6 +53,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    viewSortIds: [],
+    viewSortUniversalIdentifiers: [],
     universalSettings: null,
     ...overrides,
   };

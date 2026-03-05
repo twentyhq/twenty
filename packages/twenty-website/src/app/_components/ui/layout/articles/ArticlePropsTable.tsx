@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import PropTypes from 'prop-types';
 
 const StyledTableContainer = styled.div`

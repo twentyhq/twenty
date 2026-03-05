@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CustomException } from 'src/utils/custom-exception';
 
 const assertIsFeatureFlagKey = (

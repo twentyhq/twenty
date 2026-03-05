@@ -13,7 +13,6 @@ const meta: Meta<typeof Table> = {
   decorators: [ComponentDecorator],
   argTypes: {
     as: { table: { disable: true } },
-    theme: { table: { disable: true } },
   },
 };
 

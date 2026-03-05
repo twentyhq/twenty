@@ -2,13 +2,13 @@ import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/command-menu/pages/p
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ChartColorPaletteOptionProps = {
   selectedItemId: string | null;
@@ -19,7 +19,7 @@ type ChartColorPaletteOptionProps = {
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 export const ChartColorPaletteOption = ({
@@ -27,9 +27,7 @@ export const ChartColorPaletteOption = ({
   currentColor,
   onSelectColor,
 }: ChartColorPaletteOptionProps) => {
-  const theme = useTheme();
-
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
 
   const paletteColors = Array.from(
     { length: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT },

@@ -1,3 +1,4 @@
+import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
 import { type ValidationResult } from '@/sdk';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
@@ -6,7 +7,7 @@ import os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui'];
+const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui', 'twenty-sdk/generated'];
 
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',
@@ -74,7 +75,7 @@ const loadModule = async ({
       ...(reactPath && { react: reactPath }),
       ...(reactDomPath && { 'react-dom': reactDomPath }),
     },
-    plugins: [manifestMockPlugin],
+    plugins: [conditionalAvailabilityTransformPlugin, manifestMockPlugin],
     logLevel: 'silent',
   });
 

@@ -56,15 +56,16 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
         result.response.data?.updatePageLayoutWithTabsAndWidgets;
 
       if (isDefined(updatedPageLayout)) {
-        const serverLayout: PageLayout = transformPageLayout(updatedPageLayout);
+        const persistedLayout: PageLayout =
+          transformPageLayout(updatedPageLayout);
 
         const pageLayoutToPersist =
-          serverLayout.type === PageLayoutType.RECORD_PAGE
+          persistedLayout.type === PageLayoutType.RECORD_PAGE
             ? reInjectDynamicRelationWidgetsFromDraft(
-                serverLayout,
+                persistedLayout,
                 pageLayoutDraft,
               )
-            : serverLayout;
+            : persistedLayout;
 
         store.set(pageLayoutPersistedCallbackState, pageLayoutToPersist);
         store.set(

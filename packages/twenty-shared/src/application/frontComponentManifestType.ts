@@ -7,6 +7,7 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   availabilityType?: 'GLOBAL' | 'SINGLE_RECORD' | 'BULK_RECORDS';
   availabilityObjectUniversalIdentifier?: string;
   frontComponentUniversalIdentifier: string;
+  conditionalAvailabilityExpression?: string;
 };
 
 export type FrontComponentCommandManifest = Omit<

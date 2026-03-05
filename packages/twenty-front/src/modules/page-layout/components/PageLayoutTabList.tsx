@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   type DropResult,
@@ -47,17 +47,18 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   position: relative;
   user-select: none;
   width: 100%;
 
   &::after {
-    background-color: ${({ theme }) => theme.border.color.light};
+    background-color: ${themeCssVariables.border.color.light};
     bottom: 0;
     content: '';
     height: 1px;
@@ -70,7 +71,7 @@ const StyledContainer = styled.div`
 const StyledAddButton = styled.div`
   display: flex;
   align-items: center;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   margin-left: ${TAB_LIST_GAP}px;
 `;
 

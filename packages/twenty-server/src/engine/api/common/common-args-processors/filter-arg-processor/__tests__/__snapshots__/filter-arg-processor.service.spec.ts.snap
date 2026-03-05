@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #1: {"actorField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: ACTOR"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #2: {"actorField":{"source":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "actorField.source" of type SELECT - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #3: {"actorField":{"workspaceMemberId":{"eq":"invalid-uuid"}}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "actorField.workspaceMemberId""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ADDRESS should throw for invalid filter #1: {"addressField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: ADDRESS"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ADDRESS should throw for invalid filter #2: {"addressField":{"addressCity":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "addressField.addressCity" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ADDRESS should throw for invalid filter #3: {"addressField":{"addressCity":{}}} 1`] = `"Filter for field "addressField.addressCity" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ARRAY should throw for invalid filter #1: {"arrayField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "arrayField" of type ARRAY - Allowed operators: containsIlike, is, isEmptyArray"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ARRAY should throw for invalid filter #2: {"arrayField":{}} 1`] = `"Filter for field "arrayField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation ARRAY should throw for invalid filter #3: {"arrayField":{"containsIlike":"test","is":"NULL"}} 1`] = `"Filter for field "arrayField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation BOOLEAN should throw for invalid filter #1: {"booleanField":{"eq":{}}} 1`] = `"Invalid boolean value {} for field "booleanField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation BOOLEAN should throw for invalid filter #2: {"booleanField":{"eq":[]}} 1`] = `"Invalid boolean value [] for field "booleanField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation BOOLEAN should throw for invalid filter #3: {"booleanField":{"eq":1}} 1`] = `"Invalid boolean value 1 for field "booleanField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation BOOLEAN should throw for invalid filter #4: {"booleanField":{"invalidOperator":true}} 1`] = `"Operator "invalidOperator" is not valid for field "booleanField" of type BOOLEAN - Allowed operators: eq, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation BOOLEAN should throw for invalid filter #5: {"booleanField":{}} 1`] = `"Filter for field "booleanField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation CURRENCY should throw for invalid filter #1: {"currencyField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: CURRENCY"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation CURRENCY should throw for invalid filter #2: {"currencyField":{"amountMicros":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "currencyField.amountMicros" of type NUMERIC - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation CURRENCY should throw for invalid filter #3: {"currencyField":{"amountMicros":{"eq":"not-a-number"}}} 1`] = `"Invalid number value NaN for field "currencyField.amountMicros""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #1: {"dateField":{"eq":"malformed-date"}} 1`] = `"Invalid value 'malformed-date' for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #2: {"dateField":{"eq":{}}} 1`] = `"Invalid value {} for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #3: {"dateField":{"eq":[]}} 1`] = `"Invalid value [] for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #4: {"dateField":{"eq":true}} 1`] = `"Invalid value true for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #5: {"dateField":{"eq":1}} 1`] = `"Invalid value 1 for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #6: {"dateField":{"invalidOperator":"2025-01-01"}} 1`] = `"Operator "invalidOperator" is not valid for field "dateField" of type DATE - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE should throw for invalid filter #7: {"dateField":{}} 1`] = `"Filter for field "dateField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #1: {"dateTimeField":{"eq":"malformed-date"}} 1`] = `"Invalid value 'malformed-date' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #2: {"dateTimeField":{"eq":{}}} 1`] = `"Invalid value {} for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #3: {"dateTimeField":{"eq":[]}} 1`] = `"Invalid value [] for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #4: {"dateTimeField":{"eq":true}} 1`] = `"Invalid value true for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #5: {"dateTimeField":{"eq":1}} 1`] = `"Invalid value 1 for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #6: {"dateTimeField":{"invalidOperator":"2025-01-01T10:00:00Z"}} 1`] = `"Operator "invalidOperator" is not valid for field "dateTimeField" of type DATE_TIME - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation DATE_TIME should throw for invalid filter #7: {"dateTimeField":{}} 1`] = `"Filter for field "dateTimeField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation EMAILS should throw for invalid filter #1: {"emailsField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: EMAILS"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation EMAILS should throw for invalid filter #2: {"emailsField":{"primaryEmail":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "emailsField.primaryEmail" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation FILES should throw for invalid filter #1: {"filesField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "filesField" of type FILES - Allowed operators: is, like"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation FILES should throw for invalid filter #2: {"filesField":{}} 1`] = `"Filter for field "filesField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation FULL_NAME should throw for invalid filter #1: {"fullNameField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: FULL_NAME"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation FULL_NAME should throw for invalid filter #2: {"fullNameField":{"firstName":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "fullNameField.firstName" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation LINKS should throw for invalid filter #1: {"linksField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: LINKS"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation LINKS should throw for invalid filter #2: {"linksField":{"primaryLinkUrl":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "linksField.primaryLinkUrl" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MORPH_RELATION should throw for invalid filter #1: {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MORPH_RELATION should throw for invalid filter #2: {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id" of type MORPH_RELATION - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MORPH_RELATION should throw for invalid filter #3: {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":{}} 1`] = `"Filter for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MULTI_SELECT should throw for invalid filter #1: {"multiSelectField":{"invalidOperator":["OPTION_1"]}} 1`] = `"Operator "invalidOperator" is not valid for field "multiSelectField" of type MULTI_SELECT - Allowed operators: containsAny, is, isEmptyArray"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MULTI_SELECT should throw for invalid filter #2: {"multiSelectField":{}} 1`] = `"Filter for field "multiSelectField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation MULTI_SELECT should throw for invalid filter #3: {"multiSelectField":{"containsAny":"not-an-array"}} 1`] = `"Filter operator "containsAny" requires an array value for field multiSelectField"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #1: {"numberField":{"eq":"not-a-number"}} 1`] = `"Invalid number value NaN for field "numberField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #2: {"numberField":{"eq":{}}} 1`] = `"Invalid number value {} for field "numberField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #3: {"numberField":{"eq":[]}} 1`] = `"Invalid number value [] for field "numberField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #4: {"numberField":{"eq":true}} 1`] = `"Invalid number value true for field "numberField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #5: {"numberField":{"invalidOperator":1}} 1`] = `"Operator "invalidOperator" is not valid for field "numberField" of type NUMBER - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #6: {"numberField":{"eq":1,"neq":2}} 1`] = `"Filter for field "numberField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMBER should throw for invalid filter #7: {"numberField":{}} 1`] = `"Filter for field "numberField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMERIC should throw for invalid filter #1: {"numericField":{"eq":"not-a-number"}} 1`] = `"Invalid number value NaN for field "numericField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMERIC should throw for invalid filter #2: {"numericField":{"eq":{}}} 1`] = `"Invalid number value {} for field "numericField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMERIC should throw for invalid filter #3: {"numericField":{"invalidOperator":1}} 1`] = `"Operator "invalidOperator" is not valid for field "numericField" of type NUMERIC - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation NUMERIC should throw for invalid filter #4: {"numericField":{}} 1`] = `"Filter for field "numericField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation PHONES should throw for invalid filter #1: {"phonesField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: PHONES"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation PHONES should throw for invalid filter #2: {"phonesField":{"primaryPhoneNumber":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "phonesField.primaryPhoneNumber" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation POSITION should throw for invalid filter #1: {"position":{"eq":"not-a-number"}} 1`] = `"Invalid number value NaN for field "position""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation POSITION should throw for invalid filter #2: {"position":{"eq":{}}} 1`] = `"Invalid number value {} for field "position""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation POSITION should throw for invalid filter #3: {"position":{"invalidOperator":1}} 1`] = `"Operator "invalidOperator" is not valid for field "position" of type POSITION - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation POSITION should throw for invalid filter #4: {"position":{}} 1`] = `"Filter for field "position" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #1: {"ratingField":{"invalidOperator":"RATING_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "ratingField" of type RATING - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #2: {"ratingField":{}} 1`] = `"Filter for field "ratingField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RATING should throw for invalid filter #3: {"ratingField":{"eq":"RATING_1","neq":"RATING_2"}} 1`] = `"Filter for field "ratingField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RAW_JSON should throw for invalid filter #1: {"rawJsonField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "rawJsonField" of type RAW_JSON - Allowed operators: is, like"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RAW_JSON should throw for invalid filter #2: {"rawJsonField":{}} 1`] = `"Filter for field "rawJsonField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #1: {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "manyToOneRelationFieldId""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #2: {"manyToOneRelationFieldId":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "manyToOneRelationFieldId" of type RELATION - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #3: {"manyToOneRelationFieldId":{}} 1`] = `"Filter for field "manyToOneRelationFieldId" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #1: {"richTextField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextField" of type RICH_TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #2: {"richTextField":{}} 1`] = `"Filter for field "richTextField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #1: {"richTextV2Field":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT_V2"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #2: {"richTextV2Field":{"markdown":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextV2Field.markdown" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #1: {"selectField":{"invalidOperator":"OPTION_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "selectField" of type SELECT - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #2: {"selectField":{}} 1`] = `"Filter for field "selectField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #3: {"selectField":{"eq":"OPTION_1","neq":"OPTION_2"}} 1`] = `"Filter for field "selectField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation TEXT should throw for invalid filter #1: {"textField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "textField" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation TEXT should throw for invalid filter #2: {"textField":{"eq":"test","neq":"test"}} 1`] = `"Filter for field "textField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation TEXT should throw for invalid filter #3: {"textField":{}} 1`] = `"Filter for field "textField" must have exactly one operator"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #1: {"uuidField":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "uuidField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #2: {"uuidField":{"eq":2}} 1`] = `"Invalid UUID value 2 for field "uuidField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #3: {"uuidField":{"eq":{}}} 1`] = `"Invalid UUID value {} for field "uuidField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #4: {"uuidField":{"eq":[]}} 1`] = `"Invalid UUID value [] for field "uuidField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #5: {"uuidField":{"eq":true}} 1`] = `"Invalid UUID value true for field "uuidField""`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #6: {"uuidField":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "uuidField" of type UUID - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+
+exports[`FilterArgProcessorService failing filter inputs validation UUID should throw for invalid filter #7: {"uuidField":{}} 1`] = `"Filter for field "uuidField" must have exactly one operator"`;

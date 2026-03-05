@@ -2,19 +2,23 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
-  background: ${({ theme, withIconBackground }) =>
-    withIconBackground ? theme.background.primary : 'unset'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${({ withIconBackground }) =>
+    withIconBackground ? themeCssVariables.background.primary : 'unset'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   border: 1px solid
-    ${({ theme, withIconBackground }) =>
-      withIconBackground ? theme.border.color.medium : 'transparent'};
+    ${({ withIconBackground }) =>
+      withIconBackground
+        ? themeCssVariables.border.color.medium
+        : 'transparent'};
   &:not(:first-of-type) {
-    margin-left: -${({ theme }) => theme.spacing(1)};
+    margin-left: -${themeCssVariables.spacing[1]};
   }
   display: flex;
   align-items: center;
@@ -36,7 +40,7 @@ export const CommandMenuContextRecordChipAvatars = ({
     objectMetadataItem.nameSingular,
   );
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledIconWrapper

@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Gabarito } from 'next/font/google';
 import { type JSXElementConstructor, type ReactElement } from 'react';
 

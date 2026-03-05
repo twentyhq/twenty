@@ -4,10 +4,9 @@ import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 import { motion, type MotionProps } from 'framer-motion';
-import { type ComponentProps, type MouseEvent, useContext } from 'react';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 export type AnimatedLightIconButtonProps = {
   className?: string;
@@ -108,8 +107,6 @@ export const AnimatedLightIconButton = ({
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledButton
       data-testid={testId}
@@ -125,9 +122,7 @@ export const AnimatedLightIconButton = ({
     >
       <StyledIconContainer animate={animate} transition={transition}>
         {Icon && (
-          <Icon
-            size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
-          />
+          <Icon size={size === 'medium' ? ICON_SIZES.md : ICON_SIZES.sm} />
         )}
       </StyledIconContainer>
     </StyledButton>

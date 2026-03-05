@@ -1,4 +1,3 @@
-import { ThemeProvider } from '@emotion/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Preview } from '@storybook/react-vite';
@@ -71,15 +70,13 @@ const preview: Preview = {
 
       return (
         <I18nProvider i18n={i18n}>
-          <ThemeProvider theme={theme}>
-            <ThemeContextProvider theme={theme}>
-              <ClickOutsideListenerContext.Provider
-                value={{ excludedClickOutsideId: undefined }}
-              >
-                <Story />
-              </ClickOutsideListenerContext.Provider>
-            </ThemeContextProvider>
-          </ThemeProvider>
+          <ThemeContextProvider theme={theme}>
+            <ClickOutsideListenerContext.Provider
+              value={{ excludedClickOutsideId: undefined }}
+            >
+              <Story />
+            </ClickOutsideListenerContext.Provider>
+          </ThemeContextProvider>
         </I18nProvider>
       );
     },

@@ -5,7 +5,6 @@ export const testGqlFailingScenario = async (
   objectMetadataSingularName: string,
   objectMetadataPluralName: string,
   filter: any,
-  errorMessage: string,
 ) => {
   const graphqlOperation = findManyOperationFactory({
     objectMetadataSingularName: objectMetadataSingularName,
@@ -17,5 +16,5 @@ export const testGqlFailingScenario = async (
   const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
   expect(response.body.errors).toBeDefined();
-  expect(response.body.errors[0].message).toContain(errorMessage);
+  expect(response.body.errors[0].message).toMatchSnapshot();
 };
