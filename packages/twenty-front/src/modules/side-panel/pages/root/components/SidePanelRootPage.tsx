@@ -1,23 +1,19 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
-import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
+import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
 import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingCommandMenuActions';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { type SidePanelActionGroupConfig } from '@/side-panel/types/SidePanelActionGroupConfig';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-export type ActionGroupConfig = {
-  heading: string;
-  items?: ActionConfig[];
-};
-
-export const CommandMenu = () => {
+export const SidePanelRootPage = () => {
   const { t } = useLingui();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -43,7 +39,7 @@ export const CommandMenu = () => {
   const previousContextStoreCurrentObjectMetadataItemId =
     useAtomComponentStateValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
-      'command-menu-previous',
+      SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
     );
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -53,7 +49,7 @@ export const CommandMenu = () => {
     (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const commandGroups: ActionGroupConfig[] = [
+  const commandGroups: SidePanelActionGroupConfig[] = [
     {
       heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionActions
@@ -86,7 +82,7 @@ export const CommandMenu = () => {
   const selectableItemIds = selectableItems.map((item) => item.key);
 
   if (isDefined(previousContextStoreCurrentObjectMetadataItemId)) {
-    selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
+    selectableItemIds.unshift(SIDE_PANEL_RESET_CONTEXT_TO_SELECTION);
   }
 
   return (
@@ -97,7 +93,7 @@ export const CommandMenu = () => {
     >
       {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
         <SidePanelGroup heading={t`Context`}>
-          <ResetContextToSelectionCommandButton />
+          <SidePanelResetContextToSelectionButton />
         </SidePanelGroup>
       )}
     </SidePanelList>

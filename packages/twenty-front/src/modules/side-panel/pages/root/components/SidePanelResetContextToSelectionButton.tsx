@@ -1,7 +1,7 @@
 import { SidePanelContextRecordsChip } from '@/side-panel/components/SidePanelContextRecordsChip';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
-import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
+import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 
-export const ResetContextToSelectionCommandButton = () => {
+export const SidePanelResetContextToSelectionButton = () => {
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
@@ -44,11 +44,11 @@ export const ResetContextToSelectionCommandButton = () => {
 
   return (
     <SelectableListItem
-      itemId={RESET_CONTEXT_TO_SELECTION}
+      itemId={SIDE_PANEL_RESET_CONTEXT_TO_SELECTION}
       onEnter={resetPreviousCommandMenuContext}
     >
       <CommandMenuItem
-        id={RESET_CONTEXT_TO_SELECTION}
+        id={SIDE_PANEL_RESET_CONTEXT_TO_SELECTION}
         Icon={IconArrowBackUp}
         label={t`Reset to`}
         RightComponent={

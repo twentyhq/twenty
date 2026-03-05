@@ -22,10 +22,10 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { type CommandMenu } from '@/command-menu/components/CommandMenu';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -72,7 +72,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof CommandMenu> = {
+const meta: Meta<typeof SidePanelRootPage> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: SidePanelRouter,
   decorators: [
@@ -128,7 +128,7 @@ const meta: Meta<typeof CommandMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CommandMenu>;
+type Story = StoryObj<typeof SidePanelRootPage>;
 
 export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {
