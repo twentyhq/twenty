@@ -122,11 +122,11 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Purpose**: Clean up dead code and verify final state.
 
-- [ ] T014 [P] Remove unused imports of `isRecordTableScrolledVerticallyComponentState` and `isRecordTableScrolledHorizontallyComponentState` from `RecordTableCellFirstRowFirstColumn.tsx` and any other files that no longer need them
-- [ ] T015 [P] Verify `RecordTableScrollAndZIndexEffect` in `packages/twenty-front/src/modules/object-record/record-table/components/RecordTableScrollAndZIndexEffect.tsx` still works correctly — it should continue to manage scroll shadow CSS variables and mobile compaction. Confirm it still sets the scroll atoms (other header components still consume them for border-bottom visibility)
-- [ ] T016 Run `npx nx lint:diff-with-main twenty-front` and `npx nx typecheck twenty-front` to verify no lint or type errors
-- [ ] T017 Run the final comprehensive visual test matrix across all 8 scenarios. Verify all 6 user stories pass
-- [ ] T018 Verify the final TABLE_Z_INDEX constant is under 30 lines and all values are static (no scroll-state keys remain)
+- [X] T014 [P] Remove unused imports of `isRecordTableScrolledVerticallyComponentState` and `isRecordTableScrolledHorizontallyComponentState` from `RecordTableCellFirstRowFirstColumn.tsx` and any other files that no longer need them
+- [X] T015 [P] Verify `RecordTableScrollAndZIndexEffect` in `packages/twenty-front/src/modules/object-record/record-table/components/RecordTableScrollAndZIndexEffect.tsx` still works correctly — it should continue to manage scroll shadow CSS variables and mobile compaction. Confirm it still sets the scroll atoms (other header components still consume them for border-bottom visibility)
+- [X] T016 Run `npx nx lint:diff-with-main twenty-front` and `npx nx typecheck twenty-front` to verify no lint or type errors
+- [X] T017 Run the final comprehensive visual test matrix across all 8 scenarios. Verify all 6 user stories pass
+- [X] T018 Verify the final TABLE_Z_INDEX constant is under 30 lines and all values are static (no scroll-state keys remain)
 
 ---
 
