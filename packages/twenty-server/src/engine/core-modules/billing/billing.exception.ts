@@ -32,6 +32,7 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
   BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
+  BILLING_USER_BUDGET_EXCEEDED = 'BILLING_USER_BUDGET_EXCEEDED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -86,6 +87,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Multiple subscriptions found where one was expected.`;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
+    case BillingExceptionCode.BILLING_USER_BUDGET_EXCEEDED:
+      return msg`You have exceeded your AI chat budget. Please contact your workspace administrator.`;
     default:
       assertUnreachable(code);
   }

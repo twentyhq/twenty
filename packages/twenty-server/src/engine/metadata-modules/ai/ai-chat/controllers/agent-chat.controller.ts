@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
+import { BillingBudgetGuardService } from 'src/engine/core-modules/billing/services/billing-budget-guard.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,6 +48,7 @@ export class AgentChatController {
   constructor(
     private readonly agentStreamingService: AgentChatStreamingService,
     private readonly billingService: BillingService,
+    private readonly billingBudgetGuardService: BillingBudgetGuardService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
@@ -88,6 +90,18 @@ export class AgentChatController {
         throw new BillingException(
           'Credits exhausted',
           BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+        );
+      }
+
+      const canUserSpend = await this.billingBudgetGuardService.canUserSpend(
+        workspace.id,
+        userWorkspaceId,
+      );
+
+      if (!canUserSpend) {
+        throw new BillingException(
+          'User AI chat budget exceeded',
+          BillingExceptionCode.BILLING_USER_BUDGET_EXCEEDED,
         );
       }
     }
