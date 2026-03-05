@@ -52,7 +52,7 @@
           "command": "npx oxlint --fix -c .oxlintrc.json ."
         }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"]
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",

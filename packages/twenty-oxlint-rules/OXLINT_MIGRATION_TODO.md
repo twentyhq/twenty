@@ -33,7 +33,7 @@ These plugins were in use but have no oxlint equivalent. Consider whether altern
 | `@next/eslint-plugin-next` | Website | Next.js-specific rules (no `<img>`, link handling, etc.) | Not supported by oxlint |
 | `eslint-plugin-unused-imports` | Frontend | Removed unused imports on save | Partially covered by `no-unused-vars` |
 | `eslint-plugin-storybook` | Frontend | Storybook best practices (story structure, naming) | No equivalent |
-| `eslint-plugin-jsx-a11y` | Frontend | Accessibility rules (alt text, aria, roles, etc.) | No equivalent. Oxlint has a partial `jsx-a11y` plugin but coverage is limited. |
+| `eslint-plugin-jsx-a11y` | Frontend | Accessibility rules (alt text, aria, roles, etc.) | Partial equivalent in Oxlint (`jsx-a11y` plugin), but coverage is limited. |
 | `eslint-plugin-react-refresh` | Frontend | React Refresh boundary validation (HMR) | No equivalent |
 
 ## IDE Integration
