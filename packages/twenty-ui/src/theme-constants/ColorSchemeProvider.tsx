@@ -16,7 +16,10 @@ export const ColorSchemeProvider = ({
   colorScheme: 'light' | 'dark';
 }) => {
   useLayoutEffect(() => {
-    const root = document.documentElement;
+    const root = document?.documentElement;
+
+    if (!root?.classList) return;
+
     root.classList.toggle('dark', colorScheme === 'dark');
     root.classList.toggle('light', colorScheme === 'light');
   }, [colorScheme]);
