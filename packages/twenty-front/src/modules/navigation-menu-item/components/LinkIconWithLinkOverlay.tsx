@@ -74,9 +74,13 @@ export const LinkIconWithLinkOverlay = ({
   color: navItemColor,
 }: LinkIconWithLinkOverlayProps) => {
   const { theme } = useContext(ThemeContext);
-  const [faviconFailed, setFaviconFailed] = useState(false);
+  const [failedFaviconLink, setFailedFaviconLink] = useState<string | null>(
+    null,
+  );
   const faviconUrl = getLinkFaviconUrl(link);
-  const showFavicon = isDefined(faviconUrl) && !faviconFailed;
+  const showFavicon =
+    isDefined(faviconUrl) && failedFaviconLink !== (link ?? null);
+
   const linkStyle = getNavigationMenuItemIconStyleFromColor(
     theme,
     navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
@@ -93,7 +97,7 @@ export const LinkIconWithLinkOverlay = ({
           <StyledFaviconImage
             src={faviconUrl}
             alt=""
-            onError={() => setFaviconFailed(true)}
+            onError={() => setFailedFaviconLink(link ?? null)}
           />
         ) : (
           <DefaultIcon

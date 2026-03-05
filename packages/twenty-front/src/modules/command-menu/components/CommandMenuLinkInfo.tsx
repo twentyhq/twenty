@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconLink } from 'twenty-ui/display';
+import { IconLink, IconWorld } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
@@ -61,8 +61,10 @@ export const CommandMenuLinkInfo = () => {
   return (
     <CommandMenuPageInfoLayout
       icon={
-        <NavigationMenuItemStyleIcon
-          Icon={IconLink}
+        <LinkIconWithLinkOverlay
+          link={selectedItem.link}
+          LinkIcon={IconLink}
+          DefaultIcon={IconWorld}
           color={selectedItem.color}
         />
       }
