@@ -17,7 +17,7 @@ import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
 
-export const useCommandMenuSearchRecords = () => {
+export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const coreClient = useApolloCoreClient();
 

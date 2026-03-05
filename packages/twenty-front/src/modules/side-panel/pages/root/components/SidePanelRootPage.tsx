@@ -2,12 +2,12 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
-import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingCommandMenuActions';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { type SidePanelActionGroupConfig } from '@/side-panel/types/SidePanelActionGroupConfig';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
+import { useSidePanelMatchingActions } from '@/side-panel/pages/root/hooks/useSidePanelMatchingActions';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -31,8 +31,8 @@ export const SidePanelRootPage = () => {
     matchingNavigateActions,
     fallbackActions,
     matchingCreateRelatedRecordActions,
-  } = useMatchingCommandMenuActions({
-    commandMenuSearch: sidePanelSearch,
+  } = useSidePanelMatchingActions({
+    sidePanelSearch,
   });
 
   // eslint-disable-next-line twenty/matching-state-variable

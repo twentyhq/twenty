@@ -1,14 +1,14 @@
 import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuActions';
 import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
 
-export const useMatchingCommandMenuActions = ({
-  commandMenuSearch,
+export const useSidePanelMatchingActions = ({
+  sidePanelSearch,
 }: {
-  commandMenuSearch: string;
+  sidePanelSearch: string;
 }) => {
   const { filterActionsWithCommandMenuSearch } =
     useFilterActionsWithCommandMenuSearch({
-      commandMenuSearch,
+      commandMenuSearch: sidePanelSearch,
     });
 
   const {

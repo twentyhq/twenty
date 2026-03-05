@@ -1,9 +1,9 @@
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useCommandMenuSearchRecords } from '@/command-menu/hooks/useCommandMenuSearchRecords';
+import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { useMemo } from 'react';
 
 export const SidePanelSearchRecordsPage = () => {
-  const { commandGroups, loading, noResults } = useCommandMenuSearchRecords();
+  const { commandGroups, loading, noResults } = useSidePanelSearchRecords();
 
   const selectableItemIds = useMemo(() => {
     return commandGroups
