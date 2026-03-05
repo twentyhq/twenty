@@ -180,13 +180,17 @@ export const PhonesFieldInput = () => {
           };
         }
 
-        const phone = parsePhoneNumber(input);
-        if (phone !== undefined) {
-          return {
-            number: phone.nationalNumber,
-            callingCode: `+${phone.countryCallingCode}`,
-            countryCode: phone.country as string,
-          };
+        try {
+          const phone = parsePhoneNumber(input);
+          if (phone !== undefined) {
+            return {
+              number: phone.nationalNumber,
+              callingCode: `+${phone.countryCallingCode}`,
+              countryCode: phone.country as string,
+            };
+          }
+        } catch {
+          // parsePhoneNumber throws ParseError for inputs with unrecognized country
         }
 
         return {
