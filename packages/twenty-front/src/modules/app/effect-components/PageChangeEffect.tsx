@@ -115,7 +115,7 @@ export const PageChangeEffect = () => {
     isMatchingLocation(location, appPath),
   );
 
-  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+  const closeSidePanelUnlessOnEditPage = useCallback(() => {
     const currentPage = store.get(sidePanelPageState.atom);
     if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
@@ -130,8 +130,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenuUnlessOnEditPage();
-  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
+    closeSidePanelUnlessOnEditPage();
+  }, [location.pathname, closeSidePanelUnlessOnEditPage]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {

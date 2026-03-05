@@ -6,19 +6,16 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
-export const useRichTextCommandMenu = () => {
+export const useOpenRichTextInSidePanel = () => {
   const { navigateSidePanelMenu, openSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
-  const openRichTextInCommandMenu = useCallback(
-    ({
-      activityId,
-      activityObjectNameSingular,
-    }: {
-      activityId: string;
-      activityObjectNameSingular: string;
-    }) => {
+  const openRichTextInSidePanel = useCallback(
+    (
+      activityId: string,
+      activityObjectNameSingular: string,
+    ) => {
       store.set(viewableRichTextComponentState.atom, {
         activityId,
         activityObjectNameSingular,
@@ -34,14 +31,7 @@ export const useRichTextCommandMenu = () => {
     [navigateSidePanelMenu, openSidePanelMenu, store],
   );
 
-  const editRichText = useCallback(
-    (activityId: string, activityObjectNameSingular: string) => {
-      openRichTextInCommandMenu({ activityId, activityObjectNameSingular });
-    },
-    [openRichTextInCommandMenu],
-  );
-
   return {
-    editRichText,
+    openRichTextInSidePanel,
   };
 };

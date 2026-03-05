@@ -1,14 +1,14 @@
-import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuActions';
-import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
+import { useFilterActionsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterActionsWithSidePanelSearch';
+import { useSidePanelActions } from '@/side-panel/pages/root/hooks/useSidePanelActions';
 
 export const useSidePanelMatchingActions = ({
   sidePanelSearch,
 }: {
   sidePanelSearch: string;
 }) => {
-  const { filterActionsWithCommandMenuSearch } =
-    useFilterActionsWithCommandMenuSearch({
-      commandMenuSearch: sidePanelSearch,
+  const { filterActionsWithSidePanelSearch } =
+    useFilterActionsWithSidePanelSearch({
+      sidePanelSearch: sidePanelSearch,
     });
 
   const {
@@ -22,34 +22,34 @@ export const useSidePanelMatchingActions = ({
     frontComponentRecordSelectionActions,
     fallbackActions,
     createRelatedRecordActions,
-  } = useCommandMenuActions();
+  } = useSidePanelActions();
 
   const matchingNavigateActions =
-    filterActionsWithCommandMenuSearch(navigateActions);
+    filterActionsWithSidePanelSearch(navigateActions);
 
   const matchingStandardActionRecordSelectionActions =
-    filterActionsWithCommandMenuSearch(actionRecordSelectionActions);
+    filterActionsWithSidePanelSearch(actionRecordSelectionActions);
 
   const matchingStandardActionObjectActions =
-    filterActionsWithCommandMenuSearch(actionObjectActions);
+    filterActionsWithSidePanelSearch(actionObjectActions);
 
   const matchingStandardActionGlobalActions =
-    filterActionsWithCommandMenuSearch(actionGlobalActions);
+    filterActionsWithSidePanelSearch(actionGlobalActions);
 
   const matchingWorkflowRunRecordSelectionActions =
-    filterActionsWithCommandMenuSearch(workflowRunRecordSelectionActions);
+    filterActionsWithSidePanelSearch(workflowRunRecordSelectionActions);
 
-  const matchingWorkflowRunGlobalActions = filterActionsWithCommandMenuSearch(
+  const matchingWorkflowRunGlobalActions = filterActionsWithSidePanelSearch(
     workflowRunGlobalActions,
   );
 
   const matchingFrontComponentGlobalActions =
-    filterActionsWithCommandMenuSearch(frontComponentGlobalActions);
+    filterActionsWithSidePanelSearch(frontComponentGlobalActions);
 
   const matchingFrontComponentRecordSelectionActions =
-    filterActionsWithCommandMenuSearch(frontComponentRecordSelectionActions);
+    filterActionsWithSidePanelSearch(frontComponentRecordSelectionActions);
 
-  const matchingCreateRelatedRecordActions = filterActionsWithCommandMenuSearch(
+  const matchingCreateRelatedRecordActions = filterActionsWithSidePanelSearch(
     createRelatedRecordActions,
   );
 

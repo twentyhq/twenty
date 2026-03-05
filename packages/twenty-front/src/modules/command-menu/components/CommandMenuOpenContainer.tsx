@@ -3,13 +3,13 @@ import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandM
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
-import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { type SidePanelAnimationVariant } from '@/side-panel/types/SidePanelAnimationVariant';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
-import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
+import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useStore } from 'jotai';
@@ -37,7 +37,7 @@ const StyledCommandMenuBase = styled.div`
   position: fixed;
   right: 0%;
   top: 0%;
-  z-index: ${RootStackingContextZIndices.CommandMenu};
+  z-index: ${RootStackingContextZIndices.SidePanel};
   display: flex;
   flex-direction: column;
 `;
@@ -48,7 +48,7 @@ export const CommandMenuOpenContainer = ({
 }: React.PropsWithChildren) => {
   const isMobile = useIsMobile();
 
-  const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
+  const targetVariantForAnimation: SidePanelAnimationVariant = isMobile
     ? 'fullScreen'
     : 'normal';
 
@@ -80,7 +80,7 @@ export const CommandMenuOpenContainer = ({
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     excludedClickOutsideIds: [
       NAVIGATION_DRAWER_CLICK_OUTSIDE_ID,
-      PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
+      PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,
       RECORD_CHIP_CLICK_OUTSIDE_ID,
       SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID,

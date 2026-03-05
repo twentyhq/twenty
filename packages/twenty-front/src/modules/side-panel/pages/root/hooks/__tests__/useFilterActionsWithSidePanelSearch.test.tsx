@@ -3,11 +3,11 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { renderHook } from '@testing-library/react';
 import { IconPlus } from 'twenty-ui/display';
-import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
+import { useFilterActionsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterActionsWithSidePanelSearch';
 
 const MockComponent = <div>Mock Component</div>;
 
-describe('useFilterActionsWithCommandMenuSearch', () => {
+describe('useFilterActionsWithSidePanelSearch', () => {
   const mockActions: ActionConfig[] = [
     {
       key: 'action-1',
@@ -45,22 +45,22 @@ describe('useFilterActionsWithCommandMenuSearch', () => {
 
   it('should return all actions when search is empty', () => {
     const { result } = renderHook(() =>
-      useFilterActionsWithCommandMenuSearch({ commandMenuSearch: '' }),
+      useFilterActionsWithSidePanelSearch({ sidePanelSearch: '' }),
     );
 
     const filtered =
-      result.current.filterActionsWithCommandMenuSearch(mockActions);
+      result.current.filterActionsWithSidePanelSearch(mockActions);
 
     expect(filtered).toEqual(mockActions);
   });
 
   it('should filter actions by label', () => {
     const { result } = renderHook(() =>
-      useFilterActionsWithCommandMenuSearch({ commandMenuSearch: 'Create' }),
+      useFilterActionsWithSidePanelSearch({ sidePanelSearch: 'Create' }),
     );
 
     const filtered =
-      result.current.filterActionsWithCommandMenuSearch(mockActions);
+      result.current.filterActionsWithSidePanelSearch(mockActions);
 
     expect(filtered).toHaveLength(1);
     expect(filtered[0].key).toBe('action-1');
@@ -68,11 +68,11 @@ describe('useFilterActionsWithCommandMenuSearch', () => {
 
   it('should filter actions by hotkeys', () => {
     const { result } = renderHook(() =>
-      useFilterActionsWithCommandMenuSearch({ commandMenuSearch: 'del' }),
+      useFilterActionsWithSidePanelSearch({ sidePanelSearch: 'del' }),
     );
 
     const filtered =
-      result.current.filterActionsWithCommandMenuSearch(mockActions);
+      result.current.filterActionsWithSidePanelSearch(mockActions);
 
     expect(filtered).toHaveLength(1);
     expect(filtered[0].key).toBe('action-2');
@@ -80,22 +80,22 @@ describe('useFilterActionsWithCommandMenuSearch', () => {
 
   it('should return empty array when no actions match', () => {
     const { result } = renderHook(() =>
-      useFilterActionsWithCommandMenuSearch({ commandMenuSearch: 'xyz' }),
+      useFilterActionsWithSidePanelSearch({ sidePanelSearch: 'xyz' }),
     );
 
     const filtered =
-      result.current.filterActionsWithCommandMenuSearch(mockActions);
+      result.current.filterActionsWithSidePanelSearch(mockActions);
 
     expect(filtered).toEqual([]);
   });
 
   it('should match actions by either label or hotkeys', () => {
     const { result } = renderHook(() =>
-      useFilterActionsWithCommandMenuSearch({ commandMenuSearch: 'Record' }),
+      useFilterActionsWithSidePanelSearch({ sidePanelSearch: 'Record' }),
     );
 
     const filtered =
-      result.current.filterActionsWithCommandMenuSearch(mockActions);
+      result.current.filterActionsWithSidePanelSearch(mockActions);
 
     expect(filtered).toHaveLength(3);
   });

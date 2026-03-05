@@ -3,11 +3,11 @@ import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constant
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 
-export const useResetPreviousCommandMenuContext = () => {
+export const useResetPreviousSidePanelContext = () => {
   const { copyContextStoreStates } = useCopyContextStoreStates();
   const { resetContextStoreStates } = useResetContextStoreStates();
 
-  const resetPreviousCommandMenuContext = () => {
+  const resetPreviousSidePanelContext = () => {
     copyContextStoreStates({
       instanceIdToCopyFrom: SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
       instanceIdToCopyTo: SIDE_PANEL_COMPONENT_INSTANCE_ID,
@@ -16,6 +16,6 @@ export const useResetPreviousCommandMenuContext = () => {
   };
 
   return {
-    resetPreviousCommandMenuContext,
+    resetPreviousSidePanelContext,
   };
 };

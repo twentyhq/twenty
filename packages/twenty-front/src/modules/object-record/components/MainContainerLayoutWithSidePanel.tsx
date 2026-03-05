@@ -7,7 +7,7 @@ import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type MainContainerLayoutWithCommandMenuProps = {
+type MainContainerLayoutWithSidePanelProps = {
   children: ReactNode;
 };
 
@@ -41,9 +41,9 @@ const StyledPageBodyForMobile = styled(PageBody)`
   padding-right: ${themeCssVariables.spacing['1.5']};
 `;
 
-export const MainContainerLayoutWithCommandMenu = ({
+export const MainContainerLayoutWithSidePanel = ({
   children,
-}: MainContainerLayoutWithCommandMenuProps) => {
+}: MainContainerLayoutWithSidePanelProps) => {
   const isMobile = useIsMobile();
 
   useCommandMenuHotKeys();

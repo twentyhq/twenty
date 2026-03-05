@@ -44,12 +44,12 @@ const createTestStore = (
 };
 
 describe('useEndPageLayoutDragSelection', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutSidePanel = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigatePageLayoutSidePanel as jest.Mock).mockReturnValue({
-      navigatePageLayoutSidePanel: mockNavigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
     });
   });
 
@@ -101,7 +101,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.draggedArea).toEqual(mockBounds);
     expect(result.current.selectedCells.size).toBe(0);
 
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
       sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
@@ -140,7 +140,7 @@ describe('useEndPageLayoutDragSelection', () => {
     });
 
     expect(calculateGridBoundsFromSelectedCells).not.toHaveBeenCalled();
-    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
     expect(result.current.selectedCells.size).toBe(0);
   });
@@ -180,7 +180,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
       'invalid-cell',
     ]);
-    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
     expect(result.current.selectedCells.size).toBe(0);
   });
@@ -229,7 +229,7 @@ describe('useEndPageLayoutDragSelection', () => {
       result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalled();
   });
 
   it('should clear selected cells after successful navigation', () => {

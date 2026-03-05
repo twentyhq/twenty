@@ -19,26 +19,26 @@ const checkInLabels = (action: ActionConfig, search: string) => {
   return false;
 };
 
-type UseFilterActionsWithCommandMenuSearchProps = {
-  commandMenuSearch: string;
+type UseFilterActionsWithSidePanelSearchProps = {
+  sidePanelSearch: string;
 };
 
-export const useFilterActionsWithCommandMenuSearch = ({
-  commandMenuSearch,
-}: UseFilterActionsWithCommandMenuSearchProps) => {
-  const filterActionsWithCommandMenuSearch = useCallback(
+export const useFilterActionsWithSidePanelSearch = ({
+  sidePanelSearch,
+}: UseFilterActionsWithSidePanelSearchProps) => {
+  const filterActionsWithSidePanelSearch = useCallback(
     (actions: ActionConfig[]) => {
       return actions.filter((action) =>
-        commandMenuSearch.length > 0
-          ? checkInShortcuts(action, commandMenuSearch) ||
-            checkInLabels(action, commandMenuSearch)
+        sidePanelSearch.length > 0
+          ? checkInShortcuts(action, sidePanelSearch) ||
+            checkInLabels(action, sidePanelSearch)
           : true,
       );
     },
-    [commandMenuSearch],
+    [sidePanelSearch],
   );
 
   return {
-    filterActionsWithCommandMenuSearch,
+    filterActionsWithSidePanelSearch,
   };
 };

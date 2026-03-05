@@ -16,12 +16,12 @@ jest.mock(
 );
 
 describe('useCreateWidgetFromClick', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutSidePanel = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigatePageLayoutSidePanel as jest.Mock).mockReturnValue({
-      navigatePageLayoutSidePanel: mockNavigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
     });
   });
 
@@ -51,7 +51,7 @@ describe('useCreateWidgetFromClick', () => {
 
     expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
     expect(result.current.editingWidgetId).toBeNull();
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
       sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });

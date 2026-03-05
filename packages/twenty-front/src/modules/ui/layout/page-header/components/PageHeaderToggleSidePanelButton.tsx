@@ -3,7 +3,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
+import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
@@ -25,7 +25,7 @@ const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   right: ${({ alignToTop }) =>
     alignToTop ? themeCssVariables.spacing[3] : 'auto'};
   top: ${({ alignToTop }) => (alignToTop ? '0' : 'auto')};
-  z-index: ${RootStackingContextZIndices.CommandMenuButton};
+  z-index: ${RootStackingContextZIndices.SidePanelButton};
 `;
 
 const StyledTooltipWrapper = styled.div`
@@ -118,7 +118,7 @@ const AnimatedIcon = ({
   );
 };
 
-export const PageHeaderToggleCommandMenuButton = () => {
+export const PageHeaderToggleSidePanelButton = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isNavigationMenuInEditMode = useAtomStateValue(
@@ -127,22 +127,22 @@ export const PageHeaderToggleCommandMenuButton = () => {
 
   const isMobile = useIsMobile();
 
-  const alignWithCommandMenuTopBar =
+  const alignWithSidePanelTopBar =
     isMobile && isNavigationMenuInEditMode && isSidePanelOpened;
 
   const ariaLabel = isSidePanelOpened
-    ? t`Close command menu`
-    : t`Open command menu`;
+    ? t`Close side panel`
+    : t`Open side panel`;
 
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButtonWrapper alignToTop={alignWithCommandMenuTopBar}>
-      <div id="toggle-command-menu-button">
+    <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
+      <div id="toggle-side-panel-button">
         <AnimatedButton
           animatedSvg={<AnimatedIcon isSidePanelOpened={isSidePanelOpened} />}
-          dataClickOutsideId={PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID}
-          dataTestId="page-header-command-menu-button"
+          dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
+          dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
@@ -161,7 +161,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
 
       <StyledTooltipWrapper>
         <AppTooltip
-          anchorSelect="#toggle-command-menu-button"
+          anchorSelect="#toggle-side-panel-button"
           content={i18n._(ariaLabel)}
           delay={TooltipDelay.longDelay}
           place={TooltipPosition.Bottom}

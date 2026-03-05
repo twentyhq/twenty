@@ -4,7 +4,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useContext } from 'react';
 
-export const useCommandMenuActions = () => {
+export const useSidePanelActions = () => {
   const { actions } = useContext(ActionMenuContext);
 
   const navigateActions = actions?.filter(

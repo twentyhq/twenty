@@ -2,7 +2,7 @@ import { SidePanelContextRecordsChip } from '@/side-panel/components/SidePanelCo
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
-import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
+import { useResetPreviousSidePanelContext } from '@/side-panel/pages/root/hooks/useResetPreviousSidePanelContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -31,8 +31,8 @@ export const SidePanelResetContextToSelectionButton = () => {
       objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const { resetPreviousCommandMenuContext } =
-    useResetPreviousCommandMenuContext();
+  const { resetPreviousSidePanelContext } =
+    useResetPreviousSidePanelContext();
 
   if (
     !isDefined(objectMetadataItem) ||
@@ -45,7 +45,7 @@ export const SidePanelResetContextToSelectionButton = () => {
   return (
     <SelectableListItem
       itemId={SIDE_PANEL_RESET_CONTEXT_TO_SELECTION}
-      onEnter={resetPreviousCommandMenuContext}
+      onEnter={resetPreviousSidePanelContext}
     >
       <CommandMenuItem
         id={SIDE_PANEL_RESET_CONTEXT_TO_SELECTION}
@@ -57,7 +57,7 @@ export const SidePanelResetContextToSelectionButton = () => {
             instanceId={SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID}
           />
         }
-        onClick={resetPreviousCommandMenuContext}
+        onClick={resetPreviousSidePanelContext}
       />
     </SelectableListItem>
   );
