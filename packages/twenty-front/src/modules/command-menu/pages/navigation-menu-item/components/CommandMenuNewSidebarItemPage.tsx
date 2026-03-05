@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommandMenuNewSidebarItemMainMenu } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu';
-import { CommandMenuNewSidebarItemObjectFlow } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemObjectFlow';
-import { CommandMenuNewSidebarItemRecordSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView';
-import { CommandMenuNewSidebarItemViewFlow } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewFlow';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { SidePanelNewSidebarItemMainMenu } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu';
+import { SidePanelNewSidebarItemObjectFlow } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow';
+import { SidePanelNewSidebarItemRecordSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView';
+import { SidePanelNewSidebarItemViewFlow } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewFlow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type SelectedOption = 'object' | 'record' | 'view' | null;
@@ -23,19 +23,19 @@ export const CommandMenuNewSidebarItemPage = () => {
 
   switch (selectedOption) {
     case 'view':
-      return <CommandMenuNewSidebarItemViewFlow onBack={handleBackToMain} />;
+      return <SidePanelNewSidebarItemViewFlow onBack={handleBackToMain} />;
     case 'object':
-      return <CommandMenuNewSidebarItemObjectFlow onBack={handleBackToMain} />;
+      return <SidePanelNewSidebarItemObjectFlow onBack={handleBackToMain} />;
     case 'record':
       return (
-        <CommandMenuNewSidebarItemRecordSubView
+        <SidePanelNewSidebarItemRecordSubView
           onBack={handleBackToMain}
           disableDrag={disableDrag}
         />
       );
     default:
       return (
-        <CommandMenuNewSidebarItemMainMenu
+        <SidePanelNewSidebarItemMainMenu
           onSelectRecord={() => setSelectedOption('record')}
           onSelectObject={() => setSelectedOption('object')}
           onSelectView={() => setSelectedOption('view')}
