@@ -1,59 +1,70 @@
 {
-  "editor.formatOnSave": false,
-  "files.eol": "\n",
-  "files.insertFinalNewline": true,
-  "files.trimTrailingWhitespace": true,
-  "[typescript]": {
     "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.addMissingImports": "always",
-      "source.organizeImports": "always"
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "[typescript]": {
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit",
+            "source.addMissingImports": "always",
+            "source.organizeImports": "always"
+        }
+    },
+    "[javascript]": {
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit",
+            "source.addMissingImports": "always",
+            "source.organizeImports": "always"
+        }
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit",
+            "source.addMissingImports": "always",
+            "source.organizeImports": "always"
+        }
+    },
+    "[json]": {
+        "editor.formatOnSave": true
+    },
+    "javascript.format.enable": false,
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.format.enable": false,
+    "cSpell.enableFiletypes": [
+        "!javascript",
+        "!json",
+        "!typescript",
+        "!typescriptreact",
+        "md",
+        "mdx"
+    ],
+    "cSpell.words": [
+        "twentyhq"
+    ],
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "search.exclude": {
+        "**/.yarn": true
+    },
+    "eslint.useFlatConfig": true,
+    "eslint.debug": true,
+    "files.associations": {
+        ".cursorrules": "markdown"
+    },
+    "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.experimental.useTsgo": false,
+    "chat.promptFilesRecommendations": {
+        "speckit.constitution": true,
+        "speckit.specify": true,
+        "speckit.plan": true,
+        "speckit.tasks": true,
+        "speckit.implement": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        ".specify/scripts/bash/": true,
+        ".specify/scripts/powershell/": true
     }
-  },
-  "[javascript]": {
-    "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.addMissingImports": "always",
-      "source.organizeImports": "always"
-    }
-  },
-  "[typescriptreact]": {
-    "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.addMissingImports": "always",
-      "source.organizeImports": "always"
-    }
-  },
-  "[json]": {
-    "editor.formatOnSave": true
-  },
-  "javascript.format.enable": false,
-  "javascript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.format.enable": false,
-  "cSpell.enableFiletypes": [
-    "!javascript",
-    "!json",
-    "!typescript",
-    "!typescriptreact",
-    "md",
-    "mdx"
-  ],
-  "cSpell.words": [
-    "twentyhq"
-  ],
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "search.exclude": {
-    "**/.yarn": true
-  },
-  "eslint.useFlatConfig": true,
-  "eslint.debug": true,
-  "files.associations": {
-    ".cursorrules": "markdown"
-  },
-  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.experimental.useTsgo": false
 }
