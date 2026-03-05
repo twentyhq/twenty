@@ -5,7 +5,7 @@ import { useDebounce } from 'use-debounce';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
@@ -91,7 +91,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
     >
       <CommandMenuAddToNavDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
-          <CommandMenuList
+          <SidePanelList
             commandGroups={[]}
             selectableItemIds={selectableItemIds}
             loading={recordSearchLoading}
@@ -111,7 +111,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
               </CommandGroup>
               {placeholder}
             </div>
-          </CommandMenuList>
+          </SidePanelList>
         )}
       </CommandMenuAddToNavDroppable>
     </CommandMenuSubViewWithSearch>

@@ -1,6 +1,6 @@
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingCommandMenuActions';
@@ -90,7 +90,7 @@ export const CommandMenu = () => {
   }
 
   return (
-    <CommandMenuList
+    <SidePanelList
       commandGroups={commandGroups}
       selectableItemIds={selectableItemIds}
       noResults={noResults}
@@ -100,6 +100,6 @@ export const CommandMenu = () => {
           <ResetContextToSelectionCommandButton />
         </CommandGroup>
       )}
-    </CommandMenuList>
+    </SidePanelList>
   );
 };

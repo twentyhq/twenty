@@ -1,5 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
@@ -31,7 +31,7 @@ export const SidePanelEditObjectViewBase = ({
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
       {showColorOption && selectedItem && (
         <CommandGroup heading={t`Customize`}>
           <SidePanelEditColorOption
@@ -51,6 +51,6 @@ export const SidePanelEditObjectViewBase = ({
         showMoveToFolder
         onMoveToFolder={onOpenFolderPicker}
       />
-    </CommandMenuList>
+    </SidePanelList>
   );
 };

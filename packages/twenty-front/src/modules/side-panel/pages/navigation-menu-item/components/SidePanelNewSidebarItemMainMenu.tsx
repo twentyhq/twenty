@@ -12,7 +12,7 @@ import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/componen
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useAddFolderToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
 import { useAddLinkToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
@@ -40,7 +40,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   return (
     <CommandMenuAddToNavDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
-        <CommandMenuList
+        <SidePanelList
           commandGroups={[]}
           selectableItemIds={['object', 'view', 'record', 'folder', 'link']}
         >
@@ -130,7 +130,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
             </CommandGroup>
             {placeholder}
           </div>
-        </CommandMenuList>
+        </SidePanelList>
       )}
     </CommandMenuAddToNavDroppable>
   );

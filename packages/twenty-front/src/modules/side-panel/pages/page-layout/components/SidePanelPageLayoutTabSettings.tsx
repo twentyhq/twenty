@@ -1,6 +1,6 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -70,7 +70,7 @@ export const SidePanelPageLayoutTabSettings = () => {
 
   return (
     <>
-      <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
+      <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
         <CommandGroup heading={t`Settings`}>
           {canMoveLeft && (
             <SelectableListItem
@@ -123,7 +123,7 @@ export const SidePanelPageLayoutTabSettings = () => {
             </SelectableListItem>
           )}
         </CommandGroup>
-      </CommandMenuList>
+      </SidePanelList>
     </>
   );
 };

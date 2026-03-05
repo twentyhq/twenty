@@ -1,6 +1,6 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import { SidePanelEditFolderPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView';
 import { SidePanelEditLinkItemView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView';
@@ -147,7 +147,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
       return null;
     case NavigationMenuItemType.FOLDER:
       return (
-        <CommandMenuList
+        <SidePanelList
           commandGroups={[]}
           selectableItemIds={[
             ADD_ITEM_TO_FOLDER_ACTION_ID,
@@ -184,11 +184,11 @@ export const SidePanelNavigationMenuItemEditPage = () => {
             onAddAfter={onAddAfter}
           />
           <SidePanelEditOwnerSection />
-        </CommandMenuList>
+        </SidePanelList>
       );
     default:
       return (
-        <CommandMenuList
+        <SidePanelList
           commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(true)}
         >
@@ -211,7 +211,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
             showMoveToFolder
             onMoveToFolder={openFolderPicker}
           />
-        </CommandMenuList>
+        </SidePanelList>
       );
   }
 };

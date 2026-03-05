@@ -1,5 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { ChartSettingItem } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingItem';
 import { ChartLimitInfoBanner } from '@/side-panel/pages/page-layout/components/ChartLimitInfoBanner';
@@ -138,7 +138,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   return (
     <StyledSidePanelContainer>
-      <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
+      <SidePanelList commandGroups={[]} selectableItemIds={visibleItemIds}>
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
           setCurrentGraphType={handleGraphTypeChange}
@@ -178,7 +178,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             </CommandGroup>
           );
         })}
-      </CommandMenuList>
+      </SidePanelList>
     </StyledSidePanelContainer>
   );
 };

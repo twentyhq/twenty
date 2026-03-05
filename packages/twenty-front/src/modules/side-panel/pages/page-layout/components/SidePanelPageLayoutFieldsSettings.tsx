@@ -1,6 +1,6 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
@@ -74,7 +74,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <CommandMenuList
+        <SidePanelList
           commandGroups={[]}
           selectableItemIds={selectableItemIds}
         >
@@ -94,7 +94,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
               />
             </SelectableListItem>
           </CommandGroup>
-        </CommandMenuList>
+        </SidePanelList>
       </StyledSidePanelContainer>
       <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
     </StyledContainer>

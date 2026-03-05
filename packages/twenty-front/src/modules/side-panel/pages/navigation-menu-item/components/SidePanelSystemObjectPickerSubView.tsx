@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelObjectPickerItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
@@ -53,7 +53,7 @@ export const SidePanelSystemObjectPickerSubView = ({
       searchValue={searchValue}
       onSearchChange={onSearchChange}
     >
-      <CommandMenuList
+      <SidePanelList
         commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
@@ -71,7 +71,7 @@ export const SidePanelSystemObjectPickerSubView = ({
             />
           ))}
         </CommandGroup>
-      </CommandMenuList>
+      </SidePanelList>
     </CommandMenuSubViewWithSearch>
   );
 };

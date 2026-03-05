@@ -1,4 +1,4 @@
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useCommandMenuSearchRecords } from '@/command-menu/hooks/useCommandMenuSearchRecords';
 import { useMemo } from 'react';
 
@@ -12,7 +12,7 @@ export const SidePanelSearchRecordsPage = () => {
   }, [commandGroups]);
 
   return (
-    <CommandMenuList
+    <SidePanelList
       commandGroups={commandGroups}
       selectableItemIds={selectableItemIds}
       loading={loading}

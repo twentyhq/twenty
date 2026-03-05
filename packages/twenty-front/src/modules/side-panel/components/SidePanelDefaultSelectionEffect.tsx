@@ -7,7 +7,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const CommandMenuDefaultSelectionEffect = ({
+export const SidePanelDefaultSelectionEffect = ({
   selectableItemIds,
 }: {
   selectableItemIds: string[];

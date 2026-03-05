@@ -4,7 +4,7 @@ import { useIcons } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFolderPickerSelectionData } from '@/side-panel/pages/navigation-menu-item/hooks/useFolderPickerSelectionData';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
@@ -49,7 +49,7 @@ export const SidePanelEditFolderPickerSubView = ({
       searchValue={searchValue}
       onSearchChange={setSearchValue}
     >
-      <CommandMenuList
+      <SidePanelList
         commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
@@ -93,7 +93,7 @@ export const SidePanelEditFolderPickerSubView = ({
             );
           })}
         </CommandGroup>
-      </CommandMenuList>
+      </SidePanelList>
     </CommandMenuSubViewWithSearch>
   );
 };

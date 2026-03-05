@@ -1,6 +1,6 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -188,7 +188,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
   ];
 
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
       <CommandGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"
@@ -248,6 +248,6 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
           )}
         </CommandGroup>
       )}
-    </CommandMenuList>
+    </SidePanelList>
   );
 };

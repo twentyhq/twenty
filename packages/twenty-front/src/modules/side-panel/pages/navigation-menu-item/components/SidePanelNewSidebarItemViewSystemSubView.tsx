@@ -3,7 +3,7 @@ import { useIcons } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
@@ -50,7 +50,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
       searchValue={searchValue}
       onSearchChange={onSearchChange}
     >
-      <CommandMenuList
+      <SidePanelList
         commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
@@ -79,7 +79,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
             </SelectableListItem>
           ))}
         </CommandGroup>
-      </CommandMenuList>
+      </SidePanelList>
     </CommandMenuSubViewWithSearch>
   );
 };

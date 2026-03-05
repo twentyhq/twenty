@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
@@ -40,7 +40,7 @@ export const SidePanelEditLinkItemView = ({
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
       <CommandGroup heading={t`Customize`}>
         <SidePanelEditColorOption
           navigationMenuItemId={selectedItem.id}
@@ -73,6 +73,6 @@ export const SidePanelEditLinkItemView = ({
         moveToFolderHasSubMenu
       />
       <SidePanelEditOwnerSection applicationId={selectedItem.applicationId} />
-    </CommandMenuList>
+    </SidePanelList>
   );
 };

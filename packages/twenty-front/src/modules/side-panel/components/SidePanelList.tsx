@@ -1,7 +1,7 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { type ActionGroupConfig } from '@/command-menu/components/CommandMenu';
-import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
+import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_LIST_PADDING } from '@/side-panel/constants/SidePanelListPadding';
@@ -14,7 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-export type CommandMenuListProps = {
+export type SidePanelListProps = {
   commandGroups: ActionGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
@@ -55,21 +55,21 @@ const StyledEmpty = styled.div`
   white-space: pre-wrap;
 `;
 
-export const CommandMenuList = ({
+export const SidePanelList = ({
   commandGroups,
   selectableItemIds,
   children,
   loading = false,
   noResults = false,
   noResultsText,
-}: CommandMenuListProps) => {
+}: SidePanelListProps) => {
   const setHasUserSelectedCommand = useSetAtomState(
     hasUserSelectedCommandState,
   );
 
   return (
     <StyledCommandMenuList>
-      <CommandMenuDefaultSelectionEffect
+      <SidePanelDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
       <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>

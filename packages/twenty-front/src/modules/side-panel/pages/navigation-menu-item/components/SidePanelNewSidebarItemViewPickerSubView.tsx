@@ -1,7 +1,7 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
@@ -99,7 +99,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     >
       <CommandMenuAddToNavDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
-          <CommandMenuList
+          <SidePanelList
             commandGroups={[]}
             selectableItemIds={selectableItemIds}
             noResults={isEmpty}
@@ -148,7 +148,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
               </CommandGroup>
               {placeholder}
             </div>
-          </CommandMenuList>
+          </SidePanelList>
         )}
       </CommandMenuAddToNavDroppable>
     </CommandMenuSubViewWithSearch>
