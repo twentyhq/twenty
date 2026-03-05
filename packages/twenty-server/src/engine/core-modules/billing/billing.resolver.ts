@@ -2,14 +2,18 @@
 
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type Repository } from 'typeorm';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
+import { BillingUpdateUserAiChatBudgetInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-ai-chat-budget.input';
+import { BillingUpdateWorkspaceDefaultAiChatBudgetInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-workspace-default-ai-chat-budget.input';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-metered-product-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
@@ -30,7 +34,8 @@ import {
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -63,6 +68,10 @@ export class BillingResolver {
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly permissionsService: PermissionsService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -336,6 +345,45 @@ export class BillingResolver {
           { workspaceId: workspace.id },
         ),
     };
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateUserAiChatBudget(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args()
+    {
+      userWorkspaceId,
+      maxCreditsPerPeriod,
+    }: BillingUpdateUserAiChatBudgetInput,
+  ): Promise<boolean> {
+    await this.userWorkspaceRepository.update(
+      { id: userWorkspaceId, workspaceId: workspace.id },
+      { maxAiChatCreditsPerPeriod: maxCreditsPerPeriod },
+    );
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateWorkspaceDefaultUserAiChatBudget(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args()
+    { maxCreditsPerPeriod }: BillingUpdateWorkspaceDefaultAiChatBudgetInput,
+  ): Promise<boolean> {
+    await this.workspaceRepository.update(
+      { id: workspace.id },
+      { defaultUserAiChatMaxCreditsPerPeriod: maxCreditsPerPeriod },
+    );
+
+    return true;
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

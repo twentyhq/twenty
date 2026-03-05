@@ -82,6 +82,10 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'int', nullable: true, default: null })
+  maxAiChatCreditsPerPeriod: number | null;
+
   @OneToMany(
     () => TwoFactorAuthenticationMethodEntity,
     (twoFactorAuthenticationMethod) =>

@@ -122,6 +122,9 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 90 })
   eventLogRetentionDays: number;
 
+  @Column({ type: 'int', nullable: true, default: null })
+  defaultUserAiChatMaxCreditsPerPeriod: number | null;
+
   // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
