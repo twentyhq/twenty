@@ -84,10 +84,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
     >
       <TableCell>
         <StyledNameCell>
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           {role.label}
           {!role.isEditable && (
             <StyledIconLockContainer>

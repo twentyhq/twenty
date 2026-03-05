@@ -120,10 +120,7 @@ export const CommandMenuPageLayoutInfoContent = ({
     <CommandMenuPageInfoLayout
       icon={
         isDefined(headerIcon) ? (
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
       iconColor={headerIconColor}

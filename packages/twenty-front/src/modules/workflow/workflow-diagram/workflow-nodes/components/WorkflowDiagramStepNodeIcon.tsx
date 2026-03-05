@@ -18,22 +18,12 @@ export const WorkflowDiagramStepNodeIcon = ({
     case 'trigger': {
       switch (data.triggerType) {
         case 'DATABASE_EVENT': {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.blue}
-            />
-          );
+          return <Icon size={theme.icon.size.md} color={theme.color.blue} />;
         }
         case 'MANUAL':
         case 'CRON':
         case 'WEBHOOK': {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.purple}
-            />
-          );
+          return <Icon size={theme.icon.size.md} color={theme.color.purple} />;
         }
       }
 
@@ -54,32 +44,17 @@ export const WorkflowDiagramStepNodeIcon = ({
           );
         }
         case 'FORM': {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.orange}
-            />
-          );
+          return <Icon size={theme.icon.size.md} color={theme.color.orange} />;
         }
         case 'AI_AGENT': {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.pink}
-            />
-          );
+          return <Icon size={theme.icon.size.md} color={theme.color.pink} />;
         }
         case 'EMPTY':
           return null;
         case 'DELAY':
         case 'FILTER':
         case 'ITERATOR':
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.green12}
-            />
-          );
+          return <Icon size={theme.icon.size.md} color={theme.color.green12} />;
         default: {
           return (
             <Icon

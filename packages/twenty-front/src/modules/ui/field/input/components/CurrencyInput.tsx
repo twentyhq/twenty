@@ -121,10 +121,7 @@ export const CurrencyInput = ({
       />
       <StyledIcon>
         {Icon && (
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
       </StyledIcon>
       <StyledIMaskInput

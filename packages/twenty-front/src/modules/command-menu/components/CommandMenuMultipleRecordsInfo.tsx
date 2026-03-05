@@ -25,12 +25,7 @@ export const CommandMenuMultipleRecordsInfo = ({
 
   return (
     <CommandMenuPageInfoLayout
-      icon={
-        <Icon
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      }
+      icon={<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       iconColor={theme.font.color.tertiary}
       title={getActionLabel(label)}
       label={t`${totalCount} selected`}

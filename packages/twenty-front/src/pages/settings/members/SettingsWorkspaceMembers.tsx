@@ -462,9 +462,7 @@ export const SettingsWorkspaceMembers = () => {
                         <StyledChevronWrapper>
                           {currentWorkspaceMember?.id !==
                             workspaceMember.id && (
-                            <IconChevronRight
-                              size={theme.icon.size.sm}
-                            />
+                            <IconChevronRight size={theme.icon.size.sm} />
                           )}
                         </StyledChevronWrapper>
                       </TableCell>

@@ -140,9 +140,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                 avatarUrl={finalAvatarUrl}
                 placeholder={finalDisplayedName}
                 type="rounded"
-                color={
-                  isCountIcon ? theme.grayScale.gray11 : undefined
-                }
+                color={isCountIcon ? theme.grayScale.gray11 : undefined}
                 backgroundColor={
                   isCountIcon ? theme.grayScale.gray2 : undefined
                 }

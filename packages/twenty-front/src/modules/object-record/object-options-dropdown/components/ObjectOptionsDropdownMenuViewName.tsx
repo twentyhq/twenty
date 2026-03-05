@@ -119,10 +119,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
       {currentView?.key === 'INDEX' ? (
         <StyledMenuTitleContainer>
           <StyledMenuIconContainer>
-            <MainIcon
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
+            <MainIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           </StyledMenuIconContainer>
           <StyledMainText>
             <OverflowingTextWithTooltip text={currentView.name} />

@@ -53,10 +53,7 @@ export const SettingsApplicationDataTableRow = ({
       >
         <StyledNameTableCell>
           {isDefined(Icon) && (
-            <Icon
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
+            <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           )}
           {row.labelPlural}
         </StyledNameTableCell>

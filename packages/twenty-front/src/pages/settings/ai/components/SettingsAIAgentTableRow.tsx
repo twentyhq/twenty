@@ -48,10 +48,7 @@ export const SettingsAIAgentTableRow = ({
     <StyledAIAgentTableRow key={agent.id} to={link}>
       <StyledNameTableCell>
         <StyledIconContainer>
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>

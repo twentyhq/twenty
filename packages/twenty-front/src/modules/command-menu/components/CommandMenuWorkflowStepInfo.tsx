@@ -170,10 +170,7 @@ export const CommandMenuWorkflowStepInfo = ({
     <CommandMenuPageInfoLayout
       icon={
         headerIcon ? (
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
       iconColor={headerIconColor}

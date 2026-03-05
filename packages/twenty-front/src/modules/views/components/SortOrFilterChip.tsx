@@ -152,10 +152,7 @@ export const SortOrFilterChip = ({
         onClick={handleDeleteClick}
         data-testid={'remove-icon-' + testId}
       >
-        <IconX
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-        />
+        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>
     </StyledChip>
   );

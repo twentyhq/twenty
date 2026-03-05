@@ -46,12 +46,7 @@ export const FileIcon = ({
     <StyledIconContainer
       background={iconColors[fileCategory] ?? theme.color.gray}
     >
-      {Icon && (
-        <Icon
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-        />
-      )}
+      {Icon && <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />}
     </StyledIconContainer>
   );
 };

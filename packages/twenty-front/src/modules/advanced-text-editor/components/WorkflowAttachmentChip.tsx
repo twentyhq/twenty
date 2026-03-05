@@ -77,10 +77,7 @@ export const WorkflowAttachmentChip = ({
 
       {!readonly && (
         <StyledDelete onClick={onRemove}>
-          <IconX
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-          />
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
       )}
     </StyledChip>

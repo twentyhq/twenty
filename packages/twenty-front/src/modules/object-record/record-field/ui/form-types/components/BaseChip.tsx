@@ -92,10 +92,7 @@ export const BaseChip = ({
           aria-label={removeAriaLabel}
           danger={danger}
         >
-          <IconX
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-          />
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
       )}
     </StyledChip>
