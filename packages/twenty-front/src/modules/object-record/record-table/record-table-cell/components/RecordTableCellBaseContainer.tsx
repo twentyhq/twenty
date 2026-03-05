@@ -6,7 +6,7 @@ import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-t
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   fontColorMedium: string;
@@ -53,8 +53,8 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   } = useContext(FieldContext);
-  const { theme } = useContext(ThemeContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
+  const { theme } = useContext(ThemeContext);
 
   const { cellPosition } = useContext(RecordTableCellContext);
 

@@ -11,7 +11,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   align-items: center;
@@ -55,13 +56,14 @@ export const RecordTableColumnAggregateFooterValueCell = ({
   dropdownId: string;
   isFirstCell: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
+
+  const { theme } = useContext(ThemeContext);
   const { viewFieldId, fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );

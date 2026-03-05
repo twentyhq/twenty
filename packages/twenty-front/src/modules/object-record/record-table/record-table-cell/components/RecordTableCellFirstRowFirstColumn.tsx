@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
   z-index: ${({ zIndex }) => zIndex};
@@ -31,6 +31,8 @@ export const RecordTableCellFirstRowFirstColumn = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
+  const { theme } = useContext(ThemeContext);
+
   const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
@@ -50,8 +52,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
   const [isRecordTableScrolledVertically] = useAtomComponentState(
     isRecordTableScrolledVerticallyComponentState,
   );
-
-  const { theme } = useContext(ThemeContext);
 
   const zIndex =
     !isRecordTableScrolledVertically &&
