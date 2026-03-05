@@ -382,10 +382,10 @@ export const NavigationDrawerItem = ({
               <StyledIcon>
                 <Icon
                   style={{
-                    minWidth: parseFloat(theme.icon.size.md),
+                    minWidth: theme.icon.size.md,
                   }}
-                  size={parseFloat(theme.icon.size.md)}
-                  stroke={parseFloat(theme.icon.stroke.md)}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.md}
                   color={
                     showBreadcrumb &&
                     !isSettingsPage &&

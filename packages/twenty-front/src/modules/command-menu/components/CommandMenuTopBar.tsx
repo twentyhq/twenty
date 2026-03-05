@@ -143,7 +143,7 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: parseFloat(theme.animation.duration.instant),
+                duration: theme.animation.duration.instant,
               }}
             >
               <CommandMenuBackButton />
@@ -153,7 +153,7 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: parseFloat(theme.animation.duration.instant),
+                duration: theme.animation.duration.instant,
               }}
             >
               <IconButton

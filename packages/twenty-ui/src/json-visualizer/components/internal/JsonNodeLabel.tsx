@@ -58,7 +58,7 @@ export const JsonNodeLabel = ({
   return (
     <StyledLabelContainer highlighting={highlighting}>
       <Icon
-        size={parseFloat(theme.icon.size.md)}
+        size={theme.icon.size.md}
         color={
           highlighting === 'blue'
             ? theme.color.blue

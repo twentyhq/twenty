@@ -31,7 +31,7 @@ export const CalendarEventNotSharedContent = () => {
   return (
     <StyledVisibilityCard>
       <StyledVisibilityCardContent>
-        <IconLock size={parseFloat(theme.icon.size.sm)} />
+        <IconLock size={theme.icon.size.sm} />
         <Trans>Not shared</Trans>
       </StyledVisibilityCardContent>
     </StyledVisibilityCard>

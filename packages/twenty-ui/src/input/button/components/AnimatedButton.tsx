@@ -493,7 +493,7 @@ export const AnimatedButton = ({
       {Icon && (
         <StyledIconContainer>
           <motion.div animate={animate} transition={transition}>
-            <Icon size={parseFloat(theme.icon.size.sm)} />
+            <Icon size={theme.icon.size.sm} />
           </motion.div>
         </StyledIconContainer>
       )}

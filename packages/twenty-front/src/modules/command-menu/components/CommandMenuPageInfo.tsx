@@ -132,7 +132,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
       <CommandMenuPageInfoLayout
         icon={
           <IconColumnInsertRight
-            size={parseFloat(theme.icon.size.md)}
+            size={theme.icon.size.md}
             color={theme.font.color.tertiary}
           />
         }

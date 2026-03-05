@@ -322,8 +322,8 @@ export const SettingsWorkspaceMembers = () => {
                       <StyledInvitationTableCell>
                         <StyledIconWrapper>
                           <IconMail
-                            size={parseFloat(theme.icon.size.md)}
-                            stroke={parseFloat(theme.icon.stroke.sm)}
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
                           />
                         </StyledIconWrapper>
                         <StyledTextContainerWithEllipsis
@@ -463,7 +463,7 @@ export const SettingsWorkspaceMembers = () => {
                           {currentWorkspaceMember?.id !==
                             workspaceMember.id && (
                             <IconChevronRight
-                              size={parseFloat(theme.icon.size.sm)}
+                              size={theme.icon.size.sm}
                             />
                           )}
                         </StyledChevronWrapper>

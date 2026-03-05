@@ -21,8 +21,8 @@ export const NavigationMenuItemStyleIcon = ({
       $borderColor={style.borderColor}
     >
       <Icon
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.md)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.md}
         color={style.iconColor}
       />
     </StyledNavigationMenuItemIconContainer>

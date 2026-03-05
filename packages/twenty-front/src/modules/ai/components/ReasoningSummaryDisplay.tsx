@@ -81,7 +81,7 @@ export const ReasoningSummaryDisplay = ({
         <>
           <ShimmeringText>
             <StyledIconContainer>
-              <IconBrain size={parseFloat(theme.icon.size.sm)} />
+              <IconBrain size={theme.icon.size.sm} />
               <StyledThinkingText>{t`Thinking...`}</StyledThinkingText>
             </StyledIconContainer>
           </ShimmeringText>
@@ -95,13 +95,13 @@ export const ReasoningSummaryDisplay = ({
         <>
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
             <StyledIconContainer>
-              <IconBrain size={parseFloat(theme.icon.size.sm)} />
+              <IconBrain size={theme.icon.size.sm} />
               <span>{t`Finished thinking`}</span>
             </StyledIconContainer>
             {isExpanded ? (
-              <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
+              <IconChevronUp size={theme.icon.size.sm} />
             ) : (
-              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
+              <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledToggleButton>
 

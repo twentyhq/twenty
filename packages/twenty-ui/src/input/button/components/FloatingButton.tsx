@@ -127,7 +127,7 @@ export const FloatingButton = ({
       to={to}
       as={to ? Link : 'button'}
     >
-      {Icon && <Icon size={parseFloat(theme.icon.size.sm)} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );

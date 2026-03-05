@@ -37,7 +37,7 @@ export const CommandMenuRouter = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration.instant),
+            duration: theme.animation.duration.instant,
             delay: 0.1,
           }}
         >

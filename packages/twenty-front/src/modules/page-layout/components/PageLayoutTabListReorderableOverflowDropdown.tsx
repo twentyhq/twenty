@@ -196,7 +196,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                               style={{
                                 minWidth:
                                   GenericDropdownContentWidth.Medium -
-                                  parseFloat(theme.spacingMultiplicator) * 2,
+                                  theme.spacingMultiplicator * 2,
                               }}
                             >
                               <PageLayoutTabMenuItemSelectAvatar

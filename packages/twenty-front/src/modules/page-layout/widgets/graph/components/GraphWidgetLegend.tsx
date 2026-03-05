@@ -241,7 +241,7 @@ export const GraphWidgetLegend = ({
           animate="visible"
           exit="exit"
           transition={{
-            duration: parseFloat(theme.animation.duration.normal),
+            duration: theme.animation.duration.normal,
             ease: 'easeInOut',
           }}
         >
@@ -299,7 +299,7 @@ export const GraphWidgetLegend = ({
                   animate="center"
                   exit="exit"
                   transition={{
-                    duration: parseFloat(theme.animation.duration.normal),
+                    duration: theme.animation.duration.normal,
                     ease: 'easeInOut',
                   }}
                   centered={!needsPagination}

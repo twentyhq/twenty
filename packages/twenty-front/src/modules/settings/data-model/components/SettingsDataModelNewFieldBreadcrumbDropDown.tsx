@@ -87,7 +87,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron size={parseFloat(theme.icon.size.md)} />
+            <StyledDownChevron size={theme.icon.size.md} />
             {isConfigureStep ? (
               <StyledButton variant="tertiary" title={t`2. Configure`} />
             ) : (

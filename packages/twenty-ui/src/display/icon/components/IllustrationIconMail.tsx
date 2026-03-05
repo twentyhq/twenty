@@ -9,7 +9,7 @@ type IllustrationIconMailProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconMail = (props: IllustrationIconMailProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconMailRaw

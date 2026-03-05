@@ -65,7 +65,7 @@ export const RecordBoardColumnNewRecordButton = () => {
         });
       }}
     >
-      <IconPlus size={parseFloat(theme.icon.size.md)} />
+      <IconPlus size={theme.icon.size.md} />
       {t`New`}
     </StyledNewButton>
   );

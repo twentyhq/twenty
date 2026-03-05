@@ -88,7 +88,7 @@ export const DefaultLayout = () => {
                     : 0,
               }}
               transition={{
-                duration: parseFloat(theme.animation.duration.normal),
+                duration: theme.animation.duration.normal,
               }}
             >
               <PageDragDropProvider>

@@ -168,7 +168,7 @@ export const WebhookEntitySelect = ({
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
           <StyledControlIconChevronDown
             disabled={disabled}
-            size={parseFloat(theme.icon.size.md)}
+            size={theme.icon.size.md}
           />
         </StyledControlContainer>
       }

@@ -515,7 +515,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                             <>
                               <IconInfoCircle
                                 id="info-circle-id-skill-name"
-                                size={parseFloat(theme.icon.size.md)}
+                                size={theme.icon.size.md}
                                 color={theme.font.color.tertiary}
                                 style={{ outline: 'none' }}
                               />

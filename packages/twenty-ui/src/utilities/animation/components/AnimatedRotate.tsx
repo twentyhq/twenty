@@ -29,7 +29,7 @@ export const AnimatedRotate = ({
   const animate = { opacity: 1, rotate: 0 };
   const exit = { opacity: 0, rotate: 90 };
   const transition = {
-    duration: parseFloat(theme.animation.duration[duration]),
+    duration: theme.animation.duration[duration],
   };
 
   return (
@@ -43,7 +43,7 @@ export const AnimatedRotate = ({
           ? {
               rotate: 45,
               transition: {
-                duration: parseFloat(theme.animation.duration.fast),
+                duration: theme.animation.duration.fast,
               },
             }
           : {}

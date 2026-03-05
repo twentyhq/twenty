@@ -191,7 +191,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
             <StyledNoAccessContainer>
               <IconLock
                 color={theme.font.color.tertiary}
-                stroke={parseFloat(theme.icon.stroke.sm)}
+                stroke={theme.icon.stroke.sm}
               />
             </StyledNoAccessContainer>
           )}

@@ -109,12 +109,12 @@ export const MenuItemSelect = ({
         )}
 
         {selected && needIconCheck && (
-          <IconCheck size={parseFloat(theme.icon.size.md)} />
+          <IconCheck size={theme.icon.size.md} />
         )}
 
         {hasSubMenu && (
           <IconChevronRight
-            size={parseFloat(theme.icon.size.sm)}
+            size={theme.icon.size.sm}
             color={theme.font.color.tertiary}
           />
         )}

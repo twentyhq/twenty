@@ -204,7 +204,7 @@ export const FormSingleRecordPicker = ({
                 />
                 <StyledIconButton>
                   <IconChevronDown
-                    size={parseFloat(theme.icon.size.md)}
+                    size={theme.icon.size.md}
                     color={theme.font.color.light}
                   />
                 </StyledIconButton>

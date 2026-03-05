@@ -9,7 +9,7 @@ interface IconMicrosoftOutlookProps {
 
 export const IconMicrosoftOutlook = (props: IconMicrosoftOutlookProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconMicrosoftOutlookRaw height={size} width={size} />;
 };

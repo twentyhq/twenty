@@ -62,7 +62,7 @@ export const JsonArrow = ({
         transition={{ duration: 0.3 }}
       >
         <IconChevronDown
-          size={parseFloat(theme.icon.size.md)}
+          size={theme.icon.size.md}
           color={iconColor}
         />
       </motion.div>

@@ -32,7 +32,7 @@ export const AnimatedExpandableContainer = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<AnimationSize>(0);
 
-  const normalDuration = parseFloat(theme.animation.duration.normal);
+  const normalDuration = theme.animation.duration.normal;
 
   const actualDurations: AnimationDurationObject =
     animationDurations === 'default'

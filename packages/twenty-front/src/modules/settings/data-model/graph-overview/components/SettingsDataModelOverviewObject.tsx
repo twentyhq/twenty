@@ -128,7 +128,7 @@ export const SettingsDataModelOverviewObject = ({
               objectNamePlural: objectMetadataItem.namePlural,
             })}
           >
-            {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
+            {Icon && <Icon size={theme.icon.size.md} />}
             {objectMetadataItem.labelPlural}
           </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
@@ -150,9 +150,9 @@ export const SettingsDataModelOverviewObject = ({
               onClick={() => setOtherFieldsExpanded(!otherFieldsExpanded)}
             >
               {otherFieldsExpanded ? (
-                <IconChevronUp size={parseFloat(theme.icon.size.md)} />
+                <IconChevronUp size={theme.icon.size.md} />
               ) : (
-                <IconChevronDown size={parseFloat(theme.icon.size.md)} />
+                <IconChevronDown size={theme.icon.size.md} />
               )}
               <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
             </StyledCardRowOther>

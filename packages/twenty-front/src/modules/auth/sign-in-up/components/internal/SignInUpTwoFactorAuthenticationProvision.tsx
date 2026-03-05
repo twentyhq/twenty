@@ -101,7 +101,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
           {qrCode && (
             <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
-              <IconCopy size={parseFloat(theme.icon.size.sm)} />
+              <IconCopy size={theme.icon.size.sm} />
               <Trans>Copy Setup Key</Trans>
             </StyledCopySetupKeyLink>
           )}

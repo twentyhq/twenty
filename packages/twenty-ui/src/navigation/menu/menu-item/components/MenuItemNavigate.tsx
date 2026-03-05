@@ -34,7 +34,7 @@ export const MenuItemNavigate = ({
         />
       </StyledMenuItemLeftContent>
       <IconChevronRight
-        size={parseFloat(theme.icon.size.sm)}
+        size={theme.icon.size.sm}
         color={theme.font.color.tertiary}
       />
     </StyledMenuItemBase>

@@ -80,7 +80,7 @@ export const SettingsListItemCardContent = ({
     >
       {!!LeftIcon && (
         <LeftIcon
-          size={parseFloat(theme.icon.size.md)}
+          size={theme.icon.size.md}
           color={LeftIconColor ?? 'currentColor'}
         />
       )}
@@ -92,7 +92,7 @@ export const SettingsListItemCardContent = ({
         {rightComponent}
         {!!to && (
           <IconChevronRight
-            size={parseFloat(theme.icon.size.md)}
+            size={theme.icon.size.md}
             color={theme.font.color.tertiary}
           />
         )}

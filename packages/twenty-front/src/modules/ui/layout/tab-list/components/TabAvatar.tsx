@@ -13,11 +13,11 @@ export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
   return (
     tab.Icon && (
       <tab.Icon
-        size={parseFloat(theme.icon.size.md)}
+        size={theme.icon.size.md}
         color={
           tab.disabled ? theme.font.color.tertiary : theme.font.color.secondary
         }
-        stroke={parseFloat(theme.icon.stroke.md)}
+        stroke={theme.icon.stroke.md}
       />
     )
   );

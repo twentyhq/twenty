@@ -20,7 +20,7 @@ export const AnimatedEaseIn = ({
   const animate = { opacity: 1 };
   const transition = {
     ease: 'linear',
-    duration: parseFloat(theme.animation.duration[duration]),
+    duration: theme.animation.duration[duration],
   };
 
   return (

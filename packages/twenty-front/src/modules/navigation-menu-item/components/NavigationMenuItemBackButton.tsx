@@ -50,8 +50,8 @@ export const NavigationMenuItemBackButton = ({
   return (
     <StyledBackButton onClick={handleClick}>
       <IconX
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.lg)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.lg}
         color={theme.font.color.tertiary}
       />
       <span>{folderName}</span>

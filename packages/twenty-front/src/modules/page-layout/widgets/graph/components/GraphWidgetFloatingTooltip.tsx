@@ -77,7 +77,7 @@ export const GraphWidgetFloatingTooltip = ({
           position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: parseFloat(theme.lastLayerZIndex),
+          zIndex: theme.lastLayerZIndex,
           pointerEvents: disablePointerEvents || !isVisible ? 'none' : 'auto',
         }}
         role="tooltip"

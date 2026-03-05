@@ -103,7 +103,7 @@ export const NavigationMenuEditModeBar = () => {
   return (
     <StyledContainer>
       <StyledTitle>
-        <IconPaint size={parseFloat(theme.icon.size.md)} />
+        <IconPaint size={theme.icon.size.md} />
         {t`Layout customization`}
       </StyledTitle>
       <SaveAndCancelButtons

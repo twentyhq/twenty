@@ -74,7 +74,7 @@ export const CalendarDayCardContent = ({
       variants={upcomingDayCardContentVariants}
       transition={{
         delay: Math.max(0, dayEndsIn),
-        duration: parseFloat(theme.animation.duration.fast),
+        duration: theme.animation.duration.fast,
       }}
     >
       <StyledDayContainer>

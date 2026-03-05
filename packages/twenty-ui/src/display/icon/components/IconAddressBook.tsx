@@ -12,7 +12,7 @@ type IconAddressBookProps = Pick<
 export const IconAddressBook = (props: IconAddressBookProps) => {
   const { theme } = useContext(ThemeContext);
   const size = props.size ?? 24;
-  const stroke = props.stroke ?? parseFloat(theme.icon.stroke.md);
+  const stroke = props.stroke ?? theme.icon.stroke.md;
 
   return (
     <IconAddressBookRaw

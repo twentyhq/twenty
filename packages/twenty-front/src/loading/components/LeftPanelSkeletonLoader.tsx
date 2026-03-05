@@ -57,7 +57,7 @@ export const LeftPanelSkeletonLoader = () => {
         opacity: isMobile ? 0 : 1,
       }}
       transition={{
-        duration: parseFloat(theme.animation.duration.fast),
+        duration: theme.animation.duration.fast,
       }}
     >
       <StyledItemsContainer>

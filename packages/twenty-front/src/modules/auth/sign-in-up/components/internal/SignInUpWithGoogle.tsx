@@ -18,7 +18,7 @@ import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 const GoogleIcon = memo(() => {
   const { theme } = useContext(ThemeContext);
-  return <IconGoogle size={parseFloat(theme.icon.size.md)} />;
+  return <IconGoogle size={theme.icon.size.md} />;
 });
 
 export const SignInUpWithGoogle = ({

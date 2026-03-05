@@ -105,7 +105,7 @@ export const SettingsCard = ({
             {soon && <Pill label={t`Soon`} />}
           </StyledTitle>
           {Status && Status}
-          <StyledIconChevronRight size={parseFloat(theme.icon.size.sm)} />
+          <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>
         {description && <StyledDescription>{description}</StyledDescription>}
       </StyledCardContent>

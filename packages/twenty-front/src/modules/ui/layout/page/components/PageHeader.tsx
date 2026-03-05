@@ -123,7 +123,7 @@ export const PageHeader = ({
           <StyledTopBarIconStyledTitleContainer>
             {Icon && (
               <StyledIconContainer>
-                <Icon size={parseFloat(theme.icon.size.md)} />
+                <Icon size={theme.icon.size.md} />
               </StyledIconContainer>
             )}
             {title && (

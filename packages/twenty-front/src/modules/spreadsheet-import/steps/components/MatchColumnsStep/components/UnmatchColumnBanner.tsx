@@ -68,7 +68,7 @@ export const UnmatchColumnBanner = ({
     <StyledBanner allMatched={allMatched}>
       <IconInfoCircle
         color={allMatched ? theme.color.blue : theme.font.color.secondary}
-        size={parseFloat(theme.icon.size.md)}
+        size={theme.icon.size.md}
       />
       {isDefined(buttonOnClick) ? (
         <StyledClickableContainer onClick={buttonOnClick}>
@@ -77,7 +77,7 @@ export const UnmatchColumnBanner = ({
             isExpanded={isExpanded}
             allMatched={allMatched}
           >
-            <IconChevronDown size={parseFloat(theme.icon.size.md)} />
+            <IconChevronDown size={theme.icon.size.md} />
           </StyledIconChevronDownWrapper>
         </StyledClickableContainer>
       ) : (

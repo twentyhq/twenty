@@ -134,7 +134,7 @@ export const ImageInput = ({
             }}
           />
         ) : (
-          <IconPhotoUp size={parseFloat(theme.icon.size.lg)} />
+          <IconPhotoUp size={theme.icon.size.lg} />
         )}
       </StyledPicture>
       <StyledContent>

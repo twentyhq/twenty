@@ -54,7 +54,7 @@ export const DropdownMenuHeaderLeftComponent = ({
         ) : (
           <StyledNonClickableStartIcon>
             <props.Icon
-              size={parseFloat(theme.icon.size.sm)}
+              size={theme.icon.size.sm}
               color={theme.font.color.tertiary}
             />
           </StyledNonClickableStartIcon>

@@ -93,7 +93,7 @@ export const SettingsListCard = <
       {hasFooter && (
         <StyledFooter divider={!!items.length}>
           <StyledButton onClick={onFooterButtonClick}>
-            <IconPlus size={parseFloat(theme.icon.size.md)} />
+            <IconPlus size={theme.icon.size.md} />
             {footerButtonLabel}
           </StyledButton>
         </StyledFooter>

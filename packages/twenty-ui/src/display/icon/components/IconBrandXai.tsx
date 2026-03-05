@@ -8,7 +8,7 @@ type IconBrandXaiProps = Pick<IconComponentProps, 'size' | 'color'>;
 
 export const IconBrandXai = (props: IconBrandXaiProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return (
     <IconBrandXaiRaw

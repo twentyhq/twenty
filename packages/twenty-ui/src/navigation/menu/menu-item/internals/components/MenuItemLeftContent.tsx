@@ -70,8 +70,8 @@ export const MenuItemLeftContent = ({
           <MenuItemIconBoxContainer>
             <StyledDraggableItem>
               <IconGripVertical
-                size={parseFloat(theme.icon.size.md)}
-                stroke={parseFloat(theme.icon.stroke.sm)}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
                 color={gripIconColor}
               />
             </StyledDraggableItem>
@@ -79,8 +79,8 @@ export const MenuItemLeftContent = ({
         ) : (
           <StyledDraggableItem>
             <IconGripVertical
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
               color={gripIconColor}
             />
           </StyledDraggableItem>

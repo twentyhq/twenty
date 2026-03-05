@@ -163,10 +163,10 @@ export const SettingsObjectRelationItemTableRow = ({
         {!!Icon && (
           <Icon
             style={{
-              minWidth: parseFloat(theme.icon.size.md),
+              minWidth: theme.icon.size.md,
             }}
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
         )}
         <StyledNameContainer>
@@ -205,8 +205,8 @@ export const SettingsObjectRelationItemTableRow = ({
         <StyledRelationType>
           {RelationIcon && (
             <RelationIcon
-              size={parseFloat(theme.icon.size.sm)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
             />
           )}
           {relationTypeLabel}
@@ -217,8 +217,8 @@ export const SettingsObjectRelationItemTableRow = ({
         {fieldMetadataItem.isActive ? (
           <UndecoratedLink to={linkToNavigate}>
             <StyledIconChevronRight
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
             />
           </UndecoratedLink>
         ) : (

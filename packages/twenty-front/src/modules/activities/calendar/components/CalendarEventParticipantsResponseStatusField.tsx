@@ -67,9 +67,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
   const { theme } = useContext(ThemeContext);
 
   const Icon = {
-    Yes: <IconCheck stroke={parseFloat(theme.icon.stroke.sm)} />,
-    Maybe: <IconQuestionMark stroke={parseFloat(theme.icon.stroke.sm)} />,
-    No: <IconX stroke={parseFloat(theme.icon.stroke.sm)} />,
+    Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
+    Maybe: <IconQuestionMark stroke={theme.icon.stroke.sm} />,
+    No: <IconX stroke={theme.icon.stroke.sm} />,
   }[responseStatus];
 
   // We want to display external participants first

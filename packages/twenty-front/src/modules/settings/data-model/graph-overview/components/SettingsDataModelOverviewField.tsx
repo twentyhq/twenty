@@ -40,7 +40,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
 
   return (
     <StyledRow>
-      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
+      {Icon && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

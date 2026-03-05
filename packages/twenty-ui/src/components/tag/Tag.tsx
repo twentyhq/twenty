@@ -105,8 +105,8 @@ export const Tag = ({
       {isDefined(Icon) ? (
         <StyledIconContainer>
           <Icon
-            size={parseFloat(theme.icon.size.sm)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
           />
         </StyledIconContainer>
       ) : (

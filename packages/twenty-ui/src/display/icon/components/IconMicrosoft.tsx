@@ -9,7 +9,7 @@ interface IconMicrosoftProps {
 
 export const IconMicrosoft = (props: IconMicrosoftProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconMicrosoftRaw height={size} width={size} />;
 };

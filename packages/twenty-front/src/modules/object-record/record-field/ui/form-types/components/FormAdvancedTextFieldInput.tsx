@@ -231,7 +231,7 @@ export const FormAdvancedTextFieldInput = ({
                     transparentBackground
                     onClick={handleEnterFullScreen}
                   >
-                    <IconMaximize size={parseFloat(theme.icon.size.md)} />
+                    <IconMaximize size={theme.icon.size.md} />
                   </StyledFullScreenButtonContainer>
                 )}
               </StyledEditorActionButtonContainer>

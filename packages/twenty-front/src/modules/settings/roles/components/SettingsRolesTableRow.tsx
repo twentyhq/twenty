@@ -85,16 +85,16 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableCell>
         <StyledNameCell>
           <Icon
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
           {role.label}
           {!role.isEditable && (
             <StyledIconLockContainer>
               <IconLock
                 color={theme.font.color.light}
-                stroke={parseFloat(theme.icon.stroke.sm)}
-                size={parseFloat(theme.icon.size.sm)}
+                stroke={theme.icon.stroke.sm}
+                size={theme.icon.size.sm}
               />
             </StyledIconLockContainer>
           )}
@@ -129,7 +129,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
         <StyledAssignedText>{role.workspaceMembers.length}</StyledAssignedText>
       </TableCell>
       <TableCell align="right" color={theme.font.color.tertiary}>
-        <IconChevronRight size={parseFloat(theme.icon.size.md)} />
+        <IconChevronRight size={theme.icon.size.md} />
       </TableCell>
     </StyledTableRow>
   );

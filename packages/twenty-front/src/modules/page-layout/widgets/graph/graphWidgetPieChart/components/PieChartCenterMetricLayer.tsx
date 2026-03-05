@@ -69,7 +69,7 @@ export const PieChartCenterMetric = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration.fast),
+            duration: theme.animation.duration.fast,
             ease: 'easeInOut',
           }}
         >

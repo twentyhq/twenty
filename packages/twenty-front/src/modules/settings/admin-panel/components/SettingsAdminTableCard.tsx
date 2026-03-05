@@ -54,7 +54,7 @@ export const SettingsAdminTableCard = ({
                 gap={themeCssVariables.spacing[2]}
               >
                 {item.Icon && (
-                  <item.Icon size={parseFloat(theme.icon.size.md)} />
+                  <item.Icon size={theme.icon.size.md} />
                 )}
                 <span>{item.label}</span>
               </TableCell>

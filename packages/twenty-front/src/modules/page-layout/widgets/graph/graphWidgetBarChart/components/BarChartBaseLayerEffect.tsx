@@ -57,7 +57,7 @@ export const BarChartBaseLayerEffect = ({
   const gridColor = theme.border.color.light;
   const isVertical = layout === BarChartLayout.VERTICAL;
   const durationMs =
-    parseFloat(theme.animation.duration.normal) *
+    theme.animation.duration.normal *
     CHART_CORE_CONSTANTS.MILLISECONDS_PER_SECOND;
 
   const [dpr] = useState<number>(

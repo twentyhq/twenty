@@ -55,13 +55,13 @@ export const TableSection = ({
         <Label>{title}</Label>
         {isExpanded ? (
           <IconChevronUp
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
         ) : (
           <IconChevronDown
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
         )}
       </StyledSectionHeader>

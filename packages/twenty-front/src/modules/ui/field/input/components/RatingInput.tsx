@@ -34,7 +34,7 @@ export const RatingInput = ({
   const clearField = useClearField();
   const { theme } = useContext(ThemeContext);
 
-  const iconSizeMd = parseFloat(theme.icon.size.md);
+  const iconSizeMd = theme.icon.size.md;
   const activeColor = themeCssVariables.font.color.secondary;
   const inactiveColor = themeCssVariables.background.quaternary;
 

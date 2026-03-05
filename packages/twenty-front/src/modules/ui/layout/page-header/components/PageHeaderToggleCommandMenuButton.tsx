@@ -47,12 +47,12 @@ const AnimatedIcon = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={parseFloat(theme.icon.size.sm)}
-      height={parseFloat(theme.icon.size.sm)}
+      width={theme.icon.size.sm}
+      height={theme.icon.size.sm}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={parseFloat(theme.icon.stroke.md)}
+      strokeWidth={theme.icon.stroke.md}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -68,7 +68,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: parseFloat(theme.animation.duration.fast),
+          duration: theme.animation.duration.fast,
         }}
       />
 
@@ -83,7 +83,7 @@ const AnimatedIcon = ({
             opacity: isCommandMenuOpened ? 1 : 0,
           }}
           transition={{
-            duration: parseFloat(theme.animation.duration.fast),
+            duration: theme.animation.duration.fast,
             ease: 'easeInOut',
             delay: isCommandMenuOpened ? 0.1 : 0,
           }}
@@ -101,7 +101,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: parseFloat(theme.animation.duration.fast),
+          duration: theme.animation.duration.fast,
         }}
       />
 
@@ -116,7 +116,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: parseFloat(theme.animation.duration.fast),
+          duration: theme.animation.duration.fast,
         }}
       />
     </svg>
@@ -158,7 +158,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
             rotate: isCommandMenuOpened ? 90 : 0,
           }}
           transition={{
-            duration: parseFloat(theme.animation.duration.normal),
+            duration: theme.animation.duration.normal,
             ease: 'easeInOut',
           }}
         />

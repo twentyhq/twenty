@@ -8,7 +8,7 @@ type IconGmailProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGmail = (props: IconGmailProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconGmailRaw height={size} width={size} />;
 };

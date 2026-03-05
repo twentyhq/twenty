@@ -38,7 +38,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
     >
       <StyledRowLeftContent>
         <StyledIconContainer>
-          <permission.Icon size={parseFloat(theme.icon.size.sm)} />
+          <permission.Icon size={theme.icon.size.sm} />
         </StyledIconContainer>
         <StyledText>{permission.name}</StyledText>
       </StyledRowLeftContent>

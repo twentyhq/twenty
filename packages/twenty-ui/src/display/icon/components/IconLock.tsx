@@ -8,7 +8,7 @@ type IconLockCustomProps = Pick<IconComponentProps, 'size'>;
 
 export const IconLockCustom = (props: IconLockCustomProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconLockRaw height={size} width={size} />;
 };

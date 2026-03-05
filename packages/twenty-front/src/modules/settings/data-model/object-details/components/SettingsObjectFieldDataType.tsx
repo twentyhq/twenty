@@ -80,7 +80,7 @@ export const SettingsObjectFieldDataType = ({
       onClick={onClick}
     >
       <StyledIconWrapper>
-        <Icon size={parseFloat(theme.icon.size.sm)} />
+        <Icon size={theme.icon.size.sm} />
       </StyledIconWrapper>
       <StyledLabelContainer>
         {label} <StyledSpan>{labelDetail && `· ${labelDetail}`}</StyledSpan>

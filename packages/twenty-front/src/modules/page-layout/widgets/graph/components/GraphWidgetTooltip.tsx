@@ -198,7 +198,7 @@ export const GraphWidgetTooltip = ({
           <StyledHorizontalSectionPadding addBottom>
             <StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
               <span>{t`Click to see data`}</span>
-              <IconArrowUpRight size={parseFloat(theme.icon.size.sm)} />
+              <IconArrowUpRight size={theme.icon.size.sm} />
             </StyledTooltipLink>
           </StyledHorizontalSectionPadding>
         </>

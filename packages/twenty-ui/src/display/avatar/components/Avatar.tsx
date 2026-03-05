@@ -146,7 +146,7 @@ export const Avatar = ({
       {Icon ? (
         <Icon
           color={iconColor ? iconColor : 'currentColor'}
-          size={parseFloat(theme.icon.size.xl)}
+          size={theme.icon.size.xl}
         />
       ) : showPlaceholder ? (
         <StyledPlaceholderChar fontWeight={500}>

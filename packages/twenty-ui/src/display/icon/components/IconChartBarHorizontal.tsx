@@ -18,8 +18,8 @@ type IconChartBarHorizontalProps = Pick<
 
 export const IconChartBarHorizontal = (props: IconChartBarHorizontalProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.md);
-  const stroke = props.stroke ?? parseFloat(theme.icon.stroke.sm);
+  const size = props.size ?? theme.icon.size.md;
+  const stroke = props.stroke ?? theme.icon.stroke.sm;
 
   return (
     <StyledRotatedIconWrapper>

@@ -89,7 +89,7 @@ export const SearchInput = ({
     <StyledWrapper className={className}>
       <StyledInputContainer>
         <StyledIconContainer isFocused={isFocused}>
-          <IconSearch size={parseFloat(theme.icon.size.md)} />
+          <IconSearch size={theme.icon.size.md} />
         </StyledIconContainer>
         <StyledInput
           value={value}

@@ -77,7 +77,7 @@ export const TurnIntoBlockDropdown = ({
       dropdownId={dropdownId}
       clickableComponent={
         <StyledMenuItem>
-          <ActiveIcon size={parseFloat(theme.icon.size.md)} />
+          <ActiveIcon size={theme.icon.size.md} />
           {activeTitle}
         </StyledMenuItem>
       }

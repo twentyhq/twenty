@@ -158,7 +158,7 @@ export const Modal = ({
             overlay={overlay}
             variants={modalAnimation}
             transition={{
-              duration: parseFloat(theme.animation.duration.normal),
+              duration: theme.animation.duration.normal,
             }}
             isMobile={isMobile}
             gap={gap}

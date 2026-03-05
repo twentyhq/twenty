@@ -71,7 +71,7 @@ export const CurrencyPickerDropdownButton = ({
         <StyledDropdownButtonContainer>
           <StyledIconContainer>
             {currencyCode}
-            <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
+            <IconChevronDown size={theme.icon.size.sm} />
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       }

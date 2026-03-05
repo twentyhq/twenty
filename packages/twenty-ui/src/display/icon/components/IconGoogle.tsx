@@ -8,7 +8,7 @@ type IconGoogleProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGoogle = (props: IconGoogleProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconGoogleRaw height={size} width={size} />;
 };

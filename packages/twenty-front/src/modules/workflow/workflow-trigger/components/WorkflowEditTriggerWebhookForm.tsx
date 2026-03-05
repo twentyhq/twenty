@@ -83,7 +83,7 @@ export const WorkflowEditTriggerWebhookForm = ({
           value={displayWebhookUrl}
           RightIcon={() => (
             <IconCopy
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.font.color.secondary}
             />
           )}

@@ -47,7 +47,7 @@ export const UploadFileChip = ({ isLoading = true }: UploadFileChipProps) => {
   return (
     <StyledContainer>
       <StyledIconBox>
-        <IconArrowUp size={parseFloat(theme.icon.size.sm)} />
+        <IconArrowUp size={theme.icon.size.sm} />
       </StyledIconBox>
       {isLoading ? <Loader /> : <StyledStaticLoader />}
     </StyledContainer>

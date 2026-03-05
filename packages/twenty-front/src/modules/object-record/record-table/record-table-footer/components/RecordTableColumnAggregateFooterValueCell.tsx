@@ -95,7 +95,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
             {!hasAggregateOperationForViewField && (
               <StyledIcon
                 fontWeight="light"
-                size={parseFloat(theme.icon.size.sm)}
+                size={theme.icon.size.sm}
               />
             )}
           </>

@@ -176,7 +176,7 @@ export const SnackBar = ({
 
     const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
     const color = theme.snackBar[variant].color;
-    const size = parseFloat(theme.icon.size.md);
+    const size = theme.icon.size.md;
 
     switch (variant) {
       case SnackBarVariant.Error:

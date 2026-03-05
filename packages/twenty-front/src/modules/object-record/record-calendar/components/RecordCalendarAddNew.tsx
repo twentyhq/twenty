@@ -79,7 +79,7 @@ export const RecordCalendarAddNew = ({
         });
       }}
       variant="tertiary"
-      Icon={() => <IconPlus size={parseFloat(theme.icon.size.sm)} />}
+      Icon={() => <IconPlus size={theme.icon.size.sm} />}
     />
   );
 };

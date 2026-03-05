@@ -20,7 +20,7 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DATABASE_EVENT': {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.blue}
             />
           );
@@ -30,7 +30,7 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'WEBHOOK': {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.purple}
             />
           );
@@ -47,16 +47,16 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DRAFT_EMAIL': {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.red}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              stroke={theme.icon.stroke.sm}
             />
           );
         }
         case 'FORM': {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.orange}
             />
           );
@@ -64,7 +64,7 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'AI_AGENT': {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.pink}
             />
           );
@@ -76,16 +76,16 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'ITERATOR':
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.color.green12}
             />
           );
         default: {
           return (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
+              size={theme.icon.size.md}
               color={theme.font.color.tertiary}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              stroke={theme.icon.stroke.sm}
             />
           );
         }

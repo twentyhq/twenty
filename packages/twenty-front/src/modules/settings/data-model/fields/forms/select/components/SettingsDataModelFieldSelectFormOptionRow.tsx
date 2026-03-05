@@ -131,10 +131,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
     <StyledRow className={className}>
       <StyledIconGripVertical
         style={{
-          minWidth: parseFloat(theme.icon.size.md),
+          minWidth: theme.icon.size.md,
         }}
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.sm)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>

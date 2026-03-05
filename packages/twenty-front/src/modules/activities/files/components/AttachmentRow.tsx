@@ -199,7 +199,7 @@ export const AttachmentRow = ({
         </StyledLeftContent>
         <StyledRightContent>
           <StyledCalendarIconContainer>
-            <IconCalendar size={parseFloat(theme.icon.size.md)} />
+            <IconCalendar size={theme.icon.size.md} />
           </StyledCalendarIconContainer>
           {formatToHumanReadableDate(attachment.createdAt)}
           <AttachmentDropdown

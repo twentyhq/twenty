@@ -40,7 +40,7 @@ export const SubMatchingSelectDropdownButton = ({
         text={value?.label ?? placeholder}
         color={value?.color as TagColor}
       />
-      <StyledIconChevronDown size={parseFloat(theme.icon.size.md)} />
+      <StyledIconChevronDown size={theme.icon.size.md} />
     </SubMatchingSelectControlContainer>
   );
 };

@@ -75,7 +75,7 @@ export const RoutingStatusDisplay = ({
     return (
       <StyledContainer>
         <StyledIconTextContainer>
-          <IconCpu size={parseFloat(theme.icon.size.sm)} />
+          <IconCpu size={theme.icon.size.sm} />
           <ShimmeringText>
             <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
           </ShimmeringText>
@@ -91,14 +91,14 @@ export const RoutingStatusDisplay = ({
         isExpandable={!!isExpandable}
       >
         <StyledIconTextContainer>
-          <IconCpu size={parseFloat(theme.icon.size.sm)} />
+          <IconCpu size={theme.icon.size.sm} />
           <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
         </StyledIconTextContainer>
         {isExpandable &&
           (isExpanded ? (
-            <IconChevronUp size={parseFloat(theme.icon.size.sm)} />
+            <IconChevronUp size={theme.icon.size.sm} />
           ) : (
-            <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
+            <IconChevronDown size={theme.icon.size.sm} />
           ))}
       </StyledToggleButton>
 

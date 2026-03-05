@@ -327,7 +327,7 @@ const TextInputComponent = forwardRef<
           {!!LeftIcon && (
             <StyledLeftIconContainer sizeVariant={sizeVariant}>
               <StyledTrailingIcon isFocused={isFocused}>
-                <LeftIcon size={parseFloat(theme.icon.size.md)} />
+                <LeftIcon size={theme.icon.size.md} />
               </StyledTrailingIcon>
             </StyledLeftIconContainer>
           )}
@@ -381,9 +381,9 @@ const TextInputComponent = forwardRef<
                 data-testid="reveal-password-button"
               >
                 {passwordVisible ? (
-                  <IconEyeOff size={parseFloat(theme.icon.size.md)} />
+                  <IconEyeOff size={theme.icon.size.md} />
                 ) : (
-                  <IconEye size={parseFloat(theme.icon.size.md)} />
+                  <IconEye size={theme.icon.size.md} />
                 )}
               </StyledTrailingIcon>
             )}
@@ -391,7 +391,7 @@ const TextInputComponent = forwardRef<
               <StyledTrailingIcon
                 onClick={onRightIconClick ? onRightIconClick : undefined}
               >
-                <RightIcon size={parseFloat(theme.icon.size.md)} />
+                <RightIcon size={theme.icon.size.md} />
               </StyledTrailingIcon>
             )}
           </StyledTrailingIconContainer>

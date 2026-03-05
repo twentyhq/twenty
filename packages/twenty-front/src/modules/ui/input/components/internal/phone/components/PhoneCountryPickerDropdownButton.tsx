@@ -106,7 +106,7 @@ export const PhoneCountryPickerDropdownButton = ({
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
             <StyledCheveronIconContainer>
-              <IconChevronDown size={parseFloat(theme.icon.size.sm)} />
+              <IconChevronDown size={theme.icon.size.sm} />
             </StyledCheveronIconContainer>
           </StyledIconContainer>
         </StyledDropdownButtonContainer>

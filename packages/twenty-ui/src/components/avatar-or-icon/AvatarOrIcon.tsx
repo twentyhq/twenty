@@ -76,8 +76,8 @@ export const AvatarOrIcon = ({
         >
           <Icon
             color={theme.font.color.inverted}
-            size={parseFloat(theme.icon.size.sm)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
           />
         </StyledIconWithBackgroundContainer>
       </StyledAvatarOrIconWrapper>
@@ -87,8 +87,8 @@ export const AvatarOrIcon = ({
   return (
     <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
       <Icon
-        size={parseFloat(theme.icon.size.sm)}
-        stroke={parseFloat(theme.icon.stroke.sm)}
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.sm}
         color={IconColor || 'currentColor'}
       />
     </StyledAvatarOrIconWrapper>

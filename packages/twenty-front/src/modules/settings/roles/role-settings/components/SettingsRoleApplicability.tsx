@@ -91,7 +91,7 @@ export const SettingsRoleApplicability = ({
             }
           >
             <StyledCheckboxLabel>
-              <option.Icon size={parseFloat(theme.icon.size.sm)} />
+              <option.Icon size={theme.icon.size.sm} />
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox

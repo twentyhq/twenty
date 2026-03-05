@@ -226,7 +226,7 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder />
                 )}
                 <IconChevronDown
-                  size={parseFloat(theme.icon.size.md)}
+                  size={theme.icon.size.md}
                   color={theme.font.color.light}
                 />
               </StyledDisplayModeReadonlyContainer>
@@ -246,7 +246,7 @@ export const FormMultiSelectFieldInput = ({
                   <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
                 )}
                 <IconChevronDown
-                  size={parseFloat(theme.icon.size.md)}
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                 />
               </StyledDisplayModeContainer>

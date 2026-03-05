@@ -275,7 +275,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 <StyledBannerContent>
                   <IconInfoCircle
                     color={theme.color.blue}
-                    size={parseFloat(theme.icon.size.md)}
+                    size={theme.icon.size.md}
                   />
                   <StyledBannerText>
                     {t`An object with this name already exists`}
@@ -357,7 +357,7 @@ export const SettingsDataModelObjectAboutForm = ({
                                 <>
                                   <IconInfoCircle
                                     id={infoCircleElementId + fieldName}
-                                    size={parseFloat(theme.icon.size.md)}
+                                    size={theme.icon.size.md}
                                     color={theme.font.color.tertiary}
                                     style={{ outline: 'none' }}
                                   />

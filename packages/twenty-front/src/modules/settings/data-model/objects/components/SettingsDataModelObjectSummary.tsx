@@ -78,8 +78,8 @@ const SettingsDataModelObjectPreviewItem = ({
         <StyledObjectName>
           <StyledIconContainer>
             <ObjectIcon
-              size={parseFloat(theme.icon.size.sm)}
-              stroke={parseFloat(theme.icon.stroke.md)}
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.md}
             />
           </StyledIconContainer>
           <OverflowingTextWithTooltip
@@ -110,8 +110,8 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
         <StyledObjectName>
           <StyledIconContainer>
             <IconBox
-              size={parseFloat(theme.icon.size.sm)}
-              stroke={parseFloat(theme.icon.stroke.md)}
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.md}
               color={theme.font.color.tertiary}
             />
           </StyledIconContainer>

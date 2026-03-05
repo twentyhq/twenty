@@ -112,7 +112,7 @@ export const RecordTableHeaderAddColumnButton = () => {
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
             <StyledPlusIconContainer>
-              <IconPlus size={parseFloat(theme.icon.size.md)} />
+              <IconPlus size={theme.icon.size.md} />
             </StyledPlusIconContainer>
           }
           dropdownComponents={<RecordTableHeaderPlusButtonContent />}

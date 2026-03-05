@@ -52,7 +52,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
       initial={false}
       animate={animate}
       transition={{
-        duration: parseFloat(theme.animation.duration.normal),
+        duration: theme.animation.duration.normal,
       }}
     >
       {children}

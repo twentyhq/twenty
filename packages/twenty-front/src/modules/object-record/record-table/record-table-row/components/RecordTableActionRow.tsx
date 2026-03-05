@@ -139,8 +139,8 @@ export const RecordTableActionRow = ({
       <StyledDragDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
-          stroke={parseFloat(theme.icon.stroke.sm)}
-          size={parseFloat(theme.icon.size.sm)}
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.sm}
           color={theme.font.color.tertiary}
         />
       </StyledIconContainer>

@@ -13,7 +13,7 @@ export const GithubVersionLink = ({ version }: GithubVersionLinkProps) => {
 
   return (
     <ClickToActionLink href={GITHUB_LINK} target="_blank" rel="noreferrer">
-      <IconBrandGithub size={parseFloat(theme.icon.size.md)} />
+      <IconBrandGithub size={theme.icon.size.md} />
       {version}
     </ClickToActionLink>
   );

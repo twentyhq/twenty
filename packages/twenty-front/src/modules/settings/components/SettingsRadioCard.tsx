@@ -61,7 +61,7 @@ export const SettingsRadioCard = ({
     <StyledRadioCardContent tabIndex={0} onClick={onClick}>
       {Icon && (
         <Icon
-          size={parseFloat(theme.icon.size.xl)}
+          size={theme.icon.size.xl}
           color={theme.color.gray10}
         />
       )}

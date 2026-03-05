@@ -76,8 +76,8 @@ export const NavigationDrawerBackButton = ({
       >
         <StyledIconAndButtonContainer>
           <IconX
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.lg)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.lg}
             color={theme.font.color.tertiary}
           />
           <span>{title}</span>

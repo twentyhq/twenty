@@ -146,8 +146,8 @@ export const SettingsSSOSAMLForm = () => {
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.lg)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.lg}
               color={theme.color.blue}
             />
           )}

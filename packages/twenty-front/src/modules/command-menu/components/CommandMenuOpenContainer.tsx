@@ -97,7 +97,7 @@ export const CommandMenuOpenContainer = ({
       exit="closed"
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
       transition={{
-        duration: parseFloat(theme.animation.duration.normal),
+        duration: theme.animation.duration.normal,
       }}
       onAnimationStart={() => setIsSidePanelAnimating(true)}
       onAnimationComplete={() => setIsSidePanelAnimating(false)}

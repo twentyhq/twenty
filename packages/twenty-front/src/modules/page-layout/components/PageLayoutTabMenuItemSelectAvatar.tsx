@@ -71,7 +71,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
 
       <StyledRightContent>
         {selected && !isHovered && (
-          <StyledMenuItemIconCheck size={parseFloat(theme.icon.size.md)} />
+          <StyledMenuItemIconCheck size={theme.icon.size.md} />
         )}
 
         {isHovered && showEditButton && (

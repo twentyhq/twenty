@@ -51,7 +51,7 @@ export const MenuItemSelectTag = ({
         />
       </StyledMenuItemLeftContent>
       {selected && (
-        <StyledMenuItemIconCheck size={parseFloat(theme.icon.size.md)} />
+        <StyledMenuItemIconCheck size={theme.icon.size.md} />
       )}
     </StyledMenuItemSelect>
   );

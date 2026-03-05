@@ -9,7 +9,7 @@ type IllustrationIconTextProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconText = (props: IllustrationIconTextProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconTextRaw

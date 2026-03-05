@@ -129,8 +129,8 @@ export const MenuItem = ({
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (
           <RightIcon
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
         )}
         {RightComponent}
@@ -138,11 +138,11 @@ export const MenuItem = ({
           <StyledSubMenuIcon
             animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
             transition={{
-              duration: parseFloat(theme.animation.duration.normal),
+              duration: theme.animation.duration.normal,
             }}
           >
             <IconChevronRight
-              size={parseFloat(theme.icon.size.sm)}
+              size={theme.icon.size.sm}
               color={theme.font.color.light}
             />
           </StyledSubMenuIcon>

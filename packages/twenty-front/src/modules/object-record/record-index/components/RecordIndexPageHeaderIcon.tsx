@@ -36,7 +36,7 @@ export const RecordIndexPageHeaderIcon = ({
   }
 
   if (!isNavigationMenuItemEditingEnabled) {
-    return <ObjectIcon size={parseFloat(theme.icon.size.md)} />;
+    return <ObjectIcon size={theme.icon.size.md} />;
   }
 
   const navItem = isDefined(coreIndexViewId)

@@ -130,7 +130,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
           <StyledDueDate
             isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
           >
-            <IconCalendar size={parseFloat(theme.icon.size.md)} />
+            <IconCalendar size={theme.icon.size.md} />
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}

@@ -211,7 +211,7 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButton onClick={addField}>
-          <IconPlus size={parseFloat(theme.icon.size.sm)} />
+          <IconPlus size={theme.icon.size.sm} />
           {t`Add Output Field`}
         </StyledAddFieldButton>
       )}

@@ -79,7 +79,7 @@ export const WorkflowStepExecutionResult = ({
 
   const SuccessLeftNode = (
     <StyledOutput accent="success">
-      <IconSquareRoundedCheck size={parseFloat(theme.icon.size.md)} />
+      <IconSquareRoundedCheck size={theme.icon.size.md} />
       <div>
         <div>{status.successMessage}</div>
         {status.additionalInfo && (
@@ -91,7 +91,7 @@ export const WorkflowStepExecutionResult = ({
 
   const ErrorLeftNode = (
     <StyledOutput accent="error">
-      <IconSquareRoundedX size={parseFloat(theme.icon.size.md)} />
+      <IconSquareRoundedX size={theme.icon.size.md} />
       <div>
         <div>{status.errorMessage}</div>
         {status.additionalInfo && (
@@ -106,7 +106,7 @@ export const WorkflowStepExecutionResult = ({
   const PendingLeftNode = isTesting && (
     <StyledOutput>
       <AnimatedCircleLoading>
-        <IconLoader size={parseFloat(theme.icon.size.md)} />
+        <IconLoader size={theme.icon.size.md} />
       </AnimatedCircleLoading>
       <StyledInfoContainer>{loadingMessage}</StyledInfoContainer>
     </StyledOutput>

@@ -84,8 +84,8 @@ export const DropZone = ({
             {...getInputProps()}
           />
           <StyledUploadIcon
-            stroke={parseFloat(theme.icon.stroke.sm)}
-            size={parseFloat(theme.icon.size.lg)}
+            stroke={theme.icon.stroke.sm}
+            size={theme.icon.size.lg}
           />
           <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>

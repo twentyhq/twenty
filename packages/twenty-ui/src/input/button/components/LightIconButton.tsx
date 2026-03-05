@@ -124,8 +124,8 @@ export const LightIconButton = ({
         <Icon
           size={
             size === 'medium'
-              ? parseFloat(theme.icon.size.md)
-              : parseFloat(theme.icon.size.sm)
+              ? theme.icon.size.md
+              : theme.icon.size.sm
           }
         />
       )}

@@ -219,7 +219,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               onClick={handleResetToStaticValue}
               aria-label={t`Reset to static value`}
             >
-              <IconEraser size={parseFloat(theme.icon.size.sm)} />
+              <IconEraser size={theme.icon.size.sm} />
             </StyledIconContainer>
           </StyledContainer>
           <AppTooltip

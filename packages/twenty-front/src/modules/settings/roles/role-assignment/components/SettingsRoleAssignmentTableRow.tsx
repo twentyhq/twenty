@@ -80,10 +80,10 @@ export const SettingsRoleAssignmentTableRow = ({
       }
       case 'agent': {
         const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
-        return <Icon size={parseFloat(theme.icon.size.md)} />;
+        return <Icon size={theme.icon.size.md} />;
       }
       case 'apiKey': {
-        return <IconKey size={parseFloat(theme.icon.size.md)} />;
+        return <IconKey size={theme.icon.size.md} />;
       }
     }
   };

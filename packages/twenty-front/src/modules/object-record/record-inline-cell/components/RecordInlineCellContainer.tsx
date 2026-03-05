@@ -112,7 +112,7 @@ export const RecordInlineCellContainer = () => {
         <StyledLabelAndIconContainer id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
-              <IconLabel stroke={parseFloat(theme.icon.stroke.sm)} />
+              <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
           {showLabel && (

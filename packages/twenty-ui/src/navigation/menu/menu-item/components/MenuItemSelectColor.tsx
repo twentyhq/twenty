@@ -49,7 +49,7 @@ export const MenuItemSelectColor = ({
         <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
       {selected && (
-        <StyledMenuItemIconCheck size={parseFloat(theme.icon.size.md)} />
+        <StyledMenuItemIconCheck size={theme.icon.size.md} />
       )}
     </StyledMenuItemSelect>
   );

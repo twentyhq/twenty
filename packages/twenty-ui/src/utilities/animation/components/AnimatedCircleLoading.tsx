@@ -25,7 +25,7 @@ export const AnimatedCircleLoading = ({
       }}
       transition={{
         repeat: Infinity,
-        duration: parseFloat(theme.animation.duration.slow),
+        duration: theme.animation.duration.slow,
         ease: 'easeInOut',
       }}
     >

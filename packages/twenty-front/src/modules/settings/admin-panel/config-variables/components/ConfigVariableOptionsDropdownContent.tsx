@@ -72,13 +72,13 @@ export const ConfigVariableOptionsDropdownContent = ({
             LeftIcon={() =>
               showHiddenGroupVariables ? (
                 <IconEyeOff
-                  size={parseFloat(theme.icon.size.md)}
-                  stroke={parseFloat(theme.icon.stroke.sm)}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
                 />
               ) : (
                 <IconEye
-                  size={parseFloat(theme.icon.size.md)}
-                  stroke={parseFloat(theme.icon.stroke.sm)}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
                 />
               )
             }

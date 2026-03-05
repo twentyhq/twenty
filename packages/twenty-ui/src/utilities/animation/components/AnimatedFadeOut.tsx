@@ -31,7 +31,7 @@ export const AnimatedFadeOut = ({
           }}
           exit={{ opacity: 0, height: 0, marginBottom: 0, marginTop: 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration[duration]),
+            duration: theme.animation.duration[duration],
             ease: 'easeOut',
           }}
         >

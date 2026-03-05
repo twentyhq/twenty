@@ -42,12 +42,12 @@ export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
       animate={{ width: 20, opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{
-        duration: parseFloat(theme.animation.duration.fast),
+        duration: theme.animation.duration.fast,
         ease: 'easeInOut',
       }}
     >
       <IconGripVertical
-        size={parseFloat(theme.icon.size.sm)}
+        size={theme.icon.size.sm}
         color={theme.font.color.extraLight}
       />
     </StyledGripContainer>

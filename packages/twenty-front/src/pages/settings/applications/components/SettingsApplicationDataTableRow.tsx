@@ -54,8 +54,8 @@ export const SettingsApplicationDataTableRow = ({
         <StyledNameTableCell>
           {isDefined(Icon) && (
             <Icon
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
             />
           )}
           {row.labelPlural}
@@ -67,14 +67,14 @@ export const SettingsApplicationDataTableRow = ({
         <StyledActionTableCell>
           {hasFields && isExpanded ? (
             <IconChevronDown
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
               color={theme.font.color.tertiary}
             />
           ) : (
             <IconChevronRight
-              size={parseFloat(theme.icon.size.md)}
-              stroke={parseFloat(theme.icon.stroke.sm)}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
               color={theme.font.color.tertiary}
             />
           )}
@@ -102,8 +102,8 @@ export const SettingsApplicationDataTableRow = ({
               <StyledFieldNameTableCell>
                 {isDefined(FieldIcon) && (
                   <FieldIcon
-                    size={parseFloat(theme.icon.size.md)}
-                    stroke={parseFloat(theme.icon.stroke.sm)}
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
                   />
                 )}
                 {field.label}

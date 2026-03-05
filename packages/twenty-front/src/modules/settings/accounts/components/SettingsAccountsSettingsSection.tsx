@@ -38,8 +38,8 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconMailCog
-                size={parseFloat(theme.icon.size.lg)}
-                stroke={parseFloat(theme.icon.stroke.sm)}
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
               />
             }
             title={t`Emails`}
@@ -50,8 +50,8 @@ export const SettingsAccountsSettingsSection = () => {
           <SettingsCard
             Icon={
               <IconCalendarEvent
-                size={parseFloat(theme.icon.size.lg)}
-                stroke={parseFloat(theme.icon.stroke.sm)}
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
               />
             }
             title={t`Calendar`}

@@ -52,7 +52,7 @@ export const RoundedIconButton = ({
       onClick={onClick}
       size={size}
     >
-      <Icon size={parseFloat(theme.icon.size.md)} />
+      <Icon size={theme.icon.size.md} />
     </StyledIconButton>
   );
 };

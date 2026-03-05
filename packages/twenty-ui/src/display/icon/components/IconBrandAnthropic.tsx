@@ -8,7 +8,7 @@ type IconBrandAnthropicProps = Pick<IconComponentProps, 'size' | 'color'>;
 
 export const IconBrandAnthropic = (props: IconBrandAnthropicProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return (
     <IconAnthropicRaw

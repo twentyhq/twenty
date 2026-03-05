@@ -41,7 +41,7 @@ export const EmailThreadNotShared = ({
   return (
     <>
       <StyledContainer id={containerId} isCompact={isCompact}>
-        <IconLock size={parseFloat(theme.icon.size.sm)} />
+        <IconLock size={theme.icon.size.sm} />
         {t`Not shared`}
       </StyledContainer>
       {visibility === MessageChannelVisibility.SUBJECT && (

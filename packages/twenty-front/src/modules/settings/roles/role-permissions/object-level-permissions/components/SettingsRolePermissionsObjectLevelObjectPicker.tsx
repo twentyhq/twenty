@@ -135,8 +135,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                   <SettingsCard
                     Icon={
                       <Icon
-                        size={parseFloat(theme.icon.size.lg)}
-                        stroke={parseFloat(theme.icon.stroke.sm)}
+                        size={theme.icon.size.lg}
+                        stroke={theme.icon.stroke.sm}
                       />
                     }
                     title={objectMetadataItem.labelPlural}
@@ -164,8 +164,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     key={objectMetadataItem.id}
                     Icon={
                       <Icon
-                        size={parseFloat(theme.icon.size.lg)}
-                        stroke={parseFloat(theme.icon.stroke.sm)}
+                        size={theme.icon.size.lg}
+                        stroke={theme.icon.stroke.sm}
                       />
                     }
                     title={objectMetadataItem.labelPlural}

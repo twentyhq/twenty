@@ -35,7 +35,7 @@ export const AnimatedEaseInOut = ({
           animate={{ height: 'fit-content', opacity: 1 }}
           exit={{ height: 0, opacity: 0, marginBottom: 0, marginTop: 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration[duration]),
+            duration: theme.animation.duration[duration],
             ease: 'easeInOut',
           }}
         >

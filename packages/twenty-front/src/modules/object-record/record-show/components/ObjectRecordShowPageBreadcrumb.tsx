@@ -92,7 +92,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
           navigateToIndexView();
         }}
       >
-        {HeaderIcon && <HeaderIcon size={parseFloat(theme.icon.size.md)} />}
+        {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
         {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>

@@ -113,7 +113,7 @@ export const CalendarEventRow = ({
           {startTimeLabel}
           {endTimeLabel && (
             <>
-              <IconArrowRight size={parseFloat(theme.icon.size.sm)} />
+              <IconArrowRight size={theme.icon.size.sm} />
               {endTimeLabel}
             </>
           )}

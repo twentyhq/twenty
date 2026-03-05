@@ -91,7 +91,7 @@ export const AIChatThreadGroup = ({
           >
             <StyledSparkleIcon>
               <IconSparkles
-                size={parseFloat(theme.icon.size.md)}
+                size={theme.icon.size.md}
                 color={theme.color.blue}
               />
             </StyledSparkleIcon>

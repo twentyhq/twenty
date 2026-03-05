@@ -22,7 +22,7 @@ export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
           opacity: 1,
           y: 0,
           transition: {
-            duration: parseFloat(theme.animation.duration.normal),
+            duration: theme.animation.duration.normal,
             ease: 'easeInOut',
           },
         },

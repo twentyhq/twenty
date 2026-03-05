@@ -130,7 +130,7 @@ export const FloatingIconButton = ({
       onClick={onClick}
       isActive={isActive}
     >
-      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
+      {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
 };

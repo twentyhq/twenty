@@ -70,7 +70,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
       <TableCell align="right">
         <IconChevronRight
-          size={parseFloat(theme.icon.size.md)}
+          size={theme.icon.size.md}
           color={theme.font.color.tertiary}
         />
       </TableCell>

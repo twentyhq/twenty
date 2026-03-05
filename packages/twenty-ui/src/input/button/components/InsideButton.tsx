@@ -41,7 +41,7 @@ export const InsideButton = ({
 
   return (
     <StyledButton className={className} onClick={onClick} disabled={disabled}>
-      {Icon && <Icon size={parseFloat(theme.icon.size.sm)} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledButton>
   );
 };

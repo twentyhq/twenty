@@ -69,7 +69,7 @@ export const WorkflowEditActionFormFieldSettings = ({
       <StyledSettingsHeader>
         <StyledTitleContainer>
           <IconSettingsAutomation
-            size={parseFloat(theme.icon.size.md)}
+            size={theme.icon.size.md}
             color={theme.font.color.primary}
           />
           {t`Input settings`}

@@ -194,7 +194,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconHome
-                size={parseFloat(theme.icon.size.sm)}
+                size={theme.icon.size.sm}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
@@ -224,7 +224,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconComment
-                size={parseFloat(theme.icon.size.sm)}
+                size={theme.icon.size.sm}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
@@ -242,7 +242,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
-          <IconMessageCirclePlus size={parseFloat(theme.icon.size.md)} />
+          <IconMessageCirclePlus size={theme.icon.size.md} />
           {isExpanded && t`New chat`}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>

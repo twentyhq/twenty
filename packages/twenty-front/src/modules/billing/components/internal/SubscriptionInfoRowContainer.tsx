@@ -59,7 +59,7 @@ export const SubscriptionInfoRowContainer = ({
   return (
     <StyledContainer>
       <StyledIconLabelContainer>
-        <Icon size={parseFloat(theme.icon.size.md)} />
+        <Icon size={theme.icon.size.md} />
         <StyledLabelContainer>{label}</StyledLabelContainer>
       </StyledIconLabelContainer>
       {currentValue}

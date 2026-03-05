@@ -8,8 +8,8 @@ type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
 export const IconTrashXOff = (props: IconTrashXOffProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
-  const stroke = props.stroke ?? parseFloat(theme.icon.stroke.md);
+  const size = props.size ?? theme.icon.size.lg;
+  const stroke = props.stroke ?? theme.icon.stroke.md;
 
   return <IconTrashXOffRaw height={size} width={size} strokeWidth={stroke} />;
 };

@@ -195,8 +195,8 @@ export const SettingsToolsTable = () => {
                   tool={tool}
                   action={
                     <IconChevronRight
-                      size={parseFloat(theme.icon.size.md)}
-                      stroke={parseFloat(theme.icon.stroke.sm)}
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
                     />
                   }
                   link={getToolLink(tool)}

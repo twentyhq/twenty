@@ -54,7 +54,7 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
         <Checkbox checked={!!isSelected} />
       </StyledCheckboxTableCell>
       <StyledNameTableCell>
-        {!!Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
+        {!!Icon && <Icon size={theme.icon.size.md} />}
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>

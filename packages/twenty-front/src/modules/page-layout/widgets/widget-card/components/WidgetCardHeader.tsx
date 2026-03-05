@@ -120,7 +120,7 @@ export const WidgetCardHeader = ({
                 animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{
-                  duration: parseFloat(theme.animation.duration.fast),
+                  duration: theme.animation.duration.fast,
                   ease: 'easeInOut',
                 }}
               >

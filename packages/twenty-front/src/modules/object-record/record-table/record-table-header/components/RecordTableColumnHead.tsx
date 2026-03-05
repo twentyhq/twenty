@@ -78,7 +78,7 @@ export const RecordTableColumnHead = ({
   return (
     <StyledTitle hideTitle={shouldHideTitle}>
       <StyledIcon>
-        <Icon size={parseFloat(theme.icon.size.md)} />
+        <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <StyledText>
         {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}

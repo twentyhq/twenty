@@ -208,7 +208,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                               <>
                                 <IconInfoCircle
                                   id="info-circle-id-name"
-                                  size={parseFloat(theme.icon.size.md)}
+                                  size={theme.icon.size.md}
                                   color={theme.font.color.tertiary}
                                   style={{ outline: 'none' }}
                                 />

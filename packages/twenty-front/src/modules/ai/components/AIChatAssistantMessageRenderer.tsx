@@ -37,7 +37,7 @@ const InitialLoadingIndicator = () => {
 
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon size={parseFloat(theme.icon.size.xl)} />
+      <StyledLoadingIcon size={theme.icon.size.xl} />
     </StyledLoadingIconContainer>
   );
 };

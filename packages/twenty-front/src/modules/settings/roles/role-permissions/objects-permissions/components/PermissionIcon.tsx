@@ -47,8 +47,8 @@ export const PermissionIcon = ({ permission, state }: PermissionIconProps) => {
   return (
     <StyledIconWrapper isRevoked={isRevoked}>
       <StyledIcon isRevoked={isRevoked}>
-        {isRevoked && <IconForbidden size={parseFloat(theme.icon.size.sm)} />}
-        {!isRevoked && <Icon size={parseFloat(theme.icon.size.sm)} />}
+        {isRevoked && <IconForbidden size={theme.icon.size.sm} />}
+        {!isRevoked && <Icon size={theme.icon.size.sm} />}
       </StyledIcon>
     </StyledIconWrapper>
   );

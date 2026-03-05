@@ -200,7 +200,7 @@ export const RecordTableRecordGroupSection = () => {
           accent="secondary"
           animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration.normal),
+            duration: theme.animation.duration.normal,
           }}
         />
       </StyledChevronContainer>

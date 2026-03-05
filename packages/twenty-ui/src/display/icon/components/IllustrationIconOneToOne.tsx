@@ -11,7 +11,7 @@ export const IllustrationIconOneToOne = (
   props: IllustrationIconOneToOneProps,
 ) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconOneToOneRaw

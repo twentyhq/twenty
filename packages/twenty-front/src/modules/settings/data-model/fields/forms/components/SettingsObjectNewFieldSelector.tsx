@@ -160,8 +160,8 @@ export const SettingsObjectNewFieldSelector = ({
                             key={key}
                             Icon={
                               <config.Icon
-                                size={parseFloat(theme.icon.size.xl)}
-                                stroke={parseFloat(theme.icon.stroke.sm)}
+                                size={theme.icon.size.xl}
+                                stroke={theme.icon.stroke.sm}
                               />
                             }
                             title={config.label}

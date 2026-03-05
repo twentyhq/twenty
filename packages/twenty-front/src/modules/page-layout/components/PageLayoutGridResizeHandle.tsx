@@ -191,32 +191,32 @@ export const PageLayoutGridResizeHandle = forwardRef<
         {widgetHandleAxis === 'ne' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="ne">
             <IconRadiusTopRight
-              size={parseFloat(theme.icon.size.lg)}
-              stroke={parseFloat(theme.icon.stroke.lg)}
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'nw' && (
           <StyledCornerIconWrapper cursor="nwse-resize" position="nw">
             <IconRadiusTopLeft
-              size={parseFloat(theme.icon.size.lg)}
-              stroke={parseFloat(theme.icon.stroke.lg)}
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'se' && (
           <StyledCornerIconWrapper cursor="nwse-resize" position="se">
             <IconRadiusBottomRight
-              size={parseFloat(theme.icon.size.lg)}
-              stroke={parseFloat(theme.icon.stroke.lg)}
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'sw' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="sw">
             <IconRadiusBottomLeft
-              size={parseFloat(theme.icon.size.lg)}
-              stroke={parseFloat(theme.icon.stroke.lg)}
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}

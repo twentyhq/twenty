@@ -136,7 +136,7 @@ export const SortOrFilterChip = ({
     <StyledChip onClick={onClick} variant={variant}>
       {Icon && (
         <StyledIcon>
-          <Icon size={parseFloat(theme.icon.size.sm)} />
+          <Icon size={theme.icon.size.sm} />
         </StyledIcon>
       )}
       <StyledKeyLabelContainer>
@@ -153,8 +153,8 @@ export const SortOrFilterChip = ({
         data-testid={'remove-icon-' + testId}
       >
         <IconX
-          size={parseFloat(theme.icon.size.sm)}
-          stroke={parseFloat(theme.icon.stroke.sm)}
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
         />
       </StyledDelete>
     </StyledChip>

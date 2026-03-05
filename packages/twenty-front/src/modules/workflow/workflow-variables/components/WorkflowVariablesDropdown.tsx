@@ -97,7 +97,7 @@ export const WorkflowVariablesDropdown = ({
         transparentBackground
       >
         <IconVariablePlus
-          size={parseFloat(theme.icon.size.sm)}
+          size={theme.icon.size.sm}
           color={theme.font.color.light}
         />
       </StyledDropdownVariableButtonContainer>
@@ -114,7 +114,7 @@ export const WorkflowVariablesDropdown = ({
             isUnfolded={isDropdownOpen}
             transparentBackground
           >
-            <IconVariablePlus size={parseFloat(theme.icon.size.sm)} />
+            <IconVariablePlus size={theme.icon.size.sm} />
           </StyledDropdownVariableButtonContainer>
         )
       }

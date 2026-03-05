@@ -68,14 +68,14 @@ export const ObjectIconWithViewOverlay = ({
       >
         <ObjectIcon
           size="14px"
-          stroke={parseFloat(theme.icon.stroke.md)}
+          stroke={theme.icon.stroke.md}
           color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
       <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
           size="10px"
-          stroke={parseFloat(theme.icon.stroke.lg)}
+          stroke={theme.icon.stroke.lg}
           color={themeCssVariables.grayScale.gray10}
         />
       </StyledViewOverlay>

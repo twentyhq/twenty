@@ -8,7 +8,7 @@ type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGoogleCalendar = (props: IconGoogleCalendarProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return <IconGoogleCalendarRaw height={size} width={size} />;
 };

@@ -27,7 +27,7 @@ export const useCopyToClipboard = () => {
       enqueueSuccessSnackBar({
         message: message || t`Copied to clipboard`,
         options: {
-          icon: <IconCopy size={parseFloat(theme.icon.size.md)} />,
+          icon: <IconCopy size={theme.icon.size.md} />,
           duration: 2000,
         },
       });

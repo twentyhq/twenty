@@ -329,7 +329,7 @@ export const WorkflowEditActionFormBuilder = ({
                                 </StyledPlaceholderContainer>
                                 {field.type === 'RECORD' && (
                                   <IconChevronDown
-                                    size={parseFloat(theme.icon.size.md)}
+                                    size={theme.icon.size.md}
                                     color={
                                       themeCssVariables.font.color.tertiary
                                     }
@@ -419,7 +419,7 @@ export const WorkflowEditActionFormBuilder = ({
                 >
                   <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
-                      <IconPlus size={parseFloat(theme.icon.size.sm)} />
+                      <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
                     </StyledAddFieldButtonContentContainer>
                   </StyledFieldContainer>

@@ -47,8 +47,8 @@ export const FieldsWidgetGroupContainer = ({
         <StyledTitleLabel>{title}</StyledTitleLabel>
         <StyledChevronWrapper isExpanded={isExpanded}>
           <IconChevronDown
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
         </StyledChevronWrapper>
       </StyledHeader>

@@ -54,7 +54,7 @@ export const ButtonIcon = ({
       )}
       {Icon && (
         <StyledIcon isLoading={!!isLoading}>
-          <Icon size={parseFloat(theme.icon.size.sm)} />
+          <Icon size={theme.icon.size.sm} />
         </StyledIcon>
       )}
     </StyledIconWrapper>

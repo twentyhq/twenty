@@ -111,7 +111,7 @@ export const MainButton = ({
       className={className}
       {...{ disabled, fullWidth, width, onClick, type, variant }}
     >
-      {Icon && <Icon size={parseFloat(theme.icon.size.sm)} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );

@@ -74,7 +74,7 @@ export const Info = ({
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <IconInfoCircle size={parseFloat(theme.icon.size.md)} />
+        <IconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && to && (

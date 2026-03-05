@@ -16,7 +16,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
   const { theme } = useContext(ThemeContext);
-  const iconSizeSm = parseFloat(theme.icon.size.sm);
+  const iconSizeSm = theme.icon.size.sm;
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );

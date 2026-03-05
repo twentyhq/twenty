@@ -196,14 +196,14 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             rightOptions={
               isOpen ? (
                 <IconChevronDown
-                  size={parseFloat(theme.icon.size.sm)}
-                  stroke={parseFloat(theme.icon.stroke.sm)}
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.sm}
                   color={theme.font.color.tertiary}
                 />
               ) : (
                 <IconChevronRight
-                  size={parseFloat(theme.icon.size.sm)}
-                  stroke={parseFloat(theme.icon.stroke.sm)}
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.sm}
                   color={theme.font.color.tertiary}
                 />
               )

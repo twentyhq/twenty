@@ -73,7 +73,7 @@ export const DashboardColorSelectionMenu = ({
             </StyledColorName>
             {currentTextColor === colorName && (
               <StyledCheckIcon>
-                <IconCheck size={parseFloat(theme.icon.size.sm)} />
+                <IconCheck size={theme.icon.size.sm} />
               </StyledCheckIcon>
             )}
           </StyledColorMenuItem>
@@ -93,7 +93,7 @@ export const DashboardColorSelectionMenu = ({
             </StyledColorName>
             {currentBackgroundColor === colorName && (
               <StyledCheckIcon>
-                <IconCheck size={parseFloat(theme.icon.size.sm)} />
+                <IconCheck size={theme.icon.size.sm} />
               </StyledCheckIcon>
             )}
           </StyledColorMenuItem>

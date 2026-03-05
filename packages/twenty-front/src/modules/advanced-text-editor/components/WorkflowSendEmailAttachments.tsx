@@ -139,7 +139,7 @@ export const WorkflowSendEmailAttachments = ({
           </StyledChipsContainer>
         ) : (
           <StyledUploadAreaLabel>
-            <IconUpload size={parseFloat(theme.icon.size.sm)} />
+            <IconUpload size={theme.icon.size.sm} />
             <span>{t`Upload file`}</span>
           </StyledUploadAreaLabel>
         )}

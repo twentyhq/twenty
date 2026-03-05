@@ -36,8 +36,8 @@ export const SettingsConnectedAccountsTableRow = ({
       <TableCell>
         <StyledNameCell>
           <IconComponent
-            size={parseFloat(theme.icon.size.md)}
-            stroke={parseFloat(theme.icon.stroke.sm)}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
           />
           {account.handle}
         </StyledNameCell>

@@ -33,7 +33,7 @@ export const PageHeaderActionMenuButtons = () => {
           animate={{ width: 'unset', opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{
-            duration: parseFloat(theme.animation.duration.instant),
+            duration: theme.animation.duration.instant,
             ease: 'easeInOut',
           }}
         >

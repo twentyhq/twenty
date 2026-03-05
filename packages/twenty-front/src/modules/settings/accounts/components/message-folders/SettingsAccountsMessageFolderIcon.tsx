@@ -21,8 +21,8 @@ export const SettingsAccountsMessageFolderIcon = ({
   if (folder.isSentFolder) {
     return (
       <IconSend
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.sm)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.sm}
       />
     );
   }
@@ -30,8 +30,8 @@ export const SettingsAccountsMessageFolderIcon = ({
   if (folder.name.toLowerCase().includes('inbox')) {
     return (
       <IconInbox
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.sm)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.sm}
       />
     );
   }
@@ -39,16 +39,16 @@ export const SettingsAccountsMessageFolderIcon = ({
   if (isChildFolder) {
     return (
       <IconFolderRoot
-        size={parseFloat(theme.icon.size.md)}
-        stroke={parseFloat(theme.icon.stroke.sm)}
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.sm}
       />
     );
   }
 
   return (
     <IconFolder
-      size={parseFloat(theme.icon.size.md)}
-      stroke={parseFloat(theme.icon.stroke.sm)}
+      size={theme.icon.size.md}
+      stroke={theme.icon.stroke.sm}
     />
   );
 };

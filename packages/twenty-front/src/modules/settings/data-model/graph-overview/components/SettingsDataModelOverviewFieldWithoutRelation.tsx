@@ -32,7 +32,7 @@ export const ObjectFieldRowWithoutRelation = ({
 
   return (
     <StyledRow>
-      {Icon && <Icon size={parseFloat(theme.icon.size.md)} />}
+      {Icon && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{field.label}</StyledFieldName>
     </StyledRow>
   );

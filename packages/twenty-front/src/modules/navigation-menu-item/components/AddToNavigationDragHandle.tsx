@@ -39,8 +39,8 @@ const AddToNavigationDragHandleIcon = ({
   iconColor,
 }: AddToNavigationDragHandleIconProps) => {
   const { theme } = useContext(ThemeContext);
-  const iconSize = parseFloat(theme.icon.size.md);
-  const iconStroke = parseFloat(theme.icon.stroke.sm);
+  const iconSize = theme.icon.size.md;
+  const iconStroke = theme.icon.stroke.sm;
 
   if (isDefined(customIconContent)) {
     return <>{customIconContent}</>;
@@ -92,8 +92,8 @@ export const AddToNavigationDragHandle = ({
     >
       {isHovered ? (
         <IconGripVertical
-          size={parseFloat(theme.icon.size.md)}
-          stroke={parseFloat(theme.icon.stroke.sm)}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
           color={theme.font.color.tertiary}
         />
       ) : showCustomContentWithoutWrapper ? (

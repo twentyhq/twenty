@@ -8,7 +8,7 @@ type IconBrandGroqProps = Pick<IconComponentProps, 'size' | 'color'>;
 
 export const IconBrandGroq = (props: IconBrandGroqProps) => {
   const { theme } = useContext(ThemeContext);
-  const size = props.size ?? parseFloat(theme.icon.size.lg);
+  const size = props.size ?? theme.icon.size.lg;
 
   return (
     <IconBrandGroqRaw
