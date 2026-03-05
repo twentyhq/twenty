@@ -125,8 +125,7 @@ export class ApplicationVariableEntityService {
           id: existingVariable.id,
           description: description ?? '',
           isSecret: isSecretValue,
-          ...(shouldUpdateValue ||
-          existingVariable.isSecret !== isSecretValue
+          ...(shouldUpdateValue || existingVariable.isSecret !== isSecretValue
             ? { value: encryptedValue }
             : {}),
         });
