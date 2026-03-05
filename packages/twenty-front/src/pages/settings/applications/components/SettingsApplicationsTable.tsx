@@ -1,4 +1,4 @@
-import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui/display';
+import { H2Title, IconChevronRight } from 'twenty-ui/display';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ import { useContext, useMemo, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { SearchInput } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
@@ -58,9 +58,7 @@ export const SettingsApplicationsTable = ({
         description={t`List installed applications. Use filter to search for a specific application`}
       />
       <StyledSearchInputContainer>
-        <SettingsTextInput
-          instanceId="env-var-search"
-          LeftIcon={IconSearch}
+        <SearchInput
           placeholder={t`Search an application`}
           value={searchTerm}
           onChange={setSearchTerm}
