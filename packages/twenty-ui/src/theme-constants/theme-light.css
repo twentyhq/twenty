@@ -1,5 +1,5 @@
-/* This file is generated from packages/twenty-ui/src/theme/constants/.
-   Do not edit manually — regenerate by running the generation script. */
+/* Static theme CSS variables for the light theme.
+   These are the source of truth — edit directly. */
 
 .light {
   --t-icon-size-sm: 14;

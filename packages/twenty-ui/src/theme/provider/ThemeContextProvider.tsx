@@ -22,6 +22,10 @@ export const ThemeContextProvider = ({
     const isDark = theme.name === 'dark';
     root.classList.toggle('dark', isDark);
     root.classList.toggle('light', !isDark);
+
+    return () => {
+      root.classList.remove('dark', 'light');
+    };
   }, [theme.name]);
 
   return (

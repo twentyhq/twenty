@@ -93,7 +93,7 @@ export default defineConfig(({ command }) => {
       },
       {
         name: 'copy-theme-css',
-        closeBundle() {
+        closeBundle: () => {
           const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
           for (const file of themeCssFiles) {
             fs.copyFileSync(
