@@ -85,17 +85,21 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatRoleMaps') ||
       flatMapsKeysSet.has('flatRoleTargetMaps');
 
-    if (
-      shouldIncrementMetadataGraphqlSchemaVersion ||
-      shouldInvalidateRoleMapCache
-    ) {
+    if (shouldIncrementMetadataGraphqlSchemaVersion) {
+      asyncOperations.push(
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'ORMEntityMetadatas',
+        ]),
+      );
+    }
+
+    if (shouldInvalidateRoleMapCache) {
       asyncOperations.push(
         this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
           'rolesPermissions',
           'userWorkspaceRoleMap',
           'flatRoleTargetMaps',
           'apiKeyRoleMap',
-          'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
         ]),
       );
