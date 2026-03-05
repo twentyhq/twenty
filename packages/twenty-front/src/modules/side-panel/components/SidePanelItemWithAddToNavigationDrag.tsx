@@ -65,12 +65,9 @@ export const SidePanelItemWithAddToNavigationDrag = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const showDragAffordance = !disabled && !disableDrag && isHovered;
-  const contextualDescription =
-    disabled || disableDrag
-      ? description
-      : isHovered
-        ? t`Drag to add to navbar`
-        : description;
+  const contextualDescription = showDragAffordance
+    ? t`Drag to add to navbar`
+    : description;
 
   const DragHandleIcon = () => (
     <AddToNavigationDragHandle
