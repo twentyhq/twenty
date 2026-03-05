@@ -299,7 +299,7 @@ export const ActivityRichTextEditor = ({
   // The problem with this library is that it takes the focus before anything else and does not prevent the event from bubbling
   //   Because of this, other events listen at the same time, and when we're in luck, the click outside gets triggered,
   //   but this leaves the door open for unpredicted behavior with click handlers conflicts,
-  //   we recently had a bug which was deleting what the user typed and closed the right drawer if he used backspace key.
+  //   we recently had a bug which was deleting what the user typed and closed the side panel if he used backspace key.
   // We could maybe use the types of components in the focus stack.
   const handleBlockEditorFocus = useCallback(() => {
     const isRecordTitleCellOpen = store.get(

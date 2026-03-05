@@ -210,7 +210,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     });
 
     describe('permissions-check-front-component', () => {
-      it('should allow when has permission and not in right drawer', () => {
+      it('should allow when has permission and not in side panel', () => {
         const context = buildMockCommandMenuContextApi({
           isInSidePanel: false,
         });
@@ -223,7 +223,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         ).toBe(true);
       });
 
-      it('should deny when in right drawer', () => {
+      it('should deny when in side panel', () => {
         const context = buildMockCommandMenuContextApi({
           isInSidePanel: true,
         });

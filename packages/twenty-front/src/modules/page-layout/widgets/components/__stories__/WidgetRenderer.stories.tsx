@@ -1455,7 +1455,7 @@ export const InSidePanel: Story = {
     docs: {
       description: {
         story:
-          'Widget in side panel (right drawer) should use side-column variant instead of record-page variant.',
+          'Widget in side panel should use side-column variant instead of record-page variant.',
       },
     },
   },

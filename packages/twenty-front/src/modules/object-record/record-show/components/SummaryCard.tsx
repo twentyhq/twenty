@@ -24,7 +24,7 @@ type SummaryCardProps = {
   isInSidePanel: boolean;
 };
 
-// TODO: refactor all this hierarchy of right drawer / show page record to avoid drill down
+// TODO: refactor all this hierarchy of side panel / show page record to avoid drill down
 export const SummaryCard = ({
   objectNameSingular,
   objectRecordId,
