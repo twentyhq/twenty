@@ -12,7 +12,7 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.DASHBOARD,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('dashboard');
   });
@@ -24,7 +24,7 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('canvas');
   });
@@ -36,7 +36,7 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: true,
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('side-column');
   });
@@ -48,19 +48,19 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('side-column');
   });
 
-  it('should return side-column when isInRightDrawer is true', () => {
+  it('should return side-column when isInSidePanel is true', () => {
     expect(
       getWidgetCardVariant({
         layoutMode: PageLayoutTabLayoutMode.GRID,
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }),
     ).toBe('side-column');
   });
@@ -72,7 +72,7 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('record-page');
   });
@@ -84,7 +84,7 @@ describe('getWidgetCardVariant', () => {
         isInPinnedTab: false,
         pageLayoutType: PageLayoutType.DASHBOARD,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('dashboard');
   });

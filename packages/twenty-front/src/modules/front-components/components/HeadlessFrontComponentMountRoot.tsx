@@ -38,7 +38,7 @@ export const HeadlessFrontComponentMountRoot = () => {
                       }
                     : undefined,
                 layoutType: PageLayoutType.DASHBOARD,
-                isInRightDrawer: false,
+                isInSidePanel: false,
               }}
             >
               <FrontComponentRenderer frontComponentId={frontComponentId} />
