@@ -74,7 +74,7 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Independent Test**: Click cells to focus them in all scroll states. The focus indicator should display correctly.
 
-- [ ] T004 [US1] [US2] [US3] Simplify `RecordTableCellFocusedPortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFocusedPortal.tsx` — same changes as T003: remove all scroll state reads, remove `hasRecordGroups` read, remove all conditional z-index computation (~90 lines), replace with the same static z-index value used in the hover portal. Keep the `isUnderHoveredPortal` check (still needed). Remove unused imports
+- [X] T004 [US1] [US2] [US3] Simplify `RecordTableCellFocusedPortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFocusedPortal.tsx` — same changes as T003: remove all scroll state reads, remove `hasRecordGroups` read, remove all conditional z-index computation (~90 lines), replace with the same static z-index value used in the hover portal. Keep the `isUnderHoveredPortal` check (still needed). Remove unused imports
 
 **Checkpoint**: Run the full visual test matrix. Focus should work identically. Test focus + hover simultaneously (hover one cell, focus another).
 
