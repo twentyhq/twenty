@@ -597,7 +597,7 @@ export const SettingsApplicationRegistrationDetails = () => {
                 Icon={IconExternalLink}
                 title={t`View marketplace page`}
                 variant="secondary"
-                to={`/settings/${marketplacePageUrl}`}
+                to={marketplacePageUrl}
               />
             </StyledMarketplaceActions>
           </Section>
