@@ -6090,11 +6090,6 @@ msgstr ""
 msgid "Failed to upload file: {fileName}"
 msgstr "فشل في تحميل الملف: {fileName}"
 
-#. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Failed to upload image: "
-msgstr "فشل في تحميل الصورة: "
-
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
@@ -6260,11 +6255,6 @@ msgstr ""
 msgid "File upload failed"
 msgstr ""
 
-#. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentList.tsx
-msgid "File URL is not defined"
-msgstr ""
-
 #. js-lingui-id: sER+bs
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Files"
@@ -6398,6 +6388,7 @@ msgstr "مجلدات"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "نسيت كلمة المرور؟"
 
@@ -7382,11 +7373,6 @@ msgstr "عنوان URL غير صالح. انقر فوق تحرير لتكوين 
 msgid "Invalid verification code. Please try again."
 msgstr "رمز التحقق غير صالح. الرجاء المحاولة مرة أخرى."
 
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "مساحة العمل غير صالحة"
-
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
@@ -8094,9 +8080,8 @@ msgstr "تسجيل الخروج"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "السجلات"
 
@@ -13785,7 +13770,6 @@ msgstr ""
 #: src/modules/command-menu/components/CommandMenuContextChip.tsx
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"

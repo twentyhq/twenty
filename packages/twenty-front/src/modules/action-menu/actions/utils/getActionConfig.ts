@@ -5,7 +5,7 @@ import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actio
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
 import { WORKSPACE_MEMBERS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 

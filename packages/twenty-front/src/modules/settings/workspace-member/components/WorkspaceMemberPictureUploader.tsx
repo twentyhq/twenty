@@ -3,18 +3,13 @@ import { useState } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { buildSignedPath, isDefined } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  useUploadWorkspaceMemberProfilePictureLegacyMutation,
-  useUploadWorkspaceMemberProfilePictureMutation,
-} from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { useUploadWorkspaceMemberProfilePictureMutation } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberPictureUploaderProps = {
@@ -30,9 +25,6 @@ export const WorkspaceMemberPictureUploader = ({
   onAvatarUpdated,
   disabled = false,
 }: WorkspaceMemberPictureUploaderProps) => {
-  const isCorePictureMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
-  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -44,8 +36,6 @@ export const WorkspaceMemberPictureUploader = ({
   );
 
   const [uploadPicture] = useUploadWorkspaceMemberProfilePictureMutation();
-  const [uploadPictureLegacy] =
-    useUploadWorkspaceMemberProfilePictureLegacyMutation();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -67,51 +57,27 @@ export const WorkspaceMemberPictureUploader = ({
 
     let newAvatarUrl: string | null = null;
     try {
-      if (!isCorePictureMigrated) {
-        const { data } = await uploadPictureLegacy({
-          variables: { file },
-          context: {
-            fetchOptions: {
-              signal: controller.signal,
-            },
+      const { data } = await uploadPicture({
+        variables: { file },
+        context: {
+          fetchOptions: {
+            signal: controller.signal,
           },
-        });
+        },
+      });
 
-        const signedFile = data?.uploadWorkspaceMemberProfilePictureLegacy;
-        if (!isDefined(signedFile)) {
-          throw new Error('Avatar upload failed');
-        }
-
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: workspaceMemberId,
-          updateOneRecordInput: { avatarUrl: signedFile.path },
-        });
-
-        newAvatarUrl = buildSignedPath(signedFile);
-      } else {
-        const { data } = await uploadPicture({
-          variables: { file },
-          context: {
-            fetchOptions: {
-              signal: controller.signal,
-            },
-          },
-        });
-
-        const signedFile = data?.uploadWorkspaceMemberProfilePicture;
-        if (!isDefined(signedFile)) {
-          throw new Error('Avatar upload failed');
-        }
-
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: workspaceMemberId,
-          updateOneRecordInput: { avatarUrl: signedFile.url },
-        });
-
-        newAvatarUrl = signedFile.url;
+      const signedFile = data?.uploadWorkspaceMemberProfilePicture;
+      if (!isDefined(signedFile)) {
+        throw new Error('Avatar upload failed');
       }
+
+      await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        idToUpdate: workspaceMemberId,
+        updateOneRecordInput: { avatarUrl: signedFile.url },
+      });
+
+      newAvatarUrl = signedFile.url;
 
       if (isEditingSelf && isDefined(currentWorkspaceMember)) {
         setCurrentWorkspaceMember({

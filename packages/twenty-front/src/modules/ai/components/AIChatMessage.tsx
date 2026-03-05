@@ -13,6 +13,7 @@ import { LightCopyIconButton } from '@/object-record/record-field/ui/components/
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -170,9 +171,7 @@ export const AIChatMessage = ({ messageId }: { messageId: string }) => {
 
   const isUser = agentChatMessage.role === AgentMessageRole.USER;
 
-  const fileParts = agentChatMessage.parts.filter(
-    (part) => part.type === 'file',
-  );
+  const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
 
   return (
     <StyledMessageBubble key={agentChatMessage.id} isUser={isUser}>

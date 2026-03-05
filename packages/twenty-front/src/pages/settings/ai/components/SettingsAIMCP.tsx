@@ -96,7 +96,7 @@ export const SettingsAIMCP = () => {
                 top: 12,
               },
             }}
-            height="220px"
+            height={230}
           />
         </StyledEditorContainer>
       </StyledWrapper>

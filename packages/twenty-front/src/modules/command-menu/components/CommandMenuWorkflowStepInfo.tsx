@@ -2,10 +2,10 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -18,21 +18,19 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { t } from '@lingui/core/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { useState } from 'react';
+import { CommandMenuPages, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { ICON_SIZES, ICON_STROKES } from 'twenty-ui/theme-constants';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
-import { ThemeContext } from 'twenty-ui/theme';
 
 export const CommandMenuWorkflowStepInfo = ({
   commandMenuPageInstanceId,
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
@@ -122,14 +120,8 @@ export const CommandMenuWorkflowStepInfo = ({
     : getActionIcon(stepDefinition.definition.type);
 
   const headerIconColor = isTrigger
-    ? getTriggerIconColor({
-        theme,
-        triggerType: stepDefinition.definition.type,
-      })
-    : getActionIconColorOrThrow({
-        theme,
-        actionType: stepDefinition.definition.type,
-      });
+    ? getTriggerIconColor(stepDefinition.definition.type)
+    : getActionIconColorOrThrow(stepDefinition.definition.type);
 
   const headerType = isTrigger ? t`Trigger` : t`Action`;
 
@@ -177,7 +169,7 @@ export const CommandMenuWorkflowStepInfo = ({
     <CommandMenuPageInfoLayout
       icon={
         headerIcon ? (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
         ) : undefined
       }
       iconColor={headerIconColor}

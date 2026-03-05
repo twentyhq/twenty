@@ -277,13 +277,21 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
+    const existingStepInfos = workflowRunToUpdate.state?.stepInfos ?? {};
+
+    const mergedStepInfos = { ...existingStepInfos };
+
+    for (const [stepId, info] of Object.entries(stepInfos)) {
+      mergedStepInfos[stepId] = {
+        ...(existingStepInfos[stepId] || {}),
+        ...info,
+      };
+    }
+
     const partialUpdate = {
       state: {
         ...workflowRunToUpdate.state,
-        stepInfos: {
-          ...workflowRunToUpdate.state?.stepInfos,
-          ...stepInfos,
-        },
+        stepInfos: mergedStepInfos,
       },
     };
 

@@ -4,7 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';

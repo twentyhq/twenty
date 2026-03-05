@@ -1,4 +1,6 @@
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { useApolloClient } from '@apollo/client';
+
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -33,6 +35,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
+  const apolloClient = useApolloClient();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
 
@@ -166,6 +169,20 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
         setCurrentAIChatThreadTitle(titlePart.data.title);
+        if (isDefined(currentAIChatThread)) {
+          const threadRef = apolloClient.cache.identify({
+            __typename: 'AgentChatThread',
+            id: currentAIChatThread,
+          });
+          if (isDefined(threadRef)) {
+            apolloClient.cache.modify({
+              id: threadRef,
+              fields: {
+                title: () => titlePart.data.title,
+              },
+            });
+          }
+        }
       }
     },
   });

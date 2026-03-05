@@ -13,10 +13,12 @@ export type {
 } from './types/agent-response-schema.type';
 export type {
   CodeExecutionFile,
+  ExtendedFileUIPart,
   CodeExecutionState,
   CodeExecutionData,
   DataMessagePart,
 } from './types/DataMessagePart';
+export { isExtendedFileUIPart } from './types/DataMessagePart';
 export type {
   AIChatUsageMetadata,
   AIChatModelMetadata,
