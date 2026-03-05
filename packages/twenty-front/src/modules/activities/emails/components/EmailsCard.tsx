@@ -38,9 +38,11 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledH1Title = styled(H1Title)`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledH1TitleWrapper = styled.div`
+  > h2 {
+    display: flex;
+    gap: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledEmailCount = styled.span`
@@ -107,15 +109,17 @@ export const EmailsCard = () => {
   return (
     <StyledContainer>
       <Section>
-        <StyledH1Title
-          title={
-            <>
-              <Trans>Inbox</Trans>{' '}
-              <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
-            </>
-          }
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledH1TitleWrapper>
+          <H1Title
+            title={
+              <>
+                <Trans>Inbox</Trans>{' '}
+                <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
+              </>
+            }
+            fontColor={H1TitleFontColor.Primary}
+          />
+        </StyledH1TitleWrapper>
         {!firstQueryLoading && (
           <ActivityList>
             {timelineThreads?.map((thread: TimelineThread) => (

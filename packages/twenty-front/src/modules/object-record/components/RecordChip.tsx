@@ -1,4 +1,4 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -55,7 +55,7 @@ export const RecordChip = ({
     record,
   });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const recordIndexOpenRecordIn = useAtomStateValue(
     recordIndexOpenRecordInState,
@@ -70,7 +70,7 @@ export const RecordChip = ({
     ? onClick
     : isSidePanelViewOpenRecordInType
       ? (_event: MouseEvent<HTMLElement>) => {
-          openRecordInCommandMenu({
+          openRecordInSidePanel({
             recordId: record.id,
             objectNameSingular,
           });

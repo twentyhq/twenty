@@ -1,6 +1,6 @@
 export type CodeInterpreterFileInput = {
   filename: string;
-  url: string;
+  fileId: string;
 };
 
 export type CodeInterpreterInput = {

@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { IconGripVertical } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledGripContainerBase = styled.div`
   width: 20px;
@@ -34,7 +33,6 @@ type WidgetGripProps = {
 
 export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledGripContainer
       layout

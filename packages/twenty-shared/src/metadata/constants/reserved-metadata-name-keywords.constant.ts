@@ -1,4 +1,4 @@
-const CORE_OBJECT_NAMES = [
+export const RESERVED_METADATA_NAME_KEYWORDS = [
   'approvedAccessDomain',
   'approvedAccessDomains',
   'appToken',
@@ -41,10 +41,6 @@ const CORE_OBJECT_NAMES = [
   'roles',
   'userWorkspaceRole',
   'userWorkspaceRoles',
-];
-
-export const RESERVED_METADATA_NAME_KEYWORDS = [
-  ...CORE_OBJECT_NAMES,
   'plan',
   'plans',
   'event',

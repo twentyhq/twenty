@@ -35,9 +35,17 @@ import {
     RULE_NAME as noAngleBracketPlaceholdersName,
 } from './rules/no-angle-bracket-placeholders';
 import {
+    rule as noDirectAtomFamilyInSelector,
+    RULE_NAME as noDirectAtomFamilyInSelectorName,
+} from './rules/no-direct-atom-family-in-selector';
+import {
     rule as noHardcodedColors,
     RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
+import {
+    rule as noJotaiStoreInSelector,
+    RULE_NAME as noJotaiStoreInSelectorName,
+} from './rules/no-jotai-store-in-selector';
 import {
     rule as noNavigatePreferLink,
     RULE_NAME as noNavigatePreferLinkName,
@@ -98,6 +106,8 @@ module.exports = {
     [explicitBooleanPredicatesInIfName]: explicitBooleanPredicatesInIf,
     [maxConstsPerFileName]: maxConstsPerFile,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
+    [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
+    [noDirectAtomFamilyInSelectorName]: noDirectAtomFamilyInSelector,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [graphqlResolversShouldBeGuardedName]: graphqlResolversShouldBeGuarded,

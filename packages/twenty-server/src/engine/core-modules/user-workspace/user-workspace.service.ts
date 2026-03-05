@@ -1,8 +1,9 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
@@ -17,13 +18,12 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -44,6 +44,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -59,10 +61,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
-    private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -103,7 +103,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       : this.userWorkspaceRepository.save(userWorkspace);
   }
 
-  async createWorkspaceMember(workspaceId: string, user: UserEntity) {
+  async createWorkspaceMember(workspaceId: string, user: AuthContextUser) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -420,79 +420,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     applicationUniversalIdentifier?: string,
     queryRunner?: QueryRunner,
   ) {
-    const isOtherFileMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
-      workspaceId,
-    );
-
-    if (isOtherFileMigrated) {
-      return this.computeDefaultAvatarUrlMigrated(
-        userId,
-        workspaceId,
-        isExistingUser,
-        pictureUrl,
-        applicationUniversalIdentifier,
-        queryRunner,
-      );
-    }
-
-    return this.computeDefaultAvatarUrlLegacy(
+    return this.computeDefaultAvatarUrlMigrated(
       userId,
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
+      queryRunner,
     );
-  }
-
-  private async computeDefaultAvatarUrlLegacy(
-    userId: string,
-    workspaceId: string,
-    isExistingUser: boolean,
-    pictureUrl?: string,
-  ) {
-    if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarUrl: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
-      });
-
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
-
-      try {
-        const [_, subFolder, filename] =
-          await this.fileService.copyFileFromWorkspaceToWorkspace(
-            userWorkspace.workspaceId,
-            userWorkspace.defaultAvatarUrl,
-            workspaceId,
-          );
-
-        return `${subFolder}/${filename}`;
-      } catch (error) {
-        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-          return;
-        }
-        throw error;
-      }
-    }
-
-    if (!isDefined(pictureUrl) || pictureUrl === '') return;
-
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload avatar');
-    }
-
-    return files[0].path;
   }
 
   private async computeDefaultAvatarUrlMigrated(
@@ -601,7 +536,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         appToken?: AppTokenEntity;
       }>;
     },
-    user: UserEntity,
+    user: AuthContextUser,
     authProvider: AuthProviderEnum,
   ) {
     return {

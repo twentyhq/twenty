@@ -1,0 +1,25 @@
+import { type PieChartConvertibleFields } from '@/side-panel/pages/page-layout/types/PieChartConvertibleFields';
+import {
+  type BarChartConfiguration,
+  type LineChartConfiguration,
+} from '~/generated-metadata/graphql';
+
+export const convertBarOrLineChartConfigToPieChart = (
+  configuration: BarChartConfiguration | LineChartConfiguration,
+): PieChartConvertibleFields => {
+  if (
+    configuration.__typename !== 'BarChartConfiguration' &&
+    configuration.__typename !== 'LineChartConfiguration'
+  ) {
+    return {};
+  }
+
+  return {
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+    groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
+    groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
+    dateGranularity: configuration.primaryAxisDateGranularity,
+    orderBy: configuration.primaryAxisOrderBy,
+    splitMultiValueFields: configuration.splitMultiValueFields,
+  };
+};

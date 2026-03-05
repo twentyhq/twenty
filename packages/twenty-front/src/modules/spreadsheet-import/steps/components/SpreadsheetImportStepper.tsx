@@ -1,6 +1,4 @@
 import { useCallback, useContext, useState } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalContent } from 'twenty-ui/layout';
@@ -14,6 +12,7 @@ import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -25,7 +24,6 @@ export const SpreadsheetImportStepper = ({
   prevStep,
 }: SpreadsheetImportStepperProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =

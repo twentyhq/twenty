@@ -3,7 +3,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Table } from '@/ui/layout/table/components/Table';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -13,11 +12,6 @@ type SettingsApplicationNameDescriptionTableItem = {
   name: string;
   description?: string | null;
 };
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 export const SettingsApplicationNameDescriptionTable = ({
   title,
@@ -45,7 +39,12 @@ export const SettingsApplicationNameDescriptionTable = ({
         <TableSection title={sectionTitle}>
           {items.map((item) => (
             <TableRow key={item.name} gridAutoColumns="180px 1fr">
-              <StyledNameTableCell>{item.name}</StyledNameTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.primary}
+                gap={themeCssVariables.spacing[2]}
+              >
+                {item.name}
+              </TableCell>
               <TableCell>{item.description ?? ''}</TableCell>
             </TableRow>
           ))}

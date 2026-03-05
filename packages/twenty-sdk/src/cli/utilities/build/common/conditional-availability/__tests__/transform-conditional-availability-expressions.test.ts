@@ -14,7 +14,7 @@ const buildMockCommandMenuContextApi = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
   isShowPage: false,
-  isInRightDrawer: false,
+  isInSidePanel: false,
   isFavorite: false,
   isRemote: false,
   isNoteOrTask: false,
@@ -210,9 +210,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     });
 
     describe('permissions-check-front-component', () => {
-      it('should allow when has permission and not in right drawer', () => {
+      it('should allow when has permission and not in side panel', () => {
         const context = buildMockCommandMenuContextApi({
-          isInRightDrawer: false,
+          isInSidePanel: false,
         });
 
         expect(
@@ -223,9 +223,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         ).toBe(true);
       });
 
-      it('should deny when in right drawer', () => {
+      it('should deny when in side panel', () => {
         const context = buildMockCommandMenuContextApi({
-          isInRightDrawer: true,
+          isInSidePanel: true,
         });
 
         expect(

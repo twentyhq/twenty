@@ -30,7 +30,7 @@ const meta: Meta<typeof ActionComponent> = {
       >
         <ActionMenuContext.Provider
           value={{
-            isInRightDrawer: false,
+            isInSidePanel: false,
             actionMenuType: 'index-page-action-menu',
             displayType: 'button',
             actions: [addToFavoritesAction],

@@ -4,7 +4,7 @@ import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type ColorScheme } from 'twenty-ui/input';
-import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 type BaseThemeProviderProps = {
   children: JSX.Element | JSX.Element[];
@@ -24,14 +24,13 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
       ? systemColorScheme
       : persistedColorScheme;
 
-  document.documentElement.className =
-    effectiveColorScheme === 'Dark' ? 'dark' : 'light';
-
-  const theme = effectiveColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
-
   return (
     <ThemeSchemeContext.Provider value={setPersistedColorScheme}>
-      <ThemeContextProvider theme={theme}>{children}</ThemeContextProvider>
+      <ThemeProvider
+        colorScheme={effectiveColorScheme === 'Dark' ? 'dark' : 'light'}
+      >
+        {children}
+      </ThemeProvider>
     </ThemeSchemeContext.Provider>
   );
 };

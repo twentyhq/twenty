@@ -5,7 +5,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableItem = {
   Icon?: IconComponent;
@@ -31,6 +32,7 @@ export const SettingsAdminTableCard = ({
   valueAlign = 'left',
   className,
 }: SettingsAdminTableCardProps) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <Card
       rounded={rounded}
@@ -51,7 +53,7 @@ export const SettingsAdminTableCard = ({
                 height={themeCssVariables.spacing[6]}
                 gap={themeCssVariables.spacing[2]}
               >
-                {item.Icon && <item.Icon size={ICON_SIZES.md} />}
+                {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
               </TableCell>
               <TableCell

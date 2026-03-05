@@ -38,7 +38,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
@@ -64,7 +63,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
@@ -90,7 +88,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       filterValueDependencies: {},
       filters: [
         {
-          id: 'filter1',
           fieldMetadataId: 'f1',
           value: 'test',
           type: 'TEXT',
