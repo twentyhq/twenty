@@ -17,7 +17,7 @@ export const StyledTableRow = (
 ) => (
   <TableRow
     gridTemplateColumns="164px 1fr 96px 32px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     {...props}
   />
 );

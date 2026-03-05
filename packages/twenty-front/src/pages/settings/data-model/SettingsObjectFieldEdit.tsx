@@ -305,7 +305,7 @@ export const SettingsObjectFieldEdit = () => {
 
   return (
     <>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
           title={fieldMetadataItem?.label}

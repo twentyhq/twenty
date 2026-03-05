@@ -2,7 +2,7 @@ import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 export const unserializeDefaultValue = (
   serializedDefaultValue: FieldMetadataDefaultValueForAnyType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
 ): any => {
   if (serializedDefaultValue === undefined || serializedDefaultValue === null) {
     return null;

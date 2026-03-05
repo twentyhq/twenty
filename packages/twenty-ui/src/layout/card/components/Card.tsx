@@ -39,7 +39,7 @@ export const Card = ({
       fullWidth={fullWidth}
       rounded={rounded}
       backgroundColor={backgroundColor}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

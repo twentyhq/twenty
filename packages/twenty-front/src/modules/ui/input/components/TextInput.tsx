@@ -463,7 +463,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
           node={props.value ?? props.placeholder}
         >
           <TextInputComponent
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...props}
             ref={ref}
             fullWidth={true}
@@ -471,7 +471,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
         </StyledAutogrowWrapper>
       ) : (
         <TextInputComponent
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...props}
           ref={ref}
         />

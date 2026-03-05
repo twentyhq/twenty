@@ -27,7 +27,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       | FlatFieldMetadata<FieldMetadataType.RELATION>
       | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
     fieldKey: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     fieldValue: any,
     accumulator: GraphqlQuerySelectedFieldsResult,
     isFromOneToManyRelation?: boolean,

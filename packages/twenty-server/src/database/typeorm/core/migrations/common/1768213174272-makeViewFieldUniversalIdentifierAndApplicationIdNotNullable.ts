@@ -25,7 +25,7 @@ export class MakeViewFieldUniversalIdentifierAndApplicationIdNotNullable17682131
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in MakeViewFieldUniversalIdentifierAndApplicationIdNotNullable1768213174272',
           rollbackError,
@@ -33,7 +33,7 @@ export class MakeViewFieldUniversalIdentifierAndApplicationIdNotNullable17682131
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing MakeViewFieldUniversalIdentifierAndApplicationIdNotNullable1768213174272 error',
         e,

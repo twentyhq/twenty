@@ -59,7 +59,7 @@ export const FavoritesDroppable = ({
         >
           <div
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {children}

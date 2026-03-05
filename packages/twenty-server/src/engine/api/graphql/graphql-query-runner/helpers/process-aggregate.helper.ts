@@ -12,7 +12,7 @@ export class ProcessAggregateHelper {
     objectMetadataNameSingular,
   }: {
     selectedAggregatedFields: Record<string, AggregationField>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder<any>;
     objectMetadataNameSingular: string;
   }) => {

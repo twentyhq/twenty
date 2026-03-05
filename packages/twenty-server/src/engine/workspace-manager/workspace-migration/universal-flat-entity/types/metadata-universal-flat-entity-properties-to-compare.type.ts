@@ -25,7 +25,7 @@ export type MetadataUniversalFlatEntityPropertiesToCompare<
 }[TComparedKeys] &
   keyof MetadataUniversalFlatEntity<T>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     Equal<

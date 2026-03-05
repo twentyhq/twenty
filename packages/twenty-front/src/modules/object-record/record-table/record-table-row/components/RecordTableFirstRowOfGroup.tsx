@@ -45,7 +45,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
         data-active={false}
         data-focused={isRowFocusActive && isFocused}
         data-next-row-active-or-focused={isNextRowActiveOrFocused}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...props}
         isScrolledVertically={isRecordTableScrolledVertically}
         isFirstRowOfGroup={true}

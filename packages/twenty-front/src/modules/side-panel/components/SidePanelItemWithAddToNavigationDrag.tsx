@@ -90,9 +90,9 @@ export const SidePanelItemWithAddToNavigationDrag = ({
         {(provided) => (
           <div
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.draggableProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.dragHandleProps}
           >
             {menuItemContent}

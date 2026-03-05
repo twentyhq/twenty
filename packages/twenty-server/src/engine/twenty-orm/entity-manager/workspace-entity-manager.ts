@@ -74,7 +74,7 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: GlobalWorkspaceDataSource;
 
@@ -428,7 +428,7 @@ export class WorkspaceEntityManager extends EntityManager {
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
     // convert possible embeded path "social.likes" into object { social: { like: () => value } }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
@@ -487,7 +487,7 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(target).name;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
@@ -1040,7 +1040,7 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
@@ -1830,7 +1830,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   // Forbidden methods
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new PermissionsException(
       'Method not allowed.',

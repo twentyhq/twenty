@@ -44,9 +44,9 @@ export const PageLayoutTabRenderClone = ({
     return (
       <StyledDraggableWrapper
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,
@@ -71,9 +71,9 @@ export const PageLayoutTabRenderClone = ({
       <StyledDraggableWrapper
         id={'clone-drag-wrapper'}
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,

@@ -6,7 +6,6 @@
     "dev": "npx next dev",
     "build": "npx next build",
     "start": "npx next start",
-    "lint": "ESLINT_USE_FLAT_CONFIG=true npx next lint",
     "github:sync": "npx tsx src/github/github-sync.ts",
     "github:init": "npx tsx src/github/github-sync.ts --isFullSync",
     "database:migrate": "npx tsx src/database/migrate-database.ts",
@@ -31,9 +30,7 @@
     "twenty-ui": "workspace:*"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^14.2.0",
     "@types/facepaint": "^1.2.5",
-    "drizzle-kit": "^0.31.5",
-    "eslint-config-next": "^14.2.0"
+    "drizzle-kit": "^0.31.5"
   }
 }
