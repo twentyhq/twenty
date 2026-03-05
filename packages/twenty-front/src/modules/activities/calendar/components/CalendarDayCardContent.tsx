@@ -14,11 +14,13 @@ type CalendarDayCardContentProps = {
 };
 
 const StyledCardContentContainer = styled.div`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  > * {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: ${themeCssVariables.spacing[3]};
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  }
 `;
 
 const StyledDayContainer = styled.div`

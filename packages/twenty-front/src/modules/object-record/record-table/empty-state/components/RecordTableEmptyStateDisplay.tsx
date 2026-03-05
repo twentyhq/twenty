@@ -17,7 +17,9 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
-  align-items: flex-start;
+  > * {
+    align-items: flex-start;
+  }
 `;
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {

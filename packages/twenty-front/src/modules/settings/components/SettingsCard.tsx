@@ -29,6 +29,10 @@ const StyledCardWrapper = styled.div<{
   cursor: ${({ disabled, clickable }) =>
     disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
   width: 100%;
+
+  > * {
+    color: inherit;
+  }
 `;
 
 const StyledCardContentContainer = styled.div`

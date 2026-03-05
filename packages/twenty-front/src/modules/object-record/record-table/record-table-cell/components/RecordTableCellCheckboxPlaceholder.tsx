@@ -19,7 +19,6 @@ const StyledContainer = styled.div`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-// TODO: refactor
 const StyledRecordTableTdContainer = styled.div`
   border-left: 1px solid transparent;
 `;

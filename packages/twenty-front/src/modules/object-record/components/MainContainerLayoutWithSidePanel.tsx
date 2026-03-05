@@ -23,8 +23,11 @@ const StyledPageBodyForDesktopContainer = styled.div`
   flex: 1 1 0;
   min-width: 0;
   width: 0;
-  padding-bottom: 0;
-  padding-right: 0;
+
+  > * {
+    padding-bottom: 0;
+    padding-right: 0;
+  }
 `;
 
 const StyledMainContainerLayoutForMobile = styled.div`
@@ -35,10 +38,11 @@ const StyledMainContainerLayoutForMobile = styled.div`
 `;
 
 const StyledPageBodyForMobileContainer = styled.div`
-  padding-bottom: 0;
-  padding-left: ${themeCssVariables.spacing[1]};
-
-  padding-right: ${themeCssVariables.spacing['1.5']};
+  > * {
+    padding-bottom: 0;
+    padding-left: ${themeCssVariables.spacing[1]};
+    padding-right: ${themeCssVariables.spacing['1.5']};
+  }
 `;
 
 export const MainContainerLayoutWithSidePanel = ({
@@ -62,7 +66,7 @@ export const MainContainerLayoutWithSidePanel = ({
   return (
     <StyledMainContainerLayoutForDesktop>
       <StyledPageBodyForDesktopContainer>
-        {children}
+        <PageBody>{children}</PageBody>
       </StyledPageBodyForDesktopContainer>
       <SidePanelForDesktop />
     </StyledMainContainerLayoutForDesktop>

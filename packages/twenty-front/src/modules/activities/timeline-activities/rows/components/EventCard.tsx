@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { Card } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventCardProps = {
@@ -40,9 +39,7 @@ export const EventCard = ({ children, isOpen }: EventCardProps) => {
   return (
     isOpen && (
       <StyledCardContainer>
-        <StyledCardInnerContainer>
-          <Card fullWidth>{children}</Card>
-        </StyledCardInnerContainer>
+        <StyledCardInnerContainer>{children}</StyledCardInnerContainer>
       </StyledCardContainer>
     )
   );

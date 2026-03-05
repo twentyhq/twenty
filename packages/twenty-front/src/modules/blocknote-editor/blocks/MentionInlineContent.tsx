@@ -11,13 +11,15 @@ import { Chip, ChipVariant } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledRecordChipContainer = styled.span`
+const StyledRecordChipContainer = styled.div`
+  display: inline;
   height: auto;
   margin: 0;
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-const StyledInlineMentionRecordChipContainer = styled.span`
+const StyledInlineMentionRecordChipContainer = styled.div`
+  display: inline;
   height: auto;
   margin: 0;
   padding: 0 ${themeCssVariables.spacing[1]};

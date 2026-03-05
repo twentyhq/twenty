@@ -39,10 +39,10 @@ const StyledTitleLabel = styled.div`
 const StyledLinkContainer = styled.span`
   & > a {
     color: ${themeCssVariables.font.color.light};
-    text-decoration: none;
     font-size: ${themeCssVariables.font.size.sm};
+    text-decoration: none;
 
-    :hover {
+    &:hover {
       color: ${themeCssVariables.font.color.secondary};
     }
   }

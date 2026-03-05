@@ -11,11 +11,13 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[6]};
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-  width: auto;
+  > * {
+    display: flex;
+    flex-direction: column;
+    gap: ${themeCssVariables.spacing[6]};
+    padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+    width: auto;
+  }
 `;
 
 export type UpdateMultipleRecordsFormProps = {

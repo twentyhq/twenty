@@ -7,8 +7,8 @@ const StyledListContainer = styled.div`
     & > :not(:last-child) {
       border-bottom: 1px solid ${themeCssVariables.border.color.light};
     }
-    width: calc(100% - 2px);
     overflow: auto;
+    width: calc(100% - 2px);
   }
 `;
 
