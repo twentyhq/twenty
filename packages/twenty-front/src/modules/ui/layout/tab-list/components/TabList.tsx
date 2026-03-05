@@ -16,7 +16,6 @@ import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
 const StyledContainer = styled.div`
-  align-items: center;
   box-sizing: border-box;
   display: flex;
   height: ${themeCssVariables.spacing[10]};
@@ -33,6 +32,11 @@ const StyledContainer = styled.div`
     position: absolute;
     right: 0;
   }
+`;
+
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
 `;
 
 const StyledTabContainer = styled.div`
@@ -157,20 +161,22 @@ export const TabList = ({
             </StyledTabContainer>
 
             {hasHiddenTabs && (
-              <TabListDropdown
-                dropdownId={dropdownId}
-                onClose={() => {
-                  closeDropdown(dropdownId);
-                }}
-                overflow={{
-                  hiddenTabsCount,
-                  isActiveTabHidden,
-                }}
-                hiddenTabs={hiddenTabs}
-                activeTabId={activeTabId || ''}
-                onTabSelect={handleTabSelectFromDropdown}
-                loading={loading}
-              />
+              <StyledDropdownContainer>
+                <TabListDropdown
+                  dropdownId={dropdownId}
+                  onClose={() => {
+                    closeDropdown(dropdownId);
+                  }}
+                  overflow={{
+                    hiddenTabsCount,
+                    isActiveTabHidden,
+                  }}
+                  hiddenTabs={hiddenTabs}
+                  activeTabId={activeTabId || ''}
+                  onTabSelect={handleTabSelectFromDropdown}
+                  loading={loading}
+                />
+              </StyledDropdownContainer>
             )}
           </StyledContainer>
         </NodeDimension>

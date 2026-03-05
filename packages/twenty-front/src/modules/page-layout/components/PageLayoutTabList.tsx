@@ -50,7 +50,6 @@ import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  align-items: center;
   box-sizing: border-box;
   display: flex;
   height: ${themeCssVariables.spacing[10]};
@@ -67,6 +66,11 @@ const StyledContainer = styled.div`
     position: absolute;
     right: 0;
   }
+`;
+
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
 `;
 
 const StyledAddButton = styled.div`
@@ -367,18 +371,20 @@ export const PageLayoutTabList = ({
               />
 
               {shouldRenderReorderableDropdown && (
-                <PageLayoutTabListReorderableOverflowDropdown
-                  dropdownId={dropdownId}
-                  hiddenTabs={hiddenTabs}
-                  hiddenTabsCount={hiddenTabsCount}
-                  isActiveTabHidden={isActiveTabHidden}
-                  activeTabId={activeTabId || ''}
-                  loading={loading}
-                  onSelect={handleSelectTabFromDropdown}
-                  visibleTabCount={visibleTabCount}
-                  onClose={closeOverflowDropdown}
-                  pageLayoutType={pageLayoutType}
-                />
+                <StyledDropdownContainer>
+                  <PageLayoutTabListReorderableOverflowDropdown
+                    dropdownId={dropdownId}
+                    hiddenTabs={hiddenTabs}
+                    hiddenTabsCount={hiddenTabsCount}
+                    isActiveTabHidden={isActiveTabHidden}
+                    activeTabId={activeTabId || ''}
+                    loading={loading}
+                    onSelect={handleSelectTabFromDropdown}
+                    visibleTabCount={visibleTabCount}
+                    onClose={closeOverflowDropdown}
+                    pageLayoutType={pageLayoutType}
+                  />
+                </StyledDropdownContainer>
               )}
 
               {onAddTab && (
@@ -406,16 +412,18 @@ export const PageLayoutTabList = ({
               canReorder={canReorderTabs}
             />
             {shouldRenderStaticDropdown && (
-              <PageLayoutTabListStaticOverflowDropdown
-                dropdownId={dropdownId}
-                hiddenTabs={hiddenTabs}
-                hiddenTabsCount={hiddenTabsCount}
-                isActiveTabHidden={isActiveTabHidden}
-                activeTabId={activeTabId || ''}
-                loading={loading}
-                onSelect={handleSelectTabFromDropdown}
-                onClose={closeOverflowDropdown}
-              />
+              <StyledDropdownContainer>
+                <PageLayoutTabListStaticOverflowDropdown
+                  dropdownId={dropdownId}
+                  hiddenTabs={hiddenTabs}
+                  hiddenTabsCount={hiddenTabsCount}
+                  isActiveTabHidden={isActiveTabHidden}
+                  activeTabId={activeTabId || ''}
+                  loading={loading}
+                  onSelect={handleSelectTabFromDropdown}
+                  onClose={closeOverflowDropdown}
+                />
+              </StyledDropdownContainer>
             )}
             {onAddTab && (
               <StyledAddButton>
