@@ -59,12 +59,9 @@ export const SettingsAdminApps = () => {
   }, [registrations, searchQuery]);
 
   const handleRowClick = (registration: ApplicationRegistrationFragmentFragment) => {
-    if (isDefined(registration.ownerWorkspaceId)) {
-      return;
-    }
     navigateSettings(
-      SettingsPath.AvailableApplicationDetail,
-      { availableApplicationId: registration.universalIdentifier },
+      SettingsPath.ApplicationRegistrationDetail,
+      { applicationRegistrationId: registration.id },
     );
   };
 

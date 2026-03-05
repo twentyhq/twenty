@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -55,7 +55,10 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id, ownerWorkspaceId },
+      where: [
+        { id, ownerWorkspaceId },
+        { id, ownerWorkspaceId: IsNull() },
+      ],
     });
 
     if (!registration) {
