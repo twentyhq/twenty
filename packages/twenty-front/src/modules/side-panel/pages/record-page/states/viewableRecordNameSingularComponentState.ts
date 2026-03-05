@@ -3,7 +3,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 export const viewableRecordNameSingularComponentState =
   createAtomComponentState<string | null>({
-    key: 'command-menu/viewable-record-name-singular',
+    key: 'side-panel/viewable-record-name-singular',
     defaultValue: null,
     componentInstanceContext: SidePanelPageComponentInstanceContext,
   });

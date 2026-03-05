@@ -4,7 +4,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 export const sidePanelWorkflowRunIdComponentState = createAtomComponentState<
   string | undefined
 >({
-  key: 'command-menu/workflow-run-id',
+  key: 'side-panel/workflow-run-id',
   defaultValue: undefined,
   componentInstanceContext: SidePanelPageComponentInstanceContext,
 });

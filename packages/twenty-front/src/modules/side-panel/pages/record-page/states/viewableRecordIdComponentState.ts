@@ -4,7 +4,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 export const viewableRecordIdComponentState = createAtomComponentState<
   string | null
 >({
-  key: 'command-menu/viewable-record-id',
+  key: 'side-panel/viewable-record-id',
   defaultValue: null,
   componentInstanceContext: SidePanelPageComponentInstanceContext,
 });

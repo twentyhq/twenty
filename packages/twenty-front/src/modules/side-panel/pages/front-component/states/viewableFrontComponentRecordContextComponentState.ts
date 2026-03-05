@@ -8,7 +8,7 @@ type FrontComponentRecordContext = {
 
 export const viewableFrontComponentRecordContextComponentState =
   createAtomComponentState<FrontComponentRecordContext | null>({
-    key: 'command-menu/viewable-front-component-record-context',
+    key: 'side-panel/viewable-front-component-record-context',
     defaultValue: null,
     componentInstanceContext: SidePanelPageComponentInstanceContext,
   });
