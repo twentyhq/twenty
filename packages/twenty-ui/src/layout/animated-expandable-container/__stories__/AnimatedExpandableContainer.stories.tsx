@@ -1,21 +1,21 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { useContext, useState } from 'react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useState } from 'react';
+import { themeCssVariables } from '@ui/theme-constants';
 import { AnimatedExpandableContainer } from '../components/AnimatedExpandableContainer';
 
-const StyledButton = styled.button<{ theme: ThemeType }>`
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
-  background-color: ${({ theme }) => theme.color.blue10};
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledButton = styled.button`
+  padding: ${themeCssVariables.spacing['2']} ${themeCssVariables.spacing['4']};
+  background-color: ${themeCssVariables.color.blue10};
+  color: ${themeCssVariables.font.color.primary};
   border: none;
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${themeCssVariables.spacing['1']};
   cursor: pointer;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${themeCssVariables.spacing['3']};
 
   &:hover {
-    background-color: ${({ theme }) => theme.color.blue8};
+    background-color: ${themeCssVariables.color.blue8};
   }
 `;
 
@@ -24,8 +24,8 @@ const StyledButtonWrapper = styled.div<{ dimension: 'width' | 'height' }>`
   width: ${({ dimension }) => (dimension === 'height' ? '600px' : 'auto')};
 `;
 
-const StyledExpandableWrapper = styled.div<{ theme: ThemeType }>`
-  background-color: ${({ theme }) => theme.background.primary};
+const StyledExpandableWrapper = styled.div`
+  background-color: ${themeCssVariables.background.primary};
   height: 100%;
   width: 100%;
 `;
@@ -33,17 +33,16 @@ const StyledExpandableWrapper = styled.div<{ theme: ThemeType }>`
 const StyledContent = styled.div<{
   dimension: 'width' | 'height';
   mode: 'scroll-height' | 'fit-content';
-  theme: ThemeType;
 }>`
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing['3']};
   height: ${({ dimension, mode }) =>
     dimension === 'height' && mode === 'scroll-height' ? '200px' : 'auto'};
   width: ${({ dimension }) => (dimension === 'width' ? '400px' : 'auto')};
 
   p {
-    color: ${({ theme }) => theme.font.color.primary};
-    margin-bottom: ${({ theme }) => theme.spacing(2)};
-    font-size: ${({ theme }) => theme.font.size.md};
+    color: ${themeCssVariables.font.color.primary};
+    margin-bottom: ${themeCssVariables.spacing['2']};
+    font-size: ${themeCssVariables.font.size.md};
   }
 `;
 
@@ -63,12 +62,11 @@ const AnimatedExpandableContainerWithButton = ({
   isExpanded: initialIsExpanded,
   ...args
 }: AnimatedExpandableContainerWithButtonProps) => {
-  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
 
   return (
     <StyledButtonWrapper dimension={args.dimension}>
-      <StyledButton theme={theme} onClick={() => setIsExpanded(!isExpanded)}>
+      <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded ? 'Collapse' : 'Expand'}
       </StyledButton>
       <AnimatedExpandableContainer
@@ -77,12 +75,8 @@ const AnimatedExpandableContainerWithButton = ({
         mode={args.mode}
         animationDurations={args.animationDurations}
       >
-        <StyledExpandableWrapper theme={theme}>
-          <StyledContent
-            dimension={args.dimension}
-            mode={args.mode}
-            theme={theme}
-          >
+        <StyledExpandableWrapper>
+          <StyledContent dimension={args.dimension} mode={args.mode}>
             <p>
               This is some content inside the AnimatedExpandableContainer. It
               will animate smoothly when expanding or collapsing.

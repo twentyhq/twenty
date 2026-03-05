@@ -13,7 +13,7 @@ import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;

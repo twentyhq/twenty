@@ -49,6 +49,7 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
       name
       description
     }
+    sourcePackage
     defaultRole {
       id
       label

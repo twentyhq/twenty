@@ -1,11 +1,13 @@
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
@@ -47,8 +49,13 @@ type AIChatErrorMessageProps = {
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const handleRetryClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_RETRY_EVENT_NAME);
+  };
+
   const { theme } = useContext(ThemeContext);
-  const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
 
   return (
     <StyledErrorContainer>
@@ -65,8 +72,8 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
         variant="secondary"
         size="small"
         Icon={IconRefresh}
-        onClick={handleRetry}
-        disabled={isStreaming}
+        onClick={handleRetryClick}
+        disabled={agentChatIsStreaming}
         title={t`Retry`}
       />
     </StyledErrorContainer>

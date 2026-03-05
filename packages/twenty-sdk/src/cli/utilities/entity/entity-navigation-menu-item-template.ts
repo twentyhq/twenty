@@ -1,4 +1,4 @@
-import kebabCase from 'lodash.kebabcase';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { v4 } from 'uuid';
 
 export const getNavigationMenuItemBaseFile = ({

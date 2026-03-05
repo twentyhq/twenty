@@ -1,16 +1,9 @@
-import { type Attachment } from '@/activities/files/types/Attachment';
+import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 
 export const getAttachmentUrl = ({
   attachment,
-  isFilesFieldMigrated,
 }: {
-  attachment: Attachment;
-  isFilesFieldMigrated: boolean;
+  attachment: AttachmentWithFile;
 }): string => {
-  if (isFilesFieldMigrated) {
-    //TODO : add minimumFile settings + set it for attachment.file files field + exception invariance check here
-    return attachment.file?.[0]?.url as string;
-  }
-
-  return attachment.fullPath as string;
+  return attachment.file.url;
 };

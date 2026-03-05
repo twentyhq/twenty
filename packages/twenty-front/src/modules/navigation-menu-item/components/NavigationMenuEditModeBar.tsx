@@ -1,5 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
@@ -13,10 +13,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -41,8 +40,8 @@ export const NavigationMenuEditModeBar = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
-  const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -61,10 +60,10 @@ export const NavigationMenuEditModeBar = () => {
     setSelectedNavigationMenuItemInEditMode(null);
     setIsNavigationMenuInEditMode(false);
     const isNavItemPageOpen =
-      commandMenuPage === CommandMenuPages.NavigationMenuAddItem ||
-      commandMenuPage === CommandMenuPages.NavigationMenuItemEdit;
+      sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
+      sidePanelPage === SidePanelPages.NavigationMenuItemEdit;
     if (isNavItemPageOpen) {
-      closeCommandMenu();
+      closeSidePanelMenu();
     }
   };
 
@@ -85,7 +84,7 @@ export const NavigationMenuEditModeBar = () => {
     try {
       await saveDraft();
       cancelEditMode();
-      closeCommandMenu();
+      closeSidePanelMenu();
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to save navigation layout`,

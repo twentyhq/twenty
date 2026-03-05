@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
@@ -18,7 +18,6 @@ const SpreadsheetImport = React.lazy(() =>
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

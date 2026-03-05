@@ -970,6 +970,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    shortLabel: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isPinned: {
       toCompare: true,
       toStringify: false,

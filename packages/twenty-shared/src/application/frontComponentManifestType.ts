@@ -4,7 +4,7 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
   icon?: string;
   isPinned?: boolean;
-  availabilityType?: 'GLOBAL' | 'SINGLE_RECORD' | 'BULK_RECORDS';
+  availabilityType?: 'GLOBAL' | 'RECORD_SELECTION';
   availabilityObjectUniversalIdentifier?: string;
   frontComponentUniversalIdentifier: string;
   conditionalAvailabilityExpression?: string;

@@ -65,10 +65,7 @@ Normalerweise sollte dies sofort mit der installierten eslint-Erweiterung funkti
 
 #### Beim Ausführen von `npx nx start` oder `npx nx start twenty-front` wird ein Speicherfehler angezeigt
 
-Kommentieren Sie in `packages/twenty-front/.env` `VITE_DISABLE_TYPESCRIPT_CHECKER=true` und `VITE_DISABLE_ESLINT_CHECKER=true` aus, um Hintergrundprüfungen zu deaktivieren und den RAM-Bedarf zu reduzieren.
-
-**Wenn es nicht funktioniert:**
-Führen Sie nur die Services aus, die Sie benötigen, anstatt `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
+Run only the services you need, instead of `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
 
 **Wenn es nicht funktioniert:**
 Wenn Sie versucht haben, nur `npx nx run twenty-server:start` auf WSL zu starten und es mit dem untenstehenden Speicherfehler fehlschlägt:

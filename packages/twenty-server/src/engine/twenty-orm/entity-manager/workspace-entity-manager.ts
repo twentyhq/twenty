@@ -37,7 +37,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -138,7 +137,7 @@ export class WorkspaceEntityManager extends EntityManager {
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     rolePermissionConfig?: RolePermissionConfig,
-    authContext?: AuthContext,
+    authContext?: WorkspaceAuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
@@ -239,7 +238,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] | '*' = '*',
     permissionOptions?: PermissionOptions,
-    authContext?: AuthContext,
+    authContext?: WorkspaceAuthContext,
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -250,7 +249,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
-      .setAuthContext(authContext ?? {})
+      .setWorkspaceAuthContext(authContext ?? ({} as WorkspaceAuthContext))
       .values(entity)
       .returning(selectedColumns)
       .execute();

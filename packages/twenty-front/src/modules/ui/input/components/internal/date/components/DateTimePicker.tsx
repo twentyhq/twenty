@@ -11,7 +11,7 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Suspense, lazy, type ComponentType, useContext } from 'react';
+import { Suspense, lazy, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -24,9 +24,7 @@ import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/interna
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { Temporal } from 'temporal-polyfill';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
@@ -356,7 +354,6 @@ export const DateTimePicker = ({
   timeZone,
 }: DateTimePickerProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
   const { userTimezone } = useUserTimezone();

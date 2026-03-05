@@ -7,6 +7,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
+  ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -23,8 +25,14 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND:
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
+        throw new ForbiddenError(exception);
       case ApplicationExceptionCode.INVALID_INPUT:
+      case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
         throw new UserInputError(exception);
+      case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
+      case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
+      case ApplicationExceptionCode.UPGRADE_FAILED:
+        throw new InternalServerError(exception);
       default: {
         assertUnreachable(exception.code);
       }

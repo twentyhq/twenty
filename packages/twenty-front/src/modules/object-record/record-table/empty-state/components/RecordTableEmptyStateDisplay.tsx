@@ -16,10 +16,10 @@ import {
   type AnimatedPlaceholderType,
 } from 'twenty-ui/layout';
 
-const StyledEmptyPlaceholderOuterContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)`
-  align-items: flex-start;
+const StyledEmptyPlaceholderOuterContainer = styled.div`
+  > * {
+    align-items: flex-start;
+  }
 `;
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {

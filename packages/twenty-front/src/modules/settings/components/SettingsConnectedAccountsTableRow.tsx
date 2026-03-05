@@ -5,8 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -15,10 +14,12 @@ const StyledNameCell = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-    cursor: pointer;
+const StyledTableRowContainer = styled.div`
+  > * {
+    &:hover {
+      background-color: ${themeCssVariables.background.transparent.light};
+      cursor: pointer;
+    }
   }
 `;
 
@@ -30,23 +31,26 @@ export const SettingsConnectedAccountsTableRow = ({
   account,
 }: SettingsConnectedAccountsTableRowProps) => {
   const { theme } = useContext(ThemeContext);
-
   const IconComponent = SettingsConnectedAccountIcon({ account });
 
   return (
-    <StyledTableRow key={account.id} gridAutoColumns="332px 1fr">
-      <TableCell>
-        <StyledNameCell>
-          <IconComponent
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+    <StyledTableRowContainer>
+      <TableRow key={account.id} gridAutoColumns="332px 1fr">
+        <TableCell>
+          <StyledNameCell>
+            <IconComponent
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+            {account.handle}
+          </StyledNameCell>
+        </TableCell>
+        <TableCell align="right">
+          <SettingsAccountsConnectedAccountsRowRightContainer
+            account={account}
           />
-          {account.handle}
-        </StyledNameCell>
-      </TableCell>
-      <TableCell align="right">
-        <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
-      </TableCell>
-    </StyledTableRow>
+        </TableCell>
+      </TableRow>
+    </StyledTableRowContainer>
   );
 };

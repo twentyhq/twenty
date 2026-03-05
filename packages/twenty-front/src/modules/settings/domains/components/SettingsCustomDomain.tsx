@@ -19,13 +19,13 @@ const StyledDomainFormWrapper = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonGroup = styled(ButtonGroup)`
-  & > :not(:first-of-type) > button {
+const StyledButtonGroupContainer = styled.div`
+  > * > :not(:first-of-type) > button {
     border-left: none;
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
@@ -80,21 +80,27 @@ export const SettingsCustomDomain = () => {
           )}
         />
         {currentWorkspace?.customDomain && (
-          <StyledButtonGroup>
-            <StyledButton
-              isLoading={isLoading}
-              Icon={IconReload}
-              title={t`Reload`}
-              variant="primary"
-              onClick={checkCustomDomainRecords}
-              type="button"
-            />
-            <StyledButton
-              Icon={IconTrash}
-              variant="primary"
-              onClick={deleteCustomDomain}
-            />
-          </StyledButtonGroup>
+          <StyledButtonGroupContainer>
+            <ButtonGroup>
+              <StyledButtonContainer>
+                <Button
+                  isLoading={isLoading}
+                  Icon={IconReload}
+                  title={t`Reload`}
+                  variant="primary"
+                  onClick={checkCustomDomainRecords}
+                  type="button"
+                />
+              </StyledButtonContainer>
+              <StyledButtonContainer>
+                <Button
+                  Icon={IconTrash}
+                  variant="primary"
+                  onClick={deleteCustomDomain}
+                />
+              </StyledButtonContainer>
+            </ButtonGroup>
+          </StyledButtonGroupContainer>
         )}
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (

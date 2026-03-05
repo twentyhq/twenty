@@ -12,7 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormBooleanFieldInputProps = {
   label?: string;
@@ -45,8 +45,8 @@ export const FormBooleanFieldInput = ({
   readonly,
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const instanceId = useId();
 
@@ -134,7 +134,9 @@ export const FormBooleanFieldInput = ({
             hasRightElement={isDefined(VariablePicker) && !readonly}
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{
+              y: parseInt(theme.spacing[1], 10),
+            }}
           />
         ) : (
           <FormFieldInputInnerContainer

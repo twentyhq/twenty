@@ -1,4 +1,5 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
@@ -23,7 +24,6 @@ import {
 import {
   type MouseEvent as ReactMouseEvent,
   useCallback,
-  useContext,
   useMemo,
   useRef,
 } from 'react';
@@ -32,7 +32,6 @@ import {
   type PieChartConfiguration,
   type PieChartDataItem,
 } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];
@@ -89,8 +88,7 @@ export const GraphWidgetPieChart = ({
   showDataLabels = false,
   showCenterMetric = true,
 }: GraphWidgetPieChartProps) => {
-  const { theme } = useContext(ThemeContext);
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
   const containerRef = useRef<HTMLDivElement>(null);
   const setGraphWidgetPieTooltip = useSetAtomComponentState(
     graphWidgetPieTooltipComponentState,
@@ -140,7 +138,7 @@ export const GraphWidgetPieChart = ({
 
   const chartData = hasNoData ? emptyStateData : enrichedData;
   const chartColors = hasNoData
-    ? [theme.background.tertiary]
+    ? [themeCssVariables.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
   const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
 
@@ -205,13 +203,13 @@ export const GraphWidgetPieChart = ({
             }}
             arcLinkLabelsDiagonalLength={10}
             arcLinkLabelsStraightLength={10}
-            arcLinkLabelsTextColor={theme.font.color.light}
-            arcLinkLabelsColor={theme.font.color.extraLight}
+            arcLinkLabelsTextColor={themeCssVariables.font.color.light}
+            arcLinkLabelsColor={themeCssVariables.font.color.extraLight}
             theme={{
               labels: {
                 text: {
-                  fontSize: theme.font.size.sm,
-                  fontWeight: theme.font.weight.medium,
+                  fontSize: themeCssVariables.font.size.sm,
+                  fontWeight: themeCssVariables.font.weight.medium,
                 },
               },
             }}

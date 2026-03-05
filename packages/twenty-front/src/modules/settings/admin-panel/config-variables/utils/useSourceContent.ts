@@ -1,13 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { CustomError } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { ConfigSource } from '~/generated-metadata/graphql';
 
 export const useSourceContent = (source: ConfigSource) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
   switch (source) {
     case ConfigSource.DATABASE:

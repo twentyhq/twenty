@@ -12,5 +12,6 @@ export const mapDBMessagesToUIMessages = (
     metadata: {
       createdAt: dbMessage.createdAt,
     },
+    threadId: dbMessage.threadId,
   }));
 };

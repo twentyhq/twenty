@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconGoogleCalendarRaw from '@assets/icons/google-calendar.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
 
