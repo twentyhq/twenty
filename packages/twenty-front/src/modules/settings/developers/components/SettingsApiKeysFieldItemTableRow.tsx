@@ -10,8 +10,6 @@ import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = TableRow;
-
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -37,7 +35,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
-    <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
+    <TableRow gridAutoColumns={gridColumns} to={to}>
       <TableCell
         color={theme.font.color.primary}
         whiteSpace="nowrap"
@@ -78,6 +76,6 @@ export const SettingsApiKeysFieldItemTableRow = ({
           color={theme.font.color.tertiary}
         />
       </TableCell>
-    </StyledApisFieldTableRow>
+    </TableRow>
   );
 };

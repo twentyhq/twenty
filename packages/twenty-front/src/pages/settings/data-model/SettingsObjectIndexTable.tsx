@@ -14,21 +14,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-export const StyledObjectIndexTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="350px 70px 80px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
+const OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '350px 70px 80px';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -136,7 +128,9 @@ export const SettingsObjectIndexTable = ({
         />
       </StyledSearchInputContainer>
       <Table>
-        <StyledObjectIndexTableRow>
+        <TableRow
+          gridTemplateColumns={OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {tableMetadata.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -148,10 +142,13 @@ export const SettingsObjectIndexTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectIndexTableRow>
+        </TableRow>
         {isNonEmptyArray(filteredActiveItems) &&
           filteredActiveItems.map((objectSettingsIndex) => (
-            <StyledObjectIndexTableRow key={objectSettingsIndex.name}>
+            <TableRow
+              gridTemplateColumns={OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+              key={objectSettingsIndex.name}
+            >
               <TableCell>{objectSettingsIndex.indexFields}</TableCell>
               <TableCell>
                 {objectSettingsIndex.isUnique ? (
@@ -161,7 +158,7 @@ export const SettingsObjectIndexTable = ({
                 )}
               </TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
-            </StyledObjectIndexTableRow>
+            </TableRow>
           ))}
       </Table>
     </>

@@ -16,16 +16,6 @@ export type SettingsAIAgentTableRowProps = {
 
 export const AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 120px 36px';
 
-export const StyledAIAgentTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
-
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
   height: ${themeCssVariables.spacing[4]};
@@ -41,7 +31,11 @@ export const SettingsAIAgentTableRow = ({
   const Icon = getIcon(agent.icon || 'IconRobot');
 
   return (
-    <StyledAIAgentTableRow key={agent.id} to={link}>
+    <TableRow
+      gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      key={agent.id}
+      to={link}
+    >
       <TableCell
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
@@ -62,6 +56,6 @@ export const SettingsAIAgentTableRow = ({
       >
         {action}
       </TableCell>
-    </StyledAIAgentTableRow>
+    </TableRow>
   );
 };

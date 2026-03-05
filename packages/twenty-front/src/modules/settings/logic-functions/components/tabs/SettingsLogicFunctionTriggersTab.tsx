@@ -12,31 +12,13 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { Tag } from 'twenty-ui/components';
 import { type LogicFunction } from '~/generated-metadata/graphql';
-import React from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledRouteTriggerTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="1fr 120px 120px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
+const ROUTE_TRIGGER_GRID_TEMPLATE_COLUMNS = '1fr 120px 120px';
 
 const StyledRouteTriggerTableHeaderRowWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
-
-const StyledRouteTriggerTableHeaderRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <StyledRouteTriggerTableHeaderRowWrapper>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-    <StyledRouteTriggerTableRow {...props} />
-  </StyledRouteTriggerTableHeaderRowWrapper>
-);
 
 const StyledEmptyState = styled.div`
   align-items: center;
@@ -128,12 +110,16 @@ export const SettingsLogicFunctionTriggersTab = ({
             description={t`Triggers the function with Http request`}
           />
           <Table>
-            <StyledRouteTriggerTableHeaderRow>
-              <TableHeader>{t`Path`}</TableHeader>
-              <TableHeader>{t`Method`}</TableHeader>
-              <TableHeader>{t`Auth Required`}</TableHeader>
-            </StyledRouteTriggerTableHeaderRow>
-            <StyledRouteTriggerTableRow>
+            <StyledRouteTriggerTableHeaderRowWrapper>
+              <TableRow
+                gridTemplateColumns={ROUTE_TRIGGER_GRID_TEMPLATE_COLUMNS}
+              >
+                <TableHeader>{t`Path`}</TableHeader>
+                <TableHeader>{t`Method`}</TableHeader>
+                <TableHeader>{t`Auth Required`}</TableHeader>
+              </TableRow>
+            </StyledRouteTriggerTableHeaderRowWrapper>
+            <TableRow gridTemplateColumns={ROUTE_TRIGGER_GRID_TEMPLATE_COLUMNS}>
               <TableCell
                 color={themeCssVariables.font.color.tertiary}
                 gap={themeCssVariables.spacing[2]}
@@ -161,7 +147,7 @@ export const SettingsLogicFunctionTriggersTab = ({
                   weight="medium"
                 />
               </TableCell>
-            </StyledRouteTriggerTableRow>
+            </TableRow>
           </Table>
         </Section>
       )}

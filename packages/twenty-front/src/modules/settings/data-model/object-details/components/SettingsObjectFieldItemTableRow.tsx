@@ -10,7 +10,7 @@ import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-de
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import React, { useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -36,15 +36,8 @@ type SettingsObjectFieldItemTableRowProps = {
   mode: 'view' | 'new-field';
 };
 
-export const StyledObjectFieldTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="minmax(0, 1fr) 148px 148px 36px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
+export const OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
   display: flex;
@@ -175,7 +168,8 @@ export const SettingsObjectFieldItemTableRow = ({
       : relationObjectMetadataItem?.labelPlural;
 
   return (
-    <StyledObjectFieldTableRow
+    <TableRow
+      gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       onClick={mode === 'view' ? navigateToFieldEdit : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
@@ -280,6 +274,6 @@ export const SettingsObjectFieldItemTableRow = ({
           />
         )}
       </TableCell>
-    </StyledObjectFieldTableRow>
+    </TableRow>
   );
 };

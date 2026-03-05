@@ -26,9 +26,10 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsToolTableRow,
-  StyledToolTableRow,
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
@@ -183,11 +184,13 @@ export const SettingsToolsTable = () => {
         </StyledSearchAndFilterContainer>
         <Table>
           <StyledTableHeaderRowContainer>
-            <StyledToolTableRow>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader align="right">{t`Type`}</TableHeader>
               <TableHeader />
-            </StyledToolTableRow>
+            </TableRow>
           </StyledTableHeaderRowContainer>
           {showSkeleton
             ? Array.from({ length: 3 }).map((_, index) => (
@@ -238,11 +241,13 @@ export const SettingsToolsTable = () => {
         </StyledSearchAndFilterContainer>
         <Table>
           <StyledTableHeaderRowContainer>
-            <StyledToolTableRow>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader align="right">{t`Type`}</TableHeader>
               <TableHeader />
-            </StyledToolTableRow>
+            </TableRow>
           </StyledTableHeaderRowContainer>
           {filteredSystemTools.map((systemTool) => (
             <SettingsSystemToolTableRow

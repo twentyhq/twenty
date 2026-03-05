@@ -1,8 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectFieldItemTableRow,
-  StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -212,7 +213,9 @@ export const SettingsObjectFieldTable = ({
         />
       </StyledSearchAndFilterContainer>
       <Table>
-        <StyledObjectFieldTableRow>
+        <TableRow
+          gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {tableMetadata.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -223,7 +226,7 @@ export const SettingsObjectFieldTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectFieldTableRow>
+        </TableRow>
         {filteredItems.map((objectSettingsDetailItem) => {
           const status = objectSettingsDetailItem.fieldMetadataItem.isActive
             ? 'active'

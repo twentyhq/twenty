@@ -26,9 +26,10 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 import Skeleton from 'react-loading-skeleton';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsAIAgentTableRow,
-  StyledAIAgentTableRow,
 } from './SettingsAIAgentTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
@@ -121,7 +122,9 @@ export const SettingsAIAgentsTable = () => {
       <StyledTableContainer>
         <Table>
           <StyledTableHeaderRowContainer>
-            <StyledAIAgentTableRow>
+            <TableRow
+              gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
               {SETTINGS_AI_AGENT_TABLE_METADATA.fields.map(
                 (settingsAIAgentTableMetadataField) => (
                   <SortableTableHeader
@@ -135,7 +138,7 @@ export const SettingsAIAgentsTable = () => {
                 ),
               )}
               <TableHeader />
-            </StyledAIAgentTableRow>
+            </TableRow>
           </StyledTableHeaderRowContainer>
           {loading &&
             Array.from({ length: 3 }).map((_, index) => (

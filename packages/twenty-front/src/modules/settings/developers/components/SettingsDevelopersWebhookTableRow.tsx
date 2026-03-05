@@ -7,19 +7,11 @@ import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="1fr 28px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
+const WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 28px';
 
 const StyledIconChevronRightContainer = styled.span`
   align-items: center;
@@ -39,7 +31,10 @@ export const SettingsDevelopersWebhookTableRow = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   return (
-    <StyledApisFieldTableRow to={to}>
+    <TableRow
+      gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      to={to}
+    >
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip
           text={
@@ -60,6 +55,6 @@ export const SettingsDevelopersWebhookTableRow = ({
           />
         </StyledIconChevronRightContainer>
       </TableCell>
-    </StyledApisFieldTableRow>
+    </TableRow>
   );
 };

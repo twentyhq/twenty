@@ -25,17 +25,6 @@ const StyledFieldDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
 `;
 
-const StyledFieldNameTableCell = (
-  props: React.ComponentProps<typeof TableCell>,
-) => (
-  <TableCell
-    color={themeCssVariables.font.color.secondary}
-    gap={themeCssVariables.spacing[2]}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
-
 export const SettingsApplicationDataTableRow = ({
   row,
   isExpanded,
@@ -103,7 +92,10 @@ export const SettingsApplicationDataTableRow = ({
               key={field.key}
               gridAutoColumns={FIELD_SUB_ROW_GRID_COLUMNS}
             >
-              <StyledFieldNameTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.secondary}
+                gap={themeCssVariables.spacing[2]}
+              >
                 {isDefined(FieldIcon) && (
                   <FieldIcon
                     size={theme.icon.size.md}
@@ -111,7 +103,7 @@ export const SettingsApplicationDataTableRow = ({
                   />
                 )}
                 {field.label}
-              </StyledFieldNameTableCell>
+              </TableCell>
               <TableCell>
                 <SettingsObjectFieldDataType
                   value={field.type as SettingsFieldType}

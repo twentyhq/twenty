@@ -27,9 +27,10 @@ import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectRelationItemTableRow,
-  StyledObjectRelationTableRow,
 } from './SettingsObjectRelationItemTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
@@ -167,7 +168,9 @@ export const SettingsObjectRelationsTable = ({
         />
       </StyledSearchAndFilterContainer>
       <Table>
-        <StyledObjectRelationTableRow>
+        <TableRow
+          gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {tableMetadata.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -178,7 +181,7 @@ export const SettingsObjectRelationsTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectRelationTableRow>
+        </TableRow>
         {filteredRelationFields.map((fieldMetadataItem) => (
           <SettingsObjectRelationItemTableRow
             key={fieldMetadataItem.id}

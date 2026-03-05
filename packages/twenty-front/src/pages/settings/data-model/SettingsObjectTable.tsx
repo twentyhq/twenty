@@ -5,7 +5,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -170,7 +171,9 @@ export const SettingsObjectTable = ({
       )}
 
       <Table>
-        <StyledObjectTableRow>
+        <TableRow
+          gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
             (settingsObjectsTableMetadataField) => (
               <SortableTableHeader
@@ -184,7 +187,7 @@ export const SettingsObjectTable = ({
             ),
           )}
           <TableHeader></TableHeader>
-        </StyledObjectTableRow>
+        </TableRow>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 

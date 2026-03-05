@@ -11,7 +11,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import React, { useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -25,15 +25,8 @@ type SettingsObjectRelationItemTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const StyledObjectRelationTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="minmax(0, 1fr) 148px 148px 36px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
+export const OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
   display: flex;
@@ -161,8 +154,10 @@ export const SettingsObjectRelationItemTableRow = ({
       : fieldMetadataItem.label;
 
   return (
-    // eslint-disable-next-line twenty/no-navigate-prefer-link
-    <StyledObjectRelationTableRow onClick={navigateToFieldEdit}>
+    <TableRow
+      gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      to={linkToNavigate}
+    >
       <TableCell
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
@@ -253,6 +248,6 @@ export const SettingsObjectRelationItemTableRow = ({
           />
         )}
       </TableCell>
-    </StyledObjectRelationTableRow>
+    </TableRow>
   );
 };

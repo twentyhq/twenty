@@ -1,9 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow,
-  StyledObjectFieldTableRow,
 } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -109,7 +110,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         />
       </StyledSearchInputContainer>
       <Table>
-        <StyledObjectFieldTableRow>
+        <TableRow
+          gridTemplateColumns={FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           <SortableTableHeader
             fieldName="label"
             label={t`Name`}
@@ -134,7 +137,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
               </TableHeader>
             )}
           </>
-        </StyledObjectFieldTableRow>
+        </TableRow>
         <SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}

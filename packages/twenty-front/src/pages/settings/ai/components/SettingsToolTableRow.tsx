@@ -21,16 +21,6 @@ export type SettingsToolTableRowProps = {
 
 export const TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 100px 36px';
 
-export const StyledToolTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
-
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
@@ -43,7 +33,10 @@ export const SettingsToolTableRow = ({
   link,
 }: SettingsToolTableRowProps) => {
   return (
-    <StyledToolTableRow to={link}>
+    <TableRow
+      gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      to={link}
+    >
       <TableCell
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
@@ -66,6 +59,6 @@ export const SettingsToolTableRow = ({
       >
         {action}
       </TableCell>
-    </StyledToolTableRow>
+    </TableRow>
   );
 };

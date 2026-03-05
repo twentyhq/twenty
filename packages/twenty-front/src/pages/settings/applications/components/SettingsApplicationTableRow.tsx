@@ -18,16 +18,6 @@ export type SettingsApplicationTableRowProps = {
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px minmax(0, 1fr) 36px';
 
-export const StyledApplicationTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
-
 export const SettingsApplicationTableRow = ({
   action,
   application,
@@ -35,7 +25,11 @@ export const SettingsApplicationTableRow = ({
   link,
 }: SettingsApplicationTableRowProps) => {
   return (
-    <StyledApplicationTableRow key={application.id} to={link}>
+    <TableRow
+      gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      key={application.id}
+      to={link}
+    >
       <TableCell
         color={themeCssVariables.font.color.secondary}
         gap={themeCssVariables.spacing[2]}
@@ -56,6 +50,6 @@ export const SettingsApplicationTableRow = ({
       >
         {action}
       </TableCell>
-    </StyledApplicationTableRow>
+    </TableRow>
   );
 };

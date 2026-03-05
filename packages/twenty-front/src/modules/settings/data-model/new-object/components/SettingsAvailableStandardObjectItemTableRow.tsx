@@ -4,24 +4,17 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
 import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+export const AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS =
+  '28px 148px 256px 80px';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
   objectItem: ObjectMetadataItem;
   onClick?: () => void;
 };
-
-export const StyledAvailableStandardObjectTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <TableRow
-    gridTemplateColumns="28px 148px 256px 80px"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
 
 const StyledDescription = styled.div`
   overflow: hidden;
@@ -39,7 +32,8 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
   const Icon = getIcon(objectItem.icon);
 
   return (
-    <StyledAvailableStandardObjectTableRow
+    <TableRow
+      gridTemplateColumns={AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS}
       key={objectItem.namePlural}
       isSelected={isSelected}
       onClick={onClick}
@@ -61,6 +55,6 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
         <StyledDescription>{objectItem.description}</StyledDescription>
       </TableCell>
       <TableCell align="right">{objectItem.fields.length}</TableCell>
-    </StyledAvailableStandardObjectTableRow>
+    </TableRow>
   );
 };
