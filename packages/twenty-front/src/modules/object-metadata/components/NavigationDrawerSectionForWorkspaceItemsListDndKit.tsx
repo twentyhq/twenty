@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
+import { NavigationDrawerSectionForWorkspaceItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 import { WorkspaceOrphanDropTarget } from '@/object-metadata/components/WorkspaceOrphanDropTarget';
 import { WorkspaceSectionAddMenuItemButton } from '@/object-metadata/components/WorkspaceSectionAddMenuItemButton';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
@@ -61,7 +61,7 @@ export const WorkspaceSectionListDndKit = ({
             }
             disabled={!isNavigationMenuInEditMode || workspaceDropDisabled}
           >
-            <WorkspaceSectionItemContent
+            <NavigationDrawerSectionForWorkspaceItemContent
               item={item}
               editModeProps={getEditModeProps(item)}
               isDragging={isDragging}

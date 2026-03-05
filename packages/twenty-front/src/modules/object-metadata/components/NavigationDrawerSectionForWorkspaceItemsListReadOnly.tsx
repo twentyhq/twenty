@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import type { FlatWorkspaceItem } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
-import { WorkspaceSectionItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
+import { NavigationDrawerSectionForWorkspaceItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 
 const StyledList = styled.div`
   display: flex;
@@ -34,7 +34,7 @@ export const NavigationDrawerSectionForWorkspaceItemsListReadOnly = ({
   return (
     <StyledList>
       {filteredItems.map((item: FlatWorkspaceItem) => (
-        <WorkspaceSectionItemContent
+        <NavigationDrawerSectionForWorkspaceItemContent
           key={item.id}
           item={item}
           editModeProps={READ_ONLY_EDIT_MODE_PROPS}
