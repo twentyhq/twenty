@@ -108,8 +108,6 @@ export class ClientService {
       includeUploadFile: true,
     });
 
-    await this.writeBarrelIndex(tempPath);
-
     await remove(outputPath);
     await move(tempPath, outputPath);
   }
@@ -154,7 +152,7 @@ export class ClientService {
   }): Promise<void> {
     const outputPath = this.resolveGeneratedPath(appPath);
 
-    if (await pathExists(join(outputPath, 'index.ts'))) {
+    if (await pathExists(join(outputPath, 'core', 'index.ts'))) {
       return;
     }
 
@@ -164,21 +162,10 @@ export class ClientService {
       join(outputPath, 'core', 'index.ts'),
       'export class CoreApiClient {}\n',
     );
-    await this.writeBarrelIndex(outputPath);
   }
 
   private resolveGeneratedPath(appPath: string): string {
     return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
-  }
-
-  private async writeBarrelIndex(outputDir: string): Promise<void> {
-    const barrelContent = `export { CoreApiClient } from './core/index';
-export { MetadataApiClient } from 'twenty-sdk/metadata';
-export * as CoreSchema from './core/schema';
-export * as MetadataSchema from 'twenty-sdk/metadata';
-`;
-
-    await writeFile(join(outputDir, 'index.ts'), barrelContent);
   }
 
   private async injectClientWrapper(

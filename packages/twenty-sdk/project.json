@@ -32,15 +32,15 @@
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
-        "{projectRoot}/scripts/metadata-client/**/*",
+        "{projectRoot}/scripts/clients/**/*",
         "{projectRoot}/src/cli/utilities/client/twenty-client-template.ts"
       ],
       "outputs": [
-        "{projectRoot}/src/metadata-client/generated/*"
+        "{projectRoot}/src/clients/generated/metadata/*"
       ],
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "tsx scripts/metadata-client/generate-metadata-client.ts"
+        "command": "tsx scripts/clients/generate-metadata-client.ts"
       }
     },
     "dev": {

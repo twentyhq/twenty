@@ -45,15 +45,10 @@
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
-    "./metadata": {
-      "types": "./dist/metadata-client/index.d.ts",
-      "import": "./dist/metadata.mjs",
-      "require": "./dist/metadata.cjs"
-    },
     "./clients": {
-      "types": "./generated/index.ts",
-      "import": "./generated/index.ts",
-      "require": "./generated/index.ts"
+      "types": "./dist/clients/index.d.ts",
+      "import": "./dist/clients.mjs",
+      "require": "./dist/clients.cjs"
     },
     "./generated/core": {
       "types": "./generated/core/index.ts",
@@ -127,11 +122,8 @@
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
       ],
-      "metadata": [
-        "dist/metadata-client/index.d.ts"
-      ],
       "clients": [
-        "generated/index.ts"
+        "dist/clients/index.d.ts"
       ],
       "generated/core": [
         "generated/core/index.ts"
