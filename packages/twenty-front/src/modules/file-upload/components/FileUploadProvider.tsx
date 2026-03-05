@@ -2,7 +2,7 @@ import {
   FileUploadContext,
   type FileUploadOptions,
 } from '@/file-upload/contexts/FileUploadContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

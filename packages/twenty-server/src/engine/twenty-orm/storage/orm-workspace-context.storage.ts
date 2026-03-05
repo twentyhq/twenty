@@ -1,10 +1,12 @@
 import { AsyncLocalStorage } from 'async_hooks';
 
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import {
+  type ObjectsPermissionsByRoleId,
+  type FeatureFlagKey,
+} from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';

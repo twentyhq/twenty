@@ -4,9 +4,9 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 
@@ -36,9 +36,7 @@ export const CommandMenuItemTextInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
-
-  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
-  const isTextInputCurrentlyFocused = currentFocusId === focusId;
+  const store = useStore();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -59,21 +57,24 @@ export const CommandMenuItemTextInput = ({
   };
 
   const handleBlur = () => {
+    const isInputStillFocused =
+      store.get(currentFocusIdSelector.atom) === focusId;
+
+    if (isInputStillFocused && draftValue !== value) {
+      onChange(draftValue);
+    }
+
     removeFocusItemFromFocusStackById({ focusId });
   };
 
   const handleEscape = () => {
+    removeFocusItemFromFocusStackById({ focusId });
     setDraftValue(value);
     inputRef.current?.blur();
   };
 
   const handleEnter = () => {
-    onChange(draftValue);
     inputRef.current?.blur();
-  };
-
-  const handleClickOutside = () => {
-    onChange(draftValue);
   };
 
   useRegisterInputEvents<string>({
@@ -82,9 +83,6 @@ export const CommandMenuItemTextInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: isTextInputCurrentlyFocused
-      ? handleClickOutside
-      : undefined,
   });
 
   const focusInput = () => {

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -7,15 +7,15 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SnackBar } from './SnackBar';
 
 const StyledSnackBarContainer = styled.div`
-  bottom: ${({ theme }) => theme.spacing(3)};
+  bottom: ${themeCssVariables.spacing[3]};
   display: flex;
   flex-direction: column;
   position: fixed;
-  right: ${({ theme }) => theme.spacing(3)};
+  right: ${themeCssVariables.spacing[3]};
   z-index: ${RootStackingContextZIndices.SnackBar};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {

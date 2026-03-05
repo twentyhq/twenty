@@ -1,5 +1,5 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,6 +16,8 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import { IconArrowRight } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -25,66 +27,56 @@ type CalendarEventRowProps = {
 const StyledContainer = styled.div<{ showTitle?: boolean }>`
   align-items: center;
   display: inline-flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  height: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[3]};
+  height: ${themeCssVariables.spacing[6]};
   position: relative;
   cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
-  background-color: ${({ theme }) => theme.tag.background.gray};
+  background-color: ${({ active }) =>
+    active
+      ? themeCssVariables.tag.background.red
+      : themeCssVariables.tag.background.gray};
   height: 100%;
-  width: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-
-  ${({ active, theme }) =>
-    active &&
-    css`
-      background-color: ${theme.tag.background.red};
-    `}
+  width: ${themeCssVariables.spacing[1]};
+  border-radius: ${themeCssVariables.border.radius.xs};
 `;
 
 const StyledLabels = styled.div`
   align-items: center;
   display: flex;
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
   flex: 1 0 auto;
 `;
 
 const StyledTime = styled.div`
   align-items: center;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(26)};
+  color: ${themeCssVariables.font.color.tertiary};
+  gap: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[26]};
 `;
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
+  color: ${({ active }) =>
+    active ? themeCssVariables.font.color.primary : 'inherit'};
   flex: 1 0 auto;
+  font-weight: ${({ active }) =>
+    active ? themeCssVariables.font.weight.medium : 'inherit'};
   overflow: hidden;
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: ${({ theme }) => theme.spacing(10)};
-  ${({ theme, active }) =>
-    active &&
-    css`
-      color: ${theme.font.color.primary};
-      font-weight: ${theme.font.weight.medium};
-    `}
-
-  ${({ canceled }) =>
-    canceled &&
-    css`
-      text-decoration: line-through;
-    `}
+  width: ${themeCssVariables.spacing[10]};
 `;
 
 export const CalendarEventRow = ({
   calendarEvent,
   className,
 }: CalendarEventRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();

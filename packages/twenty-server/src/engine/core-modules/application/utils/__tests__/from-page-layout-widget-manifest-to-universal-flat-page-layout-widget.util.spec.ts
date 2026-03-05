@@ -73,4 +73,26 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       url: 'https://example.com',
     });
   });
+
+  it('should use manifest gridPosition when provided', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-3',
+        title: 'Positioned Widget',
+        type: WidgetType.GRAPH,
+        gridPosition: { row: 2, column: 6, rowSpan: 4, columnSpan: 6 },
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.gridPosition).toEqual({
+      row: 2,
+      column: 6,
+      rowSpan: 4,
+      columnSpan: 6,
+    });
+  });
 });

@@ -1634,6 +1634,26 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Default npm registry URL for resolving app packages (e.g. https://registry.npmjs.org)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  APP_REGISTRY_URL: string = 'https://registry.npmjs.org';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Auth token for the default npm registry (for private packages)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  APP_REGISTRY_TOKEN: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

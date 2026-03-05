@@ -2,12 +2,11 @@ import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -368,7 +367,8 @@ const StyledButton = styled.button<
   }
 `;
 
-const StyledSoonPill = styled(Pill)`
+const StyledSoonPillContainer = styled.span`
+  display: flex;
   margin-left: auto;
 `;
 
@@ -413,9 +413,9 @@ const StyledShortcutLabel = styled.div<{
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledIconContainer = styled(motion.div)`
-  display: flex;
+const StyledIconContainer = styled.div`
   align-items: center;
+  display: flex;
   justify-content: center;
 `;
 
@@ -446,7 +446,6 @@ export const AnimatedButton = ({
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
-  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isDisabled = soon || disabled;
 
@@ -491,13 +490,17 @@ export const AnimatedButton = ({
       data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
-        <StyledIconContainer animate={animate} transition={transition}>
-          <Icon size={theme.icon.size.sm} />
+        <StyledIconContainer>
+          <motion.div animate={animate} transition={transition}>
+            <Icon size={ICON_SIZES.sm} />
+          </motion.div>
         </StyledIconContainer>
       )}
       {animatedSvg && (
-        <StyledIconContainer animate={animate} transition={transition}>
-          {animatedSvg}
+        <StyledIconContainer>
+          <motion.div animate={animate} transition={transition}>
+            {animatedSvg}
+          </motion.div>
         </StyledIconContainer>
       )}
       {title}
@@ -509,7 +512,11 @@ export const AnimatedButton = ({
           </StyledShortcutLabel>
         </>
       )}
-      {soon && <StyledSoonPill label={soonLabel} />}
+      {soon && (
+        <StyledSoonPillContainer>
+          <Pill label={soonLabel} />
+        </StyledSoonPillContainer>
+      )}
     </StyledButton>
   );
 };

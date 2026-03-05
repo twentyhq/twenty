@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -29,16 +30,16 @@ const StyledContainer = styled.div<{
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: 24px;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  padding-right: ${themeCssVariables.spacing[1]};
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
 `;
 
 const StyledColumnHeaderCell = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
 
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   box-sizing: border-box;

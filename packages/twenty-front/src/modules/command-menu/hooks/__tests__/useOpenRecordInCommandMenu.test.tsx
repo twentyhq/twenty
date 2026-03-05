@@ -12,6 +12,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
@@ -28,6 +29,16 @@ jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
 }));
+
+const mockOpenNewRecordTitleCell = jest.fn();
+jest.mock(
+  '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell',
+  () => ({
+    useOpenNewRecordTitleCell: () => ({
+      openNewRecordTitleCell: mockOpenNewRecordTitleCell,
+    }),
+  }),
+);
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -172,5 +183,37 @@ describe('useOpenRecordInCommandMenu', () => {
       pageId: 'mocked-uuid',
       resetNavigationStack: false,
     });
+  });
+
+  it('should open title cell in edit mode when isNewRecord is true', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInCommandMenu({
+        recordId: 'new-record-123',
+        objectNameSingular: 'person',
+        isNewRecord: true,
+      });
+    });
+
+    expect(mockOpenNewRecordTitleCell).toHaveBeenCalledWith({
+      recordId: 'new-record-123',
+      fieldName: getLabelIdentifierFieldMetadataItem(
+        personMockObjectMetadataItem,
+      )?.name,
+    });
+  });
+
+  it('should not open title cell when isNewRecord is false', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInCommandMenu({
+        recordId: 'record-123',
+        objectNameSingular: 'person',
+      });
+    });
+
+    expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
   });
 });

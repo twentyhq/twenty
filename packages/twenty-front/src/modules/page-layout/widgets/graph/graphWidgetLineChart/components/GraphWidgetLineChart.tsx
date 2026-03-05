@@ -26,8 +26,7 @@ import {
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   ResponsiveLine,
   type LineCustomSvgLayerProps,
@@ -92,8 +91,7 @@ export const GraphWidgetLineChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetLineChartProps) => {
-  const theme = useTheme();
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
@@ -207,7 +205,7 @@ export const GraphWidgetLineChart = ({
       <CustomPointLabelsLayer
         points={layerProps.points}
         formatValue={(value) => formatGraphValue(value, formatOptions)}
-        offset={theme.spacingMultiplicator * 2}
+        offset={8}
         groupMode={groupMode}
         omitNullValues={omitNullValues}
         enablePointLabel={enablePointLabel}

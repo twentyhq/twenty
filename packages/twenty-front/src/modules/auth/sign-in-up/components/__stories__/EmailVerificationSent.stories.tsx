@@ -1,24 +1,17 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-// Wrap the component in Modal.Content to reflect how it's used in the app
-const RenderWithModal = (
+const RenderWithModalContent = (
   args: React.ComponentProps<typeof EmailVerificationSent>,
 ) => {
   return (
-    <Modal
-      modalId="email-verification-sent-modal"
-      padding="none"
-      modalVariant="primary"
-    >
-      <Modal.Content isVerticalCentered isHorizontalCentered>
-        <EmailVerificationSent email={args.email} isError={args.isError} />
-      </Modal.Content>
-    </Modal>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <EmailVerificationSent email={args.email} isError={args.isError} />
+    </ModalContent>
   );
 };
 
@@ -28,10 +21,10 @@ const meta: Meta<typeof EmailVerificationSent> = {
   decorators: [ComponentDecorator, SnackBarDecorator],
   parameters: {
     codeSection: {
-      docs: 'This component should always be wrapped with Modal.Content in the app.\n\nCorrect usage:\n```tsx\n<Modal.Content isVerticalCentered isHorizontalCentered>\n  <EmailVerificationSent email={email} />\n</Modal.Content>\n```\n',
+      docs: 'This component should always be wrapped with ModalContent in the app.\n\nCorrect usage:\n```tsx\n<ModalContent isVerticallyCentered isHorizontallyCentered>\n  <EmailVerificationSent email={email} />\n</ModalContent>\n```\n',
     },
   },
-  render: RenderWithModal,
+  render: RenderWithModalContent,
 };
 
 export default meta;

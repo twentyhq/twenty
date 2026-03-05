@@ -1,4 +1,4 @@
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 export const PAGE_LAYOUT_CONFIG = {
   breakpoints: {

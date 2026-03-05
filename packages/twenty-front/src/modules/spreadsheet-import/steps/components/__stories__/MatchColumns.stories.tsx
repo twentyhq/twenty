@@ -66,7 +66,7 @@ export const Default = () => (
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
-        modalId="match-columns-step"
+        modalInstanceId="match-columns-step"
         onClose={() => null}
       >
         <MatchColumnsStep

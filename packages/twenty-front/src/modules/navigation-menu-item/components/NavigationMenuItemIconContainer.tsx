@@ -14,8 +14,8 @@ export const StyledNavigationMenuItemIconContainer = styled.div<{
   justify-content: center;
   width: ${themeCssVariables.spacing[4]};
 
-  ${({ $backgroundColor }) =>
-    $backgroundColor ? `background-color: ${$backgroundColor};` : ''}
-  ${({ $borderColor }) =>
-    $borderColor ? `border: 1px solid ${$borderColor};` : ''}
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
+  border: ${({ $borderColor }) =>
+    $borderColor ? `1px solid ${$borderColor}` : 'none'};
 `;

@@ -1,6 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTextCard';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

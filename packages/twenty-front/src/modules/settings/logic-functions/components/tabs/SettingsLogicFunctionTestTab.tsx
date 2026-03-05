@@ -1,19 +1,19 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
+import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -47,8 +47,6 @@ export const SettingsLogicFunctionTestTab = ({
     }));
   };
 
-  const testLogsTextAreaId = `${logicFunctionId}-test-logs`;
-
   return (
     <Section>
       <H2Title
@@ -77,23 +75,18 @@ export const SettingsLogicFunctionTestTab = ({
             height={100}
             onChange={onChange}
             variant="with-header"
+            resizable
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
           logicFunctionTestData={logicFunctionTestData}
-          maxHeight={
-            logicFunctionTestData.output.logs.length > 0 ? 200 : undefined
-          }
           isTesting={isTesting}
         />
         {logicFunctionTestData.output.logs.length > 0 && (
           <StyledCodeEditorContainer>
-            <InputLabel>{t`Logs`}</InputLabel>
-            <TextArea
-              textAreaId={testLogsTextAreaId}
+            <LogicFunctionLogs
+              componentInstanceId={`settings-logic-function-logs-${logicFunctionId}`}
               value={isTesting ? '' : logicFunctionTestData.output.logs}
-              maxRows={20}
-              disabled
             />
           </StyledCodeEditorContainer>
         )}

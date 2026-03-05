@@ -1,15 +1,23 @@
 import { useCallback } from 'react';
 
-import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+import {
+  type HeadlessFrontComponentMountContext,
+  mountedHeadlessFrontComponentMapsState,
+} from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { useStore } from 'jotai';
 
 export const useMountHeadlessFrontComponent = () => {
   const store = useStore();
   const mountHeadlessFrontComponent = useCallback(
-    (frontComponentId: string) => {
-      store.set(mountedHeadlessFrontComponentIdsState.atom, (previousIds) =>
-        new Set(previousIds).add(frontComponentId),
-      );
+    (
+      frontComponentId: string,
+      context?: HeadlessFrontComponentMountContext,
+    ) => {
+      store.set(mountedHeadlessFrontComponentMapsState.atom, (previousMap) => {
+        const next = new Map(previousMap);
+        next.set(frontComponentId, context ?? undefined);
+        return next;
+      });
     },
     [store],
   );

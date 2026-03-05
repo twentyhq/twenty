@@ -1,9 +1,9 @@
-import { css, Global, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLayout = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -13,19 +13,9 @@ const StyledLayout = styled.div`
 `;
 
 export const BlankLayout = () => {
-  const theme = useTheme();
   return (
-    <>
-      <Global
-        styles={css`
-          body {
-            background: ${theme.background.tertiary};
-          }
-        `}
-      />
-      <StyledLayout>
-        <Outlet />
-      </StyledLayout>
-    </>
+    <StyledLayout>
+      <Outlet />
+    </StyledLayout>
   );
 };

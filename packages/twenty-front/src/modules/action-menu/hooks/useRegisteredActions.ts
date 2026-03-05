@@ -1,6 +1,6 @@
 import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ActionViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
@@ -15,8 +15,7 @@ import { useIcons } from 'twenty-ui/display';
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
 ) => {
-  const { objectMetadataItem, forceRegisteredActionsByKey } =
-    shouldBeRegisteredParams;
+  const { objectMetadataItem } = shouldBeRegisteredParams;
 
   const { getIcon } = useIcons();
 
@@ -83,15 +82,6 @@ export const useRegisteredActions = (
       ) {
         return false;
       }
-      const forcedShouldBeRegistered = forceRegisteredActionsByKey[action.key];
-
-      if (isDefined(forcedShouldBeRegistered)) {
-        return (
-          forcedShouldBeRegistered &&
-          action.shouldBeRegistered(shouldBeRegisteredParams)
-        );
-      }
-
       return action.shouldBeRegistered(shouldBeRegisteredParams);
     })
     .sort((a, b) => a.position - b.position);
