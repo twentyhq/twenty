@@ -1,6 +1,6 @@
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 
@@ -13,16 +13,16 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   return (
     <AnimatePresence>
-      {isCommandMenuOpened && (
+      {isSidePanelOpened && (
         <>
           {createPortal(
             <StyledCommandMenuMobileFullScreenContainer>
               <CommandMenuOpenContainer>
-                <CommandMenuRouter />
+                <SidePanelRouter />
               </CommandMenuOpenContainer>
             </StyledCommandMenuMobileFullScreenContainer>,
             document.body,

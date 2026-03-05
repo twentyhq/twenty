@@ -1,6 +1,7 @@
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -41,7 +42,7 @@ export type ExistingUserOrNewUser = {
 
 export type ExistingUserOrPartialUserWithPicture = {
   userData:
-    | { type: 'existingUser'; existingUser: UserEntity }
+    | { type: 'existingUser'; existingUser: AuthContextUser }
     | {
         type: 'newUserWithPicture';
         newUserWithPicture: PartialUserWithPicture;

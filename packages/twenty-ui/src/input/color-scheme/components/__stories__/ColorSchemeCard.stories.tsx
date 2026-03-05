@@ -1,16 +1,15 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { useContext } from 'react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
-const StyledContainer = styled.div<{ theme: ThemeType }>`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeCssVariables.spacing['4']};
   }
 `;
 
@@ -19,10 +18,8 @@ const meta: Meta<typeof ColorSchemeCard> = {
   component: ColorSchemeCard,
   decorators: [
     (Story) => {
-      const { theme } = useContext(ThemeContext);
-
       return (
-        <StyledContainer theme={theme}>
+        <StyledContainer>
           <Story />
         </StyledContainer>
       );

@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-
 import {
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
@@ -7,7 +5,9 @@ import {
 } from '../internals/components/StyledMenuItemBase';
 
 import { ColorSample, type ColorSampleVariant } from '@ui/display';
-import { type ThemeColor, ThemeContext } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 import {
   DEFAULT_COLOR_LABELS,
   type ColorLabels,

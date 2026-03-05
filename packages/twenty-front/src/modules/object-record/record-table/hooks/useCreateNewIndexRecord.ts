@@ -1,5 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
@@ -44,9 +44,9 @@ export const useCreateNewIndexRecord = ({
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -91,7 +91,7 @@ export const useCreateNewIndexRecord = ({
         recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
           isNewRecord: true,
@@ -100,7 +100,7 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(
           AppPath.RecordShowPage,
           {
@@ -160,12 +160,12 @@ export const useCreateNewIndexRecord = ({
       createOneRecord,
       navigate,
       objectMetadataItem,
-      openRecordInCommandMenu,
+      openRecordInSidePanel,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
-      closeCommandMenu,
+      closeSidePanelMenu,
     ],
   );
 

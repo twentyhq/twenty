@@ -81,6 +81,22 @@ const DeleteObjectMetadataInputSchema = z.object({
   id: z.string().uuid().describe('ID of the object to delete'),
 });
 
+const CreateManyObjectMetadataInputSchema = z.object({
+  objects: z
+    .array(CreateObjectMetadataInputSchema)
+    .min(1)
+    .max(20)
+    .describe('Array of object metadata to create (1-20 items).'),
+});
+
+const UpdateManyObjectMetadataInputSchema = z.object({
+  objects: z
+    .array(UpdateObjectMetadataInputSchema)
+    .min(1)
+    .max(20)
+    .describe('Array of object metadata updates to apply (1-20 items).'),
+});
+
 @Injectable()
 export class ObjectMetadataToolsFactory {
   constructor(private readonly objectMetadataService: ObjectMetadataService) {}
@@ -194,6 +210,83 @@ export class ObjectMetadataToolsFactory {
             return fromFlatObjectMetadataToObjectMetadataDto(
               flatObjectMetadata,
             );
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      create_many_object_metadata: {
+        description:
+          'Create multiple object metadata at once in the workspace data model. More efficient than calling create_object_metadata multiple times. Each item follows the same schema as create_object_metadata.',
+        inputSchema: CreateManyObjectMetadataInputSchema,
+        execute: async (parameters: {
+          objects: Array<{
+            nameSingular: string;
+            namePlural: string;
+            labelSingular: string;
+            labelPlural: string;
+            description?: string;
+            icon?: string;
+            shortcut?: string;
+            isRemote?: boolean;
+            isLabelSyncedWithName?: boolean;
+          }>;
+        }) => {
+          try {
+            await Promise.all(
+              parameters.objects.map(async (createObjectInput) => {
+                await this.objectMetadataService.createOneObject({
+                  createObjectInput: createObjectInput as Parameters<
+                    typeof this.objectMetadataService.createOneObject
+                  >[0]['createObjectInput'],
+                  workspaceId,
+                });
+              }),
+            );
+
+            return true;
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      update_many_object_metadata: {
+        description:
+          'Update multiple object metadata at once. More efficient than calling update_object_metadata multiple times. Each item must include the object ID and the properties to update.',
+        inputSchema: UpdateManyObjectMetadataInputSchema,
+        execute: async (parameters: {
+          objects: Array<{
+            id: string;
+            labelSingular?: string;
+            labelPlural?: string;
+            nameSingular?: string;
+            namePlural?: string;
+            description?: string;
+            icon?: string;
+            shortcut?: string;
+            isActive?: boolean;
+            labelIdentifierFieldMetadataId?: string;
+            imageIdentifierFieldMetadataId?: string;
+            isLabelSyncedWithName?: boolean;
+          }>;
+        }) => {
+          try {
+            await Promise.all(
+              parameters.objects.map(async ({ id, ...update }) => {
+                await this.objectMetadataService.updateOneObject({
+                  updateObjectInput: { id, update },
+                  workspaceId,
+                });
+              }),
+            );
+
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));

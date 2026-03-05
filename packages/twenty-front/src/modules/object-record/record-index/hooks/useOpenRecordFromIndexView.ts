@@ -1,5 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -22,7 +22,7 @@ export const useOpenRecordFromIndexView = () => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const isMobile = useIsMobile();
 
@@ -41,7 +41,7 @@ export const useOpenRecordFromIndexView = () => {
     recordIndexId,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const store = useStore();
 
@@ -75,13 +75,13 @@ export const useOpenRecordFromIndexView = () => {
         recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectNameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular,
           resetNavigationStack: true,
         });
       } else {
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(AppPath.RecordShowPage, {
           objectNameSingular,
           objectRecordId: recordId,
@@ -95,9 +95,9 @@ export const useOpenRecordFromIndexView = () => {
       recordIndexId,
       objectNameSingular,
       navigate,
-      openRecordInCommandMenu,
+      openRecordInSidePanel,
       isMobile,
-      closeCommandMenu,
+      closeSidePanelMenu,
       store,
     ],
   );

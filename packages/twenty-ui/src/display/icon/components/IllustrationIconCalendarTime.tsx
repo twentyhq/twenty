@@ -1,8 +1,9 @@
-import IllustrationIconCalendarTimeRaw from '@assets/icons/illustration-calendar-time.svg?react';
 import { useContext } from 'react';
+
+import IllustrationIconCalendarTimeRaw from '@assets/icons/illustration-calendar-time.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconCalendarTimeProps = Pick<IconComponentProps, 'size'>;
 

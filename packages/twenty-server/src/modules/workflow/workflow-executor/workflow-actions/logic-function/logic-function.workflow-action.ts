@@ -4,6 +4,7 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
@@ -15,7 +16,6 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowLogicFunctionAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/guards/is-workflow-logic-function-action.guard';
 import { WorkflowLogicFunctionActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/types/workflow-logic-function-action-input.type';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class LogicFunctionWorkflowAction implements WorkflowAction {
@@ -47,42 +47,38 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowLogicFunctionActionInput;
 
-    try {
-      const { workspaceId } = runInfo;
+    const { workspaceId } = runInfo;
 
-      const { flatLogicFunctionMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          },
-        );
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
 
-      const logicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: workflowActionInput.logicFunctionId,
-        flatEntityMaps: flatLogicFunctionMaps,
-      });
+    const logicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: workflowActionInput.logicFunctionId,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
 
-      if (!logicFunction) {
-        throw new WorkflowStepExecutorException(
-          `Logic function with id ${workflowActionInput.logicFunctionId} not found`,
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-        );
-      }
-
-      const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: workflowActionInput.logicFunctionId,
-        workspaceId,
-        payload: workflowActionInput.logicFunctionInput,
-      });
-
-      if (result.error) {
-        return { error: result.error.errorMessage };
-      }
-
-      return { result: result.data || {} };
-    } catch (error) {
-      return { error: error.message };
+    if (!logicFunction) {
+      throw new WorkflowStepExecutorException(
+        `Logic function with id ${workflowActionInput.logicFunctionId} not found`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
     }
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: workflowActionInput.logicFunctionId,
+      workspaceId,
+      payload: workflowActionInput.logicFunctionInput,
+    });
+
+    if (result.error) {
+      return { error: result.error.errorMessage };
+    }
+
+    return { result: result.data || {} };
   }
 }

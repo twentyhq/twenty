@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -24,11 +24,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  ICON_SIZES,
-  ICON_STROKES,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   useActivateSkillMutation,
@@ -63,6 +59,7 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const SettingsSkillsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const { data, loading, refetch } = useFindManySkillsQuery();
   const [activateSkill] = useActivateSkillMutation();
   const [deleteSkill] = useDeleteSkillMutation();
@@ -190,8 +187,8 @@ export const SettingsSkillsTable = () => {
                 action={
                   skill.isActive ? (
                     <IconChevronRight
-                      size={ICON_SIZES.md}
-                      stroke={ICON_STROKES.sm}
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
                     />
                   ) : (
                     <SettingsSkillInactiveMenuDropDown
