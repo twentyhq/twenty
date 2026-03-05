@@ -1,16 +1,21 @@
 import { z } from 'zod';
 
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 
 export const GET_TOOL_CATALOG_TOOL_NAME = 'get_tool_catalog';
+
+const availableCategories = Object.values(ToolCategory)
+  .map((entry) => entry.toString())
+  .join(', ');
 
 export const getToolCatalogInputSchema = z.object({
   categories: z
     .array(z.string())
     .optional()
     .describe(
-      'Filter by category (e.g. DATABASE_CRUD, METADATA, VIEW, WORKFLOW, DASHBOARD, LOGIC_FUNCTION, ACTION). Omit to get all.',
+      `Filter by category. Available categories: ${availableCategories}. Omit to get all.`,
     ),
 });
 

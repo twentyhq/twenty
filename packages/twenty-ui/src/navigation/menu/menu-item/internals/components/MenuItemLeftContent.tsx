@@ -1,5 +1,5 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import {
@@ -7,11 +7,7 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
-import {
-  ICON_SIZES,
-  ICON_STROKES,
-  themeCssVariables,
-} from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -59,6 +55,8 @@ export const MenuItemLeftContent = ({
   gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const gripIconColor = withIconContainer
     ? themeCssVariables.font.color.tertiary
     : disabled
@@ -72,8 +70,8 @@ export const MenuItemLeftContent = ({
           <MenuItemIconBoxContainer>
             <StyledDraggableItem>
               <IconGripVertical
-                size={ICON_SIZES.md}
-                stroke={ICON_STROKES.sm}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
                 color={gripIconColor}
               />
             </StyledDraggableItem>
@@ -81,8 +79,8 @@ export const MenuItemLeftContent = ({
         ) : (
           <StyledDraggableItem>
             <IconGripVertical
-              size={ICON_SIZES.md}
-              stroke={ICON_STROKES.sm}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
               color={gripIconColor}
             />
           </StyledDraggableItem>

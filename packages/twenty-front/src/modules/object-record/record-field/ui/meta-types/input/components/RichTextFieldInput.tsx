@@ -14,8 +14,7 @@ import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -43,7 +42,6 @@ const StyledCollapseButton = styled.div`
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

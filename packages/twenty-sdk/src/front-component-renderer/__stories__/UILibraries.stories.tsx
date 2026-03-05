@@ -16,6 +16,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   args: {
     onError: errorHandler,
     applicationAccessToken: 'fake-token',
+    executionContext: { frontComponentId: 'storybook-test', userId: null },
   },
   beforeEach: () => {
     errorHandler.mockClear();
@@ -138,7 +139,7 @@ const twentyUiTest: Story['play'] = async ({ canvasElement }) => {
 export const TwentyUiReact: Story = createComponentStory('twenty-ui-example', {
   play: twentyUiTest,
 });
-export const TwentyUiPreact: Story = createComponentStory(
-  'twenty-ui-example',
-  { runtime: 'preact', play: twentyUiTest },
-);
+export const TwentyUiPreact: Story = createComponentStory('twenty-ui-example', {
+  runtime: 'preact',
+  play: twentyUiTest,
+});

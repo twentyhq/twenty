@@ -1,8 +1,7 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   align-items: center;
@@ -44,7 +43,6 @@ export const SKELETON_LOADER_HEIGHT_SIZES = {
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

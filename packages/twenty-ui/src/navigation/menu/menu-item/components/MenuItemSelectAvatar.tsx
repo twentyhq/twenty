@@ -1,4 +1,4 @@
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import {
   StyledMenuItemIconCheck,
@@ -9,8 +9,7 @@ import {
 
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {

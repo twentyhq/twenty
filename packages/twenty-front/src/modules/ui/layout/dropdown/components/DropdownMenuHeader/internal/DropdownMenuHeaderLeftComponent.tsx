@@ -6,8 +6,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`
   align-items: center;
@@ -42,7 +41,6 @@ export const DropdownMenuHeaderLeftComponent = ({
   | Record<never, never>
 )) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <>
       {'Icon' in props &&

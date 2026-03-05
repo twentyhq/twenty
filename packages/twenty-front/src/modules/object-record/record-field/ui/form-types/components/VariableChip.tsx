@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { IconAlertTriangle } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type VariableChipProps = {
   rawVariableName: string;
@@ -18,8 +18,8 @@ export const VariableChip = ({
   onRemove,
   isFullRecord = false,
 }: VariableChipProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const { variableLabel, variablePathLabel } = useSearchVariable({
     stepId: extractRawVariableNamePart({

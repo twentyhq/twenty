@@ -42,10 +42,18 @@ export const useExecuteLogicFunction = ({
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );
+
   const setLogicFunctionTestData = useSetAtomFamilyState(
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );
+
+  const updateLogicFunctionInput = (input: object) => {
+    setLogicFunctionTestData((prev) => ({
+      ...prev,
+      input,
+    }));
+  };
 
   const executeLogicFunction = async () => {
     if (isExecuting) {
@@ -94,5 +102,10 @@ export const useExecuteLogicFunction = ({
     }
   };
 
-  return { executeLogicFunction, isExecuting };
+  return {
+    executeLogicFunction,
+    updateLogicFunctionInput,
+    logicFunctionTestData,
+    isExecuting,
+  };
 };
