@@ -16,7 +16,9 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { IconNewSection } from 'twenty-ui/display';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
+
+import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsDroppable = styled.div`
@@ -144,12 +146,7 @@ export const FieldsConfigurationGroupEditor = ({
           clickableComponentWidth="100%"
           clickableComponent={
             <StyledMenuItemDraggableWrapper>
-              <MenuItemDraggable
-                text={group.name}
-                gripMode="always"
-                isIconDisplayedOnHoverOnly={false}
-                withIconContainer
-              />
+              <FieldsConfigurationGroupDraggableHeader text={group.name} />
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
