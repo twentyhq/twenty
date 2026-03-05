@@ -21,7 +21,7 @@ export const KeyboardShortcutMenu = () => {
       toggleKeyboardShortcutMenu();
     },
     containsModifier: false,
-    dependencies: [toggleKeyboardShortcutMenu],
+    dependencies: [closeSidePanelMenu, toggleKeyboardShortcutMenu],
   });
 
   return (
