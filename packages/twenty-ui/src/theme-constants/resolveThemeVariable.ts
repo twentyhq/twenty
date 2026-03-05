@@ -10,6 +10,11 @@ export const resolveThemeVariable = (cssVarOrName: string): string => {
     .trim();
 };
 
-export const resolveThemeVariableAsNumber = (cssVarOrName: string): number => {
-  return parseFloat(resolveThemeVariable(cssVarOrName));
+export const resolveThemeVariableAsNumber = (
+  cssVarOrName: string,
+  fallback = 0,
+): number => {
+  const value = parseFloat(resolveThemeVariable(cssVarOrName));
+
+  return Number.isNaN(value) ? fallback : value;
 };

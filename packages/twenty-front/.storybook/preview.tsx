@@ -11,6 +11,8 @@ import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiSt
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
 import { ColorSchemeProvider } from 'twenty-ui/theme-constants';
 // eslint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
