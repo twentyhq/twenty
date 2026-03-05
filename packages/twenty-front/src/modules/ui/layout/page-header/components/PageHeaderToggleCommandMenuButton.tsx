@@ -13,7 +13,6 @@ import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 import {
-  resolveThemeVariable,
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
@@ -71,7 +70,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: resolveThemeVariable(
+          duration: resolveThemeVariableAsNumber(
             themeCssVariables.animation.duration.fast,
           ),
         }}
@@ -88,7 +87,7 @@ const AnimatedIcon = ({
             opacity: isCommandMenuOpened ? 1 : 0,
           }}
           transition={{
-            duration: resolveThemeVariable(
+            duration: resolveThemeVariableAsNumber(
               themeCssVariables.animation.duration.fast,
             ),
             ease: 'easeInOut',
@@ -108,7 +107,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: resolveThemeVariable(
+          duration: resolveThemeVariableAsNumber(
             themeCssVariables.animation.duration.fast,
           ),
         }}
@@ -125,7 +124,7 @@ const AnimatedIcon = ({
           opacity: isCommandMenuOpened ? 0 : 1,
         }}
         transition={{
-          duration: resolveThemeVariable(
+          duration: resolveThemeVariableAsNumber(
             themeCssVariables.animation.duration.fast,
           ),
         }}
@@ -168,7 +167,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
             rotate: isCommandMenuOpened ? 90 : 0,
           }}
           transition={{
-            duration: resolveThemeVariable(
+            duration: resolveThemeVariableAsNumber(
               themeCssVariables.animation.duration.normal,
             ),
             ease: 'easeInOut',

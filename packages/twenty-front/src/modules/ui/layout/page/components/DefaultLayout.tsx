@@ -29,7 +29,7 @@ import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
 import {
   themeCssVariables,
-  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
   background: ${themeCssVariables.background.noisy};
@@ -90,7 +90,7 @@ export const DefaultLayout = () => {
                     : 0,
               }}
               transition={{
-                duration: resolveThemeVariable(
+                duration: resolveThemeVariableAsNumber(
                   themeCssVariables.animation.duration.normal,
                 ),
               }}

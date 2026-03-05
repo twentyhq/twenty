@@ -13,12 +13,14 @@ import { useMemo } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  resolveThemeVariable,
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
+  const iconSizeSm = resolveThemeVariableAsNumber(
+    themeCssVariables.icon.size.sm,
+  );
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
@@ -113,26 +115,16 @@ export const useCommandMenuContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [
-                <page.pageIcon
-                  size={resolveThemeVariableAsNumber(
-                    themeCssVariables.icon.size.sm,
-                  )}
-                />,
-              ]
+            ? [<page.pageIcon size={iconSizeSm} />]
             : [
                 <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
-                    size={resolveThemeVariableAsNumber(
-                      themeCssVariables.icon.size.sm,
-                    )}
+                    size={iconSizeSm}
                     color={
                       isDefined(page.pageIconColor) &&
                       page.pageIconColor !== 'currentColor'
                         ? page.pageIconColor
-                        : resolveThemeVariable(
-                            themeCssVariables.font.color.tertiary,
-                          )
+                        : themeCssVariables.font.color.tertiary
                     }
                   />
                 </CommandMenuContextChipIconWrapper>,
@@ -149,6 +141,7 @@ export const useCommandMenuContextChips = () => {
   }, [
     commandMenuNavigationMorphItemsByPage,
     commandMenuNavigationStack,
+    iconSizeSm,
     navigateCommandMenuHistory,
     objectMetadataItems,
     recordIdentifiers,

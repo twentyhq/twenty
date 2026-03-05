@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   themeCssVariables,
-  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
@@ -122,7 +122,7 @@ export const WidgetCardHeader = ({
                 animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{
-                  duration: resolveThemeVariable(
+                  duration: resolveThemeVariableAsNumber(
                     themeCssVariables.animation.duration.fast,
                   ),
                   ease: 'easeInOut',

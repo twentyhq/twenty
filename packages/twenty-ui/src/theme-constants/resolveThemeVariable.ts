@@ -2,8 +2,10 @@
 // to its computed value from the current document theme.
 // Accepts either a themeCssVariables entry or a raw CSS variable name.
 export const resolveThemeVariable = (cssVarOrName: string): string => {
-  const match = cssVarOrName.match(/var\((--[^)]+)\)/);
-  const variableName = match ? match[1] : cssVarOrName;
+  const variableName =
+    cssVarOrName.startsWith('var(') && cssVarOrName.endsWith(')')
+      ? cssVarOrName.slice(4, -1)
+      : cssVarOrName;
 
   return getComputedStyle(document.documentElement)
     .getPropertyValue(variableName)

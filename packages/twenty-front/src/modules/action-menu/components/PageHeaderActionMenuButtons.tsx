@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import {
-  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 
@@ -35,7 +35,7 @@ export const PageHeaderActionMenuButtons = () => {
           animate={{ width: 'unset', opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{
-            duration: resolveThemeVariable(
+            duration: resolveThemeVariableAsNumber(
               themeCssVariables.animation.duration.instant,
             ),
             ease: 'easeInOut',

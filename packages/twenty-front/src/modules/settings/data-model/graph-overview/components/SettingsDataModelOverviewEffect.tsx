@@ -4,10 +4,7 @@ import { useEffect } from 'react';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import {
-  resolveThemeVariable,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewEffectProps = {
   setEdges: (edges: Edge[]) => void;
@@ -64,7 +61,7 @@ export const SettingsDataModelOverviewEffect = ({
               type: 'smoothstep',
               style: {
                 strokeWidth: 1,
-                stroke: resolveThemeVariable(themeCssVariables.color.gray),
+                stroke: themeCssVariables.color.gray,
               },
               markerEnd: 'marker',
               markerStart: 'marker',

@@ -4,10 +4,7 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { Avatar } from 'twenty-ui/display';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -142,12 +139,12 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                 type="rounded"
                 color={
                   isCountIcon
-                    ? resolveThemeVariable(themeCssVariables.grayScale.gray11)
+                    ? themeCssVariables.grayScale.gray11
                     : undefined
                 }
                 backgroundColor={
                   isCountIcon
-                    ? resolveThemeVariable(themeCssVariables.grayScale.gray2)
+                    ? themeCssVariables.grayScale.gray2
                     : undefined
                 }
               />

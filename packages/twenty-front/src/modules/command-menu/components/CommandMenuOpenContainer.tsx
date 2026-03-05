@@ -25,7 +25,7 @@ import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   themeCssVariables,
-  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -99,7 +99,7 @@ export const CommandMenuOpenContainer = ({
       exit="closed"
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
       transition={{
-        duration: resolveThemeVariable(
+        duration: resolveThemeVariableAsNumber(
           themeCssVariables.animation.duration.normal,
         ),
       }}

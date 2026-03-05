@@ -5,10 +5,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
@@ -166,14 +163,12 @@ export const AIChatContextUsageButton = () => {
               value={percentage}
               barColor={
                 percentage > 80
-                  ? resolveThemeVariable(themeCssVariables.color.red)
+                  ? themeCssVariables.color.red
                   : percentage > 60
-                    ? resolveThemeVariable(themeCssVariables.color.orange)
-                    : resolveThemeVariable(themeCssVariables.color.blue)
+                    ? themeCssVariables.color.orange
+                    : themeCssVariables.color.blue
               }
-              backgroundColor={resolveThemeVariable(
-                themeCssVariables.background.tertiary,
-              )}
+              backgroundColor={themeCssVariables.background.tertiary}
               withBorderRadius
             />
           </StyledSection>
@@ -182,9 +177,7 @@ export const AIChatContextUsageButton = () => {
             <>
               <HorizontalSeparator
                 noMargin
-                color={resolveThemeVariable(
-                  themeCssVariables.background.tertiary,
-                )}
+                color={themeCssVariables.background.tertiary}
               />
               <StyledSection>
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
@@ -206,7 +199,7 @@ export const AIChatContextUsageButton = () => {
 
           <HorizontalSeparator
             noMargin
-            color={resolveThemeVariable(themeCssVariables.background.tertiary)}
+            color={themeCssVariables.background.tertiary}
           />
           <StyledSection>
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>

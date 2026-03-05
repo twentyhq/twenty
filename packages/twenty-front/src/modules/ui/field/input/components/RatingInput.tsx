@@ -7,7 +7,6 @@ import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui/display';
 import {
-  resolveThemeVariable,
   resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
@@ -30,8 +29,6 @@ type RatingInputProps = {
   readonly?: boolean;
 };
 
-const iconSizeMd = resolveThemeVariableAsNumber(themeCssVariables.icon.size.md);
-
 export const RatingInput = ({
   onChange,
   value,
@@ -39,12 +36,11 @@ export const RatingInput = ({
 }: RatingInputProps) => {
   const clearField = useClearField();
 
-  const activeColor = resolveThemeVariable(
-    themeCssVariables.font.color.secondary,
+  const iconSizeMd = resolveThemeVariableAsNumber(
+    themeCssVariables.icon.size.md,
   );
-  const inactiveColor = resolveThemeVariable(
-    themeCssVariables.background.quaternary,
-  );
+  const activeColor = themeCssVariables.font.color.secondary;
+  const inactiveColor = themeCssVariables.background.quaternary;
 
   const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(null);
 

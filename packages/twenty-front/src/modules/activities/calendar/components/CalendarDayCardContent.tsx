@@ -7,6 +7,7 @@ import { CardContent } from 'twenty-ui/layout';
 import {
   themeCssVariables,
   resolveThemeVariable,
+  resolveThemeVariableAsNumber,
 } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
@@ -77,7 +78,7 @@ export const CalendarDayCardContent = ({
       variants={upcomingDayCardContentVariants}
       transition={{
         delay: Math.max(0, dayEndsIn),
-        duration: resolveThemeVariable(
+        duration: resolveThemeVariableAsNumber(
           themeCssVariables.animation.duration.fast,
         ),
       }}

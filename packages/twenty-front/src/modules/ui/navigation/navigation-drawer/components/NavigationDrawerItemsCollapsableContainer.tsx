@@ -10,6 +10,7 @@ import {
 } from 'framer-motion';
 import {
   resolveThemeVariable,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 const StyledAnimationGroupContainerBase = styled.div``;
@@ -56,7 +57,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
       initial={false}
       animate={animate}
       transition={{
-        duration: resolveThemeVariable(
+        duration: resolveThemeVariableAsNumber(
           themeCssVariables.animation.duration.normal,
         ),
       }}

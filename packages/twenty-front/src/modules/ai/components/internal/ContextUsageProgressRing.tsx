@@ -1,8 +1,5 @@
 import { styled } from '@linaria/react';
-import {
-  themeCssVariables,
-  resolveThemeVariable,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ContextUsageProgressRingProps = {
   percentage: number;
@@ -41,10 +38,10 @@ export const ContextUsageProgressRing = ({
 
   const progressColor =
     normalizedPercentage > 80
-      ? resolveThemeVariable(themeCssVariables.color.red)
+      ? themeCssVariables.color.red
       : normalizedPercentage > 60
-        ? resolveThemeVariable(themeCssVariables.color.orange)
-        : resolveThemeVariable(themeCssVariables.color.blue);
+        ? themeCssVariables.color.orange
+        : themeCssVariables.color.blue;
 
   return (
     <StyledSvg width={size} height={size}>
@@ -59,7 +56,7 @@ export const ContextUsageProgressRing = ({
         cy={size / 2}
         r={radius}
         strokeWidth={strokeWidth}
-        stroke={progressColor}
+        style={{ stroke: progressColor }}
         strokeDasharray={circumference}
         strokeDashoffset={strokeDashoffset}
         strokeLinecap="round"

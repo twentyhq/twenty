@@ -8,7 +8,7 @@ import {
   type TargetAndTransition,
 } from 'framer-motion';
 import {
-  resolveThemeVariable,
+  resolveThemeVariableAsNumber,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
 const StyledAnimatedContainerBase = styled.span`
@@ -51,7 +51,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
       initial={false}
       animate={animate}
       transition={{
-        duration: resolveThemeVariable(
+        duration: resolveThemeVariableAsNumber(
           themeCssVariables.animation.duration.normal,
         ),
       }}
