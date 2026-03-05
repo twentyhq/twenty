@@ -1,5 +1,6 @@
-import * as fs from 'fs-extra';
 import path from 'path';
+
+import { ensureDir, writeJSON } from '@/cli/utilities/file/fs-utils';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 export const writeManifestToOutput = async (
@@ -7,10 +8,10 @@ export const writeManifestToOutput = async (
   manifest: Manifest,
 ): Promise<string> => {
   const outputDir = path.join(appPath, OUTPUT_DIR);
-  await fs.ensureDir(outputDir);
+  await ensureDir(outputDir);
 
   const manifestPath = path.join(outputDir, 'manifest.json');
-  await fs.writeJSON(manifestPath, manifest, { spaces: 2 });
+  await writeJSON(manifestPath, manifest);
 
   return manifestPath;
 };

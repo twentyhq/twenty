@@ -1,6 +1,7 @@
-import * as fs from 'fs-extra';
-import path from 'path';
+import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import archiver from 'archiver';
+import { createWriteStream } from 'node:fs';
+import path from 'path';
 
 /**
  * TarballService creates distributable .tar.gz archives from built applications.
@@ -20,12 +21,12 @@ export class TarballService {
     const { sourceDir, outputPath } = options;
 
     // Ensure the source directory exists
-    if (!(await fs.pathExists(sourceDir))) {
+    if (!(await pathExists(sourceDir))) {
       throw new Error(`Source directory does not exist: ${sourceDir}`);
     }
 
     // Ensure the output directory exists
-    await fs.ensureDir(path.dirname(outputPath));
+    await ensureDir(path.dirname(outputPath));
 
     // Normalize the output path to have .tar.gz extension
     const normalizedOutputPath = outputPath.endsWith('.tar.gz')
@@ -33,7 +34,7 @@ export class TarballService {
       : `${outputPath}.tar.gz`;
 
     return new Promise((resolve, reject) => {
-      const output = fs.createWriteStream(normalizedOutputPath);
+      const output = createWriteStream(normalizedOutputPath);
       const archive = archiver('tar', {
         gzip: true,
         gzipOptions: { level: 9 }, // Maximum compression

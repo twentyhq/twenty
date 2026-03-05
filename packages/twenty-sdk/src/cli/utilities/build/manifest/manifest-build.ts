@@ -15,9 +15,9 @@ import {
 import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
-import { glob } from 'tinyglobby';
-import { readFile } from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
+import { glob } from 'tinyglobby';
 import {
   type ApplicationManifest,
   type AssetManifest,
