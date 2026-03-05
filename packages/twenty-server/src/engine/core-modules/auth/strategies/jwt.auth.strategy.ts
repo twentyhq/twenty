@@ -19,6 +19,7 @@ import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
   ApplicationAccessTokenJwtPayload,
+  AUTH_CONTEXT_USER_SELECT_FIELDS,
   type AuthContext,
   FileTokenJwtPayloadLegacy,
   type JwtPayload,
@@ -226,21 +227,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   } | null> {
     const user = await this.userRepository.findOne({
       where: { id: params.userId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        defaultAvatarUrl: true,
-        isEmailVerified: true,
-        disabled: true,
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        createdAt: true,
-        updatedAt: true,
-        deletedAt: true,
-        locale: true,
-      },
+      select: [...AUTH_CONTEXT_USER_SELECT_FIELDS],
     });
 
     if (!isDefined(user)) {
@@ -363,21 +350,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   ): Promise<AuthContext> {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        defaultAvatarUrl: true,
-        isEmailVerified: true,
-        disabled: true,
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        createdAt: true,
-        updatedAt: true,
-        deletedAt: true,
-        locale: true,
-      },
+      select: [...AUTH_CONTEXT_USER_SELECT_FIELDS],
     });
 
     userValidator.assertIsDefinedOrThrow(
