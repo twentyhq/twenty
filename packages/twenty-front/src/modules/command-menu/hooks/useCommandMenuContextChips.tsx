@@ -12,9 +12,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useCommandMenuContextChips = () => {
+  const { theme } = useContext(ThemeContext);
+  const iconSizeSm = theme.icon.size.sm;
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
@@ -26,8 +28,6 @@ export const useCommandMenuContextChips = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
-
-  const { theme } = useContext(ThemeContext);
 
   const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
@@ -111,16 +111,16 @@ export const useCommandMenuContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [<page.pageIcon size={theme.icon.size.sm} />]
+            ? [<page.pageIcon size={iconSizeSm} />]
             : [
                 <CommandMenuContextChipIconWrapper>
                   <page.pageIcon
-                    size={theme.icon.size.sm}
+                    size={iconSizeSm}
                     color={
                       isDefined(page.pageIconColor) &&
                       page.pageIconColor !== 'currentColor'
                         ? page.pageIconColor
-                        : theme.font.color.tertiary
+                        : themeCssVariables.font.color.tertiary
                     }
                   />
                 </CommandMenuContextChipIconWrapper>,
@@ -137,12 +137,11 @@ export const useCommandMenuContextChips = () => {
   }, [
     commandMenuNavigationMorphItemsByPage,
     commandMenuNavigationStack,
+    iconSizeSm,
     navigateCommandMenuHistory,
     objectMetadataItems,
     recordIdentifiers,
     records,
-    theme.font.color.tertiary,
-    theme.icon.size.sm,
   ]);
 
   return {

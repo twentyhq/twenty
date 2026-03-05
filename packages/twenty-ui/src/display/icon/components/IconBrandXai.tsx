@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconBrandXaiRaw from '@assets/icons/xai.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconBrandXaiProps = Pick<IconComponentProps, 'size' | 'color'>;
 

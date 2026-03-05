@@ -30,9 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {
@@ -153,7 +151,9 @@ export const WorkflowEditActionHttpRequest = ({
               value={formData.method}
               onChange={(value) => handleFieldChange('method', value)}
               disabled={actionOptions.readonly}
-              dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+              dropdownOffset={{
+                y: parseInt(theme.spacing[1], 10),
+              }}
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
 

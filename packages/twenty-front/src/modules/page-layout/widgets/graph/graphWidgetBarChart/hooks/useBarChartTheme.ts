@@ -1,10 +1,11 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const useBarChartTheme = () => {
   const { theme } = useContext(ThemeContext);
+
   const tickFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
   const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);
 

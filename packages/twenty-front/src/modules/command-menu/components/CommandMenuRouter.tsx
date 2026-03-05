@@ -8,9 +8,9 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
@@ -18,6 +18,7 @@ const StyledCommandMenuContent = styled.div`
 `;
 
 export const CommandMenuRouter = () => {
+  const { theme } = useContext(ThemeContext);
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
@@ -26,9 +27,6 @@ export const CommandMenuRouter = () => {
   ) : (
     <></>
   );
-
-  const { theme } = useContext(ThemeContext);
-
   return (
     <CommandMenuContainer>
       <CommandMenuPageComponentInstanceContext.Provider

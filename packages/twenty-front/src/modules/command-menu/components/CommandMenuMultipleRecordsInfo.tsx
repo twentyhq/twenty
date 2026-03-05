@@ -5,7 +5,7 @@ import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenu
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CommandMenuMultipleRecordsInfoProps = {
   commandMenuPageInstanceId: string;
@@ -15,7 +15,6 @@ export const CommandMenuMultipleRecordsInfo = ({
   commandMenuPageInstanceId,
 }: CommandMenuMultipleRecordsInfoProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
     instanceId: commandMenuPageInstanceId,
     limit: 1,

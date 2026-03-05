@@ -23,8 +23,7 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -80,6 +79,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const CommandMenuTopBar = () => {
+  const { theme } = useContext(ThemeContext);
   const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
     commandMenuSearchState,
   );
@@ -100,8 +100,6 @@ export const CommandMenuTopBar = () => {
   const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
-
-  const { theme } = useContext(ThemeContext);
 
   const { contextChips } = useCommandMenuContextChips();
 

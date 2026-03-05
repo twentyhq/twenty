@@ -3,7 +3,7 @@ import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useContext, useEffect } from 'react';
 
@@ -38,7 +38,7 @@ interface AnimatedPlaceholderProps {
 }
 
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme } = useContext(ThemeContext);
 
   const x = useMotionValue(window.innerWidth / 2);
   const y = useMotionValue(window.innerHeight / 2);
@@ -84,13 +84,13 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   return (
     <StyledContainer>
       <StyledBackgroundImage
-        src={theme.name === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
+        src={colorScheme === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
         alt=""
         type={type}
       />
       <motion.img
         src={
-          theme.name === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
+          colorScheme === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
         }
         alt=""
         style={{

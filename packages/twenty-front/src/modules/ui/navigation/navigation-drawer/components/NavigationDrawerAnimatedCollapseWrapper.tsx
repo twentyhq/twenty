@@ -2,14 +2,13 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledAnimatedContainerBase = styled.span`
   display: block;
 `;
@@ -50,7 +49,9 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
     <StyledAnimatedContainer
       initial={false}
       animate={animate}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
     >
       {children}
     </StyledAnimatedContainer>

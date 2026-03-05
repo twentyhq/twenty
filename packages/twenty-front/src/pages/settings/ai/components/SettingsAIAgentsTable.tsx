@@ -20,8 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -52,10 +51,10 @@ const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
 `;
 
 export const SettingsAIAgentsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const { data, loading } = useFindManyAgentsQuery();
 
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showWorkflowAgents, setShowWorkflowAgents] = useState(false);
 

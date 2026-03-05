@@ -28,8 +28,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -87,7 +86,6 @@ export const FormArrayFieldInput = ({
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
-
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -323,7 +321,7 @@ export const FormArrayFieldInput = ({
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing(1)),
+                  y: parseSpacingValueAsNumber(theme.spacing[1]),
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>

@@ -13,8 +13,8 @@ import {
   IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;

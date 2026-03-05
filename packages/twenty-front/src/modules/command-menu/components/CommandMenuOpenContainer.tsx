@@ -23,9 +23,7 @@ import { motion } from 'framer-motion';
 import { useCallback, useContext, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
@@ -46,14 +44,12 @@ const StyledCommandMenu = motion.create(StyledCommandMenuBase);
 export const CommandMenuOpenContainer = ({
   children,
 }: React.PropsWithChildren) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
 
   const targetVariantForAnimation: CommandMenuAnimationVariant = isMobile
     ? 'fullScreen'
     : 'normal';
-
-  const { theme } = useContext(ThemeContext);
-
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
@@ -100,7 +96,9 @@ export const CommandMenuOpenContainer = ({
       initial="closed"
       exit="closed"
       variants={COMMAND_MENU_ANIMATION_VARIANTS}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
       onAnimationStart={() => setIsSidePanelAnimating(true)}
       onAnimationComplete={() => setIsSidePanelAnimating(false)}
     >
