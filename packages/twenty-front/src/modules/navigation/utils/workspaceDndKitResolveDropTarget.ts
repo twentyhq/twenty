@@ -15,7 +15,9 @@ export const resolveDropTarget = (
   target: { id?: unknown; group?: unknown; index?: unknown } | null,
   getNavItemById: GetNavItemById,
 ): ResolvedDropTarget | null => {
-  if (target === null || target === undefined) return null;
+  if (target === null || target === undefined) {
+    return null;
+  }
   if (isDefined(target.group) && isDefined(target.index)) {
     return getDestinationFromSortableTarget(
       { id: target.id, group: target.group, index: target.index },
