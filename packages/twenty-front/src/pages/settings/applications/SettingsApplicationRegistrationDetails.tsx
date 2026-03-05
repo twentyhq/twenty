@@ -130,6 +130,21 @@ const StyledDangerButtonGroup = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledSourceRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDownloadLink = styled.a`
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  text-decoration: underline;
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
+
 const StyledMarketplaceActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -528,21 +543,25 @@ export const SettingsApplicationRegistrationDetails = () => {
       : registration.sourceType === ApplicationRegistrationSourceType.TARBALL
         ? [
             {
-              Icon: IconDownload,
+              Icon: IconBox,
               label: t`Source`,
-              value: t`Tarball upload`,
-              ...(isNonEmptyString(
+              value: isNonEmptyString(
                 tarballUrlData?.applicationRegistrationTarballUrl,
-              )
-                ? {
-                    onClick: () => {
-                      window.open(
-                        tarballUrlData.applicationRegistrationTarballUrl,
-                        '_blank',
-                      );
-                    },
-                  }
-                : {}),
+              ) ? (
+                <StyledSourceRow>
+                  <span>
+                    <Trans>Tarball upload</Trans>
+                  </span>
+                  <StyledDownloadLink
+                    href={tarballUrlData.applicationRegistrationTarballUrl}
+                    download
+                  >
+                    <Trans>Download</Trans>
+                  </StyledDownloadLink>
+                </StyledSourceRow>
+              ) : (
+                t`Tarball upload`
+              ),
             },
           ]
         : registration.sourceType === ApplicationRegistrationSourceType.LOCAL
