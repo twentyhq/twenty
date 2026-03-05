@@ -15,7 +15,7 @@ export const InputErrorHelper = ({
   children?: React.ReactNode;
 }) => (
   <div>
-    {children && (
+    {Boolean(children) && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>

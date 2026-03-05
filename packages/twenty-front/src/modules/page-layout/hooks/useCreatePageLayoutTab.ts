@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -58,7 +59,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         deletedAt: null,
       };
 
-      const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab];
+      const updatedTabs = [...(pageLayoutDraft.tabs ?? []), newTab];
 
       store.set(pageLayoutDraftState, (prev) => ({
         ...prev,

@@ -50,7 +50,7 @@ export const useGlobalHotkeys = ({
     async (keyboardEvent: KeyboardEvent, hotkeysEvent: any) => {
       const pendingHotkey = store.get(pendingHotkeyState.atom);
 
-      if (!pendingHotkey) {
+      if (!isDefined(pendingHotkey)) {
         callback(keyboardEvent, hotkeysEvent);
       }
 

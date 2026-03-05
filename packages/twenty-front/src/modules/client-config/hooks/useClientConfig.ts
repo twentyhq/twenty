@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
@@ -151,7 +152,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         magicLink: false,
         sso: clientConfig.authProviders.sso,
       });
-      setAiModels(clientConfig.aiModels || []);
+      setAiModels(clientConfig.aiModels ?? []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);

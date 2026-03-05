@@ -89,7 +89,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
 
       const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
       const isActiveTabInPersistedTabs =
-        currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
+        isDefined(currentActiveTabId) &&
+        persistedTabIds.includes(currentActiveTabId);
 
       if (!isActiveTabInPersistedTabs && pageLayoutPersisted.tabs.length > 0) {
         store.set(activeTabId, pageLayoutPersisted.tabs[0].id);

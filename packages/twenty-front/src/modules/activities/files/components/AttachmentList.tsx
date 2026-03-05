@@ -170,7 +170,7 @@ export const AttachmentList = ({
 
   return (
     <>
-      {attachmentsWithFile && attachmentsWithFile.length > 0 && (
+      {attachmentsWithFile.length > 0 && (
         <StyledContainer>
           <StyledTitleBar>
             <StyledTitle>

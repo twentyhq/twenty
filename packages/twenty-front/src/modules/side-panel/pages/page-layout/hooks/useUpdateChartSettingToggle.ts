@@ -29,7 +29,7 @@ export const useUpdateChartSettingToggle = ({
 
     if (settingId === CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS) {
       const isCurrentlyStacked = getChartSettingsValues(settingId);
-      const newGroupMode = isCurrentlyStacked
+      const newGroupMode = Boolean(isCurrentlyStacked)
         ? BarChartGroupMode.GROUPED
         : BarChartGroupMode.STACKED;
 
@@ -46,13 +46,13 @@ export const useUpdateChartSettingToggle = ({
 
       updateCurrentWidgetConfig({
         configToUpdate: {
-          isStacked: !isCurrentlyStacked,
+          isStacked: !Boolean(isCurrentlyStacked),
         },
       });
       return;
     }
 
-    const newValue = !getChartSettingsValues(settingId);
+    const newValue = !Boolean(getChartSettingsValues(settingId));
 
     updateCurrentWidgetConfig({
       configToUpdate: {

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -50,7 +51,8 @@ export const useMentionSearch = () => {
         },
       });
 
-      const searchRecords = data?.search.edges.map((edge) => edge.node) || [];
+      const searchRecords =
+        data?.search.edges.map((edge) => edge.node) ?? [];
 
       return searchRecords.map((searchRecord) => ({
         recordId: searchRecord.recordId,

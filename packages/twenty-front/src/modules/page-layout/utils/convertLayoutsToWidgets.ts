@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type Layouts } from 'react-grid-layout';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
@@ -6,7 +7,7 @@ export const convertLayoutsToWidgets = (
   widgets: PageLayoutWidget[],
   layouts: Layouts,
 ): PageLayoutWidget[] => {
-  const activeLayouts = layouts.desktop || layouts.mobile || [];
+  const activeLayouts = layouts.desktop ?? layouts.mobile ?? [];
 
   return widgets.map((widget) => {
     const layout = activeLayouts.find((l) => l.i === widget.id);

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -32,7 +33,7 @@ export const ObjectFieldRowWithoutRelation = ({
 
   return (
     <StyledRow>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{field.label}</StyledFieldName>
     </StyledRow>
   );

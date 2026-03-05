@@ -113,7 +113,7 @@ export const SettingsCard = ({
                 {title}
                 {soon && <Pill label={t`Soon`} />}
               </StyledTitle>
-              {Status && Status}
+              {Boolean(Status) && Status}
               <StyledIconChevronRightContainer>
                 <IconChevronRight size={theme.icon.size.sm} />
               </StyledIconChevronRightContainer>

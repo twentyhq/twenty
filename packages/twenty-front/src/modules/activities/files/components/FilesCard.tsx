@@ -70,7 +70,7 @@ export const FilesCard = () => {
     inputFileRef?.current?.click?.();
   };
 
-  const isAttachmentsEmpty = !attachments || attachments.length === 0;
+  const isAttachmentsEmpty = attachments.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -37,7 +38,7 @@ export const PageLayoutTabRenderClone = ({
     pageLayoutTabListCurrentDragDroppableId ===
     PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
 
-  if (!tab) return null;
+  if (!isDefined(tab)) return null;
 
   if (isHoveringTabList) {
     return (

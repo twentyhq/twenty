@@ -149,7 +149,7 @@ export const SettingsObjectRelationItemTableRow = ({
     : undefined;
 
   const targetObjectLabel =
-    isRelatedObjectLinkable && relationObjectMetadataItem
+    isRelatedObjectLinkable && isDefined(relationObjectMetadataItem)
       ? relationObjectMetadataItem.labelPlural
       : fieldMetadataItem.label;
 
@@ -162,7 +162,7 @@ export const SettingsObjectRelationItemTableRow = ({
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
       >
-        {!!Icon && (
+        {isDefined(Icon) && (
           <Icon
             style={{
               minWidth: theme.icon.size.md,

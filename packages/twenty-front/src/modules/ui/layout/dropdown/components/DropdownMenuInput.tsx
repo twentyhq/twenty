@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import {
   forwardRef,
@@ -140,10 +141,10 @@ export const DropdownMenuInput = forwardRef<
               placeholder={placeholder}
               onChange={onChange}
               ref={combinedRef}
-              withRightComponent={!!rightComponent}
+              withRightComponent={Boolean(rightComponent)}
             />
           )}
-          {!!rightComponent && (
+          {Boolean(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

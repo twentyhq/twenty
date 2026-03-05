@@ -563,8 +563,6 @@ export default [
       'twenty/styled-components-prefixed-with-styled': 'error',
       'twenty/no-state-useref': 'error',
       'twenty/component-props-naming': 'error',
-      'twenty/explicit-boolean-predicates-in-if': 'error',
-
       'twenty/no-navigate-prefer-link': 'error',
       'twenty/no-jotai-store-in-selector': 'error',
       'twenty/no-direct-atom-family-in-selector': 'error',

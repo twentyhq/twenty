@@ -51,8 +51,8 @@ export const CommandMenuItem = ({
 
   return (
     <MenuItem
-      withIconContainer={!LeftComponent}
-      LeftIcon={LeftComponent ? undefined : Icon}
+      withIconContainer={!Boolean(LeftComponent)}
+      LeftIcon={Boolean(LeftComponent) ? undefined : Icon}
       LeftComponent={LeftComponent}
       text={label}
       contextualText={description}

@@ -32,14 +32,14 @@ export const SettingsDataModelPreviewFormCard = ({
 }: SettingsDataModelPreviewFormCardProps) => (
   <Card className={className} fullWidth rounded>
     <StyledPreviewContainerWrapper>
-      <CardContent divider={!!form}>
+      <CardContent divider={Boolean(form)}>
         <StyledFormCardTitle>
           <Trans>Preview</Trans>
         </StyledFormCardTitle>
         {preview}
       </CardContent>
     </StyledPreviewContainerWrapper>
-    {!!form && (
+    {Boolean(form) && (
       <StyledFormContainerWrapper>
         <CardContent>{form}</CardContent>
       </StyledFormContainerWrapper>

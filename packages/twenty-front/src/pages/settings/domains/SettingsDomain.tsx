@@ -184,7 +184,7 @@ export const SettingsDomain = () => {
       });
     }
 
-    if (!values || !currentWorkspace) {
+    if (!isDefined(values) || !isDefined(currentWorkspace)) {
       return enqueueErrorSnackBar({
         message: t`Invalid form values`,
       });

@@ -351,9 +351,15 @@ export const NavigationDrawerItem = ({
         danger={danger}
         soon={soon}
         as={
-          to ? (isExternalLink ? 'a' : Link) : rightOptions ? 'div' : undefined
+          to
+            ? isExternalLink
+              ? 'a'
+              : Link
+            : Boolean(rightOptions)
+              ? 'div'
+              : undefined
         }
-        role={to ? undefined : rightOptions ? 'button' : undefined}
+        role={to ? undefined : Boolean(rightOptions) ? 'button' : undefined}
         to={isExternalLink ? undefined : to}
         href={isExternalLink ? to : undefined}
         target={isExternalLink ? '_blank' : undefined}
@@ -362,7 +368,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDragging={isDragging}
-        hasRightOptions={!!rightOptions}
+        hasRightOptions={Boolean(rightOptions)}
         isSelectedInEditMode={isSelectedInEditMode}
       >
         <StyledItemElementsContainer>
@@ -444,7 +450,7 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {rightOptions && (
+          {Boolean(rightOptions) && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledRightOptionsContainer
                 onClick={(e) => {

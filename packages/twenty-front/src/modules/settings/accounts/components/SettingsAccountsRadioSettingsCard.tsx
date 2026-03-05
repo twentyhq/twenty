@@ -91,7 +91,7 @@ export const SettingsAccountsRadioSettingsCard = <
               />
             </StyledRadioContainer>
           </StyledOptionHeader>
-          {option.cardContentExpanded && value === option.value && (
+          {Boolean(option.cardContentExpanded) && value === option.value && (
             <StyledExpandedContent>
               {option.cardContentExpanded}
             </StyledExpandedContent>

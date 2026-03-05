@@ -7,10 +7,6 @@ import {
     RULE_NAME as effectComponentsName,
 } from './rules/effect-components';
 import {
-    rule as explicitBooleanPredicatesInIf,
-    RULE_NAME as explicitBooleanPredicatesInIfName,
-} from './rules/explicit-boolean-predicates-in-if';
-import {
     rule as graphqlResolversShouldBeGuarded,
     RULE_NAME as graphqlResolversShouldBeGuardedName,
 } from './rules/graphql-resolvers-should-be-guarded';
@@ -103,7 +99,6 @@ module.exports = {
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
-    [explicitBooleanPredicatesInIfName]: explicitBooleanPredicatesInIf,
     [maxConstsPerFileName]: maxConstsPerFile,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,

@@ -126,7 +126,7 @@ export const PageHeader = ({
                 <Icon size={theme.icon.size.md} />
               </StyledIconContainer>
             )}
-            {title && (
+            {Boolean(title) && (
               <StyledTitleContainer data-testid="top-bar-title">
                 {typeof title === 'string' ? (
                   <OverflowingTextWithTooltip text={title} />

@@ -52,7 +52,7 @@ export const TimelineCard = () => {
     useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty =
-    !timelineActivities || timelineActivities.length === 0;
+    timelineActivities.length === 0;
 
   if (loading === true) {
     return <SkeletonLoader withSubSections />;

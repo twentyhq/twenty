@@ -43,7 +43,7 @@ export const NotesCard = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
-  const isNotesEmpty = !notes || notes.length === 0;
+  const isNotesEmpty = notes.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,

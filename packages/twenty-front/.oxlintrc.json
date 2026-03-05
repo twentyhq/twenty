@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "unicorn", "import"],
-  "jsPlugins": ["../twenty-eslint-rules/dist/oxlint-plugin.mjs"],
   "categories": {
     "correctness": "off"
   },
@@ -83,6 +82,15 @@
       "argsIgnorePattern": "^_"
     }],
 
-    "twenty/explicit-boolean-predicates-in-if": "error"
+    "typescript/strict-boolean-expressions": ["error", {
+      "allowNullableBoolean": true,
+      "allowNullableObject": true,
+      "allowString": true,
+      "allowNumber": true,
+      "allowNullableString": true,
+      "allowNullableNumber": true,
+      "allowNullableEnum": true,
+      "allowAny": true
+    }]
   }
 }

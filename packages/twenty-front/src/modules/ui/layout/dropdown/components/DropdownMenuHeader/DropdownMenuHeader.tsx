@@ -64,9 +64,11 @@ export const DropdownMenuHeader = ({
 }: DropdownMenuHeaderProps) => {
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
-      {StartComponent && StartComponent}
+      {Boolean(StartComponent) && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {EndComponent && <StyledEndComponent>{EndComponent}</StyledEndComponent>}
+      {Boolean(EndComponent) && (
+        <StyledEndComponent>{EndComponent}</StyledEndComponent>
+      )}
     </StyledHeader>
   );
 };
