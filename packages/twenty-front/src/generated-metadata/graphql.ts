@@ -316,12 +316,6 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
-export enum ApplicationRegistrationSourceType {
-  LOCAL = 'LOCAL',
-  NPM = 'NPM',
-  TARBALL = 'TARBALL'
-}
-
 export type AppToken = {
   __typename?: 'AppToken';
   createdAt: Scalars['DateTime'];
@@ -375,6 +369,12 @@ export type ApplicationRegistration = {
   updatedAt: Scalars['DateTime'];
   websiteUrl?: Maybe<Scalars['String']>;
 };
+
+export enum ApplicationRegistrationSourceType {
+  LOCAL = 'LOCAL',
+  NPM = 'NPM',
+  TARBALL = 'TARBALL'
+}
 
 export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
@@ -1084,15 +1084,6 @@ export type CreateApiKeyInput = {
 
 export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime'];
-};
-
-export type CreateApplicationInput = {
-  applicationRegistrationId?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  sourcePath: Scalars['String'];
-  universalIdentifier: Scalars['String'];
-  version: Scalars['String'];
 };
 
 export type CreateApplicationRegistration = {
@@ -2383,7 +2374,6 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
-  createOneApplication: Application;
   createOneField: Field;
   createOneLogicFunction: LogicFunction;
   createOneObject: Object;
@@ -2454,9 +2444,9 @@ export type Mutation = {
   impersonate: Impersonate;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
-  installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
   installNpmApp: Scalars['Boolean'];
+  registerNpmPackage: ApplicationRegistration;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
@@ -2467,6 +2457,7 @@ export type Mutation = {
   revokeApiKey?: Maybe<ApiKey>;
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runEvaluationInput: AgentTurn;
+  runWorkspaceMigration: Scalars['Boolean'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitations;
   setAdminAiModelEnabled: Scalars['Boolean'];
@@ -2482,6 +2473,7 @@ export type Mutation = {
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
   trackAnalytics: Analytics;
+  transferApplicationRegistrationOwnership: ApplicationRegistration;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
@@ -2704,11 +2696,6 @@ export type MutationCreateOneAgentArgs = {
 
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
-};
-
-
-export type MutationCreateOneApplicationArgs = {
-  input: CreateApplicationInput;
 };
 
 
@@ -3041,11 +3028,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 };
 
 
-export type MutationInstallApplicationArgs = {
-  workspaceMigration: WorkspaceMigrationInput;
-};
-
-
 export type MutationInstallMarketplaceAppArgs = {
   universalIdentifier: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
@@ -3055,6 +3037,11 @@ export type MutationInstallMarketplaceAppArgs = {
 export type MutationInstallNpmAppArgs = {
   packageName: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationRegisterNpmPackageArgs = {
+  packageName: Scalars['String'];
 };
 
 
@@ -3108,6 +3095,11 @@ export type MutationRotateApplicationRegistrationClientSecretArgs = {
 export type MutationRunEvaluationInputArgs = {
   agentId: Scalars['UUID'];
   input: Scalars['String'];
+};
+
+
+export type MutationRunWorkspaceMigrationArgs = {
+  workspaceMigration: WorkspaceMigrationInput;
 };
 
 
@@ -3181,6 +3173,12 @@ export type MutationTrackAnalyticsArgs = {
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
+};
+
+
+export type MutationTransferApplicationRegistrationOwnershipArgs = {
+  applicationRegistrationId: Scalars['String'];
+  targetWorkspaceSubdomain: Scalars['String'];
 };
 
 
@@ -6243,6 +6241,13 @@ export type InstallNpmAppMutationVariables = Exact<{
 
 export type InstallNpmAppMutation = { __typename?: 'Mutation', installNpmApp: boolean };
 
+export type RegisterNpmPackageMutationVariables = Exact<{
+  packageName: Scalars['String'];
+}>;
+
+
+export type RegisterNpmPackageMutation = { __typename?: 'Mutation', registerNpmPackage: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string } };
+
 export type UpgradeApplicationMutationVariables = Exact<{
   appRegistrationId: Scalars['String'];
   targetVersion: Scalars['String'];
@@ -6569,6 +6574,14 @@ export type RotateApplicationRegistrationClientSecretMutationVariables = Exact<{
 
 
 export type RotateApplicationRegistrationClientSecretMutation = { __typename?: 'Mutation', rotateApplicationRegistrationClientSecret: { __typename?: 'RotateClientSecret', clientSecret: string } };
+
+export type TransferApplicationRegistrationOwnershipMutationVariables = Exact<{
+  applicationRegistrationId: Scalars['String'];
+  targetWorkspaceSubdomain: Scalars['String'];
+}>;
+
+
+export type TransferApplicationRegistrationOwnershipMutation = { __typename?: 'Mutation', transferApplicationRegistrationOwnership: { __typename?: 'ApplicationRegistration', id: string, name: string } };
 
 export type UpdateApplicationRegistrationMutationVariables = Exact<{
   input: UpdateApplicationRegistrationInput;
@@ -11505,6 +11518,41 @@ export function useInstallNpmAppMutation(baseOptions?: Apollo.MutationHookOption
 export type InstallNpmAppMutationHookResult = ReturnType<typeof useInstallNpmAppMutation>;
 export type InstallNpmAppMutationResult = Apollo.MutationResult<InstallNpmAppMutation>;
 export type InstallNpmAppMutationOptions = Apollo.BaseMutationOptions<InstallNpmAppMutation, InstallNpmAppMutationVariables>;
+export const RegisterNpmPackageDocument = gql`
+    mutation RegisterNpmPackage($packageName: String!) {
+  registerNpmPackage(packageName: $packageName) {
+    id
+    universalIdentifier
+    name
+  }
+}
+    `;
+export type RegisterNpmPackageMutationFn = Apollo.MutationFunction<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>;
+
+/**
+ * __useRegisterNpmPackageMutation__
+ *
+ * To run a mutation, you first call `useRegisterNpmPackageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterNpmPackageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerNpmPackageMutation, { data, loading, error }] = useRegisterNpmPackageMutation({
+ *   variables: {
+ *      packageName: // value for 'packageName'
+ *   },
+ * });
+ */
+export function useRegisterNpmPackageMutation(baseOptions?: Apollo.MutationHookOptions<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>(RegisterNpmPackageDocument, options);
+      }
+export type RegisterNpmPackageMutationHookResult = ReturnType<typeof useRegisterNpmPackageMutation>;
+export type RegisterNpmPackageMutationResult = Apollo.MutationResult<RegisterNpmPackageMutation>;
+export type RegisterNpmPackageMutationOptions = Apollo.BaseMutationOptions<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>;
 export const UpgradeApplicationDocument = gql`
     mutation UpgradeApplication($appRegistrationId: String!, $targetVersion: String!) {
   upgradeApplication(
@@ -13369,6 +13417,44 @@ export function useRotateApplicationRegistrationClientSecretMutation(baseOptions
 export type RotateApplicationRegistrationClientSecretMutationHookResult = ReturnType<typeof useRotateApplicationRegistrationClientSecretMutation>;
 export type RotateApplicationRegistrationClientSecretMutationResult = Apollo.MutationResult<RotateApplicationRegistrationClientSecretMutation>;
 export type RotateApplicationRegistrationClientSecretMutationOptions = Apollo.BaseMutationOptions<RotateApplicationRegistrationClientSecretMutation, RotateApplicationRegistrationClientSecretMutationVariables>;
+export const TransferApplicationRegistrationOwnershipDocument = gql`
+    mutation TransferApplicationRegistrationOwnership($applicationRegistrationId: String!, $targetWorkspaceSubdomain: String!) {
+  transferApplicationRegistrationOwnership(
+    applicationRegistrationId: $applicationRegistrationId
+    targetWorkspaceSubdomain: $targetWorkspaceSubdomain
+  ) {
+    id
+    name
+  }
+}
+    `;
+export type TransferApplicationRegistrationOwnershipMutationFn = Apollo.MutationFunction<TransferApplicationRegistrationOwnershipMutation, TransferApplicationRegistrationOwnershipMutationVariables>;
+
+/**
+ * __useTransferApplicationRegistrationOwnershipMutation__
+ *
+ * To run a mutation, you first call `useTransferApplicationRegistrationOwnershipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTransferApplicationRegistrationOwnershipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [transferApplicationRegistrationOwnershipMutation, { data, loading, error }] = useTransferApplicationRegistrationOwnershipMutation({
+ *   variables: {
+ *      applicationRegistrationId: // value for 'applicationRegistrationId'
+ *      targetWorkspaceSubdomain: // value for 'targetWorkspaceSubdomain'
+ *   },
+ * });
+ */
+export function useTransferApplicationRegistrationOwnershipMutation(baseOptions?: Apollo.MutationHookOptions<TransferApplicationRegistrationOwnershipMutation, TransferApplicationRegistrationOwnershipMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TransferApplicationRegistrationOwnershipMutation, TransferApplicationRegistrationOwnershipMutationVariables>(TransferApplicationRegistrationOwnershipDocument, options);
+      }
+export type TransferApplicationRegistrationOwnershipMutationHookResult = ReturnType<typeof useTransferApplicationRegistrationOwnershipMutation>;
+export type TransferApplicationRegistrationOwnershipMutationResult = Apollo.MutationResult<TransferApplicationRegistrationOwnershipMutation>;
+export type TransferApplicationRegistrationOwnershipMutationOptions = Apollo.BaseMutationOptions<TransferApplicationRegistrationOwnershipMutation, TransferApplicationRegistrationOwnershipMutationVariables>;
 export const UpdateApplicationRegistrationDocument = gql`
     mutation UpdateApplicationRegistration($input: UpdateApplicationRegistrationInput!) {
   updateApplicationRegistration(input: $input) {
