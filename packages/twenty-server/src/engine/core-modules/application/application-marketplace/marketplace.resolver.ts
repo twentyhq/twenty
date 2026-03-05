@@ -6,11 +6,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import {
-  ApplicationRegistrationException,
-  ApplicationRegistrationExceptionCode,
-} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
@@ -68,13 +63,6 @@ export class MarketplaceResolver {
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
-
-    if (registration.sourceType !== ApplicationRegistrationSourceType.NPM) {
-      throw new ApplicationRegistrationException(
-        `Only NPM apps can be installed via the marketplace`,
-        ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
-      );
-    }
 
     return this.applicationInstallService.installApplication({
       appRegistrationId: registration.id,

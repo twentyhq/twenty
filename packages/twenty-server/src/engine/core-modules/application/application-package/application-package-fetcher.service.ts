@@ -1,4 +1,5 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
@@ -7,8 +8,10 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 import { type Manifest } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -17,12 +20,15 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -44,7 +50,11 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
+    private readonly fileStorageService: FileStorageService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -149,16 +159,33 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   private async resolveFromTarball(
     appRegistration: ApplicationRegistrationEntity,
   ): Promise<ResolvedPackage> {
+    if (!isDefined(appRegistration.tarballFileId)) {
+      throw new ApplicationException(
+        `App registration ${appRegistration.id} has sourceType=tarball but no tarball file`,
+        ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+      );
+    }
+
     const workDir = join(APP_FETCHER_TMPDIR, v4());
 
     await fs.mkdir(workDir, { recursive: true });
 
     try {
-      const storagePath = join('app-tarball', appRegistration.id, 'app.tar.gz');
-      const driver = this.fileStorageDriverFactory.getCurrentDriver();
-      const tarballStream = await driver.readFile({
-        filePath: storagePath,
+      const file = await this.fileRepository.findOneOrFail({
+        where: { id: appRegistration.tarballFileId },
       });
+
+      const application = await this.applicationRepository.findOneOrFail({
+        where: { id: file.applicationId },
+      });
+
+      const tarballStream = await this.fileStorageService.readFile({
+        workspaceId: file.workspaceId,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        fileFolder: FileFolder.AppTarball,
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+      });
+
       const tarballBuffer = await streamToBuffer(tarballStream);
       const tarballPath = join(workDir, 'app.tar.gz');
 
