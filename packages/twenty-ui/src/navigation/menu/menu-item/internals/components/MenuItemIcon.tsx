@@ -19,10 +19,7 @@ export const MenuItemIcon = ({
   }
 
   const iconElement = (
-    <Icon
-      size={theme.icon.size.md}
-      stroke={theme.icon.stroke.sm}
-    />
+    <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
   );
 
   if (withContainer) {

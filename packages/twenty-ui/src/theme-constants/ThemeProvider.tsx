@@ -77,7 +77,9 @@ const computeThemeFromCss = (): ThemeType => {
     return result;
   };
 
-  return resolve(themeCssVariables as unknown as Record<string, unknown>) as unknown as ThemeType;
+  return resolve(
+    themeCssVariables as unknown as Record<string, unknown>,
+  ) as unknown as ThemeType;
 };
 
 export const ThemeContext = createContext<ThemeContextType>({

@@ -128,10 +128,7 @@ export const MenuItem = ({
         )}
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (
-          <RightIcon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
         {RightComponent}
         {hasSubMenu && !disabled && (

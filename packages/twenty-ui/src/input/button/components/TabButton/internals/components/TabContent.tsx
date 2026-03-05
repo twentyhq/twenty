@@ -38,14 +38,10 @@ export const TabContent = ({
 
   return (
     <StyledTabHover contentSize={contentSize} className={className}>
-      {LeftIcon && (
-        <LeftIcon color={iconColor} size={theme.icon.size.md} />
-      )}
+      {LeftIcon && <LeftIcon color={iconColor} size={theme.icon.size.md} />}
       {logo && <Avatar avatarUrl={logo} size="md" placeholder={title} />}
       {title}
-      {RightIcon && (
-        <RightIcon color={iconColor} size={theme.icon.size.md} />
-      )}
+      {RightIcon && <RightIcon color={iconColor} size={theme.icon.size.md} />}
       {pill && (typeof pill === 'string' ? <Pill label={pill} /> : pill)}
     </StyledTabHover>
   );

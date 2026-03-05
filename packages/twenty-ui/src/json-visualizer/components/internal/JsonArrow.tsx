@@ -61,10 +61,7 @@ export const JsonArrow = ({
         animate={{ rotate: isOpen ? 0 : -90 }}
         transition={{ duration: 0.3 }}
       >
-        <IconChevronDown
-          size={theme.icon.size.md}
-          color={iconColor}
-        />
+        <IconChevronDown size={theme.icon.size.md} color={iconColor} />
       </motion.div>
     </StyledButton>
   );

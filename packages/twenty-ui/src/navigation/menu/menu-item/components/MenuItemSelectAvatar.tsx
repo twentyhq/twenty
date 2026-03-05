@@ -74,9 +74,7 @@ export const MenuItemSelectAvatar = ({
           )}
         </StyledTextContainer>
       </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck size={theme.icon.size.md} />
-      )}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

@@ -45,10 +45,7 @@ export const MenuItemIconWithGripSwap = ({
   const iconContent = (
     <StyledIconSwapContainer>
       <StyledDefaultIcon className="grip-swap-default-icon">
-        <LeftIcon
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+        <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       </StyledDefaultIcon>
       <StyledHoverIcon className="grip-swap-hover-icon">
         <IconGripVertical

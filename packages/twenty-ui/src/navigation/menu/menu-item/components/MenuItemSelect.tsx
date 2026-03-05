@@ -108,9 +108,7 @@ export const MenuItemSelect = ({
           </StyledMenuItemLabel>
         )}
 
-        {selected && needIconCheck && (
-          <IconCheck size={theme.icon.size.md} />
-        )}
+        {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
 
         {hasSubMenu && (
           <IconChevronRight

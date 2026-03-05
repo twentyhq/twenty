@@ -150,10 +150,7 @@ export const MenuPicker = ({
         aria-label={label}
       >
         <StyledIconContainer>
-          <Icon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
 
         {isDefined(label) && showLabel && (

@@ -50,9 +50,7 @@ export const MenuItemSelectTag = ({
           Icon={LeftIcon ?? undefined}
         />
       </StyledMenuItemLeftContent>
-      {selected && (
-        <StyledMenuItemIconCheck size={theme.icon.size.md} />
-      )}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };
