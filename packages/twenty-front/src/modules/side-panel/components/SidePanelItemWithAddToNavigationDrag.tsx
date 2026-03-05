@@ -10,7 +10,16 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addT
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 
-type CommandMenuItemWithAddToNavigationDragProps = {
+const StyledDraggableMenuItem = styled.div`
+  cursor: grab;
+  width: 100%;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+type SidePanelItemWithAddToNavigationDragProps = {
   icon?: IconComponent;
   customIconContent?: ReactNode;
   label: string;
@@ -21,16 +30,7 @@ type CommandMenuItemWithAddToNavigationDragProps = {
   dragIndex?: number;
 };
 
-const StyledDraggableMenuItem = styled.div`
-  cursor: grab;
-  width: 100%;
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
-
-export const CommandMenuItemWithAddToNavigationDrag = ({
+export const SidePanelItemWithAddToNavigationDrag = ({
   icon,
   customIconContent,
   label,
@@ -39,7 +39,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   onClick,
   payload,
   dragIndex,
-}: CommandMenuItemWithAddToNavigationDragProps) => {
+}: SidePanelItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
   const setAddToNavPayloadRegistry = useSetAtomState(
     addToNavPayloadRegistryState,

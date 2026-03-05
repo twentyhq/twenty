@@ -1,15 +1,15 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { type ReactNode } from 'react';
 
-type CommandMenuAddToNavDraggablePlaceholderProps = {
+type SidePanelAddToNavigationDraggablePlaceholderProps = {
   index: number;
   children: ReactNode;
 };
 
-export const CommandMenuAddToNavDraggablePlaceholder = ({
+export const SidePanelAddToNavigationDraggablePlaceholder = ({
   index,
   children,
-}: CommandMenuAddToNavDraggablePlaceholderProps) => (
+}: SidePanelAddToNavigationDraggablePlaceholderProps) => (
   <Draggable
     draggableId={`add-to-nav-placeholder-${index}`}
     index={index}

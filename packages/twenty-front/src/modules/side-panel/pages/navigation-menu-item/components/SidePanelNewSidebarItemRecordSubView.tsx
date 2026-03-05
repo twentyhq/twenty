@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
@@ -89,7 +89,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
       searchValue={recordSearchInput}
       onSearchChange={setRecordSearchInput}
     >
-      <CommandMenuAddToNavDroppable>
+      <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
             commandGroups={[]}
@@ -113,7 +113,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
             </div>
           </SidePanelList>
         )}
-      </CommandMenuAddToNavDroppable>
+      </SidePanelAddToNavigationDroppable>
     </SidePanelSubViewWithSearch>
   );
 };

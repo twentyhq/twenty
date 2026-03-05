@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
+import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
@@ -60,7 +60,7 @@ export const SidePanelObjectMenuItem = ({
   return (
     <SelectableListItem itemId={objectMetadataItem.id} onEnter={handleClick}>
       {variant === 'add' && !isDisabled ? (
-        <CommandMenuItemWithAddToNavigationDrag
+        <SidePanelItemWithAddToNavigationDrag
           icon={styledIcon}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}

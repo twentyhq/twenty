@@ -1,6 +1,6 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
-import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
+import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -97,7 +97,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
       searchValue={searchValue}
       onSearchChange={setSearchValue}
     >
-      <CommandMenuAddToNavDroppable>
+      <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
             commandGroups={[]}
@@ -114,7 +114,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
                     itemId={view.id}
                     onEnter={() => handleSelectView(view)}
                   >
-                    <CommandMenuItemWithAddToNavigationDrag
+                    <SidePanelItemWithAddToNavigationDrag
                       customIconContent={
                         selectedObjectMetadataItem ? (
                           <ObjectIconWithViewOverlay
@@ -150,7 +150,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
             </div>
           </SidePanelList>
         )}
-      </CommandMenuAddToNavDroppable>
+      </SidePanelAddToNavigationDroppable>
     </SidePanelSubViewWithSearch>
   );
 };

@@ -4,13 +4,13 @@ import { type ReactNode, useContext } from 'react';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
 
-type CommandMenuAddToNavDroppableProps = {
+type SidePanelAddToNavigationDroppableProps = {
   children: (provided: DroppableProvided) => ReactNode;
 };
 
-export const CommandMenuAddToNavDroppable = ({
+export const SidePanelAddToNavigationDroppable = ({
   children,
-}: CommandMenuAddToNavDroppableProps) => {
+}: SidePanelAddToNavigationDroppableProps) => {
   const { sourceDroppableId } = useContext(NavigationDragSourceContext);
   const isDropDisabled = sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
 

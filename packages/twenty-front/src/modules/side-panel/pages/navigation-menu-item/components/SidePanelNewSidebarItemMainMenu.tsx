@@ -8,10 +8,10 @@ import {
 } from 'twenty-ui/display';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
-import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
+import { SidePanelAddToNavigationDraggablePlaceholder } from '@/side-panel/components/SidePanelAddToNavigationDraggablePlaceholder';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
+import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useAddFolderToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
 import { useAddLinkToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
@@ -38,7 +38,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   const { handleAddLink } = useAddLinkToNavigationMenu();
 
   return (
-    <CommandMenuAddToNavDroppable>
+    <SidePanelAddToNavigationDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
         <SidePanelList
           commandGroups={[]}
@@ -47,7 +47,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>
-              <CommandMenuAddToNavDraggablePlaceholder index={0}>
+              <SidePanelAddToNavigationDraggablePlaceholder index={0}>
                 <SelectableListItem itemId="object" onEnter={onSelectObject}>
                   <CommandMenuItem
                     Icon={() => (
@@ -62,8 +62,8 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     onClick={onSelectObject}
                   />
                 </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
-              <CommandMenuAddToNavDraggablePlaceholder index={1}>
+              </SidePanelAddToNavigationDraggablePlaceholder>
+              <SidePanelAddToNavigationDraggablePlaceholder index={1}>
                 <SelectableListItem itemId="view" onEnter={onSelectView}>
                   <CommandMenuItem
                     Icon={() => (
@@ -78,8 +78,8 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     onClick={onSelectView}
                   />
                 </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
-              <CommandMenuAddToNavDraggablePlaceholder index={2}>
+              </SidePanelAddToNavigationDraggablePlaceholder>
+              <SidePanelAddToNavigationDraggablePlaceholder index={2}>
                 <SelectableListItem itemId="record" onEnter={onSelectRecord}>
                   <CommandMenuItem
                     Icon={() => (
@@ -95,11 +95,11 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     onClick={onSelectRecord}
                   />
                 </SelectableListItem>
-              </CommandMenuAddToNavDraggablePlaceholder>
+              </SidePanelAddToNavigationDraggablePlaceholder>
             </SidePanelGroup>
             <SidePanelGroup heading={t`Other`}>
               <SelectableListItem itemId="folder" onEnter={handleAddFolder}>
-                <CommandMenuItemWithAddToNavigationDrag
+                <SidePanelItemWithAddToNavigationDrag
                   icon={IconFolder}
                   label={t`Folder`}
                   id="folder"
@@ -113,7 +113,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 />
               </SelectableListItem>
               <SelectableListItem itemId="link" onEnter={handleAddLink}>
-                <CommandMenuItemWithAddToNavigationDrag
+                <SidePanelItemWithAddToNavigationDrag
                   icon={IconLink}
                   label={t`Link`}
                   id="link"
@@ -132,6 +132,6 @@ export const SidePanelNewSidebarItemMainMenu = ({
           </div>
         </SidePanelList>
       )}
-    </CommandMenuAddToNavDroppable>
+    </SidePanelAddToNavigationDroppable>
   );
 };

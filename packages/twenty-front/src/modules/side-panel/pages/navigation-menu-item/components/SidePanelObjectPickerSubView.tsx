@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { IconSettings } from 'twenty-ui/display';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { CommandMenuAddToNavDraggablePlaceholder } from '@/command-menu/components/CommandMenuAddToNavDraggablePlaceholder';
-import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
+import { SidePanelAddToNavigationDraggablePlaceholder } from '@/side-panel/components/SidePanelAddToNavigationDraggablePlaceholder';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
@@ -70,7 +70,7 @@ export const SidePanelObjectPickerSubView = ({
         />
       ))}
       {isAddVariant ? (
-        <CommandMenuAddToNavDraggablePlaceholder index={filteredItems.length}>
+        <SidePanelAddToNavigationDraggablePlaceholder index={filteredItems.length}>
           <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
             <CommandMenuItem
               Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
@@ -80,7 +80,7 @@ export const SidePanelObjectPickerSubView = ({
               onClick={onOpenSystemPicker}
             />
           </SelectableListItem>
-        </CommandMenuAddToNavDraggablePlaceholder>
+        </SidePanelAddToNavigationDraggablePlaceholder>
       ) : (
         <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
           <CommandMenuItem
@@ -104,7 +104,7 @@ export const SidePanelObjectPickerSubView = ({
       onSearchChange={onSearchChange}
     >
       {isAddVariant ? (
-        <CommandMenuAddToNavDroppable>
+        <SidePanelAddToNavigationDroppable>
           {({ innerRef, droppableProps, placeholder }) => (
             <SidePanelList
               commandGroups={[]}
@@ -119,7 +119,7 @@ export const SidePanelObjectPickerSubView = ({
               </div>
             </SidePanelList>
           )}
-        </CommandMenuAddToNavDroppable>
+        </SidePanelAddToNavigationDroppable>
       ) : (
         <SidePanelList
           commandGroups={[]}

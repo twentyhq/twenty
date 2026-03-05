@@ -1,6 +1,6 @@
 import { Avatar } from 'twenty-ui/display';
 
-import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
+import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
@@ -69,7 +69,7 @@ export const SidePanelNewSidebarItemRecordItem = ({
 
   return (
     <SelectableListItem itemId={record.recordId} onEnter={handleSelectRecord}>
-      <CommandMenuItemWithAddToNavigationDrag
+      <SidePanelItemWithAddToNavigationDrag
         customIconContent={
           <Avatar
             type={
