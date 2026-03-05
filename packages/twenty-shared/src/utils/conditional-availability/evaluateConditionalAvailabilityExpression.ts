@@ -7,6 +7,8 @@ const parser = new Parser();
 
 parser.functions.isDefined = (value: unknown) => isDefined(value);
 parser.functions.isNonEmptyString = (value: unknown) => isNonEmptyString(value);
+parser.functions.includes = (array: unknown, value: unknown) =>
+  Array.isArray(array) && array.includes(value);
 
 export const evaluateConditionalAvailabilityExpression = (
   expression: string | null | undefined,

@@ -27,5 +27,12 @@ export const targetObjectReadPermissions =
 export const targetObjectWritePermissions =
   null as unknown as CommandMenuContextApi['targetObjectWritePermissions'];
 
+export const objectMetadataItem =
+  null as unknown as CommandMenuContextApi['objectMetadataItem'];
+
 export const isDefined = null as unknown as (value: unknown) => boolean;
 export const isNonEmptyString = null as unknown as (value: unknown) => boolean;
+export const includes = null as unknown as (
+  array: unknown,
+  value: unknown,
+) => boolean;

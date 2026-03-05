@@ -18,6 +18,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   availabilityType,
   frontComponentUniversalIdentifier,
   availabilityObjectMetadataUniversalIdentifier,
+  conditionalAvailabilityExpression = null,
   commandMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
@@ -33,6 +34,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   availabilityType: CommandMenuItemAvailabilityType;
   frontComponentUniversalIdentifier: string;
   availabilityObjectMetadataUniversalIdentifier: string | null;
+  conditionalAvailabilityExpression?: string | null;
   commandMenuItemId: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
@@ -86,7 +88,8 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
     position,
     isPinned,
     availabilityType,
-    conditionalAvailabilityExpression: null,
+    conditionalAvailabilityExpression:
+      conditionalAvailabilityExpression ?? null,
     frontComponentId: flatFrontComponent.id,
     frontComponentUniversalIdentifier: flatFrontComponent.universalIdentifier,
     workflowVersionId: null,

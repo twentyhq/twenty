@@ -15,4 +15,5 @@ export type CommandMenuContextApi = {
   featureFlags: Record<string, boolean>;
   targetObjectReadPermissions: Record<string, boolean>;
   targetObjectWritePermissions: Record<string, boolean>;
+  objectMetadataItem: Record<string, unknown>;
 };

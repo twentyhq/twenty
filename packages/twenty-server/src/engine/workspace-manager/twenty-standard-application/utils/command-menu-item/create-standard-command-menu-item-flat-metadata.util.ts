@@ -50,7 +50,8 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     position: definition.position,
     isPinned: definition.isPinned,
     availabilityType: definition.availabilityType,
-    conditionalAvailabilityExpression: null,
+    conditionalAvailabilityExpression:
+      definition.conditionalAvailabilityExpression ?? null,
     frontComponentId: flatFrontComponent.id,
     frontComponentUniversalIdentifier: flatFrontComponent.universalIdentifier,
     workflowVersionId: null,

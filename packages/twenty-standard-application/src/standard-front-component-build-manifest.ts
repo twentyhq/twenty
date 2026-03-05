@@ -10,238 +10,238 @@
 export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
   "cancelDashboardLayout": {
     "builtComponentPath": "dashboard/cancel-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "774839c3a0346a1b6c242a800a4d7048"
+    "builtComponentChecksum": "e6b4eeefe87fbfe0e70d0195a479a816"
   },
   "duplicateDashboard": {
     "builtComponentPath": "dashboard/duplicate-dashboard.front-component.mjs",
-    "builtComponentChecksum": "56cfcc4a21195a55c894185aae3fd913"
+    "builtComponentChecksum": "8f0abd05b73a6c88d69945be63955f10"
   },
   "editDashboardLayout": {
     "builtComponentPath": "dashboard/edit-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "561595379f4d902be978893306c9d586"
+    "builtComponentChecksum": "0ffcdf87271ff1d3f3777a3b55c889c2"
   },
   "saveDashboardLayout": {
     "builtComponentPath": "dashboard/save-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "5afed90e3536eeba00bac8df5281254a"
+    "builtComponentChecksum": "630452b28fe6b5987845239326e4896d"
   },
   "goToCompanies": {
     "builtComponentPath": "navigation/go-to-companies.front-component.mjs",
-    "builtComponentChecksum": "5ce8b2aa896a4ba8c04d9cbe6e0e7ea9"
+    "builtComponentChecksum": "bba474f96a0667b0eb2d72c6dfe1adba"
   },
   "goToDashboards": {
     "builtComponentPath": "navigation/go-to-dashboards.front-component.mjs",
-    "builtComponentChecksum": "fe713d668a29cd6e58f968bf4404ca72"
+    "builtComponentChecksum": "ec61922159188e93519a7f60cf768a22"
   },
   "goToNotes": {
     "builtComponentPath": "navigation/go-to-notes.front-component.mjs",
-    "builtComponentChecksum": "236b7776891d88abdfe5531df53d2a22"
+    "builtComponentChecksum": "bd03a44ef24965371ac204355f3b73ff"
   },
   "goToOpportunities": {
     "builtComponentPath": "navigation/go-to-opportunities.front-component.mjs",
-    "builtComponentChecksum": "9df21623ae0224b737770499972674b9"
+    "builtComponentChecksum": "588d093045d38c652cf0013c45132948"
   },
   "goToPeople": {
     "builtComponentPath": "navigation/go-to-people.front-component.mjs",
-    "builtComponentChecksum": "07789abc55785a845a28c593b55f3340"
+    "builtComponentChecksum": "9d22a3e2502903daee9c0bb9285571fb"
   },
   "goToRuns": {
     "builtComponentPath": "navigation/go-to-runs.front-component.mjs",
-    "builtComponentChecksum": "7a0999f1fe2fd3282acb909252cfc353"
+    "builtComponentChecksum": "07285b6aa9606fbcd025874cfe641725"
   },
   "goToSettings": {
     "builtComponentPath": "navigation/go-to-settings.front-component.mjs",
-    "builtComponentChecksum": "195b53d19894a6e5df2bb3e0bb020b68"
+    "builtComponentChecksum": "6102c901a3e5c6ce1b1fe153676140d6"
   },
   "goToTasks": {
     "builtComponentPath": "navigation/go-to-tasks.front-component.mjs",
-    "builtComponentChecksum": "10d29b37b02bc30f12a7869c4a3df3af"
+    "builtComponentChecksum": "9cb2526d47a035f888f89cdc3ca172c5"
   },
   "goToWorkflows": {
     "builtComponentPath": "navigation/go-to-workflows.front-component.mjs",
-    "builtComponentChecksum": "1e877d941274050e5ac99d5812ff3d82"
+    "builtComponentChecksum": "0dc08d42d4c6f966afa3af2afd957b58"
   },
   "cancelRecordPageLayout": {
     "builtComponentPath": "page-layout/cancel-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "d28dab54b9ed63e75e43a2d1afee1028"
+    "builtComponentChecksum": "d538ef8d71c11c066dcf5a58b824bd3c"
   },
   "editRecordPageLayout": {
     "builtComponentPath": "page-layout/edit-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "a079d573b9c29de17c9c2abfd3dbc332"
+    "builtComponentChecksum": "cf9396dccab80d3a129d9ca9ddc2693c"
   },
   "saveRecordPageLayout": {
     "builtComponentPath": "page-layout/save-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "06c23f59283c64f53f3a44804a79e9f8"
+    "builtComponentChecksum": "cfca0fd9c7e6e7cc15b2be2b71ac1d25"
   },
   "addToFavorites": {
     "builtComponentPath": "record/add-to-favorites.front-component.mjs",
-    "builtComponentChecksum": "e740e39901650aa20045999e6f005580"
+    "builtComponentChecksum": "2e6bb73d537009b2ea928c4550bbcf3a"
   },
   "createNewRecord": {
     "builtComponentPath": "record/create-new-record.front-component.mjs",
-    "builtComponentChecksum": "2b42ec2e3da95805a170e49af5a5f993"
+    "builtComponentChecksum": "78a5361149e7198b138e39c2f71606e5"
   },
   "createNewView": {
     "builtComponentPath": "record/create-new-view.front-component.mjs",
-    "builtComponentChecksum": "282af1bd697bfea9b47cdfff05f54f79"
+    "builtComponentChecksum": "723bacdeafd1285c030b26caa95437f5"
   },
   "deleteMultipleRecords": {
     "builtComponentPath": "record/delete-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "3f85b4ecfe6a48856e6d31c68bfc0b7c"
+    "builtComponentChecksum": "78c677c745686d7ab4c0963bdf2b6a29"
   },
   "deleteSingleRecord": {
     "builtComponentPath": "record/delete-single-record.front-component.mjs",
-    "builtComponentChecksum": "c3bdfca1974db0aede58e64c080a0c36"
+    "builtComponentChecksum": "2f99576de01074601753f1f08e2b3c2b"
   },
   "destroyMultipleRecords": {
     "builtComponentPath": "record/destroy-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "653825f1b3b5e3743bda7b4076d213d9"
+    "builtComponentChecksum": "21e86fdf8dc948baf4bf11197d247fc9"
   },
   "destroySingleRecord": {
     "builtComponentPath": "record/destroy-single-record.front-component.mjs",
-    "builtComponentChecksum": "3cf5773c1cb32c3fa53d810dda2eae25"
+    "builtComponentChecksum": "ee5b7492badab003c3ff29756ec99fe0"
   },
   "exportFromRecordIndex": {
     "builtComponentPath": "record/export-from-record-index.front-component.mjs",
-    "builtComponentChecksum": "a05937972502ecd9627bc07d4176730d"
+    "builtComponentChecksum": "a466475d657c63ce162de7e9e938e46f"
   },
   "exportFromRecordShow": {
     "builtComponentPath": "record/export-from-record-show.front-component.mjs",
-    "builtComponentChecksum": "43255995dc435cb204de099ea1348ab5"
+    "builtComponentChecksum": "b088187f4302d37fbd5be894363417d8"
   },
   "exportMultipleRecords": {
     "builtComponentPath": "record/export-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "fa8d2071cedae1cd7422f19b24690bd4"
+    "builtComponentChecksum": "8ca9bbfeed19d80526e9101e28bb7800"
   },
   "exportNoteToPdf": {
     "builtComponentPath": "record/export-note-to-pdf.front-component.mjs",
-    "builtComponentChecksum": "9f63c5fbee8752e3eed8c91d0def0b30"
+    "builtComponentChecksum": "12b35851597e285a83e3ebc1a87ac594"
   },
   "exportView": {
     "builtComponentPath": "record/export-view.front-component.mjs",
-    "builtComponentChecksum": "fc65d2b83df792939311c96a04a6fe2a"
+    "builtComponentChecksum": "c78313172a97e51f912675bcf13d9d05"
   },
   "hideDeletedRecords": {
     "builtComponentPath": "record/hide-deleted-records.front-component.mjs",
-    "builtComponentChecksum": "a9304242b6cc09cd821c21ecbaa737c0"
+    "builtComponentChecksum": "2e55b3a28facaf35c0d862eb24c0747f"
   },
   "importRecords": {
     "builtComponentPath": "record/import-records.front-component.mjs",
-    "builtComponentChecksum": "217f4b9f84bfb32ba1d5a7dbfba2dda5"
+    "builtComponentChecksum": "4d3c5c28a20904a2da793f47c58c58ff"
   },
   "mergeMultipleRecords": {
     "builtComponentPath": "record/merge-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "fe8671a82122fbc867735647caed0b05"
+    "builtComponentChecksum": "202e8ddb32b5cca5719ff6c347fc30dc"
   },
   "navigateToNextRecord": {
     "builtComponentPath": "record/navigate-to-next-record.front-component.mjs",
-    "builtComponentChecksum": "588b87bc2f08f46e40704d5c3c618a28"
+    "builtComponentChecksum": "6eee4d15fb5c56601e0599694e547909"
   },
   "navigateToPreviousRecord": {
     "builtComponentPath": "record/navigate-to-previous-record.front-component.mjs",
-    "builtComponentChecksum": "c05f1bf2c3aa1ee20e149cf82314f200"
+    "builtComponentChecksum": "80481cec45121355c4de2121ce035376"
   },
   "removeFromFavorites": {
     "builtComponentPath": "record/remove-from-favorites.front-component.mjs",
-    "builtComponentChecksum": "1b91e3a64ffca2c4c32ca52f9cf0032f"
+    "builtComponentChecksum": "cb97482e0050ed040dbc41798144b6a9"
   },
   "restoreMultipleRecords": {
     "builtComponentPath": "record/restore-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "cb0c783563ff2d6b72b352d1338e949e"
+    "builtComponentChecksum": "c8f85f46c33ac867589de82ffaf3cc2b"
   },
   "restoreSingleRecord": {
     "builtComponentPath": "record/restore-single-record.front-component.mjs",
-    "builtComponentChecksum": "152ec0b15fca8dc3831c8c914138fc5a"
+    "builtComponentChecksum": "3cc38a1b7f898c57b5dc744761652e7a"
   },
   "seeDeletedRecords": {
     "builtComponentPath": "record/see-deleted-records.front-component.mjs",
-    "builtComponentChecksum": "90c1f75aa20960a13bfb5e4a22dda77a"
+    "builtComponentChecksum": "0f756f4ca853eafc7e8e0aba00e8619e"
   },
   "updateMultipleRecords": {
     "builtComponentPath": "record/update-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "000aa49f7abff2013b9c3055408fc93a"
+    "builtComponentChecksum": "a222887a699fb037102483492355f1c9"
   },
   "askAi": {
     "builtComponentPath": "side-panel/ask-ai.front-component.mjs",
-    "builtComponentChecksum": "2fea33780e6a02537cbad78015b4f654"
+    "builtComponentChecksum": "958a912e74a69e5391fb5df43d18b254"
   },
   "searchRecordsFallback": {
     "builtComponentPath": "side-panel/search-records-fallback.front-component.mjs",
-    "builtComponentChecksum": "ddb6f8bfa21889d01731a0a4316f7d79"
+    "builtComponentChecksum": "2b6f23cab3f649e04185cb463c4d7991"
   },
   "searchRecords": {
     "builtComponentPath": "side-panel/search-records.front-component.mjs",
-    "builtComponentChecksum": "041639c71b2e6fb97001e16d096b4b8c"
+    "builtComponentChecksum": "29690f48e27ce74e4bde1bef10361e72"
   },
   "viewPreviousAiChats": {
     "builtComponentPath": "side-panel/view-previous-ai-chats.front-component.mjs",
-    "builtComponentChecksum": "0f06b84e515004f99de1628eb839dc7d"
+    "builtComponentChecksum": "a6b6b95f6881deb92f6b05f3d9978839"
   },
   "seeVersionWorkflowRun": {
     "builtComponentPath": "workflow-run/see-version-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "b9a7db59f4713fde4204d8fb75c4b68b"
+    "builtComponentChecksum": "d70a6531e996f8fb177fef37c3910b0c"
   },
   "seeWorkflowWorkflowRun": {
     "builtComponentPath": "workflow-run/see-workflow-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "e284092d96a923542a122013c1e2a972"
+    "builtComponentChecksum": "b19ecd91e6741dae506624a0f01461da"
   },
   "stopWorkflowRun": {
     "builtComponentPath": "workflow-run/stop-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "b6044bf5eae16690130fcf140655fb16"
+    "builtComponentChecksum": "34d23ce84de0e08f62bc44bf83dd0892"
   },
   "seeRunsWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-runs-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "f952b93c14a8ab0fad782bca262df6ff"
+    "builtComponentChecksum": "d320cd050b3d8a26aedfc056406c4943"
   },
   "seeVersionsWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-versions-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "bf2198c0359953709cd798ce1e349797"
+    "builtComponentChecksum": "98a727de85f4cf016a4654434b308f61"
   },
   "seeWorkflowWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-workflow-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "dcba93dd54eafbe16d42473428fc7442"
+    "builtComponentChecksum": "ad10b5c755d7c30801b64c19de2dd6e4"
   },
   "useAsDraftWorkflowVersion": {
     "builtComponentPath": "workflow-version/use-as-draft-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "5fbe787c4a3c34f8429c3a7586b875de"
+    "builtComponentChecksum": "04fccad67b8074aef27b2ea09d903c93"
   },
   "activateWorkflow": {
     "builtComponentPath": "workflow/activate-workflow.front-component.mjs",
-    "builtComponentChecksum": "6a58d8f61d2f6be7f805a5013c279aa5"
+    "builtComponentChecksum": "e318aca1cfdb2a7708ce87655f5e3afa"
   },
   "addNodeWorkflow": {
     "builtComponentPath": "workflow/add-node-workflow.front-component.mjs",
-    "builtComponentChecksum": "4f06d4f3e4100fa59b66eb69ea89c057"
+    "builtComponentChecksum": "f07863d1bbfe5152c534a93b8ddb71ca"
   },
   "deactivateWorkflow": {
     "builtComponentPath": "workflow/deactivate-workflow.front-component.mjs",
-    "builtComponentChecksum": "b51294fce6ca9fb9fce7d02702901af1"
+    "builtComponentChecksum": "c7bd3f4a9b23b9d70e9bd8e4049ceb11"
   },
   "discardDraftWorkflow": {
     "builtComponentPath": "workflow/discard-draft-workflow.front-component.mjs",
-    "builtComponentChecksum": "9927d1644ff2d0578b1d7a6f0d5f6f68"
+    "builtComponentChecksum": "38baf65d53110417a4efc791cb743d66"
   },
   "duplicateWorkflow": {
     "builtComponentPath": "workflow/duplicate-workflow.front-component.mjs",
-    "builtComponentChecksum": "4a82fbf7f2b2123fca7e487a0786c18a"
+    "builtComponentChecksum": "1d85b9df0354087072f0621d8f59d64d"
   },
   "seeActiveVersionWorkflow": {
     "builtComponentPath": "workflow/see-active-version-workflow.front-component.mjs",
-    "builtComponentChecksum": "44fc9efee240780f432b993710e49b4a"
+    "builtComponentChecksum": "433a1e527476d1986834a0681e6b0b2c"
   },
   "seeRunsWorkflow": {
     "builtComponentPath": "workflow/see-runs-workflow.front-component.mjs",
-    "builtComponentChecksum": "41adcb578904bf1db44fc44e079a8538"
+    "builtComponentChecksum": "88cbb9ea10c397904c42a1631279cf47"
   },
   "seeVersionsWorkflow": {
     "builtComponentPath": "workflow/see-versions-workflow.front-component.mjs",
-    "builtComponentChecksum": "c5681afe1b3ce035a5c9d0aa8c8960a2"
+    "builtComponentChecksum": "a006f3e38ebb0b6c7623065313d14b4a"
   },
   "testWorkflow": {
     "builtComponentPath": "workflow/test-workflow.front-component.mjs",
-    "builtComponentChecksum": "7639d22fcdaa9ab1369c92432eae42b1"
+    "builtComponentChecksum": "9a5d80d8f08ef16b45d935415cdc97cc"
   },
   "tidyUpWorkflow": {
     "builtComponentPath": "workflow/tidy-up-workflow.front-component.mjs",
-    "builtComponentChecksum": "3d5349763589abc41b9e512650abe943"
+    "builtComponentChecksum": "b59929a3dea3cb0f39fa18482aa5226c"
   }
 } as const;

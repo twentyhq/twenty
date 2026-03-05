@@ -152,5 +152,6 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
+    objectMetadataItem: (objectMetadataItem ?? {}) as Record<string, unknown>,
   };
 };
