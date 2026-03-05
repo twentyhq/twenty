@@ -62,7 +62,7 @@ Every checkpoint requires testing these 8 scenarios:
 
 **Independent Test**: Hover over all cell types (normal, sticky column, near header) in all scroll states. The hover indicator should display correctly without any scroll-dependent z-index switching.
 
-- [ ] T003 [US1] [US2] [US3] Simplify `RecordTableCellHoveredPortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal.tsx` — remove all scroll state reads (`isRecordTableScrolledVertically`, `isRecordTableScrolledHorizontally`), remove the `hasRecordGroups` read, remove all conditional z-index computation (~90 lines), and replace with a single static z-index value (use the cell's default z-index + 1, e.g., `4`). Remove imports of `isRecordTableScrolledVerticallyComponentState`, `isRecordTableScrolledHorizontallyComponentState`, `hasRecordGroupsComponentSelector`, and `TABLE_Z_INDEX`
+- [X] T003 [US1] [US2] [US3] Simplify `RecordTableCellHoveredPortal` in `packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal.tsx` — remove all scroll state reads (`isRecordTableScrolledVertically`, `isRecordTableScrolledHorizontally`), remove the `hasRecordGroups` read, remove all conditional z-index computation (~90 lines), and replace with a single static z-index value (use the cell's default z-index + 1, e.g., `4`). Remove imports of `isRecordTableScrolledVerticallyComponentState`, `isRecordTableScrolledHorizontallyComponentState`, `hasRecordGroupsComponentSelector`, and `TABLE_Z_INDEX`
 
 **Checkpoint**: Run the full visual test matrix. Hover should work identically to after Phase 2. If any scenario fails, the static z-index value needs adjustment.
 

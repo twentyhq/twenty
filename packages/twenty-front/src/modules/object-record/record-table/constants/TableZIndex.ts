@@ -1,5 +1,6 @@
 export const TABLE_Z_INDEX = {
   base: 1,
+  hoverPortal: 4,
   cell: {
     withoutGroups: {
       default: 3,
