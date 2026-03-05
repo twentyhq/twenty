@@ -27,14 +27,14 @@ export const PageLayoutTabListEffect = ({
   );
 
   const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const initialActiveTabId = getPageLayoutTabListInitialActiveTabId({
     activeTabId,
     tabs,
     defaultTabToFocusOnMobileAndSidePanelId,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   useEffect(() => {

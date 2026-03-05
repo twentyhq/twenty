@@ -1,6 +1,6 @@
 export {
   isShowPage,
-  isInRightDrawer,
+  isInSidePanel,
   isFavorite,
   isRemote,
   isNoteOrTask,

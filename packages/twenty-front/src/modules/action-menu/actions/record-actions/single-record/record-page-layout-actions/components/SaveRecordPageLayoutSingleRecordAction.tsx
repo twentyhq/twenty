@@ -1,5 +1,5 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
@@ -21,7 +21,7 @@ export const SaveRecordPageLayoutSingleRecordAction = () => {
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const handleClick = async () => {
     const result = await savePageLayout();
@@ -29,7 +29,7 @@ export const SaveRecordPageLayoutSingleRecordAction = () => {
     if (result.status === 'successful') {
       await saveFieldsWidgetGroups();
 
-      closeCommandMenu();
+      closeSidePanelMenu();
       setIsPageLayoutInEditMode(false);
     }
   };

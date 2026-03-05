@@ -3,15 +3,15 @@ import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/Pa
 type GetPageLayoutVerticalListViewerVariantParams = {
   isInPinnedTab: boolean;
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const getPageLayoutVerticalListViewerVariant = ({
   isInPinnedTab,
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
 }: GetPageLayoutVerticalListViewerVariantParams): PageLayoutVerticalListViewerVariant => {
-  if (isInPinnedTab || isMobile || isInRightDrawer) {
+  if (isInPinnedTab || isMobile || isInSidePanel) {
     return 'side-column';
   }
 

@@ -1,11 +1,11 @@
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { useIsInSidePanelOrThrow } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 
 export const useActivityTargetsComponentInstanceId = (
   baseComponentInstanceId: string,
 ) => {
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
+  const { isInSidePanel } = useIsInSidePanelOrThrow();
 
-  return isInRightDrawer
-    ? `${baseComponentInstanceId}-right-drawer`
+  return isInSidePanel
+    ? `${baseComponentInstanceId}-side-panel`
     : baseComponentInstanceId;
 };
