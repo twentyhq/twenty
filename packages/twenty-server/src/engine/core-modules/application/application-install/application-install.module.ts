@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -35,6 +36,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     ]),
     ApplicationModule,
     CacheLockModule,
+    FeatureFlagModule,
     ApplicationVariableEntityModule,
     TokenModule,
     WorkspaceMigrationModule,

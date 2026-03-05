@@ -38,7 +38,10 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DevelopmentGuard } from 'src/engine/guards/development.guard';
-import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import {
+  FeatureFlagGuard,
+  RequireFeatureFlag,
+} from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -50,6 +53,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @UseFilters(ApplicationExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
+  FeatureFlagGuard,
   DevelopmentGuard,
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
@@ -190,6 +194,19 @@ export class ApplicationDevelopmentResolver {
       );
 
     if (existingRegistration) {
+      const isOwner =
+        await this.applicationRegistrationService.isOwnedByWorkspace(
+          existingRegistration.id,
+          workspaceId,
+        );
+
+      if (!isOwner) {
+        throw new ApplicationException(
+          'Cannot sync application: registration is owned by another workspace',
+          ApplicationExceptionCode.FORBIDDEN,
+        );
+      }
+
       return existingRegistration.id;
     }
 
@@ -233,13 +250,13 @@ export class ApplicationDevelopmentResolver {
         },
         workspaceId,
       );
-    }
 
-    if (manifest.application.serverVariables) {
-      await this.applicationRegistrationVariableService.syncVariableSchemas(
-        applicationRegistrationId,
-        manifest.application.serverVariables,
-      );
+      if (manifest.application.serverVariables) {
+        await this.applicationRegistrationVariableService.syncVariableSchemas(
+          applicationRegistrationId,
+          manifest.application.serverVariables,
+        );
+      }
     }
   }
 }

@@ -10,6 +10,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/utils/assert-valid-npm-package-name.util';
 import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
@@ -86,6 +87,8 @@ export class MarketplaceQueryService {
     packageName: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
+    assertValidNpmPackageName(params.packageName);
+
     const existing = await this.appRegistrationRepository.findOne({
       where: { sourcePackage: params.packageName },
     });

@@ -2,8 +2,8 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { execFile } from 'child_process';
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import { tmpdir } from 'os';
+import { join } from 'path';
 import { promisify } from 'util';
 
 import { type Manifest } from 'twenty-shared/application';
@@ -17,6 +17,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/constants/yarn-engine-dirname';
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/utils/assert-valid-npm-package-name.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/utils/tarball-utils';
@@ -96,6 +97,9 @@ export class AppPackageFetcherService implements OnModuleInit {
       }
 
       const sourcePackage = appRegistration.sourcePackage;
+
+      assertValidNpmPackageName(sourcePackage);
+
       const versionSpec = targetVersion ?? 'latest';
 
       await this.writeNpmrc({

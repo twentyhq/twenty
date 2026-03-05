@@ -14,6 +14,7 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
@@ -32,6 +33,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       UserWorkspaceEntity,
     ]),
     SecretEncryptionModule,
+    FeatureFlagModule,
     PermissionsModule,
     ThrottlerModule,
     TokenModule,
