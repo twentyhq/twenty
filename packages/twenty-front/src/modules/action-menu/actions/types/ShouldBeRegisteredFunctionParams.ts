@@ -17,6 +17,7 @@ export type ShouldBeRegisteredFunctionParams = {
   isRemote?: boolean;
   isNoteOrTask?: boolean;
   isSelectAll?: boolean;
+  isNavigationMenuInEditMode?: boolean;
   loadedRecords?: ObjectRecord[];
   selectedRecord?: ObjectRecord;
   numberOfSelectedRecords?: number;

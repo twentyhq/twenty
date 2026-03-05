@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldMetadata,
@@ -81,6 +82,10 @@ export const usePersistField = ({
       fieldDefinition: FieldDefinition<FieldMetadata>;
       valueToPersist: unknown;
     }) => {
+      if (store.get(isNavigationMenuInEditModeState.atom)) {
+        return;
+      }
+
       const fieldIsRelationManyToOne =
         isFieldRelationManyToOne(
           fieldDefinition as FieldDefinition<FieldRelationMetadata>,
