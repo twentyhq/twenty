@@ -37,7 +37,7 @@
     "@blocknote/xl-pdf-exporter": "0.47.0",
     "@calcom/embed-react": "^1.5.3",
     "@cyntler/react-doc-viewer": "^1.17.0",
-    "@dagrejs/dagre": "^1.1.2",
+    "@dagrejs/dagre": "^1.1.8",
     "@floating-ui/react": "^0.24.3",
     "@graphiql/plugin-explorer": "^1.0.2",
     "@graphiql/react": "^0.23.0",

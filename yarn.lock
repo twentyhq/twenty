@@ -4058,19 +4058,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dagrejs/dagre@npm:^1.1.2":
-  version: 1.1.3
-  resolution: "@dagrejs/dagre@npm:1.1.3"
+"@dagrejs/dagre@npm:^1.1.8":
+  version: 1.1.8
+  resolution: "@dagrejs/dagre@npm:1.1.8"
   dependencies:
-    "@dagrejs/graphlib": "npm:2.2.2"
-  checksum: 10c0/c81e142ed55d23bda02968624bd96987eeb545dbc860b0dc22aafd606f8bd8b1b18914e2b986c46e3250a6cfcc2bc16a944bb8df301da9adffd738936679db44
+    "@dagrejs/graphlib": "npm:2.2.4"
+  checksum: 10c0/3f4f99beb1c791c4c35fcab7a6891731a712931f076ae27b380afa4077e81a1f46341cd0ac8f21df29bf7b458e631b780e819846140a9e4f89e36faf907cdc66
   languageName: node
   linkType: hard
 
-"@dagrejs/graphlib@npm:2.2.2":
-  version: 2.2.2
-  resolution: "@dagrejs/graphlib@npm:2.2.2"
-  checksum: 10c0/2e79a4f5c6c402054b7ef42e786459645495934476170999f13867a55a00072636a23914772cce6bc03ce51eef70de589058860b8f034c1d70804fb61e01fcfc
+"@dagrejs/graphlib@npm:2.2.4":
+  version: 2.2.4
+  resolution: "@dagrejs/graphlib@npm:2.2.4"
+  checksum: 10c0/14597ea9294c46b2571aee78bcaad3a24e3e5e0ebcdf198b6eae5b3805f99af727ac54a477dd9152e8b0a576efea0528fb7d4919c74801e9f669c90e5e6f5bd9
   languageName: node
   linkType: hard
 
@@ -57632,7 +57632,7 @@ __metadata:
     "@blocknote/xl-pdf-exporter": "npm:0.47.0"
     "@calcom/embed-react": "npm:^1.5.3"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
-    "@dagrejs/dagre": "npm:^1.1.2"
+    "@dagrejs/dagre": "npm:^1.1.8"
     "@floating-ui/react": "npm:^0.24.3"
     "@graphiql/plugin-explorer": "npm:^1.0.2"
     "@graphiql/react": "npm:^0.23.0"
@@ -57835,7 +57835,6 @@ __metadata:
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.47.0"
     "@clickhouse/client": "npm:^1.11.0"
-    "@dagrejs/dagre": "npm:^1.1.2"
     "@e2b/code-interpreter": "npm:^1.0.4"
     "@envelop/core": "npm:4.0.3"
     "@envelop/on-resolve": "npm:4.1.0"
