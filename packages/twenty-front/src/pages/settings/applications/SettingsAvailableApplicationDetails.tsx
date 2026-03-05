@@ -7,7 +7,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -277,9 +277,9 @@ export const SettingsAvailableApplicationDetails = () => {
       skip: !availableApplicationId,
     });
 
-  const listedApp = useMemo(() => {
-    return marketplaceApps?.find((app) => app.id === availableApplicationId);
-  }, [availableApplicationId, marketplaceApps]);
+  const listedApp = marketplaceApps?.find(
+    (app) => app.id === availableApplicationId,
+  );
 
   const { data: singleAppData } = useFindOneMarketplaceAppQuery({
     variables: { universalIdentifier: availableApplicationId },
@@ -288,31 +288,23 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const singleApp = singleAppData?.findOneMarketplaceApp;
 
-  const application = useMemo(() => {
-    if (isDefined(listedApp)) {
-      return listedApp;
-    }
-
-    if (!isDefined(singleApp)) {
-      return undefined;
-    }
-
-    const totalFieldsCount =
-      (singleApp.objects ?? []).reduce(
-        (count, appObject) => count + appObject.fields.length,
-        0,
-      ) + (singleApp.fields ?? []).length;
-
-    return {
-      ...singleApp,
-      content: {
-        objects: (singleApp.objects ?? []).length,
-        fields: totalFieldsCount,
-        functions: (singleApp.logicFunctions ?? []).length,
-        frontComponents: (singleApp.frontComponents ?? []).length,
-      },
-    };
-  }, [listedApp, singleApp]);
+  const application = isDefined(listedApp)
+    ? listedApp
+    : isDefined(singleApp)
+      ? {
+          ...singleApp,
+          content: {
+            objects: (singleApp.objects ?? []).length,
+            fields:
+              (singleApp.objects ?? []).reduce(
+                (count, appObject) => count + appObject.fields.length,
+                0,
+              ) + (singleApp.fields ?? []).length,
+            functions: (singleApp.logicFunctions ?? []).length,
+            frontComponents: (singleApp.frontComponents ?? []).length,
+          },
+        }
+      : undefined;
 
   const isUnlisted = !isDefined(listedApp) && isDefined(application);
 

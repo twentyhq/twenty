@@ -7,7 +7,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, Status } from 'twenty-ui/display';
@@ -32,22 +32,21 @@ export const SettingsAdminApps = () => {
 
   const { data } = useQuery(FIND_ALL_APPLICATION_REGISTRATIONS);
 
-  const filtered = useMemo(() => {
-    const registrations: ApplicationRegistrationFragmentFragment[] =
-      data?.findAllApplicationRegistrations ?? [];
+  const registrations: ApplicationRegistrationFragmentFragment[] =
+    data?.findAllApplicationRegistrations ?? [];
 
-    if (searchQuery.trim().length === 0) {
-      return registrations;
-    }
-    const query = searchQuery.toLowerCase();
+  const filtered =
+    searchQuery.trim().length === 0
+      ? registrations
+      : registrations.filter((registration) => {
+          const query = searchQuery.toLowerCase();
 
-    return registrations.filter(
-      (registration) =>
-        registration.name.toLowerCase().includes(query) ||
-        (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
-        registration.universalIdentifier.toLowerCase().includes(query),
-    );
-  }, [data?.findAllApplicationRegistrations, searchQuery]);
+          return (
+            registration.name.toLowerCase().includes(query) ||
+            (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
+            registration.universalIdentifier.toLowerCase().includes(query)
+          );
+        });
 
   return (
     <Section>

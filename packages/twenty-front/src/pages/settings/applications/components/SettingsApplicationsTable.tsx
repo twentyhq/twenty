@@ -10,7 +10,7 @@ import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
@@ -41,15 +41,13 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredApplications = useMemo(() => {
-    return applications.filter(
-      (application) =>
-        application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (application.description ?? '')
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()),
-    );
-  }, [applications, searchTerm]);
+  const filteredApplications = applications.filter(
+    (application) =>
+      application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (application.description ?? '')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <Section>

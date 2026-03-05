@@ -3,7 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { IconSparkles } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -49,39 +49,29 @@ export const SettingsApplicationsAvailableTab = () => {
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
 
-  const textFilteredApplications = useMemo(() => {
-    if (!searchTerm) {
-      return marketplaceApps;
-    }
-    const lowerSearch = searchTerm.toLowerCase();
+  const textFilteredApplications = searchTerm
+    ? marketplaceApps.filter((application) => {
+        const lowerSearch = searchTerm.toLowerCase();
 
-    return marketplaceApps.filter(
-      (application) =>
-        application.name.toLowerCase().includes(lowerSearch) ||
-        application.description.toLowerCase().includes(lowerSearch) ||
-        application.author.toLowerCase().includes(lowerSearch),
-    );
-  }, [marketplaceApps, searchTerm]);
+        return (
+          application.name.toLowerCase().includes(lowerSearch) ||
+          application.description.toLowerCase().includes(lowerSearch) ||
+          application.author.toLowerCase().includes(lowerSearch)
+        );
+      })
+    : marketplaceApps;
 
-  const filteredApplications = useMemo(() => {
-    if (!showFeaturedOnly) {
-      return textFilteredApplications;
-    }
+  const filteredApplications = showFeaturedOnly
+    ? textFilteredApplications.filter(
+        (application) => application.isFeatured,
+      )
+    : textFilteredApplications;
 
-    return textFilteredApplications.filter(
-      (application) => application.isFeatured,
-    );
-  }, [textFilteredApplications, showFeaturedOnly]);
-
-  const nonFeaturedCount = useMemo(() => {
-    if (!showFeaturedOnly) {
-      return 0;
-    }
-
-    return textFilteredApplications.filter(
-      (application) => !application.isFeatured,
-    ).length;
-  }, [textFilteredApplications, showFeaturedOnly]);
+  const nonFeaturedCount = showFeaturedOnly
+    ? textFilteredApplications.filter(
+        (application) => !application.isFeatured,
+      ).length
+    : 0;
 
   if (isLoading) {
     return (
