@@ -84,6 +84,7 @@ const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
 
 const StyledScrollWrapperContainer = styled.div`
   height: 100%;
+  overflow: hidden;
 `;
 
 const StyledTableContainer = styled.div`

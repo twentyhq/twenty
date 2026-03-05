@@ -113,6 +113,7 @@ export default defineConfig(({ command, mode }) => {
         wyw({
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
+            '**/node_modules/**',
             '**/generated-metadata/**',
             '**/testing/mock-data/generated/**',
             '**/*.test.{ts,tsx}',

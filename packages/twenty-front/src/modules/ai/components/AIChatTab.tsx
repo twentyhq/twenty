@@ -104,7 +104,7 @@ const StyledScrollWrapperContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
 
   > div {
     gap: ${themeCssVariables.spacing[2]};
