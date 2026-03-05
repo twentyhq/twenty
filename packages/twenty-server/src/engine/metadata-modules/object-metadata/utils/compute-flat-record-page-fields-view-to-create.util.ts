@@ -1,7 +1,7 @@
 import {
-    ViewOpenRecordIn,
-    ViewType,
-    ViewVisibility,
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
