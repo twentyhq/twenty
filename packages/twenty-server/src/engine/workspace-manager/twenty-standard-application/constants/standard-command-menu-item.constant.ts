@@ -4,7 +4,7 @@ import { STANDARD_FRONT_COMPONENTS } from './standard-front-component.constant';
 
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
-    universalIdentifier: '20202020-cm01-4c01-8c01-c0aba11cm001',
+    universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
     label: 'Navigate to next record',
     shortLabel: null,
     icon: 'IconChevronDown',
@@ -15,7 +15,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.navigateToNextRecord.universalIdentifier,
   },
   navigateToPreviousRecord: {
-    universalIdentifier: '20202020-cm02-4c02-8c02-c0aba11cm002',
+    universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
     label: 'Navigate to previous record',
     shortLabel: null,
     icon: 'IconChevronUp',
@@ -26,7 +26,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.navigateToPreviousRecord.universalIdentifier,
   },
   createNewRecord: {
-    universalIdentifier: '20202020-cm03-4c03-8c03-c0aba11cm003',
+    universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
     label: 'Create new record',
     shortLabel: 'New record',
     icon: 'IconPlus',
@@ -37,7 +37,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.createNewRecord.universalIdentifier,
   },
   deleteSingleRecord: {
-    universalIdentifier: '20202020-cm04-4c04-8c04-c0aba11cm004',
+    universalIdentifier: '6652773f-b9a9-4fa3-a52c-e2f2e259e430',
     label: 'Delete',
     shortLabel: 'Delete',
     icon: 'IconTrash',
@@ -48,7 +48,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.deleteSingleRecord.universalIdentifier,
   },
   deleteMultipleRecords: {
-    universalIdentifier: '20202020-cm05-4c05-8c05-c0aba11cm005',
+    universalIdentifier: 'cde86f1f-2c13-42b1-812b-f2b2b468cb83',
     label: 'Delete records',
     shortLabel: 'Delete',
     icon: 'IconTrash',
@@ -59,7 +59,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.deleteMultipleRecords.universalIdentifier,
   },
   restoreSingleRecord: {
-    universalIdentifier: '20202020-cm06-4c06-8c06-c0aba11cm006',
+    universalIdentifier: '8b3a1cae-3e4d-43c1-a71f-48592b2e47ff',
     label: 'Restore record',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
@@ -70,7 +70,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.restoreSingleRecord.universalIdentifier,
   },
   restoreMultipleRecords: {
-    universalIdentifier: '20202020-cm07-4c07-8c07-c0aba11cm007',
+    universalIdentifier: '8b740c9d-d99a-45a8-812f-809caaf420ac',
     label: 'Restore records',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
@@ -81,7 +81,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.restoreMultipleRecords.universalIdentifier,
   },
   destroySingleRecord: {
-    universalIdentifier: '20202020-cm08-4c08-8c08-c0aba11cm008',
+    universalIdentifier: '44a78417-c394-4bc8-961f-98b503030ddb',
     label: 'Permanently destroy record',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
@@ -92,7 +92,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.destroySingleRecord.universalIdentifier,
   },
   destroyMultipleRecords: {
-    universalIdentifier: '20202020-cm09-4c09-8c09-c0aba11cm009',
+    universalIdentifier: 'c630b3fb-7920-40d1-9906-77d0aa797608',
     label: 'Permanently destroy records',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
@@ -103,7 +103,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.destroyMultipleRecords.universalIdentifier,
   },
   addToFavorites: {
-    universalIdentifier: '20202020-cm0a-4c0a-8c0a-c0aba11cm00a',
+    universalIdentifier: '38bf80c3-bd55-4753-80ba-38aa66429a03',
     label: 'Add to favorites',
     shortLabel: 'Add to favorites',
     icon: 'IconHeart',
@@ -114,7 +114,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.addToFavorites.universalIdentifier,
   },
   removeFromFavorites: {
-    universalIdentifier: '20202020-cm0b-4c0b-8c0b-c0aba11cm00b',
+    universalIdentifier: '3ea42507-44fa-4895-a36d-cbfef7355a50',
     label: 'Remove from favorites',
     shortLabel: 'Remove from favorites',
     icon: 'IconHeartOff',
@@ -125,7 +125,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.removeFromFavorites.universalIdentifier,
   },
   exportNoteToPdf: {
-    universalIdentifier: '20202020-cm0c-4c0c-8c0c-c0aba11cm00c',
+    universalIdentifier: '86c8f3aa-9276-4c16-8cff-e295e34fbaf0',
     label: 'Export to PDF',
     shortLabel: 'Export',
     icon: 'IconFileExport',
@@ -136,7 +136,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.exportNoteToPdf.universalIdentifier,
   },
   exportFromRecordIndex: {
-    universalIdentifier: '20202020-cm0d-4c0d-8c0d-c0aba11cm00d',
+    universalIdentifier: 'a934ba8a-ac8f-487d-9cd9-06dfdaec1f49',
     label: 'Export',
     shortLabel: 'Export',
     icon: 'IconFileExport',
@@ -147,7 +147,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.exportFromRecordIndex.universalIdentifier,
   },
   exportFromRecordShow: {
-    universalIdentifier: '20202020-cm0e-4c0e-8c0e-c0aba11cm00e',
+    universalIdentifier: 'ba339455-f3c2-4ed1-bf77-3e316d7d6a66',
     label: 'Export',
     shortLabel: 'Export',
     icon: 'IconFileExport',
@@ -158,7 +158,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.exportFromRecordShow.universalIdentifier,
   },
   updateMultipleRecords: {
-    universalIdentifier: '20202020-cm0f-4c0f-8c0f-c0aba11cm00f',
+    universalIdentifier: '2e080651-f098-4a78-bea9-7a70002dc57c',
     label: 'Update records',
     shortLabel: 'Update',
     icon: 'IconEdit',
@@ -169,7 +169,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.updateMultipleRecords.universalIdentifier,
   },
   mergeMultipleRecords: {
-    universalIdentifier: '20202020-cm10-4c10-8c10-c0aba11cm010',
+    universalIdentifier: '6c14eb04-8e7e-4d47-93c0-8ec4834e2e60',
     label: 'Merge records',
     shortLabel: 'Merge',
     icon: 'IconArrowMerge',
@@ -180,7 +180,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.mergeMultipleRecords.universalIdentifier,
   },
   exportMultipleRecords: {
-    universalIdentifier: '20202020-cm11-4c11-8c11-c0aba11cm011',
+    universalIdentifier: 'f71f68e5-7b6e-4c03-8161-c48434d7777c',
     label: 'Export records',
     shortLabel: 'Export',
     icon: 'IconFileExport',
@@ -191,7 +191,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.exportMultipleRecords.universalIdentifier,
   },
   importRecords: {
-    universalIdentifier: '20202020-cm12-4c12-8c12-c0aba11cm012',
+    universalIdentifier: 'a2dc9de7-4798-422e-bb55-bfad7b9bdbe8',
     label: 'Import records',
     shortLabel: 'Import',
     icon: 'IconFileImport',
@@ -202,7 +202,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.importRecords.universalIdentifier,
   },
   exportView: {
-    universalIdentifier: '20202020-cm13-4c13-8c13-c0aba11cm013',
+    universalIdentifier: '80680f2a-c426-48b3-a839-c63a6183dc4b',
     label: 'Export view',
     shortLabel: 'Export',
     icon: 'IconFileExport',
@@ -213,7 +213,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.exportView.universalIdentifier,
   },
   seeDeletedRecords: {
-    universalIdentifier: '20202020-cm14-4c14-8c14-c0aba11cm014',
+    universalIdentifier: 'd63c21c3-9785-4750-be87-5f36269b8e0d',
     label: 'See deleted records',
     shortLabel: 'Deleted records',
     icon: 'IconRotate2',
@@ -224,7 +224,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeDeletedRecords.universalIdentifier,
   },
   createNewView: {
-    universalIdentifier: '20202020-cm15-4c15-8c15-c0aba11cm015',
+    universalIdentifier: '6ec7c339-e167-431d-bec6-d1c737df677c',
     label: 'Create View',
     shortLabel: 'Create View',
     icon: 'IconLayout',
@@ -235,7 +235,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.createNewView.universalIdentifier,
   },
   hideDeletedRecords: {
-    universalIdentifier: '20202020-cm16-4c16-8c16-c0aba11cm016',
+    universalIdentifier: '1420db7f-0fba-49e2-b23e-4b7caa0fafa0',
     label: 'Hide deleted records',
     shortLabel: 'Hide deleted',
     icon: 'IconEyeOff',
@@ -246,7 +246,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.hideDeletedRecords.universalIdentifier,
   },
   goToPeople: {
-    universalIdentifier: '20202020-cm17-4c17-8c17-c0aba11cm017',
+    universalIdentifier: 'dfe5fef8-d42c-40f0-941f-8e3b5eb01daa',
     label: 'Go to People',
     shortLabel: 'People',
     icon: 'IconUser',
@@ -257,7 +257,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToPeople.universalIdentifier,
   },
   goToCompanies: {
-    universalIdentifier: '20202020-cm18-4c18-8c18-c0aba11cm018',
+    universalIdentifier: '196e4eec-bfdd-48a6-bcbb-6707ef11951a',
     label: 'Go to Companies',
     shortLabel: 'Companies',
     icon: 'IconBuildingSkyscraper',
@@ -268,7 +268,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToCompanies.universalIdentifier,
   },
   goToDashboards: {
-    universalIdentifier: '20202020-cm19-4c19-8c19-c0aba11cm019',
+    universalIdentifier: '11dc07d1-21b2-4f86-af8c-6a664c02f00c',
     label: 'Go to Dashboards',
     shortLabel: 'Dashboards',
     icon: 'IconLayoutDashboard',
@@ -279,7 +279,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToDashboards.universalIdentifier,
   },
   goToOpportunities: {
-    universalIdentifier: '20202020-cm1a-4c1a-8c1a-c0aba11cm01a',
+    universalIdentifier: 'f04f5e00-a208-422f-acf2-ff189769510d',
     label: 'Go to Opportunities',
     shortLabel: 'Opportunities',
     icon: 'IconTargetArrow',
@@ -290,7 +290,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToOpportunities.universalIdentifier,
   },
   goToSettings: {
-    universalIdentifier: '20202020-cm1b-4c1b-8c1b-c0aba11cm01b',
+    universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
     label: 'Go to Settings',
     shortLabel: 'Settings',
     icon: 'IconSettings',
@@ -301,7 +301,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToSettings.universalIdentifier,
   },
   goToTasks: {
-    universalIdentifier: '20202020-cm1c-4c1c-8c1c-c0aba11cm01c',
+    universalIdentifier: 'e8e3bd0b-5ce9-4577-bb61-588c0b1ad063',
     label: 'Go to Tasks',
     shortLabel: 'Tasks',
     icon: 'IconCheckbox',
@@ -312,7 +312,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToTasks.universalIdentifier,
   },
   goToNotes: {
-    universalIdentifier: '20202020-cm1d-4c1d-8c1d-c0aba11cm01d',
+    universalIdentifier: '08e0f0cc-ac2d-46cd-9bca-39a409b9addf',
     label: 'Go to Notes',
     shortLabel: 'Notes',
     icon: 'IconCheckbox',
@@ -323,7 +323,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToNotes.universalIdentifier,
   },
   editRecordPageLayout: {
-    universalIdentifier: '20202020-cm1e-4c1e-8c1e-c0aba11cm01e',
+    universalIdentifier: 'd9794c67-1799-424f-8871-5ea771dd4a6d',
     label: 'Edit Page Layout',
     shortLabel: 'Edit Layout',
     icon: 'IconPencil',
@@ -334,7 +334,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.editRecordPageLayout.universalIdentifier,
   },
   saveRecordPageLayout: {
-    universalIdentifier: '20202020-cm1f-4c1f-8c1f-c0aba11cm01f',
+    universalIdentifier: 'a3363589-e2a6-4451-a53c-b8c2710785e2',
     label: 'Save Page Layout',
     shortLabel: 'Save',
     icon: 'IconDeviceFloppy',
@@ -345,7 +345,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.saveRecordPageLayout.universalIdentifier,
   },
   cancelRecordPageLayout: {
-    universalIdentifier: '20202020-cm20-4c20-8c20-c0aba11cm020',
+    universalIdentifier: '0b9b4e93-2b4e-4ab0-908e-83ed1d674df7',
     label: 'Cancel Edition',
     shortLabel: 'Cancel',
     icon: 'IconCancel',
@@ -356,7 +356,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.cancelRecordPageLayout.universalIdentifier,
   },
   editDashboardLayout: {
-    universalIdentifier: '20202020-cm21-4c21-8c21-c0aba11cm021',
+    universalIdentifier: 'b9b53bbc-3129-4eb9-8344-c3f9628ffa7d',
     label: 'Edit Dashboard',
     shortLabel: 'Edit',
     icon: 'IconPencil',
@@ -367,7 +367,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.editDashboardLayout.universalIdentifier,
   },
   saveDashboardLayout: {
-    universalIdentifier: '20202020-cm22-4c22-8c22-c0aba11cm022',
+    universalIdentifier: '18b23908-f816-42ab-bc0a-eb5fae29c695',
     label: 'Save Dashboard',
     shortLabel: 'Save',
     icon: 'IconDeviceFloppy',
@@ -378,7 +378,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.saveDashboardLayout.universalIdentifier,
   },
   cancelDashboardLayout: {
-    universalIdentifier: '20202020-cm23-4c23-8c23-c0aba11cm023',
+    universalIdentifier: '030ecd01-0aaf-4e6d-8400-105996548887',
     label: 'Cancel Edition',
     shortLabel: 'Cancel',
     icon: 'IconCancel',
@@ -389,7 +389,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.cancelDashboardLayout.universalIdentifier,
   },
   duplicateDashboard: {
-    universalIdentifier: '20202020-cm24-4c24-8c24-c0aba11cm024',
+    universalIdentifier: '2ee07307-60ce-41ef-bfee-7c718f67557e',
     label: 'Duplicate Dashboard',
     shortLabel: 'Duplicate',
     icon: 'IconCopyPlus',
@@ -400,7 +400,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.duplicateDashboard.universalIdentifier,
   },
   goToWorkflows: {
-    universalIdentifier: '20202020-cm29-4c29-8c29-c0aba11cm029',
+    universalIdentifier: '4fa778f9-7931-4d18-b895-929e1ef9c31f',
     label: 'Go to Workflows',
     shortLabel: 'Workflows',
     icon: 'IconSettingsAutomation',
@@ -411,7 +411,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToWorkflows.universalIdentifier,
   },
   activateWorkflow: {
-    universalIdentifier: '20202020-cm2a-4c2a-8c2a-c0aba11cm02a',
+    universalIdentifier: '44f19c85-0fd0-482f-a14e-da513c60b1b3',
     label: 'Activate Workflow',
     shortLabel: 'Activate',
     icon: 'IconPower',
@@ -422,7 +422,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.activateWorkflow.universalIdentifier,
   },
   deactivateWorkflow: {
-    universalIdentifier: '20202020-cm2b-4c2b-8c2b-c0aba11cm02b',
+    universalIdentifier: '57f21a06-a17a-47b1-a123-90d90dbdf0b7',
     label: 'Deactivate Workflow',
     shortLabel: 'Deactivate',
     icon: 'IconPlayerPause',
@@ -433,7 +433,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.deactivateWorkflow.universalIdentifier,
   },
   discardDraftWorkflow: {
-    universalIdentifier: '20202020-cm2c-4c2c-8c2c-c0aba11cm02c',
+    universalIdentifier: '4c227f2e-03bb-4a66-9b13-49f263264f4a',
     label: 'Discard Draft',
     shortLabel: 'Discard Draft',
     icon: 'IconNoteOff',
@@ -444,7 +444,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.discardDraftWorkflow.universalIdentifier,
   },
   testWorkflow: {
-    universalIdentifier: '20202020-cm2d-4c2d-8c2d-c0aba11cm02d',
+    universalIdentifier: 'f85d552a-87a3-4667-99f7-71b47917539c',
     label: 'Test Workflow',
     shortLabel: 'Test',
     icon: 'IconPlayerPlay',
@@ -455,7 +455,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.testWorkflow.universalIdentifier,
   },
   seeActiveVersionWorkflow: {
-    universalIdentifier: '20202020-cm2e-4c2e-8c2e-c0aba11cm02e',
+    universalIdentifier: '31790508-75ff-4e4c-a768-83bd1b0718e0',
     label: 'See active version',
     shortLabel: 'See active version',
     icon: 'IconVersions',
@@ -466,7 +466,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeActiveVersionWorkflow.universalIdentifier,
   },
   seeRunsWorkflow: {
-    universalIdentifier: '20202020-cm2f-4c2f-8c2f-c0aba11cm02f',
+    universalIdentifier: 'e57efc2d-00a2-493a-b76c-f2dabd23a5eb',
     label: 'See runs',
     shortLabel: 'See runs',
     icon: 'IconHistoryToggle',
@@ -477,7 +477,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeRunsWorkflow.universalIdentifier,
   },
   seeVersionsWorkflow: {
-    universalIdentifier: '20202020-cm30-4c30-8c30-c0aba11cm030',
+    universalIdentifier: '92781d24-b875-4282-8cdb-d127f04a5c7d',
     label: 'See versions history',
     shortLabel: 'See versions',
     icon: 'IconVersions',
@@ -488,7 +488,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeVersionsWorkflow.universalIdentifier,
   },
   addNodeWorkflow: {
-    universalIdentifier: '20202020-cm31-4c31-8c31-c0aba11cm031',
+    universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
     label: 'Add a node',
     shortLabel: 'Add a node',
     icon: 'IconPlus',
@@ -499,7 +499,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.addNodeWorkflow.universalIdentifier,
   },
   tidyUpWorkflow: {
-    universalIdentifier: '20202020-cm32-4c32-8c32-c0aba11cm032',
+    universalIdentifier: '1f3a3cab-161a-4775-af47-11be4d0bf411',
     label: 'Tidy up workflow',
     shortLabel: 'Tidy up',
     icon: 'IconReorder',
@@ -510,7 +510,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.tidyUpWorkflow.universalIdentifier,
   },
   duplicateWorkflow: {
-    universalIdentifier: '20202020-cm33-4c33-8c33-c0aba11cm033',
+    universalIdentifier: '91094438-b4c2-46ad-a23b-8af4b23ba514',
     label: 'Duplicate Workflow',
     shortLabel: 'Duplicate',
     icon: 'IconCopy',
@@ -521,7 +521,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.duplicateWorkflow.universalIdentifier,
   },
   goToRuns: {
-    universalIdentifier: '20202020-cm34-4c34-8c34-c0aba11cm034',
+    universalIdentifier: '1ba959da-ff49-4c1f-a517-2b78ee200508',
     label: 'Go to runs',
     shortLabel: 'See runs',
     icon: 'IconHistoryToggle',
@@ -532,7 +532,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.goToRuns.universalIdentifier,
   },
   seeVersionWorkflowRun: {
-    universalIdentifier: '20202020-cm35-4c35-8c35-c0aba11cm035',
+    universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
     label: 'See version',
     shortLabel: 'See version',
     icon: 'IconVersions',
@@ -543,7 +543,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeVersionWorkflowRun.universalIdentifier,
   },
   seeWorkflowWorkflowRun: {
-    universalIdentifier: '20202020-cm36-4c36-8c36-c0aba11cm036',
+    universalIdentifier: '9d9cc62d-3543-45c3-93f3-23d2d8979f2b',
     label: 'See workflow',
     shortLabel: 'See workflow',
     icon: 'IconSettingsAutomation',
@@ -554,7 +554,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeWorkflowWorkflowRun.universalIdentifier,
   },
   stopWorkflowRun: {
-    universalIdentifier: '20202020-cm37-4c37-8c37-c0aba11cm037',
+    universalIdentifier: '4c186606-9515-4561-a1eb-9a072b4f5e58',
     label: 'Stop',
     shortLabel: 'Stop',
     icon: 'IconPlayerStop',
@@ -565,7 +565,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.stopWorkflowRun.universalIdentifier,
   },
   seeRunsWorkflowVersion: {
-    universalIdentifier: '20202020-cm38-4c38-8c38-c0aba11cm038',
+    universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
     label: 'See runs',
     shortLabel: 'See runs',
     icon: 'IconHistoryToggle',
@@ -576,7 +576,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeRunsWorkflowVersion.universalIdentifier,
   },
   seeWorkflowWorkflowVersion: {
-    universalIdentifier: '20202020-cm39-4c39-8c39-c0aba11cm039',
+    universalIdentifier: 'b43052db-023e-4083-9b63-2c2dfbfd1320',
     label: 'See workflow',
     shortLabel: 'See workflow',
     icon: 'IconSettingsAutomation',
@@ -587,7 +587,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeWorkflowWorkflowVersion.universalIdentifier,
   },
   useAsDraftWorkflowVersion: {
-    universalIdentifier: '20202020-cm3a-4c3a-8c3a-c0aba11cm03a',
+    universalIdentifier: '483c0c1d-ea4d-4a4d-8a59-2dcf9f8e38f6',
     label: 'Use as draft',
     shortLabel: 'Use as draft',
     icon: 'IconPencil',
@@ -598,7 +598,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.useAsDraftWorkflowVersion.universalIdentifier,
   },
   seeVersionsWorkflowVersion: {
-    universalIdentifier: '20202020-cm3b-4c3b-8c3b-c0aba11cm03b',
+    universalIdentifier: '1d4abeb7-2750-4af7-9a92-fbadd2a9e4ba',
     label: 'See versions history',
     shortLabel: 'See versions',
     icon: 'IconVersions',
@@ -609,7 +609,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.seeVersionsWorkflowVersion.universalIdentifier,
   },
   searchRecords: {
-    universalIdentifier: '20202020-cm25-4c25-8c25-c0aba11cm025',
+    universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
     label: 'Search records',
     shortLabel: 'Search',
     icon: 'IconSearch',
@@ -620,7 +620,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.searchRecords.universalIdentifier,
   },
   searchRecordsFallback: {
-    universalIdentifier: '20202020-cm26-4c26-8c26-c0aba11cm026',
+    universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
     label: 'Search records',
     shortLabel: 'Search',
     icon: 'IconSearch',
@@ -631,7 +631,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.searchRecordsFallback.universalIdentifier,
   },
   askAi: {
-    universalIdentifier: '20202020-cm27-4c27-8c27-c0aba11cm027',
+    universalIdentifier: 'ce5fb54d-2b19-4dd1-b7b4-9532a1761a41',
     label: 'Ask AI',
     shortLabel: 'Ask AI',
     icon: 'IconSparkles',
@@ -642,7 +642,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_FRONT_COMPONENTS.askAi.universalIdentifier,
   },
   viewPreviousAiChats: {
-    universalIdentifier: '20202020-cm28-4c28-8c28-c0aba11cm028',
+    universalIdentifier: '3084c3c9-cc23-4dad-9e00-92025f5cba7a',
     label: 'View Previous AI Chats',
     shortLabel: 'Previous AI Chats',
     icon: 'IconHistory',
