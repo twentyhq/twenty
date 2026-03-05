@@ -26,6 +26,7 @@ import {
   UpdateWorkspaceMemberEmailJob,
   UpdateWorkspaceMemberEmailJobData,
 } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserExceptionCode } from 'src/engine/core-modules/user/user.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -58,7 +59,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     super(userRepository);
   }
 
-  async loadWorkspaceMember(user: UserEntity, workspace: WorkspaceEntity) {
+  async loadWorkspaceMember(user: AuthContextUser, workspace: WorkspaceEntity) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return null;
     }
@@ -365,7 +366,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     newEmail,
     verifyEmailRedirectPath,
   }: {
-    user: UserEntity;
+    user: AuthContextUser;
     workspace: WorkspaceEntity;
     newEmail: string;
     verifyEmailRedirectPath?: string;
