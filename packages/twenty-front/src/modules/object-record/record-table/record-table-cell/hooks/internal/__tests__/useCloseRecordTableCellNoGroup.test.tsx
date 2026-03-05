@@ -33,10 +33,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecordTableComponentInstance recordTableId={recordTableId}>
-        <RecordComponentInstanceContextsWrapper
-          componentInstanceId={recordTableId}
-        >
+      <RecordComponentInstanceContextsWrapper
+        componentInstanceId={recordTableId}
+      >
+        <RecordTableComponentInstance recordTableId={recordTableId}>
           <RecordTableContextProvider
             recordTableId={recordTableId}
             viewBarId="viewBarId"
@@ -64,8 +64,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
               </RecordTableRowContextProvider>
             </FieldContext.Provider>
           </RecordTableContextProvider>
-        </RecordComponentInstanceContextsWrapper>
-      </RecordTableComponentInstance>
+        </RecordTableComponentInstance>
+      </RecordComponentInstanceContextsWrapper>
     </JotaiProvider>
   );
 };

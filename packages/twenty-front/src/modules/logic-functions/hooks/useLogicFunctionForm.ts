@@ -1,4 +1,3 @@
-import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import {
   type LogicFunctionFormValues,
   useLogicFunctionUpdateFormState,
@@ -10,22 +9,15 @@ import {
 } from 'twenty-shared/logic-function';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const useLogicFunctionEditor = ({
+export const useLogicFunctionForm = ({
   logicFunctionId,
-  executeCallback,
 }: {
   logicFunctionId: string;
-  executeCallback?: (result: object) => void;
 }) => {
   const { updateLogicFunction } = usePersistLogicFunction();
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
-
-  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
-    logicFunctionId,
-    callback: executeCallback,
-  });
 
   const handleSave = useDebouncedCallback(async () => {
     await updateLogicFunction({
@@ -74,7 +66,5 @@ export const useLogicFunctionEditor = ({
     loading,
     handleSave,
     onChange,
-    executeLogicFunction,
-    isExecuting,
   };
 };
