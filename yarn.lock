@@ -24212,7 +24212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.kebabcase@npm:^4.1.7, @types/lodash.kebabcase@npm:^4.1.9":
+"@types/lodash.kebabcase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.kebabcase@npm:4.1.9"
   dependencies:
@@ -37118,19 +37118,6 @@ __metadata:
     merge2: "npm:^1.3.0"
     micromatch: "npm:^4.0.4"
   checksum: 10c0/42baad7b9cd40b63e42039132bde27ca2cb3a4950d0a0f9abe4639ea1aa9d3e3b40f98b1fe31cbc0cc17b664c9ea7447d911a152fa34ec5b72977b125a6fc845
-  languageName: node
-  linkType: hard
-
-"fast-glob@npm:^3.3.0":
-  version: 3.3.3
-  resolution: "fast-glob@npm:3.3.3"
-  dependencies:
-    "@nodelib/fs.stat": "npm:^2.0.2"
-    "@nodelib/fs.walk": "npm:^1.2.3"
-    glob-parent: "npm:^5.1.2"
-    merge2: "npm:^1.3.0"
-    micromatch: "npm:^4.0.8"
-  checksum: 10c0/f6aaa141d0d3384cf73cbcdfc52f475ed293f6d5b65bfc5def368b09163a9f7e5ec2b3014d80f733c405f58e470ee0cc451c2937685045cddcdeaa24199c43fe
   languageName: node
   linkType: hard
 
@@ -57509,37 +57496,28 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@storybook/addon-vitest": "npm:^10.2.13"
     "@storybook/react-vite": "npm:^10.2.13"
-    "@types/archiver": "npm:^6.0.0"
-    "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
-    "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.kebabcase": "npm:^4.1.9"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:18.2.66"
     "@types/react-dom": "npm:18.2.22"
     "@vitest/browser-playwright": "npm:^4.0.18"
-    archiver: "npm:^7.0.1"
     axios: "npm:^1.13.5"
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.4.0"
     esbuild: "npm:^0.25.0"
-    fast-glob: "npm:^3.3.0"
-    form-data: "npm:^4.0.5"
-    fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
     ink: "npm:^5.1.1"
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
-    lodash.camelcase: "npm:^4.3.0"
-    lodash.kebabcase: "npm:^4.1.1"
     playwright: "npm:^1.56.1"
     preact: "npm:^10.28.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:^10.2.13"
+    tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
     twenty-shared: "workspace:*"
@@ -57630,6 +57608,7 @@ __metadata:
     "@sentry/node": "npm:^10.27.0"
     "@sentry/profiling-node": "npm:^10.27.0"
     "@sniptt/guards": "npm:0.2.0"
+    "@types/archiver": "npm:^6.0.0"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/bytes": "npm:^3.1.1"
     "@types/dompurify": "npm:^3.0.5"

@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -36,8 +35,8 @@ export const FieldsWidgetGroupContainer = ({
   children,
   title,
 }: FieldsWidgetGroupContainerProps) => {
-  const [isExpanded, setIsExpanded] = useState(true);
   const { theme } = useContext(ThemeContext);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggleGroup = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);

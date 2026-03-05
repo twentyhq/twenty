@@ -5,8 +5,7 @@ import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkel
 
 import { type IconComponent, IconPlus } from 'twenty-ui/display';
 import { Card, CardFooter } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooter = styled(CardFooter)`

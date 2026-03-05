@@ -7,9 +7,9 @@ import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -33,8 +33,8 @@ export const useFrontComponentExecutionContext = ({
     frontComponentId,
   });
   const { openConfirmationModal } = useActionMenuConfirmationModal();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {
@@ -43,7 +43,7 @@ export const useFrontComponentExecutionContext = ({
     enqueueInfoSnackBar,
     enqueueWarningSnackBar,
   } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -61,14 +61,14 @@ export const useFrontComponentExecutionContext = ({
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async ({ page, pageTitle, pageIcon, shouldResetSearchState }) => {
-      navigateCommandMenu({
+      navigateSidePanel({
         page,
         pageTitle,
         pageIcon: getIcon(pageIcon),
       });
 
       if (shouldResetSearchState === true) {
-        setCommandMenuSearch('');
+        setSidePanelSearch('');
       }
     };
 
@@ -130,7 +130,7 @@ export const useFrontComponentExecutionContext = ({
 
   const closeSidePanel: FrontComponentHostCommunicationApi['closeSidePanel'] =
     async () => {
-      closeCommandMenu();
+      closeSidePanelMenu();
     };
 
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =

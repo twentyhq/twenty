@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
   z-index: ${({ zIndex }) => zIndex};

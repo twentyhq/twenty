@@ -10,9 +10,9 @@ import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -40,7 +40,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
+import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -107,7 +107,7 @@ export const PageChangeEffect = () => {
     isAppEffectRedirectEnabledState,
   );
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
     useReturnToPath();
@@ -116,21 +116,21 @@ export const PageChangeEffect = () => {
     isMatchingLocation(location, appPath),
   );
 
-  const closeCommandMenuUnlessNotRelevant = useCallback(() => {
-    const currentPage = store.get(commandMenuPageState.atom);
+  const closeSidePanelUnlessNotRelevant = useCallback(() => {
+    const currentPage = store.get(sidePanelPageState.atom);
 
-    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+    if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }
 
-    const commandMenuIsAiChat = currentPage === CommandMenuPages.AskAI;
+    const sidePanelIsAiChat = currentPage === SidePanelPages.AskAI;
 
-    if (commandMenuIsAiChat) {
+    if (sidePanelIsAiChat) {
       return;
     }
 
-    closeCommandMenu();
-  }, [closeCommandMenu, store]);
+    closeSidePanelMenu();
+  }, [closeSidePanelMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
@@ -139,8 +139,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenuUnlessNotRelevant();
-  }, [location.pathname, closeCommandMenuUnlessNotRelevant]);
+    closeSidePanelUnlessNotRelevant();
+  }, [location.pathname, closeSidePanelUnlessNotRelevant]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -228,9 +228,9 @@ export const PageChangeEffect = () => {
           });
         }
 
-        const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
 
-        if (isCommandMenuOpen) {
+        if (isSidePanelOpen) {
           return;
         }
 

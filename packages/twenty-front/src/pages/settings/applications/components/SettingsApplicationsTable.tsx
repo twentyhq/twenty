@@ -14,8 +14,7 @@ import { type ApplicationWithoutRelation } from '~/pages/settings/applications/t
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AppRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled(Table)`
@@ -36,9 +35,8 @@ export const SettingsApplicationsTable = ({
 }: {
   applications: ApplicationWithoutRelation[];
 }) => {
-  const { t } = useLingui();
-
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
   const [searchTerm, setSearchTerm] = useState('');
 

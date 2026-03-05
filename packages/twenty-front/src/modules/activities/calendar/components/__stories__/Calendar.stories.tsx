@@ -28,7 +28,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
             targetObjectNameSingular: CoreObjectNameSingular.Company,
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInRightDrawer: false,
+          isInSidePanel: false,
         }}
       >
         <Story />

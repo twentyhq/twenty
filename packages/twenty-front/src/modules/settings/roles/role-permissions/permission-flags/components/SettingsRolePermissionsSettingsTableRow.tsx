@@ -4,11 +4,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`

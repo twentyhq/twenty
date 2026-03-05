@@ -2,11 +2,10 @@ import { type AttachmentFileCategory } from '@/activities/files/types/Attachment
 import { useFileIconColors } from '@/file/hooks/useFileIconColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type FileCategory } from 'twenty-shared/types';
 import { AvatarOrIcon } from 'twenty-ui/components';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FileIconSize = 'small' | 'medium';
 

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 import { Button } from '@ui/input/button/components/Button/Button';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 export type InfoAccent = 'blue' | 'danger';
@@ -69,10 +69,12 @@ export const Info = ({
   onClick,
   to,
 }: InfoProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <IconInfoCircle size={ICON_SIZES.md} />
+        <IconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && to && (

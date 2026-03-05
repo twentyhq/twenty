@@ -9,7 +9,7 @@ import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/compone
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -51,9 +51,9 @@ type FieldsWidgetProps = {
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
+  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -75,7 +75,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   if (!hasFieldsToDisplay) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
             // eslint-disable-next-line react/jsx-props-no-spreading
@@ -92,7 +92,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             </AnimatedPlaceholderEmptyTextContainer>
           </AnimatedPlaceholderEmptyContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 

@@ -4,11 +4,10 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledErrorContainer = styled.div`
   align-items: center;

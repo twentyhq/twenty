@@ -6,8 +6,7 @@ import { useContext } from 'react';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { AvatarOrIcon } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowAttachmentChipProps = {
   file: WorkflowAttachment;
@@ -65,8 +64,8 @@ export const WorkflowAttachmentChip = ({
   onRemove,
   readonly = false,
 }: WorkflowAttachmentChipProps) => {
-  const iconColors = useFileCategoryColors();
   const { theme } = useContext(ThemeContext);
+  const iconColors = useFileCategoryColors();
 
   return (
     <StyledChip data-chip deletable={!readonly}>

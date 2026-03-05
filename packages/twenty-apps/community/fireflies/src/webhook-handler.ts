@@ -330,7 +330,6 @@ export class WebhookHandler {
     }
   }
 
-
   private async createFailedMeetingRecord(params: unknown, error: string): Promise<void> {
     try {
       const twentyApiKey = process.env.TWENTY_API_KEY || '';

@@ -43,7 +43,6 @@ export const AdvancedFilterFieldSelectMenu = ({
 
   const [objectFilterDropdownSearchInput] = useAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
-    advancedFilterFieldSelectDropdownId,
   );
 
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
