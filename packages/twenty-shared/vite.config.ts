@@ -1,8 +1,8 @@
-// @ts-ignore
+// @ts-expect-error
 import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-// @ts-ignore
+// @ts-expect-error
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
