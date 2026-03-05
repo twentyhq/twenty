@@ -48,7 +48,10 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { Button } from 'twenty-ui/input';
 import { Card, Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  useFindManyApplicationsQuery,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -223,6 +226,9 @@ export const SettingsApplicationRegistrationDetails = () => {
   const registration = data?.findOneApplicationRegistration;
   const variables: ServerVariable[] =
     variablesData?.findApplicationRegistrationVariables ?? [];
+
+  const isNpmSource =
+    registration?.sourceType === ApplicationRegistrationSourceType.NPM;
 
   if (loading || !registration) {
     return null;
@@ -587,9 +593,22 @@ export const SettingsApplicationRegistrationDetails = () => {
             <Card rounded>
               <SettingsOptionCardContentToggle
                 title={t`Listed on marketplace`}
-                description={t`When enabled, this app appears in the marketplace browse page`}
+                description={
+                  isNpmSource
+                    ? t`Managed by the marketplace catalog sync for npm packages`
+                    : t`When enabled, this app appears in the marketplace browse page`
+                }
                 checked={registration.isListed}
                 onChange={handleToggleListed}
+                disabled={isNpmSource}
+                divider
+              />
+              <SettingsOptionCardContentToggle
+                title={t`Featured`}
+                description={t`Featured apps are curated. Open a PR to request featured status.`}
+                checked={registration.isFeatured}
+                onChange={() => {}}
+                disabled
               />
             </Card>
             <StyledMarketplaceActions>

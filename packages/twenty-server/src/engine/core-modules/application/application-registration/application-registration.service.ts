@@ -300,8 +300,6 @@ export class ApplicationRegistrationService {
         websiteUrl: params.websiteUrl,
         termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
-        isListed: params.isListed,
-        isFeatured: params.isFeatured,
         marketplaceDisplayData: params.marketplaceDisplayData,
       });
 
