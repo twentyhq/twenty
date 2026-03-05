@@ -17,6 +17,7 @@ jest.mock('@clickhouse/client', () => ({
     close: jest.fn().mockResolvedValue({}),
     exec: jest.fn().mockResolvedValue({}),
   }),
+  ClickHouseLogLevel: { OFF: 'OFF' },
 }));
 
 describe('ClickHouseService', () => {

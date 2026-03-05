@@ -36,6 +36,11 @@ export const SettingsApplicationDetailAboutTab = ({
 
   const navigate = useNavigateSettings();
 
+  const registrationId = application?.applicationRegistrationId;
+
+  const latestAvailableVersion =
+    application?.applicationRegistration?.latestAvailableVersion ?? null;
+
   if (!isDefined(application)) {
     return null;
   }
@@ -80,7 +85,7 @@ export const SettingsApplicationDetailAboutTab = ({
         />
         <SettingsTextInput
           instanceId={`application-description-${id}`}
-          value={description}
+          value={description ?? undefined}
           disabled
           fullWidth
         />
@@ -90,7 +95,11 @@ export const SettingsApplicationDetailAboutTab = ({
           title={t`Version`}
           description={t`Version of the application`}
         />
-        <SettingsApplicationVersionContainer application={application} />
+        <SettingsApplicationVersionContainer
+          application={application}
+          latestAvailableVersion={latestAvailableVersion}
+          appRegistrationId={registrationId}
+        />
       </Section>
       {application.canBeUninstalled && (
         <>
