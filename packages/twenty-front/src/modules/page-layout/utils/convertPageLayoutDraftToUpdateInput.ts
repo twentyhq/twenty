@@ -6,11 +6,12 @@ import {
   type UpdatePageLayoutWithTabsInput,
 } from '~/generated-metadata/graphql';
 
-const buildWidgetPosition = (widget: PageLayoutWidget, widgetIndex: number) => {
-  const layoutMode =
-    widget.position?.layoutMode ?? PageLayoutTabLayoutMode.GRID;
-
-  switch (layoutMode) {
+const buildWidgetPosition = (
+  widget: PageLayoutWidget,
+  widgetIndex: number,
+  tabLayoutMode: PageLayoutTabLayoutMode,
+) => {
+  switch (tabLayoutMode) {
     case PageLayoutTabLayoutMode.VERTICAL_LIST: {
       const index =
         widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
@@ -27,7 +28,6 @@ const buildWidgetPosition = (widget: PageLayoutWidget, widgetIndex: number) => {
         layoutMode: PageLayoutTabLayoutMode.CANVAS,
       };
     case PageLayoutTabLayoutMode.GRID:
-    default:
       return {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: widget.gridPosition.row,
@@ -63,7 +63,11 @@ export const convertPageLayoutDraftToUpdateInput = (
             rowSpan: widget.gridPosition.rowSpan,
             columnSpan: widget.gridPosition.columnSpan,
           },
-          position: buildWidgetPosition(widget, widgetIndex),
+          position: buildWidgetPosition(
+            widget,
+            widgetIndex,
+            tab.layoutMode ?? PageLayoutTabLayoutMode.GRID,
+          ),
           configuration: widget.configuration ?? null,
         })),
     })),
