@@ -38,7 +38,7 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
+const StyledSidePanelAnimatedPlaceholderEmptyContainer = styled(
   AnimatedPlaceholderEmptyContainer,
 )`
   height: auto;
@@ -47,7 +47,7 @@ const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
 
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetRecord);
 
@@ -59,8 +59,8 @@ export const TimelineCard = () => {
   }
 
   if (isTimelineActivitiesEmpty) {
-    const EmptyContainer = isInRightDrawer
-      ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
+    const EmptyContainer = isInSidePanel
+      ? StyledSidePanelAnimatedPlaceholderEmptyContainer
       : AnimatedPlaceholderEmptyContainer;
 
     return (

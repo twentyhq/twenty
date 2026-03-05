@@ -12,6 +12,8 @@ import {
   type WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -171,14 +173,24 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
       const contextId = createContextId();
 
       if (this.moduleRef.registerRequestByContextId) {
+        const authContext = executeParams[0];
+
         this.moduleRef.registerRequestByContextId(
           {
             req: {
               workspaceId: workspace.id,
-              userWorkspaceId: executeParams?.[0].userWorkspaceId,
-              apiKey: executeParams?.[0].apiKey,
-              workspaceMemberId: executeParams?.[0].workspaceMemberId,
-              user: executeParams?.[0].user,
+              userWorkspaceId: isUserAuthContext(authContext)
+                ? authContext.userWorkspaceId
+                : undefined,
+              apiKey: isApiKeyAuthContext(authContext)
+                ? authContext.apiKey
+                : undefined,
+              workspaceMemberId: isUserAuthContext(authContext)
+                ? authContext.workspaceMemberId
+                : undefined,
+              user: isUserAuthContext(authContext)
+                ? authContext.user
+                : undefined,
             },
           },
           contextId,

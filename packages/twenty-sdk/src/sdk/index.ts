@@ -89,7 +89,7 @@ export type {
 // Conditional availability typed variables for command menu items
 export {
   isShowPage,
-  isInRightDrawer,
+  isInSidePanel,
   isFavorite,
   isRemote,
   isNoteOrTask,
@@ -125,7 +125,7 @@ export type {
   FrontComponentExecutionContext,
 } from './front-component-api';
 
-export { AppPath, CommandMenuPages } from 'twenty-shared/types';
+export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {
   EnqueueSnackbarParams,
   SnackBarVariant,

@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -30,7 +30,7 @@ export const useMergeRecordsActions = ({
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
@@ -51,7 +51,7 @@ export const useMergeRecordsActions = ({
       enqueueSuccessSnackBar({
         message: t`Successfully merged ${recordCount} records`,
       });
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       navigate(AppPath.RecordShowPage, {
         objectNameSingular,
