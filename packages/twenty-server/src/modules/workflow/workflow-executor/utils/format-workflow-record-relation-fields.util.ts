@@ -1,5 +1,9 @@
 import { isObject, isString } from '@sniptt/guards';
-import { RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataSettingsMapping,
+  RelationType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -37,8 +41,17 @@ export const formatWorkflowRecordRelationFields = (
 
     if (
       !isDefined(field) ||
-      field.settings?.relationType !== RelationType.MANY_TO_ONE
+      (field.type !== FieldMetadataType.RELATION &&
+        field.type !== FieldMetadataType.MORPH_RELATION)
     ) {
+      continue;
+    }
+
+    const relationSettings = field.settings as
+      | FieldMetadataSettingsMapping['RELATION']
+      | FieldMetadataSettingsMapping['MORPH_RELATION'];
+
+    if (relationSettings?.relationType !== RelationType.MANY_TO_ONE) {
       continue;
     }
 
