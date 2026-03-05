@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledCommandMenuContent = styled.div`
+const StyledSidePanelContent = styled.div`
   flex: 1;
   overflow-y: auto;
 `;
@@ -45,7 +45,7 @@ export const SidePanelRouter = () => {
         >
           <SidePanelTopBar />
         </motion.div>
-        <StyledCommandMenuContent>
+        <StyledSidePanelContent>
           <ActionMenuContextProvider
             isInSidePanel={true}
             displayType="listItem"
@@ -53,7 +53,7 @@ export const SidePanelRouter = () => {
           >
             {sidePanelPageComponent}
           </ActionMenuContextProvider>
-        </StyledCommandMenuContent>
+        </StyledSidePanelContent>
       </SidePanelPageComponentInstanceContext.Provider>
     </SidePanelContainer>
   );

@@ -41,7 +41,7 @@ const StyledInnerList = styled.div`
   }
 `;
 
-const StyledCommandMenuList = styled.div`
+const StyledSidePanelList = styled.div`
   overflow-y: hidden;
 `;
 
@@ -68,11 +68,11 @@ export const SidePanelList = ({
   );
 
   return (
-    <StyledCommandMenuList>
+    <StyledSidePanelList>
       <SidePanelDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
-      <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
+      <ScrollWrapper componentInstanceId={`scroll-wrapper-side-panel`}>
         <StyledInnerList>
           <SelectableList
             selectableListInstanceId={SIDE_PANEL_SELECTABLE_LIST_ID}
@@ -98,6 +98,6 @@ export const SidePanelList = ({
           </SelectableList>
         </StyledInnerList>
       </ScrollWrapper>
-    </StyledCommandMenuList>
+    </StyledSidePanelList>
   );
 };

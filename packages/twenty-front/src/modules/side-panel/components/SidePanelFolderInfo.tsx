@@ -71,7 +71,7 @@ export const SidePanelFolderInfo = () => {
     <SidePanelPageInfoLayout
       icon={
         <IconPicker
-          dropdownId="command-menu-folder-icon-picker"
+          dropdownId="side-panel-folder-icon-picker"
           selectedIconKey={selectedIconKey}
           onChange={({ iconKey }) =>
             updateFolderInDraft(itemId, { icon: iconKey })
