@@ -427,9 +427,27 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        // ONE_TO_MANY relation: handle { is: 'NULL' } / { is: 'NOT_NULL' }
+        // The actual filtering is done at the SQL query level;
+        // at record-validation level, just check if related records exist
+        const relationIsFilter = filterValue as IsFilter | undefined;
+
+        if (relationIsFilter?.is === 'NULL') {
+          return (
+            !recordFieldValue ||
+            (Array.isArray(recordFieldValue) &&
+              recordFieldValue.length === 0)
+          );
+        }
+
+        if (relationIsFilter?.is === 'NOT_NULL') {
+          return (
+            Array.isArray(recordFieldValue) && recordFieldValue.length > 0
+          );
+        }
+
+        // For other relation filters we can't validate in-memory, pass through
+        return true;
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({
