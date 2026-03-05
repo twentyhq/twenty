@@ -20,7 +20,9 @@ const StyledMainContainerLayoutForDesktop = styled.div`
 `;
 
 const StyledPageBodyForDesktopContainer = styled.div`
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
   min-width: 0;
   width: 0;
 
@@ -38,6 +40,11 @@ const StyledMainContainerLayoutForMobile = styled.div`
 `;
 
 const StyledPageBodyForMobileContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+
   > * {
     padding-bottom: 0;
     padding-left: ${themeCssVariables.spacing[1]};
