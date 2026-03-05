@@ -1,11 +1,19 @@
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useStore } from 'jotai';
 
 export const useResetFocusStackToRecordIndex = () => {
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
+  const store = useStore();
+
   const resetFocusStackToRecordIndex = () => {
+    const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+
+    const shouldEnableGlobalHotkeys = !isCommandMenuOpen;
+
     resetFocusStackToFocusItem({
       focusStackItem: {
         focusId: PageFocusId.RecordIndex,
@@ -14,8 +22,8 @@ export const useResetFocusStackToRecordIndex = () => {
           componentInstanceId: PageFocusId.RecordIndex,
         },
         globalHotkeysConfig: {
-          enableGlobalHotkeysWithModifiers: true,
-          enableGlobalHotkeysConflictingWithKeyboard: true,
+          enableGlobalHotkeysWithModifiers: shouldEnableGlobalHotkeys,
+          enableGlobalHotkeysConflictingWithKeyboard: shouldEnableGlobalHotkeys,
         },
       },
     });

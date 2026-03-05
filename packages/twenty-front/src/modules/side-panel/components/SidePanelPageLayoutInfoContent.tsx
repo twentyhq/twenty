@@ -18,7 +18,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelPageLayoutInfoContent = ({
   pageLayoutId,

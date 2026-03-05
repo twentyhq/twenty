@@ -103,6 +103,8 @@ export class ResumeDelayedWorkflowJob {
               ? error.message
               : `Error during delay resume: ${String(error)}`,
         });
+
+        throw error;
       }
     }, authContext);
   }

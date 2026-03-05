@@ -3,9 +3,11 @@ import { Args, Mutation } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  AuthContext,
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -35,7 +37,7 @@ export class DashboardResolver {
   async duplicateDashboard(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<DuplicatedDashboardDTO> {

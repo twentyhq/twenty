@@ -9,13 +9,11 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
   display: ${({ alignToTop }) => (alignToTop ? 'flex' : 'block')};
@@ -45,6 +43,7 @@ const AnimatedIcon = ({
   isSidePanelOpened: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +67,9 @@ const AnimatedIcon = ({
           scale: isSidePanelOpened ? 0 : 1,
           opacity: isSidePanelOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: theme.animation.duration.fast,
+        }}
       />
 
       {/* X lines expanding from center */}
@@ -99,7 +100,9 @@ const AnimatedIcon = ({
           scale: isSidePanelOpened ? 0 : 1,
           opacity: isSidePanelOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: theme.animation.duration.fast,
+        }}
       />
 
       {/* Bottom dot */}
@@ -112,7 +115,9 @@ const AnimatedIcon = ({
           scale: isSidePanelOpened ? 0 : 1,
           opacity: isSidePanelOpened ? 0 : 1,
         }}
-        transition={{ duration: theme.animation.duration.fast }}
+        transition={{
+          duration: theme.animation.duration.fast,
+        }}
       />
     </svg>
   );
@@ -135,7 +140,6 @@ export const PageHeaderToggleSidePanelButton = () => {
     : t`Open side panel`;
 
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <div id="toggle-side-panel-button">

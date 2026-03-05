@@ -7,9 +7,7 @@ import {
   IconRadiusTopRight,
 } from 'twenty-ui/display';
 import { ResizeHandle } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';

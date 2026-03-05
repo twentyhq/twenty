@@ -19,8 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAdvancedTextFieldContainer = styled(FormFieldInputContainer)`
@@ -110,10 +109,10 @@ export const FormAdvancedTextFieldInput = ({
   maxWidth,
   contentType = 'json',
 }: FormAdvancedTextFieldInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { theme } = useContext(ThemeContext);
 
   const { t } = useLingui();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

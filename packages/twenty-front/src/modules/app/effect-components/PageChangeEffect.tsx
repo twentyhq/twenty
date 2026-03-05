@@ -11,6 +11,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -115,11 +116,19 @@ export const PageChangeEffect = () => {
     isMatchingLocation(location, appPath),
   );
 
-  const closeSidePanelUnlessOnEditPage = useCallback(() => {
+  const closeSidePanelUnlessNotRelevant = useCallback(() => {
     const currentPage = store.get(sidePanelPageState.atom);
+
     if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
       return;
     }
+
+    const sidePanelIsAiChat = currentPage === SidePanelPages.AskAI;
+
+    if (sidePanelIsAiChat) {
+      return;
+    }
+
     closeSidePanelMenu();
   }, [closeSidePanelMenu, store]);
 
@@ -130,8 +139,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeSidePanelUnlessOnEditPage();
-  }, [location.pathname, closeSidePanelUnlessOnEditPage]);
+    closeSidePanelUnlessNotRelevant();
+  }, [location.pathname, closeSidePanelUnlessNotRelevant]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -207,6 +216,24 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
+        const isNewRecord = location.state?.isNewRecord === true;
+
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
+        }
+
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+
+        if (isSidePanelOpen) {
+          return;
+        }
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.RecordShowPage,
@@ -220,18 +247,6 @@ export const PageChangeEffect = () => {
             },
           },
         });
-
-        const isNewRecord = location.state?.isNewRecord === true;
-
-        if (
-          isNewRecord &&
-          isDefined(location.state?.labelIdentifierFieldName)
-        ) {
-          openNewRecordTitleCell({
-            recordId: location.state.objectRecordId,
-            fieldName: location.state.labelIdentifierFieldName,
-          });
-        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -376,6 +391,7 @@ export const PageChangeEffect = () => {
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
     openNewRecordTitleCell,
+    store,
   ]);
 
   useEffect(() => {

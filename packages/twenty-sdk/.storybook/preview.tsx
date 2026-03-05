@@ -1,22 +1,17 @@
 import { type Preview } from '@storybook/react-vite';
-import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story) => {
-      const theme = THEME_LIGHT;
-
       return (
-        <ThemeContextProvider theme={theme}>
+        <ThemeProvider colorScheme="light">
           <Story />
-        </ThemeContextProvider>
+        </ThemeProvider>
       );
     },
   ],
-  args: {
-    theme: THEME_LIGHT,
-  },
 };
 
 export default preview;

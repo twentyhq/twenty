@@ -6,8 +6,8 @@ import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-mod
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -22,8 +22,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
@@ -115,10 +114,10 @@ export const SettingsDataModelObjectAboutForm = ({
   objectMetadataItem,
   conflictingObjectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
+  const { theme } = useContext(ThemeContext);
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const navigateSettings = useNavigateSettings();
 
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');

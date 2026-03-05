@@ -62,6 +62,8 @@ export class RunWorkflowJob {
           status: WorkflowRunStatus.FAILED,
           error: error.message,
         });
+
+        throw error;
       }
     }, authContext);
   }

@@ -12,9 +12,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useSidePanelContextChips = () => {
+  const { theme } = useContext(ThemeContext);
+  const iconSizeSm = theme.icon.size.sm;
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
@@ -26,8 +28,6 @@ export const useSidePanelContextChips = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateSidePanelHistory } = useSidePanelHistory();
-
-  const { theme } = useContext(ThemeContext);
 
   const sidePanelNavigationMorphItemsByPage = useAtomStateValue(
     sidePanelNavigationMorphItemsByPageState,
@@ -108,16 +108,16 @@ export const useSidePanelContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [<page.pageIcon size={theme.icon.size.sm} />]
+            ? [<page.pageIcon size={iconSizeSm} />]
             : [
                 <SidePanelContextChipIconWrapper>
                   <page.pageIcon
-                    size={theme.icon.size.sm}
+                    size={iconSizeSm}
                     color={
                       isDefined(page.pageIconColor) &&
                       page.pageIconColor !== 'currentColor'
                         ? page.pageIconColor
-                        : theme.font.color.tertiary
+                        : themeCssVariables.font.color.tertiary
                     }
                   />
                 </SidePanelContextChipIconWrapper>,
@@ -135,11 +135,10 @@ export const useSidePanelContextChips = () => {
     sidePanelNavigationMorphItemsByPage,
     sidePanelNavigationStack,
     navigateSidePanelHistory,
+    iconSizeSm,
     objectMetadataItems,
     recordIdentifiers,
     records,
-    theme.font.color.tertiary,
-    theme.icon.size.sm,
   ]);
 
   return {

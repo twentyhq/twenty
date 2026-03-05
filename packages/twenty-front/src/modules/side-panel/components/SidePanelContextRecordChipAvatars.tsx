@@ -3,11 +3,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
-import { Avatar } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { Avatar } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   background: ${({ withIconBackground }) =>
     withIconBackground ? themeCssVariables.background.primary : 'unset'};
@@ -32,6 +30,7 @@ export const SidePanelContextRecordChipAvatars = ({
   objectMetadataItem: ObjectMetadataItem;
   record: ObjectRecord;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { recordChipData } = useRecordChipData({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,
@@ -39,9 +38,6 @@ export const SidePanelContextRecordChipAvatars = ({
   const { Icon, IconColor } = useGetStandardObjectIcon(
     objectMetadataItem.nameSingular,
   );
-
-  const { theme } = useContext(ThemeContext);
-
   return (
     <StyledIconWrapper
       withIconBackground={recordChipData.avatarType !== 'rounded'}

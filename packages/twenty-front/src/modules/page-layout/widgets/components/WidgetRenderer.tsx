@@ -33,7 +33,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;

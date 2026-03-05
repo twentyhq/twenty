@@ -5,8 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -30,7 +29,6 @@ export const SettingsConnectedAccountsTableRow = ({
   account,
 }: SettingsConnectedAccountsTableRowProps) => {
   const { theme } = useContext(ThemeContext);
-
   const IconComponent = SettingsConnectedAccountIcon({ account });
 
   return (

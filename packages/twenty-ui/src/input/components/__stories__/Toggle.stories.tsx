@@ -4,7 +4,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MAIN_COLORS_LIGHT } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 import { useState } from 'react';
 
 import { Toggle, type ToggleSize } from '../Toggle';
@@ -88,7 +88,7 @@ export const Catalog: CatalogStory<Story, typeof InteractiveToggle> = {
             if (color === 'default') {
               return {};
             }
-            return { color: MAIN_COLORS_LIGHT.yellow };
+            return { color: themeCssVariables.color.yellow };
           },
         },
       ],

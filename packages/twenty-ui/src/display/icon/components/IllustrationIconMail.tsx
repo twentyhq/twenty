@@ -1,8 +1,9 @@
-import IllustrationIconMailRaw from '@assets/icons/illustration-mail.svg?react';
 import { useContext } from 'react';
+
+import IllustrationIconMailRaw from '@assets/icons/illustration-mail.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconMailProps = Pick<IconComponentProps, 'size'>;
 

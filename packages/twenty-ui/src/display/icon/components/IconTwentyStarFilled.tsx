@@ -1,14 +1,15 @@
+import { useContext } from 'react';
+
 import IconTwentyStarFilledRaw from '@assets/icons/twenty-star-filled.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { THEME_COMMON } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconTwentyStarFilledProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
-const iconStrokeMd = THEME_COMMON.icon.stroke.md;
-
 export const IconTwentyStarFilled = (props: IconTwentyStarFilledProps) => {
+  const { theme } = useContext(ThemeContext);
   const size = props.size ?? 24;
-  const stroke = props.stroke ?? iconStrokeMd;
+  const stroke = props.stroke ?? theme.icon.stroke.md;
 
   return (
     <IconTwentyStarFilledRaw height={size} width={size} strokeWidth={stroke} />

@@ -73,9 +73,15 @@ export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
 
 // Action components for front components
-export { Action, ActionLink, ActionOpenSidePanelPage } from './action';
+export {
+  Action,
+  ActionLink,
+  ActionModal,
+  ActionOpenSidePanelPage,
+} from './action';
 export type {
   ActionLinkProps,
+  ActionModalProps,
   ActionOpenSidePanelPageProps,
   ActionProps,
 } from './action';
@@ -105,6 +111,7 @@ export {
   enqueueSnackbar,
   getFrontComponentActionErrorDedupeKey,
   navigate,
+  openActionConfirmationModal,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
@@ -112,7 +119,11 @@ export {
   useRecordId,
   useUserId,
 } from './front-component-api';
-export type { FrontComponentExecutionContext } from './front-component-api';
+export type {
+  ActionConfirmationModalAccent,
+  ActionConfirmationModalResult,
+  FrontComponentExecutionContext,
+} from './front-component-api';
 
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {

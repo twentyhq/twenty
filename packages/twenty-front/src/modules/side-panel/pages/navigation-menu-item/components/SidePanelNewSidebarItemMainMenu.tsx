@@ -19,7 +19,7 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/N
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SidePanelNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;

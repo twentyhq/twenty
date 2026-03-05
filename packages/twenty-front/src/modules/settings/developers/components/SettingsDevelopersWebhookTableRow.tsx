@@ -2,14 +2,13 @@ import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -42,7 +41,6 @@ export const SettingsDevelopersWebhookTableRow = ({
   to: string;
 }) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>

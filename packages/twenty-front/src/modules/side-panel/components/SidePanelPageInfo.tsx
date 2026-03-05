@@ -21,10 +21,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};

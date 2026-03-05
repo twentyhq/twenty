@@ -1,7 +1,6 @@
 import { defineLogicFunction, RoutePayload } from "twenty-sdk";
 import { MetadataApiClient } from 'twenty-sdk/generated';
 
-
 export const OAUTH_TOKEN_PAIRS_PATH = '/oauth/token-pairs';
 
 type ApolloTokenResponse = {
@@ -53,15 +52,7 @@ const handler = async (event: RoutePayload): Promise<any> => {
   const apolloClientSecret = process.env.APOLLO_CLIENT_SECRET ?? '';
   const applicationId = process.env.APPLICATION_ID ?? '';
 
-
   const metadataClient = new MetadataApiClient({});
-
-
-
-
-
-
-
 
   const tokenPairs = await getAuthenticationTokenPairs(
     code,

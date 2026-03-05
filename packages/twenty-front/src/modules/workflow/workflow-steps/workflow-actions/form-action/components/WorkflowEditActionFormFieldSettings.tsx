@@ -10,10 +10,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
   onChange: (field: WorkflowFormActionField) => void;

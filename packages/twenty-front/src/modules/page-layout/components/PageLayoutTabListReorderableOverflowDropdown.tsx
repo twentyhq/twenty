@@ -29,7 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;

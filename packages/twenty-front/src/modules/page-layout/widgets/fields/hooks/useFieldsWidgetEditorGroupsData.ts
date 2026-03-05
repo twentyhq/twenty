@@ -4,7 +4,7 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useGetViewById } from '@/views/hooks/useGetViewById';
+import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -23,8 +23,8 @@ type UseFieldsWidgetEditorGroupsDataResult = {
 export const useFieldsWidgetEditorGroupsData = ({
   viewId,
   objectNameSingular,
-}: UseFieldsWidgetEditorGroupsDataParams): UseFieldsWidgetEditorGroupsDataResult => {
-  const { view } = useGetViewById(viewId);
+}: UseFieldsWidgetEditorGroupsDataParams) => {
+  const { view } = useViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });

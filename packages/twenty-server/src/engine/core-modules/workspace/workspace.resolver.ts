@@ -33,7 +33,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProvidersDTO,
@@ -113,7 +113,7 @@ export class WorkspaceResolver {
   @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return await this.workspaceService.activateWorkspace(user, workspace, data);

@@ -1,7 +1,7 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useContext } from 'react';
 import { type FileCategory } from 'twenty-shared/types';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const useFileIconColors = (): Record<
   AttachmentFileCategory | FileCategory,

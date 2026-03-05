@@ -3,7 +3,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledActionContainer = styled(motion.div)`
   display: flex;
@@ -12,9 +12,8 @@ const StyledActionContainer = styled(motion.div)`
 `;
 
 export const PageHeaderActionMenuButtons = () => {
-  const { actions } = useContext(ActionMenuContext);
   const { theme } = useContext(ThemeContext);
-
+  const { actions } = useContext(ActionMenuContext);
   const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();
 
   const actionsWithPositionForAnimation = pinnedActions.map(

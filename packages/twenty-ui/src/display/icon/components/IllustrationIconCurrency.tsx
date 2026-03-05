@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconCurrencyRaw from '@assets/icons/illustration-currency.svg?react';
+import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconCurrencyProps = Pick<IconComponentProps, 'size'>;
 

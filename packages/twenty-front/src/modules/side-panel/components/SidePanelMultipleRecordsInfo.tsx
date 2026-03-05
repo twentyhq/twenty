@@ -5,7 +5,7 @@ import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageIn
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SidePanelMultipleRecordsInfoProps = {
   sidePanelPageInstanceId: string;
@@ -15,7 +15,6 @@ export const SidePanelMultipleRecordsInfo = ({
   sidePanelPageInstanceId,
 }: SidePanelMultipleRecordsInfoProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
     instanceId: sidePanelPageInstanceId,
     limit: 1,

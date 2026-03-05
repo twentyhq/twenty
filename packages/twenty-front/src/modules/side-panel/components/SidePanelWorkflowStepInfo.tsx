@@ -18,19 +18,20 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { ICON_SIZES, ICON_STROKES } from 'twenty-ui/theme-constants';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowStepInfo = ({
   sidePanelPageInstanceId,
 }: {
   sidePanelPageInstanceId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
@@ -169,7 +170,7 @@ export const SidePanelWorkflowStepInfo = ({
     <SidePanelPageInfoLayout
       icon={
         headerIcon ? (
-          <Icon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
       iconColor={headerIconColor}

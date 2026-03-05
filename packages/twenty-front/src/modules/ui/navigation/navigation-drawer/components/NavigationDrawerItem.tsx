@@ -25,8 +25,11 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,

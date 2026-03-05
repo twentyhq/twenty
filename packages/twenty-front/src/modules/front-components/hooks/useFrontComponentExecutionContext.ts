@@ -5,6 +5,7 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
+import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -31,6 +32,7 @@ export const useFrontComponentExecutionContext = ({
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
+  const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { navigateSidePanel } = useNavigateSidePanel();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
@@ -68,6 +70,17 @@ export const useFrontComponentExecutionContext = ({
       if (shouldResetSearchState === true) {
         setSidePanelSearch('');
       }
+    };
+
+  const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
+    async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
+      openConfirmationModal({
+        frontComponentId,
+        title,
+        subtitle,
+        confirmButtonText,
+        confirmButtonAccent,
+      });
     };
 
   const enqueueSnackbar: FrontComponentHostCommunicationApi['enqueueSnackbar'] =
@@ -125,6 +138,7 @@ export const useFrontComponentExecutionContext = ({
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
+      openActionConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,

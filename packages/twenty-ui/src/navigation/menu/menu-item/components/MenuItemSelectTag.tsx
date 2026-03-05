@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-
 import {
   StyledMenuItemIconCheck,
   StyledMenuItemLeftContent,
@@ -7,7 +5,9 @@ import {
 
 import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
-import { type ThemeColor, ThemeContext } from '@ui/theme';
+import { type ThemeColor } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectTagProps = {
@@ -34,6 +34,7 @@ export const MenuItemSelectTag = ({
   LeftIcon,
 }: MenuItemSelectTagProps) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <StyledMenuItemSelect
       onClick={onClick}

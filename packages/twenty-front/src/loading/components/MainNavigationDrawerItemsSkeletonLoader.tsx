@@ -2,7 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   align-items: flex-start;
@@ -22,7 +22,6 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
   length: number;
 }) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledSkeletonContainer>
       <SkeletonTheme

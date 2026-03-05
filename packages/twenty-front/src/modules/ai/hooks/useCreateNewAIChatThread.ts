@@ -29,6 +29,7 @@ export const useCreateNewAIChatThread = () => {
       setCurrentAIChatThread(data.createChatThread.id);
       setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
+
       openAskAIPage({ resetNavigationStack: false });
 
       const newThread = data.createChatThread;
