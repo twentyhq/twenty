@@ -3,8 +3,10 @@ import { styled } from '@linaria/react';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useContext } from 'react';
+
 import { Avatar } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -73,6 +75,7 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
+  const { theme } = useContext(ThemeContext);
   const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
   const visibility = thread.visibility;
@@ -138,10 +141,10 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                 placeholder={finalDisplayedName}
                 type="rounded"
                 color={
-                  isCountIcon ? themeCssVariables.grayScale.gray11 : undefined
+                  isCountIcon ? theme.grayScale.gray11 : undefined
                 }
                 backgroundColor={
-                  isCountIcon ? themeCssVariables.grayScale.gray2 : undefined
+                  isCountIcon ? theme.grayScale.gray2 : undefined
                 }
               />
             </StyledAvatarWrapper>
