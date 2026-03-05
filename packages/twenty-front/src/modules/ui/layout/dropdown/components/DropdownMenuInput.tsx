@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import {
   forwardRef,

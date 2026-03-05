@@ -5,8 +5,6 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';

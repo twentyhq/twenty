@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type Layouts } from 'react-grid-layout';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';

@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type Layouts } from 'react-grid-layout';
 import { GRID_BUFFER_ROWS } from '@/page-layout/constants/GridBufferRows';
 import { GRID_MIN_ROWS } from '@/page-layout/constants/GridMinRows';

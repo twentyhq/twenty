@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 
 export const getUpdatedTabLayouts = (

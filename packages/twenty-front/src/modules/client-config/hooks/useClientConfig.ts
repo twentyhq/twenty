@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
