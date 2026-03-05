@@ -44,8 +44,9 @@ import {
   IconWorld,
   Status,
 } from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { Button } from 'twenty-ui/input';
+import { Card, Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -117,18 +118,6 @@ const StyledRotateContainer = styled.div`
 const StyledDangerButtonGroup = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledToggleRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: space-between;
-`;
-
-const StyledToggleLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const StyledMarketplaceActions = styled.div`
@@ -595,17 +584,14 @@ export const SettingsApplicationRegistrationDetails = () => {
               title={t`Marketplace Listing`}
               description={t`Control visibility on the marketplace. Unlisted apps are still accessible via direct link.`}
             />
-            <StyledToggleRow>
-              <StyledToggleLabel>
-                {registration.isListed
-                  ? t`Listed on marketplace`
-                  : t`Not listed on marketplace`}
-              </StyledToggleLabel>
-              <Toggle
-                value={registration.isListed}
+            <Card rounded>
+              <SettingsOptionCardContentToggle
+                title={t`Listed on marketplace`}
+                description={t`When enabled, this app appears in the marketplace browse page`}
+                checked={registration.isListed}
                 onChange={handleToggleListed}
               />
-            </StyledToggleRow>
+            </Card>
             <StyledMarketplaceActions>
               <Button
                 Icon={IconExternalLink}
