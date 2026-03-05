@@ -1,9 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -28,6 +29,16 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortLabel?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Float, { nullable: true })
+  position?: number;
 
   @IsBoolean()
   @IsOptional()

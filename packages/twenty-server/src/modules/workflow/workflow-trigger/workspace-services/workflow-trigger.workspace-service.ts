@@ -355,9 +355,7 @@ export class WorkflowTriggerWorkspaceService {
             case 'SINGLE_RECORD':
             case 'BULK_RECORDS': {
               availabilityType =
-                availability.type === 'SINGLE_RECORD'
-                  ? CommandMenuItemAvailabilityType.SINGLE_RECORD
-                  : CommandMenuItemAvailabilityType.BULK_RECORDS;
+                CommandMenuItemAvailabilityType.RECORD_SELECTION;
 
               const { objectIdByNameSingular } =
                 await this.workflowCommonWorkspaceService.getFlatEntityMaps(
