@@ -3731,7 +3731,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clickhouse/client@npm:^1.11.0":
+"@clickhouse/client@npm:^1.18.1":
   version: 1.18.1
   resolution: "@clickhouse/client@npm:1.18.1"
   dependencies:
@@ -57834,7 +57834,7 @@ __metadata:
     "@azure/msal-node": "npm:^3.8.4"
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.47.0"
-    "@clickhouse/client": "npm:^1.11.0"
+    "@clickhouse/client": "npm:^1.18.1"
     "@dagrejs/dagre": "npm:^1.1.2"
     "@e2b/code-interpreter": "npm:^1.0.4"
     "@envelop/core": "npm:4.0.3"
