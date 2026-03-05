@@ -1,9 +1,8 @@
-import { appendFile } from 'node:fs/promises';
+import { appendFile, readFile } from 'node:fs/promises';
 import { join } from 'path';
 
 import { CLIENTS_GENERATED_FOLDER } from '@/cli/constants/clients-generated-folder';
 import { ApiService } from '@/cli/utilities/api/api-service';
-import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import {
   emptyDir,
   ensureDir,
@@ -30,8 +29,15 @@ const STRIPPED_TYPES_END = '// __STRIPPED_DURING_INJECTION_END__';
 const UPLOAD_FILE_START = '// __UPLOAD_FILE_START__';
 const UPLOAD_FILE_END = '// __UPLOAD_FILE_END__';
 
-const buildClientWrapperSource = (options: ClientWrapperOptions): string => {
-  let source = twentyClientTemplateSource;
+const TEMPLATE_PATH = join(
+  __dirname,
+  'twenty-client-template.ts',
+);
+
+const buildClientWrapperSource = async (
+  options: ClientWrapperOptions,
+): Promise<string> => {
+  let source = await readFile(TEMPLATE_PATH, 'utf-8');
 
   source = source.replace(
     new RegExp(
@@ -71,8 +77,12 @@ const escapeRegExp = (value: string): string =>
 export class ClientService {
   private apiService: ApiService;
 
-  constructor() {
-    this.apiService = new ApiService({ disableInterceptors: true });
+  constructor(options?: { serverUrl?: string; token?: string }) {
+    this.apiService = new ApiService({
+      disableInterceptors: true,
+      serverUrl: options?.serverUrl,
+      token: options?.token,
+    });
   }
 
   async generateCoreClient({
@@ -149,7 +159,7 @@ export class ClientService {
     output: string,
     options: ClientWrapperOptions,
   ): Promise<void> {
-    const clientContent = buildClientWrapperSource(options);
+    const clientContent = await buildClientWrapperSource(options);
 
     await appendFile(join(output, 'index.ts'), clientContent);
   }

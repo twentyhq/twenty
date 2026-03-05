@@ -28,21 +28,6 @@
         "parallel": false
       }
     },
-    "generate-metadata-client": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/scripts/clients/**/*",
-        "{projectRoot}/src/cli/utilities/client/twenty-client-template.ts"
-      ],
-      "outputs": [
-        "{projectRoot}/src/clients/generated/metadata/*"
-      ],
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "tsx scripts/clients/generate-metadata-client.ts"
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],
@@ -116,6 +101,20 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx vite build -c vite.config.sdk.ts"
+      }
+    },
+    "generate-metadata-client": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/src/clients/generated/metadata"
+      ],
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "tsx -r tsconfig-paths/register scripts/generate-metadata-client.ts"
       }
     },
     "generate-remote-dom-elements": {
