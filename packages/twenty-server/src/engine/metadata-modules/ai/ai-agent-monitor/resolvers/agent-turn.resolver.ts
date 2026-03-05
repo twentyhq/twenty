@@ -42,14 +42,12 @@ export class AgentTurnResolver {
   @Query(() => [AgentTurnDTO])
   async agentTurns(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
-  ): Promise<AgentTurnDTO[]> {
-    const turns = await this.turnRepository.find({
+  ): Promise<AgentTurnEntity[]> {
+    return this.turnRepository.find({
       where: { agentId },
       relations: ['evaluations', 'messages', 'messages.parts'],
       order: { createdAt: 'DESC' },
     });
-
-    return turns;
   }
 
   @Mutation(() => AgentTurnEvaluationDTO)
@@ -67,7 +65,7 @@ export class AgentTurnResolver {
     @Args('input') input: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<AgentTurnDTO> {
+  ): Promise<AgentTurnEntity> {
     const thread = this.threadRepository.create({
       userWorkspaceId,
       title: `Eval: ${input.substring(0, 50)}...`,
