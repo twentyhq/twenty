@@ -1,5 +1,5 @@
-import { CommandMenuContextChipIconWrapper } from '@/command-menu/components/CommandMenuContextChipIconWrapper';
-import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
+import { SidePanelContextChipIconWrapper } from '@/side-panel/components/SidePanelContextChipIconWrapper';
+import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SidePanelContextRecordChipAvatars';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -14,7 +14,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme';
 
-export const useCommandMenuContextChips = () => {
+export const useSidePanelContextChips = () => {
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
@@ -51,37 +51,35 @@ export const useCommandMenuContextChips = () => {
   });
 
   const contextChips = useMemo(() => {
-    const filteredCommandMenuNavigationStack = sidePanelNavigationStack.filter(
+    const filteredSidePanelNavigationStack = sidePanelNavigationStack.filter(
       (page) => page.page !== SidePanelPages.Root,
     );
 
-    return filteredCommandMenuNavigationStack
+    return filteredSidePanelNavigationStack
       .map((page, index) => {
-        const isLastChip =
-          index === filteredCommandMenuNavigationStack.length - 1;
+        const isLastChip = index === filteredSidePanelNavigationStack.length - 1;
 
         const isRecordPage = page.page === SidePanelPages.ViewRecord;
 
         if (isRecordPage && !isLastChip) {
-          const commandMenuNavigationMorphItem =
+          const sidePanelNavigationMorphItem =
             sidePanelNavigationMorphItemsByPage.get(page.pageId)?.[0];
 
-          if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
+          if (!isDefined(sidePanelNavigationMorphItem?.recordId)) {
             return null;
           }
 
           const objectMetadataItem = objectMetadataItems.find(
-            (item) =>
-              item.id === commandMenuNavigationMorphItem.objectMetadataId,
+            (item) => item.id === sidePanelNavigationMorphItem.objectMetadataId,
           );
 
           const recordIdentifier = recordIdentifiers.find(
             (recordIdentifier) =>
-              recordIdentifier.id === commandMenuNavigationMorphItem.recordId,
+              recordIdentifier.id === sidePanelNavigationMorphItem.recordId,
           );
 
           const record = records.find(
-            (record) => record.id === commandMenuNavigationMorphItem.recordId,
+            (record) => record.id === sidePanelNavigationMorphItem.recordId,
           );
 
           if (
@@ -95,7 +93,7 @@ export const useCommandMenuContextChips = () => {
           return {
             page,
             Icons: [
-              <CommandMenuContextRecordChipAvatars
+              <SidePanelContextRecordChipAvatars
                 objectMetadataItem={objectMetadataItem}
                 record={record}
               />,
@@ -112,7 +110,7 @@ export const useCommandMenuContextChips = () => {
           Icons: isLastChip
             ? [<page.pageIcon size={theme.icon.size.sm} />]
             : [
-                <CommandMenuContextChipIconWrapper>
+                <SidePanelContextChipIconWrapper>
                   <page.pageIcon
                     size={theme.icon.size.sm}
                     color={
@@ -122,7 +120,7 @@ export const useCommandMenuContextChips = () => {
                         : theme.font.color.tertiary
                     }
                   />
-                </CommandMenuContextChipIconWrapper>,
+                </SidePanelContextChipIconWrapper>,
               ],
           text: page.pageTitle,
           onClick: isLastChip

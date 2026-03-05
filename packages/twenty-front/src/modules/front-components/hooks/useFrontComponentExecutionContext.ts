@@ -8,7 +8,7 @@ import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -32,7 +32,7 @@ export const useFrontComponentExecutionContext = ({
     frontComponentId,
   });
   const { navigateSidePanel } = useNavigateSidePanel();
-  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
+  const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {
@@ -66,7 +66,7 @@ export const useFrontComponentExecutionContext = ({
       });
 
       if (shouldResetSearchState === true) {
-        setCommandMenuSearch('');
+        setSidePanelSearch('');
       }
     };
 

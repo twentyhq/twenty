@@ -1,4 +1,4 @@
-import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
+import { SidePanelContextRecordsChip } from '@/side-panel/components/SidePanelContextRecordsChip';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
@@ -16,12 +16,12 @@ import { IconArrowBackUp } from 'twenty-ui/display';
 export const ResetContextToSelectionCommandButton = () => {
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    'command-menu-previous',
+    SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
   );
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    'command-menu-previous',
+    SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
   );
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
@@ -52,7 +52,7 @@ export const ResetContextToSelectionCommandButton = () => {
         Icon={IconArrowBackUp}
         label={t`Reset to`}
         RightComponent={
-          <CommandMenuContextRecordsChip
+          <SidePanelContextRecordsChip
             objectMetadataItemId={objectMetadataItem.id}
             instanceId={SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID}
           />

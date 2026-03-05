@@ -1,12 +1,12 @@
-import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
-import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
-import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
+import { SidePanelContextChip } from '@/side-panel/components/SidePanelContextChip';
+import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SidePanelContextRecordChipAvatars';
+import { getSelectedRecordsContextText } from '@/side-panel/utils/getSelectedRecordsContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const CommandMenuContextRecordsChip = ({
+export const SidePanelContextRecordsChip = ({
   objectMetadataItemId,
   instanceId,
 }: {
@@ -31,7 +31,7 @@ export const CommandMenuContextRecordsChip = ({
   }
 
   const Avatars = records.map((record) => (
-    <CommandMenuContextRecordChipAvatars
+    <SidePanelContextRecordChipAvatars
       objectMetadataItem={objectMetadataItem}
       key={record.id}
       record={record}
@@ -39,7 +39,7 @@ export const CommandMenuContextRecordsChip = ({
   ));
 
   return (
-    <CommandMenuContextChip
+    <SidePanelContextChip
       text={getSelectedRecordsContextText(
         objectMetadataItem,
         records,

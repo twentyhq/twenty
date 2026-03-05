@@ -4,7 +4,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingCommandMenuActions';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -20,7 +20,7 @@ export type ActionGroupConfig = {
 export const CommandMenu = () => {
   const { t } = useLingui();
 
-  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
@@ -36,7 +36,7 @@ export const CommandMenu = () => {
     fallbackActions,
     matchingCreateRelatedRecordActions,
   } = useMatchingCommandMenuActions({
-    commandMenuSearch,
+    commandMenuSearch: sidePanelSearch,
   });
 
   // eslint-disable-next-line twenty/matching-state-variable
@@ -76,7 +76,7 @@ export const CommandMenu = () => {
         .concat(matchingNavigateActions),
     },
     {
-      heading: t`Search ''${commandMenuSearch}'' with...`,
+      heading: t`Search ''${sidePanelSearch}'' with...`,
       items: fallbackActions,
     },
   ];

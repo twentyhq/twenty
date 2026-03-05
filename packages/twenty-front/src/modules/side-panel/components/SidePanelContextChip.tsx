@@ -51,7 +51,7 @@ const StyledEmptyText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-export type CommandMenuContextChipProps = {
+export type SidePanelContextChipProps = {
   Icons: React.ReactNode[];
   text?: string;
   onClick?: () => void;
@@ -64,14 +64,14 @@ export type CommandMenuContextChipProps = {
   };
 };
 
-export const CommandMenuContextChip = ({
+export const SidePanelContextChip = ({
   Icons,
   text,
   onClick,
   testId,
   maxWidth,
   forceEmptyText = false,
-}: CommandMenuContextChipProps) => {
+}: SidePanelContextChipProps) => {
   return (
     <StyledChip
       withText={isNonEmptyString(text)}

@@ -5,7 +5,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 
-import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
+import { SidePanelContextRecordsChip } from '@/side-panel/components/SidePanelContextRecordsChip';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -213,9 +213,9 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof CommandMenuContextRecordsChip> = {
-  title: 'Modules/CommandMenu/CommandMenuContextRecordChip',
-  component: CommandMenuContextRecordsChip,
+const meta: Meta<typeof SidePanelContextRecordsChip> = {
+  title: 'Modules/SidePanel/SidePanelContextRecordChip',
+  component: SidePanelContextRecordsChip,
   decorators: [
     ContextStoreDecorator,
     ChipGeneratorsDecorator,
@@ -227,7 +227,7 @@ const meta: Meta<typeof CommandMenuContextRecordsChip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CommandMenuContextRecordsChip>;
+type Story = StoryObj<typeof SidePanelContextRecordsChip>;
 
 export const Default: Story = {};
 

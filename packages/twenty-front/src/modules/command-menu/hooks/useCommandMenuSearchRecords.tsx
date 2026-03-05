@@ -4,7 +4,7 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
@@ -18,10 +18,10 @@ import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
-  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const coreClient = useApolloCoreClient();
 
-  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
+  const [deferredSidePanelSearch] = useDebounce(sidePanelSearch, 300);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -41,7 +41,7 @@ export const useCommandMenuSearchRecords = () => {
   const { data: searchData, loading } = useSearchQuery({
     client: coreClient,
     variables: {
-      searchInput: deferredCommandMenuSearch ?? '',
+      searchInput: deferredSidePanelSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
       excludedObjectNameSingulars: [
         'workspaceMember',

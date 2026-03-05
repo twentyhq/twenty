@@ -6,10 +6,10 @@ import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/Command
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -80,15 +80,15 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SidePanelTopBar = () => {
-  const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
-    commandMenuSearchState,
+  const [sidePanelSearch, setSidePanelSearch] = useAtomState(
+    sidePanelSearchState,
   );
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCommandMenuSearch(event.target.value);
+    setSidePanelSearch(event.target.value);
   };
 
   const isMobile = useIsMobile();
@@ -103,7 +103,7 @@ export const SidePanelTopBar = () => {
 
   const { theme } = useContext(ThemeContext);
 
-  const { contextChips } = useCommandMenuContextChips();
+  const { contextChips } = useSidePanelContextChips();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -178,7 +178,7 @@ export const SidePanelTopBar = () => {
             <StyledInput
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
-              value={commandMenuSearch}
+              value={sidePanelSearch}
               placeholder={t`Type anything...`}
               onChange={handleSearchChange}
               onFocus={handleInputFocus}

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCommandMenuContextChipIconWrapper = styled.div`
+const StyledSidePanelContextChipIconWrapper = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -9,5 +9,5 @@ const StyledCommandMenuContextChipIconWrapper = styled.div`
   justify-content: center;
 `;
 
-export const CommandMenuContextChipIconWrapper =
-  StyledCommandMenuContextChipIconWrapper;
+export const SidePanelContextChipIconWrapper =
+  StyledSidePanelContextChipIconWrapper;

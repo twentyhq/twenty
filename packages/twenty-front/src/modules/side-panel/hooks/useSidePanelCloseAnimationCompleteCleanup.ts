@@ -1,5 +1,5 @@
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
+import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
@@ -7,7 +7,7 @@ import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/si
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -41,7 +41,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
 
   const sidePanelCloseAnimationCompleteCleanup = useCallback(
     (options?: { emitSidePanelCloseEvent?: boolean }) => {
-      closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
+      closeDropdown(SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
       // Snapshot values before any mutations (Jotai store.get is live and
       // reflects the latest state, so we capture before mutating).
@@ -103,7 +103,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         instanceId: '',
       });
       store.set(isSidePanelOpenedState.atom, false);
-      store.set(commandMenuSearchState.atom, '');
+      store.set(sidePanelSearchState.atom, '');
       store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       store.set(sidePanelNavigationStackState.atom, []);
       resetSelectedItem();

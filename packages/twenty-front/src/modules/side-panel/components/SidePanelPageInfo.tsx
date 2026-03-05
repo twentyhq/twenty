@@ -20,7 +20,7 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { type CommandMenuContextChipProps } from '@/command-menu/components/CommandMenuContextChip';
+import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
@@ -32,7 +32,7 @@ const StyledPageTitle = styled.div`
 `;
 
 type SidePanelPageInfoProps = {
-  pageChip: CommandMenuContextChipProps | undefined;
+  pageChip: SidePanelContextChipProps | undefined;
 };
 
 export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {

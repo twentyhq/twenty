@@ -1,6 +1,6 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
@@ -76,7 +76,7 @@ export const useCommandMenu = () => {
   const toggleCommandMenu = useCallback(() => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
-    store.set(commandMenuSearchState.atom, '');
+    store.set(sidePanelSearchState.atom, '');
 
     if (isSidePanelOpened) {
       closeCommandMenu();

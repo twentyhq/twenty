@@ -1,5 +1,5 @@
-import { COMMAND_MENU_NAVIGATION_HISTORY_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuNavigationHistoryDropdownId';
-import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID } from '@/side-panel/constants/SidePanelNavigationHistoryDropdownId';
+import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -26,7 +26,7 @@ const StyledIconChevronLeft = styled(IconChevronLeft)`
 export const SidePanelBackButton = () => {
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  const { contextChips } = useCommandMenuContextChips();
+  const { contextChips } = useSidePanelContextChips();
 
   const { openDropdown } = useOpenDropdown();
 
@@ -44,7 +44,7 @@ export const SidePanelBackButton = () => {
 
     openDropdown({
       dropdownComponentInstanceIdFromProps:
-        COMMAND_MENU_NAVIGATION_HISTORY_DROPDOWN_ID,
+        SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID,
     });
   };
 
@@ -68,7 +68,7 @@ export const SidePanelBackButton = () => {
                 key={index}
                 LeftComponent={chip.Icons}
                 onClick={() => {
-                  closeDropdown(COMMAND_MENU_NAVIGATION_HISTORY_DROPDOWN_ID);
+                  closeDropdown(SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID);
                   chip.onClick?.();
                 }}
                 text={chip.text}
@@ -77,7 +77,7 @@ export const SidePanelBackButton = () => {
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownId={COMMAND_MENU_NAVIGATION_HISTORY_DROPDOWN_ID}
+      dropdownId={SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID}
       dropdownPlacement="bottom-start"
       disableClickForClickableComponent={true}
     />

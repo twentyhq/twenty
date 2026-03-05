@@ -1,7 +1,7 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -26,7 +26,7 @@ export const ActionOpenSidePanelPage = ({
 
   const { navigateSidePanel } = useNavigateSidePanel();
 
-  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
+  const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
   if (!actionConfig) {
     return null;
@@ -42,7 +42,7 @@ export const ActionOpenSidePanelPage = ({
     });
 
     if (shouldResetSearchState) {
-      setCommandMenuSearch('');
+      setSidePanelSearch('');
     }
   };
 

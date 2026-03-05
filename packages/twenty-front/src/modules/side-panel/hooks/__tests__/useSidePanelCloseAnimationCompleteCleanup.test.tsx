@@ -3,13 +3,13 @@ import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
+import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -94,7 +94,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
         instanceId: 'test-id',
       });
       jotaiStore.set(isSidePanelOpenedState.atom, true);
-      jotaiStore.set(commandMenuSearchState.atom, 'test search');
+      jotaiStore.set(sidePanelSearchState.atom, 'test search');
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.SearchRecords,
@@ -117,7 +117,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       instanceId: 'test-id',
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
-    expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('test search');
+    expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('test search');
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
         page: SidePanelPages.SearchRecords,
@@ -141,7 +141,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       instanceId: '',
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
-    expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('');
+    expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('');
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
     expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(false);
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(false);
@@ -161,7 +161,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     expect(mockEmitSidePanelCloseEvent).toHaveBeenCalledTimes(1);
 
     expect(mockCloseDropdown).toHaveBeenCalledWith(
-      COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,
+      SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,
     );
     expect(mockResetContextStoreStates).toHaveBeenNthCalledWith(
       1,

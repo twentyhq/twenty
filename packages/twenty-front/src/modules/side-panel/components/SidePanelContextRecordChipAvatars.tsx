@@ -25,7 +25,7 @@ const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   justify-content: center;
 `;
 
-export const CommandMenuContextRecordChipAvatars = ({
+export const SidePanelContextRecordChipAvatars = ({
   objectMetadataItem,
   record,
 }: {

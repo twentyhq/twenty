@@ -6,7 +6,7 @@ import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAI
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
@@ -30,7 +30,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
-  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
@@ -94,7 +94,7 @@ export const useCommandMenuHotKeys = () => {
   useHotkeysOnFocusedElement({
     keys: [Key.Backspace, Key.Delete],
     callback: () => {
-      if (isNonEmptyString(commandMenuSearch)) {
+      if (isNonEmptyString(sidePanelSearch)) {
         return;
       }
 
@@ -114,7 +114,7 @@ export const useCommandMenuHotKeys = () => {
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [
       sidePanelPage,
-      commandMenuSearch,
+      sidePanelSearch,
       contextStoreTargetedRecordsRule,
       goBackFromSidePanel,
       setGlobalCommandMenuContext,
