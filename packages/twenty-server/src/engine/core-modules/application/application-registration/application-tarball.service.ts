@@ -5,20 +5,22 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
-import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
-import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -29,7 +31,8 @@ export class ApplicationTarballService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
+    private readonly fileStorageService: FileStorageService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async uploadTarball(params: {
@@ -111,18 +114,31 @@ export class ApplicationTarballService {
           await this.appRegistrationRepository.save(appRegistration);
       }
 
-      const storagePath = join('app-tarball', appRegistration.id);
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId: params.ownerWorkspaceId },
+        );
 
-      const driver = this.fileStorageDriverFactory.getCurrentDriver();
+      const fileId = v4();
 
-      await driver.writeFile({
-        filePath: join(storagePath, 'app.tar.gz'),
+      const savedFile = await this.fileStorageService.writeFile({
         sourceFile: params.tarballBuffer,
+        resourcePath: `${appRegistration.id}/app.tar.gz`,
         mimeType: 'application/gzip',
+        fileFolder: FileFolder.AppTarball,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceId: params.ownerWorkspaceId,
+        fileId,
+        settings: {
+          isTemporaryFile: false,
+          toDelete: false,
+        },
       });
 
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
+        tarballFileId: savedFile.id,
       });
 
       this.logger.log(

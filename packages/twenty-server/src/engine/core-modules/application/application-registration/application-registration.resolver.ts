@@ -4,6 +4,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -346,12 +347,15 @@ export class ApplicationRegistrationResolver {
       workspaceId,
     );
 
-    if (registration.sourceType !== ApplicationRegistrationSourceType.TARBALL) {
+    if (
+      registration.sourceType !== ApplicationRegistrationSourceType.TARBALL ||
+      !isDefined(registration.tarballFileId)
+    ) {
       return null;
     }
 
     return this.fileUrlService.signFileByIdUrl({
-      fileId: registration.id,
+      fileId: registration.tarballFileId,
       workspaceId,
       fileFolder: FileFolder.AppTarball,
     });
