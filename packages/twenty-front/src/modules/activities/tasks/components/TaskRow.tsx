@@ -9,7 +9,7 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { type Task } from '@/activities/types/Task';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -87,7 +87,7 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const { theme } = useContext(ThemeContext);
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
@@ -101,7 +101,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
   return (
     <ActivityRow
       onClick={() => {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId: task.id,
           objectNameSingular: CoreObjectNameSingular.Task,
         });

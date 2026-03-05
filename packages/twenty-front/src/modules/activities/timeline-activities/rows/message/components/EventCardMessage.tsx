@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
-import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -62,7 +62,7 @@ export const EventCardMessage = ({
 }) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
+  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
 
   const {
     record: message,
@@ -132,7 +132,7 @@ export const EventCardMessage = ({
 
   const handleClick = () => {
     if (canOpen && isDefined(message.messageThreadId)) {
-      openEmailThreadInCommandMenu(message.messageThreadId);
+      openEmailThreadInSidePanel(message.messageThreadId);
     }
   };
 

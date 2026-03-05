@@ -2,10 +2,10 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { SidePanelPages } from 'twenty-shared/types';
 import type { IconComponent } from 'twenty-ui/display';
 
-export const useOpenNavigationMenuItemInCommandMenu = () => {
+export const useOpenNavigationMenuItemInSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
 
-  const openNavigationMenuItemInCommandMenu = ({
+  const openNavigationMenuItemInSidePanel = ({
     pageTitle,
     pageIcon,
     focusTitleInput = false,
@@ -24,6 +24,6 @@ export const useOpenNavigationMenuItemInCommandMenu = () => {
   };
 
   return {
-    openNavigationMenuItemInCommandMenu,
+    openNavigationMenuItemInSidePanel,
   };
 };

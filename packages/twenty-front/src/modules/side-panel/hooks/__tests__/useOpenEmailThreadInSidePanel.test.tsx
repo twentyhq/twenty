@@ -2,12 +2,12 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconCalendarEvent } from 'twenty-ui/display';
+import { IconMail } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -15,10 +15,10 @@ jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
-const mockNavigateCommandMenu = jest.fn();
+const mockNavigateSidePanel = jest.fn();
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
-    navigateSidePanel: mockNavigateCommandMenu,
+    navigateSidePanel: mockNavigateSidePanel,
   }),
 }));
 
@@ -43,8 +43,8 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const { openCalendarEventInCommandMenu } =
-        useOpenCalendarEventInCommandMenu();
+      const { openEmailThreadInSidePanel } =
+        useOpenEmailThreadInSidePanel();
 
       const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
@@ -52,7 +52,7 @@ const renderHooks = () => {
       );
 
       return {
-        openCalendarEventInCommandMenu,
+        openEmailThreadInSidePanel,
         viewableRecordId,
       };
     },
@@ -63,26 +63,26 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useOpenCalendarEventInCommandMenu', () => {
+describe('useOpenEmailThreadInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should set the correct states and navigate to the calendar event page', () => {
+  it('should set the correct states and navigate to the email thread page', () => {
     const { result } = renderHooks();
 
-    const calendarEventId = 'calendar-event-123';
+    const emailThreadId = 'email-thread-123';
 
     act(() => {
-      result.current.openCalendarEventInCommandMenu(calendarEventId);
+      result.current.openEmailThreadInSidePanel(emailThreadId);
     });
 
-    expect(result.current.viewableRecordId).toBe(calendarEventId);
+    expect(result.current.viewableRecordId).toBe(emailThreadId);
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewCalendarEvent,
-      pageTitle: 'Calendar Event',
-      pageIcon: IconCalendarEvent,
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith({
+      page: SidePanelPages.ViewEmailThread,
+      pageTitle: 'Email Thread',
+      pageIcon: IconMail,
       pageId: 'mocked-uuid',
     });
   });

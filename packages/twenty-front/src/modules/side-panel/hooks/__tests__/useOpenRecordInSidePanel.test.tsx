@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
@@ -23,10 +23,10 @@ jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
-const mockNavigateCommandMenu = jest.fn();
+const mockNavigateSidePanel = jest.fn();
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
-    navigateSidePanel: mockNavigateCommandMenu,
+    navigateSidePanel: mockNavigateSidePanel,
   }),
 }));
 
@@ -61,7 +61,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+      const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
       const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
@@ -91,7 +91,7 @@ const renderHooks = () => {
       const { getIcon } = useIcons();
 
       return {
-        openRecordInCommandMenu,
+        openRecordInSidePanel,
         viewableRecordId,
         viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
@@ -108,7 +108,7 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useOpenRecordInCommandMenu', () => {
+describe('useOpenRecordInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -120,7 +120,7 @@ describe('useOpenRecordInCommandMenu', () => {
     const objectNameSingular = 'person';
 
     act(() => {
-      result.current.openRecordInCommandMenu({
+      result.current.openRecordInSidePanel({
         recordId,
         objectNameSingular,
       });
@@ -151,7 +151,7 @@ describe('useOpenRecordInCommandMenu', () => {
       },
     ]);
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith({
       page: SidePanelPages.ViewRecord,
       pageTitle: 'Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
@@ -168,14 +168,14 @@ describe('useOpenRecordInCommandMenu', () => {
     const objectNameSingular = 'person';
 
     act(() => {
-      result.current.openRecordInCommandMenu({
+      result.current.openRecordInSidePanel({
         recordId,
         objectNameSingular,
         isNewRecord: true,
       });
     });
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith({
       page: SidePanelPages.ViewRecord,
       pageTitle: 'New Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
@@ -189,7 +189,7 @@ describe('useOpenRecordInCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openRecordInCommandMenu({
+      result.current.openRecordInSidePanel({
         recordId: 'new-record-123',
         objectNameSingular: 'person',
         isNewRecord: true,
@@ -208,7 +208,7 @@ describe('useOpenRecordInCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openRecordInCommandMenu({
+      result.current.openRecordInSidePanel({
         recordId: 'record-123',
         objectNameSingular: 'person',
       });

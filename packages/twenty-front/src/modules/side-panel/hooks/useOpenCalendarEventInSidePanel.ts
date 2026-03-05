@@ -3,32 +3,32 @@ import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/s
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconMail } from 'twenty-ui/display';
+import { IconCalendarEvent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 
-export const useOpenEmailThreadInCommandMenu = () => {
+export const useOpenCalendarEventInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
 
-  const openEmailThreadInCommandMenu = useCallback(
-    (emailThreadId: string) => {
+  const openCalendarEventInSidePanel = useCallback(
+    (calendarEventId: string) => {
       const pageComponentInstanceId = v4();
 
       store.set(
         viewableRecordIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        emailThreadId,
+        calendarEventId,
       );
 
-      // TODO: Uncomment this once we need to show the thread title in the navigation
+      // TODO: Uncomment this once we need to calendar event title in the navigation
       // const objectMetadataItem = snapshot
       //   .getLoadable(objectMetadataItemsState)
       //   .getValue()
       //   .find(
       //     ({ nameSingular }) =>
-      //       nameSingular === CoreObjectNameSingular.MessageThread,
+      //       nameSingular === CoreObjectNameSingular.CalendarEvent,
       //   );
 
       // set(
@@ -41,16 +41,16 @@ export const useOpenEmailThreadInCommandMenu = () => {
       //       pageComponentInstanceId,
       //       {
       //         objectMetadataId: objectMetadataItem?.id,
-      //         recordId: emailThreadId,
+      //         recordId: calendarEventId,
       //       },
       //     ],
       //   ]),
       // );
 
       navigateSidePanel({
-        page: SidePanelPages.ViewEmailThread,
-        pageTitle: t`Email Thread`,
-        pageIcon: IconMail,
+        page: SidePanelPages.ViewCalendarEvent,
+        pageTitle: t`Calendar Event`,
+        pageIcon: IconCalendarEvent,
         pageId: pageComponentInstanceId,
       });
     },
@@ -58,6 +58,6 @@ export const useOpenEmailThreadInCommandMenu = () => {
   );
 
   return {
-    openEmailThreadInCommandMenu,
+    openCalendarEventInSidePanel,
   };
 };

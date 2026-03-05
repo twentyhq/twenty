@@ -12,15 +12,15 @@ import { IconArrowMerge } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 
-type UseOpenMergeRecordsPageInCommandMenuProps = {
+type UseOpenMergeRecordsPageInSidePanelProps = {
   objectNameSingular: string;
   objectRecordIds: string[];
 };
 
-export const useOpenMergeRecordsPageInCommandMenu = ({
+export const useOpenMergeRecordsPageInSidePanel = ({
   objectNameSingular,
   objectRecordIds,
-}: UseOpenMergeRecordsPageInCommandMenuProps) => {
+}: UseOpenMergeRecordsPageInSidePanelProps) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -41,7 +41,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     },
   });
 
-  const openMergeRecordsPageInCommandMenu = useCallback(async () => {
+  const openMergeRecordsPageInSidePanel = useCallback(async () => {
     const pageId = v4();
 
     store.set(
@@ -76,6 +76,6 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
   ]);
 
   return {
-    openMergeRecordsPageInCommandMenu,
+    openMergeRecordsPageInSidePanel,
   };
 };

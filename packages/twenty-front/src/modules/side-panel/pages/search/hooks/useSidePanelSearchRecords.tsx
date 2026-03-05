@@ -3,7 +3,7 @@ import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -50,7 +50,7 @@ export const useSidePanelSearchRecords = () => {
     },
   });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const actionItems = useMemo(() => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
@@ -92,11 +92,11 @@ export const useSidePanelSearchRecords = () => {
               <Action
                 onClick={() => {
                   searchRecord.objectNameSingular === 'task'
-                    ? openRecordInCommandMenu({
+                    ? openRecordInSidePanel({
                         recordId: searchRecord.recordId,
                         objectNameSingular: CoreObjectNameSingular.Task,
                       })
-                    : openRecordInCommandMenu({
+                    : openRecordInSidePanel({
                         recordId: searchRecord.recordId,
                         objectNameSingular: CoreObjectNameSingular.Note,
                       });
@@ -121,7 +121,7 @@ export const useSidePanelSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInCommandMenu, objectMetadataItems]);
+  }, [searchData, openRecordInSidePanel, objectMetadataItems]);
 
   return {
     loading,

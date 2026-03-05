@@ -6,11 +6,11 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
-export const useOpenFrontComponentInCommandMenu = () => {
+export const useOpenFrontComponentInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openFrontComponentInCommandMenu = ({
+  const openFrontComponentInSidePanel = ({
     frontComponentId,
     pageTitle,
     pageIcon,
@@ -52,6 +52,6 @@ export const useOpenFrontComponentInCommandMenu = () => {
   };
 
   return {
-    openFrontComponentInCommandMenu,
+    openFrontComponentInSidePanel,
   };
 };

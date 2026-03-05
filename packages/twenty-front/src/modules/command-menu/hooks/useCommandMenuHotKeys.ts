@@ -2,8 +2,8 @@ import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePan
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -22,9 +22,9 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useCommandMenuHotKeys = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
 
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 

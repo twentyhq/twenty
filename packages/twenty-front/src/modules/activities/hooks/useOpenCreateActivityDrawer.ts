@@ -11,7 +11,7 @@ import { type Note } from '@/activities/types/Note';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
@@ -51,7 +51,7 @@ export const useOpenCreateActivityDrawer = ({
     isUpsertingActivityInDBState,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -125,7 +125,7 @@ export const useOpenCreateActivityDrawer = ({
       setActivityTargetableEntityArray([]);
     }
 
-    openRecordInCommandMenu({
+    openRecordInSidePanel({
       recordId: activity.id,
       objectNameSingular: activityObjectNameSingular,
       isNewRecord: true,

@@ -1,6 +1,6 @@
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -30,7 +30,7 @@ export const MobileNavigationBar = () => {
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);

@@ -7,7 +7,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
-export const useOpenAskAIPageInCommandMenu = () => {
+export const useOpenAskAIPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 

@@ -1,5 +1,5 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
@@ -44,7 +44,7 @@ export const useCreateNewIndexRecord = ({
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -91,7 +91,7 @@ export const useCreateNewIndexRecord = ({
         recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
           isNewRecord: true,
@@ -160,7 +160,7 @@ export const useCreateNewIndexRecord = ({
       createOneRecord,
       navigate,
       objectMetadataItem,
-      openRecordInCommandMenu,
+      openRecordInSidePanel,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,

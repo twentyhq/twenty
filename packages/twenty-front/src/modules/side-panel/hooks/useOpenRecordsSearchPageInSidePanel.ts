@@ -6,7 +6,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconSearch } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
-export const useOpenRecordsSearchPageInCommandMenu = () => {
+export const useOpenRecordsSearchPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 

@@ -5,7 +5,7 @@ import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/A
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
@@ -72,7 +72,7 @@ export const NoteTile = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
@@ -85,7 +85,7 @@ export const NoteTile = ({
     <StyledCard isSingleNote={isSingleNote}>
       <StyledCardDetailsContainer
         onClick={() =>
-          openRecordInCommandMenu({
+          openRecordInSidePanel({
             recordId: note.id,
             objectNameSingular: CoreObjectNameSingular.Note,
           })

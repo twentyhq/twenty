@@ -4,7 +4,7 @@ import { IconFolder } from 'twenty-ui/display';
 
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddFolderToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
@@ -21,8 +21,8 @@ export const useAddFolderToNavigationMenu = () => {
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeState,
   );
-  const { openNavigationMenuItemInCommandMenu } =
-    useOpenNavigationMenuItemInCommandMenu();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
@@ -47,7 +47,7 @@ export const useAddFolderToNavigationMenu = () => {
 
     setAddMenuItemInsertionContext(null);
     setSelectedNavigationMenuItemInEditMode(itemId);
-    openNavigationMenuItemInCommandMenu({
+    openNavigationMenuItemInSidePanel({
       pageTitle: t`Edit folder`,
       pageIcon: IconFolder,
       focusTitleInput: true,

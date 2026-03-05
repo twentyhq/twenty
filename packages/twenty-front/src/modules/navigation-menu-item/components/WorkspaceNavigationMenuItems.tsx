@@ -14,7 +14,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
@@ -70,8 +70,8 @@ export const WorkspaceNavigationMenuItems = () => {
     openNavigationMenuItemFolderIdsState,
   );
   const { navigateSidePanel } = useNavigateSidePanel();
-  const { openNavigationMenuItemInCommandMenu } =
-    useOpenNavigationMenuItemInCommandMenu();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const { getIcon } = useIcons();
 
   const loading = useIsPrefetchLoading();
@@ -94,12 +94,12 @@ export const WorkspaceNavigationMenuItems = () => {
           ? currentOpenFolders
           : [...currentOpenFolders, id],
       );
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle: t`Edit folder`,
         pageIcon: getIcon(item.icon ?? item.Icon ?? FOLDER_ICON_DEFAULT),
       });
     } else if (item.itemType === NavigationMenuItemType.LINK) {
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle: t`Edit link`,
         pageIcon: IconLink,
       });
@@ -108,7 +108,7 @@ export const WorkspaceNavigationMenuItems = () => {
         item.itemType === NavigationMenuItemType.VIEW
           ? item.labelIdentifier
           : objectMetadataItem.labelSingular;
-      openNavigationMenuItemInCommandMenu({
+      openNavigationMenuItemInSidePanel({
         pageTitle,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
@@ -121,7 +121,7 @@ export const WorkspaceNavigationMenuItems = () => {
   ) => {
     enterEditMode();
     setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
-    openNavigationMenuItemInCommandMenu({
+    openNavigationMenuItemInSidePanel({
       pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
     });

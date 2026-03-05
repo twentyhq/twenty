@@ -14,7 +14,7 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { IconArrowRight } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -78,8 +78,8 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openCalendarEventInCommandMenu } =
-    useOpenCalendarEventInCommandMenu();
+  const { openCalendarEventInSidePanel } =
+    useOpenCalendarEventInSidePanel();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -103,7 +103,7 @@ export const CalendarEventRow = ({
       onClick={
         showTitle
           ? () => {
-              openCalendarEventInCommandMenu(calendarEvent.id);
+              openCalendarEventInSidePanel(calendarEvent.id);
             }
           : undefined
       }

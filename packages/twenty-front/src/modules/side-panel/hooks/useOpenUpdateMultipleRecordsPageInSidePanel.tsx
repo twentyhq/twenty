@@ -5,16 +5,16 @@ import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconBoxMultiple } from 'twenty-ui/display';
 
-type UseOpenUpdateMultipleRecordsPageInCommandMenuProps = {
+type UseOpenUpdateMultipleRecordsPageInSidePanelProps = {
   contextStoreInstanceId: string;
 };
 
-export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
+export const useOpenUpdateMultipleRecordsPageInSidePanel = ({
   contextStoreInstanceId,
-}: UseOpenUpdateMultipleRecordsPageInCommandMenuProps) => {
+}: UseOpenUpdateMultipleRecordsPageInSidePanelProps) => {
   const { navigateSidePanel } = useNavigateSidePanel();
 
-  const openUpdateMultipleRecordsPageInCommandMenu = useCallback(async () => {
+  const openUpdateMultipleRecordsPageInSidePanel = useCallback(async () => {
     navigateSidePanel({
       page: SidePanelPages.UpdateRecords,
       pageTitle: t(msg`Update records`),
@@ -24,6 +24,6 @@ export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
   }, [navigateSidePanel, contextStoreInstanceId]);
 
   return {
-    openUpdateMultipleRecordsPageInCommandMenu,
+    openUpdateMultipleRecordsPageInSidePanel,
   };
 };

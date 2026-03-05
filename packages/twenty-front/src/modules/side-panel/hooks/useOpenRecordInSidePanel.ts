@@ -26,7 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
-export const useOpenRecordInCommandMenu = () => {
+export const useOpenRecordInSidePanel = () => {
   const store = useStore();
   const { getIcon } = useIcons();
 
@@ -35,7 +35,7 @@ export const useOpenRecordInCommandMenu = () => {
     useRunWorkflowRunOpeningInCommandMenuSideEffects();
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
-  const openRecordInCommandMenu = useCallback(
+  const openRecordInSidePanel = useCallback(
     ({
       recordId,
       objectNameSingular,
@@ -212,6 +212,6 @@ export const useOpenRecordInCommandMenu = () => {
   );
 
   return {
-    openRecordInCommandMenu,
+    openRecordInSidePanel,
   };
 };

@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -44,7 +44,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -104,7 +104,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
         include: [getOperationName(SEARCH_QUERY) ?? ''],
       });
 
-      openRecordInCommandMenu({
+      openRecordInSidePanel({
         recordId: newRecordId,
         objectNameSingular: relationObjectMetadataNameSingular,
       });
