@@ -1,19 +1,19 @@
 import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/display';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 export const WorkspaceSectionAddMenuItemButton = () => {
   const { t } = useLingui();
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigateSidePanel } = useNavigateSidePanel();
 
   const handleClick = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
+    navigateSidePanel({
+      page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,

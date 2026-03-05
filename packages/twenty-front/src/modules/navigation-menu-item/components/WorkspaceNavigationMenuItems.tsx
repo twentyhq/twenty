@@ -81,8 +81,8 @@ export const WorkspaceNavigationMenuItems = () => {
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     enterEditMode();
-    navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
+    navigateSidePanel({
+      page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,

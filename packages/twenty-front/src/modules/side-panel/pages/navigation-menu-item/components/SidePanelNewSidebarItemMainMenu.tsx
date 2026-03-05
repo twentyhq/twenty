@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
@@ -8,7 +7,7 @@ import {
   IconLink,
   IconTable,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
@@ -43,7 +42,6 @@ export const SidePanelNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: SidePanelNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
@@ -110,7 +108,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     <Avatar
                       placeholder="L"
                       type="rounded"
-                      backgroundColor={theme.color.green4}
+                      backgroundColor={themeCssVariables.color.green4}
                     />
                   )}
                   label={t`Record`}
