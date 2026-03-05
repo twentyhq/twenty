@@ -6,7 +6,6 @@ import { type DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -26,7 +25,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
@@ -49,7 +48,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
             connectedAccountId,
           });
         },
-        authContext as WorkspaceAuthContext,
+        authContext,
       );
 
     const { flatObjectMetadataMaps } =

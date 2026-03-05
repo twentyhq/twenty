@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
@@ -15,9 +15,10 @@ describe('PieChartDataService', () => {
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
-  const mockAuthContext: AuthContext = {
+  const mockAuthContext = {
+    type: 'system',
     workspace: { id: workspaceId } as any,
-  };
+  } as unknown as WorkspaceAuthContext;
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByField = {
