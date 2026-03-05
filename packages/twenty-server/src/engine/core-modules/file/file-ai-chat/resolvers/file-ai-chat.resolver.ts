@@ -7,9 +7,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
-import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileAIChatService } from 'src/engine/core-modules/file/file-ai-chat/services/file-ai-chat.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,46 +21,24 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
-export class FileResolver {
-  constructor(private readonly fileMetadataService: FileMetadataService) {}
+export class FileAIChatResolver {
+  constructor(private readonly fileAIChatService: FileAIChatService) {}
 
-  @Mutation(() => FileDTO, {
-    deprecationReason: 'Use specific file service instead',
-  })
+  @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async createFile(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  async uploadAIChatFile(
+    @AuthWorkspace()
+    { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<FileDTO> {
+    { createReadStream, filename }: FileUpload,
+  ): Promise<FileWithSignedUrlDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    return this.fileMetadataService.createFile({
+    return await this.fileAIChatService.uploadFile({
       file: buffer,
       filename,
-      mimeType: mimetype,
       workspaceId,
     });
-  }
-
-  @Mutation(() => FileDTO, {
-    deprecationReason: '',
-  })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async deleteFile(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args('fileId', { type: () => UUIDScalarType }) fileId: string,
-  ): Promise<FileDTO> {
-    const deletedFile = await this.fileMetadataService.deleteFileById(
-      fileId,
-      workspaceId,
-    );
-
-    if (!deletedFile) {
-      throw new Error(`File with id ${fileId} not found`);
-    }
-
-    return deletedFile;
   }
 }
