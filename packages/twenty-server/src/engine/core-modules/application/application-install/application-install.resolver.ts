@@ -54,7 +54,6 @@ export class ApplicationInstallResolver {
 
   @Query(() => [ApplicationDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
@@ -63,7 +62,6 @@ export class ApplicationInstallResolver {
 
   @Query(() => ApplicationDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
