@@ -35,7 +35,7 @@ const StyledEmptyState = styled.div`
 const StyledHintLink = styled.button`
   background: none;
   border: none;
-  color: ${themeCssVariables.font.color.blue};
+  color: ${themeCssVariables.color.blue};
   cursor: pointer;
   font-size: inherit;
   padding: 0;

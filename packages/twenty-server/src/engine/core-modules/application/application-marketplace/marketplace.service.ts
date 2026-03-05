@@ -80,6 +80,7 @@ export class MarketplaceService {
             logicFunctions: [],
             frontComponents: [],
             sourcePackage: name,
+            isFeatured: false,
           };
         })
         .filter(isDefined);
