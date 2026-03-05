@@ -186,9 +186,7 @@ describe('remove', () => {
   });
 
   it('should not throw when the path does not exist', async () => {
-    await expect(
-      remove(join(tmpDir, 'already-gone')),
-    ).resolves.not.toThrow();
+    await expect(remove(join(tmpDir, 'already-gone'))).resolves.not.toThrow();
   });
 });
 
