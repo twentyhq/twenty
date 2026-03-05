@@ -4,7 +4,6 @@ import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty
 import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
 import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
@@ -31,17 +30,6 @@ export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
     objectMetadataItem.nameSingular,
     objectLabelSingular,
   );
-
-  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
-    return (
-      <RecordTableEmptyStateDisplay
-        subTitle={subTitle}
-        title={title}
-        animatedPlaceholderType="noRecord"
-        buttonComponent={undefined}
-      />
-    );
-  }
 
   return (
     <RecordTableEmptyStateDisplay
