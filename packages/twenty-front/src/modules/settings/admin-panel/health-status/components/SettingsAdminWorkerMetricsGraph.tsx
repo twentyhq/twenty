@@ -29,9 +29,11 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+const StyledSettingsAdminTableCardContainer = styled.div`
+  > * {
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type SettingsAdminWorkerMetricsGraphProps = {
@@ -200,23 +202,25 @@ export const SettingsAdminWorkerMetricsGraph = ({
         )}
       </StyledGraphContainer>
       {metricsDetails && (
-        <StyledSettingsAdminTableCard
-          rounded
-          items={Object.entries(metricsDetails)
-            .filter(([key]) => key !== '__typename')
-            .map(([key, value]) => ({
-              label: key.charAt(0).toUpperCase() + key.slice(1),
-              value:
-                typeof value === 'number'
-                  ? value
-                  : Array.isArray(value)
-                    ? value.length
-                    : String(value),
-            }))}
-          gridAutoColumns="1fr 1fr"
-          labelAlign="left"
-          valueAlign="right"
-        />
+        <StyledSettingsAdminTableCardContainer>
+          <SettingsAdminTableCard
+            rounded
+            items={Object.entries(metricsDetails)
+              .filter(([key]) => key !== '__typename')
+              .map(([key, value]) => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                value:
+                  typeof value === 'number'
+                    ? value
+                    : Array.isArray(value)
+                      ? value.length
+                      : String(value),
+              }))}
+            gridAutoColumns="1fr 1fr"
+            labelAlign="left"
+            valueAlign="right"
+          />
+        </StyledSettingsAdminTableCardContainer>
       )}
     </>
   );

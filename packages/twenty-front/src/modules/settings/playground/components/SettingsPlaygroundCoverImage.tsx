@@ -3,9 +3,9 @@ import { type ReactNode, useContext } from 'react';
 
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
-import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledCard = styled(Card)`
+
+const StyledCoverContainer = styled.div`
   align-items: center;
   background-size: cover;
   border-radius: ${themeCssVariables.border.radius.md};
@@ -34,11 +34,11 @@ export const StyledSettingsApiPlaygroundCoverImage = ({
       ? LightCoverImage.toString()
       : DarkCoverImage.toString();
   return (
-    <StyledCard
+    <StyledCoverContainer
       className={className}
       style={{ backgroundImage: `url('${coverImage}')` }}
     >
       {children}
-    </StyledCard>
+    </StyledCoverContainer>
   );
 };

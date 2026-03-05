@@ -37,7 +37,7 @@ const StyledSearchAndFilterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -163,13 +163,15 @@ export const SettingsAdminAI = () => {
         />
 
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="admin-model-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a model...`}
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="admin-model-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a model...`}
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+          </StyledSearchInputContainer>
           <Dropdown
             dropdownId="admin-ai-models-filter-dropdown"
             dropdownPlacement="bottom-end"

@@ -51,15 +51,17 @@ const StyledMainContent = styled.div`
   min-height: 200px;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
 
-  &[data-disabled='true'] {
-    pointer-events: none;
+    &[data-disabled='true'] {
+      pointer-events: none;
+    }
   }
 `;
 
@@ -177,21 +179,23 @@ export const SettingsSecurity = () => {
       <SettingsPageContainer>
         <SettingsRolesQueryEffect />
         <StyledMainContent>
-          <StyledSection>
-            <H2Title
-              title={t`SSO`}
-              description={t`Configure an SSO connection`}
-              adornment={
-                <Tag
-                  text={t`Enterprise`}
-                  color="transparent"
-                  Icon={IconLock}
-                  variant="border"
-                />
-              }
-            />
-            <SettingsSSOIdentitiesProvidersListCard />
-          </StyledSection>
+          <StyledSectionContainer>
+            <Section>
+              <H2Title
+                title={t`SSO`}
+                description={t`Configure an SSO connection`}
+                adornment={
+                  <Tag
+                    text={t`Enterprise`}
+                    color="transparent"
+                    Icon={IconLock}
+                    variant="border"
+                  />
+                }
+              />
+              <SettingsSSOIdentitiesProvidersListCard />
+            </Section>
+          </StyledSectionContainer>
 
           <Section>
             <StyledContainer>
@@ -257,17 +261,19 @@ export const SettingsSecurity = () => {
                       : t`View and filter events, page views, object changes`
                 }
                 Button={
-                  <StyledLink
-                    to={getSettingsPath(SettingsPath.EventLogs)}
-                    data-disabled={!isEventLogsEnabled}
-                  >
-                    <Button
-                      title={t`View Logs`}
-                      variant="secondary"
-                      size="small"
-                      disabled={!isEventLogsEnabled}
-                    />
-                  </StyledLink>
+                  <StyledLinkContainer>
+                    <Link
+                      to={getSettingsPath(SettingsPath.EventLogs)}
+                      data-disabled={!isEventLogsEnabled}
+                    >
+                      <Button
+                        title={t`View Logs`}
+                        variant="secondary"
+                        size="small"
+                        disabled={!isEventLogsEnabled}
+                      />
+                    </Link>
+                  </StyledLinkContainer>
                 }
               />
               {isEventLogsEnabled && (

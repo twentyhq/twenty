@@ -18,32 +18,12 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr;
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr;
-`;
-
-const StyledDateCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledScoreCell = styled(TableCell)`
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledCommentCell = styled(TableCell)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledMessagesContainer = styled.div`
@@ -205,43 +185,54 @@ export const SettingsAgentTurnDetail = () => {
         <Section>
           <H2Title title={t`Evaluations`} />
           {turn.evaluations && turn.evaluations.length > 0 ? (
-            <StyledTable>
-              <StyledTableHeaderRow>
-                <TableHeader>{t`Date`}</TableHeader>
-                <TableHeader>{t`Score`}</TableHeader>
-                <TableHeader>{t`Comment`}</TableHeader>
-              </StyledTableHeaderRow>
-              {[...turn.evaluations]
-                .sort(
-                  (a: any, b: any) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime(),
-                )
-                .map((evaluation: any) => (
-                  <StyledTableRow key={evaluation.id}>
-                    <StyledDateCell>
-                      {new Date(evaluation.createdAt).toLocaleDateString(
-                        'en-US',
-                        {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        },
-                      )}
-                    </StyledDateCell>
-                    <StyledScoreCell>
-                      <Status
-                        color={getScoreColor(evaluation.score)}
-                        text={`${evaluation.score}`}
-                      />
-                    </StyledScoreCell>
-                    <StyledCommentCell>
-                      {evaluation.comment || t`No comment`}
-                    </StyledCommentCell>
-                  </StyledTableRow>
-                ))}
-            </StyledTable>
+            <StyledTableContainer>
+              <Table>
+                <StyledTableHeaderRowContainer>
+                  <TableRow gridTemplateColumns="140px 80px 1fr">
+                    <TableHeader>{t`Date`}</TableHeader>
+                    <TableHeader>{t`Score`}</TableHeader>
+                    <TableHeader>{t`Comment`}</TableHeader>
+                  </TableRow>
+                </StyledTableHeaderRowContainer>
+                {[...turn.evaluations]
+                  .sort(
+                    (a: any, b: any) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime(),
+                  )
+                  .map((evaluation: any) => (
+                    <TableRow
+                      key={evaluation.id}
+                      gridTemplateColumns="140px 80px 1fr"
+                    >
+                      <TableCell color={themeCssVariables.font.color.tertiary}>
+                        {new Date(evaluation.createdAt).toLocaleDateString(
+                          'en-US',
+                          {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },
+                        )}
+                      </TableCell>
+                      <TableCell gap={themeCssVariables.spacing[2]}>
+                        <Status
+                          color={getScoreColor(evaluation.score)}
+                          text={`${evaluation.score}`}
+                        />
+                      </TableCell>
+                      <TableCell
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
+                        {evaluation.comment || t`No comment`}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </Table>
+            </StyledTableContainer>
           ) : (
             <div>{t`No evaluations yet for this turn`}</div>
           )}

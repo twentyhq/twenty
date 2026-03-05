@@ -27,8 +27,9 @@ const StyledLoadingIconContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLoadingIcon = styled(IconDotsVertical)`
+const StyledLoadingIconWrapper = styled.span`
   color: ${themeCssVariables.font.color.light};
+  display: flex;
   transform: rotate(90deg);
 `;
 
@@ -37,7 +38,9 @@ const InitialLoadingIndicator = () => {
 
   return (
     <StyledLoadingIconContainer>
-      <StyledLoadingIcon size={theme.icon.size.xl} />
+      <StyledLoadingIconWrapper>
+        <IconDotsVertical size={theme.icon.size.xl} />
+      </StyledLoadingIconWrapper>
     </StyledLoadingIconContainer>
   );
 };

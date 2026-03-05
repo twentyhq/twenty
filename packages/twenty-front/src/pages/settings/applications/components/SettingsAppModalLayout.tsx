@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import React from 'react';
 
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { Button } from 'twenty-ui/input';
@@ -79,16 +80,36 @@ export const StyledAppModal = (props: StyledAppModalProps) => (
   </ModalWrapper>
 );
 
-export const StyledAppModalButton = styled(Button)`
+const StyledAppModalButtonContainer = styled.div`
   box-sizing: border-box;
+  display: flex;
   justify-content: center;
   margin-top: ${themeCssVariables.spacing[2]};
 `;
+
+export const StyledAppModalButton = (
+  props: React.ComponentProps<typeof Button>,
+) => (
+  <StyledAppModalButtonContainer>
+    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    <Button {...props} />
+  </StyledAppModalButtonContainer>
+);
 
 export const StyledAppModalTitle = styled.div`
   text-align: center;
 `;
 
-export const StyledAppModalSection = styled(Section)`
+const StyledAppModalSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
+
+export const StyledAppModalSection = ({
+  children,
+  ...props
+}: React.ComponentProps<typeof Section>) => (
+  <StyledAppModalSectionContainer>
+    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    <Section {...props}>{children}</Section>
+  </StyledAppModalSectionContainer>
+);
