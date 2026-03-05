@@ -1,9 +1,11 @@
-export const useInstallMarketplaceApp = () => {
-  const install = async () => {
-    return true;
-  };
+import { useInstallApp } from '~/modules/marketplace/hooks/useInstallApp';
+import { useInstallMarketplaceAppMutation } from '~/generated-metadata/graphql';
 
-  return {
-    install,
-  };
+export const useInstallMarketplaceApp = () => {
+  const [installMarketplaceAppMutation] = useInstallMarketplaceAppMutation();
+
+  return useInstallApp<{
+    universalIdentifier: string;
+    version?: string;
+  }>(installMarketplaceAppMutation);
 };

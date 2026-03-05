@@ -50,6 +50,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
+        frontComponentId={executionContext.frontComponentId}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
         setThread={setThread}
@@ -64,6 +65,7 @@ export const FrontComponentRenderer = ({
     setThread,
     applicationAccessToken,
     apiUrl,
+    executionContext.frontComponentId,
   ]);
 
   return (

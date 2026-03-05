@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -279,15 +281,7 @@ ${otherPreloadedTools.length > 0 ? otherPreloadedTools.map((toolName) => `- \`${
 
 ### Tool Catalog by Category`);
 
-    const categoryOrder = [
-      ToolCategory.DATABASE_CRUD,
-      ToolCategory.ACTION,
-      ToolCategory.WORKFLOW,
-      ToolCategory.DASHBOARD,
-      ToolCategory.METADATA,
-      ToolCategory.VIEW,
-      ToolCategory.LOGIC_FUNCTION,
-    ];
+    const categoryOrder = Object.values(ToolCategory);
 
     for (const category of categoryOrder) {
       const tools = toolsByCategory.get(category);
@@ -321,7 +315,7 @@ ${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NA
     return sections.join('\n');
   }
 
-  private getCategoryLabel(category: string): string {
+  private getCategoryLabel(category: ToolCategory): string {
     switch (category) {
       case ToolCategory.DATABASE_CRUD:
         return 'Database Tools (CRUD operations)';
@@ -337,8 +331,12 @@ ${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NA
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
+      case ToolCategory.NATIVE_MODEL:
+        return 'Native Model Capabilities (e.g. web search)';
+      case ToolCategory.VIEW_FIELD:
+        return 'View Field Tools (manage view columns)';
       default:
-        return category;
+        return assertUnreachable(category);
     }
   }
 }

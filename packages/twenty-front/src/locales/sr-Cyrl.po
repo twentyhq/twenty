@@ -1783,9 +1783,19 @@ msgstr "страница са детаљима апликације"
 msgid "Application details"
 msgstr "Детаљи апликације"
 
+#. js-lingui-id: lGEBD4
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Application installed successfully."
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
+msgstr ""
+
+#. js-lingui-id: V+GSWz
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Application upgraded successfully."
 msgstr ""
 
 #. js-lingui-id: fL7WXr
@@ -2492,6 +2502,8 @@ msgid "Can't scan? Copy the"
 msgstr "Не можете да скенирате? Копирајте"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2707,6 +2719,11 @@ msgstr "Изаберите између OIDC и SAML протокола"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Изаберите између кратке и пуне"
+
+#. js-lingui-id: +yPBXI
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Choose file"
+msgstr ""
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -4732,6 +4749,11 @@ msgstr "Дупликати"
 msgid "Dutch"
 msgstr "Холандски"
 
+#. js-lingui-id: 3MYDWJ
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "e.g. @twentyhq/hello-world"
+msgstr ""
+
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5320,6 +5342,11 @@ msgstr "Унесите акредитиве за подешавање везе"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
 msgstr "Унесите информације за подешавање везе"
+
+#. js-lingui-id: n1dNU/
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Enter the npm package name of the application you want to install."
+msgstr ""
 
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5972,6 +5999,11 @@ msgstr "Није могуће добити одговор"
 msgid "Failed to impersonate user. {errorMessage}"
 msgstr "Преузимање идентитета корисника није успело. {errorMessage}"
 
+#. js-lingui-id: qZwtAi
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Failed to install the application."
+msgstr ""
+
 #. js-lingui-id: BTjpvA
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
 msgid "Failed to load front component: {errorMessage}"
@@ -6074,6 +6106,11 @@ msgstr "Није успело ажурирање улоге"
 msgid "Failed to update variable"
 msgstr "Није успело ажурирање променљиве"
 
+#. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Failed to upgrade the application."
+msgstr ""
+
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
@@ -6090,15 +6127,15 @@ msgstr ""
 msgid "Failed to upload file: {fileName}"
 msgstr "Није успела отпремање датотеке: {fileName}"
 
-#. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Failed to upload image: "
-msgstr "Неуспех у отпремању слике: "
-
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Није успело отпремање слике"
+
+#. js-lingui-id: vWFfVs
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Failed to upload tarball."
+msgstr ""
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -6258,11 +6295,6 @@ msgstr ""
 #. js-lingui-id: ncBVqE
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 msgid "File upload failed"
-msgstr ""
-
-#. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentList.tsx
-msgid "File URL is not defined"
 msgstr ""
 
 #. js-lingui-id: sER+bs
@@ -7215,6 +7247,7 @@ msgstr "Унесите JSON унос, затим притисните \"Извр
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 msgid "Install"
 msgstr ""
 
@@ -7222,6 +7255,17 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Инсталирајте и управљајте апликацијама"
+
+#. js-lingui-id: gR90Vf
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+msgid "Install app"
+msgstr ""
+
+#. js-lingui-id: H3eHCv
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Install from npm"
+msgstr ""
 
 #. js-lingui-id: JXiMtM
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -7237,6 +7281,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
 msgstr "Инсталиране апликације"
+
+#. js-lingui-id: wJJ+Wy
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Installing..."
+msgstr ""
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -7735,6 +7784,11 @@ msgstr "Последње плаћање није успело. Молимо ва
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Last payment failed. Please update your billing details."
 msgstr "Последње плаћање није успело. Молимо вас ажурирајте ваше податке о наплати."
+
+#. js-lingui-id: pJxM65
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "latest"
+msgstr ""
 
 #. js-lingui-id: wL3cK8
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -9950,6 +10004,11 @@ msgstr ""
 msgid "p"
 msgstr ""
 
+#. js-lingui-id: VXyQnz
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Package name"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -11700,6 +11759,11 @@ msgstr "Погледајте ток рада"
 msgid "See Workflows"
 msgstr "Погледајте токове рада"
 
+#. js-lingui-id: 2PIP/G
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
+msgstr ""
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -11715,6 +11779,11 @@ msgstr ""
 #. js-lingui-id: VjMMyZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Select 1 field"
+msgstr ""
+
+#. js-lingui-id: YfBvUy
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Select a .tar.gz application package to upload and install."
 msgstr ""
 
 #. js-lingui-id: OMoA3j
@@ -12036,6 +12105,11 @@ msgstr "Дозволе за подешавања"
 #. js-lingui-id: rl/5Qa
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Settings tab"
+msgstr ""
+
+#. js-lingui-id: dIJGKR
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Setup a tailor-made workspace"
 msgstr ""
 
 #. js-lingui-id: Ue7X/E
@@ -13781,7 +13855,6 @@ msgstr ""
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
 msgstr "Неназван"
@@ -13819,6 +13892,7 @@ msgid "update"
 msgstr "ажурирај"
 
 #. js-lingui-id: EkH9pt
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -13880,6 +13954,11 @@ msgstr "Унапређење"
 msgid "Upgrade Plan"
 msgstr "Надоградите план"
 
+#. js-lingui-id: pKCx2F
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrade to {latestAvailableVersion}"
+msgstr ""
+
 #. js-lingui-id: ggd+Ee
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Upgrade to access"
@@ -13888,6 +13967,11 @@ msgstr ""
 #. js-lingui-id: jmVW3I
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Upgrade to Enterprise to access audit logs"
+msgstr ""
+
+#. js-lingui-id: +Gi3x1
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrading..."
 msgstr ""
 
 #. js-lingui-id: ONWvwQ
@@ -13899,6 +13983,11 @@ msgstr "Отпреми"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Отпремите .xlsx, .xls или .csv датотеку"
+
+#. js-lingui-id: BhkxTk
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Upload failed."
+msgstr ""
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -13922,6 +14011,12 @@ msgstr "Отпремите датотеке"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Отпремите датотеке"
+
+#. js-lingui-id: aG3MkW
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Upload tarball"
+msgstr ""
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -14132,6 +14227,11 @@ msgstr "Проверите код из апликације"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Version"
 msgstr "Верзија"
+
+#. js-lingui-id: OVk6Na
+#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+msgid "Version (optional)"
+msgstr ""
 
 #. js-lingui-id: IHIWR4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx

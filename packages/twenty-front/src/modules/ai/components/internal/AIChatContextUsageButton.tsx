@@ -8,11 +8,13 @@ import { ProgressBar } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
-import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import {
   agentChatUsageState,
   type AgentChatLastMessageUsage,
 } from '@/ai/states/agentChatUsageState';
+import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -115,6 +117,14 @@ export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const [isHovered, setIsHovered] = useState(false);
   const agentChatUsage = useAtomStateValue(agentChatUsageState);
+
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
+
+  if (!hasMessages) {
+    return null;
+  }
 
   if (!agentChatUsage) {
     return (

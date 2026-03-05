@@ -37,15 +37,16 @@ export default defineConfig(() => {
           }
 
           const builtins = [
-            'path',
+            'child_process',
+            'crypto',
             'fs',
             'fs/promises',
-            'url',
-            'crypto',
-            'stream',
-            'util',
-            'os',
             'module',
+            'os',
+            'path',
+            'stream',
+            'url',
+            'util',
           ];
 
           if (builtins.includes(id)) {
