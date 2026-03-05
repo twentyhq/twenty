@@ -29,8 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
 import {
@@ -87,6 +86,7 @@ const StyledMainButton = styled(MainButton)`
 `;
 
 export const PasswordReset = () => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
@@ -99,9 +99,6 @@ export const PasswordReset = () => {
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
-
-  const { theme } = useContext(ThemeContext);
-
   const passwordResetToken = useParams().passwordResetToken;
 
   const isLoggedIn = useIsLogged();
@@ -230,7 +227,9 @@ export const PasswordReset = () => {
                 <Skeleton
                   height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                   count={2}
-                  style={{ marginBottom: theme.spacing(2) }}
+                  style={{
+                    marginBottom: themeCssVariables.spacing[2],
+                  }}
                 />
               </SkeletonTheme>
             ) : (

@@ -7,8 +7,7 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;

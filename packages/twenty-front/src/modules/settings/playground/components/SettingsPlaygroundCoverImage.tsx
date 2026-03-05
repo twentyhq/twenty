@@ -4,9 +4,7 @@ import { type ReactNode, useContext } from 'react';
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
 import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCard = styled(Card)`
   align-items: center;
   background-size: cover;
@@ -29,9 +27,10 @@ export const StyledSettingsApiPlaygroundCoverImage = ({
   children,
   className,
 }: StyledSettingsApiPlaygroundCoverImageProps) => {
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme } = useContext(ThemeContext);
+
   const coverImage =
-    theme.name === 'light'
+    colorScheme === 'light'
       ? LightCoverImage.toString()
       : DarkCoverImage.toString();
   return (

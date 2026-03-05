@@ -17,8 +17,7 @@ import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsObjectRelationItemTableRowProps = {
@@ -99,9 +98,9 @@ export const SettingsObjectRelationItemTableRow = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsObjectRelationItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(fieldMetadataItem.icon);
@@ -163,7 +162,9 @@ export const SettingsObjectRelationItemTableRow = ({
       <StyledNameTableCell>
         {!!Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
+            style={{
+              minWidth: theme.icon.size.md,
+            }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />

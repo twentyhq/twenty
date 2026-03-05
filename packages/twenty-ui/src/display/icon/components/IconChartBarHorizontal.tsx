@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 import { IconChartBar } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 const StyledRotatedIconWrapper = styled.div`
   display: inline-flex;

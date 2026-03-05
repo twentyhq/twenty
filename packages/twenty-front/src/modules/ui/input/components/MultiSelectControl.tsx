@@ -10,8 +10,7 @@ import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
@@ -44,7 +43,6 @@ export const MultiSelectControl = ({
   hasRightElement,
 }: MultiSelectControlProps) => {
   const { theme } = useContext(ThemeContext);
-
   const firstSelectedOption = selectedOptions?.[0];
   return (
     <StyledControlContainer

@@ -25,8 +25,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -46,9 +45,8 @@ export const SettingsObjectTable = ({
   objectMetadataItems: ObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
-  const { t } = useLingui();
-
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 

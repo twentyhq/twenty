@@ -18,11 +18,12 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const workflowId = useCommandMenuWorkflowIdOrThrow();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
@@ -72,8 +73,6 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
       );
     };
   };
-
-  const { theme } = useContext(ThemeContext);
 
   return (
     <RightDrawerStepListContainer>

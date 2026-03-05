@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -6,8 +5,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
@@ -42,7 +41,6 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
   onClick,
 }: SettingsAvailableStandardObjectItemTableRowProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
 

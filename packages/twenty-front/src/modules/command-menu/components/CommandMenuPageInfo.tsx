@@ -20,11 +20,9 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 
-import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};

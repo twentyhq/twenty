@@ -19,7 +19,7 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/N
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CommandMenuNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
@@ -32,8 +32,8 @@ export const CommandMenuNewSidebarItemMainMenu = ({
   onSelectView,
   onSelectRecord,
 }: CommandMenuNewSidebarItemMainMenuProps) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
 

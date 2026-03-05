@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SettingsOptionIconCustomizerProps = {
   Icon: IconComponent;
@@ -22,6 +22,7 @@ export const SettingsOptionIconCustomizer = ({
   rotate = -4,
 }: SettingsOptionIconCustomizerProps) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <StyledIconCustomizer zoom={zoom} rotate={rotate}>
       <Icon
