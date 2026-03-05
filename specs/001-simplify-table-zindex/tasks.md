@@ -187,3 +187,9 @@ Each phase delivers value independently. If any phase reveals issues, we can sto
 - The scroll state atoms (`isRecordTableScrolledVertically/Horizontally`) are NOT deleted — they are still consumed by header components for border-bottom visibility, scroll shadows, and mobile compaction
 - The `activeRows` z-index logic in `RecordTableRowDiv` is OUT OF SCOPE per the clarification decision (portal z-index only; activeRows can be addressed in a follow-up)
 - Commit after each phase checkpoint passes
+
+---
+
+## Known Bugs (Pre-existing on main)
+
+- [ ] BUG-001 The first data column (3rd column — label identifier sticky column) is not sticky when scrolling horizontally. This bug exists on main before any changes from this feature branch. Investigate `RecordTableStyleWrapper.tsx` rules for `div.table-cell-0-0` and `div.table-cell:nth-of-type(3)` — the sticky positioning or z-index may be missing or overridden. File a separate fix or address during Phase 7/8 cleanup.
