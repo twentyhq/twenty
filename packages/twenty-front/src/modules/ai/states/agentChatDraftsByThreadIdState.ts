@@ -1,20 +1,14 @@
-import { atomWithStorage } from 'jotai/utils';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const AGENT_CHAT_NEW_THREAD_DRAFT_KEY = '__new__';
 
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
 
-const draftsAtom = atomWithStorage<Record<string, string>>(
-  DRAFTS_STORAGE_KEY,
-  {},
-  undefined,
-  { getOnInit: true },
-);
-
-draftsAtom.debugLabel = DRAFTS_STORAGE_KEY;
-
-export const agentChatDraftsByThreadIdState = {
-  type: 'State' as const,
+export const agentChatDraftsByThreadIdState = createAtomState<
+  Record<string, string>
+>({
   key: DRAFTS_STORAGE_KEY,
-  atom: draftsAtom,
-};
+  defaultValue: {},
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
+});
