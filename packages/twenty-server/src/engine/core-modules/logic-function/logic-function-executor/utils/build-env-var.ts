@@ -1,4 +1,4 @@
-import { type FlatApplicationVariable } from 'src/engine/core-modules/applicationVariable/types/flat-application-variable.type';
+import { type FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export const buildEnvVar = (

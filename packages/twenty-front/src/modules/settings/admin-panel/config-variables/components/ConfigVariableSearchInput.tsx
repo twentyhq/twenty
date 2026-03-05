@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/display';
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   width: 100%;
 `;
 
@@ -17,13 +17,15 @@ export const ConfigVariableSearchInput = ({
   onChange,
 }: ConfigVariableSearchInputProps) => {
   return (
-    <StyledSearchInput
-      instanceId="config-variable-search"
-      placeholder={t`Search config variables`}
-      value={value}
-      onChange={onChange}
-      autoFocus={false}
-      LeftIcon={IconSearch}
-    />
+    <StyledSearchInputContainer>
+      <SettingsTextInput
+        instanceId="config-variable-search"
+        placeholder={t`Search config variables`}
+        value={value}
+        onChange={onChange}
+        autoFocus={false}
+        LeftIcon={IconSearch}
+      />
+    </StyledSearchInputContainer>
   );
 };

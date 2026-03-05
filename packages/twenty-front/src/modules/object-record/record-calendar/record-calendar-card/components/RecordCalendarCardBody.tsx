@@ -17,12 +17,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledRecordCardBodyContainer = styled(RecordCardBodyContainer)`
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -73,7 +68,7 @@ export const RecordCalendarCardBody = ({
   };
 
   return (
-    <StyledRecordCardBodyContainer>
+    <RecordCardBodyContainer padding={themeCssVariables.spacing[1]}>
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -120,6 +115,6 @@ export const RecordCalendarCardBody = ({
           </StopPropagationContainer>
         );
       })}
-    </StyledRecordCardBodyContainer>
+    </RecordCardBodyContainer>
   );
 };

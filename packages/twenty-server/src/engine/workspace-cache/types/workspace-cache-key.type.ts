@@ -1,9 +1,11 @@
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import {
+  type ObjectsPermissionsByRoleId,
+  type FeatureFlagKey,
+} from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/applicationVariable/types/application-variable-cache-maps.type';
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -21,6 +23,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
   flatViewFilterGroupMaps: 'flat-maps:view-filter-group',
+  flatViewSortMaps: 'flat-maps:view-sort',
   flatLogicFunctionMaps: 'flat-maps:logic-function',
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',

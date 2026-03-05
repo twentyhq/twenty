@@ -11,8 +11,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   align-items: center;
@@ -39,7 +38,7 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
       : '0'};
 `;
 
-const StyledIcon = styled(IconChevronDown)`
+const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   height: 20px;
@@ -95,7 +94,9 @@ export const RecordTableColumnAggregateFooterValueCell = ({
               dropdownId={dropdownId}
             />
             {!hasAggregateOperationForViewField && (
-              <StyledIcon fontWeight="light" size={theme.icon.size.sm} />
+              <StyledIconContainer>
+                <IconChevronDown fontWeight="light" size={theme.icon.size.sm} />
+              </StyledIconContainer>
             )}
           </>
         ) : (

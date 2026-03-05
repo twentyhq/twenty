@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 
 describe('isActivityTargetField', () => {

@@ -150,7 +150,7 @@ export const MemberPermissionsTab = ({
 
       {pendingRole && (
         <ConfirmationModal
-          modalId={CONFIRM_ROLE_CHANGE_MODAL_ID}
+          modalInstanceId={CONFIRM_ROLE_CHANGE_MODAL_ID}
           title={t`Confirm role update`}
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}

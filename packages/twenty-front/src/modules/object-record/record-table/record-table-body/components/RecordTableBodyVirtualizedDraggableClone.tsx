@@ -1,7 +1,5 @@
-import {
-  getRecordTableColumnWidthInlineStyles,
-  HorizontalScrollBoxShadowCSS,
-} from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/HorizontalScrollBoxShadowCSS';
+import { getRecordTableColumnWidthInlineStyles } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -28,16 +26,15 @@ import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/reco
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { styled } from '@linaria/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
-import { useContext, useMemo } from 'react';
+import { styled } from '@linaria/react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MAX_COLUMNS = 100;
 
@@ -82,16 +79,14 @@ const StyledRowDraggableCloneCSSBridge = styled.div`
 
   div.table-cell-0-0 {
     position: sticky;
-    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell:nth-of-type(3) {
     position: sticky;
-    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
     z-index: ${TABLE_Z_INDEX.cell.withoutGroups.sticky};
 
     ${HorizontalScrollBoxShadowCSS}
@@ -139,8 +134,6 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 }) => {
   const realIndex = rubric.source.index;
 
-  const { theme } = useContext(ThemeContext);
-
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
@@ -178,10 +171,10 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
         style={{
           ...draggableProvided.draggableProps.style,
           background: draggableSnapshot.isDragging
-            ? theme.background.transparent.light
+            ? themeCssVariables.background.transparent.light
             : undefined,
           borderColor: draggableSnapshot.isDragging
-            ? `${theme.border.color.medium}`
+            ? themeCssVariables.border.color.medium
             : 'transparent',
           opacity: isSecondaryDragged ? 0.3 : undefined,
         }}

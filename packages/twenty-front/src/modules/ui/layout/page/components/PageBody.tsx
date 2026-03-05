@@ -24,7 +24,7 @@ const StyledMainContainer = styled.div`
 `;
 
 type LeftContainerProps = {
-  isRightDrawerOpen?: boolean;
+  isSidePanelOpen?: boolean;
 };
 
 const StyledLeftContainer = styled.div<LeftContainerProps>`

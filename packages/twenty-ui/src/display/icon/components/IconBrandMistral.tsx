@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconBrandMistralRaw from '@assets/icons/mistral.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconBrandMistralProps = Pick<IconComponentProps, 'size' | 'color'>;
 

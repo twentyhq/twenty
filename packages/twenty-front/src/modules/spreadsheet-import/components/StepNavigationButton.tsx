@@ -1,19 +1,18 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { ModalFooter } from 'twenty-ui/layout';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const StyledFooter = styled(Modal.Footer)`
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
-  gap: 10px;
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[4]};
-  height: auto;
+const StyledFooterContainer = styled.div`
+  > div {
+    border-top: 1px solid ${themeCssVariables.border.color.medium};
+    box-shadow: ${themeCssVariables.boxShadow.strong};
+    justify-content: space-between;
+  }
 `;
 
 type StepNavigationButtonProps = {
@@ -34,24 +33,26 @@ export const StepNavigationButton = ({
   isContinueDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
-    <StyledFooter>
-      {!isUndefinedOrNull(onBack) && (
-        <MainButton
-          Icon={isLoading ? CircularProgressBar : undefined}
-          title={backTitle}
-          onClick={!isLoading ? onBack : undefined}
-          variant="secondary"
-        />
-      )}
-      {!isUndefinedOrNull(onContinue) && (
-        <MainButton
-          Icon={isLoading ? CircularProgressBar : undefined}
-          title={continueTitle}
-          onClick={!isLoading ? onContinue : undefined}
-          variant="primary"
-          disabled={isContinueDisabled}
-        />
-      )}
-    </StyledFooter>
+    <StyledFooterContainer>
+      <ModalFooter autoHeight>
+        {!isUndefinedOrNull(onBack) && (
+          <MainButton
+            Icon={isLoading ? CircularProgressBar : undefined}
+            title={backTitle}
+            onClick={!isLoading ? onBack : undefined}
+            variant="secondary"
+          />
+        )}
+        {!isUndefinedOrNull(onContinue) && (
+          <MainButton
+            Icon={isLoading ? CircularProgressBar : undefined}
+            title={continueTitle}
+            onClick={!isLoading ? onContinue : undefined}
+            variant="primary"
+            disabled={isContinueDisabled}
+          />
+        )}
+      </ModalFooter>
+    </StyledFooterContainer>
   );
 };

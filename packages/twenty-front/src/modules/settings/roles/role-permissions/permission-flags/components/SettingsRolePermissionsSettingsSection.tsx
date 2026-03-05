@@ -20,7 +20,7 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCardContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
@@ -58,21 +58,23 @@ export const SettingsRolePermissionsSettingsSection = ({
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
       {shouldShowAllAccessToggle && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconSettings}
-            title={t`Settings All Access`}
-            description={t`Ability to edit all settings`}
-            checked={settingsDraftRole.canUpdateAllSettings}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-              });
-            }}
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconSettings}
+              title={t`Settings All Access`}
+              description={t`Ability to edit all settings`}
+              checked={settingsDraftRole.canUpdateAllSettings}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+                });
+              }}
+            />
+          </Card>
+        </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
         isExpanded={

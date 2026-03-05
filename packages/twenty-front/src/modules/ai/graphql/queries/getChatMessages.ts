@@ -32,6 +32,7 @@ export const GET_CHAT_MESSAGES = gql`
         fileMediaType
         fileFilename
         fileUrl
+        fileId
         providerMetadata
         createdAt
       }

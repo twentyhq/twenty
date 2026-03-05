@@ -14,7 +14,7 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -304,7 +304,7 @@ export const WithNumberChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -390,7 +390,7 @@ export const WithGaugeChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -480,7 +480,7 @@ export const WithBarChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -573,7 +573,7 @@ export const SmallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -670,7 +670,7 @@ export const MediumWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -767,7 +767,7 @@ export const LargeWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -860,7 +860,7 @@ export const WideWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -957,7 +957,7 @@ export const TallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -1075,7 +1075,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1185,7 +1185,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1303,7 +1303,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1418,7 +1418,7 @@ export const OnMobile: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1455,7 +1455,7 @@ export const InSidePanel: Story = {
     docs: {
       description: {
         story:
-          'Widget in side panel (right drawer) should use side-column variant instead of record-page variant.',
+          'Widget in side panel should use side-column variant instead of record-page variant.',
       },
     },
   },
@@ -1515,7 +1515,7 @@ export const InSidePanel: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: true,
+                  isInSidePanel: true,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1798,7 +1798,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: pageLayoutType,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,

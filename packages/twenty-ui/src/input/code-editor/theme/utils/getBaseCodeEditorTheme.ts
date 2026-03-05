@@ -1,4 +1,4 @@
-import { type ThemeType } from '@ui/theme';
+import { type ThemeType } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,11 +31,9 @@ const convertColorToHex = (color: string): string => {
   return color;
 };
 
-export const getBaseCodeEditorTheme = ({
-  theme,
-}: {
-  theme: ThemeType;
-}): editor.IStandaloneThemeData => {
+export const getBaseCodeEditorTheme = (
+  theme: ThemeType,
+): editor.IStandaloneThemeData => {
   return {
     base: 'vs',
     inherit: true,
@@ -45,12 +43,18 @@ export const getBaseCodeEditorTheme = ({
         foreground: convertColorToHex(theme.code.text.gray),
         fontStyle: 'bold',
       },
-      { token: 'keyword', foreground: convertColorToHex(theme.code.text.sky) },
+      {
+        token: 'keyword',
+        foreground: convertColorToHex(theme.code.text.sky),
+      },
       {
         token: 'delimiter',
         foreground: convertColorToHex(theme.code.text.gray),
       },
-      { token: 'string', foreground: convertColorToHex(theme.code.text.pink) },
+      {
+        token: 'string',
+        foreground: convertColorToHex(theme.code.text.pink),
+      },
       {
         token: 'comment',
         foreground: convertColorToHex(theme.code.text.orange),

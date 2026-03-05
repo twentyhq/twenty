@@ -14,7 +14,7 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -55,7 +55,7 @@ export class ProcessNestedRelationsV2Helper {
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
     limit: number;
-    authContext: AuthContext;
+    authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,7 +111,7 @@ export class ProcessNestedRelationsV2Helper {
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
     aggregate: Record<string, AggregationField>;
     limit: number;
-    authContext: AuthContext;
+    authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;

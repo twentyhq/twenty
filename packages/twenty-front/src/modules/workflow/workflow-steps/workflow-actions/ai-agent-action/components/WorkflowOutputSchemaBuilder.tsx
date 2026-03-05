@@ -9,10 +9,8 @@ import { IconPlus, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;

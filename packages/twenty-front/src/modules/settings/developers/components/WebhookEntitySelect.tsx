@@ -26,8 +26,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -61,13 +60,15 @@ const StyledControlLabel = styled.span`
   white-space: nowrap;
 `;
 
-const StyledControlIconChevronDown = styled(IconChevronDown)<{
+const StyledControlIconChevronDownContainer = styled.span<{
   disabled?: boolean;
 }>`
+  align-items: center;
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 type WebhookEntitySelectProps = {
@@ -167,10 +168,9 @@ export const WebhookEntitySelect = ({
       clickableComponent={
         <StyledControlContainer disabled={disabled}>
           <StyledControlLabel>{getSelectedLabel()}</StyledControlLabel>
-          <StyledControlIconChevronDown
-            disabled={disabled}
-            size={theme.icon.size.md}
-          />
+          <StyledControlIconChevronDownContainer disabled={disabled}>
+            <IconChevronDown size={theme.icon.size.md} />
+          </StyledControlIconChevronDownContainer>
         </StyledControlContainer>
       }
       dropdownComponents={

@@ -19,14 +19,14 @@ export const RecordIndexActionMenu = () => {
       {contextStoreCurrentObjectMetadataItemId && (
         <>
           <ActionMenuContextProvider
-            isInRightDrawer={false}
+            isInSidePanel={false}
             displayType="button"
             actionMenuType="index-page-action-menu"
           >
             {!isMobile && <PageHeaderActionMenuButtons />}
           </ActionMenuContextProvider>
           <ActionMenuContextProvider
-            isInRightDrawer={false}
+            isInSidePanel={false}
             displayType="dropdownItem"
             actionMenuType="index-page-action-menu-dropdown"
           >

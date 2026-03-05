@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
 import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -9,18 +9,33 @@ import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/com
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { IconNewSection } from 'twenty-ui/display';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
+
+import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const StyledEmptyGroupDropZone = styled.div`
+  align-items: center;
+  border: 1px dashed ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  justify-content: center;
+  margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[10]};
 `;
 
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
@@ -84,7 +99,9 @@ export const FieldsConfigurationGroupEditor = ({
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
-  const renameDropdownId = `fields-configuration-group-rename-${group.id}`;
+  const renameDropdownId = getFieldsConfigurationGroupRenameDropdownId(
+    group.id,
+  );
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -129,12 +146,7 @@ export const FieldsConfigurationGroupEditor = ({
           clickableComponentWidth="100%"
           clickableComponent={
             <StyledMenuItemDraggableWrapper>
-              <MenuItemDraggable
-                text={group.name}
-                gripMode="always"
-                isIconDisplayedOnHoverOnly={false}
-                withIconContainer
-              />
+              <FieldsConfigurationGroupDraggableHeader text={group.name} />
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
@@ -171,6 +183,11 @@ export const FieldsConfigurationGroupEditor = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
           >
+            {sortedFields.length === 0 && (
+              <StyledEmptyGroupDropZone>
+                {t`Drop fields here`}
+              </StyledEmptyGroupDropZone>
+            )}
             {sortedFields.map((field, fieldIndex) => {
               return (
                 <DraggableItem
@@ -202,7 +219,7 @@ export const FieldsConfigurationGroupEditor = ({
       <MenuItem
         LeftIcon={IconNewSection}
         withIconContainer
-        text={t`Add a Group`}
+        text={t`Add a Section`}
         onClick={onAddGroup}
       />
     </StyledGroupContainer>

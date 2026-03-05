@@ -15,9 +15,7 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
@@ -25,11 +23,10 @@ import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-
-type UseAIChatEditorProps = {
-  onSendMessage: () => void;
-};
 
 const textToTiptapContent = (text: string) => ({
   type: 'doc',
@@ -41,7 +38,7 @@ const textToTiptapContent = (text: string) => ({
   ],
 });
 
-export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
+export const useAIChatEditor = () => {
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
@@ -88,7 +85,7 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
           }
 
           event.preventDefault();
-          onSendMessage();
+          dispatchAgentChatSendMessageEvent();
 
           const { state } = view;
           view.dispatch(state.tr.delete(0, state.doc.content.size));
@@ -136,9 +133,9 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
   }
 
   const handleSendAndClear = useCallback(() => {
-    onSendMessage();
+    dispatchAgentChatSendMessageEvent();
     editor?.commands.clearContent();
-  }, [onSendMessage, editor]);
+  }, [editor]);
 
   return { editor, handleSendAndClear };
 };

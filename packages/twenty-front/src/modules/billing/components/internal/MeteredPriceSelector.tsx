@@ -31,11 +31,11 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSelect = styled(Select<string>)`
+const StyledSelectContainer = styled.div`
   flex: 1 1;
 `;
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   flex: 0 0 auto;
 `;
 
@@ -160,30 +160,34 @@ export const MeteredPriceSelector = ({
         description={t`Number of new credits allocated every ${recurringInterval}`}
       />
       <StyledRow>
-        <StyledSelect
-          dropdownId="settings_billing-metered-price"
-          options={options}
-          value={selectedPriceId ?? currentMeteredPrice.stripePriceId}
-          onChange={handleChange}
-          disabled={isUpdating || isTrialing}
-          description={
-            isTrialing ? t`Please start your subscription first` : undefined
-          }
-          fullWidth
-        />
-        {isChanged && (
-          <StyledButton
-            title={isUpgrade() ? t`Upgrade` : t`Downgrade`}
-            onClick={handleOpenConfirm}
-            variant="primary"
-            isLoading={isUpdating}
-            disabled={!isChanged}
-            accent={isUpgrade() ? 'blue' : 'danger'}
+        <StyledSelectContainer>
+          <Select
+            dropdownId="settings_billing-metered-price"
+            options={options}
+            value={selectedPriceId ?? currentMeteredPrice.stripePriceId}
+            onChange={handleChange}
+            disabled={isUpdating || isTrialing}
+            description={
+              isTrialing ? t`Please start your subscription first` : undefined
+            }
+            fullWidth
           />
+        </StyledSelectContainer>
+        {isChanged && (
+          <StyledButtonContainer>
+            <Button
+              title={isUpgrade() ? t`Upgrade` : t`Downgrade`}
+              onClick={handleOpenConfirm}
+              variant="primary"
+              isLoading={isUpdating}
+              disabled={!isChanged}
+              accent={isUpgrade() ? 'blue' : 'danger'}
+            />
+          </StyledButtonContainer>
         )}
       </StyledRow>
       <ConfirmationModal
-        modalId={confirmModalId}
+        modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
         subtitle={t`Confirm changing your current credit plan.`}
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}

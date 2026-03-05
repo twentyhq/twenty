@@ -103,11 +103,13 @@ export const WithImageFiles: Story = {
     isRunning: false,
     files: [
       {
+        fileId: '550e8400-e29b-41d4-a716-446655440001',
         filename: 'revenue_chart.png',
         url: 'https://picsum.photos/800/480',
         mimeType: 'image/png',
       },
       {
+        fileId: '550e8400-e29b-41d4-a716-446655440002',
         filename: 'pie_chart.png',
         url: 'https://picsum.photos/600/400',
         mimeType: 'image/png',
@@ -142,11 +144,13 @@ print("Files exported successfully!")`,
     isRunning: false,
     files: [
       {
+        fileId: '550e8400-e29b-41d4-a716-446655440003',
         filename: 'report.csv',
         url: 'data:text/csv,name%2Csales%0AAlice%2C1200%0ABob%2C1500',
         mimeType: 'text/csv',
       },
       {
+        fileId: '550e8400-e29b-41d4-a716-446655440004',
         filename: 'data.json',
         url: 'data:application/json,%7B%22name%22%3A%5B%22Alice%22%5D%7D',
         mimeType: 'application/json',

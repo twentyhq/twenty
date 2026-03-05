@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
@@ -10,7 +11,6 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';

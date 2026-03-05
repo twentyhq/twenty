@@ -29,7 +29,7 @@ const StyledTitle = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSuggestedPromptButton = styled(LightButton)`
+const StyledSuggestedPromptButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
@@ -62,13 +62,14 @@ export const AIChatSuggestedPrompts = ({
     <StyledContainer>
       <StyledTitle>{t`What can I help you with?`}</StyledTitle>
       {DEFAULT_SUGGESTED_PROMPTS.map((prompt) => (
-        <StyledSuggestedPromptButton
-          key={prompt.id}
-          Icon={prompt.Icon}
-          title={resolveMessage(prompt.label)}
-          accent="secondary"
-          onClick={() => handleClick(prompt)}
-        />
+        <StyledSuggestedPromptButtonContainer key={prompt.id}>
+          <LightButton
+            Icon={prompt.Icon}
+            title={resolveMessage(prompt.label)}
+            accent="secondary"
+            onClick={() => handleClick(prompt)}
+          />
+        </StyledSuggestedPromptButtonContainer>
       ))}
     </StyledContainer>
   );

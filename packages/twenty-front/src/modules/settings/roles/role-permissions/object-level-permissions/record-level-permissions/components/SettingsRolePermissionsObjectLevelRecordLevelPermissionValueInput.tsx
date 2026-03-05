@@ -3,14 +3,13 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, IconEraser, TooltipDelay } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -25,8 +24,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -100,7 +98,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
     const { theme } = useContext(ThemeContext);
-
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(

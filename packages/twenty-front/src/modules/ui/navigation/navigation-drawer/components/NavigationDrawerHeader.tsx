@@ -4,7 +4,7 @@ import { IconSearch } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -13,7 +13,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div<{ isExpanded: boolean }>`
-  align-items: center;
+  align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
@@ -25,6 +25,7 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   align-items: center;
+  align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
@@ -32,12 +33,19 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
-const StyledNavigationDrawerCollapseButton = styled(
-  NavigationDrawerCollapseButton,
-)`
-  height: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[1]};
-  width: ${themeCssVariables.spacing[6]};
+const StyledNavigationDrawerCollapseButtonContainer = styled.div`
+  > * {
+    height: ${themeCssVariables.spacing[6]};
+    padding-right: ${themeCssVariables.spacing[1]};
+    width: ${themeCssVariables.spacing[6]};
+  }
+`;
+
+const StyledWorkspaceDropdownContainer = styled.div`
+  min-height: ${themeCssVariables.spacing[8]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 type NavigationDrawerHeaderProps = {
@@ -48,14 +56,16 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
 
   return (
     <StyledContainer isExpanded={isNavigationDrawerExpanded}>
-      <MultiWorkspaceDropdownButton />
+      <StyledWorkspaceDropdownContainer>
+        <MultiWorkspaceDropdownButton />
+      </StyledWorkspaceDropdownContainer>
       {!isMobile && (
         <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
           <LightIconButton
@@ -66,7 +76,9 @@ export const NavigationDrawerHeader = ({
             aria-label={t`Search`}
           />
           {isNavigationDrawerExpanded && showCollapseButton && (
-            <StyledNavigationDrawerCollapseButton direction="left" />
+            <StyledNavigationDrawerCollapseButtonContainer>
+              <NavigationDrawerCollapseButton direction="left" />
+            </StyledNavigationDrawerCollapseButtonContainer>
           )}
         </StyledRightActions>
       )}

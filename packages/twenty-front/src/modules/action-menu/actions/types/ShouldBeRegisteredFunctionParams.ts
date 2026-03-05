@@ -1,9 +1,11 @@
-import { type ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  type ActionViewType,
+  type ObjectPermissions,
+} from 'twenty-shared/types';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
@@ -12,7 +14,7 @@ export type ShouldBeRegisteredFunctionParams = {
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   hasAnySoftDeleteFilterOnView?: boolean;
-  isInRightDrawer?: boolean;
+  isInSidePanel?: boolean;
   isFavorite?: boolean;
   isRemote?: boolean;
   isNoteOrTask?: boolean;
@@ -28,6 +30,5 @@ export type ShouldBeRegisteredFunctionParams = {
   getTargetObjectWritePermission: (
     objectMetadataItemNameSingular: string,
   ) => boolean;
-  forceRegisteredActionsByKey: Record<string, boolean | undefined>;
   isFeatureFlagEnabled: (featureFlagKey: FeatureFlagKey) => boolean;
 };

@@ -14,11 +14,13 @@ type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
     name: string;
   };
 
-const StyledCardContent = styled(CardContent)`
-  cursor: pointer;
+const StyledCardContentContainer = styled.div`
+  > * {
+    cursor: pointer;
 
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
+    &:hover {
+      background: ${themeCssVariables.background.transparent.lighter};
+    }
   }
 `;
 
@@ -39,8 +41,10 @@ const StyledDescription = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledRadio = styled(Radio)`
+const StyledRadioContainer = styled.span`
   margin-left: auto;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledExpandedContent = styled.div`
@@ -63,34 +67,37 @@ export const SettingsAccountsRadioSettingsCard = <
 }: SettingsAccountsRadioSettingsCardProps<Option>) => (
   <Card rounded>
     {options.map((option, index) => (
-      <StyledCardContent
-        key={option.value}
-        divider={index < options.length - 1}
-        onClick={() => onChange(option.value)}
-      >
-        <StyledOptionHeader>
-          {option.cardMedia}
-          <div>
-            <StyledTitle>
-              <Trans id={option.title.id} />
-            </StyledTitle>
-            <StyledDescription>
-              <Trans id={option.description.id} />
-            </StyledDescription>
-          </div>
-          <StyledRadio
-            name={name}
-            value={option.value}
-            onCheckedChange={() => onChange(option.value)}
-            checked={value === option.value}
-          />
-        </StyledOptionHeader>
-        {option.cardContentExpanded && value === option.value && (
-          <StyledExpandedContent>
-            {option.cardContentExpanded}
-          </StyledExpandedContent>
-        )}
-      </StyledCardContent>
+      <StyledCardContentContainer key={option.value}>
+        <CardContent
+          divider={index < options.length - 1}
+          onClick={() => onChange(option.value)}
+        >
+          <StyledOptionHeader>
+            {option.cardMedia}
+            <div>
+              <StyledTitle>
+                <Trans id={option.title.id} />
+              </StyledTitle>
+              <StyledDescription>
+                <Trans id={option.description.id} />
+              </StyledDescription>
+            </div>
+            <StyledRadioContainer>
+              <Radio
+                name={name}
+                value={option.value}
+                onCheckedChange={() => onChange(option.value)}
+                checked={value === option.value}
+              />
+            </StyledRadioContainer>
+          </StyledOptionHeader>
+          {option.cardContentExpanded && value === option.value && (
+            <StyledExpandedContent>
+              {option.cardContentExpanded}
+            </StyledExpandedContent>
+          )}
+        </CardContent>
+      </StyledCardContentContainer>
     ))}
   </Card>
 );

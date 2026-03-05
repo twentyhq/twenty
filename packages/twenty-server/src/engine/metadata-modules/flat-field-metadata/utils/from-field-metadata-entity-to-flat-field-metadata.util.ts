@@ -127,6 +127,11 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
+    viewSortIds: fieldMetadataEntity.viewSorts?.map(({ id }) => id) ?? [],
+    viewSortUniversalIdentifiers:
+      fieldMetadataEntity.viewSorts?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     universalSettings: settingsWithUniversalIdentifiers,
   };
 };

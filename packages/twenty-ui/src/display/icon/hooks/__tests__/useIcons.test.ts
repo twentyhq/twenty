@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import * as jotai from 'jotai';
+import { Provider } from 'jotai';
 
 import {
   Icon123,
@@ -8,17 +8,20 @@ import {
 } from '@ui/display/icon/components/TablerIcons';
 import { useIcons } from '@ui/display/icon/hooks/useIcons';
 
+const mockedStateIcons = {
+  IconUser,
+  Icon123,
+  IconBuildingSkyscraper,
+};
+
+jest.mock('jotai', () => ({
+  ...jest.requireActual('jotai'),
+  useAtomValue: () => mockedStateIcons,
+}));
+
 describe('useIcons', () => {
-  const mockedStateIcons = {
-    IconUser,
-    Icon123,
-    IconBuildingSkyscraper,
-  };
-  jest
-    .spyOn(jotai, 'useAtomValue')
-    .mockImplementationOnce(() => mockedStateIcons);
   const { result } = renderHook(() => useIcons(), {
-    wrapper: jotai.Provider,
+    wrapper: Provider,
   });
 
   it('returns default icon when no icon key is provided', () => {

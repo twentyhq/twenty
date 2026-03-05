@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -17,9 +17,10 @@ describe('BarChartDataService', () => {
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
-  const mockAuthContext: AuthContext = {
-    workspace: { id: workspaceId } as any,
-  };
+  const mockAuthContext = {
+    type: 'system',
+    workspace: { id: workspaceId },
+  } as unknown as WorkspaceAuthContext;
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByField = {

@@ -11,11 +11,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRecordChip = styled(RecordChip)`
+const StyledRecordChipContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]};
 `;
 
@@ -58,12 +58,18 @@ export const FormSingleRecordFieldChip = ({
 
   if (!!draftValue && draftValue.type === 'static' && !!selectedRecord) {
     return (
-      <StyledRecordChip
-        record={selectedRecord}
-        objectNameSingular={objectNameSingular}
-      />
+      <StyledRecordChipContainer>
+        <RecordChip
+          record={selectedRecord}
+          objectNameSingular={objectNameSingular}
+        />
+      </StyledRecordChipContainer>
     );
   }
 
-  return <StyledPlaceholder>{t`Select`}</StyledPlaceholder>;
+  return (
+    <StyledPlaceholderContainer>
+      <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
+    </StyledPlaceholderContainer>
+  );
 };

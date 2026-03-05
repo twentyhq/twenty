@@ -6,7 +6,7 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -169,7 +169,7 @@ export const InviteTeam = () => {
   });
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title>
         <Trans>Invite your team</Trans>
       </Title>
@@ -229,6 +229,6 @@ export const InviteTeam = () => {
           <Trans>Skip</Trans>
         </ClickToActionLink>
       </StyledActionSkipLinkContainer>
-    </Modal.Content>
+    </ModalContent>
   );
 };

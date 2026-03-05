@@ -1,4 +1,3 @@
-import { useStore } from 'jotai';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -7,10 +6,11 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -35,7 +35,7 @@ export const useAIChatThreadClick = (
     agentChatDraftsByThreadIdState,
   );
   const store = useStore();
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
   const handleThreadClick = (thread: AgentChatThread) => {
     const previousDraftKey =

@@ -1,10 +1,10 @@
 import { type Request } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 export const bindDataToRequestObject = (
-  data: AuthContext,
+  data: RawAuthContext,
   request: Request,
   metadataVersion: number | undefined,
 ) => {
