@@ -8,12 +8,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
-import {
-  H2Title,
-  IconArchive,
-  IconPlug,
-  IconRobot,
-} from 'twenty-ui/display';
+import { H2Title, IconArchive, IconPlug, IconRobot } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
@@ -24,7 +19,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
-
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -171,9 +165,7 @@ export const SettingsAdminAI = () => {
                     />
                     <MenuItemToggle
                       LeftIcon={IconArchive}
-                      onToggleChange={() =>
-                        setShowDeprecated(!showDeprecated)
-                      }
+                      onToggleChange={() => setShowDeprecated(!showDeprecated)}
                       toggled={showDeprecated}
                       text={t`Deprecated models`}
                       toggleSize="small"

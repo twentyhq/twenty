@@ -32,10 +32,10 @@ export const SettingsAdminApps = () => {
 
   const { data } = useQuery(FIND_ALL_APPLICATION_REGISTRATIONS);
 
-  const registrations: ApplicationRegistrationFragmentFragment[] =
-    data?.findAllApplicationRegistrations ?? [];
-
   const filtered = useMemo(() => {
+    const registrations: ApplicationRegistrationFragmentFragment[] =
+      data?.findAllApplicationRegistrations ?? [];
+
     if (searchQuery.trim().length === 0) {
       return registrations;
     }
@@ -47,7 +47,7 @@ export const SettingsAdminApps = () => {
         (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
         registration.universalIdentifier.toLowerCase().includes(query),
     );
-  }, [registrations, searchQuery]);
+  }, [data?.findAllApplicationRegistrations, searchQuery]);
 
   return (
     <Section>
@@ -80,10 +80,7 @@ export const SettingsAdminApps = () => {
                 )}
                 fullWidth
               >
-                <TableRow
-                  gridTemplateColumns={TABLE_GRID}
-                  isClickable
-                >
+                <TableRow gridTemplateColumns={TABLE_GRID} isClickable>
                   <TableCell>{registration.name}</TableCell>
                   <TableCell>
                     {registration.sourcePackage ?? registration.sourceType}

@@ -14,6 +14,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
   IconBox,
+  IconCheck,
   IconColumns,
   IconCommand,
   IconDownload,
@@ -30,6 +31,7 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
+  useFindOneApplicationByUniversalIdentifierQuery,
   useFindOneMarketplaceAppQuery,
 } from '~/generated-metadata/graphql';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
@@ -269,6 +271,11 @@ export const SettingsAvailableApplicationDetails = () => {
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
+  const { data: installedAppData } =
+    useFindOneApplicationByUniversalIdentifierQuery({
+      variables: { universalIdentifier: availableApplicationId },
+      skip: !availableApplicationId,
+    });
 
   const listedApp = useMemo(() => {
     return marketplaceApps?.find((app) => app.id === availableApplicationId);
@@ -308,6 +315,8 @@ export const SettingsAvailableApplicationDetails = () => {
   }, [listedApp, singleApp]);
 
   const isUnlisted = !isDefined(listedApp) && isDefined(application);
+
+  const isAlreadyInstalled = isDefined(installedAppData?.findOneApplication);
 
   const handleInstall = async () => {
     if (isDefined(application)) {
@@ -519,12 +528,18 @@ export const SettingsAvailableApplicationDetails = () => {
           </StyledHeaderLeft>
           {canInstallMarketplaceApps && (
             <Button
-              Icon={IconDownload}
-              title={isInstalling ? t`Installing...` : t`Install`}
-              variant="primary"
-              accent="blue"
+              Icon={isAlreadyInstalled ? IconCheck : IconDownload}
+              title={
+                isAlreadyInstalled
+                  ? t`Installed`
+                  : isInstalling
+                    ? t`Installing...`
+                    : t`Install`
+              }
+              variant={isAlreadyInstalled ? 'secondary' : 'primary'}
+              accent={isAlreadyInstalled ? 'default' : 'blue'}
               onClick={handleInstall}
-              disabled={isInstalling}
+              disabled={isAlreadyInstalled || isInstalling}
             />
           )}
         </StyledHeader>

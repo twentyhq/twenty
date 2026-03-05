@@ -3933,6 +3933,7 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
   chatMessages: Array<AgentMessage>;
@@ -3947,13 +3948,12 @@ export type Query = {
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
-  applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
+  findAllApplicationRegistrations: Array<ApplicationRegistration>;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findManyAgents: Array<Agent>;
-  findAllApplicationRegistrations: Array<ApplicationRegistration>;
   findManyApplicationRegistrations: Array<ApplicationRegistration>;
   findManyApplications: Array<Application>;
   findManyLogicFunctions: Array<LogicFunction>;
@@ -4036,6 +4036,11 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryApplicationRegistrationTarballUrlArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -5842,6 +5847,13 @@ export type FindOneApplicationQueryVariables = Exact<{
 
 export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationRegistration?: { __typename?: 'ApplicationRegistrationSummary', id: string, latestAvailableVersion?: string | null, sourceType: ApplicationRegistrationSourceType } | null, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
 
+export type FindOneApplicationByUniversalIdentifierQueryVariables = Exact<{
+  universalIdentifier: Scalars['UUID'];
+}>;
+
+
+export type FindOneApplicationByUniversalIdentifierQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string } };
+
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
 export type AuthTokenPairFragmentFragment = { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
@@ -6476,6 +6488,11 @@ export type GetAdminAiModelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAIModels', autoEnableNewModels: boolean, models: Array<{ __typename?: 'AdminAIModelConfig', modelId: string, label: string, modelFamily?: ModelFamily | null, inferenceProvider: InferenceProvider, isAvailable: boolean, isAdminEnabled: boolean, deprecated?: boolean | null, isRecommended?: boolean | null }> } };
 
+export type FindAllApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
+
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
   value: Scalars['JSON'];
@@ -6580,10 +6597,6 @@ export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealth
 
 export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
 
-export type FindAllApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
-
-export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: Array<ApplicationRegistrationFragmentFragment> };
-
 export type DeleteApplicationRegistrationMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -6611,7 +6624,7 @@ export type UpdateApplicationRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, createdAt: string, updatedAt: string } };
+export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
   input: UpdateApplicationRegistrationVariableInput;
@@ -6651,14 +6664,14 @@ export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', 
 export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<ApplicationRegistrationFragmentFragment> };
+export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneApplicationRegistrationQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: ApplicationRegistrationFragmentFragment };
+export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UninstallApplicationMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
@@ -9504,6 +9517,41 @@ export function useFindOneApplicationLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type FindOneApplicationQueryHookResult = ReturnType<typeof useFindOneApplicationQuery>;
 export type FindOneApplicationLazyQueryHookResult = ReturnType<typeof useFindOneApplicationLazyQuery>;
 export type FindOneApplicationQueryResult = Apollo.QueryResult<FindOneApplicationQuery, FindOneApplicationQueryVariables>;
+export const FindOneApplicationByUniversalIdentifierDocument = gql`
+    query FindOneApplicationByUniversalIdentifier($universalIdentifier: UUID!) {
+  findOneApplication(universalIdentifier: $universalIdentifier) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useFindOneApplicationByUniversalIdentifierQuery__
+ *
+ * To run a query within a React component, call `useFindOneApplicationByUniversalIdentifierQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneApplicationByUniversalIdentifierQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneApplicationByUniversalIdentifierQuery({
+ *   variables: {
+ *      universalIdentifier: // value for 'universalIdentifier'
+ *   },
+ * });
+ */
+export function useFindOneApplicationByUniversalIdentifierQuery(baseOptions: Apollo.QueryHookOptions<FindOneApplicationByUniversalIdentifierQuery, FindOneApplicationByUniversalIdentifierQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneApplicationByUniversalIdentifierQuery, FindOneApplicationByUniversalIdentifierQueryVariables>(FindOneApplicationByUniversalIdentifierDocument, options);
+      }
+export function useFindOneApplicationByUniversalIdentifierLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneApplicationByUniversalIdentifierQuery, FindOneApplicationByUniversalIdentifierQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneApplicationByUniversalIdentifierQuery, FindOneApplicationByUniversalIdentifierQueryVariables>(FindOneApplicationByUniversalIdentifierDocument, options);
+        }
+export type FindOneApplicationByUniversalIdentifierQueryHookResult = ReturnType<typeof useFindOneApplicationByUniversalIdentifierQuery>;
+export type FindOneApplicationByUniversalIdentifierLazyQueryHookResult = ReturnType<typeof useFindOneApplicationByUniversalIdentifierLazyQuery>;
+export type FindOneApplicationByUniversalIdentifierQueryResult = Apollo.QueryResult<FindOneApplicationByUniversalIdentifierQuery, FindOneApplicationByUniversalIdentifierQueryVariables>;
 export const AuthorizeAppDocument = gql`
     mutation authorizeApp($clientId: String!, $codeChallenge: String, $redirectUrl: String!) {
   authorizeApp(
@@ -12827,6 +12875,40 @@ export function useGetAdminAiModelsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetAdminAiModelsQueryHookResult = ReturnType<typeof useGetAdminAiModelsQuery>;
 export type GetAdminAiModelsLazyQueryHookResult = ReturnType<typeof useGetAdminAiModelsLazyQuery>;
 export type GetAdminAiModelsQueryResult = Apollo.QueryResult<GetAdminAiModelsQuery, GetAdminAiModelsQueryVariables>;
+export const FindAllApplicationRegistrationsDocument = gql`
+    query FindAllApplicationRegistrations {
+  findAllApplicationRegistrations {
+    ...ApplicationRegistrationFragment
+  }
+}
+    ${ApplicationRegistrationFragmentFragmentDoc}`;
+
+/**
+ * __useFindAllApplicationRegistrationsQuery__
+ *
+ * To run a query within a React component, call `useFindAllApplicationRegistrationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllApplicationRegistrationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllApplicationRegistrationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindAllApplicationRegistrationsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
+      }
+export function useFindAllApplicationRegistrationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
+        }
+export type FindAllApplicationRegistrationsQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsQuery>;
+export type FindAllApplicationRegistrationsLazyQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsLazyQuery>;
+export type FindAllApplicationRegistrationsQueryResult = Apollo.QueryResult<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)
@@ -13597,6 +13679,39 @@ export function useUpdateApplicationRegistrationVariableMutation(baseOptions?: A
 export type UpdateApplicationRegistrationVariableMutationHookResult = ReturnType<typeof useUpdateApplicationRegistrationVariableMutation>;
 export type UpdateApplicationRegistrationVariableMutationResult = Apollo.MutationResult<UpdateApplicationRegistrationVariableMutation>;
 export type UpdateApplicationRegistrationVariableMutationOptions = Apollo.BaseMutationOptions<UpdateApplicationRegistrationVariableMutation, UpdateApplicationRegistrationVariableMutationVariables>;
+export const ApplicationRegistrationTarballUrlDocument = gql`
+    query ApplicationRegistrationTarballUrl($id: String!) {
+  applicationRegistrationTarballUrl(id: $id)
+}
+    `;
+
+/**
+ * __useApplicationRegistrationTarballUrlQuery__
+ *
+ * To run a query within a React component, call `useApplicationRegistrationTarballUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationRegistrationTarballUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationRegistrationTarballUrlQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApplicationRegistrationTarballUrlQuery(baseOptions: Apollo.QueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
+      }
+export function useApplicationRegistrationTarballUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
+        }
+export type ApplicationRegistrationTarballUrlQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlQuery>;
+export type ApplicationRegistrationTarballUrlLazyQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlLazyQuery>;
+export type ApplicationRegistrationTarballUrlQueryResult = Apollo.QueryResult<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>;
 export const FindApplicationRegistrationByClientIdDocument = gql`
     query FindApplicationRegistrationByClientId($clientId: String!) {
   findApplicationRegistrationByClientId(clientId: $clientId) {
@@ -13636,22 +13751,6 @@ export function useFindApplicationRegistrationByClientIdLazyQuery(baseOptions?: 
 export type FindApplicationRegistrationByClientIdQueryHookResult = ReturnType<typeof useFindApplicationRegistrationByClientIdQuery>;
 export type FindApplicationRegistrationByClientIdLazyQueryHookResult = ReturnType<typeof useFindApplicationRegistrationByClientIdLazyQuery>;
 export type FindApplicationRegistrationByClientIdQueryResult = Apollo.QueryResult<FindApplicationRegistrationByClientIdQuery, FindApplicationRegistrationByClientIdQueryVariables>;
-export const ApplicationRegistrationTarballUrlDocument = gql`
-    query ApplicationRegistrationTarballUrl($id: String!) {
-  applicationRegistrationTarballUrl(id: $id)
-}
-    `;
-export function useApplicationRegistrationTarballUrlQuery(baseOptions: Apollo.QueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables> & ({ variables: ApplicationRegistrationTarballUrlQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
-        }
-export function useApplicationRegistrationTarballUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>(ApplicationRegistrationTarballUrlDocument, options);
-        }
-export type ApplicationRegistrationTarballUrlQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlQuery>;
-export type ApplicationRegistrationTarballUrlLazyQueryHookResult = ReturnType<typeof useApplicationRegistrationTarballUrlLazyQuery>;
-export type ApplicationRegistrationTarballUrlQueryResult = Apollo.QueryResult<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>;
 export const FindApplicationRegistrationStatsDocument = gql`
     query FindApplicationRegistrationStats($id: String!) {
   findApplicationRegistrationStats(id: $id) {
@@ -13805,24 +13904,6 @@ export function useFindOneApplicationRegistrationLazyQuery(baseOptions?: Apollo.
 export type FindOneApplicationRegistrationQueryHookResult = ReturnType<typeof useFindOneApplicationRegistrationQuery>;
 export type FindOneApplicationRegistrationLazyQueryHookResult = ReturnType<typeof useFindOneApplicationRegistrationLazyQuery>;
 export type FindOneApplicationRegistrationQueryResult = Apollo.QueryResult<FindOneApplicationRegistrationQuery, FindOneApplicationRegistrationQueryVariables>;
-export const FindAllApplicationRegistrationsDocument = gql`
-    query FindAllApplicationRegistrations {
-  findAllApplicationRegistrations {
-    ...ApplicationRegistrationFragment
-  }
-}
-    ${ApplicationRegistrationFragmentFragmentDoc}`;
-export function useFindAllApplicationRegistrationsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
-      }
-export function useFindAllApplicationRegistrationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>(FindAllApplicationRegistrationsDocument, options);
-        }
-export type FindAllApplicationRegistrationsQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsQuery>;
-export type FindAllApplicationRegistrationsLazyQueryHookResult = ReturnType<typeof useFindAllApplicationRegistrationsLazyQuery>;
-export type FindAllApplicationRegistrationsQueryResult = Apollo.QueryResult<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;
 export const UninstallApplicationDocument = gql`
     mutation UninstallApplication($universalIdentifier: String!) {
   uninstallApplication(universalIdentifier: $universalIdentifier)
