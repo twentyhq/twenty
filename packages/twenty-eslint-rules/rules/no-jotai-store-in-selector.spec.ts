@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import { TSESLint } from '@typescript-eslint/utils';
 
 import { rule, RULE_NAME } from './no-jotai-store-in-selector';
@@ -9,7 +6,6 @@ const ruleTester = new TSESLint.RuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    // Correct: using the provided get helper in createAtomComponentSelector
     {
       code: `
         const mySelector = createAtomComponentSelector({
@@ -22,7 +18,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // Correct: using the provided get helper in createAtomComponentFamilySelector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({
@@ -35,7 +30,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // jotaiStore.get used outside of selector — should NOT trigger
     {
       code: `
         const value = jotaiStore.get(someState.atom);
@@ -43,7 +37,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    // jotaiStore.get inside createAtomComponentSelector
     {
       code: `
         const mySelector = createAtomComponentSelector({
@@ -57,7 +50,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'noJotaiStoreInSelector' }],
     },
-    // jotaiStore.get inside createAtomComponentFamilySelector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({
@@ -71,7 +63,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'noJotaiStoreInSelector' }],
     },
-    // jotaiStore.set inside createAtomComponentSelector
     {
       code: `
         const mySelector = createAtomComponentSelector({
@@ -85,7 +76,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'noJotaiStoreInSelector' }],
     },
-    // Multiple jotaiStore violations in one selector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({

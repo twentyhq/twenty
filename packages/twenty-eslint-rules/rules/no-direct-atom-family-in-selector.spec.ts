@@ -1,15 +1,17 @@
-/**
- * @jest-environment node
- */
 import { TSESLint } from '@typescript-eslint/utils';
 
 import { rule, RULE_NAME } from './no-direct-atom-family-in-selector';
 
-const ruleTester = new TSESLint.RuleTester();
+const ruleTester = new TSESLint.RuleTester({
+  parser: require.resolve('@typescript-eslint/parser'),
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: 'module',
+  },
+});
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    // Correct: using the provided get helper in createAtomComponentSelector
     {
       code: `
         const mySelector = createAtomComponentSelector({
@@ -22,7 +24,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // Correct: using the provided get helper in createAtomComponentFamilySelector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({
@@ -35,7 +36,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // .atomFamily used outside of selector — should NOT trigger
     {
       code: `
         const atom = someState.atomFamily({ instanceId: 'test' });
@@ -43,7 +43,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    // .atomFamily() inside createAtomComponentSelector
     {
       code: `
         const mySelector = createAtomComponentSelector({
@@ -57,7 +56,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'noDirectAtomFamilyInSelector' }],
     },
-    // .selectorFamily() inside createAtomComponentFamilySelector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({
@@ -71,7 +69,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'noDirectAtomFamilyInSelector' }],
     },
-    // Multiple .atomFamily violations in one selector
     {
       code: `
         const mySelector = createAtomComponentFamilySelector({
