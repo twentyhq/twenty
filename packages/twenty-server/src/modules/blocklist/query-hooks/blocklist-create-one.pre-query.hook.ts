@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   CommonQueryRunnerException,
@@ -15,8 +15,8 @@ import {
   BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
 
-@WorkspaceQueryHook(`blocklist.createMany`)
-export class BlocklistCreateManyPreQueryHook
+@WorkspaceQueryHook(`blocklist.createOne`)
+export class BlocklistCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
@@ -26,18 +26,20 @@ export class BlocklistCreateManyPreQueryHook
   async execute(
     authContext: WorkspaceAuthContext,
     _objectName: string,
-    payload: CreateManyResolverArgs<BlocklistItem>,
-  ): Promise<CreateManyResolverArgs<BlocklistItem>> {
+    payload: CreateOneResolverArgs<BlocklistItem>,
+  ): Promise<CreateOneResolverArgs<BlocklistItem>> {
     if (!isUserAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'User id is required',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: msg`User id is required.` },
+        {
+          userFriendlyMessage: msg`You must be authenticated to manage blocklist.`,
+        },
       );
     }
 
     await this.blocklistValidationService.validateBlocklistForCreateMany(
-      payload,
+      { data: [payload.data] },
       authContext.user.id,
       authContext.workspace.id,
     );

@@ -58,7 +58,6 @@ export class ObjectMetadataOrderByBaseGenerator {
           this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldOrderByInputType(
             {
               fieldMetadata,
-              typeOptions,
               isForGroupBy,
               context,
             },
