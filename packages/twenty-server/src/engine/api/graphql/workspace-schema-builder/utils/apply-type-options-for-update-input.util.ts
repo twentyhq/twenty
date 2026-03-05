@@ -1,4 +1,4 @@
-import { GraphQLList, type GraphQLType } from 'graphql';
+import { type GraphQLType } from 'graphql';
 
 import { wrapTypeInGraphQLList } from 'src/engine/api/graphql/workspace-schema-builder/utils/wrap-type-in-graphql-list.util';
 

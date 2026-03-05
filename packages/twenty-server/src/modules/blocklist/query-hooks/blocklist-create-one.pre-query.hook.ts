@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -9,8 +8,8 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   type BlocklistItem,
   BlocklistValidationService,
@@ -25,26 +24,24 @@ export class BlocklistCreateOnePreQueryHook
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: CreateOneResolverArgs<BlocklistItem>,
   ): Promise<CreateOneResolverArgs<BlocklistItem>> {
-    if (!authContext.user?.id) {
+    if (!isUserAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'User id is required',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: msg`User id is required.` },
+        {
+          userFriendlyMessage: msg`You must be authenticated to manage blocklist.`,
+        },
       );
     }
-
-    const workspace = authContext.workspace;
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.blocklistValidationService.validateBlocklistForCreateMany(
       { data: [payload.data] },
       authContext.user.id,
-      workspace.id,
+      authContext.workspace.id,
     );
 
     return payload;

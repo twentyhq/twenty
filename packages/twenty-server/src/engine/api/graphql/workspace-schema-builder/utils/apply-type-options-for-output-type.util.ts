@@ -1,8 +1,4 @@
-import {
-  GraphQLList,
-  GraphQLNonNull,
-  type GraphQLType,
-} from 'graphql';
+import { type GraphQLList, GraphQLNonNull, type GraphQLType } from 'graphql';
 import {
   type FieldMetadataDefaultValue,
   type FieldMetadataType,

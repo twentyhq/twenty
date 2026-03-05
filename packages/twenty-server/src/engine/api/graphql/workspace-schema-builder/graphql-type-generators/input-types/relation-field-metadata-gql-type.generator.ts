@@ -33,9 +33,6 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  // Relation fields are always nullable in create/update inputs — the database
-  // constraint enforces non-nullability, but the GQL input must accept null so
-  // users can provide either the FK scalar or the connect input (not both).
   public generateSimpleRelationFieldCreateOrUpdateInputType({
     fieldMetadata,
     typeOptions,
@@ -78,7 +75,6 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     };
   }
 
-  // Filter fields are always nullable — the filter type itself handles null semantics
   public generateSimpleRelationFieldFilterInputType({
     fieldMetadata,
     typeOptions,
@@ -116,7 +112,6 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     };
   }
 
-  // Order-by fields are always nullable
   public generateSimpleRelationFieldOrderByInputType({
     fieldMetadata,
     isForGroupBy,
