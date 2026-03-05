@@ -4,26 +4,14 @@ import {
   type TSESTree,
 } from '@typescript-eslint/utils';
 
+import { isInsideNode } from '../utils/isInsideNode';
+
 export const RULE_NAME = 'no-direct-atom-family-in-selector';
 
 const SELECTOR_FACTORY_NAMES = [
   'createAtomComponentSelector',
   'createAtomComponentFamilySelector',
 ];
-
-const isInsideNode = (
-  node: TSESTree.Node,
-  ancestor: TSESTree.Node,
-): boolean => {
-  let current: TSESTree.Node | undefined = node.parent;
-
-  while (current) {
-    if (current === ancestor) return true;
-    current = current.parent;
-  }
-
-  return false;
-};
 
 export const rule = ESLintUtils.RuleCreator(() => __filename)({
   name: RULE_NAME,
