@@ -83,16 +83,10 @@ export class AgentMessagePartEntity {
   sourceDocumentFilename: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  fileMediaType: string | null;
-
-  @Column({ type: 'varchar', nullable: true })
   fileFilename: string | null;
 
   @Column({ type: 'uuid', nullable: true })
   fileId: string | null;
-
-  @Column({ type: 'varchar', nullable: true })
-  fileUrl: string | null;
 
   @ManyToOne(() => FileEntity, {
     onDelete: 'RESTRICT',
