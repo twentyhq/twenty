@@ -1,5 +1,4 @@
 import { FIND_ALL_APPLICATION_REGISTRATIONS } from '@/settings/admin-panel/apps/graphql/queries/findAllApplicationRegistrations';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,18 +8,14 @@ import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, IconSearch, Status } from 'twenty-ui/display';
+import { H2Title, Status } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
-
-const StyledSearchContainer = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -79,15 +74,11 @@ export const SettingsAdminApps = () => {
         title={t`All App Registrations`}
         description={t`All application registrations across the platform, including orphaned marketplace apps`}
       />
-      <StyledSearchContainer>
-        <SettingsTextInput
-          instanceId="admin-apps-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search registrations...`}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
-      </StyledSearchContainer>
+      <SearchInput
+        placeholder={t`Search registrations...`}
+        value={searchQuery}
+        onChange={setSearchQuery}
+      />
       <StyledTableContainer>
         <Table>
           <StyledTableHeaderRowContainer>
