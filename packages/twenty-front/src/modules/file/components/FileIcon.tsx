@@ -23,21 +23,6 @@ const StyledIconContainer = styled.div<{
   padding: 5px;
 `;
 
-const useFileIconColors = () => {
-  const theme = useTheme();
-
-  return {
-    ARCHIVE: theme.color.gray,
-    AUDIO: theme.color.pink,
-    IMAGE: theme.color.amber,
-    PRESENTATION: theme.color.orange,
-    SPREADSHEET: theme.color.turquoise,
-    TEXT_DOCUMENT: theme.color.blue,
-    VIDEO: theme.color.purple,
-    OTHER: theme.color.gray,
-  };
-};
-
 export const FileIcon = ({
   fileCategory,
   size = 'medium',
