@@ -12,6 +12,7 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -254,6 +255,11 @@ const AgentChatMessagesSetterEffect = ({
   const store = useStore();
 
   useEffect(() => {
+    store.set(
+      agentChatMessagesComponentState.atomFamily({ instanceId: INSTANCE_ID }),
+      messages,
+    );
+
     for (const message of messages) {
       store.set(
         agentChatMessageComponentFamilyState.atomFamily({

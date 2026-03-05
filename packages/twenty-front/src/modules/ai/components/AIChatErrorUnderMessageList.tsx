@@ -2,9 +2,9 @@ import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -17,9 +17,9 @@ export const AIChatErrorUnderMessageList = () => {
   );
 
   const lastMessageId = agentChatMessageIds.at(-1);
-  const agentChatMessage = useAtomComponentFamilyStateValue(
-    agentChatMessageComponentFamilyState,
-    lastMessageId ?? '',
+  const agentChatMessage = useAtomComponentFamilySelectorValue(
+    agentChatMessageComponentFamilySelector,
+    { messageId: lastMessageId },
   );
 
   const showError =

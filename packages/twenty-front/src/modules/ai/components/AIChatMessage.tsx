@@ -7,12 +7,13 @@ import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantM
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
-import { agentChatMessagesComponentSelector } from '@/ai/states/agentChatMessageComponentSelector';
+import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -144,7 +145,7 @@ const StyledFilesContainer = styled.div`
 
 export const AIChatMessage = ({ messageId }: { messageId: string }) => {
   const agentChatMessage = useAtomComponentFamilySelectorValue(
-    agentChatMessagesComponentSelector,
+    agentChatMessageComponentFamilySelector,
     { messageId },
   );
 
