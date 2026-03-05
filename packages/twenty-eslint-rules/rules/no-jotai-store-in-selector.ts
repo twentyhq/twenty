@@ -4,7 +4,7 @@ import {
   type TSESTree,
 } from '@typescript-eslint/utils';
 
-import { isInsideNode } from '../utils/isInsideNode';
+import { isNodeInsideAncestor } from '../utils/isNodeInsideAncestor';
 
 export const RULE_NAME = 'no-jotai-store-in-selector';
 
@@ -74,7 +74,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         }
 
         for (const getNode of selectorGetNodes) {
-          if (isInsideNode(node, getNode)) {
+          if (isNodeInsideAncestor(node, getNode)) {
             context.report({
               node: memberExpr,
               messageId: 'noJotaiStoreInSelector',

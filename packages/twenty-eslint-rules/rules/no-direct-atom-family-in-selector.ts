@@ -4,7 +4,7 @@ import {
   type TSESTree,
 } from '@typescript-eslint/utils';
 
-import { isInsideNode } from '../utils/isInsideNode';
+import { isNodeInsideAncestor } from '../utils/isNodeInsideAncestor';
 
 export const RULE_NAME = 'no-direct-atom-family-in-selector';
 
@@ -64,7 +64,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
       'CallExpression > MemberExpression[property.name=/^(atomFamily|selectorFamily)$/]':
         (node: TSESTree.MemberExpression) => {
           for (const getNode of selectorGetNodes) {
-            if (isInsideNode(node, getNode)) {
+            if (isNodeInsideAncestor(node, getNode)) {
               context.report({
                 node,
                 messageId: 'noDirectAtomFamilyInSelector',
