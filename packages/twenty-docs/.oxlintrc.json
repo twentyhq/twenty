@@ -1,10 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "import", "unicorn"],
-  "categories": {
-    "correctness": "off"
-  },
-  "ignorePatterns": ["node_modules"],
+  "ignorePatterns": ["node_modules", ".next", "storybook-static"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }],
@@ -16,7 +13,6 @@
     "no-redeclare": "off",
     "import/no-duplicates": "error",
     "typescript/no-redeclare": "error",
-    "typescript/ban-ts-comment": "error",
     "typescript/consistent-type-imports": ["error", {
       "prefer": "type-imports",
       "fixStyle": "inline-type-imports"

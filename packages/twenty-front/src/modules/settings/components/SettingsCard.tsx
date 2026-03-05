@@ -5,6 +5,7 @@ import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
@@ -113,7 +114,7 @@ export const SettingsCard = ({
                 {title}
                 {soon && <Pill label={t`Soon`} />}
               </StyledTitle>
-              {Boolean(Status) && Status}
+              {isDefined(Status) && Status}
               <StyledIconChevronRightContainer>
                 <IconChevronRight size={theme.icon.size.sm} />
               </StyledIconChevronRightContainer>

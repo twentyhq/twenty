@@ -8,6 +8,7 @@ import {
 import 'react-phone-number-input/style.css';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { isDefined } from 'twenty-shared/utils';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -140,10 +141,10 @@ export const DropdownMenuInput = forwardRef<
               placeholder={placeholder}
               onChange={onChange}
               ref={combinedRef}
-              withRightComponent={Boolean(rightComponent)}
+              withRightComponent={isDefined(rightComponent)}
             />
           )}
-          {Boolean(rightComponent) && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

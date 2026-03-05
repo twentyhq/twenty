@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 import { Label } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledGroupHeadingContainer = styled.div`
@@ -24,7 +25,7 @@ type SidePanelGroupProps = {
 };
 
 export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
-  if (!Boolean(children) || !React.Children.count(children)) {
+  if (!isDefined(children) || !React.Children.count(children)) {
     return null;
   }
   return (

@@ -69,6 +69,8 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/tsconfig*.json",
+        "{workspaceRoot}/tsconfig.base.json",
         "{projectRoot}/.oxlintrc.json",
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
@@ -86,11 +88,11 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --type-aware -c .oxlintrc.json $FILES"
+        "command": "FILES=$(git diff --name-only --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --type-aware -c .oxlintrc.json $FILES"
       },
       "configurations": {
         "fix": {
-          "command": "FILES=$(git diff --name-only main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --type-aware --fix -c .oxlintrc.json $FILES"
+          "command": "FILES=$(git diff --name-only --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --type-aware --fix -c .oxlintrc.json $FILES"
         }
       }
     },

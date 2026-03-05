@@ -17,22 +17,21 @@ export const rule = defineRule({
     schema: [],
   },
   create: (context) => {
+    const isStyledRoot = (node: any): boolean => {
+      if (node?.type === 'Identifier' && node.name === 'styled') return true;
+      if (node?.type === 'MemberExpression') return isStyledRoot(node.object);
+      if (node?.type === 'CallExpression') return isStyledRoot(node.callee);
+      return false;
+    };
+
     return {
       VariableDeclarator: (node: any) => {
         const templateExpr = node.init;
         if (templateExpr?.type !== 'TaggedTemplateExpression') return;
-        const tag = templateExpr.tag;
-        const tagged =
-          tag.type === 'MemberExpression'
-            ? tag.object
-            : tag.type === 'CallExpression'
-              ? tag.callee
-              : null;
 
         if (
           node.id?.type === 'Identifier' &&
-          tagged?.type === 'Identifier' &&
-          tagged.name === 'styled'
+          isStyledRoot(templateExpr.tag)
         ) {
           const variable = node.id;
           if (variable.name.startsWith('Styled')) return;

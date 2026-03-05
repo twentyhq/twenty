@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputErrorHelper = styled.div`
@@ -15,7 +16,7 @@ export const InputErrorHelper = ({
   children?: React.ReactNode;
 }) => (
   <div>
-    {Boolean(children) && (
+    {isDefined(children) && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>

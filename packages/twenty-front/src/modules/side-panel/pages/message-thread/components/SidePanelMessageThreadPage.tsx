@@ -103,7 +103,7 @@ export const SidePanelMessageThreadPage = () => {
   ]);
 
   const handleReplyClick = () => {
-    if (!Boolean(canReply)) {
+    if (!isDefined(canReply)) {
       return;
     }
 
@@ -166,14 +166,14 @@ export const SidePanelMessageThreadPage = () => {
           </>
         )}
       </StyledContainer>
-      {Boolean(canReply) && !messageChannelLoading && (
+      {isDefined(canReply) && !messageChannelLoading && (
         <StyledButtonContainer>
           <Button
             size="small"
             onClick={handleReplyClick}
             title={t`Reply`}
             Icon={IconArrowBackUp}
-            disabled={!Boolean(canReply)}
+            disabled={!isDefined(canReply)}
           />
         </StyledButtonContainer>
       )}

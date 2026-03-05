@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ComponentProps, type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.li`
@@ -64,9 +65,9 @@ export const DropdownMenuHeader = ({
 }: DropdownMenuHeaderProps) => {
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
-      {Boolean(StartComponent) && StartComponent}
+      {isDefined(StartComponent) && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {Boolean(EndComponent) && (
+      {isDefined(EndComponent) && (
         <StyledEndComponent>{EndComponent}</StyledEndComponent>
       )}
     </StyledHeader>

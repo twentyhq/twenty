@@ -4,6 +4,7 @@ import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStart
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -53,7 +54,7 @@ export const WorkflowDiagramCreateStepElement = ({
         <WorkflowDiagramConnector />
       </StyledVerticalLineContainer>
 
-      {Boolean(Label) && <StyledLabelContainer>{Label}</StyledLabelContainer>}
+      {isDefined(Label) && <StyledLabelContainer>{Label}</StyledLabelContainer>}
 
       <IconButton
         Icon={IconPlus}

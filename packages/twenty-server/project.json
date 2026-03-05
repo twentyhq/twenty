@@ -154,6 +154,8 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/tsconfig*.json",
+        "{workspaceRoot}/tsconfig.base.json",
         "{projectRoot}/.oxlintrc.json",
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],

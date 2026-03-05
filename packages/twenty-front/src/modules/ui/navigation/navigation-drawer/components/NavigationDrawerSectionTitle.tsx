@@ -83,7 +83,7 @@ export const NavigationDrawerSectionTitle = ({
       <StyledLabelContainer onClick={handleTitleClick}>
         <Label>{label}</Label>
       </StyledLabelContainer>
-      {Boolean(rightIcon) && (
+      {isDefined(rightIcon) && (
         <StyledRightIcon
           isMobile={isMobile}
           $alwaysVisible={alwaysShowRightIcon}
