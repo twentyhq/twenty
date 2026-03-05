@@ -200,7 +200,7 @@ export const SnackBar = ({
           <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
         );
     }
-  }, [iconComponent, variant, i18n]);
+  }, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
 
   const handleMouseEnter = () => {
     if (progressAnimation?.state === 'running') {
