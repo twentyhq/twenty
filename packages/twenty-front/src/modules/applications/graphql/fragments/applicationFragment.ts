@@ -13,6 +13,12 @@ export const APPLICATION_FRAGMENT = gql`
     description
     version
     universalIdentifier
+    applicationRegistrationId
+    applicationRegistration {
+      id
+      latestAvailableVersion
+      sourceType
+    }
     canBeUninstalled
     defaultRoleId
     settingsCustomTabFrontComponentId

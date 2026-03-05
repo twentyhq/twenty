@@ -6,9 +6,9 @@ export const CodeInterpreterInputZodSchema = z.object({
     .array(
       z.object({
         filename: z.string().describe('Name of the file'),
-        url: z
+        fileId: z
           .string()
-          .describe('URL of the file to include (from user attachments)'),
+          .describe('ID of the uploaded file (from user attachments)'),
       }),
     )
     .optional()

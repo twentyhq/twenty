@@ -51,7 +51,12 @@ const mocks: MockedResponse[] = [
             edges {
               node {
                 __typename
-                avatarUrl
+                avatarFile {
+                  fileId
+                  label
+                  extension
+                  url
+                }
                 createdAt
                 deletedAt
                 id

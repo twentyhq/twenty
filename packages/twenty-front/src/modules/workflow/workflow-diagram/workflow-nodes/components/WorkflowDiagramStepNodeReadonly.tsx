@@ -25,7 +25,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,
@@ -35,7 +34,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
   data: WorkflowDiagramStepNodeData;
 }) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -90,7 +88,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
     <>
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-        theme={theme}
         onClick={handleClick}
         selected={selected}
       >
@@ -107,7 +104,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
           </WorkflowNodeLabelWithCounterPart>
 
           <WorkflowNodeTitle
-            theme={theme}
             highlight={nodeTitleHighlighted}
             selected={selected}
           >

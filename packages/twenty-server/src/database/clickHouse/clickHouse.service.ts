@@ -5,7 +5,11 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -29,6 +33,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
           wait_for_async_insert: 1,
         },
         application: 'twenty',
+        log: { level: ClickHouseLogLevel.OFF },
       });
     }
   }
@@ -88,6 +93,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         wait_for_async_insert: 1,
       },
       application: 'twenty',
+      log: { level: ClickHouseLogLevel.OFF },
     });
 
     // Ping to check connection

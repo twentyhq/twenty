@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ICON_STROKES, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
@@ -57,11 +56,7 @@ export const ObjectIconWithViewOverlay = ({
   ViewIcon,
   objectColor,
 }: ObjectIconWithViewOverlayProps) => {
-  const { theme } = useContext(ThemeContext);
-  const objectStyle = getNavigationMenuItemIconStyleFromColor(
-    theme,
-    objectColor,
-  );
+  const objectStyle = getNavigationMenuItemIconStyleFromColor(objectColor);
 
   return (
     <StyledCompositeContainer>
@@ -71,15 +66,15 @@ export const ObjectIconWithViewOverlay = ({
       >
         <ObjectIcon
           size="14px"
-          stroke={theme.icon.stroke.md}
+          stroke={ICON_STROKES.md}
           color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
-      <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
+      <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
           size="10px"
-          stroke={theme.icon.stroke.lg}
-          color={theme.grayScale.gray10}
+          stroke={ICON_STROKES.lg}
+          color={themeCssVariables.grayScale.gray10}
         />
       </StyledViewOverlay>
     </StyledCompositeContainer>

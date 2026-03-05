@@ -21,15 +21,13 @@ import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import { ThemeContext } from 'twenty-ui/theme';
 
 export const useOpenRecordInCommandMenu = () => {
   const store = useStore();
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const { navigateCommandMenu } = useCommandMenu();
@@ -168,10 +166,9 @@ export const useOpenRecordInCommandMenu = () => {
         ? getIcon(objectMetadataItem.icon)
         : getIcon('IconList');
 
-      const IconColor = getIconColorForObjectType({
-        objectType: objectMetadataItem.nameSingular,
-        theme,
-      });
+      const IconColor = getIconColorForObjectType(
+        objectMetadataItem.nameSingular,
+      );
 
       const objectLabelSingular = objectMetadataItem.labelSingular;
 
@@ -210,7 +207,6 @@ export const useOpenRecordInCommandMenu = () => {
       navigateCommandMenu,
       openNewRecordTitleCell,
       runWorkflowRunOpeningInCommandMenuSideEffects,
-      theme,
       store,
     ],
   );

@@ -1591,6 +1591,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@twentyhq/hello-world@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@twentyhq/hello-world@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.7.2"
+    "@types/react": "npm:^18.2.0"
+    eslint: "npm:^9.32.0"
+    react: "npm:^18.2.0"
+    twenty-sdk: "npm:0.6.3"
+    typescript: "npm:^5.9.3"
+    typescript-eslint: "npm:^8.50.0"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^3.1.1"
+  languageName: unknown
+  linkType: soft
+
 "@types/chai@npm:^5.2.2":
   version: 5.2.3
   resolution: "@types/chai@npm:5.2.3"
@@ -1604,7 +1620,7 @@ __metadata:
 "@types/deep-eql@npm:*":
   version: 4.0.2
   resolution: "@types/deep-eql@npm:4.0.2"
-  checksum: 10c0/bf3f811843117900d7084b9d0c852da9a044d12eb40e6de73b552598a6843c21291a8a381b0532644574beecd5e3491c5ff3a0365ab86b15d59862c025384844
+  checksum: 10c0-bf3f811843117900d7084b9d0c852da9a044d12eb40e6de73b552598a6843c21291a8a381b0532644574beecd5e3491c5ff3a0365ab86b15d59862c025384844
   languageName: node
   linkType: hard
 
@@ -4675,22 +4691,6 @@ __metadata:
   checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
   languageName: node
   linkType: hard
-
-"hello-world@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "hello-world@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^18.2.0"
-    eslint: "npm:^9.32.0"
-    react: "npm:^18.2.0"
-    twenty-sdk: "npm:0.6.3"
-    typescript: "npm:^5.9.3"
-    typescript-eslint: "npm:^8.50.0"
-    vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^3.1.1"
-  languageName: unknown
-  linkType: soft
 
 "hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2

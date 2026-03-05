@@ -125,7 +125,7 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
   }
 
