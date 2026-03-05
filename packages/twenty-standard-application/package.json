@@ -1,0 +1,20 @@
+{
+  "name": "twenty-standard-application",
+  "private": true,
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "build": "tsx scripts/build-standard-front-components.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10",
+    "react": "^18.3.1",
+    "tsx": "^4.19.3",
+    "twenty-sdk": "workspace:*"
+  },
+  "engines": {
+    "node": "^24.5.0"
+  }
+}

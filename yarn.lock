@@ -52059,7 +52059,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -57764,6 +57764,7 @@ __metadata:
     tslib: "npm:2.8.1"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
+    twenty-standard-application: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
@@ -57799,6 +57800,17 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
+  languageName: unknown
+  linkType: soft
+
+"twenty-standard-application@workspace:*, twenty-standard-application@workspace:packages/twenty-standard-application":
+  version: 0.0.0-use.local
+  resolution: "twenty-standard-application@workspace:packages/twenty-standard-application"
+  dependencies:
+    esbuild: "npm:^0.25.10"
+    react: "npm:^18.3.1"
+    tsx: "npm:^4.19.3"
+    twenty-sdk: "workspace:*"
   languageName: unknown
   linkType: soft
 

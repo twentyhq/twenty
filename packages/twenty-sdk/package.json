@@ -45,6 +45,11 @@
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
+    },
     "./generated": {
       "types": "./generated/index.ts",
       "import": "./generated/index.ts",

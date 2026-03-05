@@ -1,0 +1,17 @@
+{
+  "name": "twenty-standard-application",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:shared"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-standard-application",
+        "command": "tsx scripts/build-standard-front-components.ts"
+      },
+      "dependsOn": ["^build"]
+    }
+  }
+}

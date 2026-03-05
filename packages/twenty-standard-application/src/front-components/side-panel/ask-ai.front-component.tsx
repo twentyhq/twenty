@@ -1,0 +1,17 @@
+import { ActionOpenSidePanelPage, defineFrontComponent } from 'twenty-sdk';
+import { CommandMenuPages } from 'twenty-shared/types';
+
+const AskAi = () => (
+  <ActionOpenSidePanelPage
+    page={CommandMenuPages.AskAI}
+    pageTitle="Ask AI"
+    pageIcon="IconSparkles"
+  />
+);
+
+export default defineFrontComponent({
+  universalIdentifier: '75d8fed0-36d9-4798-afa5-1472ecac0884',
+  name: 'Ask AI',
+  component: AskAi,
+  isHeadless: false,
+});
