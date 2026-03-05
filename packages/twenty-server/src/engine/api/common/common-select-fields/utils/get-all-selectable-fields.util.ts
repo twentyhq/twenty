@@ -8,7 +8,6 @@ import {
   type RestrictedFieldsPermissions,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -88,18 +87,11 @@ export const getAllSelectableFields = ({
         )) &&
       flatField.settings.relationType === RelationType.MANY_TO_ONE
     ) {
-      const joinColumnName = isFlatFieldMetadataOfType(
-        flatField,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? computeMorphOrRelationFieldJoinColumnName({ name: flatField.name })
-        : flatField.settings.joinColumnName;
+      const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+        name: flatField.name,
+      });
 
-      if (isDefined(joinColumnName)) {
-        result[joinColumnName] = true;
-      } else {
-        result[flatField.name] = true;
-      }
+      result[joinColumnName] = true;
     } else {
       result[flatField.name] = true;
     }

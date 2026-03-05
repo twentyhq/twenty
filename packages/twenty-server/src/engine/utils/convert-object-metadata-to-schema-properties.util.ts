@@ -109,12 +109,9 @@ export const convertObjectMetadataToSchemaProperties = ({
       field.settings?.relationType === RelationType.MANY_TO_ONE;
 
     if (isRelationManyToOne) {
-      const key = isFieldMetadataEntityOfType(
-        field,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? computeMorphOrRelationFieldJoinColumnName({ name: field.name })
-        : `${field.name}Id`;
+      const key = computeMorphOrRelationFieldJoinColumnName({
+        name: field.name,
+      });
 
       return {
         ...node,
@@ -126,9 +123,9 @@ export const convertObjectMetadataToSchemaProperties = ({
     }
 
     if (
-      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-        field.settings?.relationType === RelationType.ONE_TO_MANY) ||
-      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) &&
+      field.settings?.relationType === RelationType.ONE_TO_MANY
     ) {
       return node;
     }

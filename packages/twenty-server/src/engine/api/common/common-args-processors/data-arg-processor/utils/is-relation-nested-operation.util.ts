@@ -1,10 +1,11 @@
+import { isObject } from '@sniptt/guards';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const { CONNECT, DISCONNECT } = RELATION_NESTED_QUERY_KEYWORDS;
 
 export const isRelationNestedOperation = (value: unknown): boolean => {
-  if (!isDefined(value) || typeof value !== 'object' || Array.isArray(value)) {
+  if (!isObject(value)) {
     return false;
   }
 

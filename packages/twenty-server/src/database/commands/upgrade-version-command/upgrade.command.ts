@@ -32,7 +32,6 @@ import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'sr
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { MigrateWorkflowRelationFieldsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-migrate-workflow-relation-fields.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -81,7 +80,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
     protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
-    protected readonly migrateWorkflowRelationFieldsCommand: MigrateWorkflowRelationFieldsCommand,
     protected readonly seedServerIdCommand: SeedServerIdCommand,
   ) {
     super(
@@ -125,7 +123,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
       this.backfillPageLayoutsCommand,
       this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.migrateWorkflowRelationFieldsCommand,
       this.seedServerIdCommand,
     ];
 
