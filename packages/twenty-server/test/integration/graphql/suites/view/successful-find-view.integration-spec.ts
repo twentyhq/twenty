@@ -11,7 +11,7 @@ import { findCoreViews } from 'test/integration/metadata/suites/view/utils/find-
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
-import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewKey } from 'twenty-shared/types';
 
 describe('successful find view with all sub-relations (e2e)', () => {
   let companyObjectMetadataId: string;

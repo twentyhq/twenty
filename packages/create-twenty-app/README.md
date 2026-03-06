@@ -66,11 +66,10 @@ yarn twenty app:uninstall
 
 Control which example files are included when creating a new app:
 
-| Flag                | Behavior                                                                |
-| ------------------- | ----------------------------------------------------------------------- |
-| `-e, --exhaustive`  | **(default)** Creates all example files without prompting               |
-| `-m, --minimal`     | Creates only core files (`application-config.ts` and `default-role.ts`) |
-| `-i, --interactive` | Prompts you to select which examples to include                         |
+| Flag               | Behavior                                                                |
+| ------------------ | ----------------------------------------------------------------------- |
+| `-e, --exhaustive` | **(default)** Creates all example files                                 |
+| `-m, --minimal`    | Creates only core files (`application-config.ts` and `default-role.ts`) |
 
 ```bash
 # Default: all examples included
@@ -78,21 +77,7 @@ npx create-twenty-app@latest my-app
 
 # Minimal: only core files
 npx create-twenty-app@latest my-app -m
-
-# Interactive: choose which examples to include
-npx create-twenty-app@latest my-app -i
 ```
-
-In interactive mode, you can pick from:
-
-- **Example object** — a custom CRM object definition (`objects/example-object.ts`)
-- **Example field** — a custom field on the example object (`fields/example-field.ts`)
-- **Example logic function** — a server-side handler with HTTP trigger (`logic-functions/hello-world.ts`)
-- **Example front component** — a React UI component (`front-components/hello-world.tsx`)
-- **Example view** — a saved view for the example object (`views/example-view.ts`)
-- **Example navigation menu item** — a sidebar link (`navigation-menu-items/example-navigation-menu-item.ts`)
-- **Example skill** — an AI agent skill definition (`skills/example-skill.ts`)
-- **Integration test** — a vitest integration test verifying app installation (`__tests__/app-install.integration-test.ts`)
 
 ## What gets scaffolded
 
