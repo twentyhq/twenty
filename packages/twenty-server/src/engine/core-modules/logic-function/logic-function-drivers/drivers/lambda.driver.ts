@@ -1,4 +1,6 @@
+import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
+import { resolve, join } from 'path';
 
 import {
   CreateFunctionCommand,
@@ -12,9 +14,12 @@ import {
   ListLayerVersionsCommand,
   type ListLayerVersionsCommandInput,
   LogType,
+  PublishLayerVersionCommand,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,8 +29,10 @@ import {
   type LogicFunctionDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
+import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -43,7 +50,15 @@ const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 300;
 const BUILDER_LAMBDA_MEMORY_MB = 1024;
-const DEFAULT_BUILDER_FUNCTION_NAME = 'twenty-package-sandbox-builder';
+const COMMON_LAYER_NAME = 'twenty-common-layer-dependencies';
+
+const BUILDER_HANDLER_PATH = resolve(
+  __dirname,
+  join(
+    ASSET_PATH,
+    'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
+  ),
+);
 
 type LambdaDriverExecutorPayload = {
   code: string;
@@ -54,26 +69,24 @@ type LambdaDriverExecutorPayload = {
 
 export type BuilderLambdaPayload = {
   action: 'createLayer';
-  layerName: string;
   packageJson: string;
   yarnLock: string;
-  compatibleRuntimes: string[];
-};
-
-export type BuilderLambdaResult = {
-  layerVersionArn: string;
+  presignedUploadUrl: string;
 };
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   region: string;
   lambdaRole: string;
+  layerBucketName: string;
   subhostingRole?: string;
-  builderFunctionName?: string;
 }
+
+const PRESIGNED_URL_EXPIRY_SECONDS = BUILDER_LAMBDA_TIMEOUT_SECONDS + 60;
 
 export class LambdaDriver implements LogicFunctionDriver {
   private lambdaClient: Lambda | undefined;
+  private s3Client: S3Client | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
@@ -100,6 +113,24 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     return this.lambdaClient;
+  }
+
+  private async getS3Client() {
+    if (
+      !isDefined(this.s3Client) ||
+      (isDefined(this.options.subhostingRole) &&
+        isDefined(this.credentialsExpiry) &&
+        new Date() >= this.credentialsExpiry)
+    ) {
+      this.s3Client = new S3Client({
+        region: this.options.region,
+        ...(isDefined(this.options.subhostingRole) && {
+          credentials: await this.getAssumeRoleCredentials(),
+        }),
+      });
+    }
+
+    return this.s3Client;
   }
 
   private async getAssumeRoleCredentials() {
@@ -151,12 +182,65 @@ export class LambdaDriver implements LogicFunctionDriver {
     return flatApplication.yarnLockChecksum ?? 'default';
   }
 
-  private getBuilderFunctionName() {
-    return this.options.builderFunctionName ?? DEFAULT_BUILDER_FUNCTION_NAME;
+  private builderFunctionName: string | undefined;
+
+  private async getBuilderFunctionName(): Promise<string> {
+    if (isDefined(this.builderFunctionName)) {
+      return this.builderFunctionName;
+    }
+
+    const handlerContent = await fs.readFile(BUILDER_HANDLER_PATH, 'utf-8');
+    const checksum = createHash('sha256')
+      .update(handlerContent)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.builderFunctionName = `twenty-builder-${checksum}`;
+
+    return this.builderFunctionName;
+  }
+
+  private async ensureCommonLayerExists(): Promise<string> {
+    const existingArn = await this.getExistingLayerArn(COMMON_LAYER_NAME);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    await copyCommonLayerDependencies(sourceTemporaryDir);
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const lambdaClient = await this.getLambdaClient();
+
+    const result = await lambdaClient.send(
+      new PublishLayerVersionCommand({
+        LayerName: COMMON_LAYER_NAME,
+        Content: { ZipFile: await fs.readFile(lambdaZipPath) },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
+
+    await temporaryDirManager.clean();
+
+    if (!result.LayerVersionArn) {
+      throw new Error(
+        'PublishLayerVersion did not return a LayerVersionArn for common layer',
+      );
+    }
+
+    return result.LayerVersionArn;
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
-    const builderFunctionName = this.getBuilderFunctionName();
+    const builderFunctionName = await this.getBuilderFunctionName();
     const lambdaClient = await this.getLambdaClient();
 
     try {
@@ -171,6 +255,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
     }
 
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
@@ -184,6 +270,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       FunctionName: builderFunctionName,
+      Layers: [commonLayerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: LogicFunctionRuntime.NODE22,
@@ -200,14 +287,16 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   private async invokeBuilderLambda(
     payload: BuilderLambdaPayload,
-  ): Promise<BuilderLambdaResult> {
+  ): Promise<void> {
     const lambdaClient = await this.getLambdaClient();
+
+    const builderFunctionName = await this.getBuilderFunctionName();
 
     const result = await callWithTimeout({
       callback: () =>
         lambdaClient.send(
           new InvokeCommand({
-            FunctionName: this.getBuilderFunctionName(),
+            FunctionName: builderFunctionName,
             Payload: JSON.stringify(payload),
             LogType: LogType.Tail,
           }),
@@ -215,18 +304,57 @@ export class LambdaDriver implements LogicFunctionDriver {
       timeoutMs: BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000,
     });
 
-    const parsedResult = result.Payload
-      ? JSON.parse(result.Payload.transformToString())
-      : {};
-
     if (result.FunctionError) {
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
+
       throw new LogicFunctionException(
         `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
+  }
 
-    return parsedResult as BuilderLambdaResult;
+  private async generatePresignedPutUrl(s3Key: string): Promise<string> {
+    const s3Client = await this.getS3Client();
+
+    return getSignedUrl(
+      s3Client,
+      new PutObjectCommand({
+        Bucket: this.options.layerBucketName,
+        Key: s3Key,
+        ContentType: 'application/zip',
+      }),
+      { expiresIn: PRESIGNED_URL_EXPIRY_SECONDS },
+    );
+  }
+
+  private async publishLayerFromS3(
+    layerName: string,
+    s3Key: string,
+    compatibleRuntimes: LogicFunctionRuntime[],
+  ): Promise<string> {
+    const lambdaClient = await this.getLambdaClient();
+
+    const result = await lambdaClient.send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: {
+          S3Bucket: this.options.layerBucketName,
+          S3Key: s3Key,
+        },
+        CompatibleRuntimes: compatibleRuntimes,
+      }),
+    );
+
+    if (!result.LayerVersionArn) {
+      throw new Error(
+        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+      );
+    }
+
+    return result.LayerVersionArn;
   }
 
   private async getExistingLayerArn(
@@ -289,16 +417,20 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.ensureBuilderLambdaExists();
 
+    const s3Key = `layer-builds/${layerName}.zip`;
+    const presignedUploadUrl = await this.generatePresignedPutUrl(s3Key);
+
     await this.invokeBuilderLambda({
       action: 'createLayer',
-      layerName,
       packageJson,
       yarnLock,
-      compatibleRuntimes: [
-        LogicFunctionRuntime.NODE18,
-        LogicFunctionRuntime.NODE22,
-      ],
+      presignedUploadUrl,
     });
+
+    await this.publishLayerFromS3(layerName, s3Key, [
+      LogicFunctionRuntime.NODE18,
+      LogicFunctionRuntime.NODE22,
+    ]);
   }
 
   private async getLayerArn({

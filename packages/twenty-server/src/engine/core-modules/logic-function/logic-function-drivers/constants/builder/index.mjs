@@ -1,20 +1,14 @@
-import { execFile } from 'child_process';
-import { promises as fs } from 'fs';
+import { createWriteStream, promises as fs } from 'fs';
 import { join } from 'path';
-import { promisify } from 'util';
 
-import {
-  LambdaClient,
-  PublishLayerVersionCommand,
-} from '@aws-sdk/client-lambda';
-
-const execFilePromise = promisify(execFile);
-const lambdaClient = new LambdaClient({});
+import archiver from 'archiver';
+import { pipeline } from 'stream/promises';
 
 const BUILD_DIR = '/tmp/layer';
 const NODEJS_DIR = join(BUILD_DIR, 'nodejs');
 const ZIP_PATH = '/tmp/layer.zip';
 const YARN_INSTALL_TIMEOUT_MS = 240_000;
+const YARN_ENGINE_PATH = '.yarn/releases/yarn-4.9.2.cjs';
 
 const cleanTmp = async () => {
   await fs.rm(BUILD_DIR, { recursive: true, force: true });
@@ -30,22 +24,23 @@ const writePackageFiles = async (packageJson, yarnLock) => {
 };
 
 const copyYarnEngine = async () => {
-  // The yarn engine is bundled alongside this handler in the Lambda zip
-  const yarnEngineDir = join(import.meta.dirname, 'yarn-engine');
-
-  await fs.cp(yarnEngineDir, NODEJS_DIR, { recursive: true });
+  await fs.cp('yarn-engine', NODEJS_DIR, { recursive: true });
 };
 
 const runYarnInstall = async () => {
-  const localYarnPath = join(NODEJS_DIR, '.yarn/releases/yarn-4.9.2.cjs');
+  const { execFile } = await import('child_process');
+  const { promisify } = await import('util');
+  const execFilePromise = promisify(execFile);
 
-  // oxlint-disable-next-line no-undef
   const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
 
+  // Lambda runs as a sandboxed user whose $HOME doesn't exist.
+  // Yarn needs a writable HOME for its global cache/config.
+  cleanEnv.HOME = '/tmp';
+
   await execFilePromise(
-    // oxlint-disable-next-line no-undef
     process.execPath,
-    [localYarnPath, 'workspaces', 'focus', '--all', '--production'],
+    [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
     {
       cwd: NODEJS_DIR,
       env: cleanEnv,
@@ -71,40 +66,47 @@ const runYarnInstall = async () => {
 };
 
 const createZip = async () => {
-  await execFilePromise('zip', ['-r', ZIP_PATH, '.'], {
-    cwd: BUILD_DIR,
-  });
+  const output = createWriteStream(ZIP_PATH);
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  const p = pipeline(archive, output);
+
+  archive.directory(BUILD_DIR, false);
+  archive.finalize();
+
+  return p;
 };
 
-const publishLayer = async (layerName, compatibleRuntimes) => {
+const uploadToS3 = async (presignedUploadUrl) => {
   const zipBuffer = await fs.readFile(ZIP_PATH);
 
-  const result = await lambdaClient.send(
-    new PublishLayerVersionCommand({
-      LayerName: layerName,
-      Content: { ZipFile: zipBuffer },
-      CompatibleRuntimes: compatibleRuntimes,
-    }),
-  );
+  const response = await fetch(presignedUploadUrl, {
+    method: 'PUT',
+    body: zipBuffer,
+    headers: {
+      'Content-Type': 'application/zip',
+    },
+  });
 
-  if (!result.LayerVersionArn) {
-    throw new Error('PublishLayerVersion did not return a LayerVersionArn');
+  if (!response.ok) {
+    const body = await response.text();
+
+    throw new Error(
+      `S3 upload failed: ${response.status} ${response.statusText} - ${body}`,
+    );
   }
-
-  return result.LayerVersionArn;
 };
 
 export const handler = async (event) => {
-  const { action, layerName, packageJson, yarnLock, compatibleRuntimes } =
-    event;
+  const { action, packageJson, yarnLock, presignedUploadUrl } = event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
   }
 
-  if (!layerName || !packageJson || !yarnLock) {
+  if (!packageJson || !yarnLock || !presignedUploadUrl) {
     throw new Error(
-      'Missing required fields: layerName, packageJson, yarnLock',
+      'Missing required fields: packageJson, yarnLock, presignedUploadUrl',
     );
   }
 
@@ -114,13 +116,9 @@ export const handler = async (event) => {
   await copyYarnEngine();
   await runYarnInstall();
   await createZip();
-
-  const layerVersionArn = await publishLayer(
-    layerName,
-    compatibleRuntimes ?? ['nodejs18.x', 'nodejs22.x'],
-  );
+  await uploadToS3(presignedUploadUrl);
 
   await cleanTmp();
 
-  return { layerVersionArn };
+  return { uploaded: true };
 };

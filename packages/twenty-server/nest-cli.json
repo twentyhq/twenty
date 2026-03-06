@@ -37,6 +37,10 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "database/clickHouse/migrations/*.sql",
         "outDir": "dist"
       },
