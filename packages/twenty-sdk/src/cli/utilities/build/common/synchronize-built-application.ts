@@ -75,14 +75,17 @@ export const synchronizeBuiltApplication = async ({
     appPath,
   });
 
-  const uploadPromises = Array.from(builtFileInfos.values()).map((fileInfo) =>
-    fileUploader.uploadFile({
+  const uploadResults = [];
+
+  for (const fileInfo of builtFileInfos.values()) {
+    const result = await fileUploader.uploadFile({
       builtPath: fileInfo.builtPath,
       fileFolder: fileInfo.fileFolder,
-    }),
-  );
+    });
 
-  const uploadResults = await Promise.all(uploadPromises);
+    uploadResults.push(result);
+  }
+
   const failedUploads = uploadResults.filter((result) => !result.success);
 
   if (failedUploads.length > 0) {
