@@ -1,10 +1,10 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 export const SaveRecordPageLayoutSingleRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -24,11 +24,11 @@ export const SaveRecordPageLayoutSingleRecordAction = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const handleClick = async () => {
+    await saveFieldsWidgetGroups();
+
     const result = await savePageLayout();
 
     if (result.status === 'successful') {
-      await saveFieldsWidgetGroups();
-
       closeSidePanelMenu();
       setIsPageLayoutInEditMode(false);
     }
