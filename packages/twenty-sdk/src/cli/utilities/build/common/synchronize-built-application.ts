@@ -15,6 +15,40 @@ export type AppSyncOptions = {
   workspace?: string;
 };
 
+const ensureApplicationRegistrationExists = async (
+  apiService: ApiService,
+  manifest: Manifest,
+): Promise<CommandResult> => {
+  const universalIdentifier = manifest.application.universalIdentifier;
+
+  const findResult =
+    await apiService.findApplicationRegistrationByUniversalIdentifier(
+      universalIdentifier,
+    );
+
+  if (findResult.success && findResult.data) {
+    return { success: true, data: undefined };
+  }
+
+  const createResult = await apiService.createApplicationRegistration({
+    name: manifest.application.displayName,
+    description: manifest.application.description,
+    universalIdentifier,
+  });
+
+  if (!createResult.success) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.SYNC_FAILED,
+        message: `Failed to create application registration: ${serializeError(createResult.error)}`,
+      },
+    };
+  }
+
+  return { success: true, data: undefined };
+};
+
 export const synchronizeBuiltApplication = async ({
   appPath,
   manifest,
@@ -26,6 +60,15 @@ export const synchronizeBuiltApplication = async ({
 }): Promise<CommandResult> => {
   const apiService = new ApiService();
   const universalIdentifier = manifest.application.universalIdentifier;
+
+  const registrationResult = await ensureApplicationRegistrationExists(
+    apiService,
+    manifest,
+  );
+
+  if (!registrationResult.success) {
+    return registrationResult;
+  }
 
   const fileUploader = new FileUploader({
     applicationUniversalIdentifier: universalIdentifier,
