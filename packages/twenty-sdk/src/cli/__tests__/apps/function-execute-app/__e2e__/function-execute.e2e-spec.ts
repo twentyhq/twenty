@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { vi } from 'vitest';
 
-import { appBuild } from '@/cli/public-operations/app-build';
+import { appGenerateClient } from '@/cli/public-operations/app-generate-client';
 import { appUninstall } from '@/cli/public-operations/app-uninstall';
 import { functionExecute } from '@/cli/public-operations/function-execute';
 import { ADD_NUMBERS_UNIVERSAL_IDENTIFIER } from '../src/logic-functions/add-numbers.function';
@@ -10,15 +10,15 @@ const APP_PATH = resolve(__dirname, '../');
 
 describe('functionExecute E2E', () => {
   beforeAll(async () => {
-    const buildResult = await appBuild({ appPath: APP_PATH });
+    const generateResult = await appGenerateClient({ appPath: APP_PATH });
 
-    if (!buildResult.success) {
+    if (!generateResult.success) {
       throw new Error(
-        `appBuild failed: ${buildResult.error.code} – ${buildResult.error.message}`,
+        `appGenerateClient failed: ${generateResult.error.code} – ${generateResult.error.message}`,
       );
     }
 
-    // Although appBuild uploads files before syncing the manifest, the server
+    // Although appGenerateClient uploads files before syncing the manifest, the server
     // may need a moment to make them readable by the execution engine.
     // Retry a dummy execution until the handler file becomes available.
     await vi.waitFor(

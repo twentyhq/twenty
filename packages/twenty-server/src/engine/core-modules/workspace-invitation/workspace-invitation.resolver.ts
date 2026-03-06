@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -12,10 +11,6 @@ import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -62,13 +57,6 @@ export class WorkspaceInvitationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
-      throw new WorkspaceException(
-        'Workspace is not ready yet. Please complete workspace activation first.',
-        WorkspaceExceptionCode.WORKSPACE_NOT_READY,
-      );
-    }
-
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
@@ -109,13 +97,6 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsDTO> {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
-      throw new WorkspaceException(
-        'Workspace is not ready yet. Please complete workspace activation first.',
-        WorkspaceExceptionCode.WORKSPACE_NOT_READY,
-      );
-    }
-
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
