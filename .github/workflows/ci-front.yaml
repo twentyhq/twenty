@@ -92,8 +92,14 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Build twenty-shared
-        run: npx nx build twenty-shared
+      - name: Restore storybook build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-ui
       - name: Download storybook build
         uses: actions/download-artifact@v4
         with:
@@ -226,6 +232,7 @@ jobs:
     runs-on: ubuntu-latest-8-cores
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
+      ANALYZE: "true"
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
