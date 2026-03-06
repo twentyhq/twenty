@@ -480,25 +480,17 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     if (!isDefined(pictureUrl) || pictureUrl === '') return;
 
-    try {
-      const savedFile =
-        await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
-          {
-            imageUrl: pictureUrl,
-            workspaceId,
-            applicationUniversalIdentifier,
-            queryRunner,
-          },
-        );
-
-      return savedFile?.url;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to upload profile picture from URL: ${pictureUrl} — ${error instanceof Error ? error.message : String(error)}`,
+    const savedFile =
+      await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
+        {
+          imageUrl: pictureUrl,
+          workspaceId,
+          applicationUniversalIdentifier,
+          queryRunner,
+        },
       );
 
-      return;
-    }
+    return savedFile?.url;
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

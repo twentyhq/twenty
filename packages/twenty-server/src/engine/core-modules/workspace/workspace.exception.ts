@@ -13,6 +13,7 @@ export enum WorkspaceExceptionCode {
   WORKSPACE_CUSTOM_DOMAIN_DISABLED = 'WORKSPACE_CUSTOM_DOMAIN_DISABLED',
   ENVIRONMENT_VAR_NOT_ENABLED = 'ENVIRONMENT_VAR_NOT_ENABLED',
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
+  WORKSPACE_NOT_READY = 'WORKSPACE_NOT_READY',
 }
 
 const getWorkspaceExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       return msg`This feature is not enabled.`;
     case WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND:
       return msg`Custom domain not found.`;
+    case WorkspaceExceptionCode.WORKSPACE_NOT_READY:
+      return msg`Workspace is not ready yet. Please complete workspace activation first.`;
     default:
       assertUnreachable(code);
   }
