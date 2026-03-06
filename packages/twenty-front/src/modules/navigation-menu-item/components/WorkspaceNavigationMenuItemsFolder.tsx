@@ -132,6 +132,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     ? (e?: React.MouseEvent) => {
         e?.stopPropagation();
         onEditModeClick?.();
+        handleToggle();
       }
     : handleToggle;
 
@@ -167,6 +168,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           ? folderColor
           : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
       }
+      active={!isOpen && selectedNavigationMenuItemIndex >= 0}
       onClick={handleClick}
       className="navigation-drawer-item"
       triggerEvent="CLICK"
@@ -174,19 +176,26 @@ export const WorkspaceNavigationMenuItemsFolder = ({
       isDragging={isDragging}
       alwaysShowRightOptions
       rightOptions={
-        isOpen ? (
-          <IconChevronDown
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        ) : (
-          <IconChevronRight
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        )
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggle();
+          }}
+        >
+          {isOpen ? (
+            <IconChevronDown
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
+            />
+          ) : (
+            <IconChevronRight
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
+            />
+          )}
+        </div>
       }
     />
   );

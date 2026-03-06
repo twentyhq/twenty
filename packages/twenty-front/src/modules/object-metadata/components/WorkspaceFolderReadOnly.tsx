@@ -66,6 +66,7 @@ export const WorkspaceFolderReadOnly = ({
               ? folderColor
               : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
           }
+          active={!isOpen && selectedNavigationMenuItemIndex >= 0}
           onClick={handleToggle}
           className="navigation-drawer-item"
           triggerEvent="CLICK"
