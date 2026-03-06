@@ -12,8 +12,8 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   height: 100vh;
-  width: 100vw;
   padding: 12px;
+  width: 100vw;
 `;
 
 const StyledPanel = styled.div`
@@ -28,18 +28,18 @@ const StyledPanel = styled.div`
 
 const StyledEmptyContainer = styled.div`
   align-items: center;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100%;
   justify-content: center;
   text-align: center;
+  width: 100%;
 `;
 
 const StyledImageContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
   position: relative;
 `;
@@ -51,8 +51,8 @@ const StyledBackgroundImage = styled.img`
 
 const StyledInnerImage = styled.img`
   max-height: 130px;
-  position: absolute;
   max-width: 130px;
+  position: absolute;
 `;
 
 const StyledEmptyTextContainer = styled.div`
@@ -85,12 +85,12 @@ const StyledButton = styled.button`
   align-items: center;
   background: ${themeCssVariables.grayScale.gray1};
   border: 1px solid ${themeCssVariables.grayScale.gray5};
-  color: ${themeCssVariables.grayScale.gray12};
   border-radius: 8px;
+  color: ${themeCssVariables.grayScale.gray12};
   cursor: pointer;
   display: flex;
-  padding: 8px 16px;
   padding: 8px;
+  padding: 8px 16px;
 `;
 
 const StyledIconContainer = styled.span`

@@ -20,10 +20,10 @@ const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.border.color.strong};
 
-  position: relative;
-  top: -2px;
-
   height: 2px;
+  position: relative;
+
+  top: -2px;
   width: 1px;
 `;
 
@@ -33,9 +33,9 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.border.color.strong};
 
+  height: 28px;
   position: relative;
   top: -17px;
-  height: 28px;
   width: 1px;
 `;
 

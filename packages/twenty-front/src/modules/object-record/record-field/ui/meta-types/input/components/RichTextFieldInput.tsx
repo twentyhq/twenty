@@ -24,13 +24,13 @@ const ActivityRichTextEditor = lazy(() =>
 
 const StyledContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
-  width: 480px;
+  box-sizing: border-box;
+  display: flex;
+  margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[12]};
-  margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
-  display: flex;
-  box-sizing: border-box;
   position: relative;
+  width: 480px;
 `;
 
 const StyledCollapseButton = styled.div`

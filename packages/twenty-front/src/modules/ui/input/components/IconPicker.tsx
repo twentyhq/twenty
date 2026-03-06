@@ -105,20 +105,20 @@ const StyledLightIconButton = ({
 );
 
 const StyledLoadingMore = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 40px;
+  display: flex;
   font-size: 14px;
+  height: 40px;
+  justify-content: center;
 `;
 
 const StyledMatrixItem = styled.div`
-  width: 32px;
-  height: 32px;
-  display: flex;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>

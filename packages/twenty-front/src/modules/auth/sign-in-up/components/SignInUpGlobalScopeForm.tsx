@@ -61,16 +61,16 @@ const StyledWorkspaceContainer = styled.div`
 `;
 
 const StyledWorkspaceItem = styled.div`
+  align-items: center;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  width: 100%;
   height: ${themeCssVariables.spacing[15]};
-  padding: 0;
+  justify-content: space-between;
   overflow: hidden;
 
-  cursor: pointer;
-  justify-content: space-between;
+  padding: 0;
+  width: 100%;
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -85,8 +85,8 @@ const StyledWorkspaceContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
   padding: 0 ${themeCssVariables.spacing[4]};
+  width: 100%;
 `;
 
 const StyledWorkspaceTextContainer = styled.div`
@@ -96,13 +96,13 @@ const StyledWorkspaceTextContainer = styled.div`
 `;
 
 const StyledWorkspaceLogo = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  height: ${themeCssVariables.spacing[6]};
-  width: ${themeCssVariables.spacing[6]};
-  background-color: ${themeCssVariables.background.transparent.light};
-  display: flex;
-  justify-content: center;
   align-items: center;
+  background-color: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledWorkspaceName = styled.div`

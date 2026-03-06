@@ -10,8 +10,8 @@ import {
 } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
   flex: 1;
 
   &:not(:last-of-type) {

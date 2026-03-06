@@ -6,8 +6,8 @@ import { forwardRef, type InputHTMLAttributes } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
-  align-items: center;
   --vertical-padding: ${themeCssVariables.spacing[2]};
+  align-items: center;
   display: flex;
   flex-direction: row;
   min-height: calc(36px - 2 * var(--vertical-padding));
@@ -18,13 +18,13 @@ const StyledDropdownMenuSearchInputContainer = styled.div`
 
 const StyledInput = styled.input`
   background-color: transparent;
+  background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
   font-size: inherit;
   font-weight: inherit;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -33,8 +33,8 @@ const StyledInput = styled.input`
     font-weight: ${themeCssVariables.font.weight.medium};
   }
 
-  font-size: ${themeCssVariables.font.size.sm};
-  background-color: transparent;
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &[type='number']::-webkit-outer-spin-button,

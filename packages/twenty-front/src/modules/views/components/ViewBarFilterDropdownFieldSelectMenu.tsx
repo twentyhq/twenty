@@ -29,22 +29,22 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 export const StyledInput = styled.input`
   background: transparent;
   border: none;
-  border-top: none;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 0;
+  border-top: none;
   border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.font.color.primary};
-  margin: 0;
-  outline: none;
-  padding: ${themeCssVariables.spacing[2]};
-  min-height: 19px;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.sm};
-
   font-weight: inherit;
+  margin: 0;
   max-width: 100%;
+  min-height: 19px;
+
+  outline: none;
   overflow: hidden;
+  padding: ${themeCssVariables.spacing[2]};
   text-decoration: none;
 
   &::placeholder {

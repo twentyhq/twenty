@@ -18,8 +18,8 @@ const StyledContainer = styled.div`
   border-top-left-radius: 8px;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: auto 1fr;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   height: 100%;
 `;
 

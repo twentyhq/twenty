@@ -12,21 +12,21 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
 
   font-weight: ${themeCssVariables.font.weight.medium};
+
   height: ${themeCssVariables.spacing[7]};
-
   justify-content: space-between;
-
   padding-left: ${themeCssVariables.spacing[2]};
+
   padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
-
-  box-sizing: border-box;
-  cursor: pointer;
 `;
 
 export type DropdownMenuInnerSelectProps = {

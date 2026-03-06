@@ -12,8 +12,8 @@ import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 const StyledDraggableWrapper = styled.div`
-  display: flex;
   cursor: grab;
+  display: flex;
 
   &:active {
     cursor: grabbing;

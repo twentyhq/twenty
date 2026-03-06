@@ -41,8 +41,8 @@ const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding-top: ${themeCssVariables.spacing[1]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSummaryText = styled.span`

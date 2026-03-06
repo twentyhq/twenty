@@ -20,29 +20,29 @@ const StyledColumnFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
-  color: ${themeCssVariables.font.color.tertiary};
-
   border-right: solid 1px ${themeCssVariables.background.primary};
 
-  padding: 0;
-
-  min-width: ${({ columnWidth }) => columnWidth}px;
-  width: ${({ columnWidth }) => columnWidth}px;
-  text-align: left;
-  &:hover {
-    background: ${themeCssVariables.background.secondary};
-  }
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-
-  overflow: hidden;
-
-  position: sticky;
   bottom: 0;
 
+  color: ${themeCssVariables.font.color.tertiary};
+
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   left: ${({ isFirstCell }) =>
     isFirstCell
       ? `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`
       : 'auto'};
+  min-width: ${({ columnWidth }) => columnWidth}px;
+  &:hover {
+    background: ${themeCssVariables.background.secondary};
+  }
+  overflow: hidden;
+
+  padding: 0;
+
+  position: sticky;
+  text-align: left;
+
+  width: ${({ columnWidth }) => columnWidth}px;
   z-index: ${({ isFirstCell, isTableWithGroups }) =>
     isFirstCell
       ? isTableWithGroups
@@ -70,8 +70,8 @@ const StyledColumnFooterCell = styled.div<{
 
 const StyledColumnFootContainer = styled.div`
   position: relative;
-  z-index: 1;
   width: 100%;
+  z-index: 1;
 `;
 
 export const RecordTableAggregateFooterCell = ({

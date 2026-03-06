@@ -6,8 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledInputErrorHelper = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.xs};
-  position: absolute;
   margin-top: 1px;
+  position: absolute;
 `;
 
 export const InputErrorHelper = ({

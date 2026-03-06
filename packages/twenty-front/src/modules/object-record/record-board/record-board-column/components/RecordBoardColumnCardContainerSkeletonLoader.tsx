@@ -23,16 +23,16 @@ const StyledBodyContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  padding-top: 4px;
   padding-bottom: 4px;
+  padding-top: 4px;
 `;
 
 const StyledStaticCellSkeleton = styled.div<{ width: number; height: number }>`
   background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.sm};
 
-  width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
+  width: ${({ width }) => width}px;
 `;
 
 export const RecordBoardColumnCardContainerSkeletonLoader = () => {

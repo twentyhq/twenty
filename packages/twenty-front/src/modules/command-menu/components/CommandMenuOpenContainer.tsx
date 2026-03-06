@@ -28,6 +28,8 @@ const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
   font-family: ${themeCssVariables.font.family};
   height: 100%;
   overflow: hidden;
@@ -36,8 +38,6 @@ const StyledCommandMenuBase = styled.div`
   right: 0%;
   top: 0%;
   z-index: ${RootStackingContextZIndices.SidePanel};
-  display: flex;
-  flex-direction: column;
 `;
 const StyledCommandMenu = motion.create(StyledCommandMenuBase);
 

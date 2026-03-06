@@ -23,36 +23,36 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
+  display: flex;
+  flex-direction: column;
   height: ${({ isDraggingFile }) =>
     isDraggingFile ? `calc(100% - 24px)` : '100%'};
   padding: ${({ isDraggingFile }) =>
     isDraggingFile ? themeCssVariables.spacing[3] : '0'};
-  display: flex;
-  flex-direction: column;
 `;
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
+  background: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-inline: ${themeCssVariables.spacing[3]};
   padding-block: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[3]};
-  background: ${themeCssVariables.background.primary};
+  padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInputBox = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   min-height: 140px;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  box-sizing: border-box;
 
   &:focus-within {
     border-color: ${themeCssVariables.color.blue};
@@ -75,11 +75,11 @@ const StyledEditorWrapper = styled.div`
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
-    outline: none;
-    padding: 0;
-    min-height: 48px;
     max-height: 320px;
+    min-height: 48px;
+    outline: none;
     overflow-y: auto;
+    padding: 0;
 
     p {
       margin: 0;

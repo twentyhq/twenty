@@ -4,9 +4,9 @@ import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
 const StyledNotificationCounterContainer = styled.div`
+  left: -7px;
   position: absolute;
   top: -7px;
-  left: -7px;
   z-index: 1000;
 `;
 

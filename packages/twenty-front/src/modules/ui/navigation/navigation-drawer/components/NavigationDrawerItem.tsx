@@ -84,17 +84,15 @@ type StyledItemProps = Pick<
 };
 
 const StyledItem = styled.button<StyledItemProps>`
-  box-sizing: border-box;
   align-items: center;
   background: ${({ active }) =>
     active ? themeCssVariables.background.transparent.light : 'transparent'};
-  height: ${themeCssVariables.spacing[7]};
   border: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
-  text-decoration: none;
+  box-sizing: border-box;
   color: ${({ active, danger, soon }) => {
     if (active === true) {
       return themeCssVariables.font.color.primary;
@@ -112,6 +110,9 @@ const StyledItem = styled.button<StyledItemProps>`
   display: flex;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.md};
+  height: ${themeCssVariables.spacing[7]};
+  margin-top: ${({ indentationLevel }) =>
+    indentationLevel === 2 ? '2px' : '0'};
 
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
@@ -121,15 +122,11 @@ const StyledItem = styled.button<StyledItemProps>`
       : themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
 
-  margin-top: ${({ indentationLevel }) =>
-    indentationLevel === 2 ? '2px' : '0'};
-
   pointer-events: ${({ soon }) => (soon ? 'none' : 'auto')};
 
-  width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
-    !isNavigationDrawerExpanded
-      ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
-      : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
+  text-decoration: none;
+
+  user-select: none;
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
@@ -143,7 +140,10 @@ const StyledItem = styled.button<StyledItemProps>`
     visibility: visible;
   }
 
-  user-select: none;
+  width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
+    !isNavigationDrawerExpanded
+      ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
+      : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     font-size: ${themeCssVariables.font.size.lg};
@@ -157,13 +157,13 @@ const StyledItemElementsContainer = styled.div`
 `;
 
 const StyledLabelParent = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex: 1 1 auto;
-  white-space: nowrap;
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
+  white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
@@ -191,17 +191,17 @@ const StyledItemCount = styled.span`
 
 const StyledKeyBoardShortcut = styled.span`
   align-items: center;
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+
   height: ${themeCssVariables.spacing[4]};
   justify-content: center;
   width: ${themeCssVariables.spacing[4]};
-  box-sizing: border-box;
-
-  border-radius: ${themeCssVariables.border.radius.sm};
-  border: 1px solid ${themeCssVariables.border.color.strong};
-  background: ${themeCssVariables.background.transparent.lighter};
 `;
 
 const StyledNavigationDrawerItemContainer = styled.div`
@@ -218,44 +218,44 @@ const StyledIcon = styled.div<{
   $borderColor?: string;
 }>`
   align-items: center;
-  display: flex;
-  flex-grow: 0;
-  flex-shrink: 0;
-  justify-content: center;
-  margin-right: ${themeCssVariables.spacing[2]};
   background-color: ${({ $backgroundColor }) =>
     $backgroundColor || 'transparent'};
+  border: ${({ $backgroundColor, $borderColor }) =>
+    $backgroundColor && $borderColor ? `1px solid ${$borderColor}` : 'none'};
   border-radius: ${({ $backgroundColor }) => ($backgroundColor ? '4px' : '0')};
   box-sizing: ${({ $backgroundColor }) =>
     $backgroundColor ? 'border-box' : 'content-box'};
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
   height: ${({ $backgroundColor }) =>
     $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
+  justify-content: center;
+  margin-right: ${themeCssVariables.spacing[2]};
   width: ${({ $backgroundColor }) =>
     $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
-  border: ${({ $backgroundColor, $borderColor }) =>
-    $backgroundColor && $borderColor ? `1px solid ${$borderColor}` : 'none'};
 `;
 
 const StyledRightOptionsContainer = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  flex-grow: 0;
-  height: ${themeCssVariables.spacing[6]};
   border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
 `;
 
 const StyledRightOptionsVisbility = styled.div`
-  display: block;
-  opacity: 0;
-  transition: opacity 150ms;
-  position: absolute;
-  padding-left: ${themeCssVariables.spacing[2]};
-  overflow: hidden;
   clip-path: inset(1px);
-  white-space: nowrap;
+  display: block;
   height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  padding-left: ${themeCssVariables.spacing[2]};
+  position: absolute;
+  transition: opacity 150ms;
+  white-space: nowrap;
   width: 1px;
 
   &[data-visible='true'],

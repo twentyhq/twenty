@@ -25,11 +25,11 @@ type CalendarEventRowProps = {
 
 const StyledContainer = styled.div<{ showTitle?: boolean }>`
   align-items: center;
+  cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
   display: inline-flex;
   gap: ${themeCssVariables.spacing[3]};
   height: ${themeCssVariables.spacing[6]};
   position: relative;
-  cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
@@ -37,23 +37,23 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
     active
       ? themeCssVariables.tag.background.red
       : themeCssVariables.tag.background.gray};
+  border-radius: ${themeCssVariables.border.radius.xs};
   height: 100%;
   width: ${themeCssVariables.spacing[1]};
-  border-radius: ${themeCssVariables.border.radius.xs};
 `;
 
 const StyledLabels = styled.div`
   align-items: center;
-  display: flex;
   color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
+  display: flex;
   flex: 1 0 auto;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTime = styled.div`
   align-items: center;
-  display: flex;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   width: ${themeCssVariables.spacing[26]};
 `;
