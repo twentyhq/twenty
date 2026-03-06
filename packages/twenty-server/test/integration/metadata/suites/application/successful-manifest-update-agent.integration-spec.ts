@@ -25,7 +25,8 @@ const findAppAgents = async () => {
   });
 
   return data.findManyAgents.filter(
-    (agent) => agent.name === 'sales-assistant' || agent.name === 'support-bot',
+    (agent) =>
+      agent.name === 'sales-assistant' || agent.name === 'support-bot',
   );
 };
 
@@ -40,10 +41,38 @@ describe('Manifest update - agents', () => {
   }, 60000);
 
   afterEach(async () => {
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
-    });
+    try {
+      await uninstallApplication({
+        universalIdentifier: TEST_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't fully install/sync
+    }
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
   });
 
   it('should create a new agent when added to manifest on second sync', async () => {
@@ -172,7 +201,9 @@ describe('Manifest update - agents', () => {
 
     expect(agentsAfterFirstSync).toHaveLength(2);
     expect(
-      agentsAfterFirstSync.find((agent) => agent.name === 'sales-assistant'),
+      agentsAfterFirstSync.find(
+        (agent) => agent.name === 'sales-assistant',
+      ),
     ).toBeDefined();
     expect(
       agentsAfterFirstSync.find((agent) => agent.name === 'support-bot'),
