@@ -34,6 +34,7 @@ export const AgentChatFileUploadButton = () => {
 
     uploadFiles(Array.from(event.target.files));
     setAgentChatSelectedFiles(Array.from(event.target.files));
+    event.target.value = '';
   };
 
   return (
