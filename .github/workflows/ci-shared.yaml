@@ -1,8 +1,6 @@
 name: CI Shared
 
 on:
-  merge_group:
-
   pull_request:
 
 permissions:

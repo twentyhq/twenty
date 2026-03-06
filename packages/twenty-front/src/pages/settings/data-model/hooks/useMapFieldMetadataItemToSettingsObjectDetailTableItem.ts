@@ -39,8 +39,8 @@ export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
       fieldMetadataItem,
       fieldType: fieldType ?? '',
       dataType:
-        (isDefined(relationObjectMetadataItem?.labelPlural) ||
-        isFieldTypeSupportedInSettings(fieldMetadataType))
+        isDefined(relationObjectMetadataItem?.labelPlural) ||
+        isFieldTypeSupportedInSettings(fieldMetadataType)
           ? getSettingsFieldTypeConfig(fieldMetadataType as SettingsFieldType)
               ?.label
           : '',

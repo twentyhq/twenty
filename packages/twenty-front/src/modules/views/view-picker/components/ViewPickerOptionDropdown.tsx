@@ -83,7 +83,7 @@ export const ViewPickerOptionDropdown = ({
     : favorites.some(
         (favorite) =>
           favorite.recordId === view.id &&
-            isDefined(favorite.forWorkspaceMemberId),
+          isDefined(favorite.forWorkspaceMemberId),
       );
 
   const handleDelete = () => {
