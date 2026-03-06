@@ -242,7 +242,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 <StyledFolderDroppableContent
                   ref={provided.innerRef}
                   $compact={isEditMode || navigationMenuItems.length === 0}
-                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
                   {...provided.droppableProps}
                 >
                   {navigationMenuItems.map((navigationMenuItem, index) => {

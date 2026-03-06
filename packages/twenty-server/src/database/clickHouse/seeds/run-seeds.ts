@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { createClient, ClickHouseLogLevel } from '@clickhouse/client';
 import { config } from 'dotenv';
 

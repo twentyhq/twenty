@@ -132,7 +132,7 @@ const parseKeyFilter = ({
   queryBuilder: WhereExpressionBuilder;
   objectNameSingular: string;
   key: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   value: any;
   isFirst: boolean;
   fieldParser: GraphqlQueryFilterFieldParser;

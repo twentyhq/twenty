@@ -101,7 +101,6 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
           this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldOrderByInputType(
             {
               fieldMetadata,
-              typeOptions,
               context,
             },
           );

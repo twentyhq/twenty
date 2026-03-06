@@ -43,7 +43,7 @@ export const NotesCard = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
-  const isNotesEmpty = !notes || notes.length === 0;
+  const isNotesEmpty = notes.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -62,7 +62,7 @@ export const NotesCard = () => {
   if (isNotesEmpty) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="noNote" />

@@ -26,8 +26,12 @@ export const StyledEventRowItemColumn = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const StyledEventRowItemAction = styled(StyledEventRowItemColumn)`
+export const StyledEventRowItemAction = styled.div`
+  align-items: center;
   color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex-direction: row;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const EventRowDynamicComponent = ({

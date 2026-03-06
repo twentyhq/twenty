@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 import { Label } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledGroupHeading = styled(Label)`
+const StyledGroupHeadingContainer = styled.div`
   align-items: center;
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
@@ -24,12 +25,14 @@ type SidePanelGroupProps = {
 };
 
 export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
-  if (!children || !React.Children.count(children)) {
+  if (!isDefined(children) || !React.Children.count(children)) {
     return null;
   }
   return (
     <>
-      <StyledGroupHeading>{heading}</StyledGroupHeading>
+      <StyledGroupHeadingContainer>
+        <Label>{heading}</Label>
+      </StyledGroupHeadingContainer>
       <StyledGroup>{children}</StyledGroup>
     </>
   );

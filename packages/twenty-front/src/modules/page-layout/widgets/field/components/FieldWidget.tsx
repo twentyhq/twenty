@@ -82,7 +82,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
           >
             <AnimatedPlaceholder type="noRecord" />

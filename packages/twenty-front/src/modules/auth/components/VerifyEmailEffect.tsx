@@ -121,7 +121,7 @@ export const VerifyEmailEffect = () => {
     verifyEmailToken();
 
     // Verify email only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigApiStatus.isLoadedOnce]);
 
   if (isError) {

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import jsonLogic, { type RulesLogic } from 'json-logic-js';
 
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
@@ -11,7 +12,7 @@ export const evaluateWidgetVisibility = ({
   conditionalDisplay,
   context,
 }: EvaluateWidgetVisibilityParams): boolean => {
-  if (!conditionalDisplay) {
+  if (!isDefined(conditionalDisplay)) {
     return true;
   }
 

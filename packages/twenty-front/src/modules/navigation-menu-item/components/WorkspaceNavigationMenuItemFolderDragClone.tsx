@@ -44,9 +44,9 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   return (
     <div
       ref={draggableProvided.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.dragHandleProps}
       style={{
         ...draggableProvided.draggableProps.style,

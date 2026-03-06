@@ -6,7 +6,7 @@ export const convertLayoutsToWidgets = (
   widgets: PageLayoutWidget[],
   layouts: Layouts,
 ): PageLayoutWidget[] => {
-  const activeLayouts = layouts.desktop || layouts.mobile || [];
+  const activeLayouts = layouts.desktop ?? layouts.mobile ?? [];
 
   return widgets.map((widget) => {
     const layout = activeLayouts.find((l) => l.i === widget.id);

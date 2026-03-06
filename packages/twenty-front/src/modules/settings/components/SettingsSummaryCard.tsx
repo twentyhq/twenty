@@ -8,12 +8,14 @@ type SettingsSummaryCardProps = {
   rightComponent: ReactNode;
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-  min-height: ${themeCssVariables.spacing[6]};
+const StyledCardContentContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]};
+    min-height: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const StyledTitle = styled.div`
@@ -29,9 +31,11 @@ export const SettingsSummaryCard = ({
   rightComponent,
 }: SettingsSummaryCardProps) => (
   <Card>
-    <StyledCardContent>
-      <StyledTitle>{title}</StyledTitle>
-      {rightComponent}
-    </StyledCardContent>
+    <StyledCardContentContainer>
+      <CardContent>
+        <StyledTitle>{title}</StyledTitle>
+        {rightComponent}
+      </CardContent>
+    </StyledCardContentContainer>
   </Card>
 );

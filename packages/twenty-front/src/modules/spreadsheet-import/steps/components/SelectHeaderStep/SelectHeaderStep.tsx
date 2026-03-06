@@ -15,7 +15,7 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { useLingui } from '@lingui/react/macro';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
-const StyledHeading = styled(Heading)`
+const StyledHeadingContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
@@ -105,7 +105,9 @@ export const SelectHeaderStep = ({
   return (
     <>
       <ModalContent>
-        <StyledHeading title={t`Select header row`} />
+        <StyledHeadingContainer>
+          <Heading title={t`Select header row`} />
+        </StyledHeadingContainer>
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}

@@ -145,7 +145,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}

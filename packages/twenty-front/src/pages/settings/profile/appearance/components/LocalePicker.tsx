@@ -74,7 +74,7 @@ export const LocalePicker = () => {
     try {
       localStorage.setItem('locale', value);
     } catch (error) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
     await refreshObjectMetadataItems();

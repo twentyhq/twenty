@@ -16,7 +16,7 @@ export const WithLock = (
 
     const originalMethod = descriptor.value;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     descriptor.value = async function (...args: any[]) {
       const self = this as { cacheLockService: CacheLockService };
 

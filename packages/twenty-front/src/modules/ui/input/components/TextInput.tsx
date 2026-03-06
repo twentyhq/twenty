@@ -1,4 +1,5 @@
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { isDefined } from 'twenty-shared/utils';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -143,7 +144,9 @@ const StyledInput = styled.input<
         ? `calc(${themeCssVariables.spacing[3]} + 16px)`
         : themeCssVariables.spacing[2]};
   width: ${({ width }) =>
-    width ? `calc(${width}px + ${themeCssVariables.spacing[0.5]})` : '100%'};
+    isDefined(width)
+      ? `calc(${width}px + ${themeCssVariables.spacing[0.5]})`
+      : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
   text-overflow: ellipsis;
   &::placeholder,
@@ -336,7 +339,7 @@ const TextInputComponent = forwardRef<
             id={instanceId}
             width={width}
             data-testid={dataTestId}
-            autoComplete={autoComplete || 'off'}
+            autoComplete={autoComplete ?? 'off'}
             ref={combinedRef}
             tabIndex={tabIndex ?? 0}
             onFocus={handleFocus}
@@ -457,10 +460,10 @@ const TextInputWithAutoGrowWrapper = forwardRef<
       {props.autoGrow ? (
         <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
-          node={props.value || props.placeholder}
+          node={props.value ?? props.placeholder}
         >
           <TextInputComponent
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...props}
             ref={ref}
             fullWidth={true}
@@ -468,7 +471,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
         </StyledAutogrowWrapper>
       ) : (
         <TextInputComponent
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...props}
           ref={ref}
         />

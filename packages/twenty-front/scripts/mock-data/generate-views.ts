@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const FIND_ALL_CORE_VIEWS_QUERY = `

@@ -10,7 +10,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 
 export interface CursorData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   [key: string]: any;
 }
 
@@ -30,7 +30,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
   objectRecord: T,
   order: ObjectRecordOrderBy | undefined,
 ): string => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
   const orderBy = order?.reduce((acc, orderBy) => ({ ...acc, ...orderBy }), {});
@@ -54,9 +54,9 @@ export const encodeCursorData = (cursorData: CursorData) => {
 };
 
 export const getCursor = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   args: FindManyResolverArgs<any, any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
 ): Record<string, any> | undefined => {
   if (args.after) return decodeCursor(args.after);
   if (args.before) return decodeCursor(args.before);

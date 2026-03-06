@@ -38,11 +38,11 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledSidePanelAnimatedPlaceholderEmptyContainer = styled(
-  AnimatedPlaceholderEmptyContainer,
-)`
-  height: auto;
-  padding-top: ${themeCssVariables.spacing[8]};
+const StyledSidePanelPlaceholderWrapper = styled.div`
+  > * {
+    height: auto;
+    padding-top: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 export const TimelineCard = () => {
@@ -52,20 +52,16 @@ export const TimelineCard = () => {
     useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty =
-    !timelineActivities || timelineActivities.length === 0;
+    timelineActivities.length === 0;
 
   if (loading === true) {
     return <SkeletonLoader withSubSections />;
   }
 
   if (isTimelineActivitiesEmpty) {
-    const EmptyContainer = isInSidePanel
-      ? StyledSidePanelAnimatedPlaceholderEmptyContainer
-      : AnimatedPlaceholderEmptyContainer;
-
-    return (
-      <EmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+    const placeholderContent = (
+      <AnimatedPlaceholderEmptyContainer
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="emptyTimeline" />
@@ -77,7 +73,15 @@ export const TimelineCard = () => {
             {t`There is no activity associated with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-      </EmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+
+    return isInSidePanel ? (
+      <StyledSidePanelPlaceholderWrapper>
+        {placeholderContent}
+      </StyledSidePanelPlaceholderWrapper>
+    ) : (
+      placeholderContent
     );
   }
 

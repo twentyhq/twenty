@@ -23,7 +23,7 @@ type TestedRecord = {
 
 type TestResult = ExtractSerializedRelationProperties<TestedRecord>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     Equal<

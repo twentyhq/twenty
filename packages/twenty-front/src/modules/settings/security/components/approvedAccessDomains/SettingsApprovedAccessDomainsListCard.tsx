@@ -19,8 +19,10 @@ import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
@@ -54,12 +56,14 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   };
 
   return loading || !approvedAccessDomains.length ? (
-    <StyledLink to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
-      <SettingsCard
-        title={t`Add Approved Access Domain`}
-        Icon={<IconMailCog />}
-      />
-    </StyledLink>
+    <StyledLinkContainer>
+      <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
+        <SettingsCard
+          title={t`Add Approved Access Domain`}
+          Icon={<IconMailCog />}
+        />
+      </Link>
+    </StyledLinkContainer>
   ) : (
     <>
       <SettingsSecurityApprovedAccessDomainValidationEffect />

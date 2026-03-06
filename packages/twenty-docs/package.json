@@ -8,7 +8,7 @@
     "dev": "mintlify dev",
     "build": "mintlify build",
     "fix-links": "bash scripts/fix-translated-links.sh",
-    "lint": "eslint **/*.mdx --max-warnings=0"
+    "lint": "npx oxlint -c .oxlintrc.json ."
   },
   "dependencies": {
     "mintlify": "latest"

@@ -26,8 +26,10 @@ const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
     dotPosition === 'top' ? 'stretch' : 'center'};
 `;
 
-const StyledIconPoint = styled(IconPoint)`
+const StyledIconPointContainer = styled.span`
   margin-right: 0;
+  display: flex;
+  align-items: center;
 `;
 
 export const AdvancedSettingsContentWrapperWithDot = ({
@@ -41,11 +43,13 @@ export const AdvancedSettingsContentWrapperWithDot = ({
     <StyledWrapper>
       {!hideDot && (
         <StyledDotContainer dotPosition={dotPosition}>
-          <StyledIconPoint
-            size={12}
-            color={theme.color.yellow}
-            fill={theme.color.yellow}
-          />
+          <StyledIconPointContainer>
+            <IconPoint
+              size={12}
+              color={theme.color.yellow}
+              fill={theme.color.yellow}
+            />
+          </StyledIconPointContainer>
         </StyledDotContainer>
       )}
       {children}

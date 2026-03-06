@@ -37,16 +37,9 @@ const StyledFoldersContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  padding-right: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
 `;
 
 const StyledSectionHeader = styled.div`
@@ -61,8 +54,10 @@ const StyledSectionHeader = styled.div`
   text-align: left;
 `;
 
-const StyledLabel = styled(Label)`
+const StyledLabelContainer = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -158,30 +153,37 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }
 
-  if (!messageFolders || messageFolders.length === 0) {
+  if (messageFolders.length === 0) {
     return <SettingsMessageFoldersEmptyStateCard />;
   }
 
   return (
     <Section>
       <Table>
-        <StyledSearchInput
-          placeholder={t`Search folders...`}
-          value={search}
-          onChange={setSearch}
-          instanceId={'message-folders-search'}
-        />
-        <StyledLabel>{t`Folders`}</StyledLabel>
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            placeholder={t`Search folders...`}
+            value={search}
+            onChange={setSearch}
+            instanceId={'message-folders-search'}
+          />
+        </StyledSearchInputContainer>
+        <StyledLabelContainer>
+          <Label>{t`Folders`}</Label>
+        </StyledLabelContainer>
 
         <StyledSectionHeader>
           <Label>{t`Toggle all folders`}</Label>
-          <StyledCheckboxCell>
+          <TableCell
+            align="right"
+            padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+          >
             <Checkbox
               checked={allFoldersToggled}
               onChange={() => handleToggleAllFolders(messageFolders)}
               size={CheckboxSize.Small}
             />
-          </StyledCheckboxCell>
+          </TableCell>
         </StyledSectionHeader>
 
         <StyledFoldersContainer>

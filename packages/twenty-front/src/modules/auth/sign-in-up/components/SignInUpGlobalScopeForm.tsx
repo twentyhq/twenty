@@ -244,7 +244,7 @@ export const SignInUpGlobalScopeForm = () => {
           {(authProviders.google || authProviders.microsoft) && (
             <HorizontalSeparator />
           )}
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...form}>
             <SignInUpWithCredentials isGlobalScope />
           </FormProvider>
