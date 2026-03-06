@@ -37,13 +37,13 @@ const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: 4px;
-  bottom: -7px;
+  bottom: -5px;
   display: flex;
   height: 14px;
   justify-content: center;
   position: absolute;
-  right: -7px;
-  width: 14px;
+  right: -6px;
+  width: 12px;
 `;
 
 export type ObjectIconWithViewOverlayProps = {
