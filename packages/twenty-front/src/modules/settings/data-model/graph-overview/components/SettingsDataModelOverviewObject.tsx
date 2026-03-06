@@ -12,7 +12,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
 import '@xyflow/react/dist/style.css';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -131,7 +131,7 @@ export const SettingsDataModelOverviewObject = ({
                 objectNamePlural: objectMetadataItem.namePlural,
               })}
             >
-              {Icon && <Icon size={theme.icon.size.md} />}
+              {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
               {objectMetadataItem.labelPlural}
             </Link>
           </StyledObjectLinkContainer>

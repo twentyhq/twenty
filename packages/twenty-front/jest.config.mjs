@@ -9,9 +9,9 @@ const __dirname = dirname(__filename);
 const tsConfigPath = resolve(__dirname, './tsconfig.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
-// eslint-disable-next-line no-undef
+// oxlint-disable-next-line no-undef
 process.env.TZ = 'GMT';
-// eslint-disable-next-line no-undef
+// oxlint-disable-next-line no-undef
 process.env.LC_ALL = 'en_US.UTF-8';
 const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string

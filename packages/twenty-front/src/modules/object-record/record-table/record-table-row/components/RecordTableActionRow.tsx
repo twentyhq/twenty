@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -18,6 +17,7 @@ import {
   sumByProperty,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
@@ -72,8 +72,7 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: start;
 
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   position: sticky;
   width: ${({ width }) => width}px;
 `;

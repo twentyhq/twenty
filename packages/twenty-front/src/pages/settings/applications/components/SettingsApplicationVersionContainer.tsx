@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  AppRegistrationSourceType,
+  ApplicationRegistrationSourceType,
   type Application,
 } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
@@ -26,7 +26,7 @@ export const SettingsApplicationVersionContainer = ({
   const currentVersion = application?.version;
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const isNpmApp = sourceType === AppRegistrationSourceType.NPM;
+  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
 
   const latestVersion = isNpmApp
     ? (latestAvailableVersion ?? currentVersion)

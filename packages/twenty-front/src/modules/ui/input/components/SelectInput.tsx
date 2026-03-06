@@ -64,7 +64,7 @@ export const SelectInput = ({
           option.value !== selectedOption?.value &&
           normalizeSearchText(option.label).includes(searchTerm)
         );
-      }) || []
+      })
     );
   }, [options, searchFilter, selectedOption?.value]);
 

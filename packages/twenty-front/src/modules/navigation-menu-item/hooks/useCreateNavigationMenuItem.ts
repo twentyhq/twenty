@@ -27,7 +27,8 @@ export const useCreateNavigationMenuItem = () => {
       const relevantItems = folderId
         ? navigationMenuItems.filter((item) => item.folderId === folderId)
         : navigationMenuItems.filter(
-            (item) => !item.folderId && item.userWorkspaceId,
+            (item) =>
+              !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
           );
 
       const maxPosition = Math.max(
@@ -59,7 +60,8 @@ export const useCreateNavigationMenuItem = () => {
       const relevantItems = folderId
         ? navigationMenuItems.filter((item) => item.folderId === folderId)
         : navigationMenuItems.filter(
-            (item) => !item.folderId && item.userWorkspaceId,
+            (item) =>
+              !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
           );
 
       const maxPosition = Math.max(

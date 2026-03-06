@@ -98,7 +98,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
             noResults={isEmpty}
             noResultsText={noResultsText}
           >
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+            {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
             <div ref={innerRef} {...droppableProps}>
               <SidePanelGroup heading={t`Results`}>
                 {availableSearchRecords.map((record, index) => (

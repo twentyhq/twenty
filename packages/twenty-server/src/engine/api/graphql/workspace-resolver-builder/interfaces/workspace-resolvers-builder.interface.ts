@@ -13,7 +13,7 @@ import {
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
 // Use RESOLVER_METHOD_NAMES as the single source of truth for operation names
@@ -77,7 +77,7 @@ export interface UpdateOneResolverArgs<
 
 export interface UpdateManyResolverArgs<
   Data extends Partial<ObjectRecord> = Partial<ObjectRecord>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   Filter = any,
 > {
   filter: Filter;
@@ -88,7 +88,7 @@ export interface DeleteOneResolverArgs {
   id: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -97,7 +97,7 @@ export interface RestoreOneResolverArgs {
   id: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -112,7 +112,7 @@ export interface DestroyOneResolverArgs {
   id: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export interface DestroyManyResolverArgs<Filter = any> {
   filter: Filter;
 }

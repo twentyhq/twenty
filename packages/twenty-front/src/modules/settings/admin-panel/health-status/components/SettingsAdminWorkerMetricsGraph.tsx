@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -201,7 +202,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
           <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
-      {metricsDetails && (
+      {isDefined(metricsDetails) && (
         <StyledSettingsAdminTableCardContainer>
           <SettingsAdminTableCard
             rounded

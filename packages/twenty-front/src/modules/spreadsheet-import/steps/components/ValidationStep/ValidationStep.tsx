@@ -127,7 +127,7 @@ export const ValidationStep = ({
   >(
     useMemo(
       () => addErrorsAndRunHooks(initialData, fields, rowHook, tableHook),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [],
     ),
   );
@@ -206,9 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-          return Object.values(value.__errors)?.filter(
-            (err) => err.level === 'error',
-          ).length;
+            return (
+              (Object.values(value.__errors)?.filter(
+                (err) => err.level === 'error',
+              ).length ?? 0) > 0
+            );
         }
         return false;
       });

@@ -89,7 +89,7 @@ export const ViewPickerDropdown = () => {
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
-            {currentView && CurrentViewIcon ? (
+            {isDefined(currentView) && isDefined(CurrentViewIcon) ? (
               <CurrentViewIcon size={theme.icon.size.md} />
             ) : (
               <IconList size={theme.icon.size.md} />

@@ -58,7 +58,7 @@ export const SentryInitEffect = () => {
 
           setIsSentryInitialized(true);
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error('Failed to initialize Sentry:', error);
         } finally {
           setIsSentryInitializing(false);
@@ -82,7 +82,7 @@ export const SentryInitEffect = () => {
           });
           setIsSentryUserDefined(true);
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error('Failed to set Sentry user:', error);
         }
       } else if (!isDefined(currentUser) && isSentryInitialized) {
@@ -90,7 +90,7 @@ export const SentryInitEffect = () => {
           const { setUser } = await import('@sentry/react');
           setUser(null);
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error('Failed to clear Sentry user:', error);
         }
       }

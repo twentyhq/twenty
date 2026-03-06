@@ -3,6 +3,7 @@ import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -65,7 +66,7 @@ export const RoutingStatusDisplay = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const isLoading = data.state === 'loading';
   const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
-  const isExpandable = isDebugMode && data.state === 'routed' && data.debug;
+  const isExpandable = isDebugMode && data.state === 'routed' && isDefined(data.debug);
 
   if (data.state === 'error') {
     return null;

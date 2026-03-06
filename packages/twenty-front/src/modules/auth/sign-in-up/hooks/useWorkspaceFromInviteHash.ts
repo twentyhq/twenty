@@ -30,7 +30,7 @@ export const useWorkspaceFromInviteHash = () => {
       onCompleted: (data) => {
         if (
           isDefined(currentWorkspace) &&
-          data?.findWorkspaceFromInviteHash &&
+          isDefined(data?.findWorkspaceFromInviteHash) &&
           currentWorkspace.id === data.findWorkspaceFromInviteHash.id
         ) {
           const workspaceDisplayName =

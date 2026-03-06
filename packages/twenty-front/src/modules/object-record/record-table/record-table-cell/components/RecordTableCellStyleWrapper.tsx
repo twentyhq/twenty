@@ -63,7 +63,7 @@ export const RecordTableCellStyleWrapper = ({
       fontColor={fontColor}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
       className={cx('table-cell', widthClassName)}
     >

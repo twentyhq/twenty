@@ -96,30 +96,30 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # 公共资源文件夹（图片、字体等）
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # 必需 - 主应用配置
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # 逻辑函数的默认角色
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # 示例自定义对象定义
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # 示例独立字段定义
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # 示例逻辑函数
-  │   ├── pre-install.ts                # 安装前逻辑函数
-  │   └── post-install.ts               # 安装后逻辑函数
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # 示例前端组件
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # 示例已保存视图定义
+  │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # 示例侧边栏导航链接
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
   └── skills/
-      └── example-skill.ts                # 示例 AI 代理技能定义
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。 With `--interactive`, you choose which example files to include.
@@ -130,7 +130,7 @@ my-twenty-app/
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
-* **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**：应用根目录中的简短 README，包含基本说明。
 * **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
 * **src/**：你以代码形式定义应用的主要位置

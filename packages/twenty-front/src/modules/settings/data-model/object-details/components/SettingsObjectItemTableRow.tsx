@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -70,7 +71,7 @@ export const SettingsObjectMetadataItemTableRow = ({
       to={link}
     >
       <StyledNameTableCell>
-        {!!Icon && (
+        {isDefined(Icon) && (
           <Icon
             style={{
               minWidth: theme.icon.size.md,

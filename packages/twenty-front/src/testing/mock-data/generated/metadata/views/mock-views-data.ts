@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 

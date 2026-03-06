@@ -55,7 +55,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Restore server setup
@@ -149,7 +149,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Restore server setup
@@ -212,7 +212,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Update .env.test for integrations tests

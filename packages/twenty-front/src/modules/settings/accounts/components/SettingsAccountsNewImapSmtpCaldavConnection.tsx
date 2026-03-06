@@ -28,7 +28,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { control } = formMethods;
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
         title={t`New Account`}

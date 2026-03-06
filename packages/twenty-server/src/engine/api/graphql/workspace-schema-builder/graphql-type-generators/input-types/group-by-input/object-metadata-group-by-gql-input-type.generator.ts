@@ -101,7 +101,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
 
       type = groupByDateGranularityInputType;
     } else {
-      type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+      type = GraphQLBoolean;
     }
 
     return {

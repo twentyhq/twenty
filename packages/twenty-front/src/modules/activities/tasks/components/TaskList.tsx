@@ -45,7 +45,7 @@ const StyledCount = styled.span`
 
 export const TaskList = ({ title, tasks, button }: TaskListProps) => (
   <>
-    {tasks && tasks.length > 0 && (
+    {tasks.length > 0 && (
       <StyledContainer>
         <StyledTitleBar>
           {title && (

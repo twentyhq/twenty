@@ -26,9 +26,11 @@ export const useInstallApp = <TVariables extends Record<string, unknown>>(
       }
 
       return false;
-    } catch {
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
+
       enqueueErrorSnackBar({
-        message: t`Failed to install the application.`,
+        message: graphqlMessage ?? t`Failed to install the application.`,
       });
 
       return false;
