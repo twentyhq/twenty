@@ -1,6 +1,27 @@
 import { definePlugin } from '@oxlint/plugins';
 
 import {
+  rule as linguiNoExpressionInMessage,
+  name as linguiNoExpressionInMessageName,
+} from 'eslint-plugin-lingui/lib/rules/no-expression-in-message';
+import {
+  rule as linguiNoSingleTagToTranslate,
+  name as linguiNoSingleTagToTranslateName,
+} from 'eslint-plugin-lingui/lib/rules/no-single-tag-to-translate';
+import {
+  rule as linguiNoTransInsideTrans,
+  name as linguiNoTransInsideTransName,
+} from 'eslint-plugin-lingui/lib/rules/no-trans-inside-trans';
+import {
+  rule as linguiNoUnlocalizedStrings,
+  name as linguiNoUnlocalizedStringsName,
+} from 'eslint-plugin-lingui/lib/rules/no-unlocalized-strings';
+import {
+  rule as linguiTCallInFunction,
+  name as linguiTCallInFunctionName,
+} from 'eslint-plugin-lingui/lib/rules/t-call-in-function';
+
+import {
   rule as componentPropsNaming,
   RULE_NAME as componentPropsNamingName,
 } from './rules/component-props-naming';
@@ -85,5 +106,10 @@ export default definePlugin({
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [linguiTCallInFunctionName]: linguiTCallInFunction,
+    [linguiNoSingleTagToTranslateName]: linguiNoSingleTagToTranslate,
+    [linguiNoTransInsideTransName]: linguiNoTransInsideTrans,
+    [linguiNoExpressionInMessageName]: linguiNoExpressionInMessage,
+    [linguiNoUnlocalizedStringsName]: linguiNoUnlocalizedStrings,
   },
 });

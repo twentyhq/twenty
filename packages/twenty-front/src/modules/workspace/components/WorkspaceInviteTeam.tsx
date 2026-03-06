@@ -186,7 +186,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
               return (
                 <SettingsTextInput
                   instanceId="workspace-invite-team-emails"
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings
+                  // oxlint-disable-next-line twenty/no-unlocalized-strings
                   placeholder="tim@apple.com, jony.ive@apple.dev"
                   value={value}
                   onChange={onChange}

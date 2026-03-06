@@ -1,5 +1,8 @@
 {
   "name": "twenty-oxlint-rules",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "eslint-plugin-lingui": "^0.11.0"
+  }
 }
