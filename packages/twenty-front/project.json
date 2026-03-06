@@ -67,7 +67,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["twenty-oxlint-rules:build"],
+      "dependsOn": ["twenty-oxlint-rules:build", "twenty-shared:build"],
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",

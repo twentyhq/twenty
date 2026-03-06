@@ -113,18 +113,18 @@ export const useUpdateActivityTargetFromCell = ({
       );
 
       if (isDefined(existingActivityTarget)) {
-        activityTargetsAfterUpdate = activityTargetWithTargetRecords
-          .map((activityTarget) => {
+        activityTargetsAfterUpdate = activityTargetWithTargetRecords.flatMap(
+          (activityTarget) => {
             if (
               activityTarget.targetObject.id === morphItem.recordId &&
               !morphItem.isSelected
             ) {
-              return undefined;
+              return [];
             }
 
-            return activityTarget.activityTarget;
-          })
-          .filter(isDefined);
+            return [activityTarget.activityTarget];
+          },
+        );
 
         if (!morphItem.isSelected) {
           await deleteOneActivityTarget(
