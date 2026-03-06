@@ -105,7 +105,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   ) {
     return {
       not: {
-        and: [
+        or: [
           ...groupRecordGqlOperationFilters,
           ...subGroupRecordGqlOperationFilters,
         ],

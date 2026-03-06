@@ -55,7 +55,15 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       currentRecordFilterGroupId: 'group1',
     });
 
-    expect(result).toHaveProperty('and');
+    expect(result).toEqual({
+      and: [
+        {
+          name: {
+            ilike: '%test%',
+          },
+        },
+      ],
+    });
   });
 
   it('should return OR filter for OR logical operator', () => {
@@ -80,7 +88,15 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       currentRecordFilterGroupId: 'group1',
     });
 
-    expect(result).toHaveProperty('or');
+    expect(result).toEqual({
+      or: [
+        {
+          name: {
+            ilike: '%test%',
+          },
+        },
+      ],
+    });
   });
 
   it('should return NOT filter for NOT logical operator', () => {
@@ -105,7 +121,17 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       currentRecordFilterGroupId: 'group1',
     });
 
-    expect(result).toHaveProperty('not');
+    expect(result).toEqual({
+      not: {
+        or: [
+          {
+            name: {
+              ilike: '%test%',
+            },
+          },
+        ],
+      },
+    });
   });
 
   it('should handle nested groups', () => {
@@ -135,9 +161,18 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
       currentRecordFilterGroupId: 'group1',
     });
 
-    expect(result).toHaveProperty('and');
-    const andFilters = (result as any).and;
-
-    expect(andFilters.length).toBeGreaterThan(0);
+    expect(result).toEqual({
+      and: [
+        {
+          or: [
+            {
+              name: {
+                ilike: '%test%',
+              },
+            },
+          ],
+        },
+      ],
+    });
   });
 });
